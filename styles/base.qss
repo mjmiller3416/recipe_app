@@ -1,0 +1,17 @@
+/* ----------------------------------------------------------
+   BASE STYLING
+---------------------------------------------------------- */
+
+QWidget {
+  
+  /* Font */
+  color: #E1E1E3;
+  font-family: 'Montserrat';
+  font-size: 14px;
+}
+
+QFrame[class="CardFrame"] {
+  background-color: #3b3f43;
+  border: 2px solid #262626;
+  border-radius: 10px;
+}

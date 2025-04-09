@@ -1,0 +1,72 @@
+recipe_name,recipe_category,total_time,servings,directions,image_path,ingredient_name,quantity,unit,ingredient_category
+Grilled Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Chicken Breast,500,g,Meat
+Grilled Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Lemon Juice,50,ml,Condiments
+Grilled Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Olive Oil,30,ml,Oils
+Grilled Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Garlic,10,g,Spices
+Grilled Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Rosemary,5,g,Herbs
+Grilled Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Salt,5,g,Spices
+Grilled Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Black Pepper,5,g,Spices
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Beef Strips,400,g,Meat
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Onion,100,g,Vegetables
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Mushrooms,200,g,Vegetables
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Garlic,10,g,Spices
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Butter,20,g,Dairy
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Sour Cream,100,g,Dairy
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Pasta,250,g,Pasta
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Salt,5,g,Spices
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Black Pepper,5,g,Spices
+Teriyaki Salmon,Japanese,30,2,Marinate salmon in teriyaki sauce and bake until flaky.,recipe_images/teriyaki_salmon.jpg,Salmon Fillet,300,g,Seafood
+Teriyaki Salmon,Japanese,30,2,Marinate salmon in teriyaki sauce and bake until flaky.,recipe_images/teriyaki_salmon.jpg,Teriyaki Sauce,50,ml,Condiments
+Teriyaki Salmon,Japanese,30,2,Marinate salmon in teriyaki sauce and bake until flaky.,recipe_images/teriyaki_salmon.jpg,Sesame Seeds,5,g,Spices
+Teriyaki Salmon,Japanese,30,2,Marinate salmon in teriyaki sauce and bake until flaky.,recipe_images/teriyaki_salmon.jpg,Green Onion,50,g,Vegetables
+Teriyaki Salmon,Japanese,30,2,Marinate salmon in teriyaki sauce and bake until flaky.,recipe_images/teriyaki_salmon.jpg,Ginger,10,g,Spices
+Vegetarian Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/vegetarian_stir-fry.jpg,Broccoli,150,g,Vegetables
+Vegetarian Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/vegetarian_stir-fry.jpg,Bell Pepper,100,g,Vegetables
+Vegetarian Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/vegetarian_stir-fry.jpg,Carrot,100,g,Vegetables
+Vegetarian Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/vegetarian_stir-fry.jpg,Soy Sauce,30,ml,Condiments
+Vegetarian Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/vegetarian_stir-fry.jpg,Garlic,10,g,Spices
+Vegetarian Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/vegetarian_stir-fry.jpg,Ginger,10,g,Spices
+Vegetarian Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/vegetarian_stir-fry.jpg,Tofu,200,g,Vegetables
+Spaghetti Bolognese,Italian,45,4,Simmer ground beef with tomatoes and serve over spaghetti.,recipe_images/spaghetti_bolognese.jpg,Ground Beef,500,g,Meat
+Spaghetti Bolognese,Italian,45,4,Simmer ground beef with tomatoes and serve over spaghetti.,recipe_images/spaghetti_bolognese.jpg,Tomatoes,400,g,Vegetables
+Spaghetti Bolognese,Italian,45,4,Simmer ground beef with tomatoes and serve over spaghetti.,recipe_images/spaghetti_bolognese.jpg,Onion,100,g,Vegetables
+Spaghetti Bolognese,Italian,45,4,Simmer ground beef with tomatoes and serve over spaghetti.,recipe_images/spaghetti_bolognese.jpg,Garlic,10,g,Spices
+Spaghetti Bolognese,Italian,45,4,Simmer ground beef with tomatoes and serve over spaghetti.,recipe_images/spaghetti_bolognese.jpg,Olive Oil,20,ml,Oils
+Spaghetti Bolognese,Italian,45,4,Simmer ground beef with tomatoes and serve over spaghetti.,recipe_images/spaghetti_bolognese.jpg,Salt,5,g,Spices
+Spaghetti Bolognese,Italian,45,4,Simmer ground beef with tomatoes and serve over spaghetti.,recipe_images/spaghetti_bolognese.jpg,Black Pepper,5,g,Spices
+Spaghetti Bolognese,Italian,45,4,Simmer ground beef with tomatoes and serve over spaghetti.,recipe_images/spaghetti_bolognese.jpg,Spaghetti,300,g,Pasta
+Chicken Fajitas,Mexican,35,4,Sauté chicken with bell peppers and onions. Serve with tortillas.,recipe_images/chicken_fajitas.jpg,Chicken Breast,500,g,Meat
+Chicken Fajitas,Mexican,35,4,Sauté chicken with bell peppers and onions. Serve with tortillas.,recipe_images/chicken_fajitas.jpg,Bell Pepper,200,g,Vegetables
+Chicken Fajitas,Mexican,35,4,Sauté chicken with bell peppers and onions. Serve with tortillas.,recipe_images/chicken_fajitas.jpg,Onion,100,g,Vegetables
+Chicken Fajitas,Mexican,35,4,Sauté chicken with bell peppers and onions. Serve with tortillas.,recipe_images/chicken_fajitas.jpg,Garlic,10,g,Spices
+Chicken Fajitas,Mexican,35,4,Sauté chicken with bell peppers and onions. Serve with tortillas.,recipe_images/chicken_fajitas.jpg,Cumin,5,g,Spices
+Chicken Fajitas,Mexican,35,4,Sauté chicken with bell peppers and onions. Serve with tortillas.,recipe_images/chicken_fajitas.jpg,Chili Powder,5,g,Spices
+Chicken Fajitas,Mexican,35,4,Sauté chicken with bell peppers and onions. Serve with tortillas.,recipe_images/chicken_fajitas.jpg,Tortillas,4,pcs,Bread
+Shrimp Pad Thai,Thai,40,3,"Stir-fry shrimp with noodles, eggs, and peanuts.",recipe_images/shrimp_pad_thai.jpg,Shrimp,300,g,Seafood
+Shrimp Pad Thai,Thai,40,3,"Stir-fry shrimp with noodles, eggs, and peanuts.",recipe_images/shrimp_pad_thai.jpg,Rice Noodles,250,g,Pasta
+Shrimp Pad Thai,Thai,40,3,"Stir-fry shrimp with noodles, eggs, and peanuts.",recipe_images/shrimp_pad_thai.jpg,Eggs,2,pcs,Dairy
+Shrimp Pad Thai,Thai,40,3,"Stir-fry shrimp with noodles, eggs, and peanuts.",recipe_images/shrimp_pad_thai.jpg,Peanuts,50,g,Nuts
+Shrimp Pad Thai,Thai,40,3,"Stir-fry shrimp with noodles, eggs, and peanuts.",recipe_images/shrimp_pad_thai.jpg,Bean Sprouts,100,g,Vegetables
+Shrimp Pad Thai,Thai,40,3,"Stir-fry shrimp with noodles, eggs, and peanuts.",recipe_images/shrimp_pad_thai.jpg,Lime,1,pcs,Fruits
+Shrimp Pad Thai,Thai,40,3,"Stir-fry shrimp with noodles, eggs, and peanuts.",recipe_images/shrimp_pad_thai.jpg,Soy Sauce,30,ml,Condiments
+Lentil Soup,Mediterranean,50,6,"Simmer lentils with carrots, tomatoes, and spices.",recipe_images/lentil_soup.jpg,Lentils,250,g,Legumes
+Lentil Soup,Mediterranean,50,6,"Simmer lentils with carrots, tomatoes, and spices.",recipe_images/lentil_soup.jpg,Carrots,150,g,Vegetables
+Lentil Soup,Mediterranean,50,6,"Simmer lentils with carrots, tomatoes, and spices.",recipe_images/lentil_soup.jpg,Tomatoes,400,g,Vegetables
+Lentil Soup,Mediterranean,50,6,"Simmer lentils with carrots, tomatoes, and spices.",recipe_images/lentil_soup.jpg,Garlic,10,g,Spices
+Lentil Soup,Mediterranean,50,6,"Simmer lentils with carrots, tomatoes, and spices.",recipe_images/lentil_soup.jpg,Cumin,5,g,Spices
+Lentil Soup,Mediterranean,50,6,"Simmer lentils with carrots, tomatoes, and spices.",recipe_images/lentil_soup.jpg,Vegetable Broth,500,ml,Condiments
+Lentil Soup,Mediterranean,50,6,"Simmer lentils with carrots, tomatoes, and spices.",recipe_images/lentil_soup.jpg,Olive Oil,20,ml,Oils
+Stuffed Bell Peppers,European,60,4,"Stuff bell peppers with rice and beef, then bake.",recipe_images/stuffed_bell_peppers.jpg,Bell Pepper,4,pcs,Vegetables
+Stuffed Bell Peppers,European,60,4,"Stuff bell peppers with rice and beef, then bake.",recipe_images/stuffed_bell_peppers.jpg,Ground Beef,400,g,Meat
+Stuffed Bell Peppers,European,60,4,"Stuff bell peppers with rice and beef, then bake.",recipe_images/stuffed_bell_peppers.jpg,Rice,200,g,Grains
+Stuffed Bell Peppers,European,60,4,"Stuff bell peppers with rice and beef, then bake.",recipe_images/stuffed_bell_peppers.jpg,Onion,100,g,Vegetables
+Stuffed Bell Peppers,European,60,4,"Stuff bell peppers with rice and beef, then bake.",recipe_images/stuffed_bell_peppers.jpg,Garlic,10,g,Spices
+Stuffed Bell Peppers,European,60,4,"Stuff bell peppers with rice and beef, then bake.",recipe_images/stuffed_bell_peppers.jpg,Tomato Sauce,200,ml,Condiments
+Stuffed Bell Peppers,European,60,4,"Stuff bell peppers with rice and beef, then bake.",recipe_images/stuffed_bell_peppers.jpg,Cheese,100,g,Dairy
+BBQ Pulled Pork,American,300,6,Slow-cook pork with BBQ sauce until tender.,recipe_images/bbq_pulled_pork.jpg,Pork Shoulder,1000,g,Meat
+BBQ Pulled Pork,American,300,6,Slow-cook pork with BBQ sauce until tender.,recipe_images/bbq_pulled_pork.jpg,BBQ Sauce,200,ml,Condiments
+BBQ Pulled Pork,American,300,6,Slow-cook pork with BBQ sauce until tender.,recipe_images/bbq_pulled_pork.jpg,Onion,100,g,Vegetables
+BBQ Pulled Pork,American,300,6,Slow-cook pork with BBQ sauce until tender.,recipe_images/bbq_pulled_pork.jpg,Garlic,10,g,Spices
+BBQ Pulled Pork,American,300,6,Slow-cook pork with BBQ sauce until tender.,recipe_images/bbq_pulled_pork.jpg,Brown Sugar,20,g,Sweeteners
+BBQ Pulled Pork,American,300,6,Slow-cook pork with BBQ sauce until tender.,recipe_images/bbq_pulled_pork.jpg,Salt,5,g,Spices
+BBQ Pulled Pork,American,300,6,Slow-cook pork with BBQ sauce until tender.,recipe_images/bbq_pulled_pork.jpg,Black Pepper,5,g,Spices

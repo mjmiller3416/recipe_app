@@ -1,0 +1,33 @@
+{
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+
+    //** Editor settings **//
+    "editor.formatOnSave": false, // Disable format on save
+    "editor.codeActionsOnSave": {}, // Disable code actions on save
+    "editor.tabSize": 4, // Set tab size to 4 spaces
+    "editor.rulers": [110], // Set a ruler at 110 characters
+    "editor.minimap.enabled": false, // Disable minimap
+    "editor.stickyScroll.enabled": false, // Disable sticky scroll
+    "editor.scrollbar.vertical": "hidden", // Hide vertical scrollbar
+    "editor.scrollbar.horizontal": "hidden", // Hide horizontal scrollbar
+
+    //** Font settings **//
+    "editor.fontSize": 14, // Set the font size to 16
+    "editor.fontFamily": "JetBrains Mono", // Set the font family to JetBrains Mono
+    "editor.fontLigatures": true, // Enable font ligatures
+
+    //** Window settings **//
+    "window.zoomLevel": 0.4, // 0 = 100% zoom level, 1 = 110% zoom level, -1 = 90% zoom level
+
+    //** File settings **//
+    "files.exclude": { // Exclude certain files and folders from the file explorer
+      "**/__pycache__": true,
+      "**/.venv": true,
+      "**/.vscode": true,
+    },
+
+    "files.associations": { // Associate certain file types with certain languages
+      "*.qss": "css"
+    },
+    
+  }

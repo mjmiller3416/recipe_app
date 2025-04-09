@@ -1,0 +1,11 @@
+/* ------------------------------------------------------------------
+   SHOPPING LIST STYLING
+   ------------------------------------------------------------------ */
+
+#ShoppingList {
+    background-color: green;
+}
+
+#ShoppingList QWidget{
+    background-color: green;  
+}

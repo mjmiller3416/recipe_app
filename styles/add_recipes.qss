@@ -1,0 +1,95 @@
+/* ------------------------------------------------------------------
+   ADD RECIPE STYLSHEET
+   ------------------------------------------------------------------ */
+#AddRecipes {
+    background-color: #3A4048;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+#AddRecipes QLabel {
+    color: #E1E1E3;
+    font: 16px 'Montserrat';
+    font-weight: 500;
+}
+
+#AddRecipes QLineEdit, 
+#AddRecipes QComboBox, 
+#AddRecipes QTextEdit {
+    background-color: #525861;
+    border: 1px solid #666;
+    border-radius: 4px;
+    padding: 5px;
+    color: #E1E1E3;
+    font: 14px 'Montserrat';
+    padding-left: 2px;
+}
+
+#AddRecipes QLineEdit:focus, 
+#AddRecipes QComboBox:focus, 
+#AddRecipes QTextEdit:focus {
+    border: 1px solid #03B79E;
+    outline: none;
+}
+
+#AddRecipes QComboBox QAbstractItemView {
+        background-color: #424951; /* Dark background for dropdown */
+        color: white;
+        selection-background-color: #555555;
+        border: 1px solid #777;
+    }
+
+#AddRecipes QPushButton {
+    background-color: #3B575B;
+    color: #E1E1E3;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font: 14px 'Montserrat';
+    font-weight: 600;
+    border: none;
+}
+
+#AddRecipes QPushButton:hover {
+    background-color: #03B79E;
+    color: #353535;
+}
+
+#sa_ingredients {
+    background: transparent;
+    border: none;
+}
+
+#sa_ingredients QWidget {
+    background: #525861; /* Set the color for the viewport */
+}
+
+/* ------------------------------------------------------------------
+   INGREDIENT WIDGET STYLING
+   ------------------------------------------------------------------ */
+   #IngredientWidget {
+    background: #353A42;  /* Darker grayish-blue */
+    border-radius: 6px;
+    padding: 5px;
+}
+
+#cb_recipie_category {
+    background: #525861;  /* Slightly lighter than background */
+}
+
+/* Ensure QLineEdit and QComboBox in IngredientWidget are properly styled */
+#IngredientWidget QLineEdit,
+#IngredientWidget QComboBox {
+    background: #424951;  /* Slightly lighter than background */
+    border: 1px solid #555A60;
+    border-radius: 4px;
+    padding: 4px;
+    color: #E1E1E3;
+    font: 14px 'Montserrat';
+}
+
+/* Focus effect for better visibility */
+#IngredientWidget QLineEdit:focus,
+#IngredientWidget QComboBox:focus {
+    border: 1px solid #03B79E;  /* Teal highlight */
+    outline: none;
+}
