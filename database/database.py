@@ -18,8 +18,8 @@ import sqlite3
 from threading import Lock
 
 #🔸Local Imports
-from app.database.db_helpers import DatabaseHelper
-from debug_logger import DebugLogger
+from database.db_helpers import DatabaseHelper
+from core.helpers import DebugLogger
 
 class ApplicationDatabase:
     """

@@ -1,0 +1,64 @@
+[
+    {
+        "type": "Group",
+        "name": "Main",
+        "parent_id": null,
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "E1O8pMjUCdn2De6T"
+    },
+    {
+        "type": "File",
+        "name": "g:\\My Drive\\Python\\recipe_app\\features\\add_recipes\\add_recipes.py",
+        "parent_id": "E1O8pMjUCdn2De6T",
+        "fsPath": "g:\\My Drive\\Python\\recipe_app\\features\\add_recipes\\add_recipes.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "wi620h8oXjsAEHbf"
+    },
+    {
+        "type": "File",
+        "name": "g:\\My Drive\\Python\\recipe_app\\core\\application\\application.py",
+        "parent_id": "E1O8pMjUCdn2De6T",
+        "fsPath": "g:\\My Drive\\Python\\recipe_app\\core\\application\\application.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "LKQV0rie3cxdkI1H"
+    },
+    {
+        "type": "File",
+        "name": "g:\\My Drive\\Python\\recipe_app\\features\\view_recipes\\view_recipes.py",
+        "parent_id": "E1O8pMjUCdn2De6T",
+        "fsPath": "g:\\My Drive\\Python\\recipe_app\\features\\view_recipes\\view_recipes.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "N01u6SqkAZVWwKOb"
+    },
+    {
+        "type": "File",
+        "name": "g:\\My Drive\\Python\\recipe_app\\features\\meal_planner\\meal_planner.py",
+        "parent_id": "E1O8pMjUCdn2De6T",
+        "fsPath": "g:\\My Drive\\Python\\recipe_app\\features\\meal_planner\\meal_planner.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "gAw4unza8Uqtv9bo"
+    },
+    {
+        "type": "File",
+        "name": "g:\\My Drive\\Python\\recipe_app\\features\\shopping_list\\shopping_list.py",
+        "parent_id": "E1O8pMjUCdn2De6T",
+        "fsPath": "g:\\My Drive\\Python\\recipe_app\\features\\shopping_list\\shopping_list.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "mJEiOSDv3Vp09bBK"
+    },
+    {
+        "type": "File",
+        "name": "g:\\My Drive\\Python\\recipe_app\\features\\dashboard\\dashboard.py",
+        "parent_id": "E1O8pMjUCdn2De6T",
+        "fsPath": "g:\\My Drive\\Python\\recipe_app\\features\\dashboard\\dashboard.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "82a9FHPCmRlMQVhd"
+    }
+]

@@ -7,14 +7,14 @@
 import sys 
 
 #🔸Third-Party Imports
-from helpers.qt_imports import QApplication, Qt
+from core.helpers.qt_imports import QApplication
 
 #🔸Local Imports
-from application import Application
+from core.application import Application
 from database import DB_INSTANCE
 from database.initialize_db import reset_to_version
-from managers import StyleManager
-from helpers import DebugLogger
+from core.managers import StyleManager
+from core.helpers import DebugLogger
 
 class MealPlannerApp:
     """

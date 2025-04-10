@@ -10,24 +10,93 @@
     "editor.stickyScroll.enabled": false, // Disable sticky scroll
     "editor.scrollbar.vertical": "hidden", // Hide vertical scrollbar
     "editor.scrollbar.horizontal": "hidden", // Hide horizontal scrollbar
-
-    //** Font settings **//
     "editor.fontSize": 14, // Set the font size to 16
     "editor.fontFamily": "JetBrains Mono", // Set the font family to JetBrains Mono
     "editor.fontLigatures": true, // Enable font ligatures
+    "editor.hover.delay": 1000, // Set hover delay to 1000ms
+    "editor.quickSuggestions": { 
+      "other": true,
+      "comments": false,
+      "strings": false
+    },
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.suggest.showIcons": true,
+    "editor.suggestSelection": "first",  // or "recentlyUsed" if history is preferred
+    "editor.parameterHints.enabled": false, // Disable function signature popups
+    "editor.inlineSuggest.enabled": true, // Enable ghost text-style inline suggestions
+    "editor.acceptSuggestionOnCommitCharacter": false, // Prevent auto-accepting with punctuation
+    "editor.acceptSuggestionOnEnter": "smart", // Avoid accidental 'Enter' acceptance
+
 
     //** Window settings **//
-    "window.zoomLevel": 0.4, // 0 = 100% zoom level, 1 = 110% zoom level, -1 = 90% zoom level
+    "window.zoomLevel": 0.6, // 0 = 100% zoom level, 1 = 110% zoom level, -1 = 90% zoom level
+
+    //** Workbench settings **//
+    "workbench.editor.enablePreviewFromQuickOpen": true, // Disable preview from quick open
+    "workbench.editor.enablePreview": true, // Disable preview editor
+    "workbench.editor.pinnedTabSizing": "compact", // Set pinned tab sizing to compact
+
 
     //** File settings **//
     "files.exclude": { // Exclude certain files and folders from the file explorer
       "**/__pycache__": true,
       "**/.venv": true,
       "**/.vscode": true,
+      "**/.git": true,
+      "**/.favorites.json": true,
     },
 
     "files.associations": { // Associate certain file types with certain languages
       "*.qss": "css"
     },
+
+    //** Explorer settings **//
+    "explorer.sortOrder": "filesFirst", // Sort files first in the file explorer
     
+    //** EXTENSION: Draw Folder Structure **//
+    "draw.folder.structure.exclude": [ // Exclude certain files and folders from the folder structure
+      "**/__pycache__",
+      "**/.venv",
+      "**/.git",
+      "**/.vscode",
+      "**/.favorites.json",
+    ],
+
+    //** EXTENSION: Material Icon Theme **//
+    "material-icon-theme.folders.associations": {
+
+      //** Main folders **//
+      "features": "Class",
+      "application": "Python",
+      "dashboard": "Python",
+      "meal_planner": "Python",
+      "view_recipes": "Python",
+      "shopping_list": "Python",
+      "add_recipes": "Python",
+
+      //** Assets **//
+      "assets": "Resource",
+      "fonts": "Font",
+      "icons": "SVG",
+      "images": "Images",
+      "recipe_images": "Images",
+
+      //** Misc **//
+      "dev_sandbox": "Sandbox",
+      "managers": "Controller",
+      "styles": "Theme",
+      "widgets": "Element",
+    },
+
+    "material-icon-theme.files.associations": {
+
+      //** Misc **//
+      "__init__.py": "Tree",
+      "config.py": "Settings",
+    },
+
+    //** EXTENSION: Custom CSS and JS **//
+    "vscode_custom_css.imports": [
+      "file:///G:/My%20Drive/Python/recipe_app/.vscode/sidebar.css"
+    ],
   }

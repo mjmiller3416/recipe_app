@@ -5,8 +5,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QIcon, QPixmap
 
-from app.helpers import svg_loader  # Assuming this is accessible
-from app.widgets.svg_button import SVGButton  # Assuming you have this ready to use
+from core.helpers import svg_loader  # Assuming this is accessible
+from core.widgets.svg_button import SVGButton  # Assuming you have this ready to use
 
 
 class IconComparisonDemo(QWidget):

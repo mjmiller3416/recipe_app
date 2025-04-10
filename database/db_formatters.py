@@ -1,7 +1,7 @@
 # Description: Functions for formatting and validating data for saving to the database.
 
 #🔸Local Imports
-from debug_logger import DebugLogger
+from core.helpers.debug_logger import DebugLogger
 
 #🔹FORMAT DATA
 def format_recipe_data(le_recipe_name, cb_recipe_category, le_total_time, le_servings, te_directions, image_path=None):

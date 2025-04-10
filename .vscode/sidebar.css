@@ -1,0 +1,7 @@
+/* CUSTOM CSS FOR SIDEBAR */
+
+/* Hide the tooltip in the sidebar */
+.monaco-workbench .monaco-tooltip,
+div[role="tooltip"] {
+    display: none !important;
+}

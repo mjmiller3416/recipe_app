@@ -10,7 +10,7 @@ It includes:
 """
 
 # 🔸 Local Imports
-from debug_logger import DebugLogger
+from core.helpers.debug_logger import DebugLogger
 
 class DatabaseHelper:
     """Handles low-level database operations for recipes and ingredients."""
