@@ -9,12 +9,18 @@ Functions:
     _create_nav_button
 """
 
-from core.helpers.qt_imports import (
-    QWidget, QVBoxLayout, QLabel, QPushButton, QSizePolicy, QSpacerItem, 
-    QSize, Qt, QIcon, QPixmap)
+# 🔸 Third-Part Imports
+from PySide6.QtWidgets import (
+    QWidget, QVBoxLayout, QSpacerItem, QSizePolicy, QPushButton, QLabel
+)
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QIcon, QPixmap
 
-# 🔹 Local Imports
+# 🔸 Local Application Imports
+from core.helpers.config import ICON_COLOR, ICON_SIZE, LOGO_COLOR, icon_path, image_path
 from core.managers.style_manager import StyleManager
+from core.helpers import svg_loader
+from core.helpers.ui_helpers import get_all_buttons
 
 class SidebarWidget(QWidget):
     """
@@ -24,13 +30,18 @@ class SidebarWidget(QWidget):
     including dashboard, meal planning, recipe viewing, shopping list,
     settings, and exit controls.
     """
+
+    # 🔹 Signals
+    close_app = Signal()  # To signal a close event
+
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setObjectName("SidebarWidget")
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setMinimumWidth(0)
-        
+
         # 🔹 Main vertical layout
         self.verticalLayout = QVBoxLayout(self)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -46,7 +57,6 @@ class SidebarWidget(QWidget):
         self.lbl_logo = QLabel()
         self.lbl_logo.setObjectName("lbl_logo")
         self.lbl_logo.setFixedSize(180, 180)
-        self.lbl_logo.setPixmap(QPixmap(":/logo/logo.svg"))
         self.lbl_logo.setScaledContents(True)
 
         self.logo_layout.addWidget(self.lbl_logo)
@@ -57,23 +67,69 @@ class SidebarWidget(QWidget):
         self.verticalLayout.addItem(QSpacerItem(212, 40, QSizePolicy.Minimum, QSizePolicy.Fixed))
 
         # 🔹 Navigation Buttons
-        self.btn_dashboard = self._create_nav_button("btn_dashboard", "Dashboard", ":/icons/dashboard.svg", checked=True)
-        self.btn_meal_planner = self._create_nav_button("btn_meal_planner", "Meal Plan", ":/icons/meal_planner.svg")
-        self.btn_view_recipes = self._create_nav_button("btn_view_recipes", "View Recipes", ":/icons/view_recipes.svg")
-        self.btn_shopping_list = self._create_nav_button("btn_shopping_list", "Shopping List", ":/icons/shopping_list.svg")
-        self.btn_add_recipes = self._create_nav_button("btn_add_recipes", "Add Recipes", ":/icons/add_recipes.svg")
+        self.btn_dashboard = self._create_nav_button( # Dashboard button
+            "btn_dashboard", 
+            "Dashboard", 
+            self.get_sidebar_icon("dashboard"), 
+            checked=True
+        )
+        self.verticalLayout.addWidget(self.btn_dashboard)
+
+        self.btn_meal_planner = self._create_nav_button( # Meal Planner button
+            "btn_meal_planner", 
+            "Meal Plan", 
+            self.get_sidebar_icon("meal_planner")
+        )
+        self.verticalLayout.addWidget(self.btn_meal_planner)
+
+        self.btn_view_recipes = self._create_nav_button( # View Recipes button
+            "btn_view_recipes", 
+            "View Recipes", 
+            self.get_sidebar_icon("view_recipes")
+        )
+        self.verticalLayout.addWidget(self.btn_view_recipes)
+
+        self.btn_shopping_list = self._create_nav_button( # Shopping List button
+            "btn_shopping_list", 
+            "Shopping List", 
+            self.get_sidebar_icon("shopping_list")
+        )
+        self.verticalLayout.addWidget(self.btn_shopping_list)
+
+        self.btn_add_recipes = self._create_nav_button( # Add Recipes button
+            "btn_add_recipes", 
+            "Add Recipes", 
+            self.get_sidebar_icon("add_recipes")
+        )
+        self.verticalLayout.addWidget(self.btn_add_recipes)
 
         # 🔹 Expanding Spacer
         self.verticalLayout.addItem(QSpacerItem(212, 39, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
         # 🔹 Settings & Exit Buttons
-        self.btn_settings = self._create_nav_button("btn_settings", "Settings", ":/icons/settings.svg")
-        self.btn_exit = self._create_nav_button("btn_exit", "Exit", ":/icons/exit.svg")
+        self.btn_settings = self._create_nav_button( # Settings button
+            "btn_settings", 
+            "Settings", 
+            self.get_sidebar_icon("settings")
+        )
+        self.verticalLayout.addWidget(self.btn_settings)
 
-        # 🔹 Apply styles (hover effects, margins, etc.)
-        self.style_manager = StyleManager(self)
+        self.btn_exit = self._create_nav_button( # Exit button
+            "btn_exit", 
+            "Exit", 
+            self.get_sidebar_icon("exit")
+        )
+        self.btn_exit.clicked.connect(self.close_app.emit) # Connect exit button to close_app signal
 
-    def _create_nav_button(self, object_name, text, icon_path, checked=False):
+        self.verticalLayout.addWidget(self.btn_exit)
+
+        # 🔹 Apply local sidebar-specific styles
+        self._apply_local_styles()
+
+    def get_sidebar_icon(self, name: str) -> QIcon:
+        return svg_loader(icon_path(name), ICON_COLOR, size=ICON_SIZE, return_type=QIcon, source_color="#000")
+
+    def _create_nav_button(self, name, label, icon: QIcon = None, checked=False):
         """Helper to create navigation buttons.
         
         Args:
@@ -85,17 +141,33 @@ class SidebarWidget(QWidget):
         Returns:
             QPushButton: The created navigation button.
         """
-        btn = QPushButton(text)
-        btn.setObjectName(object_name)
-        btn.setMinimumSize(215, 50)
-        btn.setMaximumSize(215, 50)
-        btn.setIcon(QIcon(icon_path))
-        btn.setIconSize(QSize(24, 24))
-        btn.setCheckable(True)
-        btn.setAutoExclusive(True)
-        btn.setChecked(checked)
-        self.verticalLayout.addWidget(btn)
-        return btn
+        button = QPushButton(label)
+        button.setObjectName(name)
+        button.setCheckable(True)
+        button.setChecked(checked)
+        if icon:
+            button.setIcon(icon)
+            button.setIconSize(ICON_SIZE)
+        return button
+
+    def _apply_local_styles(self):
+        """
+        Applies Sidebar-specific styles like logo coloring, layout margins,
+        and hover effects for navigation buttons.
+        """
+
+        # Update the logo color dynamically
+        img_logo = svg_loader(
+            image_path("logo"), LOGO_COLOR, size=self.lbl_logo.size(), 
+            return_type=QPixmap, source_color="#000"
+        )
+        self.lbl_logo.setPixmap(img_logo)
+
+        # Apply sidebar margins
+        self.verticalLayout.setContentsMargins(0, 18, 0, 18)
+
+        # Apply hover effects to all buttons
+        StyleManager.apply_hover_effects(get_all_buttons(self), (24, 24))
 
     @property
     def buttons(self):

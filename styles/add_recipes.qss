@@ -35,7 +35,7 @@
 #AddRecipes QComboBox QAbstractItemView {
         background-color: #424951; /* Dark background for dropdown */
         color: white;
-        selection-background-color: #555555;
+        
         border: 1px solid #777;
     }
 

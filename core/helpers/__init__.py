@@ -19,6 +19,7 @@ from .ui_helpers import (
     get_all_buttons,
     get_button_icons,
     svg_loader,
+    wrap_layout,
     apply_error_style,
     clear_error_styles,
     dynamic_validation,
@@ -37,7 +38,7 @@ __all__ = [
     # ui_helpers
     "get_all_buttons", "get_button_icons", "svg_loader",
     "apply_error_style", "clear_error_styles", "dynamic_validation",
-    "set_scaled_image", "HoverButton", "SidebarAnimator",
+    "set_scaled_image", "HoverButton", "SidebarAnimator", "wrap_layout",
 
     # debug_logger
     "DebugLogger",

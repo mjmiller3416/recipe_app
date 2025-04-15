@@ -5,13 +5,40 @@
 # widget. These functions are commonly used in PyQt applications to manage icons and button interactions.
 
 #🔸Third-party Imports
-from qt_imports import (
-    QPushButton, QSize, QIcon, QPixmap, QFile, QTextStream, QSvgRenderer,
-    QByteArray, QPainter, Qt, QApplication, QRectF, QWidget, 
-    QRegularExpressionValidator, QLineEdit, Property, QObject, QAbstractButton, QFontMetrics)
+from PySide6.QtWidgets import (
+    QWidget,QLayout, QPushButton, QAbstractButton, QLineEdit, QApplication
+)
+from PySide6.QtCore import (
+    QObject, Property, Qt, QSize, QRectF, QByteArray, QFile, QTextStream
+    
+)
+from PySide6.QtGui import (
+    QPainter, QPixmap, QIcon, QFontMetrics, QRegularExpressionValidator
+)
+from PySide6.QtSvg import (
+    QSvgRenderer, 
+)
 
 #🔸Local Imports
-from debug_logger import DebugLogger
+from core.helpers.debug_logger import DebugLogger
+from core.helpers.config import icon_path
+
+def wrap_layout(layout_class: type[QLayout], name: str) -> tuple[QWidget, QLayout]:
+    """
+    Creates a QWidget wrapper with a named objectName and assigns the given layout.
+
+    Args:
+        layout_class (type): QVBoxLayout or QHBoxLayout
+        name (str): Object name for styling via QSS
+
+    Returns:
+        (QWidget, QLayout): The container widget and its layout
+    """
+    container = QWidget()
+    container.setObjectName(name)
+    layout = layout_class(container)
+    layout.setContentsMargins(0, 0, 0, 0)
+    return container, layout
 
 class SidebarAnimator(QObject):
     def __init__(self, sidebar):
@@ -66,7 +93,7 @@ def get_all_buttons(parent_widget):
     """
     return {btn.objectName(): btn for btn in parent_widget.findChildren(QAbstractButton)}
 
-def get_button_icons(buttons):
+def get_button_icons(buttons: dict) -> dict:
     """
     Extracts icon file paths from QPushButtons dynamically.
 
@@ -76,17 +103,11 @@ def get_button_icons(buttons):
     Returns:
         dict: A dictionary mapping button names to their assigned icon paths.
     """
-    icon_paths = {}
-
-    for name, button in buttons.items():
-        icon = button.icon()
-        if not icon.isNull():
-            icon_path = f":/icons/{name.replace('btn_', '')}.svg"
-            icon_paths[name] = icon_path
-            # DebugLogger().log(f"Icon path for {name}: {icon_path}")
-        
-
-    return icon_paths 
+    return {
+    name: icon_path(name.removeprefix("btn_"))
+    for name in buttons.keys()
+    if name and name.startswith("btn_")
+    }
 
 def get_colored_svg_renderer(svg_path: str, color: str) -> QSvgRenderer:
     """
@@ -113,8 +134,6 @@ def get_colored_svg_renderer(svg_path: str, color: str) -> QSvgRenderer:
     colored_svg = re.sub(r'fill=["\']#?0{3,6}["\']', f'fill="{color}"', svg_data, flags=re.IGNORECASE)
 
     return QSvgRenderer(QByteArray(colored_svg.encode("utf-8")))
-
-
 
 def draw_svg_icon_with_text_alignment(painter: QPainter,
                                       text: str,
@@ -148,76 +167,168 @@ def draw_svg_icon_with_text_alignment(painter: QPainter,
         icon_size.height()
     )
 
-    svg_renderer.render(painter, icon_rect)
 
-
-
-
-def svg_loader(svg_path, color, size=None, return_type=None, crisp=None):
+def svg_loader(svg_path: str,
+               color: str,
+               size: QSize | tuple | None = None,
+               return_type: type = QPixmap,
+               source_color: str = "#000000") -> QPixmap | QIcon:
     """
-    Loads an SVG and renders it into a styled QPixmap or QIcon.
+    Loads an SVG, replaces a specified source color, and renders it
+    into a styled QPixmap or QIcon with HiDPI support.
 
     Args:
-        svg_path (str): Qt resource path (e.g. ':/icons/search.svg').
-        color (str): Fill color (e.g. '#FFFFFF').
-        size (QSize or tuple): Output size (defaults to 24x24).
-        return_type (type): QPixmap or QIcon.
-        crisp (bool, optional): If not set, auto-determined by return_type:
-            - QPixmap → True
-            - QIcon   → False
+        svg_path (str): Qt resource path (e.g. ':/icons/search.svg') or file system path.
+        color (str): The desired *new* fill color (e.g., '#FFFFFF', 'white').
+                     Ensure this is a valid color representation for Qt/SVG.
+        size (QSize | tuple, optional): Target logical size (width, height).
+                                         Defaults to QSize(24, 24).
+        return_type (type, optional): The desired return type, either QPixmap
+                                      or QIcon. Defaults to QPixmap.
+        source_color (str, optional): The *original* fill color within the SVG
+                                      to be replaced. Defaults to '#000000' (black).
+                                      Case-sensitive.
 
     Returns:
-        QPixmap or QIcon
+        QPixmap | QIcon: The rendered icon or pixmap. Returns an empty QPixmap
+                         or QIcon if loading or rendering fails.
+
+    Raises:
+        ValueError: If return_type is not QPixmap or QIcon.
+
+    Note:
+        Performs simple, case-sensitive string replacement of 'fill="<source_color>"'.
+        Reliable for single-color icons designed for this. May fail for complex SVGs.
     """
+    # --- Basic Input Validation ---
     if return_type not in (QPixmap, QIcon):
         DebugLogger.log_and_raise(
             "svg_loader: return_type must be QPixmap or QIcon",
             ValueError
         )
 
-    if crisp is None:
-        crisp = return_type is QPixmap
+    DebugLogger.log(f"svg_loader: ENTERED - Path='{svg_path}', Color='{color}', Size='{size}', ReturnType='{return_type.__name__}', SourceColor='{source_color}'", "info")
 
+    # --- *** Size Handling and logical_size Definition (This was missing/misplaced) *** ---
     if size is None:
-        size = QSize(24, 24)
+        logical_size = QSize(24, 24) # Assignment
+        DebugLogger.log(f"svg_loader: Size is None, logical_size set to default: {logical_size}", "debug")
     elif isinstance(size, tuple):
-        size = QSize(*size)
+        # Ensure tuple is valid (e.g., 2 elements, numeric) before unpacking
+        if len(size) == 2 and isinstance(size[0], (int, float)) and isinstance(size[1], (int, float)):
+             logical_size = QSize(int(size[0]), int(size[1])) # Assignment
+             DebugLogger.log(f"svg_loader: Size is tuple {size}, logical_size converted to: {logical_size}", "debug")
+        else:
+             DebugLogger.log(f"svg_loader: Invalid tuple format for size '{size}'. Using default.", "warning")
+             logical_size = QSize(24, 24) # Fallback Assignment
+    elif isinstance(size, QSize):
+        logical_size = size         # Assignment
+        DebugLogger.log(f"svg_loader: Size is QSize {size}, logical_size set to: {logical_size}", "debug")
+    else:
+        DebugLogger.log(f"svg_loader: Invalid size type '{type(size)}'. Using default 24x24.", "warning")
+        logical_size = QSize(24, 24) # Assignment
 
+    # --- Secondary Size Validation ---
+    if not logical_size.isValid() or logical_size.width() <= 0 or logical_size.height() <= 0:
+         DebugLogger.log(f"svg_loader: Invalid logical_size dimensions '{logical_size}' after conversion. Using default.", "warning")
+         logical_size = QSize(24, 24)
+
+    # --- Debug Check (Optional but helpful) ---
+    # This confirms logical_size was definitely assigned by the block above
+    if 'logical_size' not in locals():
+        DebugLogger.log("CRITICAL DEBUG: logical_size was NOT defined by the size handling block!", "error")
+        # Avoid crash later by assigning default, but indicates a fundamental flaw if this prints
+        logical_size = QSize(24, 24)
+    else:
+        DebugLogger.log(f"DEBUG: logical_size defined as type {type(logical_size)} value {logical_size} before loading file", "debug")
+    # --- End Debug Check ---
+
+    # --- Load SVG Data ---
     file = QFile(svg_path)
+    svg_data = None # Initialize svg_data
     if not file.open(QFile.ReadOnly | QFile.Text):
-        DebugLogger.log(f"Failed to open SVG path: {svg_path}", "error")
+        DebugLogger.log(f"svg_loader: ERROR - Failed to open SVG path: {svg_path}", "error")
         return QIcon() if return_type is QIcon else QPixmap()
+    try:
+        stream = QTextStream(file)
+        svg_data = stream.readAll()
+        DebugLogger.log(f"svg_loader: Successfully read {len(svg_data)} chars from {svg_path}", "info")
+    except Exception as e:
+        DebugLogger.log(f"svg_loader: ERROR - Failed to read SVG data from {svg_path}: {e}", "error")
+        return QIcon() if return_type is QIcon else QPixmap()
+    finally:
+        file.close()
 
-    svg_data = QTextStream(file).readAll()
-    file.close()
+    if svg_data is None:
+         DebugLogger.log(f"svg_loader: ERROR - svg_data is None after attempting read for {svg_path}", "error")
+         return QIcon() if return_type is QIcon else QPixmap()
 
-    colored_svg = svg_data.replace('fill="#000"', f'fill="{color}"')
-    renderer = QSvgRenderer(QByteArray(colored_svg.encode("utf-8")))
+    # --- Color Replacement ---
+    target_string = f'fill="{source_color}"'
+    replacement_string = f'fill="{color}"'
+    DebugLogger.log(f"svg_loader: Attempting replacement: Find '{target_string}', Replace with '{replacement_string}'", "info")
+
+    if target_string not in svg_data:
+         DebugLogger.log(f"svg_loader: WARNING - Target string '{target_string}' NOT FOUND in raw SVG data for {svg_path}. Replacement will fail.", "warning")
+         # Debug clues (optional but kept for now)
+         if f"fill='{source_color}'" in svg_data: DebugLogger.log(f"svg_loader: DEBUG CLUE - Found 'fill='{source_color}'' (single quotes) instead.", "info")
+         if f'fill = "{source_color}"' in svg_data: DebugLogger.log(f"svg_loader: DEBUG CLUE - Found 'fill = \"{source_color}\"' (spaces around =) instead.", "info")
+         if source_color=="#000" and 'fill="black"' in svg_data: DebugLogger.log(f"svg_loader: DEBUG CLUE - Found 'fill=\"black\"' instead.", "info")
+
+    colored_svg_data = svg_data.replace(target_string, replacement_string)
+
+    if svg_data == colored_svg_data:
+        DebugLogger.log(f"svg_loader: WARNING - Replacement had NO effect for {svg_path}. Output SVG data is identical to input.", "warning")
+    else:
+        DebugLogger.log(f"svg_loader: SUCCESS - Replacement occurred for {svg_path}. Length before: {len(svg_data)}, after: {len(colored_svg_data)}.", "info")
+
+    # --- Render SVG ---
+    svg_bytes = QByteArray(colored_svg_data.encode("utf-8"))
+    renderer = QSvgRenderer(svg_bytes)
 
     if not renderer.isValid():
-        DebugLogger.log(f"Invalid SVG data: {svg_path}", "error")
+        DebugLogger.log(f"svg_loader: ERROR - QSvgRenderer is NOT VALID after color replacement for path: {svg_path}.", "error")
+        DebugLogger.log(f"svg_loader: Invalid SVG Data Snippet (first 500 chars):\n{colored_svg_data[:500]}", "error") # Log snippet
         return QIcon() if return_type is QIcon else QPixmap()
-
-    dpr = QApplication.primaryScreen().devicePixelRatio() if not crisp else 1.0
-    target_size = QSize(int(size.width() * dpr), int(size.height() * dpr))
-
-    pixmap = QPixmap(target_size)
-    pixmap.fill(Qt.transparent)
-
-    painter = QPainter(pixmap)
-    painter.setRenderHint(QPainter.Antialiasing)
-    painter.setRenderHint(QPainter.SmoothPixmapTransform)
-    renderer.render(painter, QRectF(0, 0, target_size.width(), target_size.height()))
-    painter.end()
-
-    if not crisp:
-        pixmap.setDevicePixelRatio(dpr)
     else:
-        pixmap = pixmap.scaled(size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+         DebugLogger.log(f"svg_loader: QSvgRenderer is VALID for {svg_path}", "info")
 
-    return QIcon(pixmap) if return_type is QIcon else pixmap
+    # --- HiDPI Handling ---
+    app_instance = QApplication.instance()
+    dpr = app_instance.primaryScreen().devicePixelRatio() if app_instance and app_instance.primaryScreen() else 1.0
 
+    # Calculate physical_size using the QSize logical_size (already defined and validated)
+    physical_size = QSize(int(logical_size.width() * dpr), int(logical_size.height() * dpr))
+    DebugLogger.log(f"svg_loader: DPR={dpr}, LogicalSize={logical_size}, PhysicalSize={physical_size}", "debug")
 
+    # Create the target pixmap
+    pixmap = QPixmap(physical_size)
+    pixmap.fill(Qt.transparent) # Use Qt.transparent
+
+    # --- Painting ---
+    painter = QPainter(pixmap)
+    try:
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+        renderer.render(painter, QRectF(0.0, 0.0, physical_size.width(), physical_size.height()))
+        DebugLogger.log(f"svg_loader: Rendering completed for {svg_path}", "debug")
+    except Exception as e:
+         DebugLogger.log(f"svg_loader: ERROR during rendering for {svg_path}: {e}", "error")
+         # Consider returning empty object on render failure too
+         painter.end() # Ensure painter is ended on exception
+         return QIcon() if return_type is QIcon else QPixmap()
+    finally:
+        # Ensure painter is ended if no exception occurred during render
+        if painter.isActive():
+             painter.end()
+
+    # --- Final Pixmap Setup ---
+    pixmap.setDevicePixelRatio(dpr)
+
+    # --- Return Result ---
+    result = QIcon(pixmap) if return_type is QIcon else pixmap
+    DebugLogger.log(f"svg_loader: EXITED NORMALLY - Returning {return_type.__name__} for {svg_path}", "info")
+    return result
 
 def apply_error_style(widget: QWidget, error_message: str = None):
     """
@@ -281,8 +392,11 @@ def set_scaled_image(label, image_path, size: QSize, fallback_text="No Image", s
     """
     pixmap = QPixmap(image_path)
     if pixmap.isNull():
+        label.clear()
         label.setText(fallback_text)
+        label.setAlignment(Qt.AlignCenter)
         label.setStyleSheet(style)
     else:
         label.setPixmap(pixmap.scaled(size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+
 #🔸END

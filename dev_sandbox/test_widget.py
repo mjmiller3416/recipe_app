@@ -7,7 +7,7 @@ from PySide6.QtGui import QIcon, QPixmap
 
 from core.helpers import svg_loader  # Assuming this is accessible
 from core.widgets.svg_button import SVGButton  # Assuming you have this ready to use
-
+from core.helpers.config import icon_path
 
 class IconComparisonDemo(QWidget):
     def __init__(self):
@@ -25,12 +25,12 @@ class IconComparisonDemo(QWidget):
         button_row = QHBoxLayout()
         layout.addLayout(button_row)
 
-        icon_path = ":/icons/search.svg"
+        icon_file = icon_path("search")
         color = "#03B79E"
         size = QSize(48, 48)
 
         # Button using QIcon (crisp = False)
-        icon_blurry = svg_loader(icon_path, color=color, size=size, return_type=QIcon, crisp=False)
+        icon_blurry = svg_loader(icon_file, color=color, size=size, return_type=QIcon, source_color="#000")
         btn_blurry = QPushButton("crisp = False")
         btn_blurry.setIcon(icon_blurry)
         btn_blurry.setIconSize(size)
@@ -38,7 +38,7 @@ class IconComparisonDemo(QWidget):
         button_row.addWidget(btn_blurry)
 
         # Button using QIcon (crisp = True)
-        icon_crisp = svg_loader(icon_path, color=color, size=size, return_type=QIcon, crisp=True)
+        icon_crisp = svg_loader(icon_file, color=color, size=size, return_type=QIcon, source_color="#000")
         btn_crisp = QPushButton("crisp = True")
         btn_crisp.setIcon(icon_crisp)
         btn_crisp.setIconSize(size)
@@ -46,7 +46,7 @@ class IconComparisonDemo(QWidget):
         button_row.addWidget(btn_crisp)
 
         # Button using SVGButton wrapper class
-        btn_custom = SVGButton(svg_path=icon_path, color=color, text="SVGButton", icon_size=size)
+        btn_custom = SVGButton(svg_path=icon_file, color=color, text="SVGButton", icon_size=size)
         btn_custom.setFixedSize(160, 100)
         button_row.addWidget(btn_custom)
 

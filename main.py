@@ -1,13 +1,11 @@
-# Package: MealGenie
-
 # Description: Main entry point for the MealGenie application.
-# This file initializes the PySide6 application, sets up the database, and runs the main event loop.
 
 #🔸System Imports
 import sys 
 
 #🔸Third-Party Imports
-from core.helpers.qt_imports import QApplication
+from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import QCoreApplication
 
 #🔸Local Imports
 from core.application import Application
@@ -18,9 +16,16 @@ from core.helpers import DebugLogger
 
 class MealPlannerApp:
     """
-    Main application class for the Meal Planner using PySide6.
-    Sets up the UI, database, and application logic.
+    Main application class for MealGenie.
+
+    Attributes:
+        app (QApplication): The PySide6 application instance.
+        main_window (Application): The main application window.
+
+    Methods:
+        run(): Starts the application's main event loop.
     """
+
 
     def __init__(self):
         """
@@ -52,8 +57,8 @@ class MealPlannerApp:
    
 if "--reset" in sys.argv:
     print("Resetting database...")
-    db_path = "app/database/app_data.db"
-    sql_file = "app/database/db_tables.sql"
+    db_path = "database/app_data.db"
+    sql_file = "database/db_tables.sql"
 
     # Ensure database connection is closed before reset
     DB_INSTANCE.close_connection()
@@ -62,7 +67,24 @@ if "--reset" in sys.argv:
     reset_to_version(db_path, sql_file)
     DebugLogger().log("Database reset complete.\n", "info")
 
+elif "--test" in sys.argv:
+    print("Launching in TEST MODE...\n")
+
+    # 🔹 Minimal test setup (no main window!)
+    app = QApplication(sys.argv)
+    app.setApplicationName("MealGenie")
+
+    # 🔹 Initialize DB + Styles (just like MealPlannerApp does)
+    DB_INSTANCE.connect()  # Just in case
+    StyleManager(app)
+
+    # 🔹 Run your test harness
+    from dev_sandbox.test_recipe_card import run_test
+    test_window = run_test(app)
+
+    sys.exit(app.exec())
+
 else:
-    # Entry point: Create and run the Meal Planner application
+    # Regular launch
     app = MealPlannerApp()
     app.run()

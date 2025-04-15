@@ -1,11 +1,13 @@
-from core.helpers.qt_imports import (
-    Qt, QMainWindow, QVBoxLayout, QHBoxLayout, QFrame, QWidget, 
-    QStackedWidget, QApplication, QLabel, QPropertyAnimation,
-    QEasingCurve)
+# 🔸 Third-Party Imports
+from PySide6.QtWidgets import (
+    QMainWindow, QStackedWidget, QFrame, QVBoxLayout, QHBoxLayout, 
+    QWidget, QLabel, QApplication
+)
+from PySide6.QtCore import Qt, QPropertyAnimation, QEasingCurve
 
-# 🔹 Local Imports
-from core.application.title_bar import TitleBar
-from core.application.sidebar_widget import SidebarWidget
+# 🔸 Local Application Imports
+from .title_bar import TitleBar
+from .sidebar_widget import SidebarWidget
 from features.dashboard import Dashboard
 from features.meal_planner import MealPlanner
 from features.view_recipes import ViewRecipes
@@ -42,7 +44,6 @@ class Application(QMainWindow):
         # 🔹 Custom Title Bar
         self.title_bar = TitleBar(self)
         self.outer_layout.addWidget(self.title_bar)
-        self.title_bar.btn_toggle_sidebar.clicked.connect(self.toggle_sidebar)
 
         # 🔹 Main App Layout (Sidebar + Content)
         self.main_layout = QHBoxLayout()
@@ -53,6 +54,13 @@ class Application(QMainWindow):
         # 🔹 Sidebar
         self.sidebar = SidebarWidget()
         self.main_layout.addWidget(self.sidebar)
+
+        # 🔹 Connect Signals
+        self.title_bar.sidebar_toggled.connect(self.toggle_sidebar)
+        self.title_bar.close_clicked.connect(self.handle_close)
+        self.title_bar.minimize_clicked.connect(self.showMinimized)
+        self.title_bar.maximize_clicked.connect(self.toggle_maximize_restore)
+        self.sidebar.close_app.connect(self.handle_close)
 
         # 🔹 Main Content Container (Header + Pages)
         self.content_wrapper = QVBoxLayout()
@@ -130,27 +138,43 @@ class Application(QMainWindow):
             if button:
                 button.clicked.connect(lambda _, p=page_name: self.switch_page(p))
 
-        # Exit button
-        self.sidebar.buttons["btn_exit"].clicked.connect(self.handle_close)
-
-        # TitleBar close override
-        self.title_bar.btn_close.clicked.disconnect()
-        self.title_bar.btn_close.clicked.connect(self.handle_close)
-
     def switch_page(self, page_name):
-        """Switch stacked widget to the given page.
-
-        Args:
-            page_name (str): The name of the page to switch to. Must match the keys in page_instances.
-        
         """
+        Switch stacked widget to the given page.
+        
+        Args:
+            page_name (str): The name of the page to switch to.
+        """
+        DebugLogger.log("Switching to page: {page_name}", "info")
         if page_name in self.page_instances:
+            # Set button states
+            for btn_name, page_key in {
+                "btn_dashboard": "dashboard",
+                "btn_meal_planner": "meal_planner",
+                "btn_view_recipes": "view_recipes",
+                "btn_shopping_list": "shopping_list",
+                "btn_add_recipes": "add_recipe",
+            }.items():
+                button = self.sidebar.buttons.get(btn_name)
+                if button:
+                    button.setChecked(page_key == page_name)
+
+            # Animate page transition
             next_widget = self.page_instances[page_name]
             current_widget = self.sw_pages.currentWidget()
 
             if current_widget != next_widget:
                 AnimationManager.transition_stack(current_widget, next_widget, self.sw_pages)
-    
+
+
+    def toggle_maximize_restore(self):
+        if self.isMaximized():
+            self.showNormal()
+            self.title_bar.updateMaximizeIcon(False)
+        else:
+            self.showMaximized()
+            self.title_bar.updateMaximizeIcon(True)
+
     def toggle_sidebar(self):
         """ Toggle the sidebar's expanded/collapsed state with animation."""
         collapsed_width = 0

@@ -1,20 +1,15 @@
-"""
-Custom title bar widget for the MealGenie application.
+# 🔸 Third-Party Import
+from PySide6.QtCore import Qt, QSize, Signal
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QPushButton
+from PySide6.QtGui import QIcon
 
-Includes:
-- Application title display
-- Minimize, maximize/restore, and close buttons
-- Window drag behavior for frameless windows
-
-Class:
-    TitleBar(QWidget)
-"""
-
-from core.helpers.qt_imports import Qt, QWidget, QLabel, QHBoxLayout, QSize, QPushButton, Signal, QIcon
-
-# 🔹 Local Imports
+# 🔸 Local Application Imports
 from core.helpers import svg_loader
-from core.managers.style_manager import ICON_DEFAULT_COLOR
+from core.helpers.config import ICON_COLOR, icon_path
+
+# 🔸 Constants
+ICON_SIZE = QSize(12, 12)
+BUTTON_SIZE = QSize(38, 38)
 
 class TitleBar(QWidget):
     """
@@ -25,68 +20,81 @@ class TitleBar(QWidget):
         - Minimize, maximize/restore, and close window buttons
         - Click-and-drag functionality to move the window
 
-    Emits:
-        - sidebarToggled: Signal emitted when the sidebar toggle button is clicked.
+    Attributes:
+        sidebarToggled (Signal): Emitted when the sidebar toggle button is clicked.
+        lbl_title (QLabel): Displays the app name.
+        btn_toggle_sidebar (QPushButton): Toggles sidebar visibility.
+        btn_minimize (QPushButton): Minimizes the window.
+        btn_maximize (QPushButton): Maximizes or restores the window.
+        btn_close (QPushButton): Closes the application.
     """
 
-    sidebarToggled = Signal() 
+    # 🔹 Signals
+    sidebar_toggled = Signal()   # To toggle sidebar visibility
+    close_clicked = Signal()     # To signal a close event
+    minimize_clicked = Signal()  # To signal a minimize event
+    maximize_clicked = Signal()  # To signal a maximize/restore event
 
     def __init__(self, parent):
+        """
+        Initializes the custom title bar widget and sets up UI components.
+
+        Args:
+            parent (QWidget): The parent widget of the title bar.
+        """
         super().__init__(parent)
         self.setObjectName("TitleBar")
         self.setAttribute(Qt.WA_StyledBackground)
         self.setFixedHeight(38)
 
-        icon_size = QSize(12, 12)
-        self.old_pos = None # Initialize old position for dragging
+        self.old_pos = None  # Initialize old position for dragging
 
         # 🔹 Load Icons
-        self.icon_minimize = svg_loader(":/icons/window_minimize.svg", ICON_DEFAULT_COLOR, size=icon_size, return_type=QIcon)
-        self.icon_maximize = svg_loader(":/icons/window_maximize.svg", ICON_DEFAULT_COLOR, size=icon_size, return_type=QIcon)
-        self.icon_restore = svg_loader(":/icons/window_restore.svg", ICON_DEFAULT_COLOR, size=icon_size, return_type=QIcon)  
-        self.icon_restore = svg_loader(":/icons/window_restore.svg", ICON_DEFAULT_COLOR, size=icon_size, return_type=QIcon)
-        self.icon_close = svg_loader(":/icons/window_close.svg", ICON_DEFAULT_COLOR, size=icon_size, return_type=QIcon)
-        self.icon_sidebar_toggle = svg_loader(":/icons/sidebar_toggle.svg", ICON_DEFAULT_COLOR, size=icon_size, return_type=QIcon) 
+        self.icon_minimize = svg_loader(icon_path("minimize"), ICON_COLOR, ICON_SIZE, return_type=QIcon, source_color="#000")
+        self.icon_maximize = svg_loader(icon_path("maximize"), ICON_COLOR, ICON_SIZE, return_type=QIcon, source_color="#000")
+        self.icon_restore = svg_loader(icon_path("restore"), ICON_COLOR, ICON_SIZE, return_type=QIcon, source_color="#000")
+        self.icon_close = svg_loader(icon_path("close"), ICON_COLOR, ICON_SIZE, return_type=QIcon, source_color="#000")
+        self.icon_toggle = svg_loader(icon_path("toggle"), ICON_COLOR, ICON_SIZE, return_type=QIcon, source_color="#000")
 
         # 🔹 Title Label
         self.lbl_title = QLabel("MealGenie", self)
         self.lbl_title.setObjectName("lbl_title")
 
         # 🔹 Sidebar Toggle Button
-        self.btn_toggle_sidebar = QPushButton(self) 
+        self.btn_toggle_sidebar = QPushButton(self)
         self.btn_toggle_sidebar.setObjectName("btn_toggle_sidebar")
-        self.btn_toggle_sidebar.setFixedSize(38, 38)
-        self.btn_toggle_sidebar.setIcon(self.icon_sidebar_toggle)
-        self.btn_toggle_sidebar.setIconSize(QSize(20,20))  # Set icon size for the button
-        self.btn_toggle_sidebar.clicked.connect(self.sidebarToggled.emit)
+        self.btn_toggle_sidebar.setFixedSize(BUTTON_SIZE)
+        self.btn_toggle_sidebar.setIcon(self.icon_toggle)
+        self.btn_toggle_sidebar.setIconSize(QSize(20, 20))
+        self.btn_toggle_sidebar.clicked.connect(self.sidebar_toggled.emit)
 
         # 🔹 Minimize Button
         self.btn_minimize = QPushButton(self)
         self.btn_minimize.setObjectName("btn_minimize")
-        self.btn_minimize.setFixedSize(38, 38)
+        self.btn_minimize.setFixedSize(BUTTON_SIZE)
         self.btn_minimize.setIcon(self.icon_minimize)
-        self.btn_minimize.setIconSize(icon_size)
-        self.btn_minimize.clicked.connect(lambda: self.window().showMinimized())
+        self.btn_minimize.setIconSize(ICON_SIZE)
+        self.btn_minimize.clicked.connect(lambda: self.minimize_clicked.emit())
 
         # 🔹 Maximize/Restore Button
         self.btn_maximize = QPushButton(self)
         self.btn_maximize.setObjectName("btn_maximize")
-        self.btn_maximize.setFixedSize(38, 38)
+        self.btn_maximize.setFixedSize(BUTTON_SIZE)
         self.btn_maximize.setIcon(self.icon_maximize)
-        self.btn_maximize.setIconSize(icon_size)
-        self.btn_maximize.clicked.connect(self.toggle_maximize_restore)
+        self.btn_maximize.setIconSize(ICON_SIZE)
+        self.btn_maximize.clicked.connect(lambda: self.maximize_clicked.emit())
 
-        # 🔹 Close Button
+        # Close Button
         self.btn_close = QPushButton(self)
         self.btn_close.setObjectName("btn_close")
-        self.btn_close.setFixedSize(38, 38)
+        self.btn_close.setFixedSize(BUTTON_SIZE)
         self.btn_close.setIcon(self.icon_close)
-        self.btn_close.setIconSize(icon_size)
-        self.btn_close.clicked.connect(self.close)
+        self.btn_close.setIconSize(ICON_SIZE)
+        self.btn_close.clicked.connect(lambda: self.close_clicked.emit())
 
         # 🔹 Layout For Title Bar
         title_bar_layout = QHBoxLayout(self)
-        title_bar_layout.addWidget(self.btn_toggle_sidebar) 
+        title_bar_layout.addWidget(self.btn_toggle_sidebar)
         title_bar_layout.addWidget(self.lbl_title)
         title_bar_layout.addStretch(1)  # Push buttons to the right
         title_bar_layout.addWidget(self.btn_minimize)
@@ -98,6 +106,9 @@ class TitleBar(QWidget):
     def buttons(self):
         """
         Exposes title bar buttons for external use.
+
+        Returns:
+            dict: A dictionary of QPushButton widgets.
         """
         return {
             "toggle_sidebar": self.btn_toggle_sidebar,
@@ -106,43 +117,30 @@ class TitleBar(QWidget):
             "close": self.btn_close,
         }
 
-    def toggle_maximize_restore(self):
+    def updateMaximizeIcon(self, maximized: bool):
         """
-        Toggle the window between maximized and normal state,
-        and update the maximize button icon accordingly.
+        Updates the maximize/restore icon based on the maximized state.
+        
+        Args:
+            maximized (bool): True if the window is maximized, False otherwise.
         """
-        window = self.window()
-        if window.isMaximized():
-            window.showNormal()
-            self.btn_maximize.setIcon(self.icon_maximize)
-        else:
-            window.showMaximized()
+        if maximized:
             self.btn_maximize.setIcon(self.icon_restore)
-
-    def mouseMoveEvent(self, event):
-        """
-        Moves the main window based on the change in mouse position.
-        Only active while dragging with the left mouse button held down.
-        """
-        if self.old_pos:
-            delta = event.globalPos() - self.old_pos
-            main_window = self.window()
-            main_window.move(main_window.x() + delta.x(), main_window.y() + delta.y())
-            self.old_pos = event.globalPos()
+        else:
+            self.btn_maximize.setIcon(self.icon_maximize)
 
     def mousePressEvent(self, event):
-        """
-        Records the initial global mouse position when the left button is pressed.
-        Used to enable window dragging.
-        """
         if event.button() == Qt.LeftButton:
             self.old_pos = event.globalPos()
             self.setCursor(Qt.SizeAllCursor)
 
+    def mouseMoveEvent(self, event):
+        if self.old_pos:
+            delta = event.globalPos() - self.old_pos
+            # Let the parent window manage the drag action
+            self.parent().move(self.parent().x() + delta.x(), self.parent().y() + delta.y())
+            self.old_pos = event.globalPos()
+
     def mouseReleaseEvent(self, event):
-        """
-        Clears the stored position when the mouse button is released,
-        ending the window drag behavior.
-        """
         self.old_pos = None
         self.setCursor(Qt.ArrowCursor)

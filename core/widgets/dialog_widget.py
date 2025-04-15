@@ -4,7 +4,8 @@ from core.helpers.qt_imports import (
     QSizePolicy, QApplication
 )
 from core.helpers import svg_loader, DebugLogger
-from core.managers.style_manager import SUCCESS_COLOR, WARNING_COLOR, ERROR_COLOR, INFO_COLOR
+from core.helpers.config import icon_path
+from core.helpers.config import SUCCESS_COLOR, WARNING_COLOR, ERROR_COLOR, INFO_COLOR
 import sys
 
 
@@ -106,7 +107,7 @@ class DialogWidget(QDialog):
         elif self.message_type == "error":
             color = ERROR_COLOR
 
-        pixmap = svg_loader(":/icons/success.svg", color, size=self.lbl_icon.size(), return_type=QPixmap)
+        pixmap = svg_loader(icon_path("success"), color, size=self.lbl_icon.size(), return_type=QPixmap, source_color="#000")
         self.lbl_icon.setPixmap(pixmap)
 
     def discard_changes(self):

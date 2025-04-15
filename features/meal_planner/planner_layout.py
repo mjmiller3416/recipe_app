@@ -10,7 +10,7 @@ It includes a main dish and up to three side dishes, enabling users to select re
 from core.helpers.qt_imports import QWidget, QHBoxLayout, QVBoxLayout, QEvent, QToolTip
 
 # 🔸 Local Imports
-from meal_planner.meal_widget import MealWidget
+from .meal_widget import MealWidget
 
 class PlannerLayout(QWidget):
     """
@@ -43,12 +43,12 @@ class PlannerLayout(QWidget):
         self.main_layout.setContentsMargins(10, 10, 10, 10)
         self.main_layout.setSpacing(10)
 
-        # Main Dish Widget
+        #🔹Main Dish Widget
         self.main_recipe = MealWidget(meal_type="main")
         self.meal_widgets["main"] = self.main_recipe
         self.main_layout.addWidget(self.main_recipe)
 
-        # Side Dishes (vertical stack)
+        #🔹Side Dishes (vertical stack)
         self.side_layout = QVBoxLayout()
         self.side_layout.setSpacing(10)
 

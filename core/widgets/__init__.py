@@ -5,8 +5,7 @@ This module consolidates the custom widgets and dialog boxes used in the applica
 """
 
 # Import custom widgets
-from .ingredient_widget.ingredient_widget import IngredientWidget
-from .dialog_widget.dialog_widget import DialogWidget
-from .combobox.combobox import CustomComboBox
-from .crop_image_dialog import CropImageDialog
+
+from .dialog_widget import DialogWidget
+from .combobox import CustomComboBox
 from .search_widget import SearchWidget

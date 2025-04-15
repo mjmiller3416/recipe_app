@@ -1,0 +1,39 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+     
+        // Task to run the main.py script
+        {
+            "label": "Run main.py",
+            "type": "shell",
+            "command": "python",
+            "args": ["main.py"],
+            "problemMatcher": []
+        },
+
+        // Task to run package_automation.py script
+        {
+            "label": "Run Package Automation",
+            "type": "shell",
+            "command": "python",
+            "args": ["scripts/package_automation.py"],
+            "problemMatcher": []
+        },
+
+        // Task to run the test environment
+        {
+            "label": "Run Test Environment",
+            "type": "shell",
+            "command": "python",
+            "args": ["main.py", "--test"],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

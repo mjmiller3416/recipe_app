@@ -1,5 +1,1 @@
-from add_recipes import AddRecipes
-from add_recipes import IngredientWidget
-from add_recipes import Ui_AddRecipes
-from crop_image_dialog import CropImageDialog
-from ingredient_widget import IngredientWidget
+from .add_recipes import AddRecipes

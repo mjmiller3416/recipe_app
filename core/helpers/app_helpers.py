@@ -7,7 +7,7 @@
 from typing import Literal
 
 #🔸Third-Party Imports
-from qt_imports import (QMessageBox, Qt, QWidget, QComboBox)
+from core.helpers.qt_imports import (QMessageBox, Qt, QWidget, QComboBox)
 
 #🔸Local Imports
 

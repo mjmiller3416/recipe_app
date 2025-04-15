@@ -10,9 +10,10 @@ It allows users to add a meal, open a recipe selection dialog, and display the s
 from core.helpers.qt_imports import QFrame, QVBoxLayout, QPushButton, QSize, Qt, Signal, QIcon
 
 # 🔸 Local Application Imports
-from meal_planner.recipe_selection_dialog import RecipeSelectionDialog
-from view_recipes.recipe_card import RecipeCard 
+from .recipe_selection_dialog import RecipeSelectionDialog
+from features.view_recipes.recipe_card import RecipeCard 
 from database import DB_INSTANCE
+from core.helpers.config import icon_path
 
 class MealWidget(QFrame):
     """
@@ -57,7 +58,7 @@ class MealWidget(QFrame):
         self.btn_add_meal = QPushButton()
         self.btn_add_meal.setObjectName("btn_add_meal")
         self.btn_add_meal.setStyleSheet("background: transparent;")
-        self.btn_add_meal.setIcon(QIcon(":/icons/add_meal.svg"))
+        self.btn_add_meal.setIcon(QIcon(icon_path("add_meal")))
         self.btn_add_meal.setIconSize(QSize(50, 50))
         self.btn_add_meal.clicked.connect(self.open_recipe_selection)
 

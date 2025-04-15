@@ -5,84 +5,22 @@
 # handles hover effects for buttons and dynamically changes the color of SVG icons. The StyleManager class is initialized
 # with an Application instance and automatically applies styles when initialized.
 
-#🔸System Imports
-import os
-
-#🔸Third-party Imports 
-from core.helpers.qt_imports import(
-    QSize, QPushButton, QGraphicsDropShadowEffect, QColor, QVBoxLayout, 
-    QMainWindow, QWidget, QApplication, QPixmap, QIcon, QToolButton)
-
-#🔸Local Imports
+# 🔸 Third-party Imports 
+from PySide6.QtCore import QSize
+from PySide6.QtWidgets import (
+    QMainWindow, QWidget, QVBoxLayout, QApplication, QToolButton, 
+    QPushButton, QGraphicsDropShadowEffect
+)
+from PySide6.QtGui import QPixmap, QIcon, QColor
 from functools import partial
+
+# 🔸 Local Imports
 from core.helpers import svg_loader
-
-#🔹STATIC COLORS
-TITLEBAR_ICON_COLOR = "#949aa7"  
-TITLEBAR_ICON_HOVER = "#03B79E"  # Color for hover state of title bar icons
-ICON_DEFAULT_COLOR = "#949aa7"
-ICON_HOVER_COLOR = "#03B79E"
-ICON_CHECKED_COLOR = "#03B79E"
-LOGO_COLOR = "#949aa7"
-
-#🔹DIALOG COLORS
-SUCCESS_COLOR = "#5cde42"
-ERROR_COLOR = "#ff4d4d"
-WARNING_COLOR = "#ffcc00"
-INFO_COLOR = "#03B79E"
+from core.helpers.style_loader import StyleLoader
+from core.helpers.config import ICON_COLOR, ICON_COLOR_HOVER, ICON_COLOR_CHECKED, LOGO_COLOR, image_path
 
 #🔹MARGINS        ←  ↑  →  ↓
 SIDEBAR_MARGINS = 0, 18, 0, 18
-
-class StyleLoader:
-    """
-    Loads and concatenates QSS stylesheets from the /styles directory.
-    """
-
-    def __init__(self, style_dir=None):
-        """
-        Initialize StyleLoader with a default relative path to the styles directory.
-        """
-        if style_dir is None:
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            self.style_dir = os.path.join(current_dir, "styles")
-        else:
-            self.style_dir = style_dir
-
-    def load_styles(self, *files):
-        """
-        Loads specific .qss files from the style directory.
-
-        Args:
-            *files (str): One or more stylesheet filenames (without extension).
-
-        Returns:
-            str: Combined QSS content.
-        """
-        stylesheet = ""
-        for file in files:
-            path = os.path.join(self.style_dir, f"{file}.qss")
-            if os.path.exists(path):
-                with open(path, "r", encoding="utf-8") as f:
-                    stylesheet += f.read() + "\n"
-            else:
-                print(f"[StyleLoader] ⚠️ File not found: {path}")
-        return stylesheet
-
-    def load_all_styles(self):
-        """
-        Loads all .qss files from the style directory.
-
-        Returns:
-            str: Combined QSS content.
-        """
-        stylesheet = ""
-        for filename in os.listdir(self.style_dir):
-            if filename.endswith(".qss"):
-                path = os.path.join(self.style_dir, filename)
-                with open(path, "r", encoding="utf-8") as f:
-                    stylesheet += f.read() + "\n"
-        return stylesheet
 
 class StyleManager:
     """
@@ -97,10 +35,8 @@ class StyleManager:
         Args:
             app_instance (Application): The main application instance.
         """
-        from style_manager import StyleLoader
 
         self.style_loader = StyleLoader()
-
         self.app = app_instance
         self.apply_styles()
 
@@ -136,7 +72,10 @@ class StyleManager:
         if isinstance(self.app, QWidget) and self.app.objectName() == "SidebarWidget":
             # Change the logo color
             if hasattr(self.app, 'lbl_logo'):
-                img_logo = svg_loader(":/logo/logo.svg", LOGO_COLOR, size=self.app.lbl_logo.size(), return_type=QPixmap, crisp=False)
+                img_logo = svg_loader(
+                    image_path("logo"), LOGO_COLOR, size=self.app.lbl_logo.size(), 
+                    return_type=QPixmap, source_color="#000"
+                    )
                 self.app.lbl_logo.setPixmap(img_logo)
 
             # Apply sidebar margins
@@ -192,9 +131,9 @@ class StyleManager:
                 continue  # Skip buttons without valid icons
 
             # Load default, hover, and checked icons
-            original_icon = svg_loader(svg_path, ICON_DEFAULT_COLOR, size, return_type=QIcon)
-            hover_icon = svg_loader(svg_path, ICON_HOVER_COLOR, size, return_type=QIcon)
-            checked_icon = svg_loader(svg_path, ICON_CHECKED_COLOR, size, return_type=QIcon)
+            original_icon = svg_loader(svg_path, ICON_COLOR, size, return_type=QIcon, source_color="#000")
+            hover_icon = svg_loader(svg_path, ICON_COLOR_HOVER, size, return_type=QIcon, source_color="#000")
+            checked_icon = svg_loader(svg_path, ICON_COLOR_CHECKED, size, return_type=QIcon, source_color="#000")
 
             if original_icon.isNull() or hover_icon.isNull():
                 continue  # Skip if icons fail to load

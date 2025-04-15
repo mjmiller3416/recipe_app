@@ -210,8 +210,6 @@ class RecipeCard(QFrame):
         """
         if event.button() == Qt.MouseButton.LeftButton:
             self.recipe_clicked.emit(self.recipe_id)
-            if self.clickable and not self.meal_selection:
-                self.show_full_recipe(self.recipe_id)
 
     def show_full_recipe(self, recipe_id):
         """

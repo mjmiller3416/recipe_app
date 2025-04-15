@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
     QStackedWidget, QVBoxLayout, QWidget, QFrame, QDialogButtonBox, QSpinBox, QTabWidget,
     QToolTip, QListView, QGraphicsDropShadowEffect, QStyle, QLayout, QFileDialog, QGraphicsView,
     QMenu, QInputDialog, QGraphicsOpacityEffect, QToolButton, QToolBar, QStatusBar, QAbstractButton, 
-    QTabBar,
+    QTabBar, QTextBrowser
     
     
 )
@@ -26,7 +26,7 @@ from PySide6.QtGui import (
     QImage, QKeySequence, QLinearGradient, QPainter, QPalette, QPixmap, QRadialGradient, 
     QTransform, QIcon, QPixmap, QPainter, QDoubleValidator, QRegularExpressionValidator, 
     QShortcut, QIntValidator, QPen, QPainterPath, QKeyEvent, QTextDocument, QAction, QRegion, 
-    QFontMetrics,
+    QFontMetrics, 
     
 )
 

@@ -9,11 +9,11 @@
 from core.helpers.qt_imports import (QWidget, QVBoxLayout, Qt, QFileDialog)
 
 #🔸Local Imports
-from add_recipes.ui_add_recipes import Ui_AddRecipes
+from .ui_add_recipes import Ui_AddRecipes
 from database.database import ApplicationDatabase
-from add_recipes import IngredientWidget
+from .ingredient_widget import IngredientWidget
 from core.widgets.dialog_widget import DialogWidget
-from add_recipes import CropImageDialog
+from .crop_image_dialog import CropImageDialog
 from core.helpers import populate_combobox, dynamic_validation, clear_error_styles
 from core.helpers.config import RECIPE_CATEGORIES, NAME, INT
 from core.managers import StyleManager

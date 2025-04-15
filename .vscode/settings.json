@@ -1,5 +1,7 @@
 {
     "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+    "python.envFile": "${workspaceFolder}/.env",
+
 
     //** Editor settings **//
     "editor.formatOnSave": false, // Disable format on save
@@ -8,7 +10,7 @@
     "editor.rulers": [110], // Set a ruler at 110 characters
     "editor.minimap.enabled": false, // Disable minimap
     "editor.stickyScroll.enabled": false, // Disable sticky scroll
-    "editor.scrollbar.vertical": "hidden", // Hide vertical scrollbar
+    //"editor.scrollbar.vertical": "hidden", // Hide vertical scrollbar
     "editor.scrollbar.horizontal": "hidden", // Hide horizontal scrollbar
     "editor.fontSize": 14, // Set the font size to 16
     "editor.fontFamily": "JetBrains Mono", // Set the font family to JetBrains Mono
@@ -23,7 +25,6 @@
     "editor.suggest.showIcons": true,
     "editor.suggestSelection": "first",  // or "recentlyUsed" if history is preferred
     "editor.parameterHints.enabled": false, // Disable function signature popups
-    "editor.inlineSuggest.enabled": true, // Enable ghost text-style inline suggestions
     "editor.acceptSuggestionOnCommitCharacter": false, // Prevent auto-accepting with punctuation
     "editor.acceptSuggestionOnEnter": "smart", // Avoid accidental 'Enter' acceptance
 
@@ -34,8 +35,11 @@
     //** Workbench settings **//
     "workbench.editor.enablePreviewFromQuickOpen": true, // Disable preview from quick open
     "workbench.editor.enablePreview": true, // Disable preview editor
-    "workbench.editor.pinnedTabSizing": "compact", // Set pinned tab sizing to compact
+    //"workbench.editor.pinnedTabSizing": "compact", // Set pinned tab sizing to compact
 
+    //** Terminal settings **//
+    "terminal.integrated.fontSize": 12, // Set terminal font size to 14
+    "terminal.integrated.fontFamily": "Fira Code", // Set terminal font family to Fira Code
 
     //** File settings **//
     "files.exclude": { // Exclude certain files and folders from the file explorer

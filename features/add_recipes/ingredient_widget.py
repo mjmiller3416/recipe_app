@@ -9,6 +9,7 @@ from core.managers.style_manager import StyleManager
 from core.helpers.app_helpers import populate_combobox
 from core.widgets.combobox import CustomComboBox
 import sys
+from core.helpers.config import icon_path
 
 
 class IngredientWidget(QWidget):
@@ -46,11 +47,11 @@ class IngredientWidget(QWidget):
         self.gridLayout.addWidget(self.cb_ingredient_category, 0, 3, 1, 1)
 
         self.btn_subtract = QPushButton(self)
-        self.btn_subtract.setIcon(QIcon(":/icons/subtract.svg"))
+        self.btn_subtract.setIcon(QIcon(icon_path("subtract")))
         self.gridLayout.addWidget(self.btn_subtract, 0, 4, 1, 1)
 
         self.btn_add = QPushButton(self)
-        self.btn_add.setIcon(QIcon(":/icons/add.svg"))
+        self.btn_add.setIcon(QIcon(icon_path("add")))
         self.gridLayout.addWidget(self.btn_add, 0, 5, 1, 1)
 
     @property

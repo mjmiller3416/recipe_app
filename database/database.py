@@ -1,5 +1,5 @@
 """
-Package: app/database
+Package: database
 
 This module defines the `ApplicationDatabase` class, a singleton that manages 
 high-level interactions with the SQLite database for the Meal Planner application.
@@ -55,14 +55,14 @@ class ApplicationDatabase:
 
         if not os.path.exists(db_path):
             DebugLogger.log("Database file not found. Initializing new database...", "warning")
-            from initialize_db import initialize_database
-            initialize_database(db_path, "app/database/db_tables.sql")
+            from .initialize_db import initialize_database
+            initialize_database(db_path, "database/db_tables.sql")
 
         self.db_path = db_path  # Store path for future connections
         DebugLogger.log(f"Database successfully initialized at: {db_path}\n", "info")
 
     @classmethod
-    def get_connection(cls):
+    def connect(cls):
         """
         Provides a new database connection.
 
@@ -104,7 +104,7 @@ class ApplicationDatabase:
             int: The ID of the newly added recipe.
         """
         DebugLogger().log("🔵 Adding new recipe...", "info")
-        with self.get_connection() as conn:
+        with self.connect() as conn:
             cursor = conn.cursor()
             recipe_id = DatabaseHelper.insert_recipe(cursor, recipe_data)
             conn.commit()
@@ -121,7 +121,7 @@ class ApplicationDatabase:
         """
         DebugLogger().log("🔵 Saving all ingredients to the database...", "info")
 
-        with self.get_connection() as conn:
+        with self.connect() as conn:
             cursor = conn.cursor()
             for ing in ingredient_data:
                 # Insert into `ingredients` table
@@ -154,7 +154,7 @@ class ApplicationDatabase:
         """
         DebugLogger().log(f"🔵 Saving meal '{meal_name}' with main recipe {main_recipe_id}", "info")
 
-        with self.get_connection() as conn:
+        with self.connect() as conn:
             cursor = conn.cursor()
 
             # Ensure side_recipes always has 3 values (fill with None if missing)
@@ -177,7 +177,7 @@ class ApplicationDatabase:
         """
         DebugLogger().log("🟢 Fetching all recipes from the database...", "debug")
 
-        with self.get_connection() as conn:
+        with self.connect() as conn:
             cursor = conn.cursor()
             
             # Fetch all recipes
@@ -204,7 +204,7 @@ class ApplicationDatabase:
         """
         DebugLogger().log("🟢 Fetching full recipe with ingredients for ID: '{recipe_id}'...", "debug")
 
-        with self.get_connection() as conn:
+        with self.connect() as conn:
             cursor = conn.cursor()
             
             # Fetch the main recipe details
@@ -237,7 +237,7 @@ class ApplicationDatabase:
         all_recipes = app_db.get_all_recipes()
 
         # ✅ Open one connection for efficiency
-        with app_db.get_connection() as conn:
+        with app_db.connect() as conn:
             cursor = conn.cursor()
 
             for recipe in all_recipes:
@@ -269,7 +269,7 @@ class ApplicationDatabase:
 
     def get_meal(self, meal_id):
         DebugLogger().log(f"🟢 Fetching meal with ID: {meal_id}", "info")
-        with self.get_connection() as conn:
+        with self.connect() as conn:
             cursor = conn.cursor()
             meal = DatabaseHelper.get_meal(cursor, meal_id)
             if meal:
@@ -293,7 +293,7 @@ class ApplicationDatabase:
         Returns:
             list: A list of dictionaries, each representing a saved meal.
         """
-        with self.get_connection() as conn:
+        with self.connect() as conn:
             cursor = conn.cursor()
             return DatabaseHelper.get_all_meals(cursor)
 
@@ -339,7 +339,7 @@ class ApplicationDatabase:
             bool: True if the update was successful, False otherwise.
         """
         try:
-            with self.get_connection() as conn:
+            with self.connect() as conn:
                 cursor = conn.cursor()
                 # Extract values from meal_data, using None if a side is not provided
                 main_recipe_id = meal_data.get("main")
@@ -404,7 +404,7 @@ class ApplicationDatabase:
             bool: True if the deletion was successful, False otherwise.
         """
         try:
-            with self.get_connection() as conn:
+            with self.connect() as conn:
                 cursor = conn.cursor()
                 cursor.execute("DELETE FROM meal_selection WHERE id = ?", (meal_id,))
                 conn.commit()
@@ -416,6 +416,6 @@ class ApplicationDatabase:
 
 
 # 🔹 Create a Global Database Instance
-DB_INSTANCE = ApplicationDatabase("app/database/app_data.db")
+DB_INSTANCE = ApplicationDatabase("database/app_data.db")
 
 #🔸END

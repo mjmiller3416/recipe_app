@@ -12,9 +12,10 @@ from core.helpers.qt_imports import QWidget, QVBoxLayout, QTabWidget, QSize, QIc
 
 # 🔸 Local Application Imports
 from core.helpers import DebugLogger
-from meal_planner.planner_layout import PlannerLayout
-from meal_planner.meal_helpers import load_meal_plan, save_meal_plan, save_all_meals
+from .planner_layout import PlannerLayout
+from .meal_helpers import load_meal_plan, save_meal_plan, save_all_meals
 from core.helpers import svg_loader
+from core.helpers.config import icon_path
 
 
 class MealPlanner(QWidget):
@@ -59,7 +60,7 @@ class MealPlanner(QWidget):
     def add_meal_tab(self):
         """Add the last "+" tab to create new custom meals."""
         plus_tab = QWidget()
-        icon = svg_loader(":/icons/add.svg", "#949aa7", size=(16, 16), return_type=QIcon)
+        icon = svg_loader(icon_path("add"), "#949aa7", size=(16, 16), return_type=QIcon, source_color="#000")
         index = self.meal_tabs.addTab(plus_tab, icon, "")
         self.meal_tabs.setTabToolTip(index, "Add Meal")
 
@@ -87,8 +88,7 @@ class MealPlanner(QWidget):
             layout.set_meal_data(meal_data)
 
         insert_index = self.meal_tabs.count() - 1
-        icon = svg_loader(":/icons/add.svg", "#000000", size=(12, 12), return_type=QIcon)
-        index = self.meal_tabs.insertTab(insert_index, layout, icon, "Custom Meal")
+        index = self.meal_tabs.insertTab(insert_index, layout, "Custom Meal")
 
         self.tab_map[index] = {"layout": layout, "meal_id": meal_id}
         self.meal_tabs.setCurrentIndex(index)

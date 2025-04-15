@@ -5,7 +5,8 @@ from core.helpers.qt_imports import (
 
 # 🔹 Local Import
 from core.helpers import svg_loader
-from core.managers.style_manager import ICON_DEFAULT_COLOR
+from core.helpers.config import icon_path
+from core.helpers.config import ICON_COLOR
 from core.managers.style_manager import StyleManager
 
 class SearchWidget(QFrame):
@@ -16,7 +17,11 @@ class SearchWidget(QFrame):
         - search_triggered(str): when text is entered or Enter is pressed.
         - recipe_selected(str): placeholder for future recipe selection support.
     """
+    
+    # 🔹 Constants
+    ICON_SIZE = QSize(16, 16)
 
+    # 🔹 Signals
     recipe_selected = Signal(str)
     search_triggered = Signal(str)
 
@@ -33,20 +38,19 @@ class SearchWidget(QFrame):
 
     def _setup_ui(self):
         """Creates and lays out the internal UI elements."""
-        ICON_SIZE = QSize(16, 16)
 
         self.layout = QGridLayout(self)
         self.layout.setContentsMargins(12, 0, 8, 0)  # Left/right padding for breathing room
         self.layout.setSpacing(5)
 
         # 🔹 Load Label Icons
-        self.icon_search = svg_loader(":/icons/search.svg", ICON_DEFAULT_COLOR, ICON_SIZE, return_type=QPixmap, crisp=False)
-        self.icon_clear = svg_loader(":/icons/x.svg", ICON_DEFAULT_COLOR, ICON_SIZE, return_type=QIcon)
+        self.icon_search = svg_loader(icon_path("search"), ICON_COLOR, self.ICON_SIZE, return_type=QPixmap, source_color="#000")
+        self.icon_clear = svg_loader(icon_path("x"), ICON_COLOR, self.ICON_SIZE, return_type=QIcon, source_color="#000")
 
         # 🔹 Search Icon
         self.lbl_search = QLabel(self)
         self.lbl_search.setObjectName("lbl_search")
-        self.lbl_search.setFixedSize(ICON_SIZE)
+        self.lbl_search.setFixedSize(self.ICON_SIZE)
         self.lbl_search.setPixmap(self.icon_search)
         self.lbl_search.setAlignment(Qt.AlignCenter)
         self.layout.addWidget(self.lbl_search, 0, 0)
