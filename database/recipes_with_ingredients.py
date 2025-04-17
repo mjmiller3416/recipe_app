@@ -40,4 +40,4 @@ def insert_recipes_from_csv(csv_file):
             print(f"✅ Added Recipe: {recipe_name} with {len(data['ingredients'])} ingredients")
 
 # Run the function
-insert_recipes_from_csv("app/database/recipes_with_ingredients.csv")
+insert_recipes_from_csv("database/recipes_with_ingredients.csv")

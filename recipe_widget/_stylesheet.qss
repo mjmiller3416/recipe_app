@@ -12,8 +12,8 @@ RecipeWidget {
 /* Base styles for common child widgets (can be overridden per mode) */
 RecipeWidget QLabel {
     color: #E1E1E1;          /* Default text color for labels */
-    background: transparent; /* Ensure labels don't have own background */
-    border: none;            /* Ensure labels don't have unexpected borders */
+    background: transparent;   /* Ensure labels don't have own background */
+    border: none;              /* Ensure labels don't have unexpected borders */
 }
 
 RecipeWidget #CardImageFull, RecipeWidget #CardImageMini {
@@ -31,47 +31,46 @@ RecipeWidget #CardTitle, RecipeWidget #CardTitleMini {
 /* === Mode-Specific Styles              === */
 /* ========================================= */
 
-/* --- Styles active only when layoutMode="full" --- */
+/* --- Styles active only when layoutMode="medium" --- */
 
-RecipeWidget[layoutMode="full"] { /* Frame style overrides */
+RecipeWidget[layoutMode="medium"] { /* Frame style overrides */
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
 }
 
-RecipeWidget[layoutMode="full"] #CardImageFull {
+RecipeWidget[layoutMode="medium"] #CardImageFull {
     border-radius: 0px; /* Make image corners square to match top of card */
 }
 
-RecipeWidget[layoutMode="full"] #CardTitle {
+RecipeWidget[layoutMode="medium"] #CardTitle {
     font-size: 22px;
     font-weight: 600;
-    /* margin removed - handled by Python layout */
     text-align: center; /* Explicitly center */
 }
 
-RecipeWidget[layoutMode="full"] #ServingsTitle,
-RecipeWidget[layoutMode="full"] #TimeTitle {
+RecipeWidget[layoutMode="medium"] #ServingsTitle,
+RecipeWidget[layoutMode="medium"] #TimeTitle {
     font-size: 16px;
     color: #B0B0B0;
     /* margin-bottom removed - handled by Python layout */
 }
 
-RecipeWidget[layoutMode="full"] #ServingsLabel,
-RecipeWidget[layoutMode="full"] #TimeLabel {
-    font-size: 20px;
+RecipeWidget[layoutMode="medium"] #ServingsLabel,
+RecipeWidget[layoutMode="medium"] #TimeLabel {
+    font-size: 20px; 
     font-weight: 500;
     color: #E1E1E1; /* Explicitly set or rely on base QLabel */
 }
 
-/* --- Styles active only when layoutMode="mini" --- */
+/* --- Styles active only when layoutMode="small" --- */
 
-RecipeWidget[layoutMode="mini"] #CardTitleMini {
-    font-size: 16px;
+RecipeWidget[layoutMode="small"] #CardTitleMini {
+    font-size: 18px;
     font-weight: 500;
     text-align: center; 
 }
 
-RecipeWidget[layoutMode="mini"] { /* Frame style overrides */
+RecipeWidget[layoutMode="small"] { /* Frame style overrides */
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
 
@@ -91,7 +90,7 @@ RecipeWidget:pressed {
 }
 
 /* Apply focus highlight specifically to the title within the focused card */
-RecipeWidget[layoutMode="full"]:focus #CardTitle,
-RecipeWidget[layoutMode="mini"]:focus #CardTitleMini {
+RecipeWidget[layoutMode="medium"]:focus #CardTitle,
+RecipeWidget[layoutMode="small"]:focus #CardTitleMini {
     color: #1ABC9C; /* Teal accent */
 }

@@ -5,13 +5,13 @@
 
 #🔸Standard Imports
 from typing import Literal
+import os
 
 #🔸Third-Party Imports
 from core.helpers.qt_imports import (QMessageBox, Qt, QWidget, QComboBox)
 
 #🔸Local Imports
-
-
+from core.helpers.debug_logger import DebugLogger
 def exit_fullscreen(self, event):
         """
         Handle key press events, such as ESC to exit fullscreen mode.
@@ -77,8 +77,25 @@ def get_user_friendly_name(field_name):
     # Replace underscores with spaces and title-case the result.
     return field_name.replace("_", " ").title()
 
-def load_stylesheet(path: str) -> str:
-    with open(path, "r", encoding="utf-8") as file:
-        return file.read()
+def load_stylesheet(parent, path: str) -> str:
+    """
+    Loads and applies a stylesheet from the given path, relative to the parent's base directory.
+    Args:
+        parent: The widget to apply the stylesheet to.
+        path (str): The relative or absolute path to the stylesheet file.
+    """
+    import os
+    # Try to resolve path relative to parent's base directory if possible
+    base_dir = os.path.dirname(
+        os.path.abspath(parent.__module__.replace('.', os.sep) + '.py')
+    ) if hasattr(parent, '__module__') else os.getcwd()
+    stylesheet_path = os.path.join(base_dir, path) if not os.path.isabs(path) else path
+    try:
+        with open(stylesheet_path, "r") as file:
+            parent.setStyleSheet(file.read())
+    except FileNotFoundError:
+        DebugLogger.log(f"Stylesheet not found: {stylesheet_path}", "warning")
+    except Exception as e:
+        DebugLogger.log_and_raise(f"Error loading stylesheet: {e}")
 
 #🔸END

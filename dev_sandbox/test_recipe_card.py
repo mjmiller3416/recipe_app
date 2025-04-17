@@ -4,19 +4,17 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 from core.modules.recipe_module import Recipe
 from recipe_widget.recipe_widget import RecipeWidget
+# Import the database instance
+from database import DB_INSTANCE
 
-
-def generate_mock_recipe(name, time, servings, image_path):
-    return Recipe({
-        "id": hash(name) % 10000,
-        "recipe_name": name,
-        "total_time": time,
-        "servings": servings,
-        "image_path": image_path,
-        "ingredients": [],  # Optional; add fake ingredient data if needed
-        "directions": "Some simple steps for cooking.",
-    })
-
+def fetch_real_recipes(limit=3):
+    # Fetch all recipes from the database (no limit argument)
+    recipes_data = DB_INSTANCE.get_all_recipes()
+    # Slice to the desired limit
+    recipes_data = recipes_data[:limit]
+    # Convert to Recipe objects
+    recipes = [Recipe(recipe_dict) for recipe_dict in recipes_data]
+    return recipes
 
 def create_test_widget():
     container = QWidget()
@@ -24,30 +22,28 @@ def create_test_widget():
     layout.setAlignment(Qt.AlignTop)
     layout.setSpacing(20)
 
-    recipes = [
-        generate_mock_recipe("Beef Stroganoff", 40, 4, "recipe_images/beef_stroganoff.jpg"),
-        generate_mock_recipe("Vegetarian Stir-Fry", 25, 3, "recie_images/vegetarian_stir-fry.jpg"),
-        generate_mock_recipe("Shrimp Pad Thai", 40, 3, "recipe_images/shrimp_pad_thai.jpg"),
-    ]
+    # Use real recipes from the database
+    recipes = fetch_real_recipes(limit=3)
 
     full_row = QHBoxLayout()
     mini_row = QHBoxLayout()
 
-    layout.addWidget(QLabel("Full View Layout"))
-    for recipe in recipes:
-        card = RecipeWidget(recipe, layout_mode="full")
+    layout.addWidget(QLabel("Medium View Layout"))
+    for _ in range(3):
+        # Pass meal_selection=True to show the Add Meal button for empty widgets
+        card = RecipeWidget(layout_mode="medium", meal_selection=True)
         full_row.addWidget(card)
 
     layout.addLayout(full_row)
 
-    layout.addWidget(QLabel("Mini View Layout"))
-    for recipe in recipes:
-        card = RecipeWidget(recipe, layout_mode="mini")
+    layout.addWidget(QLabel("Small View Layout"))
+    for _ in range(3):
+        card = RecipeWidget(layout_mode="small", meal_selection=True)
         mini_row.addWidget(card)
 
     layout.addLayout(mini_row)
 
-    return container
+    return container 
 
 
 def run_test(app: QApplication):

@@ -1,11 +1,11 @@
 recipe_name,recipe_category,total_time,servings,directions,image_path,ingredient_name,quantity,unit,ingredient_category
-Grilled Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Chicken Breast,500,g,Meat
-Grilled Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Lemon Juice,50,ml,Condiments
-Grilled Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Olive Oil,30,ml,Oils
-Grilled Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Garlic,10,g,Spices
-Grilled Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Rosemary,5,g,Herbs
-Grilled Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Salt,5,g,Spices
-Grilled Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Black Pepper,5,g,Spices
+Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Chicken Breast,500,g,Meat
+Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Lemon Juice,50,ml,Condiments
+Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Olive Oil,30,ml,Oils
+Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Garlic,10,g,Spices
+Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Rosemary,5,g,Herbs
+Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Salt,5,g,Spices
+Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Black Pepper,5,g,Spices
 Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Beef Strips,400,g,Meat
 Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Onion,100,g,Vegetables
 Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Mushrooms,200,g,Vegetables
@@ -20,13 +20,13 @@ Teriyaki Salmon,Japanese,30,2,Marinate salmon in teriyaki sauce and bake until f
 Teriyaki Salmon,Japanese,30,2,Marinate salmon in teriyaki sauce and bake until flaky.,recipe_images/teriyaki_salmon.jpg,Sesame Seeds,5,g,Spices
 Teriyaki Salmon,Japanese,30,2,Marinate salmon in teriyaki sauce and bake until flaky.,recipe_images/teriyaki_salmon.jpg,Green Onion,50,g,Vegetables
 Teriyaki Salmon,Japanese,30,2,Marinate salmon in teriyaki sauce and bake until flaky.,recipe_images/teriyaki_salmon.jpg,Ginger,10,g,Spices
-Vegetarian Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/vegetarian_stir-fry.jpg,Broccoli,150,g,Vegetables
-Vegetarian Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/vegetarian_stir-fry.jpg,Bell Pepper,100,g,Vegetables
-Vegetarian Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/vegetarian_stir-fry.jpg,Carrot,100,g,Vegetables
-Vegetarian Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/vegetarian_stir-fry.jpg,Soy Sauce,30,ml,Condiments
-Vegetarian Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/vegetarian_stir-fry.jpg,Garlic,10,g,Spices
-Vegetarian Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/vegetarian_stir-fry.jpg,Ginger,10,g,Spices
-Vegetarian Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/vegetarian_stir-fry.jpg,Tofu,200,g,Vegetables
+Veggie Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/Veggie_stir-fry.jpg,Broccoli,150,g,Vegetables
+Veggie Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/Veggie_stir-fry.jpg,Bell Pepper,100,g,Vegetables
+Veggie Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/Veggie_stir-fry.jpg,Carrot,100,g,Vegetables
+Veggie Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/Veggie_stir-fry.jpg,Soy Sauce,30,ml,Condiments
+Veggie Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/Veggie_stir-fry.jpg,Garlic,10,g,Spices
+Veggie Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/Veggie_stir-fry.jpg,Ginger,10,g,Spices
+Veggie Stir-Fry,Asian,25,3,Sauté vegetables in soy sauce and serve over rice.,recipe_images/Veggie_stir-fry.jpg,Tofu,200,g,Vegetables
 Spaghetti Bolognese,Italian,45,4,Simmer ground beef with tomatoes and serve over spaghetti.,recipe_images/spaghetti_bolognese.jpg,Ground Beef,500,g,Meat
 Spaghetti Bolognese,Italian,45,4,Simmer ground beef with tomatoes and serve over spaghetti.,recipe_images/spaghetti_bolognese.jpg,Tomatoes,400,g,Vegetables
 Spaghetti Bolognese,Italian,45,4,Simmer ground beef with tomatoes and serve over spaghetti.,recipe_images/spaghetti_bolognese.jpg,Onion,100,g,Vegetables

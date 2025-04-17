@@ -12,6 +12,7 @@ from .app_helpers import (
     exit_fullscreen,
     show_message_box,
     populate_combobox,
+    load_stylesheet
 )
 
 # ─── UI Helpers ────────────────────────────────────────────────────────────────
