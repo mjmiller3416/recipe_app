@@ -1,85 +1,112 @@
-/* RecipeCard.qss - Bold, Modern Dark Theme (Compatible Version) */
+/* RecipeCard.qss - Property-Based Refactor (Spacing handled in Python) */
 
-/* === Global Card Styling === */
+/* ========================================= */
+/* === Base Styles for ALL RecipeCards === */
+/* ========================================= */
+
 RecipeCard {
-    background-color: #2C2F33;         /* Flat dark background */
-    border: 1px solid #23272A;
-    border-radius: 10px;
-    padding: 8px;
+    background-color: #2C2F33;  /* Flat dark background */
+    border: 1px solid #23272A;   /* Consistent border */
+    border-radius: 0px;          /* Default to square corners */
+    font-family: 'Poppins', sans-serif; /* Base font for the card */
 }
 
-/* Hover state: simple color and border change */
-RecipeCard:hover {
-    background-color: #3A3D41;
-    border: 1px solid #1ABC9C;         /* Teal accent on hover */
+/* Base styles for common child widgets (can be overridden per mode) */
+RecipeCard QLabel {
+    color: #E1E1E1;          /* Default text color for labels */
+    background: transparent; /* Ensure labels don't have own background */
+    border: none;            /* Ensure labels don't have unexpected borders */
 }
 
-/* Pressed state: slight visual emphasis */
-RecipeCard:pressed {
-    background-color: #2C2F33;
-    border: 1px solid #1E90FF;         /* Blue accent on click */
+RecipeCard #CardImageFull, RecipeCard #CardImageMini {
+    border: none; /* Base style for images */
+     /* Specific border-radius will be set per mode */
 }
 
-/* === Full Layout === */
-
-/* Full image styling */
-#CardImageFull {
-    border-radius: 8px;
-    border: none;
+RecipeCard #CardTitle, RecipeCard #CardTitleMini {
+    color: #F0F0F0;          /* Base title color */
+     /* Font size, weight, alignment will be set per mode */
+     /* Margins removed - handled by Python layout */
 }
 
-/* Recipe title styling */
-#CardTitle {
-    font-family: 'Poppins', sans-serif;
+
+/* ========================================= */
+/* === Mode-Specific Styles            === */
+/* ========================================= */
+
+/* --- Styles active only when layoutMode="full" --- */
+
+RecipeCard[layoutMode="full"] { /* Frame style overrides */
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    /* Top corners remain square (from base rule) */
+}
+
+RecipeCard[layoutMode="full"] #CardImageFull {
+    border-radius: 0px; /* Make image corners square to match top of card */
+}
+
+RecipeCard[layoutMode="full"] #CardTitle {
     font-size: 22px;
     font-weight: 600;
-    color: #F0F0F0;
-    margin: 8px 0 4px 0;
-    text-align: center;
+    /* margin removed - handled by Python layout */
+    text-align: center; /* Explicitly center */
 }
 
-/* Meta row margins adjustments */
-#CardMetaRow {
-    margin: 0 12px 4px 12px;
-}
-
-/* Servings & Time titles styling */
-#ServingsTitle,
-#TimeTitle {
-    font-family: 'Poppins', sans-serif;
-    font-size: 12px;
+RecipeCard[layoutMode="full"] #ServingsTitle,
+RecipeCard[layoutMode="full"] #TimeTitle {
+    font-size: 16px;
     color: #B0B0B0;
-    margin-bottom: 2px;
+    /* margin-bottom removed - handled by Python layout */
 }
 
-/* Servings & Time labels styling */
-#ServingsLabel,
-#TimeLabel {
-    font-family: 'Poppins', sans-serif;
-    font-size: 14px;
+RecipeCard[layoutMode="full"] #ServingsLabel,
+RecipeCard[layoutMode="full"] #TimeLabel {
+    font-size: 20px;
     font-weight: 500;
-    color: #E1E1E1;
+    color: #E1E1E1; /* Explicitly set or rely on base QLabel */
 }
 
-/* === Mini Layout === */
-
-/* Mini image styling */
-#CardImageMini {
+/* --- Styles active only when layoutMode="mini" --- */
+/* ... (Keep Mini Mode styles as they were) ... */
+RecipeCard[layoutMode="mini"] #CardImageMini {
     border-radius: 5px;
-    border: none;
 }
 
-/* Mini title styling */
-#CardTitleMini {
-    font-family: 'Poppins', sans-serif;
+RecipeCard[layoutMode="mini"] #CardImageMini {
+    border-radius: 5px; /* Keep mini image rounded */
+}
+
+RecipeCard[layoutMode="mini"] #CardTitleMini {
     font-size: 16px;
     font-weight: 500;
-    color: #F0F0F0;
-    margin-left: 8px;
+    /* margins removed - handled by Python layout */
+    text-align: left; /* Assuming mini title is left-aligned */
 }
 
-/* Accent focus effect for focus state */
-RecipeCard:focus #CardTitle,
-RecipeCard:focus #CardTitleMini {
-    color: #1ABC9C;
+
+/* ========================================= */
+/* === Interactive States              === */
+/* ========================================= */
+
+/* Apply hover/pressed to the whole card */
+RecipeCard:hover {
+    background-color: #3A3D41; /* Slightly lighter on hover */
 }
+
+RecipeCard:pressed {
+    background-color: #23272A; /* Darker on pressed (example) */
+}
+
+/* Apply focus highlight specifically to the title within the focused card */
+RecipeCard[layoutMode="full"]:focus #CardTitle,
+RecipeCard[layoutMode="mini"]:focus #CardTitleMini {
+    color: #1ABC9C; /* Teal accent */
+}
+
+/* ========================================= */
+/* === Cleanup Notes                   === */
+/* ========================================= */
+/* - Spacing between widgets now primarily handled in Python layouts. */
+/* - Removed relevant 'margin' properties from QSS. */
+/* - Kept visual styling (color, font, border, radius, states) in QSS. */

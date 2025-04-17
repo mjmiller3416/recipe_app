@@ -3,7 +3,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 from core.modules.recipe_module import Recipe
-from dev_sandbox.recipe_card import RecipeCard
+from recipe_widget.recipe_widget import RecipeWidget
 
 
 def generate_mock_recipe(name, time, servings, image_path):
@@ -35,14 +35,14 @@ def create_test_widget():
 
     layout.addWidget(QLabel("Full View Layout"))
     for recipe in recipes:
-        card = RecipeCard(recipe, layout_mode="full")
+        card = RecipeWidget(recipe, layout_mode="full")
         full_row.addWidget(card)
 
     layout.addLayout(full_row)
 
     layout.addWidget(QLabel("Mini View Layout"))
     for recipe in recipes:
-        card = RecipeCard(recipe, layout_mode="mini")
+        card = RecipeWidget(recipe, layout_mode="mini")
         mini_row.addWidget(card)
 
     layout.addLayout(mini_row)
@@ -52,7 +52,7 @@ def create_test_widget():
 
 def run_test(app: QApplication):
     test_window = QScrollArea()
-    test_window.setWindowTitle("RecipeCard View Test")
+    test_window.setWindowTitle("RecipeWidget View Test")
     test_window.setWidgetResizable(True)
     test_window.setMinimumSize(1000, 700)
     test_window.setWidget(create_test_widget())
