@@ -1,283 +1,258 @@
 # 🔸 Standard Library Imports
-import os # Added for path joining
+import os
+from typing import Literal, Optional
 
 # 🔸 Third-party Imports
-from PySide6.QtWidgets import (
-    QFrame, QLabel, QVBoxLayout, QSizePolicy,
-    QDialog, QHBoxLayout, QPushButton, QVBoxLayout
-)
-from PySide6.QtGui import QPixmap, QMouseEvent,QIcon
-from PySide6.QtCore import Signal, Qt, QSize, QTimer # Import QTimer
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import QFrame, QStackedLayout, QWidget
 
-# 🔸 Local Imports
-from core.modules.recipe_module import Recipe
-from core.helpers.app_helpers import load_stylesheet
-from core.helpers.ui_helpers import set_scaled_image
+from core.helpers.app_helpers import load_and_apply_stylesheet
+# 🔸 Local Application Imports
 from core.helpers.debug_logger import DebugLogger
-# Import the new layout builders
-from .layouts._medium_layout import build_full_layout
-from .layouts._small_layout import build_mini_layout
-# Import constants from the new config file
-from ._config import (
-    FULL_CARD_WIDTH, FULL_IMAGE_HEIGHT,
-    MINI_IMAGE_SIZE
-)
-from ._recipe_selection_dialog import RecipeSelectionDialog
+from core.modules.recipe_module import Recipe
 from database import DB_INSTANCE
-from core.helpers.config import icon_path
+
+from .config import (MEDIUM_CARD_HEIGHT, MEDIUM_CARD_WIDTH, SMALL_CARD_HEIGHT,
+                     SMALL_CARD_WIDTH)
+from .frame_layouts.build_empty_frame import build_empty_frame
+from .frame_layouts.build_medium_frame import build_medium_frame
+from .frame_layouts.build_small_frame import build_small_frame
+from .full_recipe import FullRecipe
+from .recipe_selection_dialog import RecipeSelectionDialog
 
 
 class RecipeWidget(QFrame):
     """
-    A reusable card widget to preview recipe data.
+    A container widget that displays a recipe card or an 'add' button.
+    It manages switching between an empty state and different recipe display formats (medium, small)
+    using a QStackedLayout.
 
-    Supports two visual layout modes ("medium" and "small") and
-    an optional meal selection mode that alters interaction behavior.
+    Properties:
+        layoutMode (str): Controls the display format ('medium' or 'small').
+        selection (bool): Indicates if the widget is in selection mode (not currently used for display logic).
 
-    Args:
-        recipe (Recipe): The Recipe model instance to render.
-        layout_mode (str): Layout variant, either "medium" or "small".
-        is_meal_selection (bool): Whether this card is in meal selection context.
-        parent (QWidget, optional): Parent widget for proper styling context.
-
-    Attributes:
-        recipe (Recipe): The Recipe model instance.
-        recipe_id (int): The ID of the recipe.
-        layout_mode (str): Current layout mode ("medium" or "small").
-        is_meal_selection (bool): Flag for meal selection context.
-
-    Raises:
-        ValueError: If an invalid layout mode is provided.
+    Signals:
+        recipe_selected (Signal): Emitted when a recipe is chosen via the dialog (int: recipe_id).
+        recipe_cleared (Signal): Emitted when the recipe is cleared (e.g., future feature).
+        widget_clicked (Signal): Emitted when the populated widget (not the empty button) is clicked (int: recipe_id).
     """
+    recipe_selected = Signal(int)
+    recipe_cleared = Signal()
+    widget_clicked = Signal(int) # Emitted when the frame itself is clicked
 
-    # 🔹 Signals
-    recipe_clicked = Signal(int)        # Emitted when card is clicked in default mode
-    recipe_selected = Signal(object)    # Emitted when selected in meal planner mode (dict or (meal_type, id))
+    def __init__(self,
+                 parent: Optional[QWidget] = None,
+                 recipe_id: Optional[int] = None,
+                 layout_mode: Literal["medium", "small"] = "medium",
+                 selection: bool = False):
+        """
+        Initialize the RecipeWidget.
 
-    def __init__(self, recipe=None, layout_mode="medium", meal_selection=False, parent=None, meal_type="main"):
+        Args:
+            parent (QWidget, optional): Parent widget. Defaults to None.
+            recipe_id (int, optional): Initial recipe ID to load. Defaults to None.
+            layout_mode (Literal["medium", "small"]): Initial layout mode. Defaults to "medium".
+            selection (bool): Flag for selection mode (currently unused). Defaults to False.
+        """
         super().__init__(parent)
-
-        self.meal_type = meal_type
-        self.is_meal_selection = meal_selection
-        self.recipe = recipe
-        self.recipe_id = recipe.id if recipe else None
-        self.layout_mode = layout_mode
-        self._add_mode = recipe is None and meal_selection
-
         self.setObjectName("RecipeWidget")
         self.setAttribute(Qt.WA_StyledBackground, True)
-        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.setProperty("layoutMode", self.layout_mode)
 
-        load_stylesheet(self, "_stylesheet.qss")
+        self._recipe_id: Optional[int] = None
+        self._recipe_data: Optional[Recipe] = None
+        self._layout_mode: Literal["medium", "small"] = layout_mode
+        self._selection: bool = selection
+        self._current_content_widget: Optional[QWidget] = None # Track the current frame
 
-        self._show_correct_state()
+        #🔹Main Layout🔹
+        self._stacked_layout = QStackedLayout(self)
+        self._stacked_layout.setContentsMargins(0, 0, 0, 0)
+        # StackAll might not be needed if we always remove the old widget
+        # self._stacked_layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
 
-    # Use the simpler _clear_layout
-    def _clear_layout(self):
-        old_layout = self.layout()
-        if old_layout is not None:
-            # Dissociate the layout from this widget.
-            self.setLayout(None)
-            # Schedule the old layout and its contents for deletion.
-            old_layout.deleteLater()
+        self.setLayout(self._stacked_layout)
 
-    # Remove the complex _clear_nested_layout helper
-    # def _clear_nested_layout(self, layout_to_clear): ...
-
-    # _show_correct_state already sets widget references to None first (from previous step)
-    # _setup_add_meal_ui calls _clear_layout
-    # build_ui calls _clear_layout
-
-    def _show_correct_state(self):
-        # Explicitly clear widget references BEFORE clearing layout/building UI
-        self.lbl_image = None
-        self.lbl_name = None
-        self.lbl_servings_title = None
-        self.servings_icon = None
-        self.lbl_servings = None
-        self.lbl_time_title = None
-        self.lbl_time = None
-        self.meta_container = None
-        self.btn_add_meal = None # Also clear button reference
-
-        # Now handle state logic which calls _clear_layout and build_ui
-        if self.recipe is None and self.is_meal_selection:
-            self._setup_add_meal_ui() # Calls _clear_layout
-        elif self.recipe is not None:
-            self.build_ui() # Calls _clear_layout, creates new widgets
-            # Call populate directly now, as _show_correct_state is already deferred
-            self.populate()
+         #🔹Styling & Initial State🔹
+        # Load and apply the stylesheet ONCE during initialization
+        stylesheet_content = load_and_apply_stylesheet(self, "stylesheet")
+        if (stylesheet_content):
+            self.setStyleSheet(stylesheet_content)
         else:
-             self._clear_layout() # Ensure layout is cleared if no state applies
+            DebugLogger.log("Stylesheet content is empty, not applying.", "warning")
 
-    def _setup_add_meal_ui(self):
-        self._clear_layout()
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        self.btn_add_meal = QPushButton()
-        self.btn_add_meal.setObjectName("btn_add_meal")
-        self.btn_add_meal.setStyleSheet("background: transparent;")
-        self.btn_add_meal.setIcon(QIcon(icon_path("add_meal")))
-        self.btn_add_meal.setIconSize(QSize(50, 50))
-        self.btn_add_meal.clicked.connect(self.open_recipe_selection)
-        layout.addWidget(self.btn_add_meal, alignment=Qt.AlignCenter)
+        self.setProperty("layoutMode", self._layout_mode) # Set initial property for styling
+        # Call set_layout_mode first to set constraints before setting recipe_id
+        self.set_layout_mode(self._layout_mode)
+        # Now set recipe_id, which will load data and build the initial frame
+        self.set_recipe_id(recipe_id)
 
-    # In RecipeWidget class
+        DebugLogger.log(f"RecipeWidget initialized. Mode: {self._layout_mode}, ID: {self._recipe_id}", "info")
 
-    def open_recipe_selection(self):
-        # Keep 'self' as parent for styling and ownership
-        dialog = RecipeSelectionDialog(self)
-        # --- Change Start ---
-        # Connect the dialog's accepted signal to a handler slot
-        # Note: Ensure only one connection if this method can be called multiple times
-        try: dialog.accepted.disconnect(self._handle_recipe_selected) # Prevent duplicates
-        except RuntimeError: pass # Ignore if not connected
-        dialog.accepted.connect(self._handle_recipe_selected)
+     #🔹Properties🔹
+    def get_layout_mode(self) -> Literal["medium", "small"]:
+        return self._layout_mode
 
-        # Use open() for non-blocking display instead of exec()
-        dialog.open()
-        # --- Change End ---
+    def set_layout_mode(self, mode: Literal["medium", "small"]):
+        """Sets the layout mode and updates size constraints and stylesheet property."""
+        if mode not in ["medium", "small"]:
+            DebugLogger.log(f"Invalid layout mode '{mode}'. Defaulting to 'medium'.", "warning")
+            mode = "medium"
 
-    # New slot to handle the selection AFTER the dialog is accepted
-    def _handle_recipe_selected(self):
-        # The sender() is the dialog that emitted the accepted signal
-        dialog = self.sender()
-        # Check if the sender is the correct dialog and has a selection
-        if dialog and isinstance(dialog, RecipeSelectionDialog) and dialog.selected_recipe:
-            # Call set_selected_recipe with the ID stored in the dialog
-            # This runs safely after the dialog context is resolved
-            self.set_selected_recipe(dialog.selected_recipe)
-
-        # Optional: Explicitly schedule the dialog for deletion if needed,
-        # though Qt's parent/child system should handle it if dialog's parent is self.
-        # if dialog:
-        #     dialog.deleteLater()
-
-    # You might need to adjust where self.recipe_selected.emit() is called.
-    # Currently, it's in set_selected_recipe. If you need it emitted *only*
-    # after the user selects via the dialog, you could move it to the end
-    # of _handle_recipe_selected.
-    # def set_selected_recipe(self, recipe_id):
-    #     # ... (existing code to fetch recipe, set self.recipe, etc.) ...
-    #     self._show_correct_state()
-    #     # Consider if self.recipe_selected.emit should be here or in the handler
-    #     # self.recipe_selected.emit((self.meal_type, recipe_id)) # Maybe move this
-
-    def set_selected_recipe(self, recipe_id):
-        recipe = DB_INSTANCE.get_recipe(recipe_id)
-        if not recipe:
+        # Only update if mode actually changes
+        if self._layout_mode == mode:
+            self._update_size_constraints() # Ensure constraints are set even if mode doesn't change
             return
-        # Ensure self.recipe is always a Recipe object
-        if isinstance(recipe, dict):
-            recipe = Recipe(recipe)
-        self.recipe = recipe
-        self.recipe_id = recipe_id
-        self._add_mode = False
-        # Schedule the UI update instead of calling _show_correct_state directly
-        # QTimer.singleShot(0, self._update_ui_after_selection) # REMOVED
-        self._show_correct_state() # CALL DIRECTLY
-        self.recipe_selected.emit((self.meal_type, recipe_id))
 
-    def clear(self):
-        self.recipe = None
-        self.recipe_id = None
-        self._add_mode = True
-        self._show_correct_state()
+        self._layout_mode = mode
+        self.setProperty("layoutMode", self._layout_mode) # Update property for QSS
 
-    def build_ui(self):
-        self._clear_layout()
-        # Build the new layout using imported functions
-        if self.layout_mode == "small":
-            new_layout = build_mini_layout(self) # Get the layout
-        else: # Default to medium
-            new_layout = build_full_layout(self) # Get the layout
-        self.setLayout(new_layout) # Set the layout on the widget
+         #🔹Re-evaluate Styles🔹
+        self.style().unpolish(self)
+        self.style().polish(self)
 
-    def populate(self):
-        """Populates the UI based on the current layout mode."""
-        if not self.recipe: return # Guard clause
+        self._update_size_constraints()
+        # Only rebuild content if a recipe is actually loaded, otherwise size change is enough
+        if self._recipe_id is not None:
+            self._update_content()
+        DebugLogger.log(f"Layout mode changed to: {self._layout_mode}", "info")
 
-        # Check if widgets exist before populating (important if build fails or called early)
-        if self.layout_mode == "small":
-            if self.lbl_name: self.lbl_name.setText(self.recipe.name)
-            if self.lbl_image: self.set_image(self.recipe.image_path)
-        elif self.layout_mode == "medium":
-            if self.lbl_name: self.lbl_name.setText(self.recipe.name)
-            if self.lbl_servings: self.lbl_servings.setText(self.recipe.formatted_servings())
-            if self.lbl_time: self.lbl_time.setText(self.recipe.formatted_time())
-            if self.lbl_image: self.set_image(self.recipe.image_path)
+    def get_recipe_id(self) -> Optional[int]:
+        return self._recipe_id
+
+    def set_recipe_id(self, recipe_id: Optional[int]):
+        """Sets the recipe ID and triggers a UI update."""
+        if self._recipe_id == recipe_id:
+            return # No change
+
+        DebugLogger.log(f"Setting recipe ID to: {recipe_id}", "info")
+        self._recipe_id = recipe_id
+        self._recipe_data = None # Clear old data
+
+        if self._recipe_id is not None:
+            if not self._load_recipe():
+                # If loading fails, revert to empty state
+                self._recipe_id = None
+                self._recipe_data = None
+
+        self._update_content() # Update the displayed frame
+
+     #🔹Internal Methods🔹
+    def _update_size_constraints(self):
+        """Applies fixed size based on the current layout mode."""
+        if self._layout_mode == "medium":
+            self.setFixedSize(MEDIUM_CARD_WIDTH, MEDIUM_CARD_HEIGHT)
+        elif self._layout_mode == "small":
+            self.setFixedSize(SMALL_CARD_WIDTH, SMALL_CARD_HEIGHT)
+        self.updateGeometry()
+
+    def _load_recipe(self) -> bool:
+        """Loads recipe data from the database using the current recipe_id."""
+        if self._recipe_id is None:
+            DebugLogger.log("Cannot load recipe: recipe_id is None.", "warning")
+            return False
+
+        DebugLogger.log(f"Loading recipe data for ID: {self._recipe_id}", "info")
+        try:
+            # Assuming DB_INSTANCE.get_recipe returns a dict or similar
+            recipe_dict = DB_INSTANCE.get_recipe(self._recipe_id)
+            if recipe_dict:
+                self._recipe_data = Recipe(recipe_dict) # Convert dict to Recipe object
+                DebugLogger.log(f"Recipe '{self._recipe_data.name}' loaded successfully.", "info")
+                return True
+            else:
+                DebugLogger.log(f"Recipe ID {self._recipe_id} not found in database.", "error")
+                return False
+        except Exception as e:
+            DebugLogger.log(f"Error loading recipe ID {self._recipe_id}: {e}", "error", exc_info=True)
+            return False
+
+    def _update_content(self):
+        """Creates and displays the appropriate content frame based on state."""
+        new_content_widget: Optional[QWidget] = None
+
+         #🔹Determine which frame to build🔹
+        if self._recipe_id is not None and self._recipe_data is not None:
+            if self._layout_mode == "medium":
+                # Call build_medium_frame 
+                new_content_widget = build_medium_frame(self._recipe_data, self)
+                DebugLogger.log(f"Building medium frame for recipe ID: {self._recipe_id}", "debug")
+            elif self._layout_mode == "small":
+                # Call build_small_frame 
+                new_content_widget = build_small_frame(self._recipe_data, self)
+                DebugLogger.log(f"Building small frame for recipe ID: {self._recipe_id}", "debug")
         else:
-            # This case should ideally not be reached if __init__ validates
-             try:
-                 raise ValueError(f"Invalid layout mode '{self.layout_mode}'. Use 'medium' or 'small'.")
-             except ValueError as e:
-                  DebugLogger.exception(e) # Log the error
+            # Build empty frame
+            new_content_widget = build_empty_frame(self)
+            DebugLogger.log("Building empty frame.", "debug")
 
-    def set_image(self, image_path):
-        """
-        Sets the image for the RecipeWidget based on the provided path.
 
-        Args:
-            image_path (str): The path to the recipe image file.
-        """
-        if not self.lbl_image: return # Check if image label exists
+         #🔹Switch Widgets in Stacked Layout🔹
+        if new_content_widget:
+            # Remove the old widget if it exists
+            if self._current_content_widget:
+                self._stacked_layout.removeWidget(self._current_content_widget)
+                self._current_content_widget.deleteLater()
+                DebugLogger.log("Old content widget removed and scheduled for deletion.", "debug")
 
-        if self.layout_mode == "small":
-             # Use the imported constant directly
-             size = MINI_IMAGE_SIZE
-        else: # Default to medium size
-             # Use the imported constants directly
-             size = QSize(FULL_CARD_WIDTH, FULL_IMAGE_HEIGHT)
+            # Add the new widget and make it current
+            self._stacked_layout.addWidget(new_content_widget)
+            self._stacked_layout.setCurrentWidget(new_content_widget)
+            self._current_content_widget = new_content_widget
+            DebugLogger.log(f"New content widget ({type(new_content_widget).__name__}) added and set as current.", "debug")
 
-        set_scaled_image(self.lbl_image, image_path, size)
+            # Ensure the main widget is visible and update
+            self.update()
+            self.updateGeometry()
+        else:
+             DebugLogger.log("Failed to build new content widget.", "error")
 
-    def mousePressEvent(self, event: QMouseEvent):
-        """
-        Handles clicks based on is_meal_selection flag:
-        - If False (default), opens FullRecipe (TODO)
-        - If True, emits recipe_selected (TODO)
+    def _open_recipe_selection(self):
+        """Opens the recipe selection dialog."""
+        if self._selection:
+             DebugLogger.log("Widget is in selection mode, cannot open dialog again.", "info")
+             return
 
-        Args:
-            event (QMouseEvent): Mouse click event
-        """
-        if self.is_meal_selection and self.recipe is not None:
-            self.emit_selection()
-        elif self.recipe is not None:
-            self.show_full_recipe()
+        DebugLogger.log("Opening recipe selection dialog.", "info")
+        # Use the specific dialog for this widget
+        dialog = RecipeSelectionDialog(self)
+        if dialog.exec():
+            selected_id = dialog.selected_recipe_id
+            if selected_id is not None:
+                DebugLogger.log(f"Recipe selected with ID: {selected_id}", "info")
+                self.set_recipe_id(selected_id) # This triggers _update_content
+                self.recipe_selected.emit(selected_id) # Emit signal
+            else:
+                DebugLogger.log("Recipe selection cancelled or failed.", "info")
+        else:
+            DebugLogger.log("Recipe selection dialog closed without selection.", "info")
 
-    def show_full_recipe(self):
-        """
-        Opens the FullRecipe dialog using the current recipe model.
-        """
-        DebugLogger.log("RecipeWidget clicked: Show full recipe for ID {self.recipe_id}", "info")
-        # Import FullRecipe directly from _full_recipe
-        from ._full_recipe import FullRecipe
+    def _handle_content_click(self):
+        """Handles clicks forwarded from the content frame (Medium/SmallRecipeFrame)."""
+        if self._recipe_id is not None:
+            DebugLogger.log(f"Content frame clicked for Recipe ID: {self._recipe_id}", "info")
+            self.widget_clicked.emit(self._recipe_id) # Emit the main widget's signal
+            # Open the full recipe view when the content frame is clicked
+            self._open_full_recipe_view()
+        else:
+            DebugLogger.log("Content frame clicked, but no recipe ID is set.", "warning")
 
-        # Check if recipe data is loaded
-        if self.recipe:
-            # Pass the recipe ID to the dialog
-            dialog = FullRecipe(self.recipe_id, self) # Pass recipe_id
+    def _open_full_recipe_view(self):
+        """Opens the modal dialog to show the full recipe details."""
+        if self._recipe_id is None:
+            DebugLogger.log("Cannot open full recipe view: No recipe ID.", "warning")
+            return
+
+        DebugLogger.log(f"Opening full recipe view for ID: {self._recipe_id}", "info")
+        try:
+            # Use the specific FullRecipe dialog for this widget
+            dialog = FullRecipe(self._recipe_id, self)
             dialog.exec()
-        else:
-            DebugLogger.log("No recipe data available to show full recipe.", "warning")
+        except Exception as e:
+            DebugLogger.log(f"Error opening FullRecipe dialog: {e}", "error", exc_info=True)
 
-        self.recipe_clicked.emit(self.recipe_id)
-
-    def emit_selection(self):
-        """
-        Emits the recipe_selected signal to notify caller. (Placeholder)
-        """
-        if self.recipe:
-            payload = {'id': self.recipe_id, 'name': self.recipe.name}
-            self.recipe_selected.emit(payload)
-
-    def set_meal_selection(self, enabled: bool):
-        """
-        Updates whether the card should behave in meal selection mode.
-
-        Args:
-            enabled (bool): Toggle meal selection logic
-        """
-        self.is_meal_selection = enabled
-        self._show_correct_state()
+    #🔹Public Methods🔹
+    def clear_recipe(self):
+        """Resets the widget to the empty state."""
+        DebugLogger.log("Clearing recipe.", "info")
+        self.set_recipe_id(None) # This triggers _update_content to show empty frame
+        self.recipe_cleared.emit()

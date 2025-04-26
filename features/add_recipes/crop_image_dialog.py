@@ -1,6 +1,6 @@
-from core.helpers.qt_imports import (
-    QDialog, QVBoxLayout, QPushButton, QFileDialog, QLabel, QPixmap
-)
+from core.helpers.qt_imports import (QDialog, QFileDialog, QLabel, QPixmap,
+                                     QPushButton, QVBoxLayout)
+
 
 class CropImageDialog(QDialog):
     """A dialog that allows the user to upload an image."""

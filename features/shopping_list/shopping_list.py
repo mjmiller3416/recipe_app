@@ -1,4 +1,4 @@
-from core.helpers.qt_imports import QWidget, Qt, QVBoxLayout, QLabel
+from core.helpers.qt_imports import QLabel, Qt, QVBoxLayout, QWidget
 
 
 class ShoppingList(QWidget):

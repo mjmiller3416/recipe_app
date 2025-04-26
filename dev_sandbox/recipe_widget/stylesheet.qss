@@ -1,0 +1,40 @@
+/* RecipeWidget.qss */
+
+/* BASE STYLES */
+
+#RecipeStateFrame, #EmptyStateFrame, #ErrorStateFrame {
+    background-color: #2C2F33;  /* Flat dark background */
+    border-radius: 10px; /* Rounded corners */
+}
+
+
+
+#RecipeStateFrame QLabel {
+    color: #E1E1E1;  
+    font-family: 'Montserrat Bold';
+    font-size: 16px;
+    font-weight: 600;
+
+}
+
+#RecipeStateFrame[layout_size="medium"] [title_text="true"] {        
+    font-size: 22px; 
+    font-weight: 600;
+}
+
+#RecipeStateFrame [label_text="true"] {   
+    color: #B0B0B0;  
+    font-family: 'Roboto Regular';
+    font-weight: 400;
+}
+
+#RecipeStateFrame [value_text="true"] {   
+    color: #03B79E;     
+}
+
+/* INTERACTIVE ELEMENTS */
+
+#RecipeStateFrame:hover, #ErrorStateFrame:hover {
+    background-color: #3A3D41; /* Slightly lighter on hover */
+}
+

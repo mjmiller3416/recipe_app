@@ -1,18 +1,20 @@
 # Description: Main entry point for the MealGenie application.
 
 #🔸System Imports
-import sys 
+import sys
 
+from PySide6.QtCore import QCoreApplication
 #🔸Third-Party Imports
 from PySide6.QtWidgets import QApplication
-from PySide6.QtCore import QCoreApplication
 
 #🔸Local Imports
 from core.application import Application
+from core.helpers import DebugLogger
+from core.helpers.debug_layout import DebugLayout
+from core.managers import StyleManager
 from database import DB_INSTANCE
 from database.initialize_db import reset_to_version
-from core.managers import StyleManager
-from core.helpers import DebugLogger
+
 
 class MealPlannerApp:
     """
@@ -72,18 +74,18 @@ elif "--test" in sys.argv:
 
     # 🔹 Minimal test setup (no main window!)
     app = QApplication(sys.argv)
-    app.setApplicationName("MealGenie")
+    app.setApplicationName("Test App")
 
     # 🔹 Initialize DB + Styles (just like MealPlannerApp does)
     DB_INSTANCE.connect()  # Just in case
     StyleManager(app)
 
     # 🔹 Run your test harness
-    from dev_sandbox.test_recipe_card import run_test
+    from dev_sandbox.test_app import run_test
     test_window = run_test(app)
 
     sys.exit(app.exec())
-
+ 
 else:
     # Regular launch
     app = MealPlannerApp()

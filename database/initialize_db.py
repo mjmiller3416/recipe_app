@@ -1,5 +1,6 @@
-import sqlite3
 import os
+import sqlite3
+
 from core.helpers.qt_imports import QSettings
 
 SCHEMA_VERSION = "1.0"  # Update this whenever you make changes to the schema

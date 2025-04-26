@@ -34,6 +34,30 @@
                 "kind": "build",
                 "isDefault": true
             }
-        }
+        }, 
+
+        // Task to run QtDesigner
+        {
+            "label": "Run QtDesigner",
+            "type": "shell",
+            "command": "C:/Qt/6.8.2/msvc2022_64/bin/designer.exe",
+            "problemMatcher": []
+        },
+
+        // Task to run the UI Converter script
+        {
+            "label": "Convert UI Files",
+            "type": "shell",
+            "command": "python",
+            "args": ["scripts/ui_converter.py"],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
     ]
 }

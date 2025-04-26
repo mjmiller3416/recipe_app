@@ -11,12 +11,12 @@ Main Functions:
     - save_all_meals(tab_map): Saves or updates all open meals in the database based on the current tab map.
 """
 
-# 🔸 Third-party Imports
-from core.helpers.qt_imports import QSettings
-
 # 🔸 Local Application Imports
 from core.helpers import DebugLogger
+# 🔸 Third-party Imports
+from core.helpers.qt_imports import QSettings
 from database import DB_INSTANCE
+
 
 def load_meal_plan(callback):
     """

@@ -13,13 +13,13 @@ It provides:
 #🔸Standard Imports
 import os
 import sqlite3
-
 #🔸Third-Party Imports
 from threading import Lock
 
+from core.helpers import DebugLogger
 #🔸Local Imports
 from database.db_helpers import DatabaseHelper
-from core.helpers import DebugLogger
+
 
 class ApplicationDatabase:
     """

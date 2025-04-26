@@ -1,5 +1,7 @@
 import csv
+
 from database import DB_INSTANCE
+
 
 def insert_recipes_from_csv(csv_file):
     recipes = {}

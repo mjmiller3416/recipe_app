@@ -9,9 +9,9 @@ ViewRecipes widget. Instead of emitting its own signal, the dialog listens for t
 
 # 🔸 Third-party Imports
 from core.helpers.qt_imports import QDialog, QVBoxLayout
-
 # 🔸 Local Application Imports
 from features.view_recipes import ViewRecipes
+
 
 class RecipeSelectionDialog(QDialog):
     """

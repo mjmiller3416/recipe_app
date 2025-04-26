@@ -6,7 +6,10 @@ Class Methods:
     - transition_stack: Manages cross-fading between two stacked widgets.
  """
 
-from core.helpers.qt_imports import QGraphicsOpacityEffect, QPropertyAnimation, QEasingCurve, QTimer, QParallelAnimationGroup
+from core.helpers.qt_imports import (QEasingCurve, QGraphicsOpacityEffect,
+                                     QParallelAnimationGroup,
+                                     QPropertyAnimation, QTimer)
+
 
 class AnimationManager:
     active_animations = []  # Store animations to prevent garbage collection

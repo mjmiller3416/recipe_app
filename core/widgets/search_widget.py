@@ -1,13 +1,11 @@
-from core.helpers.qt_imports import (
-    QFrame, QLineEdit, QToolButton, QLabel, QGridLayout,
-    QIcon, QSize, QPixmap, Signal, Qt, QSizePolicy
-)
-
+from core.application.config import ICON_COLOR, icon_path
 # 🔹 Local Import
 from core.helpers import svg_loader
-from core.helpers.config import icon_path
-from core.helpers.config import ICON_COLOR
+from core.helpers.qt_imports import (QFrame, QGridLayout, QIcon, QLabel,
+                                     QLineEdit, QPixmap, QSize, QSizePolicy,
+                                     Qt, QToolButton, Signal)
 from core.managers.style_manager import StyleManager
+
 
 class SearchWidget(QFrame):
     """
@@ -48,7 +46,7 @@ class SearchWidget(QFrame):
         self.icon_clear = svg_loader(icon_path("x"), ICON_COLOR, self.ICON_SIZE, return_type=QIcon, source_color="#000")
 
         # 🔹 Search Icon
-        self.lbl_search = QLabel(self)
+        self.lbl_search = QLabel(self) 
         self.lbl_search.setObjectName("lbl_search")
         self.lbl_search.setFixedSize(self.ICON_SIZE)
         self.lbl_search.setPixmap(self.icon_search)

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Frame</class>
+ <widget class="QFrame" name="Frame">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Frame</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">/* 🔲 QGridLayout containers */
+QWidget[layoutType=&quot;grid&quot;] {
+    border: 2px dashed #E57373; /* soft red */
+    background-color: rgba(229, 115, 115, 0.05); /* super subtle red fill */
+}
+
+/* 🔽 QVBoxLayout containers */
+QWidget[layoutType=&quot;vbox&quot;] {
+    border: 2px dashed #64B5F6; /* soft blue */
+    background-color: rgba(100, 181, 246, 0.05);
+}
+
+/* 🔼 QHBoxLayout containers */
+QWidget[layoutType=&quot;hbox&quot;] {
+    border: 2px dashed #81C784; /* soft green */
+    background-color: rgba(129, 199, 132, 0.05);
+}
+
+/* 🔹 All layout-bearing widgets – catch-alls */
+QWidget:has(*:layout) {
+    margin: 4px;
+    padding: 2px;
+}</string>
+  </property>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

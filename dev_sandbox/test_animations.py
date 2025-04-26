@@ -1,11 +1,10 @@
-from PySide6.QtWidgets import (
-    QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QGraphicsOpacityEffect, QFrame
-)
-from PySide6.QtCore import (
-    Qt, QPropertyAnimation, QEasingCurve, QRect, QParallelAnimationGroup, QSequentialAnimationGroup, QTimer,
-    QPoint
-)
 import sys
+
+from PySide6.QtCore import (QEasingCurve, QParallelAnimationGroup, QPoint,
+                            QPropertyAnimation, QRect,
+                            QSequentialAnimationGroup, Qt, QTimer)
+from PySide6.QtWidgets import (QApplication, QFrame, QGraphicsOpacityEffect,
+                               QLabel, QPushButton, QVBoxLayout, QWidget)
 
 
 class AnimatedDemo(QWidget):

@@ -1,4 +1,4 @@
-import sqlite3 # Imports
+import sqlite3  # Imports
 
 # Connect to the database
 db_path = "app/database/app_data.db"

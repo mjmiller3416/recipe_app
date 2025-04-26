@@ -7,15 +7,15 @@ It allows users to create, edit, and save meal plans. The MealPlanner uses QTabW
 multiple meal planning tabs and integrates with the database to load and save meal data.   
 """
 
-# 🔸 Third-party Imports
-from core.helpers.qt_imports import QWidget, QVBoxLayout, QTabWidget, QSize, QIcon
-
+from core.application.config import icon_path
 # 🔸 Local Application Imports
-from core.helpers import DebugLogger
+from core.helpers import DebugLogger, svg_loader
+# 🔸 Third-party Imports
+from core.helpers.qt_imports import (QIcon, QSize, QTabWidget, QVBoxLayout,
+                                     QWidget)
+
+from .meal_helpers import load_meal_plan, save_all_meals, save_meal_plan
 from .planner_layout import PlannerLayout
-from .meal_helpers import load_meal_plan, save_meal_plan, save_all_meals
-from core.helpers import svg_loader
-from core.helpers.config import icon_path
 
 
 class MealPlanner(QWidget):

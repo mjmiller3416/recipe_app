@@ -5,10 +5,11 @@
 # creates recipe cards for each recipe. The layout is designed to be responsive, with three columns
 # per row. The class also includes methods for clearing the display and loading recipes.
 
-# 🔸 Third-Party Imports
-from core.helpers.qt_imports import (QWidget, QVBoxLayout, Qt, Signal, QScrollArea, QSizePolicy, QSpacerItem)
 from functools import partial
 
+# 🔸 Third-Party Imports
+from core.helpers.qt_imports import (QScrollArea, QSizePolicy, QSpacerItem, Qt,
+                                     QVBoxLayout, QWidget, Signal)
 # 🔸 Local Imports
 from database import DB_INSTANCE
 
@@ -59,7 +60,7 @@ class ViewRecipes(QWidget):
 
     def create_flow_layout(self, parent):
         """Returns a responsive flow layout for displaying cards, with centered alignment."""
-        from core.helpers.qt_imports import QLayout, QRect, QSize, QPoint
+        from core.helpers.qt_imports import QLayout, QPoint, QRect, QSize
 
         class FlowLayout(QLayout):
             def __init__(self, parent=None, margin=0, spacing=45):
@@ -150,7 +151,8 @@ class ViewRecipes(QWidget):
 
     def load_recipes(self):
         """Fetches all recipes and displays them as wrapped RecipeCards."""
-        from features.view_recipes import RecipeCard # ⚠️ Import RecipeCard here to avoid circular import
+        from features.view_recipes import \
+            RecipeCard  # ⚠️ Import RecipeCard here to avoid circular import
 
         recipes = DB_INSTANCE.get_all_recipes()
         if not recipes:

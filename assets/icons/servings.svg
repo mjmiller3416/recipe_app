@@ -1,9 +1,1 @@
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Left Person (Accent) -->
-  <circle cx="10" cy="10" r="4" fill="#03B79E"/>
-  <path d="M4 24c0-3.31 2.69-6 6-6s6 2.69 6 6v2H4v-2z" fill="#03B79E"/>
-
-  <!-- Right Person (Base) -->
-  <circle cx="22" cy="10" r="4" fill="#3B575B"/>
-  <path d="M16 24c0-3.31 2.69-6 6-6s6 2.69 6 6v2H16v-2z" fill="#3B575B"/>
-</svg>
+<svg id="Layer_1" height="512" viewBox="0 0 24 24" width="512" fill="#000" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1"><path d="m7.5 13a4.5 4.5 0 1 1 4.5-4.5 4.505 4.505 0 0 1 -4.5 4.5zm6.5 11h-13a1 1 0 0 1 -1-1v-.5a7.5 7.5 0 0 1 15 0v.5a1 1 0 0 1 -1 1zm3.5-15a4.5 4.5 0 1 1 4.5-4.5 4.505 4.505 0 0 1 -4.5 4.5zm-1.421 2.021a6.825 6.825 0 0 0 -4.67 2.831 9.537 9.537 0 0 1 4.914 5.148h6.677a1 1 0 0 0 1-1v-.038a7.008 7.008 0 0 0 -7.921-6.941z"/></svg>

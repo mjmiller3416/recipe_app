@@ -1,22 +1,23 @@
 # 🔸 Third-Party Imports
-from PySide6.QtWidgets import (
-    QMainWindow, QStackedWidget, QFrame, QVBoxLayout, QHBoxLayout, 
-    QWidget, QLabel, QApplication
-)
-from PySide6.QtCore import Qt, QPropertyAnimation, QEasingCurve
+from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt
+from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
+                               QMainWindow, QStackedWidget, QVBoxLayout,
+                               QWidget)
 
-# 🔸 Local Application Imports
-from .title_bar import TitleBar
-from .sidebar_widget import SidebarWidget
-from features.dashboard import Dashboard
-from features.meal_planner import MealPlanner
-from features.view_recipes import ViewRecipes
-from features.shopping_list import ShoppingList
-from features.add_recipes import AddRecipes
-from core.widgets.search_widget import SearchWidget
+# 🔸 Local Imports
+from core.helpers.debug_layout import DebugLayout
+from core.helpers.debug_logger import DebugLogger
 from core.helpers.ui_helpers import SidebarAnimator
 from core.managers.animation_manager import AnimationManager
-from core.helpers.debug_logger import DebugLogger
+from core.widgets.search_widget import SearchWidget
+from features.add_recipes import AddRecipes
+from features.dashboard import Dashboard
+from features.meal_planner import MealPlanner
+from features.shopping_list import ShoppingList
+from features.view_recipes import ViewRecipes
+from .sidebar_widget import SidebarWidget
+from .title_bar import TitleBar
+
 
 class Application(QMainWindow):
     """
@@ -113,6 +114,8 @@ class Application(QMainWindow):
         self.connect_navigation()
         self.switch_page("dashboard")
 
+        self.overlay = DebugLayout(self.wrapper)
+
     def build_pages(self):
         """Instantiate and return all page instances for the stacked widget."""
         return {
@@ -141,7 +144,7 @@ class Application(QMainWindow):
     def switch_page(self, page_name):
         """
         Switch stacked widget to the given page.
-        
+
         Args:
             page_name (str): The name of the page to switch to.
         """
@@ -200,4 +203,4 @@ class Application(QMainWindow):
         self.page_instances["meal_planner"].save_meal_plan()
         QApplication.quit()
 
-    
+

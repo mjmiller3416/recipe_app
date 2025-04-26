@@ -1,5 +1,7 @@
-from core.helpers.qt_imports import QSize, QPushButton, QSvgRenderer, QPainter, Qt, QRectF, QStyle, QIcon, QPixmap
-from core.helpers.ui_helpers import get_colored_svg_renderer, draw_svg_icon_with_text_alignment
+from core.helpers.qt_imports import (QIcon, QPainter, QPixmap, QPushButton,
+                                     QRectF, QSize, QStyle, QSvgRenderer, Qt)
+from core.helpers.ui_helpers import (draw_svg_icon_with_text_alignment,
+                                     get_colored_svg_renderer)
 
 
 class SVGButton(QPushButton):

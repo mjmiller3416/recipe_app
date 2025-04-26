@@ -6,15 +6,15 @@ Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, 
 Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Rosemary,5,g,Herbs
 Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Salt,5,g,Spices
 Lemon Herb Chicken,American,45,4,"Marinate chicken with lemon juice, olive oil, and herbs. Grill until cooked.",recipe_images/grilled_lemon_herb_chicken.jpg,Black Pepper,5,g,Spices
-Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Beef Strips,400,g,Meat
-Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Onion,100,g,Vegetables
-Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Mushrooms,200,g,Vegetables
-Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Garlic,10,g,Spices
-Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Butter,20,g,Dairy
-Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Sour Cream,100,g,Dairy
-Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Pasta,250,g,Pasta
-Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Salt,5,g,Spices
-Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.jpg,Black Pepper,5,g,Spices
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.png,Beef Strips,400,g,Meat
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.png,Onion,100,g,Vegetables
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.png,Mushrooms,200,g,Vegetables
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.png,Garlic,10,g,Spices
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.png,Butter,20,g,Dairy
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.png,Sour Cream,100,g,Dairy
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.png,Pasta,250,g,Pasta
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.png,Salt,5,g,Spices
+Beef Stroganoff,Russian,40,4,Sauté beef with onions and mushrooms. Add sour cream and serve over pasta.,recipe_images/beef_stroganoff.png,Black Pepper,5,g,Spices
 Teriyaki Salmon,Japanese,30,2,Marinate salmon in teriyaki sauce and bake until flaky.,recipe_images/teriyaki_salmon.jpg,Salmon Fillet,300,g,Seafood
 Teriyaki Salmon,Japanese,30,2,Marinate salmon in teriyaki sauce and bake until flaky.,recipe_images/teriyaki_salmon.jpg,Teriyaki Sauce,50,ml,Condiments
 Teriyaki Salmon,Japanese,30,2,Marinate salmon in teriyaki sauce and bake until flaky.,recipe_images/teriyaki_salmon.jpg,Sesame Seeds,5,g,Spices

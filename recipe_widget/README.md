@@ -35,22 +35,9 @@ layout_mode
     ```Visually reformats the layout and style of the widget depending on mode passed. Layouts contain more/less recipe data```
     ```depending on the selected layout e.g. Recipe Name, Servings, Ingredients, etc```
 
-meal_selection
-    ```Defaults to ‘False’```
-    ```State check to determine correct ‘mousePressEvent’ action```
-    ```‘False’, when clicked, open FullRecipe```
-    ```‘True’, when clicked, insert recipe details into RecipeWidget.```
-    ```Inserted details will be dictated by the layout_mode that was selected.```
-    ```Possibly redundant logic and may be able to refactor  to omit for better usability/readability.```
-
 parent
     ```Defaults to ‘None```
     ```Parent class of where the RecipeWidget was called from.```
-    ```Possibly remove? Unsure.```
-meal_type
-    ```Defaults to “main”```
-    ```Legacy attribute, now redundant, needs removed.```
-    ```A way to track what recipes were “main” dishes and which meals were “side” dishes from within the MealPlanner.```
 
 Order of Operations starting at beginning on Runtime
 Order of operations assumes no recipe data has been previously loaded.  
@@ -58,11 +45,14 @@ Order of operations assumes no recipe data has been previously loaded.
 
 1. Check layout_mode
 2. Store layout_mode for later use. 
+    ```Check recipe mode and assigned fixed dimensions of layout, to RecipeWidget```
+    ```This loads, even an empty widget, in the same dimensions as it's layout (post recipe load)```
+    ```See config.py for appripiate constants```
 3. Check recipe 
     ```If NOT ‘None’, load recipe details based on “layout_mode” and relevant ‘Recipe.id’```
-    ```If NOT ‘None’, set “meal_selection” to ‘False’```
+    ```If NOT ‘None’, set “selection” - variable to ‘False’```
 
-    ```If ‘None’, set “meal_selection” to ‘True’```
+    ```If ‘None’, set “selectionn” to ‘True’```
     ```If ‘None’, load as an “empty” RecipeWidget```
 
 	### Note, empty widgets contain only a singular button, whos only functionality is to load the RecipeSelectionDialog class, in order to select a recipe. ###
@@ -79,32 +69,18 @@ Order of operations assumes no recipe data has been previously loaded.
 7. Load appropriate data, based on the existing “layout_mode” is loaded. 
 8. RecipeWidget, is now fully loaded with appropriate recipe details based on the “lay_out” mode. 
 9. On mousePressEvent
-    ```If “meal_selection” = ‘False’ & recipe NOT ‘None’```
+    ```If “selection” = ‘False’ & recipe NOT ‘None’```
         ```Open FullRecipeClass```
     ```Else```  ***this check assume that one cannot be true, unless both are true***
         ```Signal emits```
     ```Triggers RecipeSelectionDialog```
 
 Notes: 
-
-Possible redundancies/legacy attributes in present build. 
-
-“meal_type” is no longer necessary and should be independently managed, within the MealPlanner class (I think) MealPlanner, should be able to determine, within it’s layout, which RecipeWidgets are being dedicated to Main Dishes and which are Side Dishes. That logic doesn’t seem directly connected to the functionality of the RecipeWidget itself. 
-
-“meal_selection” may be redundant. Based on current design, “meal_selection” can be checked, based on the recipe attribute. 
- 
-	E.g. If recipe is NOT ‘None’, there should never be an instance where “meal_selection” is ‘True’. Same as, if recipe is ‘None’, “meal_selection” should always be ‘True’. 
-
-Additionally, “meal_selection” naming is misleading. RecipeWidget as an independent package has nothing to do with the MealPlanner 
-
-Consider dropping “meal_selection” as an attribute and instead perform a simply check to determine “recipe_selection” 
-
-	E.g. If recipe is NOT ‘None’, recipe_selection is ‘False’ 
-		Else recipe_selection is ‘True’ 
+Recpe data should be loaded from module class core/modules/recpie_module.py
 
 When a recipe is loaded to  the RecipeWidget, ALL recipe details, for that recipe should be stored and bound specifically to that particular RecipeWidget. 
 
-### Need some way to track RecipeWidgets, separate multiple widgets logically ###
+### Need some way to track RecipeWidgets, separate multiple widgets logically ### 
 
 Once details are stored, only the appropriate details should be loaded based on  the layout chosen. 
 

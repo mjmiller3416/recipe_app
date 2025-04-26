@@ -1,15 +1,15 @@
-from core.helpers.qt_imports import (
-    QWidget, Signal, QGridLayout, QLineEdit, QPushButton,
-    QSizePolicy, QSize, QApplication, QIcon
-)
+import sys
+
+from core.application.config import (FLOAT, INGREDIENT_CATEGORIES,
+                                     MEASUREMENT_UNITS, NAME, icon_path)
 from core.helpers import DebugLogger
-from core.helpers.config import INGREDIENT_CATEGORIES, MEASUREMENT_UNITS, FLOAT, NAME
+from core.helpers.app_helpers import populate_combobox
+from core.helpers.qt_imports import (QApplication, QGridLayout, QIcon,
+                                     QLineEdit, QPushButton, QSize,
+                                     QSizePolicy, QWidget, Signal)
 from core.helpers.ui_helpers import clear_error_styles, dynamic_validation
 from core.managers.style_manager import StyleManager
-from core.helpers.app_helpers import populate_combobox
 from core.widgets.combobox import CustomComboBox
-import sys
-from core.helpers.config import icon_path
 
 
 class IngredientWidget(QWidget):

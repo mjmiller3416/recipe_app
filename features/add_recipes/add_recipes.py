@@ -5,19 +5,20 @@
 # with the ApplicationDatabase class to save the recipe data to the database. It also uses the IngredientWidget class to manage the 
 # input of individual ingredients.
 
+from core.application.config import INT, NAME, RECIPE_CATEGORIES
+from core.helpers import (DebugLogger, clear_error_styles, dynamic_validation,
+                          populate_combobox)
 #🔸Third-party Imports
-from core.helpers.qt_imports import (QWidget, QVBoxLayout, Qt, QFileDialog)
+from core.helpers.qt_imports import QFileDialog, Qt, QVBoxLayout, QWidget
+from core.managers import StyleManager
+from core.widgets.dialog_widget import DialogWidget
+from database.database import ApplicationDatabase
 
+from .crop_image_dialog import CropImageDialog
+from .ingredient_widget import IngredientWidget
 #🔸Local Imports
 from .ui_add_recipes import Ui_AddRecipes
-from database.database import ApplicationDatabase
-from .ingredient_widget import IngredientWidget
-from core.widgets.dialog_widget import DialogWidget
-from .crop_image_dialog import CropImageDialog
-from core.helpers import populate_combobox, dynamic_validation, clear_error_styles
-from core.helpers.config import RECIPE_CATEGORIES, NAME, INT
-from core.managers import StyleManager
-from core.helpers import DebugLogger
+
 
 class AddRecipes(QWidget):
     """Subclass of the generated UI for the Add Recipe screen."""

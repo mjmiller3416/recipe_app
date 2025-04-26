@@ -1,16 +1,15 @@
 # 🔸 Third-party Imports
-from PySide6.QtCore import Qt, QPoint
-from PySide6.QtGui import QPixmap, QPainter, QKeySequence, QKeyEvent, QFont
-from PySide6.QtWidgets import (
-    QDialog, QVBoxLayout, QWidget, QLabel, QTextEdit, QHBoxLayout,
-    QScrollArea, QFrame, QGridLayout
-)
-from PySide6.QtPrintSupport import QPrinter, QPrintDialog, QPrintPreviewDialog
+from PySide6.QtCore import QPoint, Qt
+from PySide6.QtGui import QFont, QKeyEvent, QKeySequence, QPainter, QPixmap
+from PySide6.QtPrintSupport import QPrintDialog, QPrinter, QPrintPreviewDialog
+from PySide6.QtWidgets import (QDialog, QFrame, QGridLayout, QHBoxLayout,
+                               QLabel, QScrollArea, QTextEdit, QVBoxLayout,
+                               QWidget)
 
-# 🔸 Local Imports
-from database import DB_INSTANCE
 from core.application.title_bar import TitleBar
 from core.helpers.debug_logger import DebugLogger
+# 🔸 Local Imports
+from database import DB_INSTANCE
 
 
 class FullRecipe(QDialog):

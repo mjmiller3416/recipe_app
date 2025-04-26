@@ -9,18 +9,19 @@ Functions:
     _create_nav_button
 """
 
-# 🔸 Third-Part Imports
-from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QSpacerItem, QSizePolicy, QPushButton, QLabel
-)
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QIcon, QPixmap
+# 🔸 Third-Part Imports
+from PySide6.QtWidgets import (QLabel, QPushButton, QSizePolicy, QSpacerItem,
+                               QVBoxLayout, QWidget)
 
 # 🔸 Local Application Imports
-from core.helpers.config import ICON_COLOR, ICON_SIZE, LOGO_COLOR, icon_path, image_path
-from core.managers.style_manager import StyleManager
+from core.application.config import (ICON_COLOR, ICON_SIZE, LOGO_COLOR,
+                                     icon_path, image_path)
 from core.helpers import svg_loader
 from core.helpers.ui_helpers import get_all_buttons
+from core.managers.style_manager import StyleManager
+
 
 class SidebarWidget(QWidget):
     """
@@ -158,8 +159,11 @@ class SidebarWidget(QWidget):
 
         # Update the logo color dynamically
         img_logo = svg_loader(
-            image_path("logo"), LOGO_COLOR, size=self.lbl_logo.size(), 
-            return_type=QPixmap, source_color="#000"
+            image_path("logo"), 
+            LOGO_COLOR, 
+            size=self.lbl_logo.size(), 
+            return_type=QPixmap, 
+            source_color="#000"
         )
         self.lbl_logo.setPixmap(img_logo)
 

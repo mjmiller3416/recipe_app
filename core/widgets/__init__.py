@@ -6,6 +6,6 @@ This module consolidates the custom widgets and dialog boxes used in the applica
 
 # Import custom widgets
 
-from .dialog_widget import DialogWidget
 from .combobox import CustomComboBox
+from .dialog_widget import DialogWidget
 from .search_widget import SearchWidget

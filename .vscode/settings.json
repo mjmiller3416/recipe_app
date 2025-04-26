@@ -21,12 +21,14 @@
       "comments": false,
       "strings": false
     },
-    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.suggest.snippetsPreventQuickSuggestions": true, 
+    "editor.inlineSuggest.enabled": true, // Disable inline suggestions
     "editor.suggest.showIcons": true,
     "editor.suggestSelection": "first",  // or "recentlyUsed" if history is preferred
     "editor.parameterHints.enabled": false, // Disable function signature popups
     "editor.acceptSuggestionOnCommitCharacter": false, // Prevent auto-accepting with punctuation
     "editor.acceptSuggestionOnEnter": "smart", // Avoid accidental 'Enter' acceptance
+    
 
 
     //** Window settings **//
@@ -78,6 +80,10 @@
       "shopping_list": "Python",
       "add_recipes": "Python",
 
+      //** Subfolders **//
+      "app_helpers": "App",
+      "ui_helpers": "UI",
+      
       //** Assets **//
       "assets": "Resource",
       "fonts": "Font",

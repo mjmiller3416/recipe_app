@@ -1,6 +1,7 @@
 # 🔸 Local Application Imports
 from .ingredient_module import RecipeIngredient
 
+
 class Recipe:
     """
     A lightweight wrapper for recipe data.
@@ -16,26 +17,25 @@ class Recipe:
         self._data = data or {}
 
         self.id = self._data.get("id")
-        self.name = self._data.get("recipe_name", "Unnamed")
-        self.category = self._data.get("recipe_category", "Uncategorized")
-        self.total_time = self._data.get("total_time", "N/A")
-        self.servings = self._data.get("servings", "N/A")
+        self.name = self._data.get("recipe_name")
+        self.category = self._data.get("recipe_category")
+        self.total_time = self._data.get("total_time")
+        self.servings = self._data.get("servings")
         self.image_path = self._data.get("image_path")
         self.ingredients = [RecipeIngredient(i) for i in data.get("ingredients", [])]
-        self.directions = self._data.get("directions", "")
+        self.directions = self._data.get("directions")
 
     def has_image(self) -> bool:
         """Returns True if the recipe has an associated image path."""
         return bool(self.image_path)
-
-    def formatted_time(self) -> str:
-        """Returns a string-formatted cook time."""
-        return f"{self.total_time} min" if isinstance(self.total_time, int) else str(self.total_time)
+    
+    def formatted_total_time(self) -> str:
+        return f"{self.total_time} min"
 
     def formatted_servings(self) -> str:
-        """Returns a string-formatted servings count."""
-        return f"{self.servings}" if isinstance(self.servings, int) else str(self.servings)
-
+        """Returns the servings in a formatted string."""
+        return f"{self.servings}"
+    
     def to_dict(self) -> dict:
         """Returns the original dictionary."""
         return self._data

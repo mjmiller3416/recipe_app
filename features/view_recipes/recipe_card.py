@@ -1,12 +1,13 @@
 
 #🔸Third-Party Imports
-from core.helpers.qt_imports import (
-    QFrame, QLabel, QVBoxLayout, QGridLayout, Qt, QPixmap, Signal, QSize, Qt, QSizePolicy, QSpacerItem, QWidget, QHBoxLayout)
+from core.helpers.debug_logger import DebugLogger
+from core.helpers.qt_imports import (QFrame, QGridLayout, QHBoxLayout, QLabel,
+                                     QPixmap, QSize, QSizePolicy, QSpacerItem,
+                                     Qt, QVBoxLayout, QWidget, Signal)
+from core.helpers.ui_helpers import set_scaled_image
 
 #🔸Local Imports
 from .full_recipe import FullRecipe
-from core.helpers.ui_helpers import set_scaled_image
-from core.helpers.debug_logger import DebugLogger
 
 
 class RecipeCard(QFrame):
@@ -235,7 +236,7 @@ class RecipeCard(QFrame):
         Returns:
             QWidget: A widget containing the RecipeCard with fixed aspect ratio behavior.
         """
-        from core.helpers.qt_imports import QWidget, QVBoxLayout
+        from core.helpers.qt_imports import QVBoxLayout, QWidget
 
         # Create the card
         card = RecipeCard(recipe_data, **kwargs)

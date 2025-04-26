@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
 #🔸Third-party Imports
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QScrollArea, QWidget, QFrame, QPushButton
-from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QPixmap, QPainter, QFont, QKeySequence
+from PySide6.QtCore import QSize, Qt
+from PySide6.QtGui import QFont, QKeySequence, QPainter, QPixmap
 from PySide6.QtPrintSupport import QPrinter, QPrintPreviewDialog
+from PySide6.QtWidgets import (QDialog, QFrame, QLabel, QPushButton,
+                               QScrollArea, QVBoxLayout, QWidget)
 
+from core.helpers import DebugLogger
 #🔸Local Imports
 from core.modules.recipe_module import Recipe
-from core.helpers import DebugLogger
+
 
 class FullRecipe(QDialog):
     """

@@ -2,8 +2,7 @@
 
 #🔸Local Imports
 from core.helpers import DebugLogger
-from core.helpers.qt_imports import (
-    QLineEdit, QComboBox, QTextEdit)
+from core.helpers.qt_imports import QComboBox, QLineEdit, QTextEdit
 from core.helpers.ui_helpers import apply_error_style
 
 #🔹VALIDATE DATA

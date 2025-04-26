@@ -16,7 +16,8 @@ Usage:
 import os
 
 #🔸Local Application Imports
-from core.helpers.config import BASE_DIR
+from core.application.config import BASE_DIR
+
 
 class StyleLoader:
     """

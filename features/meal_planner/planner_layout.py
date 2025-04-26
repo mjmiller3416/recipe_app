@@ -7,10 +7,12 @@ It includes a main dish and up to three side dishes, enabling users to select re
 """
 
 # 🔸Third-party Imports
-from core.helpers.qt_imports import QWidget, QHBoxLayout, QVBoxLayout, QEvent, QToolTip
+from core.helpers.qt_imports import (QEvent, QHBoxLayout, QToolTip,
+                                     QVBoxLayout, QWidget)
 
 # 🔸 Local Imports
 from .meal_widget import MealWidget
+
 
 class PlannerLayout(QWidget):
     """

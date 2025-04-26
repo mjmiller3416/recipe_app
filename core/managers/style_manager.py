@@ -5,19 +5,22 @@
 # handles hover effects for buttons and dynamically changes the color of SVG icons. The StyleManager class is initialized
 # with an Application instance and automatically applies styles when initialized.
 
-# 🔸 Third-party Imports 
-from PySide6.QtCore import QSize
-from PySide6.QtWidgets import (
-    QMainWindow, QWidget, QVBoxLayout, QApplication, QToolButton, 
-    QPushButton, QGraphicsDropShadowEffect
-)
-from PySide6.QtGui import QPixmap, QIcon, QColor
 from functools import partial
+#🔸Standard Library
+from typing import Union
 
-# 🔸 Local Imports
-from core.helpers import svg_loader
+#🔸Third-party 
+from PySide6.QtCore import QSize
+from PySide6.QtGui import QColor, QIcon, QPixmap
+from PySide6.QtWidgets import (QApplication, QGraphicsDropShadowEffect,
+                               QMainWindow, QPushButton, QToolButton,
+                               QVBoxLayout, QWidget)
+
+from core.application.config import (ICON_COLOR, ICON_COLOR_CHECKED,
+                                     ICON_COLOR_HOVER, LOGO_COLOR, image_path)
+#🔸Local Imports
+from core.helpers import get_button_icons, svg_loader
 from core.helpers.style_loader import StyleLoader
-from core.helpers.config import ICON_COLOR, ICON_COLOR_HOVER, ICON_COLOR_CHECKED, LOGO_COLOR, image_path
 
 #🔹MARGINS        ←  ↑  →  ↓
 SIDEBAR_MARGINS = 0, 18, 0, 18
@@ -105,17 +108,24 @@ class StyleManager:
         widget.setGraphicsEffect(shadow)
 
     @staticmethod
-    def apply_hover_effects(buttons, size=None):
+    def apply_hover_effects(
+        buttons: QPushButton | QToolButton |list | dict,
+        size: tuple[int, int] | QSize | None = None,
+        default_color: str = ICON_COLOR,
+        hover_color: str   = ICON_COLOR_HOVER,
+        checked_color: str = ICON_COLOR_CHECKED,
+    ) -> None:
         """
-        Applies hover effects to QPushButton(s) by changing their icons dynamically.
+        Applies hover effects to QPushButton(s) by swapping icons on enter/leave and toggle.
 
         Args:
-            buttons (QPushButton | list[QPushButton] | dict): A single button, list of buttons, or dictionary of buttons.
-            size (tuple, optional): Icon size as (width, height). Defaults to None.
+            buttons: Single button, list of buttons, or dict of buttons.
+            size:    Icon size as (width, height) or QSize. If provided, sets iconSize.
+            default_color: Color for the normal state.
+            hover_color:   Color for the hover state.
+            checked_color: Color when button.isChecked() == True.
         """
-        from core.helpers.ui_helpers import get_button_icons, svg_loader
-
-        # Ensure buttons is iterable
+        # normalize buttons into a list
         if isinstance(buttons, (QPushButton, QToolButton)):
             buttons = [buttons]
         elif isinstance(buttons, dict):
@@ -123,47 +133,39 @@ class StyleManager:
 
         icon_paths = get_button_icons({btn.objectName(): btn for btn in buttons})
 
-        for button in buttons:
-            name = button.objectName()
+        for btn in buttons:
+            name = btn.objectName()
             svg_path = icon_paths.get(name)
-
             if not svg_path:
-                continue  # Skip buttons without valid icons
+                continue
 
-            # Load default, hover, and checked icons
-            original_icon = svg_loader(svg_path, ICON_COLOR, size, return_type=QIcon, source_color="#000")
-            hover_icon = svg_loader(svg_path, ICON_COLOR_HOVER, size, return_type=QIcon, source_color="#000")
-            checked_icon = svg_loader(svg_path, ICON_COLOR_CHECKED, size, return_type=QIcon, source_color="#000")
+            # build all three icons with the passed-in colors
+            orig_icon = svg_loader(svg_path, default_color, size, return_type=QIcon, source_color="#000")
+            hov_icon  = svg_loader(svg_path, hover_color,   size, return_type=QIcon, source_color="#000")
+            chk_icon  = svg_loader(svg_path, checked_color, size, return_type=QIcon, source_color="#000")
 
-            if original_icon.isNull() or hover_icon.isNull():
-                continue  # Skip if icons fail to load
+            if orig_icon.isNull() or hov_icon.isNull():
+                continue
 
-            # Apply the default or checked icon
-            button.setIcon(checked_icon if button.isChecked() else original_icon)
+            # set initial icon & size
+            btn.setIcon(chk_icon if btn.isChecked() else orig_icon)
             if size:
-                button.setIconSize(QSize(*size))
+                btn.setIconSize(QSize(*size) if isinstance(size, tuple) else size)
 
-            # Enable mouse tracking on button
-            button.setMouseTracking(True)  
+            # needed for enter/leave events
+            btn.setMouseTracking(True)
 
-            # Define hover functions
-            def change_to_hover(event, btn=button, icon=hover_icon):
-                print(f"[Hover ON] {btn.objectName()}")
-                if not btn.isChecked():
-                    btn.setIcon(icon)
+            # hover handlers
+            def on_enter(event, b=btn, ic=hov_icon):
+                if not b.isChecked():
+                    b.setIcon(ic)
+            def on_leave(event, b=btn, ic=orig_icon):
+                if not b.isChecked():
+                    b.setIcon(ic)
 
-            def restore_original(event, btn=button, icon=original_icon):
-                print(f"[Hover OFF] {btn.objectName()}")
-                if not btn.isChecked():
-                    btn.setIcon(icon)
+            btn.enterEvent = partial(on_enter)
+            btn.leaveEvent = partial(on_leave)
 
-            # Hook up hover events
-            button.enterEvent = partial(change_to_hover)
-            button.leaveEvent = partial(restore_original)
-
-            # Also update on toggle change
-            def update_icon(checked, btn=button, orig=original_icon, chk=checked_icon):
-                btn.setIcon(chk if checked else orig)
-
-            button.toggled.connect(update_icon)
+            # toggle handler
+            btn.toggled.connect(lambda checked, b=btn, o=orig_icon, c=chk_icon: b.setIcon(c if checked else o))
 

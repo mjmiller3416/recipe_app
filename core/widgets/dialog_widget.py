@@ -1,12 +1,13 @@
-from core.helpers.qt_imports import (
-    QDialog, Qt, QDialogButtonBox, QGraphicsDropShadowEffect,
-    QColor, QPixmap, QLabel, QVBoxLayout, QGridLayout, QSpacerItem,
-    QSizePolicy, QApplication
-)
-from core.helpers import svg_loader, DebugLogger
-from core.helpers.config import icon_path
-from core.helpers.config import SUCCESS_COLOR, WARNING_COLOR, ERROR_COLOR, INFO_COLOR
 import sys
+
+from core.application.config import (ERROR_COLOR, INFO_COLOR, SUCCESS_COLOR,
+                                     WARNING_COLOR, icon_path)
+from core.helpers import DebugLogger, svg_loader
+from core.helpers.qt_imports import (QApplication, QColor, QDialog,
+                                     QDialogButtonBox,
+                                     QGraphicsDropShadowEffect, QGridLayout,
+                                     QLabel, QPixmap, QSizePolicy, QSpacerItem,
+                                     Qt, QVBoxLayout)
 
 
 class DialogWidget(QDialog):

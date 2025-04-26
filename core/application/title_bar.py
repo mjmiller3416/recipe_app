@@ -1,11 +1,11 @@
 # 🔸 Third-Party Import
-from PySide6.QtCore import Qt, QSize, Signal
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QPushButton
+from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
 
+from core.application.config import ICON_COLOR, icon_path
 # 🔸 Local Application Imports
 from core.helpers import svg_loader
-from core.helpers.config import ICON_COLOR, icon_path
 
 # 🔸 Constants
 ICON_SIZE = QSize(12, 12)

@@ -6,14 +6,16 @@ This module defines the MealWidget class, which is responsible for displaying a 
 It allows users to add a meal, open a recipe selection dialog, and display the selected recipe as a card.
 """
 
+from core.application.config import icon_path
 # 🔸 Third-party Imports
-from core.helpers.qt_imports import QFrame, QVBoxLayout, QPushButton, QSize, Qt, Signal, QIcon
+from core.helpers.qt_imports import (QFrame, QIcon, QPushButton, QSize, Qt,
+                                     QVBoxLayout, Signal)
+from database import DB_INSTANCE
+from features.view_recipes.recipe_card import RecipeCard
 
 # 🔸 Local Application Imports
 from .recipe_selection_dialog import RecipeSelectionDialog
-from features.view_recipes.recipe_card import RecipeCard 
-from database import DB_INSTANCE
-from core.helpers.config import icon_path
+
 
 class MealWidget(QFrame):
     """
