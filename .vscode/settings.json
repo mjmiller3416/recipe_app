@@ -16,20 +16,18 @@
     "editor.fontFamily": "JetBrains Mono", // Set the font family to JetBrains Mono
     "editor.fontLigatures": true, // Enable font ligatures
     "editor.hover.delay": 1000, // Set hover delay to 1000ms
-    "editor.quickSuggestions": { 
+    "editor.quickSuggestions": {
       "other": true,
       "comments": false,
       "strings": false
     },
-    "editor.suggest.snippetsPreventQuickSuggestions": true, 
+    "editor.suggest.snippetsPreventQuickSuggestions": true,
     "editor.inlineSuggest.enabled": true, // Disable inline suggestions
     "editor.suggest.showIcons": true,
     "editor.suggestSelection": "first",  // or "recentlyUsed" if history is preferred
     "editor.parameterHints.enabled": false, // Disable function signature popups
     "editor.acceptSuggestionOnCommitCharacter": false, // Prevent auto-accepting with punctuation
     "editor.acceptSuggestionOnEnter": "smart", // Avoid accidental 'Enter' acceptance
-    
-
 
     //** Window settings **//
     "window.zoomLevel": 0.6, // 0 = 100% zoom level, 1 = 110% zoom level, -1 = 90% zoom level
@@ -58,7 +56,7 @@
 
     //** Explorer settings **//
     "explorer.sortOrder": "filesFirst", // Sort files first in the file explorer
-    
+
     //** EXTENSION: Draw Folder Structure **//
     "draw.folder.structure.exclude": [ // Exclude certain files and folders from the folder structure
       "**/__pycache__",
@@ -83,7 +81,7 @@
       //** Subfolders **//
       "app_helpers": "App",
       "ui_helpers": "UI",
-      
+
       //** Assets **//
       "assets": "Resource",
       "fonts": "Font",
@@ -109,4 +107,25 @@
     "vscode_custom_css.imports": [
       "file:///G:/My%20Drive/Python/recipe_app/.vscode/sidebar.css"
     ],
+
+    "commentBox.styles": {
+    // make this the default style so ⇧⌥C “Add Comment Box” just uses it
+        "defaultStyle": {
+        "capitalize": false,            // leave your original casing alone
+        "textAlignment": "left",        // indent your lines the way you type them
+        "boxWidth": 0,                  // auto-fit to your longest line
+        "commentStartToken": "# ",       // top-left corner
+        "commentEndToken": " #",         // bottom-right corner
+        "topEdgeToken": "─",            // the ──── line across the top
+        "topRightToken": " #",           // top-right corner
+        "bottomLeftToken": "# ",         // bottom-left corner
+        "bottomEdgeToken": "─",         // the ──── line across the bottom
+        "leftEdgeToken": "# ",          // each line starts “# “
+        "rightEdgeToken": " #",         // each line ends “ #”
+        "fillingToken": " ",            // fill empty space with spaces
+        "removeEmptyLines": false,      // keep blank lines in the box
+        "ignoreOuterIndentation": false,
+        "ignoreInnerIndentation": false
+        }
+    },
   }

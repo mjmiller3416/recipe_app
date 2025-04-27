@@ -1,13 +1,13 @@
 # Expose specific helpers for external use
 
-from .base_dialog import BaseDialog
-from .rounded_image import create_rounded_image
+from ..app_helpers.base_dialog import BaseDialog
+from .rounded_image import RoundedImage
 from .separator import Separator
-from .svg_loader import svg_loader
+from .image import Image
 
 __all__ = [
     "BaseDialog",
-    "create_rounded_image",
+    "RoundedImage",
     "Separator",
-    "svg_loader",
+    "Image",
 ]

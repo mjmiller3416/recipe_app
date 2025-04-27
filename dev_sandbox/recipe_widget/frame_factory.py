@@ -1,64 +1,44 @@
-# recipe_cards/frame_factory.py
-# ────────────────────────────────────────────────────────────────────────────────
+"""ecipe_widget/frame_factory.py
 
-"""
-FrameFactory
-============
-Single responsibility: **return a fully-built `QFrame`** for a given
-widget *state* (“recipe”, “empty”, or “error”) and *size*.
-
-External code never sees the builders directly; they stay private to
-the recipe_cards package.
+Provides the FrameFactory class for generating fully-built QFrames based on widget states ('recipe', 'empty', or 'error').
 """
 
-#🔸Third-party
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtWidgets import QFrame
 
-#🔸Local Imports
 from .builders.empty_state_builder import EmptyStateBuilder
 from .builders.error_state_builder import ErrorStateBuilder
 from .builders.recipe_card_builder import RecipeCardBuilder
 from .constants import LayoutSize
 
-# ────────────────────────────────────────────────────────────────────────────────
-
-
+# ── Class Definition ────────────────────────────────────────────────────────────
 class FrameFactory:
-    """
-    A thin façade that delegates to the correct *StateBuilder*.
+    """A thin façade that delegates to the correct StateBuilder.
 
-    Usage
-    -----
+    Example:
         frame = FrameFactory.make("recipe", LayoutSize.SMALL, my_recipe)
     """
 
-    # ── public ──────────────────────────────────────────────────────────────────────
+    # ── Public Methods ──────────────────────────────────────────────────────────────
     @classmethod
     def make(
         cls,
         state: str,
         size: LayoutSize,
-        recipe=None,   # Recipe | None – kept untyped to avoid circular import
+        recipe=None
     ) -> QFrame:
-        """
-        Parameters
-        ----------
-        state : {'recipe', 'empty', 'error'}
-            Which visual state to build.
-        size : LayoutSize
-            Target card size (SMALL / MEDIUM / LARGE).
-        recipe : Recipe | None, optional
-            Required only for the 'recipe' state.
+        """Build and return a fully constructed QFrame for a given widget state.
 
-        Returns
-        -------
-        QFrame
-            Fully styled, fixed-size frame ready to insert into a layout.
+        Args:
+            state (str): The widget state to build ('recipe', 'empty', or 'error').
+            size (LayoutSize): Target card size (small, medium, or large).
+            recipe (Recipe | None, optional): Required only for the 'recipe' state.
 
-        Raises
-        ------
-        ValueError
-            If `state` is not recognised or required params are missing.
+        Returns:
+            QFrame: Fully styled, fixed-size frame ready to insert into a layout.
+
+        Raises:
+            ValueError: If `state` is not recognized or required parameters are missing.
         """
         match state:
             case "recipe":

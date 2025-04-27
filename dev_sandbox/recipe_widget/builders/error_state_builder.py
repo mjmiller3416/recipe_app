@@ -1,49 +1,53 @@
-# core/ui/recipe_widget/builders/error_state_builder.py
+"""recipe_widget/builders/error_state_builder.py
+
+Defines the ErrorStateBuilder class for generating error recipe card frames.
+"""
+
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-#🔸Standard Library
 from dataclasses import dataclass
 
-#🔸Third-party
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout
 
-#🔸Local Imports
 from ..constants import LAYOUT_SIZE, LayoutSize
 
-# ────────────────────────────────────────────────────────────────────────────────
-
-
+# ── Class Definition ────────────────────────────────────────────────────────────
 @dataclass(frozen=True, slots=True)
 class ErrorStateBuilder:
-    """
-    Builds the **Error-state** frame shown when a recipe fails to load.
+    """Builds the ErrorState frame shown when a recipe fails to load.
 
-    Parameters
-    ----------
-    size     : LayoutSize
-        Card size (SMALL / MEDIUM / LARGE).
-    message  : str
-        Human-readable error text to display.
+    Attributes:
+        size (LayoutSize): Target card size (small, medium, or large).
+        message (str): Human-readable error text to display.
     """
+
     size:    LayoutSize
     message: str = "Failed to load recipe."
 
-    # ── public ──────────────────────────────────────────────────────────────────────
+    # ── Public Methods ──────────────────────────────────────────────────────────────
     def build(self) -> QFrame:
+        """Build and return a QFrame displaying an error message.
+
+        Returns:
+            QFrame: Frame containing a centered error label.
+        """
+        # ── Create Frame ──
         frame = QFrame()
         frame.setObjectName("ErrorStateFrame")
-        frame.setProperty("layout_size", self.size.value) # for CSS styling
+        frame.setProperty("layout_size", self.size.value)
         frame.setFixedSize(LAYOUT_SIZE[self.size.value])
 
+        # ── Layout ──
         lyt = QVBoxLayout(frame)
         lyt.setContentsMargins(4, 4, 4, 4)
 
+        # error message
         lbl = QLabel(self.message)
         lbl.setAlignment(Qt.AlignCenter)
         lbl.setWordWrap(True)
         lbl.setStyleSheet("color: red;")
-
-        lyt.addWidget(lbl)
+        lyt.addWidget(lbl) # add to layout
 
         return frame

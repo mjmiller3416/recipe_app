@@ -1,8 +1,10 @@
 # helpers/icons/builders/__init__.py
 from .icon_button import IconButton
-from .icon_label import IconLabel
+from .icon import Icon
+from .rounded_icon import RoundedIcon
 
 __all__ = [
     "IconButton",
-    "IconLabel",
+    "Icon",
+    "RoundedIcon"
 ]

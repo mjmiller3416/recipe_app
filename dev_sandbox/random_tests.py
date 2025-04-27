@@ -1,51 +1,32 @@
-# Minimal Test
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit, QListView, QSplitter
+from PySide6.QtCore import Qt
 import sys
 
-from PySide6.QtCore import QSize
-from PySide6.QtWidgets import (QApplication, QFrame, QPushButton, QSizePolicy,
-                               QStackedWidget, QVBoxLayout, QWidget)
+class SplitterExample(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.init_ui()
 
-app = QApplication(sys.argv)
+    def init_ui(self):
+        layout = QVBoxLayout(self)
 
-main_win = QWidget()
-main_layout = QVBoxLayout(main_win)
+        splitter = QSplitter(Qt.Horizontal)  # Split left and right
 
-# --- Create a container similar to RecipeSlot ---
-slot_frame = QFrame()
-slot_frame.setObjectName("SlotFrame")
-slot_frame.setStyleSheet("QFrame#SlotFrame { border: 1px solid blue; }") # See the slot frame bounds
+        text_edit = QTextEdit()
+        text_edit.setPlainText("This is a QTextEdit.")
 
-# --- Create the Stacked Widget ---
-stack = QStackedWidget()
-stack.setObjectName("Stack")
-# stack.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred) # Try with/without
-stack.setStyleSheet("QStackedWidget#Stack { border: 1px solid green; }") # See the stack bounds
+        list_view = QListView()
 
-# --- Create the Empty State Frame ---
-empty_frame = QFrame()
-empty_frame.setObjectName("EmptyFrame")
-empty_frame.setFixedSize(QSize(280, 100))
-empty_frame.setStyleSheet("QFrame#EmptyFrame { background-color: magenta; }") # See the empty frame bounds
-# Add a button inside empty frame
-empty_layout = QVBoxLayout(empty_frame)
-button = QPushButton("Test Button")
-empty_layout.addWidget(button)
+        splitter.addWidget(text_edit)
+        splitter.addWidget(list_view)
 
-# --- Add empty frame to stack ---
-stack.addWidget(empty_frame)
-stack.setCurrentIndex(0)
+        layout.addWidget(splitter)
 
-# --- Layout for the Slot Frame ---
-slot_layout = QVBoxLayout(slot_frame)
-slot_layout.setContentsMargins(0,0,0,0)
-slot_layout.addWidget(stack) # Add stack to slot frame's layout
+        self.setWindowTitle('QSplitter Example')
+        self.resize(600, 400)
+        self.show()
 
-# --- Try forcing sizes ---
-# stack.setFixedSize(280, 100) # Try forcing stack size directly
-# slot_frame.setFixedSize(280, 100) # Try forcing slot frame size directly
-
-# --- Add slot frame to main window layout ---
-main_layout.addWidget(slot_frame)
-
-main_win.show()
-sys.exit(app.exec())
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = SplitterExample()
+    sys.exit(app.exec_())

@@ -37,10 +37,6 @@ class FullRecipe(QDialog):
         self._build_ui()
         self.load_recipe(recipe_id)
 
-        # ---- Connect Signals ----
-        self.title_bar.close_clicked.connect(self.close)
-        self.title_bar.minimize_clicked.connect(self.showMinimized)
-
     def _build_ui(self):
         # ---- Outer Layout and Title Bar ----
         wrapper = QVBoxLayout(self)
@@ -138,12 +134,12 @@ class FullRecipe(QDialog):
 
         # Format and populate ingredients
         ingredients_text = "\n".join(
-            [f"{ing['quantity']} {ing['unit']} - {ing['ingredient_name']}" 
+            [f"{ing['quantity']} {ing['unit']} - {ing['ingredient_name']}"
             for ing in recipe["ingredients"]]
         )
         self.tb_ingredients.setPlainText(ingredients_text)
 
-        # Load recipe image 
+        # Load recipe image
         if recipe["image_path"]:
             pixmap = QPixmap(recipe["image_path"])
             if not pixmap.isNull():
@@ -213,7 +209,6 @@ if __name__ == "__main__":
     from PySide6.QtWidgets import QApplication
 
     # point this at wherever your FullRecipe lives
-    from core.application.full_recipe import FullRecipe
     from core.modules.recipe_module import Recipe
     from database import DB_INSTANCE
 

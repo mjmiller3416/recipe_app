@@ -1,54 +1,55 @@
-# recipe_widget/builders/empty_state_builder.py
-# ────────────────────────────────────────────────────────────────────────────────
+"""recipe_widget/builders/empty_state_builder.py
 
-#🔸Standard Library
+Defines the EmptyStateBuilder class for generating empty recipe card frames.
+"""
+
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from dataclasses import dataclass
 
-#🔸Third-party
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import QFrame, QPushButton, QVBoxLayout
+from PySide6.QtWidgets import QFrame, QVBoxLayout
 
-from helpers.icons.widgets import IconButton
-
-#🔸Local Imports
+from helpers.icon_helpers.widgets import IconButton
 from ..constants import LAYOUT_SIZE, LayoutSize
 
-#🔸Constants
-ICON_SIZE = QSize(60, 60) 
-# ────────────────────────────────────────────────────────────────────────────────
+# ── Constants ───────────────────────────────────────────────────────────────────
+ICON_SIZE = QSize(60, 60)
 
-
+# ── Class Definition ────────────────────────────────────────────────────────────
 @dataclass(frozen=True, slots=True)
 class EmptyStateBuilder:
-    """
-    Builds the **Empty-state** frame (big “+ Add Meal” button).
+    """Builds the EmptyState frame (big '+ Add Meal' button).
 
-    Parameters
-    ----------
-    size : LayoutSize
-        Card size to honour (SMALL / MEDIUM / LARGE).
+    Attributes:
+        size (LayoutSize): Card size to honor (small, medium, or large).
     """
+
     size: LayoutSize
 
-    # ── public ──────────────────────────────────────────────────────────────────────
+    # ── Public Methods ──────────────────────────────────────────────────────────────
     def build(self) -> QFrame:
+        """Build and return a QFrame representing an empty recipe card.
+
+        Returns:
+            QFrame: Frame containing a centered 'Add Meal' button.
+        """
+        # ── Create Frame ──
         frame = QFrame()
         frame.setObjectName("EmptyStateFrame")
-        frame.setProperty("layout_size", self.size.value) # for CSS styling
+        frame.setProperty("layout_size", self.size.value)
         frame.setFixedSize(LAYOUT_SIZE[self.size.value])
 
+        # ── Layout ──
         lyt = QVBoxLayout(frame)
         lyt.setContentsMargins(0, 0, 0, 0)
 
-        btn_add = QPushButton()
-        btn_add.setObjectName("AddMealButton")     # <- slot looks for this
-        btn_add.setFixedSize(60, 60)
+        # add meal button
+        btn_add = IconButton(
+            path="add_meal.svg",
+            size=ICON_SIZE
+        )
+        btn_add.setObjectName("AddMealButton") # slot looks for this
         btn_add.setCursor(Qt.PointingHandCursor)
-
-        btn_add = IconButton(path="add_meal.svg", size=ICON_SIZE)
-
-        lyt.addStretch(1)
-        lyt.addWidget(btn_add, 0, Qt.AlignCenter)
-        lyt.addStretch(1)
+        lyt.addWidget(btn_add, 0, Qt.AlignCenter) # add to layout
 
         return frame

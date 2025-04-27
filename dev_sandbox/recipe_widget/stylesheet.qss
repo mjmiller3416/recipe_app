@@ -10,26 +10,26 @@
 
 
 #RecipeStateFrame QLabel {
-    color: #E1E1E1;  
+    color: #E1E1E1;
     font-family: 'Montserrat Bold';
     font-size: 16px;
     font-weight: 600;
 
 }
 
-#RecipeStateFrame[layout_size="medium"] [title_text="true"] {        
-    font-size: 22px; 
+#RecipeStateFrame[layout_size="medium"] [title_text="true"] {
+    font-size: 22px;
     font-weight: 600;
 }
 
-#RecipeStateFrame [label_text="true"] {   
-    color: #B0B0B0;  
+#RecipeStateFrame [label_text="true"] {
+    color: #B0B0B0;
     font-family: 'Roboto Regular';
     font-weight: 400;
 }
 
-#RecipeStateFrame [value_text="true"] {   
-    color: #03B79E;     
+#RecipeStateFrame [value_text="true"] {
+    color: #03B79E;
 }
 
 /* INTERACTIVE ELEMENTS */
@@ -38,3 +38,36 @@
     background-color: #3A3D41; /* Slightly lighter on hover */
 }
 
+/* RECIPE DIALOG */
+
+
+#TitleBar {
+    background-color: #1b1d23;
+    border-top-left-radius: 0px; /* App Window Border Radius */
+    border-top-right-radius: 0px; /* App Window Border Radius */
+    border-bottom: 2px solid #343b48;
+}
+
+#TitleBar QLabel {
+    padding-left: 10px;
+    background-color: transparent;
+
+    /* Font */
+    font-size: 16px;
+    font-weight: 600
+}
+
+#TitleBar QPushButton {
+    background-color: transparent;
+    border-radius: 0px;
+    margin-bottom: 2px; /* Button Margin */
+
+    /* Font */
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+}
+
+#TitleBar QPushButton:hover {
+    background-color: #3B575B; /* Button Hover Background Color */
+}

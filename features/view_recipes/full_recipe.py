@@ -1,207 +1,257 @@
-# 🔸 Third-party Imports
-from PySide6.QtCore import QPoint, Qt
-from PySide6.QtGui import QFont, QKeyEvent, QKeySequence, QPainter, QPixmap
-from PySide6.QtPrintSupport import QPrintDialog, QPrinter, QPrintPreviewDialog
-from PySide6.QtWidgets import (QDialog, QFrame, QGridLayout, QHBoxLayout,
-                               QLabel, QScrollArea, QTextEdit, QVBoxLayout,
-                               QWidget)
+# File: ui/dialogs/full_recipe_dialog.py (Example path)
 
-from core.application.title_bar import TitleBar
-from core.helpers.debug_logger import DebugLogger
-# 🔸 Local Imports
+# ── Imports ─────────────────────────────────────────────────────────────────────
+import sys
+
+from PySide6.QtWidgets import (QApplication, QWidget, QLabel,
+    QVBoxLayout, QHBoxLayout, QTextEdit, QSizePolicy, QDialog
+)
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont
+
+from core.application.config import ICON_COLOR, ICON_SIZE
+from core.modules.recipe_module import Recipe
 from database import DB_INSTANCE
+from helpers.icon_helpers import Icon
+from helpers.app_helpers.base_dialog import BaseDialog
+from helpers.ui_helpers import rounded_image
 
-
-class FullRecipe(QDialog):
+# ── Class Definition ────────────────────────────────────────────────────────────
+class FullRecipe(BaseDialog):
     """
-    A dialog for displaying and printing a complete recipe.
-
-    This view renders a recipe's name, image, ingredients, directions,
-    and metadata in a custom-styled window. It also supports print
-    preview and clean PDF-style printing without UI chrome.
-
-    Args:
-        recipe_id (int): The ID of the recipe to load.
-        parent (QWidget, optional): The parent widget. Defaults to None.
+    A dialog to display a full recipe, mimicking the provided screenshot layout.
+    Inherits from BaseDialog for custom window chrome.
     """
-
-    def __init__(self, recipe_id, parent=None):
+    def __init__(self, recipe: Recipe, parent=None):
         super().__init__(parent)
-        self.setObjectName("FullRecipe")
-        self.setWindowFlags(Qt.Dialog | Qt.FramelessWindowHint)
-        self.setAttribute(Qt.WA_StyledBackground, True)
+        self.recipe = Recipe(recipe)  # Ensure recipe is a Recipe object
+        self._setup_ui()
 
-        self.recipe_id = None
-        self.recipe_data = None
+    def _setup_ui(self):
+        """Creates and arranges the widgets."""
 
-        self._build_ui()
-        self.load_recipe(recipe_id)
-
-        # 🔹 Connect Signals
-        self.title_bar.close_clicked.connect(self.close)
-        self.title_bar.minimize_clicked.connect(self.showMinimized)
-
-    def _build_ui(self):
-        # 🔹 Outer Layout and Title Bar
-        wrapper = QVBoxLayout(self)
-        wrapper.setContentsMargins(0, 0, 0, 0)
-        wrapper.setSpacing(0)
-
-        self.title_bar = TitleBar(self)
-        wrapper.addWidget(self.title_bar)
+        # ── Window Properties ──
+        self.window().setWindowTitle(f"{self.recipe.name or 'Recipe Details'}")
+        self.resize(750, 650)
         self.title_bar.btn_maximize.setVisible(False)
         self.title_bar.btn_toggle_sidebar.setVisible(False)
 
+        # ── Fonts ──
+        font_recipe_title = QFont()
+        font_recipe_title.setPointSize(26)
+        font_recipe_title.setFamily("Times New Roman")
+        font_recipe_title.setWeight(QFont.Bold) # If title should be bold
+
+        font_section_title = QFont()
+        font_section_title.setPointSize(16)
+        font_section_title.setBold(True)
+
+        # ── Main Recipe Title ──
+        lbl_recipe_title = QLabel(self.recipe.name or "Untitled Recipe")
+        lbl_recipe_title.setObjectName("recipeDisplayTitle")
+        lbl_recipe_title.setFont(font_recipe_title)
+        lbl_recipe_title.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        lbl_recipe_title.setStyleSheet("padding-bottom: 10px; margin-left: 5px;") # Add some spacing
+
+        # ── Recipe Image ──
+        img_label = self._create_recipe_image()
+        img_label.setAlignment(Qt.AlignCenter)
+
+        # ── Ingredients Section ──
+        lbl_ingredients_title = QLabel("Ingredients")
+        lbl_ingredients_title.setObjectName("sectionTitle")
+        lbl_ingredients_title.setFont(font_section_title)
+
+        # ingredients text area
+        txt_ingredients = QTextEdit()
+        txt_ingredients.setObjectName("recipeText")
+        txt_ingredients.setReadOnly(True)
+        txt_ingredients.setHtml(self._format_ingredients())
+        txt_ingredients.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        txt_ingredients.setMinimumHeight(150)
+
+        # ── Metadata Section ──
+        meta_layout = self._create_metadata_layout()
+        meta_widget = QWidget() # wrapper for metadata
+        meta_widget.setLayout(meta_layout) # add layout to widget
+        meta_widget.setObjectName("metadataBox")
+
+        # Example styling (adjust as needed):
+        meta_widget.setStyleSheet("#metadataBox { background-color: #f0f0f0; border-radius: 5px; }")
+
+
+        # ── Directions Section ──
+        lbl_directions_title = QLabel("Directions")
+        lbl_directions_title.setObjectName("sectionTitle")
+        lbl_directions_title.setFont(font_section_title)
+
+        txt_directions = QTextEdit()
+        txt_directions.setObjectName("recipeText")
+        txt_directions.setReadOnly(True)
+        txt_directions.setHtml(self._format_directions())
+        txt_directions.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        # ── Layouts ──
+
+        # Left Column Layout (Image + Ingredients)
+        left_col_layout = QVBoxLayout()
+        left_col_layout.addWidget(img_label, 0, Qt.AlignCenter)
+        left_col_layout.addSpacing(15)
+        left_col_layout.addWidget(lbl_ingredients_title)
+        left_col_layout.addWidget(txt_ingredients, 1) # Allow ingredients to stretch
+
+
+        # Right Column Layout (Metadata + Directions)
+        right_col_layout = QVBoxLayout()
+        right_col_layout.addWidget(meta_widget)
+        right_col_layout.addSpacing(15)
+        right_col_layout.addWidget(lbl_directions_title)
+        right_col_layout.addWidget(txt_directions, 1) # Allow directions to stretch
+
+
+        # Main Horizontal Split Layout
+        main_split_layout = QHBoxLayout()
+        main_split_layout.setSpacing(20) # Space between left and right columns
+        # Add layouts with stretch factors to approximate screenshot proportions
+        main_split_layout.addLayout(left_col_layout, 3) # Left takes ~30-40%
+        main_split_layout.addLayout(right_col_layout, 5) # Right takes ~60-70%
+
+        # Add widgets to the BaseDialog's content_layout
+        # (Inherited from BaseDialog - add widgets here)
+        self.content_layout.addWidget(lbl_recipe_title)
+        self.content_layout.addLayout(main_split_layout)
+
+
+    def _create_recipe_image(self) -> QLabel:
+        """Creates the recipe image label using the helper function."""
+        if self.recipe.has_image():
+            try:
+                # Ensure the rounded_image function is available
+                if 'rounded_image' in globals() and callable(rounded_image):
+                     img_lbl = rounded_image(
+                         image_path=self.recipe.image_path,
+                         dimension=180,
+                         radii=(12, 12, 12, 12), # Rounded corners
+                     )
+                     return img_lbl
+                else:
+                     raise NameError("rounded_image function not found")
+            except Exception as e:
+                print(f"Error loading recipe image '{self.recipe.image_path}': {e}")
+                # Fallback to placeholder if loading fails
+        return self._create_placeholder_image(180)
+
+
+    def _create_placeholder_image(self, dimension: int) -> QLabel:
+        """Creates a styled placeholder label for when the image is missing/failed."""
+        lbl = QLabel(f"Image\nNot Available")
+        lbl.setFixedSize(dimension, dimension)
+        lbl.setAlignment(Qt.AlignCenter)
+        lbl.setStyleSheet(f"""
+            QLabel {{
+                background-color: #f0f0f0;
+                border: 1px dashed #cccccc;
+                border-radius: 12px;
+                color: #888888;
+                font-size: 11px;
+            }}
+        """)
+        return lbl
+
+    def _create_metadata_layout(self) -> QVBoxLayout:
+        """Creates the vertical layout for category, time, and servings."""
         layout = QVBoxLayout()
-        layout.setContentsMargins(20, 20, 20, 20)
-        layout.setSpacing(20)
+        layout.setSpacing(8) # Spacing between metadata items
+        layout.setContentsMargins(5, 5, 5, 5) # Padding inside the metadata area
 
-        # 🔹 Recipe Name Label
-        self.lbl_recipe_name = QLabel("Recipe Name")
-        self.lbl_recipe_name.setObjectName("lbl_recipe_name")
-        font = QFont()
-        font.setPointSize(26)
-        self.lbl_recipe_name.setFont(font)
-        layout.addWidget(self.lbl_recipe_name)
+        # Category
+        if self.recipe.category:
+            layout.addLayout(self._create_icon_text_row("category.svg", self.recipe.category))
 
-        # 🔹 Recipe Image
-        self.lbl_recipe_image = QLabel()
-        self.lbl_recipe_image.setObjectName("lbl_recipe_image")
-        self.lbl_recipe_image.setMinimumHeight(250)
-        self.lbl_recipe_image.setAlignment(Qt.AlignCenter)
-        layout.addWidget(self.lbl_recipe_image)
+        # Total Time
+        if self.recipe.total_time:
+             time_str = self.recipe.formatted_total_time()
+             if time_str: # Only add if time is valid
+                layout.addLayout(self._create_icon_text_row("total_time.svg", time_str))
 
-        # 🔹 Metadata (Time + Servings)
-        self.lbl_total_time = QLabel("0 min")
-        self.lbl_total_time.setObjectName("lbl_total_time")
-        self.lbl_servings = QLabel("0")
-        self.lbl_servings.setObjectName("lbl_servings")
+        # Servings
+        if self.recipe.servings:
+            servings_str = self.recipe.formatted_servings()
+            if servings_str: # Only add if servings is valid
+                layout.addLayout(self._create_icon_text_row("servings.svg", servings_str))
 
-        meta_layout = QHBoxLayout()
-        meta_layout.addWidget(self.lbl_total_time)
-        meta_layout.addStretch()
-        meta_layout.addWidget(self.lbl_servings)
-        layout.addLayout(meta_layout)
+        layout.addStretch(1) # Push items to the top
+        return layout
 
-        # 🔹 Ingredients + Directions
-        self.tb_ingredients = QTextEdit()
-        self.tb_ingredients.setObjectName("tb_ingredients")
-        self.tb_ingredients.setReadOnly(True)
 
-        self.tb_directions = QTextEdit()
-        self.tb_directions.setObjectName("tb_directions")
-        self.tb_directions.setReadOnly(True)
+    def _create_icon_text_row(self, icon_name: str, text: str) -> QHBoxLayout:
+        """Helper to create a horizontal layout with an icon and text."""
+        row_layout = QHBoxLayout()
+        row_layout.setSpacing(8) # Space between icon and text
 
-        content_frame = QFrame()
-        content_frame.setObjectName("content_frame")
-        grid = QGridLayout(content_frame)
-        grid.addWidget(self.tb_ingredients, 0, 0)
-        grid.addWidget(self.tb_directions, 0, 1)
-
-        layout.addWidget(content_frame)
-
-        # 🔹 Scrollable Container
-        container = QWidget()
-        container.setLayout(layout)
-
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll.setFrameShape(QFrame.NoFrame)
-        scroll.setWidget(container)
-
-        wrapper.addWidget(scroll)
-
-        self.content_widget = container
-
-    def load_recipe(self, recipe_id):
-        # 🔹 Query database for recipe data
-        """
-        Fetch and display all relevant recipe data into the UI.
-
-        Args:
-            recipe_id (int): The ID of the recipe to load from the database.
-        """
-        # 🔹 Log the fetch attempt
-        DebugLogger.log(f"Fetching recipe with ID: {recipe_id}", "info")
-        recipe = DB_INSTANCE.get_recipe(recipe_id)
-
-        # 🔹 Handle missing recipe case
-        if not recipe:
-            DebugLogger.log("Recipe not found!", "error")
-            self.lbl_recipe_name.setText("Recipe Not Found")
-            return
-
-        # 🔹 Set recipe metadata
-        self.lbl_recipe_name.setText(recipe["recipe_name"])
-        self.lbl_total_time.setText(f"{recipe['total_time']} min")
-        self.lbl_servings.setText(f"{recipe['servings']}")
-        self.tb_directions.setPlainText(recipe["directions"])
-
-        # 🔹 Format and populate ingredients
-                # 🔹 Format and populate ingredients
-        ingredients_text = "\n".join(
-            [f"{ing['quantity']} {ing['unit']} - {ing['ingredient_name']}" 
-            for ing in recipe["ingredients"]]
-        )
-        self.tb_ingredients.setPlainText(ingredients_text)
-
-        # 🔹 Load recipe image (or fallback)
-        if recipe["image_path"]:
-            pixmap = QPixmap(recipe["image_path"])
-            if not pixmap.isNull():
-                self.lbl_recipe_image.setPixmap(pixmap.scaled(300, 300))
+        try:
+            # Ensure Icon class is available
+            if 'Icon' in globals() and callable(Icon):
+                 icon_widget = Icon(
+                    name=icon_name,
+                    size=ICON_SIZE,
+                    color=ICON_COLOR,
+                    source="#000", # Or remove if your Icon class doesn't need source
+                 )
+                 row_layout.addWidget(icon_widget)
             else:
-                self.lbl_recipe_image.setText("Image Not Found")
+                 raise NameError("Icon class not found")
+        except Exception as e:
+            print(f"Error creating icon '{icon_name}': {e}")
+            # Placeholder if icon fails
+            row_layout.addWidget(QLabel("?"))
+
+        lbl_text = QLabel(text)
+        row_layout.addWidget(lbl_text)
+        row_layout.addStretch(1) # Push icon/text to the left
+        return row_layout
+
+    def _format_ingredients(self) -> str:
+        """Formats the ingredients list as an HTML bulleted list."""
+        if not self.recipe.ingredients:
+            return "<p>No ingredients listed.</p>"
+
+        html = "<ul style='margin-left: 0px; padding-left: 20px;'>" # Basic list styling
+        for ingredient in self.recipe.ingredients:
+            # Using str() assumes RecipeIngredient has a __str__ method
+            # that returns the desired text (e.g., "12 oz spaghetti")
+            html += f"<li>{str(ingredient)}</li>"
+        html += "</ul>"
+        return html
+
+    def _format_directions(self) -> str:
+        """Formats the directions as an HTML numbered list."""
+        if not self.recipe.directions or not str(self.recipe.directions).strip():
+            return "<p>No directions provided.</p>"
+
+        # Treat directions as potentially multi-line string. Split into steps.
+        steps = str(self.recipe.directions).strip().split('\n')
+
+        # Filter out empty lines and remove potential leading/trailing whitespace
+        cleaned_steps = [step.strip() for step in steps if step.strip()]
+
+        if not cleaned_steps:
+             return "<p>No directions provided.</p>"
+
+        # Check if steps look like they are already numbered (e.g., "1.", "2. ")
+        # This is a basic check and might need refinement
+        already_numbered = all(step[0].isdigit() and step[1] in ['.', ')'] for step in cleaned_steps if len(step) > 1)
+
+        if already_numbered:
+            # Just wrap existing lines in paragraph tags for spacing
+             html = "".join(f"<p style='margin-bottom: 8px;'>{step}</p>" for step in cleaned_steps)
+
         else:
-            self.lbl_recipe_image.setText("No Image Available")
+            # Create an ordered list
+            html = "<ol style='margin-left: 0px; padding-left: 20px;'>"
+            for step in cleaned_steps:
+                html += f"<li style='margin-bottom: 8px;'>{step}</li>" # Add space between items
+            html += "</ol>"
+        return html
 
-    def _render_without_toolbar_and_border(self, printer):
-        """
-        Render the content widget only (without the toolbar and frame)
-        for clean print output.
 
-        Args:
-            printer (QPrinter): The printer to render onto.
-        """
-        toolbar_visible = self.title_bar.isVisible()
-        self.title_bar.setVisible(False)
-
-        painter = QPainter(printer)
-        page_rect = printer.pageLayout().paintRectPixels(printer.resolution())
-
-        scale_x = page_rect.width() / float(self.content_widget.width())
-        scale_y = page_rect.height() / float(self.content_widget.height())
-        scale = min(scale_x, scale_y)
-        painter.scale(scale, scale)
-
-        self.content_widget.render(painter, QPoint(0, 0))
-        painter.end()
-
-        self.title_bar.setVisible(toolbar_visible)
-
-    def show_print_preview(self):
-        """Display a print preview of the recipe without UI chrome."""
-        printer = QPrinter(QPrinter.HighResolution)
-        preview_dialog = QPrintPreviewDialog(printer, self)
-        preview_dialog.paintRequested.connect(self._render_without_toolbar_and_border)
-        preview_dialog.exec()
-
-    def print_recipe(self):
-        """Print the recipe content without window decorations."""
-        printer = QPrinter(QPrinter.HighResolution)
-        dialog = QPrintDialog(printer, self)
-
-        if dialog.exec():
-            self._render_without_toolbar_and_border(printer)
-
-    def keyPressEvent(self, event: QKeyEvent):
-        """
-        Handle keyboard shortcuts like Ctrl+P to trigger printing.
-
-        Args:
-            event (QKeyEvent): The key event triggered by the user.
-        """
-        if event.matches(QKeySequence.Print):
-            self.print_recipe()
-        else:
-            super().keyPressEvent(event)
