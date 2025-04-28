@@ -5,7 +5,7 @@
 
 #🔸Local Imports
 from core.application.config import INGREDIENT_CATEGORIES, MEASUREMENT_UNITS
-from core.helpers.debug_logger import DebugLogger
+from helpers.debug_logger import DebugLogger
 #🔸Third-Party Imports
 from core.helpers.qt_imports import QComboBox, QListView, Qt, Signal
 
@@ -29,12 +29,12 @@ class CustomComboBox(QComboBox):
         self.setView(list_view)
 
         # Corrected signal connection
-        self.currentTextChanged.connect(self.emit_validation)  
+        self.currentTextChanged.connect(self.emit_validation)
 
     def emit_validation(self, text):
         """
         Emits a signal when a valid selection is made.
         """
         self.cb_validated.emit(bool(text))  # Emits True if text is not empty
-        # DebugLogger.log("🟢 ComboBox text changed: {text}", "debug")  # ⚠️ Debugging line 
+        # DebugLogger.log("🟢 ComboBox text changed: {text}", "debug")  # ⚠️ Debugging line
 

@@ -23,7 +23,7 @@ def validate_data_fields(data): # ✅
     error_messages = {}
 
     for field_name, widget in data.items():
-        
+
         # 🔹 Validate QLineEdit (Ensure it was at least touched)
         if isinstance(widget, QLineEdit):
             if not widget.text():  # Only fails if it's completely empty

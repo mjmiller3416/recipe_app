@@ -3,17 +3,20 @@
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtWidgets import (
     QWidget, QLabel, QVBoxLayout, QHBoxLayout,
-    QTextEdit, QSizePolicy
+    QTextEdit, QSizePolicy, QFrame, QSpacerItem, QScrollArea,
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QSize
 
-from core.application.config import ICON_COLOR, ICON_SIZE
+from core.helpers.debug_layout import DebugLayout
 from core.modules.recipe_module import Recipe
 from database import DB_INSTANCE
 from helpers.icon_helpers import Icon
 from helpers.app_helpers.base_dialog import BaseDialog
-from helpers.ui_helpers import Image
+from helpers.ui_helpers import Image, Separator
 
+# ── Constants ───────────────────────────────────────────────────────────────────
+ICON_SIZE = QSize(30,30)
+ICON_COLOR = "#3B575B"  # Example color, adjust as needed
 # ── Class Definition ────────────────────────────────────────────────────────────
 class RecipeDialogBuilder(BaseDialog):
     """
@@ -25,194 +28,163 @@ class RecipeDialogBuilder(BaseDialog):
         self.recipe = recipe
 
         # ── Window Properties ──
-        self.window().setWindowTitle(f"{self.recipe.name or 'Recipe Details'}")
-        self.resize(750, 650)
+        self.setFixedSize(760, 983.25)  # roughly 8.5 x 10.35 inches at 96 DPI
         self.title_bar.btn_maximize.setVisible(False)
         self.title_bar.btn_toggle_sidebar.setVisible(False)
+        self.setObjectName("RecipeDialog")
 
         # ── Setup UI ──
         self._setup_ui()
+        self.overlay = DebugLayout(self)
 
-    def _setup_ui(self):
-        """Creates and arranges the widgets."""
+    # ── Public Methods ──────────────────────────────────────────────────────────────
+    def _setup_ui(self) -> None:
+        """Builds the main UI layout."""
         # ── Create Main Layout ──
-        lyt_main = QHBoxLayout(self)
-        lyt_main.setSpacing(30)  # plenty of space between columns
-        lyt_main.setContentsMargins(20, 20, 20, 20)
+        self.lyt_main = QVBoxLayout()
+        self.lyt_main.setSpacing(30)
+        self.lyt_main.setContentsMargins(20, 20, 20, 20)
+
+        # ── Add Header ──
+        self.header_frame = self.build_header_frame()
+        self.lyt_main.addWidget(self.header_frame, 0) # add header to main layout
+
+        # ── Add Left & Right Columns ──
+        self.lyt_body = QHBoxLayout()
+        self.left_column = self._build_left_column()
+        self.right_column = self._build_right_column()
+        self.lyt_body.addLayout(self.left_column, 2)
+        self.lyt_body.addLayout(self.right_column, 3)
+        self.lyt_main.addLayout(self.lyt_body, 1)
+
+        # ── Add Header & Columns ──
+        self.content_layout.addLayout(self.lyt_main)
+
+    def build_header_frame(self) -> QFrame:
+        """Creates the recipe image widget."""
+        # create frame
+        self.header_frame, lyt_header = self._create_framed_layout(line_width=0)
 
         # recipe name
-        lbl_recipe_name = QLabel()
-        lbl_recipe_name.setText(self.recipe.name)
-        lbl_recipe_name.setObjectName("recipeDisplayTitle")
-        lyt_main.addWidget(lbl_recipe_name, 0, Qt.AlignVCenter) # add to main layout
+        self.lbl_recipe_name = QLabel(self.recipe.name)
+        self.lbl_recipe_name.setObjectName("RecipeName")
+        self.lbl_recipe_name.setAlignment(Qt.AlignCenter)
+        lyt_header.addWidget(self.lbl_recipe_name) # add recipe name to layout
 
-        # ── Left Column ──
-        left_column = QVBoxLayout()
-        left_column.setSpacing(20)
+        # separator
+        self.separator = Separator.horizontal(690) # intentionally omitted for now
+        lyt_header.addWidget(self.separator, 0, Qt.AlignCenter) # add separator to layout
 
-        # recipe image
-        img_recipe = Image(
-            image_path=(self.recipe.image_path),
-            target_size=300,
-            parent=self
-        )
-        img_recipe.setAlignment(Qt.AlignCenter)
-        left_column.addWidget(img_recipe, 0, Qt.AlignCenter) # add to left column
-        left_column.addSpacing(15)
+        return self.header_frame
 
-        # ingredients header
-        lbl_ingredients_title = QLabel("Ingredients")
-        lbl_ingredients_title.setObjectName("sectionTitle")
+    def build_image_frame(self) -> QFrame:
+        """Creates the recipe image widget."""
+        # create frame
+        self.image_frame, lyt_image = self._create_framed_layout(line_width=0)
 
-        # ingredients text area
-        txt_ingredients = QTextEdit()
-        txt_ingredients.setObjectName("recipeText")
-        txt_ingredients.setReadOnly(True)
-        txt_ingredients.setHtml(self._format_ingredients())
-        txt_ingredients.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        txt_ingredients.setMinimumHeight(150)
+        # add image to layout
+        self.recipe_image = Image(self.recipe.image_path, 280, self.image_frame)
+        lyt_image.addWidget(self.recipe_image, 0, Qt.AlignCenter)
 
-        # ── Metadata Section ──
-        meta_layout = self._create_metadata_layout()
-        meta_widget = QWidget() # wrapper for metadata
-        meta_widget.setLayout(meta_layout) # add layout to widget
-        meta_widget.setObjectName("metadataBox")
+        return self.image_frame
 
-        # Example styling (adjust as needed):
-        meta_widget.setStyleSheet("#metadataBox { background-color: #f0f0f0; border-radius: 5px; }")
+    def build_meta_frame(self) -> QFrame:
+        """Creates the meta information widget."""
+        # create frame
+        self.meta_info_widget, lyt_meta = self._create_framed_layout(line_width=0)
 
+        # add meta info to layout
+        lyt_meta.addWidget(self._build_meta_row("servings.svg", str(self.recipe.servings)))
+        lyt_meta.addWidget(self._build_meta_row("total_time.svg", str(self.recipe.total_time)))
+        lyt_meta.addWidget(self._build_meta_row("category.svg", self.recipe.category))
 
-        # ── Directions Section ──
-        lbl_directions_title = QLabel("Directions")
-        lbl_directions_title.setObjectName("sectionTitle")
+        return self.meta_info_widget
 
-        txt_directions = QTextEdit()
-        txt_directions.setObjectName("recipeText")
-        txt_directions.setReadOnly(True)
-        txt_directions.setHtml(self._format_directions())
-        txt_directions.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+    def build_ingredients_frame(self) -> QFrame:
+        """Creates the ingredients list widget."""
+        # create frame
+        self.ingredients_widget, lyt_ingredients = self._create_framed_layout()
 
-        # ── Layouts ──
+        #TODO: Add ingredients list
+        # add ingredients to layout
 
-        # Left Column Layout (Image + Ingredients)
-        left_col_layout = QVBoxLayout()
-        left_col_layout.addWidget(img_recipe, 0, Qt.AlignCenter)
-        left_col_layout.addSpacing(15)
-        left_col_layout.addWidget(lbl_ingredients_title)
-        left_col_layout.addWidget(txt_ingredients, 1) # Allow ingredients to stretch
+        return self.ingredients_widget
 
+    def build_directions_frame(self) -> QFrame:
+        """Creates the directions list widget."""
+        # create frame
+        self.directions_widget, lyt_directions = self._create_framed_layout()
 
-        # Right Column Layout (Metadata + Directions)
-        right_col_layout = QVBoxLayout()
-        right_col_layout.addWidget(meta_widget)
-        right_col_layout.addSpacing(15)
-        right_col_layout.addWidget(lbl_directions_title)
-        right_col_layout.addWidget(txt_directions, 1) # Allow directions to stretch
+        #TODO: Add directions list
+        # add directions to layout
 
+        return self.directions_widget
 
-        # Main Horizontal Split Layout
-        main_split_layout = QHBoxLayout()
-        main_split_layout.setSpacing(20) # Space between left and right columns
-        # Add layouts with stretch factors to approximate screenshot proportions
-        main_split_layout.addLayout(left_col_layout, 3) # Left takes ~30-40%
-        main_split_layout.addLayout(right_col_layout, 5) # Right takes ~60-70%
+    # ── Private Methods ─────────────────────────────────────────────────────────────
+    def _create_framed_layout(
+    self,
+    frame_shape:  QFrame.Shape = QFrame.Box,
+    frame_shadow: QFrame.Shadow = QFrame.Plain,
+    line_width:   int = 1,
+    size_policy:  tuple = (QSizePolicy.Expanding, QSizePolicy.Expanding),
+    margins:      tuple = (0, 0, 0, 0),
+    spacing:      int = 0,
+) -> tuple[QFrame, QVBoxLayout]:
+        """
+        Creates a QFrame with a QVBoxLayout inside, with standardized styling.
 
-        self.content_layout.addLayout(main_split_layout)
+        Returns:
+            Tuple containing (QFrame, QVBoxLayout).
+        """
+        frame = QFrame()
+        frame.setFrameShape(frame_shape)
+        frame.setFrameShadow(frame_shadow)
+        frame.setLineWidth(line_width)
+        frame.setSizePolicy(*size_policy)
 
-    def _create_metadata_layout(self) -> QVBoxLayout:
-        """Creates the vertical layout for category, time, and servings."""
-        layout = QVBoxLayout()
-        layout.setSpacing(8) # Spacing between metadata items
-        layout.setContentsMargins(5, 5, 5, 5) # Padding inside the metadata area
+        layout = QVBoxLayout(frame)
+        layout.setContentsMargins(*margins)
+        layout.setSpacing(spacing)
 
-        # Category
-        if self.recipe.category:
-            layout.addLayout(self._create_icon_text_row("category.svg", self.recipe.category))
-
-        # Total Time
-        if self.recipe.total_time:
-             time_str = self.recipe.formatted_total_time()
-             if time_str: # Only add if time is valid
-                layout.addLayout(self._create_icon_text_row("total_time.svg", time_str))
-
-        # Servings
-        if self.recipe.servings:
-            servings_str = self.recipe.formatted_servings()
-            if servings_str: # Only add if servings is valid
-                layout.addLayout(self._create_icon_text_row("servings.svg", servings_str))
-
-        layout.addStretch(1) # Push items to the top
-        return layout
+        return frame, layout
 
 
-    def _create_icon_text_row(self, icon_name: str, text: str) -> QHBoxLayout:
-        """Helper to create a horizontal layout with an icon and text."""
-        row_layout = QHBoxLayout()
-        row_layout.setSpacing(8) # Space between icon and text
+    def _build_left_column(self) -> QVBoxLayout:
+        """Constructs the left side of the dialog (Image + Ingredients)."""
+        lyt = QVBoxLayout()
+        lyt.setSpacing(30)
 
-        try:
-            # Ensure Icon class is available
-            if 'Icon' in globals() and callable(Icon):
-                 icon_widget = Icon(
-                    name=icon_name,
-                    size=ICON_SIZE,
-                    color=ICON_COLOR,
-                    source="#000", # Or remove if your Icon class doesn't need source
-                 )
-                 row_layout.addWidget(icon_widget)
-            else:
-                 raise NameError("Icon class not found")
-        except Exception as e:
-            print(f"Error creating icon '{icon_name}': {e}")
-            # Placeholder if icon fails
-            row_layout.addWidget(QLabel("?"))
+        lyt.addWidget(self.build_image_frame(),1)
+        lyt.addWidget(self.build_ingredients_frame(),2)
 
-        lbl_text = QLabel(text)
-        row_layout.addWidget(lbl_text)
-        row_layout.addStretch(1) # Push icon/text to the left
-        return row_layout
+        return lyt
 
-    def _format_ingredients(self) -> str:
-        """Formats the ingredients list as an HTML bulleted list."""
-        if not self.recipe.ingredients:
-            return "<p>No ingredients listed.</p>"
+    def _build_right_column(self) -> QVBoxLayout:
+        """Constructs the right side of the dialog (Meta Info + Directions)."""
+        lyt = QVBoxLayout()
+        lyt.setSpacing(30)
 
-        html = "<ul style='margin-left: 0px; padding-left: 20px;'>" # Basic list styling
-        for ingredient in self.recipe.ingredients:
-            # Using str() assumes RecipeIngredient has a __str__ method
-            # that returns the desired text (e.g., "12 oz spaghetti")
-            html += f"<li>{str(ingredient)}</li>"
-        html += "</ul>"
-        return html
+        lyt.addWidget(self.build_meta_frame(),1)
+        lyt.addWidget(self.build_directions_frame(),3)
 
-    def _format_directions(self) -> str:
-        """Formats the directions as an HTML numbered list."""
-        if not self.recipe.directions or not str(self.recipe.directions).strip():
-            return "<p>No directions provided.</p>"
+        return lyt
 
-        # Treat directions as potentially multi-line string. Split into steps.
-        steps = str(self.recipe.directions).strip().split('\n')
+    def _build_meta_row(self, icon_name: str, text: str) -> QWidget:
+        """Helper to create a row with an icon and label, nicely spaced."""
+        container = QWidget()
+        lyt = QHBoxLayout(container)
+        lyt.setContentsMargins(0, 0, 0, 0)
+        lyt.setSpacing(20)
 
-        # Filter out empty lines and remove potential leading/trailing whitespace
-        cleaned_steps = [step.strip() for step in steps if step.strip()]
+        icon = Icon(icon_name, ICON_SIZE, ICON_COLOR)
+        lbl = QLabel(text)
+        lbl.setProperty("metaTitle", True)
+        lbl.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
-        if not cleaned_steps:
-             return "<p>No directions provided.</p>"
+        lyt.addWidget(icon)
+        lyt.addWidget(lbl)
+        lyt.addStretch()
 
-        # Check if steps look like they are already numbered (e.g., "1.", "2. ")
-        # This is a basic check and might need refinement
-        already_numbered = all(step[0].isdigit() and step[1] in ['.', ')'] for step in cleaned_steps if len(step) > 1)
-
-        if already_numbered:
-            # Just wrap existing lines in paragraph tags for spacing
-             html = "".join(f"<p style='margin-bottom: 8px;'>{step}</p>" for step in cleaned_steps)
-
-        else:
-            # Create an ordered list
-            html = "<ol style='margin-left: 0px; padding-left: 20px;'>"
-            for step in cleaned_steps:
-                html += f"<li style='margin-bottom: 8px;'>{step}</li>" # Add space between items
-            html += "</ol>"
-        return html
+        return container
 
 

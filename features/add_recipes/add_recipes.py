@@ -1,13 +1,15 @@
 # Package: app.add_recipes
 
-# Description: This file contains the AddRecipes class, which is a custom widget that represents the Add Recipe screen. It allows 
-# users to input recipe details such as name, category, ingredients, total time, and servings. The AddRecipes class communicates 
-# with the ApplicationDatabase class to save the recipe data to the database. It also uses the IngredientWidget class to manage the 
+# Description: This file contains the AddRecipes class, which is a custom widget that represents the Add Recipe screen. It allows
+# users to input recipe details such as name, category, ingredients, total time, and servings. The AddRecipes class communicates
+# with the ApplicationDatabase class to save the recipe data to the database. It also uses the IngredientWidget class to manage the
 # input of individual ingredients.
 
 from core.application.config import INT, NAME, RECIPE_CATEGORIES
-from core.helpers import (DebugLogger, clear_error_styles, dynamic_validation,
-                          populate_combobox)
+from core.helpers import clear_error_styles, dynamic_validation
+from core.helpers.app_helpers import populate_combobox
+from core.helpers import DebugLogger
+
 #🔸Third-party Imports
 from core.helpers.qt_imports import QFileDialog, Qt, QVBoxLayout, QWidget
 from core.managers import StyleManager
@@ -27,7 +29,7 @@ class AddRecipes(QWidget):
         super().__init__(parent)
 
         # Initialize & Setup UI
-        self.ui = Ui_AddRecipes() 
+        self.ui = Ui_AddRecipes()
         self.ui.setupUi(self)
         self.setObjectName("AddRecipes")
 
@@ -43,12 +45,12 @@ class AddRecipes(QWidget):
 
         # Populate comboboxes
         self.populate_combobox()
-        
+
         # Connect signals and slots
         self.setup_event_logic()
 
         # Store the selected image path
-        self.selected_image_path = None  
+        self.selected_image_path = None
 
 
     @property
@@ -59,16 +61,16 @@ class AddRecipes(QWidget):
             "le_recipe_name": self.ui.le_recipe_name,
             "cb_recipe_category": self.ui.cb_recipie_category,
             "le_total_time": self.ui.le_total_time,
-            "le_servings": self.ui.le_servings, 
+            "le_servings": self.ui.le_servings,
             "te_directions": self.ui.te_directions,
-            "image_path": self.selected_image_path 
+            "image_path": self.selected_image_path
         }
 
     def setup_event_logic(self):
         """Connects the signals and slots for the Add Recipe screen."""
 
         # Connect save button to save_recipe method
-        self.ui.btn_save_recipes.clicked.connect(self.save_recipe) 
+        self.ui.btn_save_recipes.clicked.connect(self.save_recipe)
 
         # Dynamic validation for QLineEdit fields
         dynamic_validation(self.ui.le_recipe_name, NAME)
@@ -83,17 +85,17 @@ class AddRecipes(QWidget):
         # Dynamic (positive) validation for directions
         self.ui.te_directions.textChanged.connect(
             lambda:clear_error_styles(self.ui.te_directions)
-        )  
+        )
 
         # Ensure there is at least one ingredient
         if self.ingredient_widgets:
             first_ingredient: IngredientWidget = self.ingredient_widgets[0]  # Get the first widget
 
             # Connect signals for the first ingredient
-            first_ingredient.remove_ingredient_requested.connect(self.remove_ingredient)  
+            first_ingredient.remove_ingredient_requested.connect(self.remove_ingredient)
             first_ingredient.add_ingredient_requested.connect(self.add_new_ingredient)
-            first_ingredient.ingredient_validated.connect(self.receive_ingredient_data) 
-        
+            first_ingredient.ingredient_validated.connect(self.receive_ingredient_data)
+
         # Connect Browse button for image selection
         self.ui.btn_image_path.clicked.connect(self.select_image)
 
@@ -149,7 +151,7 @@ class AddRecipes(QWidget):
         new_widget.ui.btn_subtract.setEnabled(True)
 
         # Store the new widget in the list
-        self.ingredient_widgets.append(new_widget)  
+        self.ingredient_widgets.append(new_widget)
 
         # Connect signals for the new widget
         new_widget.remove_ingredient_requested.connect(self.remove_ingredient)
@@ -177,7 +179,7 @@ class AddRecipes(QWidget):
         DebugLogger().log("🔵 Ingredient Data Received 🔵", "info")
         self.stored_ingredients.append(ingredient_data)  # Store the ingredient data
         DebugLogger().log("🟢 Ingredient Data Stored: {self.stored_ingredients}\n", "debug")
- 
+
     def select_image(self):
         """Opens the CropImageDialog and stores the selected image path."""
         dialog = CropImageDialog(self)  # Create the dialog
@@ -207,5 +209,5 @@ class AddRecipes(QWidget):
 
         # Set up comboboxes
         populate_combobox(self.ui.cb_recipie_category, *RECIPE_CATEGORIES)
-        
+
 #🔸END

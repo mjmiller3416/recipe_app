@@ -8,7 +8,7 @@ from PySide6.QtGui import QMouseEvent, QPixmap
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
 from core.application.config import ICON_COLOR, icon_path
-from core.helpers.debug_logger import DebugLogger
+from helpers.debug_logger import DebugLogger
 from core.helpers.ui_helpers import set_scaled_image, svg_loader
 # 🔸 Local Imports
 from core.modules.recipe_module import Recipe
@@ -50,7 +50,7 @@ class MediumRecipeFrame(QFrame):
 
         title_container = QHBoxLayout()
         # Sets padding (left, top, right, bottom) around the title label within its container
-        title_container.setContentsMargins(16, 8, 16, 0) 
+        title_container.setContentsMargins(16, 8, 16, 0)
         title_container.addWidget(self.lbl_name)
 
         # ───── Servings Block ─────
@@ -69,9 +69,9 @@ class MediumRecipeFrame(QFrame):
 
         servings_value_row = QHBoxLayout()
         # Sets padding (left, top, right, bottom) within the servings icon+label row
-        servings_value_row.setContentsMargins(0, 0, 0, 0) 
+        servings_value_row.setContentsMargins(0, 0, 0, 0)
         # Sets spacing between items (icon and label) in the servings row
-        servings_value_row.setSpacing(8) 
+        servings_value_row.setSpacing(8)
         servings_value_row.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         servings_value_row.addWidget(self.servings_icon)
         servings_value_row.addWidget(self.lbl_servings)
@@ -79,9 +79,9 @@ class MediumRecipeFrame(QFrame):
 
         servings_layout = QVBoxLayout()
         # Sets padding (left, top, right, bottom) around the entire servings block (title + value row)
-        servings_layout.setContentsMargins(0, 0, 0, 0) 
+        servings_layout.setContentsMargins(0, 0, 0, 0)
         # Sets vertical spacing between the servings title and the value row
-        servings_layout.setSpacing(2) 
+        servings_layout.setSpacing(2)
         servings_layout.addWidget(lbl_servings_title)
         servings_layout.addLayout(servings_value_row)
 
@@ -96,18 +96,18 @@ class MediumRecipeFrame(QFrame):
 
         time_value_row = QHBoxLayout()
         # Sets padding (left, top, right, bottom) within the time label row
-        time_value_row.setContentsMargins(0, 0, 0, 0) 
+        time_value_row.setContentsMargins(0, 0, 0, 0)
         # Sets spacing between items (stretch and label) in the time row
-        time_value_row.setSpacing(4) 
+        time_value_row.setSpacing(4)
         time_value_row.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         time_value_row.addStretch()
         time_value_row.addWidget(self.lbl_time)
 
         time_layout = QVBoxLayout()
         # Sets padding (left, top, right, bottom) around the entire time block (title + value row)
-        time_layout.setContentsMargins(0, 0, 0, 0) 
+        time_layout.setContentsMargins(0, 0, 0, 0)
         # Sets vertical spacing between the time title and the value row
-        time_layout.setSpacing(2) 
+        time_layout.setSpacing(2)
         time_layout.setAlignment(Qt.AlignRight)
         time_layout.addWidget(lbl_time_title)
         time_layout.addLayout(time_value_row)
@@ -115,18 +115,18 @@ class MediumRecipeFrame(QFrame):
         # ───── Metadata Row ─────
         meta_layout = QHBoxLayout()
         # Sets padding (left, top, right, bottom) around the combined servings and time blocks
-        meta_layout.setContentsMargins(16, 8, 16, 0) 
+        meta_layout.setContentsMargins(16, 8, 16, 0)
         # Sets horizontal spacing between the servings block and the time block
-        meta_layout.setSpacing(16) 
+        meta_layout.setSpacing(16)
         meta_layout.addLayout(servings_layout)
         meta_layout.addLayout(time_layout)
 
         # ───── Main Layout (for this frame) ─────
         main_layout = QVBoxLayout(self) # Set layout directly on the frame
         # Sets padding (left, top, right, bottom) for the entire frame content
-        main_layout.setContentsMargins(0, 0, 0, 0) 
+        main_layout.setContentsMargins(0, 0, 0, 0)
         # Sets vertical spacing between the main elements (image, title container, metadata layout)
-        main_layout.setSpacing(8) 
+        main_layout.setSpacing(8)
         main_layout.addWidget(self.lbl_image)
         main_layout.addLayout(title_container)
         main_layout.addLayout(meta_layout)

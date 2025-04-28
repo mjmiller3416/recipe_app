@@ -1,13 +1,23 @@
 /* RecipeWidget.qss */
 
-/* BASE STYLES */
+#RecipeDialog #RecipeName {
+    color: #1B1D23;
+    font-family: 'Sakitu Baelah Clean';
+    font-size: 80px;
+    font-weight: 400;
+}
+
+#RecipeDialog [metaTitle="true"] {
+    color: #040404;
+    font-family: 'Montserrat Regular';
+    font-size: 22px;
+    font-weight: 400;
+}
 
 #RecipeStateFrame, #EmptyStateFrame, #ErrorStateFrame {
     background-color: #2C2F33;  /* Flat dark background */
     border-radius: 10px; /* Rounded corners */
 }
-
-
 
 #RecipeStateFrame QLabel {
     color: #E1E1E1;
@@ -32,15 +42,15 @@
     color: #03B79E;
 }
 
+
+
 /* INTERACTIVE ELEMENTS */
 
 #RecipeStateFrame:hover, #ErrorStateFrame:hover {
     background-color: #3A3D41; /* Slightly lighter on hover */
 }
 
-/* RECIPE DIALOG */
-
-
+/*** RECIPE DIALOG ***/
 #TitleBar {
     background-color: #1b1d23;
     border-top-left-radius: 0px; /* App Window Border Radius */

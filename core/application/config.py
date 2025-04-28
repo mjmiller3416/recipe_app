@@ -11,7 +11,7 @@ from PySide6.QtCore import QRegularExpression, QSize
 from PySide6.QtGui import QRegularExpressionValidator
 
 #🔸Local Imports
-from core.helpers.debug_logger import DebugLogger
+from helpers.debug_logger import DebugLogger
 
 #🔹DIRECTORY PATHS
 BASE_DIR = Path(__file__).resolve().parents[2]
@@ -21,8 +21,8 @@ IMAGES_DIR = ASSETS_DIR / "images"
 RECIPE_DIR = ASSETS_DIR / "recipe_images"
 
 #🔹ICON DEFAULTS
-ICON_SIZE = QSize(20, 20) 
-ICON_COLOR = "#949aa7" 
+ICON_SIZE = QSize(20, 20)
+ICON_COLOR = "#949aa7"
 ICON_COLOR_HOVER = "#03B79E"
 ICON_COLOR_CHECKED = "#03B79E"
 

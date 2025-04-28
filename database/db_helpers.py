@@ -1,7 +1,7 @@
 """
 Package: app/database
 
-This module provides low-level database operations for managing recipes, ingredients, 
+This module provides low-level database operations for managing recipes, ingredients,
 and weekly menus in the Meal Planner database.
 
 It includes:
@@ -10,7 +10,7 @@ It includes:
 """
 
 # 🔸 Local Imports
-from core.helpers.debug_logger import DebugLogger
+from helpers.debug_logger import DebugLogger
 
 
 class DatabaseHelper:
@@ -51,7 +51,7 @@ class DatabaseHelper:
         """
         Inserts a new ingredient into the 'ingredients' table.
         - No quantity or unit, because we only store that in recipe_ingredients.
-        
+
         Args:
             ingredient_data (dict): For example:
                 {
@@ -140,7 +140,7 @@ class DatabaseHelper:
     def delete_weekly_recipe(cursor, recipe_id): # ❌
         """
         Removes a weekly recipe from the database.
-        Low-level SQL delete operation. 
+        Low-level SQL delete operation.
         """
         # Remove the weekly recipe from the database
         # Return True if successful, False otherwise
@@ -182,22 +182,22 @@ class DatabaseHelper:
             recipe_id (int): The ID of the recipe to retrieve.
 
         Returns:
-            dict or None: A dictionary representing the recipe if found, 
+            dict or None: A dictionary representing the recipe if found,
                         or None if no recipe matches the given ID.
         """
         DebugLogger().log("🟢 Fetching recipe with ID '{recipe_id}' from the database...", "debug")
-        
+
         cursor.execute("""
             SELECT id, recipe_name, recipe_category, total_time, servings, directions, image_path
             FROM recipes
             WHERE id = ?
         """, (recipe_id,))
-        
+
         row = cursor.fetchone()
         if row:
             columns = [desc[0] for desc in cursor.description]
             return dict(zip(columns, row))
-        
+
         return None
 
     def get_all_ingredients(cursor, recipe_id): # ⚠️
@@ -229,7 +229,7 @@ class DatabaseHelper:
         """
         pass
 
-    @staticmethod 
+    @staticmethod
     def get_recipe_ingredients(cursor, recipe_id): # ⚠️
         """
         Retrieves all ingredients linked to a recipe.
@@ -242,14 +242,14 @@ class DatabaseHelper:
             list: A list of dictionaries containing ingredient details.
         """
         # DebugLogger().log("🟢 Fetching ingredients for recipe ID '{recipe_id}'...\n", "debug")
-        
+
         cursor.execute("""
             SELECT i.id, i.ingredient_name, i.ingredient_category, ri.quantity, ri.unit
             FROM recipe_ingredients ri
             JOIN ingredients i ON ri.ingredient_id = i.id
             WHERE ri.recipe_id = ?
         """, (recipe_id,))
-        
+
         columns = [desc[0] for desc in cursor.description]
         return [dict(zip(columns, row)) for row in cursor.fetchall()]
 
@@ -275,14 +275,14 @@ class DatabaseHelper:
             """,
             (meal_id,)
         )
-        
+
         row = cursor.fetchone()
         if row:
             columns = [desc[0] for desc in cursor.description]
             return dict(zip(columns, row))
-        
+
         return None
-    
+
     @staticmethod
     def get_all_meals(cursor):
         """
@@ -341,7 +341,7 @@ class DatabaseHelper:
         # Return True if it exists, False otherwise
         pass
 
-    def recipe_in_menu(self, recipe_id): # ❌   
+    def recipe_in_menu(self, recipe_id): # ❌
         """
         Check if a recipe is already in the weekly menu.
 

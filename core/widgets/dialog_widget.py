@@ -2,7 +2,7 @@ import sys
 
 from core.application.config import (ERROR_COLOR, INFO_COLOR, SUCCESS_COLOR,
                                      WARNING_COLOR, icon_path)
-from core.helpers import DebugLogger, svg_loader
+from helpers.debug_logger import DebugLogger
 from core.helpers.qt_imports import (QApplication, QColor, QDialog,
                                      QDialogButtonBox,
                                      QGraphicsDropShadowEffect, QGridLayout,
@@ -97,6 +97,7 @@ class DialogWidget(QDialog):
             self.buttonBox.addButton("OK", QDialogButtonBox.AcceptRole).clicked.connect(self.accept)
 
     def _set_messages(self, message, description):
+        from core.helpers.ui_helpers import svg_loader # Local import for button icons⚠️⚠️⚠️
         self.lbl_message.setText(message)
         self.lbl_description.setText(description)
 

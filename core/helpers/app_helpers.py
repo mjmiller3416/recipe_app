@@ -11,7 +11,7 @@ from typing import Literal
 from PySide6.QtCore import QFile, QIODevice, QTextStream
 
 #🔸Local Imports
-from core.helpers.debug_logger import DebugLogger
+from core.helpers import DebugLogger
 #🔸Third-Party Imports
 from core.helpers.qt_imports import (QApplication, QComboBox, QFile,
                                      QMessageBox, Qt, QTextStream, QWidget)
@@ -42,9 +42,9 @@ def show_message_box(
     Returns:
         QMessageBox.StandardButton: The button clicked by the user.
     """
-    
+
     from widgets import \
-        DialogWidget  # 🔸Lazy import to avoid circular dependancy 
+        DialogWidget  # 🔸Lazy import to avoid circular dependancy
 
     dialog = DialogWidget(box_type, message, informative_text, parent)
 
@@ -70,7 +70,7 @@ def populate_combobox(combobox: QComboBox, *values):
     """
     if len(values) == 1 and isinstance(values[0], list):
         values = values[0]  # Unpack list if a single list argument is passed
-    
+
     combobox.clear()
     combobox.addItems(values)
 
@@ -132,7 +132,7 @@ def load_and_apply_stylesheet(app: QApplication, file_path: str) -> bool:
         # Optionally apply an empty stylesheet to clear any existing one
         # app.setStyleSheet("")
         return False # Consider empty file a failure or non-action
-    
+
 # In core/helpers/app_helpers.py
 
 # 🔸Third-party Imports (Ensure these are at the top of the file)
@@ -141,7 +141,7 @@ from PySide6.QtWidgets import (  # QApplication might still be needed for type h
     QApplication, QWidget)
 
 # 🔸Local Imports (Ensure these are at the top of the file)
-from core.helpers.debug_logger import DebugLogger
+from helpers.debug_logger import DebugLogger
 
 # --- Existing load_and_apply_stylesheet function ---
 # def load_and_apply_stylesheet(app: QApplication, file_path: str) -> bool:

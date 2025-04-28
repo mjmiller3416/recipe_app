@@ -5,7 +5,7 @@ from database import DB_INSTANCE
 
 def insert_recipes_from_csv(csv_file):
     recipes = {}
-    
+
     # Read CSV file
     with open(csv_file, newline='', encoding='utf-8') as file:
         reader = csv.DictReader(file)

@@ -56,7 +56,7 @@ class MealPlannerApp:
         """
         DebugLogger().log("Application initializing...\n", "info")
         sys.exit(self.app.exec())
-   
+
 if "--reset" in sys.argv:
     print("Resetting database...")
     db_path = "database/app_data.db"
@@ -85,7 +85,7 @@ elif "--test" in sys.argv:
     test_window = run_test(app)
 
     sys.exit(app.exec())
- 
+
 else:
     # Regular launch
     app = MealPlannerApp()

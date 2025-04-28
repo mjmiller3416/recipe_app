@@ -30,7 +30,7 @@ class Icon(QLabel):
         """Initialize the Icon with the specified SVG, color, and size.
 
         Args:
-            name (str): Name of the SVG file (without path).
+            name (str): Name of the SVG file with extension (e.g., "icon.svg").
             size (QSize): Desired icon size.
             color (str, optional): Color to apply to the SVG. Defaults to ICON_COLOR.
             source (str, optional): Source color of the original SVG for color replacement. Defaults to "#000".

@@ -1,7 +1,7 @@
 """
 Package: database
 
-This module defines the `ApplicationDatabase` class, a singleton that manages 
+This module defines the `ApplicationDatabase` class, a singleton that manages
 high-level interactions with the SQLite database for the Meal Planner application.
 
 It provides:
@@ -16,7 +16,7 @@ import sqlite3
 #🔸Third-Party Imports
 from threading import Lock
 
-from core.helpers import DebugLogger
+from core.helpers.debug_logger import DebugLogger
 #🔸Local Imports
 from database.db_helpers import DatabaseHelper
 
@@ -24,7 +24,7 @@ from database.db_helpers import DatabaseHelper
 class ApplicationDatabase:
     """
     Singleton class that manages all database interactions.
-    
+
     Provides high-level CRUD operations for recipes, ingredients, and weekly menus.
     Uses `DatabaseHelper` for low-level SQL execution.
     """
@@ -42,7 +42,7 @@ class ApplicationDatabase:
 
     def init_db(self, db_path):
         """
-        Initializes the database. If the database file does not exist, 
+        Initializes the database. If the database file does not exist,
         it attempts to create and initialize it.
 
         Args:
@@ -68,7 +68,7 @@ class ApplicationDatabase:
 
         Returns:
             sqlite3.Connection: An active database connection.
-        
+
         Raises:
             RuntimeError: If the database has not been initialized.
         """
@@ -89,8 +89,8 @@ class ApplicationDatabase:
                 DebugLogger.log("Database connection closed.", "info")
         except Exception as e:
             DebugLogger.log(f"Error closing database connection: {e}", "error")
-    
-    # CRUD Operations               
+
+    # CRUD Operations
 
     #🔹CREATE
     def save_recipe(self, recipe_data): # ✅
@@ -110,11 +110,11 @@ class ApplicationDatabase:
             conn.commit()
         DebugLogger().log("🟢 Recipe added with ID: {recipe_id}\n", "debug")
         return recipe_id
-    
+
     def save_ingredients(self, recipe_id, ingredient_data):
         """
         Saves all ingredients to the database and links them to the given recipe_id.
-        
+
         Args:
             recipe_id (int): The ID of the recipe these ingredients belong to.
             ingredient_data (list): A list of ingredient dicts to save.
@@ -179,7 +179,7 @@ class ApplicationDatabase:
 
         with self.connect() as conn:
             cursor = conn.cursor()
-            
+
             # Fetch all recipes
             recipes = DatabaseHelper.get_all_recipes(cursor)
             if not recipes:
@@ -206,13 +206,13 @@ class ApplicationDatabase:
 
         with self.connect() as conn:
             cursor = conn.cursor()
-            
+
             # Fetch the main recipe details
             recipe = DatabaseHelper.get_recipe(cursor, recipe_id)
             if not recipe:
                 DebugLogger().log("🔴 Recipe ID '{recipe_id}' not found.\n", "warning")
                 return None
-            
+
             # Fetch associated ingredients
             recipe["ingredients"] = DatabaseHelper.get_recipe_ingredients(cursor, recipe_id)
 
@@ -230,9 +230,9 @@ class ApplicationDatabase:
 
         Returns:
             dict: A dictionary of ingredients with their quantities, units, and categories.
-        """ 
+        """
         DebugLogger().log("Fetching all ingredients from the database...", "debug")
-        
+
         ingredients = {}
         all_recipes = app_db.get_all_recipes()
 
@@ -243,7 +243,7 @@ class ApplicationDatabase:
             for recipe in all_recipes:
                 recipe_id = recipe[0]
                 ingredient_data = cursor.execute(
-                    "SELECT name, ingredient_category, quantity, unit FROM ingredients WHERE recipe_id = ?", 
+                    "SELECT name, ingredient_category, quantity, unit FROM ingredients WHERE recipe_id = ?",
                     (recipe_id,)
                 ).fetchall()
 
@@ -258,7 +258,7 @@ class ApplicationDatabase:
                         }
 
         return ingredients
-  
+
     def get_ingredient(self, ingredient_id): # ❌
         """
         Retrieve an ingredient by ID from the database.
@@ -346,7 +346,7 @@ class ApplicationDatabase:
                 side1 = meal_data.get("side1")
                 side2 = meal_data.get("side2")
                 side3 = meal_data.get("side3")
-                
+
                 cursor.execute(
                     """
                     UPDATE meal_selection
@@ -370,7 +370,7 @@ class ApplicationDatabase:
         """
         Delete a recipe from the database.
         Calls remove_recipe from db_helpers.py.
-        
+
         Args:
             recipe_id (int): The ID of the recipe to delete.
         """

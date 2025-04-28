@@ -1,6 +1,5 @@
 from core.application.config import ICON_COLOR, icon_path
 # 🔹 Local Import
-from core.helpers import svg_loader
 from core.helpers.qt_imports import (QFrame, QGridLayout, QIcon, QLabel,
                                      QLineEdit, QPixmap, QSize, QSizePolicy,
                                      Qt, QToolButton, Signal)
@@ -15,7 +14,7 @@ class SearchWidget(QFrame):
         - search_triggered(str): when text is entered or Enter is pressed.
         - recipe_selected(str): placeholder for future recipe selection support.
     """
-    
+
     # 🔹 Constants
     ICON_SIZE = QSize(16, 16)
 
@@ -37,6 +36,8 @@ class SearchWidget(QFrame):
     def _setup_ui(self):
         """Creates and lays out the internal UI elements."""
 
+        from core.helpers.ui_helpers import svg_loader # Import to avoid circular dependency ⚠️⚠️⚠️
+
         self.layout = QGridLayout(self)
         self.layout.setContentsMargins(12, 0, 8, 0)  # Left/right padding for breathing room
         self.layout.setSpacing(5)
@@ -46,7 +47,7 @@ class SearchWidget(QFrame):
         self.icon_clear = svg_loader(icon_path("x"), ICON_COLOR, self.ICON_SIZE, return_type=QIcon, source_color="#000")
 
         # 🔹 Search Icon
-        self.lbl_search = QLabel(self) 
+        self.lbl_search = QLabel(self)
         self.lbl_search.setObjectName("lbl_search")
         self.lbl_search.setFixedSize(self.ICON_SIZE)
         self.lbl_search.setPixmap(self.icon_search)

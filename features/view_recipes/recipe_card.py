@@ -48,7 +48,7 @@ class RecipeCard(QFrame):
                 font-weight: bold;
             }
 
-            #lbl_cook_time, 
+            #lbl_cook_time,
             #lbl_servings {
                 color: #E1E1E3;
                 font-size: 14px;
@@ -81,7 +81,7 @@ class RecipeCard(QFrame):
                 font-weight: bold;
             }
 
-            #lbl_cook_time, 
+            #lbl_cook_time,
             #lbl_servings {
                 color: #E1E1E3;
                 font-size: 14px;
@@ -195,7 +195,7 @@ class RecipeCard(QFrame):
     def set_image(self, image_path):
         """
         Sets the image for the RecipeCard based on the provided path.
-        
+
         Args:
             image_path (str): The path to the recipe image file.
         """
@@ -205,7 +205,7 @@ class RecipeCard(QFrame):
     def mousePressEvent(self, event):
         """
         Handles mouse press events on the RecipeCard.
-        
+
         Args:
             event (QMouseEvent): The mouse event that occurred.
         """
@@ -215,7 +215,7 @@ class RecipeCard(QFrame):
     def show_full_recipe(self, recipe_id):
         """
         Opens the FullRecipe dialog for the given recipe ID.
-        
+
         Args:
             recipe_id (int): The ID of the recipe to display in the FullRecipe dialog.
         """
@@ -227,7 +227,7 @@ class RecipeCard(QFrame):
     def wrapped(recipe_data, aspect_ratio=3 / 4, **kwargs):
         """
         Wraps a RecipeCard in a QWidget that maintains a fixed aspect ratio.
-        
+
         Args:
             recipe_data (dict): Recipe data to initialize the RecipeCard.
             aspect_ratio (float): Desired width / height ratio. Default is 3:4.
@@ -251,10 +251,10 @@ class RecipeCard(QFrame):
         # Inject resizeEvent into wrapper
         def resize_event(event):
             """ Adjust the wrapper size to maintain the aspect ratio.
-            
+
             This method is called when the wrapper is resized. It calculates the height based on the current width and the aspect ratio.
             If the width is changed, it sets the height accordingly to maintain the aspect ratio.
-            
+
             Args:
                 event (QResizeEvent): The resize event that triggered this method.
             """

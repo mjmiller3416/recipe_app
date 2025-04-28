@@ -9,7 +9,7 @@ from functools import partial
 #🔸Standard Library
 from typing import Union
 
-#🔸Third-party 
+#🔸Third-party
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QColor, QIcon, QPixmap
 from PySide6.QtWidgets import (QApplication, QGraphicsDropShadowEffect,
@@ -19,7 +19,6 @@ from PySide6.QtWidgets import (QApplication, QGraphicsDropShadowEffect,
 from core.application.config import (ICON_COLOR, ICON_COLOR_CHECKED,
                                      ICON_COLOR_HOVER, LOGO_COLOR, image_path)
 #🔸Local Imports
-from core.helpers import get_button_icons, svg_loader
 from core.helpers.style_loader import StyleLoader
 
 #🔹MARGINS        ←  ↑  →  ↓
@@ -47,11 +46,12 @@ class StyleManager:
         """
         Applies base QSS styles + widget-specific enhancements.
         """
-        from core.helpers.ui_helpers import get_all_buttons
+        from core.helpers.ui_helpers import get_all_buttons # Local import for button icons⚠️⚠️⚠️
+        from core.helpers.ui_helpers import svg_loader # Local import for SVG loader⚠️⚠️⚠️
 
         # Load and apply stylesheets (global styles)
-        base_stylesheet = self.style_loader.load_styles("base")  
-        
+        base_stylesheet = self.style_loader.load_styles("base")
+
         application_stylesheet = self.style_loader.load_styles("application")
         dashboard_stylesheet = self.style_loader.load_styles("dashboard")
         meal_planner_stylesheet = self.style_loader.load_styles("meal_planner")
@@ -61,9 +61,9 @@ class StyleManager:
         recipe_card_stylesheet = self.style_loader.load_styles("recipe_card")
         dialog_widget_stylesheet = self.style_loader.load_styles("dialog_widget")
 
-        combined_styles = ( 
-            base_stylesheet + application_stylesheet + dashboard_stylesheet + 
-            meal_planner_stylesheet + view_recipes_stylesheet + shopping_list_stylesheet + 
+        combined_styles = (
+            base_stylesheet + application_stylesheet + dashboard_stylesheet +
+            meal_planner_stylesheet + view_recipes_stylesheet + shopping_list_stylesheet +
             add_recipes_stylesheet + recipe_card_stylesheet + dialog_widget_stylesheet
         )
 
@@ -76,7 +76,7 @@ class StyleManager:
             # Change the logo color
             if hasattr(self.app, 'lbl_logo'):
                 img_logo = svg_loader(
-                    image_path("logo"), LOGO_COLOR, size=self.app.lbl_logo.size(), 
+                    image_path("logo"), LOGO_COLOR, size=self.app.lbl_logo.size(),
                     return_type=QPixmap, source_color="#000"
                     )
                 self.app.lbl_logo.setPixmap(img_logo)
@@ -125,6 +125,9 @@ class StyleManager:
             hover_color:   Color for the hover state.
             checked_color: Color when button.isChecked() == True.
         """
+        from core.helpers.ui_helpers import get_button_icons # Local import for button icons⚠️⚠️⚠️
+        from core.helpers.ui_helpers import svg_loader # Local import for SVG loader⚠️⚠️⚠️
+
         # normalize buttons into a list
         if isinstance(buttons, (QPushButton, QToolButton)):
             buttons = [buttons]

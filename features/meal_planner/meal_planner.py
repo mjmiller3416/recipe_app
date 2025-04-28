@@ -2,9 +2,9 @@
 """
 Module: meal_planner.meal_planner
 
-This module defines the MealPlanner class, which provides a tabbed interface for meal planning. 
-It allows users to create, edit, and save meal plans. The MealPlanner uses QTabWidget to manage 
-multiple meal planning tabs and integrates with the database to load and save meal data.   
+This module defines the MealPlanner class, which provides a tabbed interface for meal planning.
+It allows users to create, edit, and save meal plans. The MealPlanner uses QTabWidget to manage
+multiple meal planning tabs and integrates with the database to load and save meal data.
 """
 
 from core.application.config import icon_path
@@ -21,7 +21,7 @@ from .planner_layout import PlannerLayout
 class MealPlanner(QWidget):
     """
     The MealPlanner class manages a tabbed interface for creating, editing,
-    and saving meal plans within the application. 
+    and saving meal plans within the application.
 
     Atributes:
         meal_tabs (QTabWidget): The tab widget to manage meal planning tabs.
@@ -67,7 +67,7 @@ class MealPlanner(QWidget):
     def handle_tab_click(self, index):
         """
         Check if '+' tab was clicked, and open a new meal tab if so.
-        
+
         Args:
             index (int): The index of the clicked tab.
         """
@@ -109,7 +109,7 @@ class MealPlanner(QWidget):
     def get_current_meal_data(self):
         """
         Return meal data from the currently active tab, or None if unavailable.
-        
+
         Returns:
             dict or None: The meal data from the currently active tab's PlannerLayout, or None if no valid layout is found.
         """

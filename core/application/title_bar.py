@@ -5,8 +5,6 @@ from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
 
 from core.application.config import ICON_COLOR, icon_path
 # 🔸 Local Application Imports
-from core.helpers import svg_loader
-
 # 🔸 Constants
 ICON_SIZE = QSize(12, 12)
 BUTTON_SIZE = QSize(38, 38)
@@ -42,6 +40,9 @@ class TitleBar(QWidget):
         Args:
             parent (QWidget): The parent widget of the title bar.
         """
+
+        from core.helpers.ui_helpers import svg_loader # Local import for SVG loader⚠️⚠️⚠️
+
         super().__init__(parent)
         self.setObjectName("TitleBar")
         self.setAttribute(Qt.WA_StyledBackground)
@@ -120,7 +121,7 @@ class TitleBar(QWidget):
     def updateMaximizeIcon(self, maximized: bool):
         """
         Updates the maximize/restore icon based on the maximized state.
-        
+
         Args:
             maximized (bool): True if the window is maximized, False otherwise.
         """

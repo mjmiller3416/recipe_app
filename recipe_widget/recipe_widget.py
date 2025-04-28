@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QFrame, QStackedLayout, QWidget
 
 from core.helpers.app_helpers import load_and_apply_stylesheet
 # 🔸 Local Application Imports
-from core.helpers.debug_logger import DebugLogger
+from helpers.debug_logger import DebugLogger
 from core.modules.recipe_module import Recipe
 from database import DB_INSTANCE
 
@@ -173,11 +173,11 @@ class RecipeWidget(QFrame):
          #🔹Determine which frame to build🔹
         if self._recipe_id is not None and self._recipe_data is not None:
             if self._layout_mode == "medium":
-                # Call build_medium_frame 
+                # Call build_medium_frame
                 new_content_widget = build_medium_frame(self._recipe_data, self)
                 DebugLogger.log(f"Building medium frame for recipe ID: {self._recipe_id}", "debug")
             elif self._layout_mode == "small":
-                # Call build_small_frame 
+                # Call build_small_frame
                 new_content_widget = build_small_frame(self._recipe_data, self)
                 DebugLogger.log(f"Building small frame for recipe ID: {self._recipe_id}", "debug")
         else:

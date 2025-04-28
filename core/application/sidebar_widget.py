@@ -18,7 +18,7 @@ from PySide6.QtWidgets import (QLabel, QPushButton, QSizePolicy, QSpacerItem,
 # 🔸 Local Application Imports
 from core.application.config import (ICON_COLOR, ICON_SIZE, LOGO_COLOR,
                                      icon_path, image_path)
-from core.helpers import svg_loader
+from core.helpers.ui_helpers import svg_loader
 from core.helpers.ui_helpers import get_all_buttons
 from core.managers.style_manager import StyleManager
 
@@ -48,7 +48,7 @@ class SidebarWidget(QWidget):
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setSpacing(10)  # Space between buttons
 
-        # 🔹 Logo Container 
+        # 🔹 Logo Container
         self.logo_container = QWidget()
         self.logo_layout = QVBoxLayout(self.logo_container)
         self.logo_layout.setContentsMargins(0, 0, 0, 0)
@@ -69,37 +69,37 @@ class SidebarWidget(QWidget):
 
         # 🔹 Navigation Buttons
         self.btn_dashboard = self._create_nav_button( # Dashboard button
-            "btn_dashboard", 
-            "Dashboard", 
-            self.get_sidebar_icon("dashboard"), 
+            "btn_dashboard",
+            "Dashboard",
+            self.get_sidebar_icon("dashboard"),
             checked=True
         )
         self.verticalLayout.addWidget(self.btn_dashboard)
 
         self.btn_meal_planner = self._create_nav_button( # Meal Planner button
-            "btn_meal_planner", 
-            "Meal Plan", 
+            "btn_meal_planner",
+            "Meal Plan",
             self.get_sidebar_icon("meal_planner")
         )
         self.verticalLayout.addWidget(self.btn_meal_planner)
 
         self.btn_view_recipes = self._create_nav_button( # View Recipes button
-            "btn_view_recipes", 
-            "View Recipes", 
+            "btn_view_recipes",
+            "View Recipes",
             self.get_sidebar_icon("view_recipes")
         )
         self.verticalLayout.addWidget(self.btn_view_recipes)
 
         self.btn_shopping_list = self._create_nav_button( # Shopping List button
-            "btn_shopping_list", 
-            "Shopping List", 
+            "btn_shopping_list",
+            "Shopping List",
             self.get_sidebar_icon("shopping_list")
         )
         self.verticalLayout.addWidget(self.btn_shopping_list)
 
         self.btn_add_recipes = self._create_nav_button( # Add Recipes button
-            "btn_add_recipes", 
-            "Add Recipes", 
+            "btn_add_recipes",
+            "Add Recipes",
             self.get_sidebar_icon("add_recipes")
         )
         self.verticalLayout.addWidget(self.btn_add_recipes)
@@ -109,15 +109,15 @@ class SidebarWidget(QWidget):
 
         # 🔹 Settings & Exit Buttons
         self.btn_settings = self._create_nav_button( # Settings button
-            "btn_settings", 
-            "Settings", 
+            "btn_settings",
+            "Settings",
             self.get_sidebar_icon("settings")
         )
         self.verticalLayout.addWidget(self.btn_settings)
 
         self.btn_exit = self._create_nav_button( # Exit button
-            "btn_exit", 
-            "Exit", 
+            "btn_exit",
+            "Exit",
             self.get_sidebar_icon("exit")
         )
         self.btn_exit.clicked.connect(self.close_app.emit) # Connect exit button to close_app signal
@@ -132,7 +132,7 @@ class SidebarWidget(QWidget):
 
     def _create_nav_button(self, name, label, icon: QIcon = None, checked=False):
         """Helper to create navigation buttons.
-        
+
         Args:
             object_name (str): The object name for the button.
             text (str): The display text for the button.
@@ -159,10 +159,10 @@ class SidebarWidget(QWidget):
 
         # Update the logo color dynamically
         img_logo = svg_loader(
-            image_path("logo"), 
-            LOGO_COLOR, 
-            size=self.lbl_logo.size(), 
-            return_type=QPixmap, 
+            image_path("logo"),
+            LOGO_COLOR,
+            size=self.lbl_logo.size(),
+            return_type=QPixmap,
             source_color="#000"
         )
         self.lbl_logo.setPixmap(img_logo)

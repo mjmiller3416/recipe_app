@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 # 🔸 Local Imports
 from core.application.config import icon_path
-from core.helpers.debug_logger import DebugLogger
+from helpers.debug_logger import DebugLogger
 # 🔸 Third-party Imports
 from core.helpers.qt_imports import (QFrame, QHBoxLayout, QIcon, QPushButton,
                                      QSize, Qt, QVBoxLayout)
