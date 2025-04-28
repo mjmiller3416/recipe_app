@@ -1,7 +1,7 @@
 # Description: Database validators for recipe and ingredient data.
 
 #🔸Local Imports
-from core.helpers import DebugLogger
+from core.helpers.debug_logger import DebugLogger
 from core.helpers.qt_imports import QComboBox, QLineEdit, QTextEdit
 from core.helpers.ui_helpers import apply_error_style
 

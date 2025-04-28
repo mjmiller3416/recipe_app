@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QScrollArea,
 # Load stylesheet helper
 from core.helpers.app_helpers import load_stylesheet_for_widget
 # Debug logging
-from helpers.debug_logger import DebugLogger
+from core.helpers.debug_logger import DebugLogger
 # Recipe model
 from core.modules.recipe_module import Recipe
 # Database

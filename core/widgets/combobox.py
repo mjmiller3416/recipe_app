@@ -5,7 +5,7 @@
 
 #🔸Local Imports
 from core.application.config import INGREDIENT_CATEGORIES, MEASUREMENT_UNITS
-from helpers.debug_logger import DebugLogger
+from core.helpers.debug_logger import DebugLogger
 #🔸Third-Party Imports
 from core.helpers.qt_imports import QComboBox, QListView, Qt, Signal
 

@@ -2,7 +2,7 @@ import sys
 
 from core.application.config import (ERROR_COLOR, INFO_COLOR, SUCCESS_COLOR,
                                      WARNING_COLOR, icon_path)
-from helpers.debug_logger import DebugLogger
+from core.helpers.debug_logger import DebugLogger
 from core.helpers.qt_imports import (QApplication, QColor, QDialog,
                                      QDialogButtonBox,
                                      QGraphicsDropShadowEffect, QGridLayout,

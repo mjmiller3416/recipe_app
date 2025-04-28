@@ -12,7 +12,7 @@ Main Functions:
 """
 
 # 🔸 Local Application Imports
-from core.helpers import DebugLogger
+from core.helpers.debug_logger import DebugLogger
 # 🔸 Third-party Imports
 from core.helpers.qt_imports import QSettings
 from database import DB_INSTANCE

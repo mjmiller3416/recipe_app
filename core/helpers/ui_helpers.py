@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication,  # Added QLabel
 
 from core.application.config import DEBUG_LAYOUT_BORDERS, icon_path
 #🔸Local Imports
-from core.helpers import DebugLogger
+from core.helpers.debug_logger import DebugLogger
 
 # Package: app.helpers
 
@@ -38,7 +38,24 @@ def wrap_layout(layout_class: type[QLayout], name: str) -> tuple[QWidget, QLayou
     container.setObjectName(name)
     layout = layout_class(container)
     layout.setContentsMargins(0, 0, 0, 0)
-    return container, layout
+    return container, layout\
+
+class SidebarAnimator(QObject):
+    """ SidebarAnimator is a QObject that manages the width of a sidebar widget. """
+    def __init__(self, sidebar):
+        super().__init__()
+        self._value = sidebar.width()
+        self.sidebar = sidebar
+
+    def getValue(self):
+        return self._value
+
+    def setValue(self, value):
+        self._value = max(0, value)  # Clamp to non-negative
+        self.sidebar.setMaximumWidth(self._value)
+
+    value = Property(int, getValue, setValue)
+
 
 class HoverButton(QPushButton):
     """

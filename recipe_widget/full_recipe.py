@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (QDialog, QFrame, QGridLayout, QHBoxLayout,
                                QWidget)
 
 from core.application.title_bar import TitleBar
-from helpers.debug_logger import DebugLogger
+from core.helpers.debug_logger import DebugLogger
 # 🔸 Local Imports
 from database import DB_INSTANCE
 

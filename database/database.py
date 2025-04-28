@@ -168,6 +168,27 @@ class ApplicationDatabase:
         return meal_id
 
     #🔹READ
+    def recipe_exists(self, recipe_name, recipe_category):
+        """
+        Check if a recipe with the given name and category already exists.
+
+        Args:
+            recipe_name (str): The name of the recipe.
+            recipe_category (str): The category of the recipe.
+
+        Returns:
+            bool: True if the recipe exists, False otherwise.
+        """
+        DebugLogger().log(
+            "Checking if recipe '{recipe_name}' exists in category '{recipe_category}'...",
+            "debug"
+        )
+        query = "SELECT 1 FROM recipes WHERE recipe_name = ? AND recipe_category = ?"
+        with self.connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute(query, (recipe_name, recipe_category))
+            return cursor.fetchone() is not None
+
     def get_all_recipes(self): # ✅
         """
         Retrieves all recipes from the database, including associated ingredients.

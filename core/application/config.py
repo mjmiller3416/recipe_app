@@ -11,7 +11,7 @@ from PySide6.QtCore import QRegularExpression, QSize
 from PySide6.QtGui import QRegularExpressionValidator
 
 #🔸Local Imports
-from helpers.debug_logger import DebugLogger
+from core.helpers.debug_logger import DebugLogger
 
 #🔹DIRECTORY PATHS
 BASE_DIR = Path(__file__).resolve().parents[2]

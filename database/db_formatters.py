@@ -1,7 +1,7 @@
 # Description: Functions for formatting and validating data for saving to the database.
 
 #🔸Local Imports
-from helpers.debug_logger import DebugLogger
+from core.helpers.debug_logger import DebugLogger
 
 
 #🔹FORMAT DATA

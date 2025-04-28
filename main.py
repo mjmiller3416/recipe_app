@@ -9,7 +9,7 @@ from PySide6.QtWidgets import QApplication
 
 #🔸Local Imports
 from core.application import Application
-from core.helpers import DebugLogger
+from core.helpers.debug_logger import DebugLogger
 from core.helpers.debug_layout import DebugLayout
 from core.managers import StyleManager
 from database import DB_INSTANCE
@@ -85,6 +85,20 @@ elif "--test" in sys.argv:
     test_window = run_test(app)
 
     sys.exit(app.exec())
+
+elif "--import-recipes" in sys.argv:
+    print("Importing recipes from CSV...\n")
+
+    # 🔹 Initialize minimal app environment (optional if needed)
+    DB_INSTANCE.connect()
+
+    # 🔹 Import your function
+    from database.recipes_with_ingredients import insert_recipes_from_csv
+
+    # 🔹 Run it!
+    insert_recipes_from_csv("database/recipes_with_ingredients.csv")
+
+    DebugLogger().log("✅ Recipe import complete.\n", "success")
 
 else:
     # Regular launch

@@ -14,7 +14,7 @@ from .app_helpers import (exit_fullscreen, load_and_apply_stylesheet,
 # ─── Debugging ─────────────────────────────────────────────────────────────────
 from .debug_logger import DebugLogger
 # ─── UI Helpers ────────────────────────────────────────────────────────────────
-from .ui_helpers import (HoverButton, apply_error_style,
+from .ui_helpers import (HoverButton, SidebarAnimator, apply_error_style,
                          clear_error_styles, dynamic_validation,
                          get_all_buttons, get_button_icons, set_scaled_image,
                          svg_loader, wrap_layout)

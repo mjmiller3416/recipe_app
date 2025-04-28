@@ -8,7 +8,7 @@ from PySide6.QtGui import QMouseEvent, QPixmap
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
 from core.application.config import ICON_COLOR, icon_path
-from helpers.debug_logger import DebugLogger
+from core.helpers.debug_logger import DebugLogger
 from core.helpers.ui_helpers import set_scaled_image, svg_loader
 # 🔸 Local Imports
 from core.modules.recipe_module import Recipe

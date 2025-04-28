@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QFrame, QStackedLayout, QWidget
 
 from core.helpers.app_helpers import load_and_apply_stylesheet
 # 🔸 Local Application Imports
-from helpers.debug_logger import DebugLogger
+from core.helpers.debug_logger import DebugLogger
 from core.modules.recipe_module import Recipe
 from database import DB_INSTANCE
 

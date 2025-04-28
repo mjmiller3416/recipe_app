@@ -10,7 +10,7 @@ It includes:
 """
 
 # 🔸 Local Imports
-from helpers.debug_logger import DebugLogger
+from core.helpers.debug_logger import DebugLogger
 
 
 class DatabaseHelper:
@@ -309,23 +309,6 @@ class DatabaseHelper:
         return [dict(zip(columns, row)) for row in rows]
 
     #🔹CHECK DATA
-    def recipe_exists(self, name, category): # ⚠️
-        """
-        Check if a recipe with the given name and category already exists.
-
-        Args:
-            name (str): The name of the recipe.
-            category (str): The category of the recipe.
-
-        Returns:
-            bool: True if the recipe exists, False otherwise.
-        """
-        DebugLogger().log("Checking if recipe '{name}' exists in category '{category}'...", "debug")
-        query = "SELECT 1 FROM recipes WHERE name = ? AND category = ?"
-        with self.get_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute(query, (name, category))
-            return cursor.fetchone() is not None
 
     def ingredient_exists(self, name): # ❌
         """
