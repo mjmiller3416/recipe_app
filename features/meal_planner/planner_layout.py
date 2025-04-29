@@ -1,34 +1,19 @@
 # recipe_app/meal_planner/planner_layout.py
-"""
-Module: meal_planner.planner_layout
 
-This module defines the PlannerLayout class, which is a custom QWidget that organizes MealWidgets for meal planning.
-It includes a main dish and up to three side dishes, enabling users to select recipes for each meal type.
-"""
+# ── Imports ─────────────────────────────────────────────────────────────────────
+from core.helpers.qt_imports import (QEvent, QHBoxLayout, QToolTip, QVBoxLayout, QWidget)
 
-# 🔸Third-party Imports
-from core.helpers.qt_imports import (QEvent, QHBoxLayout, QToolTip,
-                                     QVBoxLayout, QWidget)
+from database import DB_INSTANCE
+from dev_sandbox.recipe_widget.recipe_slot import RecipeSlot
+from dev_sandbox.recipe_widget.constants   import LayoutSize
 
-# 🔸 Local Imports
-from .meal_widget import MealWidget
-
-
+# ── Class Definition ────────────────────────────────────────────────────────────
 class PlannerLayout(QWidget):
-    """
-    PlannerLayout is a custom QWidget that organizes MealWidgets for meal planning.
-
-    This layout includes a main dish and up to three side dishes, enabling users to select recipes for each meal type.
-
-    Attributes:
-        meal_widgets (dict): A dictionary mapping meal type keys to their respective MealWidget instances.
-        current_meal (dict): A dictionary tracking the currently selected recipe IDs for main and side dishes.
-    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.meal_widgets = {}
+        self.meal_slots = {}
         self.current_meal = {"main": None, "side1": None, "side2": None, "side3": None}
 
         self._setup_ui()
@@ -46,22 +31,24 @@ class PlannerLayout(QWidget):
         self.main_layout.setSpacing(10)
 
         #🔹Main Dish Widget
-        self.main_recipe = MealWidget(meal_type="main")
-        self.meal_widgets["main"] = self.main_recipe
-        self.main_layout.addWidget(self.main_recipe)
+        self.main_slot = RecipeSlot(size=LayoutSize.MEDIUM)
+        self.meal_slots["main"] = self.main_slot
+        self.main_layout.addWidget(self.main_slot)
 
         #🔹Side Dishes (vertical stack)
         self.side_layout = QVBoxLayout()
         self.side_layout.setSpacing(10)
 
         for i in range(1, 4):
-            key = f"side{i}"
-            widget = MealWidget(meal_type="side")
-            widget.setEnabled(False)
-            widget.setToolTip("Please select a main recipe first.")
-            widget.installEventFilter(self)
-            self.meal_widgets[key] = widget
-            self.side_layout.addWidget(widget)
+            side_slot = RecipeSlot(size=LayoutSize.SMALL) # create side dish slot
+
+            # set tooltip for disabled side slots
+            side_slot.setEnabled(False)
+            side_slot.setToolTip("Select a main dish first")
+
+            # add to layout
+            self.side_layout.addWidget(side_slot)
+            self.meal_slots[f"side{i}"] = side_slot
 
         self.main_layout.addLayout(self.side_layout)
 
@@ -69,17 +56,18 @@ class PlannerLayout(QWidget):
         """
         Connect signals from each MealWidget to the update_meal method.
 
-        This method connects the recipe_selected signal from each MealWidget to the update_meal 
+        This method connects the recipe_selected signal from each MealWidget to the update_meal
         method, allowing the PlannerLayout to update its internal state when a recipe is selected.
         """
-        for key, widget in self.meal_widgets.items():
-            widget.recipe_selected.connect(lambda mt, rid, k=key: self.update_meal(k, rid))
+        for key, slot in self.meal_slots.items():
+            # k=key closes over current loop variable
+            slot.recipe_selected.connect(lambda rid, k=key: self.update_meal(k, rid))
 
     def update_meal(self, key, recipe_id):
         """
         Update the meal selection for the given key (main or side).
 
-        This method updates the internal state of the current meal based on the selected recipe ID 
+        This method updates the internal state of the current meal based on the selected recipe ID
         for the given meal type key.
 
         Args:
@@ -90,8 +78,7 @@ class PlannerLayout(QWidget):
 
         if key == "main":
             for side in ["side1", "side2", "side3"]:
-                self.meal_widgets[side].setEnabled(True)
-                self.meal_widgets[side].setToolTip("")
+                self.meal_slots[side].setEnabled(True)
         elif key.startswith("side") and self.current_meal["main"] is None:
             # Failsafe (should never trigger)
             return
@@ -102,18 +89,21 @@ class PlannerLayout(QWidget):
 
     def set_meal_data(self, meal_dict):
         """Pre-populates the layout with given recipe IDs."""
-        for key, recipe_id in meal_dict.items():
-            if recipe_id:
-                self.meal_widgets[key].set_selected_recipe(recipe_id)
-                if key == "main":
+        for key, slot in self.meal_slots.items():
+            rid = meal_dict.get(key)
+            if rid:
+                recipe = DB_INSTANCE.get_recipe(rid)
+                slot.set_recipe(recipe)
+
+                if key == "main": # ensure main dish is enabled
                     for side in ["side1", "side2", "side3"]:
-                        self.meal_widgets[side].setEnabled(True)
-                        self.meal_widgets[side].setToolTip("")
+                        self.meal_slots[side].setEnabled(True)
+                        self.meal_slots[side].setToolTip("")
 
     def eventFilter(self, obj, event):
         """
         Custom event filter to handle tooltips for disabled MealWidgets.
-        
+
         This method intercepts events for the MealWidgets to show a tooltip when they are disabled.
 
         Args:

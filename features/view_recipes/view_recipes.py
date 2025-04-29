@@ -16,13 +16,13 @@ from database import DB_INSTANCE
 
 class ViewRecipes(QWidget):
     """Dynamically displays all recipes in a responsive scrollable layout using RecipeCard wrappers."""
-    
+
     recipe_selected = Signal(int)  # Signal that emits selected recipe ID
 
     def __init__(self, parent=None, meal_selection=False):
         """
         Initialize ViewRecipes.
-        
+
         Args:
             parent (QWidget, optional): Parent widget.
             meal_selection (bool): If True, enables recipe selection mode.
@@ -31,11 +31,11 @@ class ViewRecipes(QWidget):
 
         # Initialize & Setup UI
         self.setObjectName("ViewRecipes")
-        self.meal_selection = meal_selection 
+        self.meal_selection = meal_selection
         self.build_ui()
         self.recipes_loaded = False
         self.load_recipes()
-        
+
 
     def build_ui(self):
         """Initializes layout with a scrollable, responsive recipe area."""
@@ -177,7 +177,7 @@ class ViewRecipes(QWidget):
 
     def select_recipe(self, recipe_id):
         """Emit the selected recipe's ID and close the selection dialog.
-        
+
         Args:
             recipe_id (int): The ID of the selected recipe.
         """
@@ -190,7 +190,7 @@ class ViewRecipes(QWidget):
 
     def showEvent(self, event):
         """Override showEvent to load recipes if not already loaded.
-        
+
         Args:
             event (QShowEvent): The show event triggered when the widget is displayed.
         """

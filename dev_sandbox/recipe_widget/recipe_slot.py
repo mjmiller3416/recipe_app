@@ -9,6 +9,7 @@ from typing import Optional
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QPushButton, QStackedWidget, QVBoxLayout
 
+from core.helpers.debug_logger import DebugLogger
 from core.modules.recipe_module import Recipe
 from database import DB_INSTANCE
 from .builders.full_recipe import FullRecipe
@@ -28,9 +29,10 @@ class RecipeSlot(QFrame):
     """
 
     # ── Signals ─────────────────────────────────────────────────────────────────
-    add_meal_clicked  = Signal()
-    card_clicked   = Signal(object) # Recipe instance
-    delete_clicked = Signal(int)
+    add_meal_clicked = Signal()
+    card_clicked     = Signal(object) # recipe instance
+    delete_clicked   = Signal(int)
+    recipe_selected  = Signal(int)    # recipe_id
 
     def __init__(self, size: LayoutSize, parent=None) -> None:
         """Initialize the RecipeSlot with stacked empty, recipe, and error states."""
@@ -62,26 +64,39 @@ class RecipeSlot(QFrame):
 
     # ── Public Methods ──────────────────────────────────────────────────────────────
     def set_recipe(self, recipe: Recipe | None) -> None:
-        """Load a recipe into the slot or clear it.
-
-        Attempts to build the recipe page dynamically. If an error occurs during building, switches to the error page.
-
+        """Load or clear a recipe in this `RecipeSlot`.
         Args:
-            recipe (Recipe | None): Recipe object to display, or None to clear the slot.
+            recipe (Recipe | None): The `Recipe` object to display.
+                • `None` → revert to the empty state.
         """
+        # ── Clear Slots ──
         if recipe is None:
             self._recipe = None
-            self._stack.setCurrentIndex(0)
+            self._stack.setCurrentIndex(0) # show empty page
+
+            # Optionally inform listeners we cleared the slot
+            # self.recipe_selected.emit(-1)
+
             return
 
+        # ── Build Recipe Card ──
         self._recipe = recipe
         try:
             new_frame = FrameFactory.make("recipe", self._size, recipe)
-            self._swap_recipe_state(new_frame)
-            self._stack.setCurrentIndex(1)
-        except Exception as exc:
-            print("RecipeSlot error:", exc)
-            self._stack.setCurrentIndex(2)
+            self._swap_recipe_state(new_frame)        # replace old card
+            self._stack.setCurrentIndex(1)            # show recipe page
+
+            # wire click to card_clicked
+            new_frame.mousePressEvent = self._emit_card_clicked
+
+            # emit recipe ID
+            rid = getattr(recipe, "id", getattr(recipe, "recipe_id", None))
+            if rid is not None:
+                self.recipe_selected.emit(rid)
+
+        except Exception as exc:                      # catch render errors
+            print(f"[RecipeSlot] Failed to build card: {exc}")
+            self._stack.setCurrentIndex(2)            # show error page
 
     def recipe(self) -> Recipe | None:
         """Return the currently displayed recipe (or None)."""
@@ -118,7 +133,7 @@ class RecipeSlot(QFrame):
         if event.button() == Qt.LeftButton and self._recipe:
             self.card_clicked.emit(self._recipe)
 
-            # Auto-open the recipe dialog
+            # open the recipe dialog
             dlg = FullRecipe(self._recipe, self)
             dlg.exec()
 
@@ -128,30 +143,22 @@ class RecipeSlot(QFrame):
         Fetches recipes, displays a selection dialog, and loads the chosen recipe.
         """
         try:
-            # --- Database Interaction ---
-            # Assumption: DB_INSTANCE.get_all_recipes() returns a list of Recipe objects.
-            # Adjust this part based on your actual database access implementation.
-            all_recipes = DB_INSTANCE.get_all_recipes()
+            all_recipes = DB_INSTANCE.get_all_recipes() # fetch all recipes from the database
             if not all_recipes:
-                # Handle case with no recipes in DB (e.g., show message)
-                print("No recipes found in the database.")
+                print("No recipes found in the database.") # handle empty state
                 return
 
-            # --- Show Selection Dialog ---
+            # ── Show Selection Dialog ──
             dialog = RecipeSelectionDialog(all_recipes, self)
             if dialog.exec():  # Use exec() for modal dialog
                 selected_recipe = dialog.selected_recipe()
                 if selected_recipe:
                     self.set_recipe(selected_recipe)
                 else:
-                    # Handle case where dialog was accepted but no selection occurred (if possible)
-                    print("No recipe selected.")
+                    print("No recipe selected.") # handle no selection
             else:
-                # Handle dialog cancellation
-                print("Recipe selection cancelled.")
+                print("Recipe selection cancelled.") # handle cancellation
 
         except Exception as e:
-            # Handle potential errors during DB fetch or dialog display
-            print(f"Error handling add meal click: {e}")
-            # Optionally switch to error state:
-            # self._stack.setCurrentIndex(2)
+            print(f"Error handling add meal click: {e}") # handle exceptions
+            self._stack.setCurrentIndex(2) # switch to error state

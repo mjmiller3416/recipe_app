@@ -25,37 +25,35 @@ class RecipeSelectionDialog(BaseDialog):
         self._recipes = recipes
         self._selected_recipe: Optional[Recipe] = None
 
-        # --- Window Properties ---
+        # ── Window Properties ──
         self.setWindowTitle("Select a Recipe")
-        # Adjust size as needed
         self.setMinimumSize(400, 500)
         self.title_bar.btn_maximize.setVisible(False)
         self.title_bar.btn_toggle_sidebar.setVisible(False)
 
-        # --- Widgets ---
+        # ── Widgets ──
         self.list_widget = QListWidget()
         self.list_widget.setSelectionMode(QAbstractItemView.SingleSelection)
         self.populate_list()
 
-        # Connect double-click for quick selection
+        # connect double-click for quick selection
         self.list_widget.itemDoubleClicked.connect(self.accept)
 
-        # Standard OK/Cancel buttons
+        # ok/cancel buttons
         self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
 
-        # --- Layout ---
-        # add widgets to the content layout
+        # add widgets to layout
         self.content_layout.addWidget(self.list_widget)
         self.content_layout.addWidget(self.button_box)
 
     def populate_list(self):
         """ Fills the list widget with recipe names. """
         self.list_widget.clear()
+        # populate the list widget with recipe names
         for recipe in self._recipes:
             item = QListWidgetItem(recipe.name)
-            # Store the actual Recipe object with the item for later retrieval
             item.setData(Qt.UserRole, recipe)
             self.list_widget.addItem(item)
 
@@ -63,7 +61,7 @@ class RecipeSelectionDialog(BaseDialog):
         """ Returns the Recipe object selected by the user, or None. """
         current_item = self.list_widget.currentItem()
         if current_item:
-            # Retrieve the stored Recipe object
+            #retrieve the stored Recipe object
             return current_item.data(Qt.UserRole)
         return None
 
@@ -72,9 +70,6 @@ class RecipeSelectionDialog(BaseDialog):
         selected = self.selected_recipe()
         if selected:
             self._selected_recipe = selected
-            super().accept() # Call BaseDialog's accept
+            super().accept() # call BaseDialog accept method
         else:
-            # Optionally show a message if nothing is selected and OK is clicked
-            print("Please select a recipe.")
-            # Or just allow closing without selection depending on desired UX
-            # super().accept() # Uncomment to allow OK without selection
+            print("Please select a recipe.") # handle no selection case
