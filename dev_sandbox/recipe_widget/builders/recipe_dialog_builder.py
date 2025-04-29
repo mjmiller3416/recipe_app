@@ -1,4 +1,7 @@
-# File: ui/dialogs/full_recipe_dialog.py (Example path)
+"""recipe_widget/builders/recipe_dialog_builder.py
+
+Defines the RecipeDialogBuilder class, a custom dialog for displaying full recipe details including metadata, ingredients, and directions.
+"""
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtWidgets import (
@@ -17,11 +20,19 @@ from helpers.ui_helpers import Image, Separator
 # ── Constants ───────────────────────────────────────────────────────────────────
 ICON_SIZE = QSize(30,30)
 ICON_COLOR = "#3B575B"  # Example color, adjust as needed
+
 # ── Class Definition ────────────────────────────────────────────────────────────
 class RecipeDialogBuilder(BaseDialog):
-    """
-    A dialog to display a full recipe, mimicking the provided screenshot layout.
-    Inherits from BaseDialog for custom window chrome.
+    """Dialog for displaying a complete recipe with custom layout.
+
+    Inherits:
+        BaseDialog: Provides window chrome and layout container.
+
+    Displays:
+        - Header with recipe name
+        - Meta info (servings, time, category)
+        - Ingredients list
+        - Step-by-step directions
     """
     def __init__(self, recipe: Recipe, parent=None):
         super().__init__(parent)
@@ -34,52 +45,50 @@ class RecipeDialogBuilder(BaseDialog):
         self.setObjectName("RecipeDialog")
 
         # ── Setup UI ──
-        self._setup_ui()
+        self.setup_ui()
         self.overlay = DebugLayout(self)
 
     # ── Public Methods ──────────────────────────────────────────────────────────────
-    def _setup_ui(self) -> None:
-        """Builds the main UI layout."""
+    def setup_ui(self) -> None:
+        """Set up the full dialog layout with header, left, and right columns."""
         # ── Create Main Layout ──
-        self.lyt_main = QVBoxLayout()
-        self.lyt_main.setSpacing(30)
-        self.lyt_main.setContentsMargins(20, 20, 20, 20)
+        lyt_main = QVBoxLayout()
+        lyt_main.setSpacing(30)
+        lyt_main.setContentsMargins(20, 20, 20, 20)
 
-        # ── Add Header ──
-        self.header_frame = self.build_header_frame()
-        self.lyt_main.addWidget(self.header_frame, 0) # add header to main layout
+        # add header
+        header_frame = self.build_header_frame()
+        lyt_main.addWidget(header_frame, 0) # add header to main layout
 
         # ── Add Left & Right Columns ──
-        self.lyt_body = QHBoxLayout()
-        self.left_column = self._build_left_column()
-        self.right_column = self._build_right_column()
-        self.lyt_body.addLayout(self.left_column, 2)
-        self.lyt_body.addLayout(self.right_column, 3)
-        self.lyt_main.addLayout(self.lyt_body, 1)
+        lyt_body = QHBoxLayout()
+        left_column = self._build_left_column()
+        right_column = self._build_right_column()
+        lyt_body.addLayout(left_column, 2)
+        lyt_body.addLayout(right_column, 3)
+        lyt_main.addLayout(lyt_body, 1)
 
         # ── Add Header & Columns ──
-        self.content_layout.addLayout(self.lyt_main)
+        self.content_layout.addLayout(lyt_main)
 
     def build_header_frame(self) -> QFrame:
         """Creates the recipe image widget."""
-        # create frame
         self.header_frame, lyt_header = self._create_framed_layout(line_width=0)
 
         # recipe name
         self.lbl_recipe_name = QLabel(self.recipe.name)
         self.lbl_recipe_name.setObjectName("RecipeName")
         self.lbl_recipe_name.setAlignment(Qt.AlignCenter)
-        lyt_header.addWidget(self.lbl_recipe_name) # add recipe name to layout
+        lyt_header.addWidget(self.lbl_recipe_name) # add to layout
 
         # separator
-        self.separator = Separator.horizontal(690) # intentionally omitted for now
-        lyt_header.addWidget(self.separator, 0, Qt.AlignCenter) # add separator to layout
+        self.separator = Separator.horizontal(690)
+        lyt_header.addWidget(self.separator, 0, Qt.AlignCenter) # add to layout
 
         return self.header_frame
 
     def build_image_frame(self) -> QFrame:
         """Creates the recipe image widget."""
-        # create frame
         self.image_frame, lyt_image = self._create_framed_layout(line_width=0)
 
         # add image to layout
@@ -90,7 +99,6 @@ class RecipeDialogBuilder(BaseDialog):
 
     def build_meta_frame(self) -> QFrame:
         """Creates the meta information widget."""
-        # create frame
         self.meta_info_widget, lyt_meta = self._create_framed_layout(line_width=0)
 
         # add meta info to layout
@@ -101,47 +109,161 @@ class RecipeDialogBuilder(BaseDialog):
         return self.meta_info_widget
 
     def build_ingredients_frame(self) -> QFrame:
-        """Creates the ingredients list widget."""
-        # create frame
-        self.ingredients_widget, lyt_ingredients = self._create_framed_layout()
+        """Creates the ingredients list widget with bulleted items."""
+        self.ingredients_widget, lyt_ingredients = self._create_framed_layout(line_width=0)
 
-        #TODO: Add ingredients list
-        # add ingredients to layout
+        # header
+        lbl_ingredients_header = QLabel("Ingredients")
+        lbl_ingredients_header.setProperty("textHeader", True)
+        lyt_ingredients.addWidget(lbl_ingredients_header, 0, Qt.AlignTop) # add to layout
+
+        # ingredients list
+        if self.recipe.ingredients:
+            ingredients_block = self.build_list_block(
+                items=self.recipe.ingredients,
+                bullet_symbol="•",
+                bullet_color="#3B575B",
+                margins=(12, 20, 4, 4),
+                spacing=12, #space between items
+                label_property="textIngredients",
+            )
+            lyt_ingredients.addWidget(ingredients_block) # add to layout
+        else:
+            lyt_ingredients.addWidget(QLabel("No ingredients available."))
+
+        # spacer
+        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding) # pushes content to top
+        lyt_ingredients.addItem(spacer) # add to layout
 
         return self.ingredients_widget
 
     def build_directions_frame(self) -> QFrame:
-        """Creates the directions list widget."""
-        # create frame
-        self.directions_widget, lyt_directions = self._create_framed_layout()
+        """Creates the directions list widget with each step on its own line."""
+        self.directions_widget, lyt_directions = self._create_framed_layout(line_width=0)
+        self.directions_widget.setObjectName("DirectionsFrame")
 
-        #TODO: Add directions list
-        # add directions to layout
+        # ── Header ──
+        lbl_directions_header = QLabel("Directions")
+        lbl_directions_header.setProperty("textHeader", True)
+        lyt_directions.addWidget(lbl_directions_header, 0, Qt.AlignTop)
+
+        # ── Directions List ──
+        directions = self.recipe.directions or ""
+        lines = [line.strip() for line in directions.splitlines() if line.strip()]
+
+        if lines:
+            directions_block = self.build_list_block(
+                items=lines,
+                bullet_symbol= None,
+                margins= (8, 20, 4, 4),
+                spacing=20, # space between steps
+                label_property="textDirections",
+            )
+            lyt_directions.addWidget(directions_block)
+        else:
+            lbl_empty = QLabel("No directions available.")
+            lbl_empty.setWordWrap(True)
+            lyt_directions.addWidget(lbl_empty, 0, Qt.AlignTop)
+
+        # ── Spacer ──
+        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        lyt_directions.addItem(spacer)
 
         return self.directions_widget
 
-    # ── Private Methods ─────────────────────────────────────────────────────────────
-    def _create_framed_layout(
+    def build_list_block(
     self,
-    frame_shape:  QFrame.Shape = QFrame.Box,
-    frame_shadow: QFrame.Shadow = QFrame.Plain,
-    line_width:   int = 1,
-    size_policy:  tuple = (QSizePolicy.Expanding, QSizePolicy.Expanding),
-    margins:      tuple = (0, 0, 0, 0),
-    spacing:      int = 0,
-) -> tuple[QFrame, QVBoxLayout]:
+    items: list[str],
+    bullet_symbol: str | None = "•",
+    bullet_color: str = "#3B575B",
+    margins: tuple = (4, 4, 4, 4),
+    spacing: int = 6,
+    label_property: str | None = None,
+    property_value: any = True,
+) -> QFrame:
         """
-        Creates a QFrame with a QVBoxLayout inside, with standardized styling.
+        Builds a styled QFrame containing a formatted list.
+
+        Args:
+            items (list[str]): List of strings to display.
+            bullet_symbol (str | None, optional): Symbol to use as a bullet (e.g., '•', '1.', or None to disable).
+                Use "numbers" to auto-number each line. Set to None or "" to omit bullets entirely.
+            bullet_color (str, optional): Color of the bullet symbol (ignored if bullet_symbol is None).
+            margins (tuple, optional): Layout margins (left, top, right, bottom).
+            spacing (int, optional): Vertical spacing between list items (in pixels).
 
         Returns:
-            Tuple containing (QFrame, QVBoxLayout).
+            QFrame: A framed widget containing the formatted list.
         """
+        # ── Create sub-frame ──
+        frame, layout = self._create_framed_layout(
+            frame_shape=QFrame.NoFrame,
+            margins=margins,
+            spacing=0,
+        )
+
+        # ── Format list into RichText ──
+        html = ""
+        for idx, item in enumerate(items, start=1):
+            if bullet_symbol == "numbers":
+                bullet_html = f'<span style="color:{bullet_color};">{idx}.</span> '
+            elif bullet_symbol:  # handles non-empty string like '•'
+                bullet_html = f'<span style="color:{bullet_color};">{bullet_symbol}</span> '
+            else:
+                bullet_html = ""
+
+            html += (
+                f'<div style="margin-bottom:{spacing}px;">'
+                f'{bullet_html}{item}'
+                f'</div>'
+            )
+
+        # ── Create QLabel for RichText ──
+        lbl_list = QLabel()
+        lbl_list.setTextFormat(Qt.RichText)
+        lbl_list.setText(html)
+        lbl_list.setWordWrap(True)
+        lbl_list.setStyleSheet("padding: 2px 4px;")
+
+        # ── Optional QSS property ──
+        if label_property:
+            lbl_list.setProperty(label_property, property_value)
+
+        layout.addWidget(lbl_list)
+
+        return frame
+
+    # ── Private Methods ─────────────────────────────────────────────────────────────
+    def _create_framed_layout(
+        self,
+        frame_shape:  QFrame.Shape = QFrame.Box,
+        frame_shadow: QFrame.Shadow = QFrame.Plain,
+        line_width:   int = 1,
+        size_policy:  tuple = (QSizePolicy.Expanding, QSizePolicy.Expanding),
+        margins:      tuple = (0, 0, 0, 0),
+        spacing:      int = 0,
+    ) -> tuple[QFrame, QVBoxLayout]:
+        """Create a QFrame with a QVBoxLayout inside, with standardized styling.
+
+        Args:
+            frame_shape (QFrame.Shape): Shape of the frame (Box, NoFrame, etc.)
+            frame_shadow (QFrame.Shadow): Shadow style of the frame.
+            line_width (int): Line width for the frame border.
+            size_policy (tuple): (horizontal, vertical) QSizePolicy values.
+            margins (tuple): Layout margins (left, top, right, bottom).
+            spacing (int): Spacing between layout elements.
+
+        Returns:
+            tuple[QFrame, QVBoxLayout]: The created frame and its layout.
+        """
+        # ── Create Frame & Layout ──
         frame = QFrame()
         frame.setFrameShape(frame_shape)
         frame.setFrameShadow(frame_shadow)
         frame.setLineWidth(line_width)
         frame.setSizePolicy(*size_policy)
 
+        # ── Set Frame Properties ──
         layout = QVBoxLayout(frame)
         layout.setContentsMargins(*margins)
         layout.setSpacing(spacing)
@@ -171,20 +293,25 @@ class RecipeDialogBuilder(BaseDialog):
 
     def _build_meta_row(self, icon_name: str, text: str) -> QWidget:
         """Helper to create a row with an icon and label, nicely spaced."""
+        # ── Create Row ──
         container = QWidget()
         lyt = QHBoxLayout(container)
         lyt.setContentsMargins(0, 0, 0, 0)
         lyt.setSpacing(20)
 
+        # ── Create Icon & Label ──
         icon = Icon(icon_name, ICON_SIZE, ICON_COLOR)
         lbl = QLabel(text)
         lbl.setProperty("metaTitle", True)
         lbl.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
+        # ── add widgets to layout ──
         lyt.addWidget(icon)
         lyt.addWidget(lbl)
-        lyt.addStretch()
+        lyt.addStretch() # add stretch to push widgets to the left
 
         return container
+
+
 
 

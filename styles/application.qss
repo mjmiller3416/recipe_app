@@ -5,14 +5,14 @@ QWidget {
 
     /*Font */
     color: #949aa7;
-    font-family: "Segoe UI", "Arial", sans-serif; 
+    font-family: 'Segoe UI", "Arial", sans-serif';
 }
 
 
 #ApplicationWrapper {
     background-color: #2c313c;
     border: 0px solid #343b48; /* App Window Border */
-    border-radius: 0px; /* App Window Border Radius */ 
+    border-radius: 0px; /* App Window Border Radius */
 }
 
 #lbl_greeting {
@@ -23,10 +23,10 @@ QWidget {
     padding-left: 10px;
 
     /* Font */
-    color: #03B79E;
+    color: #6ad7ca;
     font-size: 26px;
     font-weight: bold;
-    
+
 }
 
 /* ------------------------------------------------------------------
@@ -34,7 +34,7 @@ QWidget {
    ------------------------------------------------------------------ */
 
 #TitleBar {
-    background-color: #1b1d23; 
+    background-color: #1b1d23;
     border-top-left-radius: 0px; /* App Window Border Radius */
     border-top-right-radius: 0px; /* App Window Border Radius */
     border-bottom: 2px solid #343b48;
@@ -53,7 +53,7 @@ QWidget {
     background-color: transparent;
     border-radius: 0px;
     margin-bottom: 2px; /* Button Margin */
-    
+
     /* Font */
     font-size: 20px;
     font-weight: 500;
@@ -77,8 +77,9 @@ QWidget {
     background-color: transparent;
     border-radius: 0px;
     padding: 10px 20px 10px 40px;
-    
+
    /* Font */
+    font-family: 'Baby Girly Script';
     font-size: 16px;
     text-align: left;
 }
@@ -97,7 +98,7 @@ QWidget {
 #SidebarWidget #lbl_logo {
     background-color: transparent;
 }
-    
+
 /* ------------------------------------------------------------------
    SEARCH WIDGET STYLING
    ------------------------------------------------------------------ */

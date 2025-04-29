@@ -4,6 +4,19 @@
 from core.helpers.debug_logger import DebugLogger
 
 
+def format_directions(raw_text: str) -> str:
+    """
+    Formats the directions by ensuring each step is separated by a newline.
+
+    Args:
+        raw_text (str): The raw input text from the user.
+
+    Returns:
+        str: A cleaned, newline-separated directions string.
+    """
+    lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
+    return "\n".join(lines)
+
 #🔹FORMAT DATA
 def format_recipe_data(le_recipe_name, cb_recipe_category, le_total_time, le_servings, te_directions, image_path=None):
     """
@@ -23,7 +36,7 @@ def format_recipe_data(le_recipe_name, cb_recipe_category, le_total_time, le_ser
         "recipe_category": cb_recipe_category.currentText().strip(),
         "total_time": int(le_total_time.text().strip()),
         "servings": int(le_servings.text().strip()),
-        "directions": te_directions.toPlainText().strip(),
+        "directions": format_directions(te_directions.toPlainText()),
         "image_path": image_path if image_path else "",
     }
 

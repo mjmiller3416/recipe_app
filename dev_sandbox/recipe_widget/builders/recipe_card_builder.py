@@ -131,7 +131,8 @@ class RecipeCardBuilder:
             )
         )
 
-        lyt.addLayout(lyt_meta) # add to layout
+        # ── add meta to layout ──
+        lyt.addLayout(lyt_meta)
 
     def _build_large(self, parent: QFrame):
         """Construct the large layout for the recipe card.

@@ -15,7 +15,7 @@ LAYOUT_SIZE = {
     "medium": QSize(280, 420),
     "large": QSize(420, 600),
 }
-ICON_COLOR = "#03B79E"
+ICON_COLOR = "#6ad7ca"
 
 # ── Enums ───────────────────────────────────────────────────────────────────────
 class LayoutSize(Enum):
