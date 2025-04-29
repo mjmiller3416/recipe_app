@@ -8,7 +8,9 @@ from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon
 
 from core.helpers.debug_logger import DebugLogger
+
 from .loader import SVGLoader, icon_path
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class IconFactory:

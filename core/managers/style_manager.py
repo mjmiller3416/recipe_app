@@ -46,8 +46,10 @@ class StyleManager:
         """
         Applies base QSS styles + widget-specific enhancements.
         """
-        from core.helpers.ui_helpers import get_all_buttons # Local import for button icons⚠️⚠️⚠️
-        from core.helpers.ui_helpers import svg_loader # Local import for SVG loader⚠️⚠️⚠️
+        from core.helpers.ui_helpers import \
+            get_all_buttons  # Local import for button icons⚠️⚠️⚠️
+        from core.helpers.ui_helpers import \
+            svg_loader  # Local import for SVG loader⚠️⚠️⚠️
 
         # Load and apply stylesheets (global styles)
         base_stylesheet = self.style_loader.load_styles("base")
@@ -125,8 +127,10 @@ class StyleManager:
             hover_color:   Color for the hover state.
             checked_color: Color when button.isChecked() == True.
         """
-        from core.helpers.ui_helpers import get_button_icons # Local import for button icons⚠️⚠️⚠️
-        from core.helpers.ui_helpers import svg_loader # Local import for SVG loader⚠️⚠️⚠️
+        from core.helpers.ui_helpers import \
+            get_button_icons  # Local import for button icons⚠️⚠️⚠️
+        from core.helpers.ui_helpers import \
+            svg_loader  # Local import for SVG loader⚠️⚠️⚠️
 
         # normalize buttons into a list
         if isinstance(buttons, (QPushButton, QToolButton)):

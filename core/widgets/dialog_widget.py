@@ -97,7 +97,8 @@ class DialogWidget(QDialog):
             self.buttonBox.addButton("OK", QDialogButtonBox.AcceptRole).clicked.connect(self.accept)
 
     def _set_messages(self, message, description):
-        from core.helpers.ui_helpers import svg_loader # Local import for button icons⚠️⚠️⚠️
+        from core.helpers.ui_helpers import \
+            svg_loader  # Local import for button icons⚠️⚠️⚠️
         self.lbl_message.setText(message)
         self.lbl_description.setText(description)
 

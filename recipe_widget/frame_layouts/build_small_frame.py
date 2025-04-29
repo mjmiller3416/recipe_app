@@ -3,6 +3,7 @@
 from typing import TYPE_CHECKING
 
 from PySide6.QtGui import QMouseEvent  # For mousePressEvent
+
 from core.helpers.debug_logger import DebugLogger
 # 🔸 Third-party Imports
 from core.helpers.qt_imports import QFrame, QHBoxLayout, QLabel, QSize, Qt

@@ -10,6 +10,7 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QFrame, QVBoxLayout
 
 from helpers.icon_helpers.widgets import IconButton
+
 from ..constants import LAYOUT_SIZE, LayoutSize
 
 # ── Constants ───────────────────────────────────────────────────────────────────

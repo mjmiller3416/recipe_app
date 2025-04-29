@@ -3,18 +3,17 @@
 Defines the RecipeDialogBuilder class, a custom dialog for displaying full recipe details including metadata, ingredients, and directions.
 """
 
+from PySide6.QtCore import QSize, Qt
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtWidgets import (
-    QWidget, QLabel, QVBoxLayout, QHBoxLayout,
-    QTextEdit, QSizePolicy, QFrame, QSpacerItem, QScrollArea,
-)
-from PySide6.QtCore import Qt, QSize
+from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QScrollArea,
+                               QSizePolicy, QSpacerItem, QTextEdit,
+                               QVBoxLayout, QWidget)
 
 from core.helpers.debug_layout import DebugLayout
 from core.modules.recipe_module import Recipe
 from database import DB_INSTANCE
-from helpers.icon_helpers import Icon
 from helpers.app_helpers.base_dialog import BaseDialog
+from helpers.icon_helpers import Icon
 from helpers.ui_helpers import Image, Separator
 
 # ── Constants ───────────────────────────────────────────────────────────────────
@@ -22,7 +21,7 @@ ICON_SIZE = QSize(30,30)
 ICON_COLOR = "#3B575B"  # Example color, adjust as needed
 
 # ── Class Definition ────────────────────────────────────────────────────────────
-class RecipeDialogBuilder(BaseDialog):
+class FullRecipe(BaseDialog):
     """Dialog for displaying a complete recipe with custom layout.
 
     Inherits:

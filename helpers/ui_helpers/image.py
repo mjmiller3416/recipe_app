@@ -3,10 +3,11 @@
 Defines the Image class, a QLabel subclass for displaying square images with size validation.
 """
 
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QPixmap
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtWidgets import QLabel
-from PySide6.QtGui import QPixmap
-from PySide6.QtCore import Qt
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class Image(QLabel):

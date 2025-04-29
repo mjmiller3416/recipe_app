@@ -9,7 +9,6 @@ from core.application.config import INT, NAME, RECIPE_CATEGORIES
 from core.helpers import clear_error_styles, dynamic_validation
 from core.helpers.app_helpers import populate_combobox
 from core.helpers.debug_logger import DebugLogger
-
 #🔸Third-party Imports
 from core.helpers.qt_imports import QFileDialog, Qt, QVBoxLayout, QWidget
 from core.managers import StyleManager

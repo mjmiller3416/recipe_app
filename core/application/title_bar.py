@@ -4,6 +4,7 @@ from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
 
 from core.application.config import ICON_COLOR, icon_path
+
 # 🔸 Local Application Imports
 # 🔸 Constants
 ICON_SIZE = QSize(12, 12)
@@ -41,7 +42,8 @@ class TitleBar(QWidget):
             parent (QWidget): The parent widget of the title bar.
         """
 
-        from core.helpers.ui_helpers import svg_loader # Local import for SVG loader⚠️⚠️⚠️
+        from core.helpers.ui_helpers import \
+            svg_loader  # Local import for SVG loader⚠️⚠️⚠️
 
         super().__init__(parent)
         self.setObjectName("TitleBar")

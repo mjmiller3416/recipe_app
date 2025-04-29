@@ -9,10 +9,12 @@ It includes:
 - Database integrity validation before performing operations.
 """
 
-# 🔸 Local Imports
+# ── Imports ─────────────────────────────────────────────────────────────────────
+from typing import List, Dict, Any
+
 from core.helpers.debug_logger import DebugLogger
 
-
+# ── Class Definition ────────────────────────────────────────────────────────────
 class DatabaseHelper:
     """Handles low-level database operations for recipes and ingredients."""
 
@@ -148,17 +150,18 @@ class DatabaseHelper:
 
     #🔹FETCH DATA
     @staticmethod
-    def get_all_recipes(cursor): # ✅
+    def get_all_recipes(cursor) -> List[Dict[str, Any]]: # <-- Return List[Dict]
         """
-        Retrieves all recipes from the database.
+        Retrieves core details for all recipes from the database.
 
         Args:
             cursor (sqlite3.Cursor): Active database cursor.
 
         Returns:
-            list: A list of dictionaries, each containing recipe details.
+            List[Dict[str, Any]]: A list of dictionaries, each containing core recipe details.
+                                  Keys match database column names (e.g., 'recipe_name').
         """
-        DebugLogger().log("🔵 Fetching all recipes from the database...", "info")
+        DebugLogger().log("🔵 Fetching core recipe details from the database...", "info")
 
         cursor.execute("""
             SELECT id, recipe_name, recipe_category, total_time, servings, directions, image_path
@@ -170,6 +173,7 @@ class DatabaseHelper:
             return []
 
         columns = [desc[0] for desc in cursor.description]
+        # Return list of dictionaries directly
         return [dict(zip(columns, row)) for row in rows]
 
     @staticmethod
@@ -230,28 +234,38 @@ class DatabaseHelper:
         pass
 
     @staticmethod
-    def get_recipe_ingredients(cursor, recipe_id): # ⚠️
+    def get_recipe_ingredients(cursor, recipe_id: int) -> List[Dict[str, Any]]: # <-- Add type hint
         """
-        Retrieves all ingredients linked to a recipe.
+        Retrieves all ingredients linked to a recipe, formatted for RecipeIngredient.
 
         Args:
             cursor (sqlite3.Cursor): Active database cursor.
             recipe_id (int): The ID of the recipe to fetch ingredients for.
 
         Returns:
-            list: A list of dictionaries containing ingredient details.
+            List[Dict[str, Any]]: A list of dictionaries containing ingredient details
+                                  compatible with RecipeIngredient.
         """
-        # DebugLogger().log("🟢 Fetching ingredients for recipe ID '{recipe_id}'...\n", "debug")
+        # DebugLogger().log("🟢 Fetching ingredients for recipe ID '{recipe_id}'...\n", "debug") # Optional logging
 
         cursor.execute("""
-            SELECT i.id, i.ingredient_name, i.ingredient_category, ri.quantity, ri.unit
+            SELECT
+                i.id AS ingredient_id,  -- <<< Use alias here
+                i.ingredient_name,
+                i.ingredient_category,
+                ri.quantity,
+                ri.unit
             FROM recipe_ingredients ri
             JOIN ingredients i ON ri.ingredient_id = i.id
             WHERE ri.recipe_id = ?
         """, (recipe_id,))
 
+        rows = cursor.fetchall() # Fetch all rows first
+        if not rows:
+             return [] # Return empty list if no ingredients
+
         columns = [desc[0] for desc in cursor.description]
-        return [dict(zip(columns, row)) for row in cursor.fetchall()]
+        return [dict(zip(columns, row)) for row in rows] # Convert rows to list of dicts
 
     @staticmethod
     def get_meal(cursor, meal_id):

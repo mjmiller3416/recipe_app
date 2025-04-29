@@ -10,9 +10,12 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QPushButton, QStackedWidget, QVBoxLayout
 
 from core.modules.recipe_module import Recipe
-from .builders.recipe_dialog_builder import RecipeDialogBuilder
+from database import DB_INSTANCE
+from .builders.full_recipe import FullRecipe
 from .constants import LayoutSize
+from .dialogas.recipe_selection_dialog import RecipeSelectionDialog
 from .frame_factory import FrameFactory
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class RecipeSlot(QFrame):
@@ -25,8 +28,8 @@ class RecipeSlot(QFrame):
     """
 
     # ── Signals ─────────────────────────────────────────────────────────────────
-    empty_clicked  = Signal()
-    card_clicked   = Signal(object)   # Recipe instance
+    add_meal_clicked  = Signal()
+    card_clicked   = Signal(object) # Recipe instance
     delete_clicked = Signal(int)
 
     def __init__(self, size: LayoutSize, parent=None) -> None:
@@ -92,7 +95,7 @@ class RecipeSlot(QFrame):
         """
         btn: QPushButton | None = self._empty_state.findChild(QPushButton, "AddMealButton")
         if btn:
-            btn.clicked.connect(self.empty_clicked.emit)
+            btn.clicked.connect(self._handle_add_meal_click)
 
     def _swap_recipe_state(self, new_frame: QFrame) -> None:
         """Replace the existing recipe page (index 1) with a fresh one."""
@@ -116,5 +119,39 @@ class RecipeSlot(QFrame):
             self.card_clicked.emit(self._recipe)
 
             # Auto-open the recipe dialog
-            dlg = RecipeDialogBuilder(self._recipe, self)
+            dlg = FullRecipe(self._recipe, self)
             dlg.exec()
+
+    def _handle_add_meal_click(self):
+        """
+        Handles the click event for the 'Add Meal' button in the empty state.
+        Fetches recipes, displays a selection dialog, and loads the chosen recipe.
+        """
+        try:
+            # --- Database Interaction ---
+            # Assumption: DB_INSTANCE.get_all_recipes() returns a list of Recipe objects.
+            # Adjust this part based on your actual database access implementation.
+            all_recipes = DB_INSTANCE.get_all_recipes()
+            if not all_recipes:
+                # Handle case with no recipes in DB (e.g., show message)
+                print("No recipes found in the database.")
+                return
+
+            # --- Show Selection Dialog ---
+            dialog = RecipeSelectionDialog(all_recipes, self)
+            if dialog.exec():  # Use exec() for modal dialog
+                selected_recipe = dialog.selected_recipe()
+                if selected_recipe:
+                    self.set_recipe(selected_recipe)
+                else:
+                    # Handle case where dialog was accepted but no selection occurred (if possible)
+                    print("No recipe selected.")
+            else:
+                # Handle dialog cancellation
+                print("Recipe selection cancelled.")
+
+        except Exception as e:
+            # Handle potential errors during DB fetch or dialog display
+            print(f"Error handling add meal click: {e}")
+            # Optionally switch to error state:
+            # self._stack.setCurrentIndex(2)

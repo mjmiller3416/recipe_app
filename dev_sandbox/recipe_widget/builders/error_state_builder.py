@@ -13,6 +13,7 @@ from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout
 
 from ..constants import LAYOUT_SIZE, LayoutSize
 
+
 # ── Class Definition ────────────────────────────────────────────────────────────
 @dataclass(frozen=True, slots=True)
 class ErrorStateBuilder:

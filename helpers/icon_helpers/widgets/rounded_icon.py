@@ -10,7 +10,9 @@ from PySide6.QtWidgets import QLabel, QWidget
 
 from core.application.config import ICON_COLOR
 from core.helpers.debug_logger import DebugLogger
+
 from ..loader import SVGLoader, icon_path
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class RoundedIcon(QLabel):

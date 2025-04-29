@@ -10,10 +10,10 @@ multiple meal planning tabs and integrates with the database to load and save me
 from core.application.config import icon_path
 # 🔸 Local Application Imports
 from core.helpers.debug_logger import DebugLogger
-from core.helpers.ui_helpers import svg_loader
 # 🔸 Third-party Imports
 from core.helpers.qt_imports import (QIcon, QSize, QTabWidget, QVBoxLayout,
                                      QWidget)
+from core.helpers.ui_helpers import svg_loader
 
 from .meal_helpers import load_meal_plan, save_all_meals, save_meal_plan
 from .planner_layout import PlannerLayout

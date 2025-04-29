@@ -1,6 +1,9 @@
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit, QListView, QSplitter
-from PySide6.QtCore import Qt
 import sys
+
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (QApplication, QListView, QSplitter, QTextEdit,
+                               QVBoxLayout, QWidget)
+
 
 class SplitterExample(QWidget):
     def __init__(self):

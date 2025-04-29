@@ -13,7 +13,8 @@ from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 from core.helpers.debug_logger import DebugLogger
 from core.modules.recipe_module import Recipe
 from helpers.icon_helpers.widgets import Icon
-from helpers.ui_helpers import Separator, RoundedImage
+from helpers.ui_helpers import RoundedImage, Separator
+
 from ..constants import ICON_COLOR, LAYOUT_SIZE, LayoutSize
 
 # ── Constants ───────────────────────────────────────────────────────────────────

@@ -16,6 +16,7 @@ from PySide6.QtWidgets import QApplication
 from core.helpers.debug_logger import DebugLogger
 from helpers.app_helpers.file_helpers import ICONS_DIR
 
+
 # ── Public Methods ──────────────────────────────────────────────────────────────
 def icon_path(name: str) -> str:
     """Resolve the filesystem path to an icon by name.

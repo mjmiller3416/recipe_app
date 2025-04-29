@@ -15,6 +15,7 @@ from features.dashboard import Dashboard
 from features.meal_planner import MealPlanner
 from features.shopping_list import ShoppingList
 from features.view_recipes import ViewRecipes
+
 from .sidebar_widget import SidebarWidget
 from .title_bar import TitleBar
 

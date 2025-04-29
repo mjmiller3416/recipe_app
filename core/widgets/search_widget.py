@@ -36,7 +36,8 @@ class SearchWidget(QFrame):
     def _setup_ui(self):
         """Creates and lays out the internal UI elements."""
 
-        from core.helpers.ui_helpers import svg_loader # Import to avoid circular dependency ⚠️⚠️⚠️
+        from core.helpers.ui_helpers import \
+            svg_loader  # Import to avoid circular dependency ⚠️⚠️⚠️
 
         self.layout = QGridLayout(self)
         self.layout.setContentsMargins(12, 0, 8, 0)  # Left/right padding for breathing room

@@ -2,8 +2,8 @@ import sys
 
 from core.application.config import (FLOAT, INGREDIENT_CATEGORIES,
                                      MEASUREMENT_UNITS, NAME, icon_path)
-from core.helpers.debug_logger import DebugLogger
 from core.helpers.app_helpers import populate_combobox
+from core.helpers.debug_logger import DebugLogger
 from core.helpers.qt_imports import (QApplication, QGridLayout, QIcon,
                                      QLineEdit, QPushButton, QSize,
                                      QSizePolicy, QWidget, Signal)

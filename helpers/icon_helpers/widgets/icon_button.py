@@ -7,10 +7,12 @@ Defines the IconButton class, a QPushButton with built-in dynamic hover and chec
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QPushButton
 
-from core.application.config import (ICON_COLOR, ICON_COLOR_CHECKED, ICON_COLOR_HOVER)
+from core.application.config import (ICON_COLOR, ICON_COLOR_CHECKED,
+                                     ICON_COLOR_HOVER)
 
 from ..effects import ApplyHoverEffects
 from ..factory import IconFactory
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class IconButton(QPushButton):

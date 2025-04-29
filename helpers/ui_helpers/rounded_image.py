@@ -9,6 +9,7 @@ from typing import Tuple, Union
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QLabel
 
+
 # ── Class Definition ────────────────────────────────────────────────────────────
 class RoundedImage(QLabel):
     """A QLabel subclass that displays an image with rounded corners.

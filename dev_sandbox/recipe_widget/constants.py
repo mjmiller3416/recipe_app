@@ -8,7 +8,6 @@ from enum import Enum
 
 from PySide6.QtCore import QSize
 
-
 # ── Constants ───────────────────────────────────────────────────────────────────
 LAYOUT_SIZE = {
     "small": QSize(280, 100),

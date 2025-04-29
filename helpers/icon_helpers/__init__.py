@@ -2,7 +2,7 @@
 from .effects import ApplyHoverEffects
 from .factory import IconFactory
 from .loader import SVGLoader, icon_path
-from .widgets import IconButton, Icon
+from .widgets import Icon, IconButton
 
 __all__ = [
     "SVGLoader","icon_path",

@@ -18,8 +18,7 @@ from PySide6.QtWidgets import (QLabel, QPushButton, QSizePolicy, QSpacerItem,
 # 🔸 Local Application Imports
 from core.application.config import (ICON_COLOR, ICON_SIZE, LOGO_COLOR,
                                      icon_path, image_path)
-from core.helpers.ui_helpers import svg_loader
-from core.helpers.ui_helpers import get_all_buttons
+from core.helpers.ui_helpers import get_all_buttons, svg_loader
 from core.managers.style_manager import StyleManager
 
 

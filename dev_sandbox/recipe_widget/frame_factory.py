@@ -11,6 +11,7 @@ from .builders.error_state_builder import ErrorStateBuilder
 from .builders.recipe_card_builder import RecipeCardBuilder
 from .constants import LayoutSize
 
+
 # ── Class Definition ────────────────────────────────────────────────────────────
 class FrameFactory:
     """A thin façade that delegates to the correct StateBuilder.

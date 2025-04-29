@@ -12,6 +12,7 @@ from core.helpers.debug_logger import DebugLogger
 
 from ..loader import SVGLoader, icon_path
 
+
 # ── Class Definition ────────────────────────────────────────────────────────────
 class Icon(QLabel):
     """A QLabel subclass that displays an SVG icon with color and size customization.

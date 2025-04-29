@@ -1,5 +1,6 @@
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QObject, Property
+from PySide6.QtCore import Property, QObject
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class SidebarAnimator(QObject):

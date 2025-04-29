@@ -9,6 +9,7 @@ from PySide6.QtWidgets import QDialog, QVBoxLayout, QWidget
 
 from core.application.title_bar import TitleBar
 
+
 # ── Class Definition ────────────────────────────────────────────────────────────
 class BaseDialog(QDialog):
     """

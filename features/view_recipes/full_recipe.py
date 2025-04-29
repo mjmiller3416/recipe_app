@@ -3,18 +3,18 @@
 # ── Imports ─────────────────────────────────────────────────────────────────────
 import sys
 
-from PySide6.QtWidgets import (QApplication, QWidget, QLabel,
-    QVBoxLayout, QHBoxLayout, QTextEdit, QSizePolicy, QDialog
-)
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
+from PySide6.QtWidgets import (QApplication, QDialog, QHBoxLayout, QLabel,
+                               QSizePolicy, QTextEdit, QVBoxLayout, QWidget)
 
 from core.application.config import ICON_COLOR, ICON_SIZE
 from core.modules.recipe_module import Recipe
 from database import DB_INSTANCE
-from helpers.icon_helpers import Icon
 from helpers.app_helpers.base_dialog import BaseDialog
+from helpers.icon_helpers import Icon
 from helpers.ui_helpers import rounded_image
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class FullRecipe(BaseDialog):

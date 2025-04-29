@@ -9,6 +9,7 @@ from functools import partial
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QAbstractButton
 
+
 # ── Class Definition ────────────────────────────────────────────────────────────
 class ApplyHoverEffects:
     """Provides static methods to wire dynamic hover and toggle icon effects onto buttons.
