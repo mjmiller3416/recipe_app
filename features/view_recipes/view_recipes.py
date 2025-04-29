@@ -5,7 +5,6 @@
 # creates recipe cards for each recipe. The layout is designed to be responsive, with three columns
 # per row. The class also includes methods for clearing the display and loading recipes.
 
-from functools import partial
 
 # 🔸 Third-Party Imports
 from core.helpers.qt_imports import (QScrollArea, QSizePolicy, QSpacerItem, Qt,
@@ -141,7 +140,6 @@ class ViewRecipes(QWidget):
 
         return FlowLayout(parent)
 
-
     def clear_recipe_display(self):
         """Removes all recipe widgets from the layout."""
         while self.flow_layout.count():
@@ -149,10 +147,9 @@ class ViewRecipes(QWidget):
             if item.widget():
                 item.widget().deleteLater()
 
-    def load_recipes(self):
-        """Fetches all recipes and displays them as wrapped RecipeCards."""
-        from features.view_recipes import \
-            RecipeCard  # ⚠️ Import RecipeCard here to avoid circular import
+    def load_recipes(self) -> None:
+        from dev_sandbox.recipe_widget.recipe_slot import RecipeSlot
+        from dev_sandbox.recipe_widget.constants   import LayoutSize
 
         recipes = DB_INSTANCE.get_all_recipes()
         if not recipes:
@@ -161,19 +158,17 @@ class ViewRecipes(QWidget):
         self.clear_recipe_display()
 
         for recipe in recipes:
-            card_widget = RecipeCard.wrapped(
-                recipe_data=recipe,
-                mode="full",
-                clickable=True,
-                meal_selection=self.meal_selection
-            )
+            slot = RecipeSlot(LayoutSize.MEDIUM, parent=self.scroll_container)
+            slot.set_recipe(recipe)
 
             if self.meal_selection:
-                card_widget.findChild(RecipeCard).recipe_clicked.connect(self.select_recipe)
+                slot.card_clicked.connect(
+                    lambda r, self=self: self.select_recipe(r.id)
+                )
 
-            self.flow_layout.addWidget(card_widget)
+            self.flow_layout.addWidget(slot)
 
-        self.recipes_loaded = True  # ✅ Mark as loaded
+        self.recipes_loaded = True
 
     def select_recipe(self, recipe_id):
         """Emit the selected recipe's ID and close the selection dialog.

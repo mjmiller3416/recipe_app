@@ -31,7 +31,7 @@ class RecipeSlot(QFrame):
     # ── Signals ─────────────────────────────────────────────────────────────────
     add_meal_clicked = Signal()
     card_clicked     = Signal(object) # recipe instance
-    delete_clicked   = Signal(int)
+    delete_clicked   = Signal(int)    # recipe_id
     recipe_selected  = Signal(int)    # recipe_id
 
     def __init__(self, size: LayoutSize, parent=None) -> None:
