@@ -28,14 +28,14 @@ class Recipe:
     def has_image(self) -> bool:
         """Returns True if the recipe has an associated image path."""
         return bool(self.image_path)
-    
+
     def formatted_total_time(self) -> str:
         return f"{self.total_time} min"
 
     def formatted_servings(self) -> str:
         """Returns the servings in a formatted string."""
         return f"{self.servings}"
-    
+
     def to_dict(self) -> dict:
         """Returns the original dictionary."""
         return self._data
