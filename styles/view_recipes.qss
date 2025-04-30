@@ -7,46 +7,6 @@
    border: none;
 }
 
-/* ------------------------------------------------------------------
-   FULL RECIPE STYLING
-   ------------------------------------------------------------------ */
-   #FullRecipe{
-      background-color: #ffffff;
-      padding: 15px;
-  }
-  
-  #FullRecipe #lbl_recipe_name {
-      color: #060606;
-      font-size: 26px;
-      font-weight: 800;
-  }
-  
-  #FullRecipe QLabel#lbl_total_time,
-  #FullRecipe QLabel#lbl_servings {
-      color: #060606;
-      font: 16px 'Montserrat';
-      font-weight: 500;
-  }
-  
-  #FullRecipe QTextBrowser {
-      background-color: #ffffff;
-      border: 1px solid #666;
-      border-radius: 4px;
-      padding: 5px;
-      color: #000000;
-      font: 14px 'Montserrat';
-  }
-  
-  #FullRecipe #lbl_recipe_image {
-      background-color: #ffffff;
-      border: 2px dashed #666;
-      color: #000000;
-      font-size: 14px;
-      font-weight: bold;
-      border-radius: 10px;
-  }
-
-
 
 
 

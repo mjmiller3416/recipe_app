@@ -45,7 +45,7 @@ class ViewRecipes(QWidget):
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.scroll_area.viewport().setStyleSheet("background-color: transparent;")
+
 
         self.scroll_container = QWidget()
         self.flow_layout = self.create_flow_layout(self.scroll_container)
@@ -148,8 +148,8 @@ class ViewRecipes(QWidget):
                 item.widget().deleteLater()
 
     def load_recipes(self) -> None:
-        from dev_sandbox.recipe_widget.constants import LayoutSize
-        from dev_sandbox.recipe_widget.recipe_slot import RecipeSlot
+        from recipe_widget.constants import LayoutSize
+        from recipe_widget.recipe_slot import RecipeSlot
 
         recipes = DB_INSTANCE.get_all_recipes()
         if not recipes:

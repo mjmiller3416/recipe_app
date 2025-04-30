@@ -13,7 +13,7 @@ from core.helpers.debug_logger import DebugLogger
 from database import DB_INSTANCE
 from database.modules.recipe_module import Recipe
 
-from .builders.full_recipe import FullRecipe
+from .builders.full_recipe_builder import FullRecipe
 from .constants import LayoutSize
 from .dialogas.recipe_selection_dialog import RecipeSelectionDialog
 from .frame_factory import FrameFactory

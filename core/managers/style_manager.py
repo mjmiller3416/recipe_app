@@ -60,13 +60,13 @@ class StyleManager:
         view_recipes_stylesheet = self.style_loader.load_styles("view_recipes")
         shopping_list_stylesheet = self.style_loader.load_styles("shopping_list")
         add_recipes_stylesheet = self.style_loader.load_styles("add_recipes")
-        recipe_card_stylesheet = self.style_loader.load_styles("recipe_card")
+        recipe_widget_stylesheet = self.style_loader.load_styles("recipe_widget")
         dialog_widget_stylesheet = self.style_loader.load_styles("dialog_widget")
 
         combined_styles = (
             base_stylesheet + application_stylesheet + dashboard_stylesheet +
             meal_planner_stylesheet + view_recipes_stylesheet + shopping_list_stylesheet +
-            add_recipes_stylesheet + recipe_card_stylesheet + dialog_widget_stylesheet
+            add_recipes_stylesheet + recipe_widget_stylesheet + dialog_widget_stylesheet
         )
 
         app_instance = QApplication.instance()

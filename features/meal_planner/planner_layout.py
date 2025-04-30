@@ -6,8 +6,8 @@ from PySide6.QtWidgets import QHBoxLayout, QToolTip, QVBoxLayout, QWidget
 
 from database import DB_INSTANCE
 from database.modules.recipe_module import Recipe
-from dev_sandbox.recipe_widget.constants import LayoutSize
-from dev_sandbox.recipe_widget.recipe_slot import RecipeSlot
+from recipe_widget.constants import LayoutSize
+from recipe_widget.recipe_slot import RecipeSlot
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

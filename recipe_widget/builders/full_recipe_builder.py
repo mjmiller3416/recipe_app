@@ -103,7 +103,7 @@ class FullRecipe(BaseDialog):
         # add meta info to layout
         lyt_meta.addWidget(self._build_meta_row("servings.svg", str(self.recipe.servings)))
         lyt_meta.addWidget(self._build_meta_row("total_time.svg", str(self.recipe.total_time)))
-        lyt_meta.addWidget(self._build_meta_row("category.svg", self.recipe.category))
+        lyt_meta.addWidget(self._build_meta_row("category.svg", self.recipe.recipe_category))
 
         return self.meta_info_widget
 
