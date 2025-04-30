@@ -148,8 +148,8 @@ class ViewRecipes(QWidget):
                 item.widget().deleteLater()
 
     def load_recipes(self) -> None:
+        from dev_sandbox.recipe_widget.constants import LayoutSize
         from dev_sandbox.recipe_widget.recipe_slot import RecipeSlot
-        from dev_sandbox.recipe_widget.constants   import LayoutSize
 
         recipes = DB_INSTANCE.get_all_recipes()
         if not recipes:

@@ -16,10 +16,10 @@ import sqlite3
 from typing import List
 
 from core.helpers.debug_logger import DebugLogger
-from core.modules.recipe_module import Recipe
+from database.helpers.db_helpers import DatabaseHelper
+from database.modules.recipe_module import Recipe
+from database.row_mapper import recipe_to_rows, rows_to_recipe
 
-
-from database.db_helpers import DatabaseHelper
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class ApplicationDatabase:
@@ -94,7 +94,7 @@ class ApplicationDatabase:
     # CRUD Operations
 
     #🔹CREATE
-    def save_recipe(self, recipe_data): # ✅
+    def save_recipe(self, recipe: Recipe) -> int: # ✅
         """
         Adds a new recipe to the database.
 
@@ -105,9 +105,21 @@ class ApplicationDatabase:
             int: The ID of the newly added recipe.
         """
         DebugLogger().log("🔵 Adding new recipe...", "info")
+        core_row, ingredient_rows = recipe_to_rows(recipe)
+
         with self.connect() as conn:
             cursor = conn.cursor()
-            recipe_id = DatabaseHelper.insert_recipe(cursor, recipe_data)
+            recipe_id = DatabaseHelper.insert_recipe(cursor, core_row)
+
+            for ingredient in ingredient_rows:
+                ingredient_id = DatabaseHelper.insert_ingredient(cursor, ingredient)
+                DatabaseHelper.insert_recipe_ingredient(
+                    cursor,
+                    recipe_id,
+                    ingredient_id,
+                    ingredient["quantity"],
+                    ingredient["unit"]
+                )
             conn.commit()
         DebugLogger().log("🟢 Recipe added with ID: {recipe_id}\n", "debug")
         return recipe_id
@@ -190,52 +202,37 @@ class ApplicationDatabase:
             cursor.execute(query, (recipe_name, recipe_category))
             return cursor.fetchone() is not None
 
-    def get_all_recipes(self) -> List[Recipe]: # <-- Return List[Recipe]
-        """
-        Retrieves all recipes from the database as fully populated Recipe objects,
-        including associated ingredients handled via the Recipe class constructor.
-
-        Returns:
-            List[Recipe]: A list of Recipe objects with ingredients populated.
-        """
+    def get_all_recipes(self) -> List[Recipe]:
+        """Return every recipe as a fully populated `Recipe` object."""
         DebugLogger().log("🟢 Fetching all recipes and their ingredients...", "debug")
-
         recipe_objects: List[Recipe] = []
 
         with self.connect() as conn:
             cursor = conn.cursor()
+            core_rows = DatabaseHelper.get_all_recipes(cursor)          # list[dict]
 
-            # 1. Fetch core recipe details as dictionaries
-            core_recipe_data_list = DatabaseHelper.get_all_recipes(cursor) # Returns List[Dict]
-            if not core_recipe_data_list:
+            if not core_rows:
                 DebugLogger().log("🔴 No recipes found in the database.\n", "warning")
                 return []
 
-            # 2. For each recipe dictionary, fetch its ingredient dictionaries
-            for recipe_dict in core_recipe_data_list:
-                recipe_id = recipe_dict.get("id")
+            for row in core_rows:
+                recipe_id = row.get("id")
                 if recipe_id is None:
-                    DebugLogger().log(f"⚠️ Skipping recipe dict with no ID: {recipe_dict}", "warning")
+                    DebugLogger().log(f"⚠️ Skipping recipe dict with no ID: {row}", "warning")
                     continue
 
-                # Fetch ingredient data (List[Dict]) for this recipe
-                # This now returns dicts with 'ingredient_id' key correctly
-                ingredient_data_list = DatabaseHelper.get_recipe_ingredients(cursor, recipe_id)
+                ingredient_rows = DatabaseHelper.get_recipe_ingredients(cursor, recipe_id)
 
-                # 3. Add the ingredient list to the recipe dictionary
-                recipe_dict["ingredients"] = ingredient_data_list
-
-                # 4. Now, create the Recipe object using the combined dictionary
                 try:
-                    # Recipe.__init__ handles mapping dict keys ('recipe_name', etc.)
-                    # and creating RecipeIngredient objects from the 'ingredients' list.
-                    recipe_obj = Recipe(recipe_dict)
-                    recipe_objects.append(recipe_obj)
+                    recipe_objects.append(rows_to_recipe(row, ingredient_rows))
                 except Exception as e:
-                    # Log error if Recipe instantiation fails
-                    DebugLogger().log(f"🔴 Error creating Recipe object for ID {recipe_id}: {e}\nData: {recipe_dict}", "error")
+                    DebugLogger().log(
+                        f"Error building Recipe ID {recipe_id}: {e}\nData: {row}",
+                        "error"
+                    )
 
-        return recipe_objects # Return the list of fully populated Recipe objects
+        return recipe_objects
+
 
     def get_recipe(self, recipe_id): # ✅
         """
@@ -259,9 +256,9 @@ class ApplicationDatabase:
                 return None
 
             # Fetch associated ingredients
-            recipe["ingredients"] = DatabaseHelper.get_recipe_ingredients(cursor, recipe_id)
+            ingredients = DatabaseHelper.get_recipe_ingredients(cursor, recipe_id)
 
-        return recipe
+        return rows_to_recipe(recipe, ingredients) # Convert to Recipe object
 
     def get_all_ingredients(app_db): # ⚠️
         """

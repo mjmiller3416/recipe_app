@@ -93,7 +93,7 @@ elif "--import-recipes" in sys.argv:
     DB_INSTANCE.connect()
 
     # 🔹 Import your function
-    from database.recipes_with_ingredients import insert_recipes_from_csv
+    from scripts.db.recipes_with_ingredients import insert_recipes_from_csv
 
     # 🔹 Run it!
     insert_recipes_from_csv("database/recipes_with_ingredients.csv")

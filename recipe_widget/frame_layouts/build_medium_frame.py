@@ -2,6 +2,8 @@
 # 🔸 Standard Library Imports
 from typing import TYPE_CHECKING
 
+# 🔸 Local Imports
+from core.modules.recipe_module import Recipe
 # 🔸 Third-party Imports
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QMouseEvent, QPixmap
@@ -10,8 +12,6 @@ from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 from core.application.config import ICON_COLOR, icon_path
 from core.helpers.debug_logger import DebugLogger
 from core.helpers.ui_helpers import set_scaled_image, svg_loader
-# 🔸 Local Imports
-from core.modules.recipe_module import Recipe
 
 from ..config import MEDIUM_CARD_WIDTH  # Import dimensions
 from ..config import MEDIUM_IMAGE_HEIGHT

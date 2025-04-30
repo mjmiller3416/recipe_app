@@ -10,8 +10,8 @@ from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QScrollArea,
                                QVBoxLayout, QWidget)
 
 from core.helpers.debug_layout import DebugLayout
-from core.modules.recipe_module import Recipe
 from database import DB_INSTANCE
+from database.modules.recipe_module import Recipe
 from helpers.app_helpers.base_dialog import BaseDialog
 from helpers.icon_helpers import Icon
 from helpers.ui_helpers import Image, Separator
@@ -75,7 +75,7 @@ class FullRecipe(BaseDialog):
         self.header_frame, lyt_header = self._create_framed_layout(line_width=0)
 
         # recipe name
-        self.lbl_recipe_name = QLabel(self.recipe.name)
+        self.lbl_recipe_name = QLabel(self.recipe.recipe_name)
         self.lbl_recipe_name.setObjectName("RecipeName")
         self.lbl_recipe_name.setAlignment(Qt.AlignCenter)
         lyt_header.addWidget(self.lbl_recipe_name) # add to layout

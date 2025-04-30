@@ -2,15 +2,15 @@
 # 🔸 Standard Library Imports
 from typing import TYPE_CHECKING
 
+# 🔸 Local Imports
+from core.modules.recipe_module import \
+    Recipe  # Assuming Recipe object is passed
 from PySide6.QtGui import QMouseEvent  # For mousePressEvent
 
 from core.helpers.debug_logger import DebugLogger
 # 🔸 Third-party Imports
 from core.helpers.qt_imports import QFrame, QHBoxLayout, QLabel, QSize, Qt
 from core.helpers.ui_helpers import set_scaled_image
-# 🔸 Local Imports
-from core.modules.recipe_module import \
-    Recipe  # Assuming Recipe object is passed
 
 from ..config import SMALL_IMAGE_SIZE  # Import dimensions
 

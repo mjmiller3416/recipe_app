@@ -1,14 +1,14 @@
 # recipe_app/meal_planner/planner_layout.py
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QEvent
-from PySide6.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QToolTip
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QEvent, Qt
+from PySide6.QtWidgets import QHBoxLayout, QToolTip, QVBoxLayout, QWidget
 
-from core.modules.recipe_module import Recipe
 from database import DB_INSTANCE
+from database.modules.recipe_module import Recipe
+from dev_sandbox.recipe_widget.constants import LayoutSize
 from dev_sandbox.recipe_widget.recipe_slot import RecipeSlot
-from dev_sandbox.recipe_widget.constants   import LayoutSize
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class PlannerLayout(QWidget):

@@ -15,7 +15,7 @@ Main Functions:
 from core.helpers.debug_logger import DebugLogger
 # 🔸 Third-party Imports
 from core.helpers.qt_imports import QSettings
-from database import DB_INSTANCE
+from database.database import DB_INSTANCE
 
 
 def load_meal_plan(callback):

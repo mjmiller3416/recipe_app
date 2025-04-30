@@ -208,9 +208,9 @@ if __name__ == "__main__":
 
     from PySide6.QtWidgets import QApplication
 
-    # point this at wherever your FullRecipe lives
-    from core.modules.recipe_module import Recipe
     from database import DB_INSTANCE
+    # point this at wherever your FullRecipe lives
+    from database.modules.recipe_module import Recipe
 
     parser = argparse.ArgumentParser(
         description="Launch FullRecipe dialog against your real DB"
@@ -233,7 +233,7 @@ if __name__ == "__main__":
     # 📦 wrap it in your Recipe helper (just to prove it’s working)
     recipe = Recipe(raw_data)
     print(
-        f"✅ Loaded “{recipe.name}” "
+        f"✅ Loaded “{recipe.recipe_name}” "
         f"({recipe.formatted_total_time()}, serves {recipe.formatted_servings()})"
     )
 

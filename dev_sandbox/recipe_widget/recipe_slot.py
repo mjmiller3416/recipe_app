@@ -10,8 +10,9 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QPushButton, QStackedWidget, QVBoxLayout
 
 from core.helpers.debug_logger import DebugLogger
-from core.modules.recipe_module import Recipe
 from database import DB_INSTANCE
+from database.modules.recipe_module import Recipe
+
 from .builders.full_recipe import FullRecipe
 from .constants import LayoutSize
 from .dialogas.recipe_selection_dialog import RecipeSelectionDialog

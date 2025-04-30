@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QDialogButtonBox,
                                QListWidget, QListWidgetItem, QPushButton,
                                QVBoxLayout)
 
-from core.modules.recipe_module import Recipe
+from database.modules.recipe_module import Recipe
 from helpers.app_helpers.base_dialog import BaseDialog
 
 
@@ -53,7 +53,7 @@ class RecipeSelectionDialog(BaseDialog):
         self.list_widget.clear()
         # populate the list widget with recipe names
         for recipe in self._recipes:
-            item = QListWidgetItem(recipe.name)
+            item = QListWidgetItem(recipe.recipe_name)
             item.setData(Qt.UserRole, recipe)
             self.list_widget.addItem(item)
 

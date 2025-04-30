@@ -11,7 +11,7 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
 from core.helpers.debug_logger import DebugLogger
-from core.modules.recipe_module import Recipe
+from database.modules.recipe_module import Recipe
 from helpers.icon_helpers.widgets import Icon
 from helpers.ui_helpers import RoundedImage, Separator
 
@@ -76,7 +76,7 @@ class RecipeCardBuilder:
         lyt.addWidget(lbl_image) # add to layout
 
         # recipe name
-        lbl_name = QLabel(self.recipe.name)
+        lbl_name = QLabel(self.recipe.recipe_name)
         lbl_name.setProperty("title_text", "true")
         lbl_name.setAlignment(Qt.AlignCenter)
         lyt.addWidget(lbl_name) # add to layout
@@ -101,7 +101,7 @@ class RecipeCardBuilder:
         lyt.addWidget(img_recipe) # add to layout
 
         # recipe name
-        lbl_name = QLabel(self.recipe.name)
+        lbl_name = QLabel(self.recipe.recipe_name)
         lbl_name.setProperty("title_text", "true")
         lbl_name.setAlignment(Qt.AlignCenter)
         lyt.addWidget(lbl_name) # add to layout

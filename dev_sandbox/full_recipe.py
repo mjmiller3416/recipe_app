@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (QDialog, QFrame, QLabel, QPushButton,
 
 from core.helpers.debug_logger import DebugLogger
 #🔸Local Imports
-from core.modules.recipe_module import Recipe
+from database.modules.recipe_module import Recipe
 
 
 class FullRecipe(QDialog):
