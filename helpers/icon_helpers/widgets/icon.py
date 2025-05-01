@@ -8,7 +8,7 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QLabel
 
 from core.application.config import ICON_COLOR
-from core.helpers.debug_logger import DebugLogger
+from helpers.app_helpers.debug_logger import DebugLogger
 
 from ..loader import SVGLoader, icon_path
 

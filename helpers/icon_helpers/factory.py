@@ -7,7 +7,7 @@ Provides the IconFactory class for generating QIcons with dynamic color variants
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon
 
-from core.helpers.debug_logger import DebugLogger
+from helpers.app_helpers.debug_logger import DebugLogger
 
 from .loader import SVGLoader, icon_path
 

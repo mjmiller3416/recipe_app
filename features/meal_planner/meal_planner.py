@@ -9,7 +9,7 @@ multiple meal planning tabs and integrates with the database to load and save me
 
 from core.application.config import icon_path
 # 🔸 Local Application Imports
-from core.helpers.debug_logger import DebugLogger
+from helpers.app_helpers.debug_logger import DebugLogger
 # 🔸 Third-party Imports
 from core.helpers.qt_imports import (QIcon, QSize, QTabWidget, QVBoxLayout,
                                      QWidget)

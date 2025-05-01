@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication,  # Added QLabel
 
 from core.application.config import DEBUG_LAYOUT_BORDERS, icon_path
 #🔸Local Imports
-from core.helpers.debug_logger import DebugLogger
+from helpers.app_helpers.debug_logger import DebugLogger
 
 # Package: app.helpers
 

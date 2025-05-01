@@ -1,6 +1,6 @@
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from core.application.config import ICONS_DIR, IMAGES_DIR, RECIPE_DIR
-from core.helpers.debug_logger import DebugLogger
+from helpers.app_helpers.debug_logger import DebugLogger
 
 
 def image_path(name: str) -> str:

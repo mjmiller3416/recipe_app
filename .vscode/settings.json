@@ -81,6 +81,9 @@
       //** Subfolders **//
       "app_helpers": "App",
       "ui_helpers": "UI",
+      "migrations": "Archive",
+      "services": "Tasks",
+      "models": "Packages",
 
       //** Assets **//
       "assets": "Resource",

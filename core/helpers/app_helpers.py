@@ -11,7 +11,7 @@ from typing import Literal
 from PySide6.QtCore import QFile, QIODevice, QTextStream
 
 #🔸Local Imports
-from core.helpers.debug_logger import DebugLogger
+from helpers.app_helpers.debug_logger import DebugLogger
 #🔸Third-Party Imports
 from core.helpers.qt_imports import (QApplication, QComboBox, QFile,
                                      QMessageBox, Qt, QTextStream, QWidget)
@@ -141,7 +141,7 @@ from PySide6.QtWidgets import (  # QApplication might still be needed for type h
     QApplication, QWidget)
 
 # 🔸Local Imports (Ensure these are at the top of the file)
-from core.helpers.debug_logger import DebugLogger
+from helpers.app_helpers.debug_logger import DebugLogger
 
 # --- Existing load_and_apply_stylesheet function ---
 # def load_and_apply_stylesheet(app: QApplication, file_path: str) -> bool:
