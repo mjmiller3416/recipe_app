@@ -9,9 +9,9 @@ from typing import Optional
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QPushButton, QStackedWidget, QVBoxLayout
 
-from helpers.app_helpers.debug_logger import DebugLogger
 from database import DB_INSTANCE
 from database.modules.recipe_module import Recipe
+from helpers.app_helpers.debug_logger import DebugLogger
 
 from .builders.full_recipe_builder import FullRecipe
 from .constants import LayoutSize

@@ -1,3 +1,4 @@
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from typing import Optional
 
 from pydantic import Field
@@ -5,6 +6,7 @@ from pydantic import Field
 from database.base_model import ModelBase
 
 
+# ── Class Definition ────────────────────────────────────────────────────────────
 class RecipeIngredient(ModelBase):
     """
     Pydantic model for the `recipe_ingredients` join table.
@@ -16,7 +18,7 @@ class RecipeIngredient(ModelBase):
 
     @classmethod
     def table_name(cls) -> str:
-        # Override default pluralization to match the actual table name
+        # override default pluralization to match the actual table name
         return "recipe_ingredients"
 
     def __repr__(self) -> str:

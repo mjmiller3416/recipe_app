@@ -7,12 +7,12 @@ Includes general-purpose utility functions and classes for:
 - debug logging
 """
 
+# ─── Debugging ─────────────────────────────────────────────────────────────────
+from ...helpers.app_helpers.debug_logger import DebugLogger
 # ─── Application Helpers ────────────────────────────────────────────────────────
 from .app_helpers import (exit_fullscreen, load_and_apply_stylesheet,
                           load_stylesheet_for_widget, populate_combobox,
                           show_message_box)
-# ─── Debugging ─────────────────────────────────────────────────────────────────
-from ...helpers.app_helpers.debug_logger import DebugLogger
 # ─── UI Helpers ────────────────────────────────────────────────────────────────
 from .ui_helpers import (HoverButton, SidebarAnimator, apply_error_style,
                          clear_error_styles, dynamic_validation,

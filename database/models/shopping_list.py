@@ -1,4 +1,4 @@
-# database/models/shopping_list.py
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from typing import Optional
@@ -8,6 +8,7 @@ from pydantic import Field, model_validator
 from database.base_model import ModelBase
 
 
+# ── Class Definition ────────────────────────────────────────────────────────────
 class ShoppingList(ModelBase):
     id: Optional[int]        = None
     ingredient_name: str     = Field(..., min_length=1)

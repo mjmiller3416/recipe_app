@@ -1,13 +1,13 @@
-import os
-import sqlite3
+
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from pathlib import Path
 
 from .db import get_connection
 
-# Directory containing migration SQL files, e.g., '001_initial.sql', '002_add_column.sql', etc.
-MIGRATIONS_DIR = Path(__file__).parent / "migrations"
+# ── Constants ───────────────────────────────────────────────────────────────────
+MIGRATIONS_DIR = Path(__file__).parent / "migrations" # directory containing SQL migration files
 
-
+# ── Private Methods ─────────────────────────────────────────────────────────────
 def init_db():
     """
     Initialize or migrate the SQLite database by applying any pending SQL scripts
@@ -16,7 +16,7 @@ def init_db():
     conn = get_connection()
     cursor = conn.cursor()
 
-    # Ensure the schema_version table exists
+    # ensure the schema_version table exists
     cursor.execute(
         """
         CREATE TABLE IF NOT EXISTS schema_version (
@@ -28,11 +28,11 @@ def init_db():
     )
     conn.commit()
 
-    # Fetch already applied migrations
+    # fetch already applied migrations
     cursor.execute("SELECT version FROM schema_version;")
     applied = {row[0] for row in cursor.fetchall()}
 
-    # Collect and sort all migration files
+    # collect and sort all migration files
     migration_files = sorted(MIGRATIONS_DIR.glob("*.sql"))
 
     for migration_file in migration_files:
@@ -40,12 +40,12 @@ def init_db():
         if version in applied:
             continue  # Skip already applied migrations
 
-        # Read and execute the SQL script
+        # read and execute the SQL script
         sql = migration_file.read_text(encoding="utf-8")
         cursor.executescript(sql)
         conn.commit()
 
-        # Record the applied migration
+        # record the applied migration
         cursor.execute(
             "INSERT INTO schema_version (version) VALUES (?);",
             (version,)
@@ -54,7 +54,7 @@ def init_db():
         print(f"Applied migration: {version}")
 
     cursor.close()
-    conn.close()
+    conn.close() # close the connection
 
 
 if __name__ == "__main__":

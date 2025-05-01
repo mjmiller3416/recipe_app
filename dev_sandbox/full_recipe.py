@@ -7,9 +7,9 @@ from PySide6.QtPrintSupport import QPrinter, QPrintPreviewDialog
 from PySide6.QtWidgets import (QDialog, QFrame, QLabel, QPushButton,
                                QScrollArea, QVBoxLayout, QWidget)
 
-from helpers.app_helpers.debug_logger import DebugLogger
 #🔸Local Imports
 from database.modules.recipe_module import Recipe
+from helpers.app_helpers.debug_logger import DebugLogger
 
 
 class FullRecipe(QDialog):

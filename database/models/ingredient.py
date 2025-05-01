@@ -1,4 +1,4 @@
-# database/models/ingredient.py
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, Optional
@@ -11,6 +11,7 @@ from database.db import get_connection
 if TYPE_CHECKING:
     from database.models.recipe import Recipe
 
+# ── Class Definition ────────────────────────────────────────────────────────────
 class Ingredient(ModelBase):
     id: Optional[int] = None
     ingredient_name: str = Field(..., min_length=1, description="Name of the ingredient")
@@ -18,7 +19,7 @@ class Ingredient(ModelBase):
 
     @model_validator(mode="before")
     def strip_strings(cls, values):
-        # Trim whitespace on string fields
+        # trim whitespace on string fields
         for fld in ("ingredient_name", "ingredient_category"):
             v = values.get(fld)
             if isinstance(v, str):

@@ -1,18 +1,20 @@
-# database/services/shopping_service.py
-
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from collections import defaultdict
-from typing import List, Dict, Any
-from database.db import get_connection
-from database.models.ingredient          import Ingredient
-from database.models.recipe_ingredient import RecipeIngredient
-from database.models.shopping_list      import ShoppingList
+from typing import Any, Dict, List
 
-# A simple conversion map for special cases (butter, etc.)
+from database.db import get_connection
+from database.models.ingredient import Ingredient
+from database.models.recipe_ingredient import RecipeIngredient
+from database.models.shopping_list import ShoppingList
+
+# ── Constants ───────────────────────────────────────────────────────────────────
 _CONVERSIONS = {
     "butter": {"stick": 8, "tbsp": 1},
+    # a simple conversion map for special cases (butter, etc.)
     # add more: e.g. sugar: {"cup":1, "tbsp":1/16}, etc.
 }
 
+# ── Public Methods ──────────────────────────────────────────────────────────────
 def _convert_qty(name: str, qty: float, unit: str) -> tuple[float, str]:
     """If `name` has a conversion group, convert `qty`+`unit` into the best display."""
     key = name.lower()
@@ -37,7 +39,7 @@ def generate_shopping_list(recipe_ids: List[int]) -> List[Dict[str, Any]]:
     Returns a list of dicts, each with:
       - ingredient_name, quantity, unit, category, source="recipe" or "manual", have (for manual)
     """
-    # 1) Aggregate recipe ingredients
+    # ── Aggregate Recipe Ingredients ──
     agg: Dict[int, Dict[str, Any]] = defaultdict(lambda: {"qty": 0, "unit": None, "category": None, "name": None})
     for ri in RecipeIngredient.filter(recipe_id__in=recipe_ids):
         ing = Ingredient.get(ri.ingredient_id)
@@ -47,10 +49,10 @@ def generate_shopping_list(recipe_ids: List[int]) -> List[Dict[str, Any]]:
         data["unit"]     = ri.unit or data["unit"]
         data["qty"]     += (ri.quantity or 0)
 
-    # 2) Convert quantities and build result entries
+    # ── Build Results ──
     result = []
     for ing_id, data in agg.items():
-        q, u = _convert_qty(data["name"], data["qty"], data["unit"])
+        q, u = _convert_qty(data["name"], data["qty"], data["unit"]) # convert to best display
         result.append({
             "ingredient_name": data["name"],
             "quantity": q,
@@ -60,7 +62,7 @@ def generate_shopping_list(recipe_ids: List[int]) -> List[Dict[str, Any]]:
             "have": False
         })
 
-    # 3) Append manual ShoppingList entries
+    # ── Append Manual Enteries ──
     for m in ShoppingList.all():
         result.append({
             "ingredient_name": m.ingredient_name,

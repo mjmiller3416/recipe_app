@@ -1,3 +1,5 @@
+
+# ── Imports ─────────────────────────────────────────────────────────────────────
 import re
 from typing import List, Optional, Type, TypeVar
 
@@ -5,14 +7,17 @@ from pydantic import BaseModel as PydanticBaseModel
 
 from .db import get_connection
 
+# ── Constants ───────────────────────────────────────────────────────────────────
 T = TypeVar("T", bound="ModelBase")
 
+# ── Classes ─────────────────────────────────────────────────────────────────────
 class ModelBase(PydanticBaseModel):
     """
     Base class providing generic CRUD operations for Pydantic models.
     """
     id: Optional[int] = None
 
+# ── Public Methods ──────────────────────────────────────────────────────────────
     @classmethod
     def table_name(cls) -> str:
         # CamelCase → snake_case
@@ -27,7 +32,7 @@ class ModelBase(PydanticBaseModel):
     def all(cls: Type[T]) -> List[T]:
         conn = get_connection()
         rows = conn.execute(f"SELECT * FROM {cls.table_name()}").fetchall()
-        # Use Pydantic v2 model_validate method for parsing
+        # use Pydantic v2 model_validate method for parsing
         return [cls.model_validate(dict(row)) for row in rows]
 
     @classmethod
@@ -67,7 +72,7 @@ class ModelBase(PydanticBaseModel):
         return bool(row)
 
     def save(self) -> "ModelBase":
-        # Use model_dump for Pydantic v2 serialization
+        # use model_dump for Pydantic v2 serialization
         data = self.model_dump(exclude_none=True)
         cols, vals = zip(*data.items())
         placeholders = ", ".join("?" for _ in cols)

@@ -2,12 +2,12 @@ import sys
 
 from core.application.config import (ERROR_COLOR, INFO_COLOR, SUCCESS_COLOR,
                                      WARNING_COLOR, icon_path)
-from helpers.app_helpers.debug_logger import DebugLogger
 from core.helpers.qt_imports import (QApplication, QColor, QDialog,
                                      QDialogButtonBox,
                                      QGraphicsDropShadowEffect, QGridLayout,
                                      QLabel, QPixmap, QSizePolicy, QSpacerItem,
                                      Qt, QVBoxLayout)
+from helpers.app_helpers.debug_logger import DebugLogger
 
 
 class DialogWidget(QDialog):

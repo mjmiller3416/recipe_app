@@ -10,10 +10,10 @@ from PySide6.QtWidgets import QApplication
 #🔸Local Imports
 from core.application import Application
 from core.helpers.debug_layout import DebugLayout
-from helpers.app_helpers.debug_logger import DebugLogger
 from core.managers import StyleManager
 from database import DB_INSTANCE
 from database.initialize_db import reset_to_version
+from helpers.app_helpers.debug_logger import DebugLogger
 
 
 class MealPlannerApp:

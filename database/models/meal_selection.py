@@ -1,4 +1,4 @@
-# database/models/meal_selection.py
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, Optional
@@ -10,6 +10,7 @@ from database.base_model import ModelBase
 if TYPE_CHECKING:
     from database.models.recipe import Recipe
 
+# ── Class Definition ────────────────────────────────────────────────────────────
 class MealSelection(ModelBase):
     id: Optional[int]         = None
     meal_name: str            = Field(..., min_length=1)

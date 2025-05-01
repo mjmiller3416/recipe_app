@@ -1,4 +1,4 @@
-# database/models/recipe.py
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from datetime import datetime, timedelta
@@ -12,9 +12,9 @@ from database.models.recipe_ingredient import RecipeIngredient
 from database.models.recipe_ingredient_detail import RecipeIngredientDetail
 
 if TYPE_CHECKING:
-    # only for the type checker—avoids circular import at runtime
     from database.models.ingredient import Ingredient
 
+# ── Class Definition ────────────────────────────────────────────────────────────
 class Recipe(ModelBase):
     id: Optional[int] = None
     recipe_name: str = Field(..., min_length=1)
@@ -96,7 +96,8 @@ class Recipe(ModelBase):
         Fetch one 👀 on all ingredients for this recipe in a single JOIN
         (pulling name, category, quantity & unit).
         """
-        from database.models.recipe_ingredient_detail import RecipeIngredientDetail
+        from database.models.recipe_ingredient_detail import \
+            RecipeIngredientDetail
 
         sql = """
         SELECT

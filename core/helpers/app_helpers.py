@@ -10,11 +10,11 @@ from typing import Literal
 
 from PySide6.QtCore import QFile, QIODevice, QTextStream
 
-#🔸Local Imports
-from helpers.app_helpers.debug_logger import DebugLogger
 #🔸Third-Party Imports
 from core.helpers.qt_imports import (QApplication, QComboBox, QFile,
                                      QMessageBox, Qt, QTextStream, QWidget)
+#🔸Local Imports
+from helpers.app_helpers.debug_logger import DebugLogger
 
 
 def exit_fullscreen(self, event):

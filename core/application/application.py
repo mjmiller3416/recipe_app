@@ -6,7 +6,6 @@ from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
 
 # 🔸 Local Imports
 from core.helpers.debug_layout import DebugLayout
-from helpers.app_helpers.debug_logger import DebugLogger
 from core.helpers.ui_helpers import SidebarAnimator
 from core.managers.animation_manager import AnimationManager
 from core.widgets.search_widget import SearchWidget
@@ -15,6 +14,7 @@ from features.dashboard import Dashboard
 from features.meal_planner import MealPlanner
 from features.shopping_list import ShoppingList
 from features.view_recipes import ViewRecipes
+from helpers.app_helpers.debug_logger import DebugLogger
 
 from .sidebar_widget import SidebarWidget
 from .title_bar import TitleBar

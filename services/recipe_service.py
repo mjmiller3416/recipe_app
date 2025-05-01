@@ -1,11 +1,12 @@
-# database/services/recipe_service.py
-
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from typing import List
+
 from database.db import get_connection
-from database.models.recipe import Recipe
 from database.models.ingredient import Ingredient
+from database.models.recipe import Recipe
 from database.models.recipe_ingredient import RecipeIngredient
 
+# ── Public Methods ──────────────────────────────────────────────────────────────
 def create_recipe_with_ingredients(
     recipe_data: dict,
     ingredients: List[dict]  # each dict: {"ingredient_name", "ingredient_category", "quantity", "unit"}
@@ -14,14 +15,14 @@ def create_recipe_with_ingredients(
     Atomically create a Recipe, its Ingredients (or get existing),
     and the RecipeIngredient join rows.
     """
-    # Use a single connection/transaction
+    # use a single connection/transaction
     conn = get_connection()
     cursor = conn.cursor()
     try:
-        # 1) Save the recipe core
+        # ── Save Recipe ──
         recipe = Recipe.model_validate(recipe_data).save()
 
-        # 2) For each ingredient, get_or_create then join
+        # ── Get Each Ingredient ──
         for ing in ingredients:
             # check if ingredient already exists
             existing = conn.execute(
@@ -38,7 +39,7 @@ def create_recipe_with_ingredients(
                 ).save()
                 ingredient_id = ingredient.id
 
-            # 3) Create join
+            # ── Create Join ──
             RecipeIngredient(
                 recipe_id=recipe.id,
                 ingredient_id=ingredient_id,

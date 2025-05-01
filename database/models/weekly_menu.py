@@ -1,4 +1,4 @@
-# database/models/weekly_menu.py
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from datetime import datetime
@@ -11,6 +11,7 @@ from database.base_model import ModelBase
 if TYPE_CHECKING:
     from database.models.recipe import Recipe
 
+# ── Class Definition ────────────────────────────────────────────────────────────
 class WeeklyMenu(ModelBase):
     id: Optional[int]      = None
     recipe_id: int         = Field(..., ge=1)

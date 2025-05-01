@@ -8,8 +8,6 @@ from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QScrollArea,
 
 # Load stylesheet helper
 from core.helpers.app_helpers import load_stylesheet_for_widget
-# Debug logging
-from helpers.app_helpers.debug_logger import DebugLogger
 # Database
 from database.database import DB_INSTANCE
 # Recipe model
@@ -17,6 +15,8 @@ from database.modules.recipe_module import Recipe
 #🔸Local Imports
 # Use the new slot widget and enum
 from dev_sandbox.recipe_widget.recipe_slot import LayoutSize, RecipeSlot
+# Debug logging
+from helpers.app_helpers.debug_logger import DebugLogger
 
 
 # --- Fetch Recipe Data from DB ---

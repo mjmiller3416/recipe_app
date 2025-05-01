@@ -1,8 +1,12 @@
-# database/models/recipe_ingredient_detail.py
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
+
 from pydantic import Field
+
 from database.base_model import ModelBase
 
+
+# ── Class Definition ────────────────────────────────────────────────────────────
 class RecipeIngredientDetail(ModelBase):
     """
     A flattened view of one row from recipe_ingredients JOIN ingredients.

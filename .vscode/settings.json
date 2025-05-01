@@ -97,6 +97,7 @@
       "managers": "Controller",
       "styles": "Theme",
       "widgets": "Element",
+
     },
 
     "material-icon-theme.files.associations": {
@@ -104,6 +105,7 @@
       //** Misc **//
       "__init__.py": "Tree",
       "config.py": "Settings",
+      "conversion_manager_blueprint.md": "Template",
     },
 
     //** EXTENSION: Custom CSS and JS **//

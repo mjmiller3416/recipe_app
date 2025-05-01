@@ -1,5 +1,4 @@
-# database/models/meal_log.py
-
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from datetime import datetime
@@ -12,6 +11,7 @@ from database.base_model import ModelBase
 if TYPE_CHECKING:
     from database.models.meal_selection import MealSelection
 
+# ── Class Definition ────────────────────────────────────────────────────────────
 class MealLog(ModelBase):
     """
     Logs each time a MealSelection was made (or checked off).

@@ -3,13 +3,13 @@ import sys
 from core.application.config import (FLOAT, INGREDIENT_CATEGORIES,
                                      MEASUREMENT_UNITS, NAME, icon_path)
 from core.helpers.app_helpers import populate_combobox
-from helpers.app_helpers.debug_logger import DebugLogger
 from core.helpers.qt_imports import (QApplication, QGridLayout, QIcon,
                                      QLineEdit, QPushButton, QSize,
                                      QSizePolicy, QWidget, Signal)
 from core.helpers.ui_helpers import clear_error_styles, dynamic_validation
 from core.managers.style_manager import StyleManager
 from core.widgets.combobox import CustomComboBox
+from helpers.app_helpers.debug_logger import DebugLogger
 
 
 class IngredientWidget(QWidget):

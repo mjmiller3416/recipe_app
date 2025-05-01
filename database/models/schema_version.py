@@ -1,5 +1,4 @@
-# database/models/schema_version.py
-
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from datetime import datetime
@@ -10,6 +9,7 @@ from pydantic import Field
 from database.base_model import ModelBase
 
 
+# ── Class Definition ────────────────────────────────────────────────────────────
 class SchemaVersion(ModelBase):
     """
     Tracks which SQL migrations have been applied.

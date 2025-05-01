@@ -10,8 +10,8 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
-from helpers.app_helpers.debug_logger import DebugLogger
 from database.modules.recipe_module import Recipe
+from helpers.app_helpers.debug_logger import DebugLogger
 from helpers.icon_helpers.widgets import Icon
 from helpers.ui_helpers import RoundedImage, Separator
 
