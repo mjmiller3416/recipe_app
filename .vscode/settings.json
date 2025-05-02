@@ -11,7 +11,7 @@
     "editor.minimap.enabled": false, // Disable minimap
     "editor.stickyScroll.enabled": false, // Disable sticky scroll
     //"editor.scrollbar.vertical": "hidden", // Hide vertical scrollbar
-    "editor.scrollbar.horizontal": "hidden", // Hide horizontal scrollbar
+    //"editor.scrollbar.horizontal": "hidden", // Hide horizontal scrollbar
     "editor.fontSize": 14, // Set the font size to 16
     "editor.fontFamily": "JetBrains Mono", // Set the font family to JetBrains Mono
     "editor.fontLigatures": true, // Enable font ligatures
@@ -48,6 +48,9 @@
       "**/.vscode": true,
       "**/.git": true,
       "**/.favorites.json": true,
+      "**/config/.editorconfig": true,
+      "**/config/.env": true,
+      "**/config/isort.cfg": true,
     },
 
     "files.associations": { // Associate certain file types with certain languages
@@ -77,6 +80,11 @@
       "view_recipes": "Python",
       "shopping_list": "Python",
       "add_recipes": "Python",
+      "data": "Other",
+      "database": "Context",
+      "recipe_widget": "Packages",
+      "paths": "Constant",
+      "iconkit": "Mojo",
 
       //** Subfolders **//
       "app_helpers": "App",
@@ -84,9 +92,10 @@
       "migrations": "Archive",
       "services": "Tasks",
       "models": "Packages",
+      "icon_widgets": "Element",
 
       //** Assets **//
-      "assets": "Resource",
+      "assets": "Shader",
       "fonts": "Font",
       "icons": "SVG",
       "images": "Images",

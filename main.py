@@ -3,17 +3,17 @@
 #🔸System Imports
 import sys
 
+from helpers.app_helpers.debug_logger import DebugLogger
 from PySide6.QtCore import QCoreApplication
 #🔸Third-Party Imports
 from PySide6.QtWidgets import QApplication
 
 #🔸Local Imports
 from core.application import Application
-from core.helpers.debug_layout import DebugLayout
-from core.managers import StyleManager
+from core.controllers import StyleManager
 from database import DB_INSTANCE
 from database.initialize_db import reset_to_version
-from helpers.app_helpers.debug_logger import DebugLogger
+from ui.tools.layout_debugger import DebugLayout
 
 
 class MealPlannerApp:

@@ -1,27 +1,27 @@
 """recipe_widget/builders/recipe_dialog_builder.py
 
-Defines the RecipeDialogBuilder class, a custom dialog for displaying full recipe details including metadata, ingredients, and directions.
+Defines the RecipeDialogBuilder class, a custom dialog for displaying full recipe details including metadata, 
+ingredients, and directions.
 """
-
-from PySide6.QtCore import QSize, Qt
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QScrollArea,
-                               QSizePolicy, QSpacerItem, QTextEdit,
-                               QVBoxLayout, QWidget)
+from PySide6.QtCore import QSize, Qt
 
-from core.helpers.debug_layout import DebugLayout
-from database import DB_INSTANCE
-from database.modules.recipe_module import Recipe
-from helpers.app_helpers.base_dialog import BaseDialog
-from helpers.icon_helpers import Icon
-from helpers.ui_helpers import Image, Separator
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QSizePolicy, QSpacerItem, QVBoxLayout, QWidget
+
+from ui.components.dialogs.styled_dialog import StyledDialog
+from ui.components.square_image import SquareImage
+from ui.components.separator import Separator
+from ui.iconkit import StandardIcon
+
+from database.models import Recipe
+from ui.tools.layout_debugger import LayoutDebugger
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 ICON_SIZE = QSize(30,30)
 ICON_COLOR = "#3B575B"  # Example color, adjust as needed
 
 # ── Class Definition ────────────────────────────────────────────────────────────
-class FullRecipe(BaseDialog):
+class FullRecipe(StyledDialog):
     """Dialog for displaying a complete recipe with custom layout.
 
     Inherits:
@@ -45,7 +45,7 @@ class FullRecipe(BaseDialog):
 
         # ── Setup UI ──
         self.setup_ui()
-        self.overlay = DebugLayout(self)
+        self.overlay = LayoutDebugger(self)
 
     # ── Public Methods ──────────────────────────────────────────────────────────────
     def setup_ui(self) -> None:
@@ -91,7 +91,7 @@ class FullRecipe(BaseDialog):
         self.image_frame, lyt_image = self._create_framed_layout(line_width=0)
 
         # add image to layout
-        self.recipe_image = Image(self.recipe.image_path, 280, self.image_frame)
+        self.recipe_image = SquareImage(self.recipe.image_path, 280, self.image_frame)
         lyt_image.addWidget(self.recipe_image, 0, Qt.AlignCenter)
 
         return self.image_frame
@@ -299,7 +299,7 @@ class FullRecipe(BaseDialog):
         lyt.setSpacing(20)
 
         # ── Create Icon & Label ──
-        icon = Icon(icon_name, ICON_SIZE, ICON_COLOR)
+        icon = StandardIcon(icon_name, ICON_SIZE, ICON_COLOR)
         lbl = QLabel(text)
         lbl.setProperty("metaTitle", True)
         lbl.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)

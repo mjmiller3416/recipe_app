@@ -6,6 +6,7 @@ from database.models.ingredient import Ingredient
 from database.models.recipe import Recipe
 from database.models.recipe_ingredient import RecipeIngredient
 
+
 # ── Public Methods ──────────────────────────────────────────────────────────────
 def create_recipe_with_ingredients(
     recipe_data: dict,

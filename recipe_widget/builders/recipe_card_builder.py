@@ -6,14 +6,14 @@ Defines the RecipeCardBuilder class for generating recipe card layouts (small, m
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from dataclasses import dataclass
 
+from helpers.app_helpers.debug_logger import DebugLogger
+from helpers.ui_helpers import RoundedImage, Separator
+from helpers.ui_helpers.icons.widgets import Icon
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
 from database.modules.recipe_module import Recipe
-from helpers.app_helpers.debug_logger import DebugLogger
-from helpers.icon_helpers.widgets import Icon
-from helpers.ui_helpers import RoundedImage, Separator
 
 from ..constants import ICON_COLOR, LAYOUT_SIZE, LayoutSize
 

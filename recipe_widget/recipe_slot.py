@@ -6,12 +6,12 @@ Defines the RecipeSlot class that acts as a dynamic container for different reci
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from typing import Optional
 
+from helpers.app_helpers.debug_logger import DebugLogger
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QPushButton, QStackedWidget, QVBoxLayout
 
 from database import DB_INSTANCE
 from database.modules.recipe_module import Recipe
-from helpers.app_helpers.debug_logger import DebugLogger
 
 from .builders.full_recipe_builder import FullRecipe
 from .constants import LayoutSize

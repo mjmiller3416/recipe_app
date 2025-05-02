@@ -1,27 +1,23 @@
-"""
-Defines the SidebarWidget class, which contains the application’s main
-navigation buttons and logo, styled in a vertical layout.
+"""core/application/sidebar_widget.py
 
-Classes:
-    SidebarWidget
-
-Functions:
-    _create_nav_button
+SidebarWidget class for managing the sidebar of the application.
 """
 
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QIcon, QPixmap
-# 🔸 Third-Part Imports
-from PySide6.QtWidgets import (QLabel, QPushButton, QSizePolicy, QSpacerItem,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import QLabel, QPushButton, QSizePolicy, QSpacerItem, QVBoxLayout, QWidget
 
-# 🔸 Local Application Imports
-from core.application.config import (ICON_COLOR, ICON_SIZE, LOGO_COLOR,
-                                     icon_path, image_path)
-from core.helpers.ui_helpers import get_all_buttons, svg_loader
-from core.managers.style_manager import StyleManager
+from config.config import (ICON_COLOR, ICON_SIZE, LOGO_COLOR, icon_path, image_path)
+from core.controllers.style_controller import StyleManager
 
+# ── Note ──────────────────────────────────────────────────────────────────────── 
+# ⚠️⚠️⚠️ SIDEBAR_MARGINS = 0, 18, 0, 18 # ⚠️⚠️⚠️
+# No longer applied via StyleManager.apply_styles() 
+# TODO: Add a method to apply margins to the sidebar widget
+# ──────────────────────────────────────────────────────────────────────────────── 
 
+# ── Class Definition ────────────────────────────────────────────────────────────
 class SidebarWidget(QWidget):
     """
     Sidebar widget for the application.

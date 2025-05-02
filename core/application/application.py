@@ -1,20 +1,20 @@
 # 🔸 Third-Party Imports
-from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt
-from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
-                               QMainWindow, QStackedWidget, QVBoxLayout,
-                               QWidget)
-
-# 🔸 Local Imports
-from core.helpers.debug_layout import DebugLayout
-from core.helpers.ui_helpers import SidebarAnimator
-from core.managers.animation_manager import AnimationManager
-from core.widgets.search_widget import SearchWidget
 from features.add_recipes import AddRecipes
 from features.dashboard import Dashboard
 from features.meal_planner import MealPlanner
 from features.shopping_list import ShoppingList
 from features.view_recipes import ViewRecipes
 from helpers.app_helpers.debug_logger import DebugLogger
+from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt
+from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
+                               QMainWindow, QStackedWidget, QVBoxLayout,
+                               QWidget)
+
+from core.controllers.animation_controller import AnimationManager
+from core.helpers.ui_helpers import SidebarAnimator
+from core.widgets.search_widget import SearchWidget
+# 🔸 Local Imports
+from ui.tools.layout_debugger import DebugLayout
 
 from .sidebar_widget import SidebarWidget
 from .title_bar import TitleBar

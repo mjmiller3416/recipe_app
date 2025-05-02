@@ -1,3 +1,8 @@
+"""database/models/recipe.py
+
+This module defines the Recipe class, which represents a recipe in the database.
+"""
+
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
