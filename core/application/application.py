@@ -1,23 +1,23 @@
 # 🔸 Third-Party Imports
-from features.add_recipes import AddRecipes
-from features.dashboard import Dashboard
-from features.meal_planner import MealPlanner
-from features.shopping_list import ShoppingList
-from features.view_recipes import ViewRecipes
-from helpers.app_helpers.debug_logger import DebugLogger
+from views.add_recipes import AddRecipes
+from views.dashboard import Dashboard
+from views.meal_planner import MealPlanner
+from views.shopping_list import ShoppingList
+from views.view_recipes import ViewRecipes
+from core.helpers import DebugLogger
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt
 from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
                                QMainWindow, QStackedWidget, QVBoxLayout,
                                QWidget)
 
 from core.controllers.animation_controller import AnimationManager
-from core.helpers.ui_helpers import SidebarAnimator
-from core.widgets.search_widget import SearchWidget
+from ui.animations import SidebarAnimator
+from ui.components.inputs.search_widget import SearchWidget
 # 🔸 Local Imports
-from ui.tools.layout_debugger import DebugLayout
+from ui.tools.layout_debugger import LayoutDebugger
 
 from .sidebar_widget import SidebarWidget
-from .title_bar import TitleBar
+from ...ui.components.layouts.title_bar import TitleBar
 
 
 class Application(QMainWindow):
@@ -115,7 +115,7 @@ class Application(QMainWindow):
         self.connect_navigation()
         self.switch_page("dashboard")
 
-        self.overlay = DebugLayout(self.wrapper)
+        self.overlay = LayoutDebugger(self.wrapper)
 
     def build_pages(self):
         """Instantiate and return all page instances for the stacked widget."""

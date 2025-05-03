@@ -10,7 +10,6 @@ from PySide6.QtGui import QRegularExpressionValidator
 
 from core.helpers.debug_logger import DebugLogger
 
-# ── Constants ───────────────────────────────────────────────────────────────────
 # ── Directory Paths ──
 BASE_DIR = Path(__file__).resolve().parents[2]
 ASSETS_DIR = BASE_DIR / "assets"
@@ -55,8 +54,8 @@ FLOAT = lambda parent: QRegularExpressionValidator(QRegularExpression(r"^\d{1,2}
 INT = lambda parent: QRegularExpressionValidator(QRegularExpression(r"^\d{1,3}$"), parent)
 NON_EMPTY = lambda parent: QRegularExpressionValidator(QRegularExpression(r"^(?!\s*$).+"), parent)
 
-# ── Debug Flags ──-
-DEBUG_LAYOUT_BORDERS = True # Set to True to draw layout borders
+# ── Debug Flags ──
+DEBUG_LAYOUT_BORDERS = True # set to True to draw layout borders
 
 # ── Public Methods ──────────────────────────────────────────────────────────────
 def icon_path(name: str) -> str:
@@ -66,8 +65,8 @@ def icon_path(name: str) -> str:
     return str(ICONS_DIR / f"{name}.svg")
 
 def image_path(name: str) -> str:
-    return str(IMAGES_DIR / f"{name}.svg")  # All images must be SVG
+    return str(IMAGES_DIR / f"{name}.svg")  # all images must be SVG
 
 def recipe_image_path(name: str) -> str:
-    return str(IMAGES_DIR / f"{name}.png")  # All recipe images must be PNG
+    return str(IMAGES_DIR / f"{name}.png")  # all recipe images must be PNG
 

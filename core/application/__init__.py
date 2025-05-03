@@ -9,4 +9,4 @@ from .application import Application
 # Import the SidebarWidget class for the sidebar navigation
 from .sidebar_widget import SidebarWidget
 # Import the TitleBar class for custom window title bar functionality
-from .title_bar import TitleBar
+from ...ui.components.layouts.title_bar import TitleBar

@@ -1,4 +1,8 @@
-# 🔸 Third-Party Import
+"""ui/components/title_bar.py
+
+"""
+
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
