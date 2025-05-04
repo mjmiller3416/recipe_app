@@ -1,3 +1,7 @@
+""" database/models/ingredient.py
+
+Ingredient model for the recipe database."""
+
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
@@ -35,10 +39,11 @@ class Ingredient(ModelBase):
         Traverse the recipe_ingredients join table to return all Recipes
         that include this ingredient.
         """
-        conn = get_connection()
-        rows = conn.execute(
-            "SELECT recipe_id FROM recipe_ingredients WHERE ingredient_id = ?",
-            (self.id,),
-        ).fetchall()
-
+        with get_connection() as conn:
+            rows = conn.execute(
+                "SELECT recipe_id FROM recipe_ingredients WHERE ingredient_id = ?",
+                (self.id,),
+            ).fetchall()
+        # convert the rows to Recipe objects
         return [Recipe.get(row["recipe_id"]) for row in rows]
+

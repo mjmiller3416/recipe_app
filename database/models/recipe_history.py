@@ -1,3 +1,8 @@
+""" database/models/recipe_history.py
+
+Recipe History model for tracking when recipes were cooked.
+"""
+
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 

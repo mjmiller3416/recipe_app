@@ -1,3 +1,8 @@
+""" database/models/recipe_ingredient_detail.py
+
+Recipe Ingredient Detail model, flattened view of one row from recipe_ingredients JOIN ingredients.
+"""
+
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 

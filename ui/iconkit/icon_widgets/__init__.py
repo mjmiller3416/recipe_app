@@ -1,10 +1,12 @@
 # helpers/icons/builders/__init__.py
-from .standard_icon import StandardIcon
-from .icon_button import IconButton
+from .button_icon import ButtonIcon
 from .rounded_icon import RoundedIcon
+from .standard_icon import StandardIcon
+from .tool_button_icon import ToolButtonIcon
 
 __all__ = [
-    "IconButton",
-    "Icon",
-    "RoundedIcon"
+    "StandardIcon",
+    "RoundedIcon",
+    "ToolButtonIcon",
+    "ButtonIcon",
 ]

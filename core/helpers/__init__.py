@@ -8,7 +8,9 @@ Includes general-purpose utility functions and classes for:
 """
 
 from core.helpers.debug_logger import DebugLogger
+from core.helpers.types import ThemedIcon
 
 __all__ = [
     "DebugLogger",
+    "ThemedIcon",
 ]

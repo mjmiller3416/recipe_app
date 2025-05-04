@@ -5,6 +5,7 @@ Register and manage custom fonts for the application.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from pathlib import Path
+
 from PySide6.QtGui import QFontDatabase
 
 from config.paths.app_paths import AppPaths

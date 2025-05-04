@@ -7,6 +7,7 @@ This allows for a modular approach to styling, where each view can have its own 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from config.paths.qss_paths import QssPaths
 
+
 # ── Class Definition ────────────────────────────────────────────────────────────
 class QssCombiner:
     """

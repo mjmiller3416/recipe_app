@@ -3,9 +3,10 @@
 Module to create visual effects for widgets.
 """
 
+from PySide6.QtGui import QColor
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtWidgets import QGraphicsDropShadowEffect
-from PySide6.QtGui import QColor
+
 
 # ── Public Methods ──────────────────────────────────────────────────────────────
 @staticmethod

@@ -1,3 +1,7 @@
+""" database/base_model.py
+
+Base model for CRUD operations with SQLite and Pydantic. 
+"""
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 import re
@@ -12,9 +16,7 @@ T = TypeVar("T", bound="ModelBase")
 
 # ── Classes ─────────────────────────────────────────────────────────────────────
 class ModelBase(PydanticBaseModel):
-    """
-    Base class providing generic CRUD operations for Pydantic models.
-    """
+    """ Base class providing generic CRUD operations for Pydantic models. """
     id: Optional[int] = None
 
 # ── Public Methods ──────────────────────────────────────────────────────────────
@@ -30,70 +32,74 @@ class ModelBase(PydanticBaseModel):
 
     @classmethod
     def all(cls: Type[T]) -> List[T]:
-        conn = get_connection()
-        rows = conn.execute(f"SELECT * FROM {cls.table_name()}").fetchall()
-        # use Pydantic v2 model_validate method for parsing
-        return [cls.model_validate(dict(row)) for row in rows]
+        """ Fetch all records from the table. """
+        with get_connection() as conn:
+            rows = conn.execute(f"SELECT * FROM {cls.table_name()}").fetchall() 
+        
+        return [cls.model_validate(dict(row)) for row in rows] 
 
     @classmethod
     def get(cls: Type[T], id: int) -> Optional[T]:
-        conn = get_connection()
-        row = conn.execute(
-            f"SELECT * FROM {cls.table_name()} WHERE id = ?", (id,)
-        ).fetchone()
+        """ Fetch a record by its ID. """
+        with get_connection() as conn:
+            row = conn.execute(
+                f"SELECT * FROM {cls.table_name()} WHERE id = ?", (id,)
+            ).fetchone()
+
         return cls.model_validate(dict(row)) if row else None
 
     @classmethod
     def update(cls: Type[T], id: int, **fields) -> Optional[T]:
-        """
-        Shortcut to patch specific columns on a record.
-        Example: Recipe.update(1, servings=8, total_time=30)
-        """
+        """ Shortcut to patch specific columns on a record. """
         instance = cls.get(id)
         if not instance:
             return None
         for k, v in fields.items():
             setattr(instance, k, v)
+
         return instance.save()
 
     @classmethod
     def exists(cls, **fields) -> bool:
-        """
+        """ 
         Quickly checks if a record matching the given field values exists.
         Usage: Recipe.exists(recipe_name="Pancakes", servings=4)
         """
-        conn = get_connection()
         cols = " AND ".join(f"{k}=?" for k in fields)
         vals = tuple(fields.values())
-        row = conn.execute(
-            f"SELECT 1 FROM {cls.table_name()} WHERE {cols} LIMIT 1",
-            vals
-        ).fetchone()
-        return bool(row)
+
+        with get_connection() as conn:
+            row = conn.execute( 
+                f"SELECT 1 FROM {cls.table_name()} WHERE {cols} LIMIT 1",
+                vals
+            ).fetchone() 
+
+        return bool(row) 
 
     def save(self) -> "ModelBase":
-        # use model_dump for Pydantic v2 serialization
+        """ Save the current instance to the database. """
         data = self.model_dump(exclude_none=True)
         cols, vals = zip(*data.items())
         placeholders = ", ".join("?" for _ in cols)
 
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-            f"INSERT OR REPLACE INTO {self.table_name()} ({', '.join(cols)}) "
-            f"VALUES ({placeholders})",
-            tuple(vals),
-        )
-        conn.commit()
-        if self.id is None:
-            self.id = cursor.lastrowid
+        with get_connection() as conn:
+            result = conn.execute(
+                f"INSERT OR REPLACE INTO {self.table_name()} ({', '.join(cols)}) "
+                f"VALUES ({placeholders})",
+                tuple(vals),
+            )
+            # context manager will commit on success
+            if self.id is None:
+                self.id = result.lastrowid
+
         return self
 
     def delete(self):
+        """ Delete the current instance from the database. """
         if self.id is None:
             raise ValueError("Cannot delete unsaved record")
-        conn = get_connection()
-        conn.execute(
-            f"DELETE FROM {self.table_name()} WHERE id = ?", (self.id,)
-        )
-        conn.commit()
+        
+        with get_connection() as conn:
+            conn.execute(
+                f"DELETE FROM {self.table_name()} WHERE id = ?", (self.id,)
+            )

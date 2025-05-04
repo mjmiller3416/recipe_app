@@ -8,28 +8,12 @@ import re
 from pathlib import Path
 from typing import Union
 
-from helpers.app_helpers.debug_logger import DebugLogger
-from helpers.app_helpers.file_helpers import ICONS_DIR
+from core.helpers import DebugLogger
+from config import AppPaths
 from PySide6.QtCore import QByteArray, QRectF, QSize, Qt
 from PySide6.QtGui import QIcon, QPainter, QPixmap
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtWidgets import QApplication
-
-
-# ── Public Methods ──────────────────────────────────────────────────────────────
-def icon_path(name: str) -> str:
-    """Resolve the filesystem path to an icon by name.
-
-    Args:
-        name (str): Name of the icon file (without extension).
-
-    Returns:
-        str: Full path to the icon file, or a default invalid path if name is missing.
-    """
-    if not name:
-        DebugLogger.log("[ERROR] [icon_path] Empty name passed to icon_path()", "error")
-        return "invalid.svg"  # or a default fallback path?
-    return str(ICONS_DIR / f"{name}")
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class SVGLoader:
@@ -40,7 +24,7 @@ class SVGLoader:
 
     @staticmethod
     def load(
-        path: str,
+        file_path: str,
         color: str,
         size: Union[QSize, tuple[int, int]] = QSize(24, 24),
         source: str = "#000",
@@ -49,7 +33,7 @@ class SVGLoader:
         """Load an SVG file, optionally recolor it, and render as QPixmap or QIcon.
 
         Args:
-            path (str): Filesystem path to the SVG file.
+            file_path (str): Filesystem path to the SVG file.
             color (str): New fill/stroke color to apply.
             size (QSize or tuple[int, int], optional): Logical size for rendering. Defaults to QSize(24, 24).
             source (str, optional): Original fill/stroke color to replace. Defaults to "#000".
@@ -72,10 +56,10 @@ class SVGLoader:
 
         # ── Read SVG ──
         try:
-            with open(path, 'r', encoding='utf-8') as f:
+            with open(file_path, 'r', encoding='utf-8') as f:
                 svg_data = f.read()
         except Exception as e:
-            DebugLogger.log(f"svg_loader: Failed to open SVG file {path}: {e}", "error")
+            DebugLogger.log(f"svg_loader: Failed to open SVG file {file_path}: {e}", "error")
             return QIcon() if as_icon else QPixmap() # return empty instance on error
 
         # ── Note ───────────────────────────────────────────────────────────── #
@@ -103,7 +87,7 @@ class SVGLoader:
             svg_data = re.sub(pattern_no_quotes, replacement_no_quotes, svg_data, flags=re.IGNORECASE)
 
         except re.error as e: # catch regex errors
-             DebugLogger.log(f"svg_loader: Regex error processing {path}: {e}", "error")
+             DebugLogger.log(f"svg_loader: Regex error processing {file_path}: {e}", "error")
              return QIcon() if as_icon else QPixmap() # return empty instance on error
 
 
@@ -111,10 +95,10 @@ class SVGLoader:
         try:
             renderer = QSvgRenderer(QByteArray(svg_data.encode('utf-8')))
             if not renderer.isValid():
-                 DebugLogger.log(f"svg_loader: Invalid SVG data after color replacement for {path}", "warning")
+                 DebugLogger.log(f"svg_loader: Invalid SVG data after color replacement for {file_path}", "warning")
                  # Continue attempt to render, might still work partially or return empty
         except Exception as e: # Catch potential errors during QSvgRenderer creation
-             DebugLogger.log(f"svg_loader: Failed to create QSvgRenderer for {path}: {e}", "error")
+             DebugLogger.log(f"svg_loader: Failed to create QSvgRenderer for {file_path}: {e}", "error")
              return QIcon() if as_icon else QPixmap()
 
 
@@ -144,7 +128,7 @@ class SVGLoader:
         if renderer.isValid():
              renderer.render(painter, QRectF(0, 0, physical.width(), physical.height()))
         else:
-            DebugLogger.log(f"svg_loader: Skipping render for {path} due to invalid SVG data", "warning")
+            DebugLogger.log(f"svg_loader: Skipping render for {file_path} due to invalid SVG data", "warning")
 
         # ── Clean Up ──
         painter.end()

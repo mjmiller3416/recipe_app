@@ -12,11 +12,10 @@ Main Functions:
 """
 
 # 🔸 Local Application Imports
-from helpers.app_helpers.debug_logger import DebugLogger
+from core.helpers import DebugLogger
 
 # 🔸 Third-party Imports
-from core.helpers.qt_imports import QSettings
-from database.database import DB_INSTANCE
+from PySide6.QtCore import QSettings
 
 
 def load_meal_plan(callback):
@@ -38,7 +37,7 @@ def load_meal_plan(callback):
         return False
 
     loaded_any = False
-    for meal_id in saved_meal_ids:
+    """ for meal_id in saved_meal_ids:⚠️⚠️⚠️⚠️⚠️⚠️
         meal = DB_INSTANCE.get_meal(meal_id)
         if not meal:
             DebugLogger.log(f"Meal ID {meal_id} not found in DB.", "warning")
@@ -51,7 +50,7 @@ def load_meal_plan(callback):
             "side3": meal.get("side_recipe_3"),
         }
         callback(meal_data=meal_data, meal_id=meal_id)
-        loaded_any = True
+        loaded_any = True """
 
     return loaded_any
 
@@ -89,10 +88,10 @@ def save_all_meals(tab_map):
             DebugLogger.log(f"[MealPlanner] Skipped saving tab {index}: No main recipe selected.", "warning")
             continue
 
-        if meal_id is None:
+        """ if meal_id is None: ⚠️⚠️⚠️⚠️⚠️⚠️
             meal_id = DB_INSTANCE.save_meal("Custom Meal", data["main"], [data["side1"], data["side2"], data["side3"]])
             tab_info["meal_id"] = meal_id
             DebugLogger.log(f"[MealPlanner] Saved new meal ID: {meal_id} from tab {index}", "success")
         else:
             DB_INSTANCE.update_meal(meal_id, data)
-            DebugLogger.log(f"[MealPlanner] Updated meal ID: {meal_id} from tab {index}", "info")
+            DebugLogger.log(f"[MealPlanner] Updated meal ID: {meal_id} from tab {index}", "info") """

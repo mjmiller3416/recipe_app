@@ -1,3 +1,8 @@
+""" database/models/meal_log.py
+
+Meal Log model for logging meal selections.
+"""
+
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 

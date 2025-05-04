@@ -1,25 +1,29 @@
-# 🔸 Third-Party Imports
-from views.add_recipes import AddRecipes
-from views.dashboard import Dashboard
-from views.meal_planner import MealPlanner
-from views.shopping_list import ShoppingList
-from views.view_recipes import ViewRecipes
-from core.helpers import DebugLogger
+""" core/application/application.py
+
+Main application window with a custom title bar, sidebar, header, and dynamic stacked content.
+"""
+
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt
 from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
                                QMainWindow, QStackedWidget, QVBoxLayout,
                                QWidget)
 
 from core.controllers.animation_controller import AnimationManager
+from core.helpers import DebugLogger
 from ui.animations import SidebarAnimator
 from ui.components.inputs.search_widget import SearchWidget
-# 🔸 Local Imports
 from ui.tools.layout_debugger import LayoutDebugger
+from views.add_recipes import AddRecipes
+from views.dashboard import Dashboard
+from views.meal_planner import MealPlanner
+from views.shopping_list import ShoppingList
+from views.view_recipes import ViewRecipes
 
+from ui.components.layouts.title_bar import TitleBar
 from .sidebar_widget import SidebarWidget
-from ...ui.components.layouts.title_bar import TitleBar
 
-
+# ── Class Definition ────────────────────────────────────────────────────────────
 class Application(QMainWindow):
     """
     Main application window with a custom title bar, sidebar, header, and dynamic stacked content.
@@ -28,56 +32,58 @@ class Application(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        # ── Window Setup ──
         self.setObjectName("Application")
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setMinimumSize(1280, 720) # Set minimum size for the window
         self.sidebar_is_expanded = True
 
-        # 🔹 Outer Wrapper for styling (rounded corners, shadows)
+        # ── Outter Wrapper ──
         self.wrapper = QFrame()
         self.wrapper.setObjectName("ApplicationWrapper")
         self.setCentralWidget(self.wrapper)
 
+        # ── Layouts ──
         self.outer_layout = QVBoxLayout(self.wrapper)
         self.outer_layout.setContentsMargins(0, 0, 0, 0)
         self.outer_layout.setSpacing(0)
 
-        # 🔹 Custom Title Bar
+        # ── Create Title Bar ──
         self.title_bar = TitleBar(self)
         self.outer_layout.addWidget(self.title_bar)
 
-        # 🔹 Main App Layout (Sidebar + Content)
+        # ── Main Layout ──
         self.main_layout = QHBoxLayout()
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.setSpacing(0)
         self.outer_layout.addLayout(self.main_layout)
 
-        # 🔹 Sidebar
+        # ── Instantiate Sidebar ──
         self.sidebar = SidebarWidget()
         self.main_layout.addWidget(self.sidebar)
 
-        # 🔹 Connect Signals
+        # ── Connect Signals ──
         self.title_bar.sidebar_toggled.connect(self.toggle_sidebar)
         self.title_bar.close_clicked.connect(self.handle_close)
         self.title_bar.minimize_clicked.connect(self.showMinimized)
         self.title_bar.maximize_clicked.connect(self.toggle_maximize_restore)
         self.sidebar.close_app.connect(self.handle_close)
 
-        # 🔹 Main Content Container (Header + Pages)
+        # ── Main Content Container ──
         self.content_wrapper = QVBoxLayout()
         self.content_wrapper.setContentsMargins(0, 0, 0, 0)
         self.content_wrapper.setSpacing(0)
         self.main_layout.addLayout(self.content_wrapper)
 
-        # 🔹 Header
+        # ── Header ──
         self.header = QWidget()
         self.header.setObjectName("Header")
         self.header_layout = QHBoxLayout(self.header)
         self.header_layout.setContentsMargins(20, 12, 20, 12)
         self.header_layout.setSpacing(20)
 
-        # 🔹 Welcome Message Group
+        # ── Welcome Message Group ──
         self.greeting_container = QWidget(self.header) # Create a container for the greeting labels
         self.greeting_container.setObjectName("greeting_container")
 
@@ -103,11 +109,11 @@ class Application(QMainWindow):
 
         self.content_wrapper.addWidget(self.header)
 
-        # 🔹 Stacked Pages
+        # ── Stacked Pages ──
         self.sw_pages = QStackedWidget()
         self.content_wrapper.addWidget(self.sw_pages)
 
-        self.page_instances = self.build_pages() # Build page instances
+        self.page_instances = self.build_pages() # build page instances
 
         for name, page in self.page_instances.items():
             self.sw_pages.addWidget(page)
@@ -115,7 +121,7 @@ class Application(QMainWindow):
         self.connect_navigation()
         self.switch_page("dashboard")
 
-        self.overlay = LayoutDebugger(self.wrapper)
+        #self.overlay = LayoutDebugger(self.wrapper)
 
     def build_pages(self):
         """Instantiate and return all page instances for the stacked widget."""
@@ -151,7 +157,7 @@ class Application(QMainWindow):
         """
         DebugLogger.log("Switching to page: {page_name}", "info")
         if page_name in self.page_instances:
-            # Set button states
+            # ── Set Button States ──
             for btn_name, page_key in {
                 "btn_dashboard": "dashboard",
                 "btn_meal_planner": "meal_planner",
@@ -163,7 +169,7 @@ class Application(QMainWindow):
                 if button:
                     button.setChecked(page_key == page_name)
 
-            # Animate page transition
+            # ── Animate Transisitions ──
             next_widget = self.page_instances[page_name]
             current_widget = self.sw_pages.currentWidget()
 

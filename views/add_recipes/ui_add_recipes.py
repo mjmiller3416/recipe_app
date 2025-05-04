@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QLabel,
                                QLineEdit, QPushButton, QScrollArea,
                                QSizePolicy, QTextEdit, QVBoxLayout, QWidget)
 
-from core.widgets.combobox import CustomComboBox
+from ui.components.inputs import CustomComboBox
 
 
 class Ui_AddRecipes(object):

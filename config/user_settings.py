@@ -10,6 +10,7 @@ from pathlib import Path
 
 from config.paths.app_paths import AppPaths
 
+
 # ── Class Definition ────────────────────────────────────────────────────────────
 class UserSettings:
     """

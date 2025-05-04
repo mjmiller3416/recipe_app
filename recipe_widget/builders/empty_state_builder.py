@@ -6,7 +6,7 @@ Defines the EmptyStateBuilder class for generating empty recipe card frames.
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from dataclasses import dataclass
 
-from helpers.ui_helpers.icons.widgets import IconButton
+from ui.iconkit import ButtonIcon
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QFrame, QVBoxLayout
 
@@ -44,8 +44,8 @@ class EmptyStateBuilder:
         lyt.setContentsMargins(0, 0, 0, 0)
 
         # add meal button
-        btn_add = IconButton(
-            path="add_meal.svg",
+        btn_add = ButtonIcon(
+            file_name="add_meal.svg",
             size=ICON_SIZE
         )
         btn_add.setObjectName("AddMealButton") # slot looks for this

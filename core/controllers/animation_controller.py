@@ -1,18 +1,15 @@
-"""
+""" core.controllers.animation_controller.py
+
 AnimationManager provides methods for fading widgets in and out using QPropertyAnimation.
+"""
 
-Class Methods:
-    - fade_widget: Fades a given widget from a specified start opacity to an end opacity.
-    - transition_stack: Manages cross-fading between two stacked widgets.
- """
+# ── Imports ─────────────────────────────────────────────────────────────────────
+from PySide6.QtCore import QPropertyAnimation, QEasingCurve, QTimer
+from PySide6.QtWidgets import QGraphicsOpacityEffect
 
-from core.helpers.qt_imports import (QEasingCurve, QGraphicsOpacityEffect,
-                                     QParallelAnimationGroup,
-                                     QPropertyAnimation, QTimer)
-
-
+# ── Class Definition ────────────────────────────────────────────────────────────
 class AnimationManager:
-    active_animations = []  # Store animations to prevent garbage collection
+    active_animations = []  # store animations to prevent garbage collection
 
     @staticmethod
     def fade_widget(widget, duration=300, start=1.0, end=0.0):
@@ -26,17 +23,17 @@ class AnimationManager:
             end (float): Ending opacity value (0.0 to 1.0). Default is 0.0 (fully transparent).
         """
         if not widget.isVisible():
-            widget.setVisible(True)  # Force visibility if hidden
+            widget.setVisible(True)  # force visibility if hidden
 
-        # ✅ Store effect on widget to prevent GC and reuse it
+        # store effect on widget to prevent GC and reuse it
         if not hasattr(widget, "_fade_effect"):
             effect = QGraphicsOpacityEffect(widget)
             widget.setGraphicsEffect(effect)
-            widget._fade_effect = effect  # Cache it on the widget
+            widget._fade_effect = effect  # cache it on the widget
         else:
             effect = widget._fade_effect
 
-        # 🧯 Safety check — set initial opacity directly before animating
+        # set initial opacity directly before animating
         effect.setOpacity(start)
 
         anim = QPropertyAnimation(effect, b"opacity", widget)
@@ -61,19 +58,19 @@ class AnimationManager:
         fade_out = AnimationManager.fade_widget(current_widget, duration, 1.0, 0.0)
         fade_in = AnimationManager.fade_widget(next_widget, duration, 0.0, 1.0)
 
-        # Make sure fade-in is ready
+        # make sure fade-in is ready
         if not next_widget.isVisible():
             next_widget.setVisible(True)
         next_widget.repaint()
 
-        # ⏱️ Delay fade-in just slightly (e.g. 100–150ms into fade-out)
+        # delay fade-in just slightly (e.g. 100–150ms into fade-out)
         def start_fade_in():
             stacked_widget.setCurrentWidget(next_widget)
             fade_in.start()
 
         QTimer.singleShot(duration // 3, start_fade_in)  # e.g. 100ms into 300ms fade-out
 
-        # Keep both animations alive
+        # keep both animations alive
         AnimationManager.active_animations.extend([fade_out, fade_in])
 
         def cleanup():

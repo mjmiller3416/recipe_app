@@ -3,13 +3,15 @@
 Provides the IconFactory class for generating QIcons with dynamic color variants (default, hover, checked).
 """
 
-from helpers.app_helpers.debug_logger import DebugLogger
+
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon
 
-from .loader import SVGLoader, icon_path
-
+from config import AppPaths 
+from core.helpers import DebugLogger
+from .loader import SVGLoader
+from core.controllers.icon_controller import IconController
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class IconFactory:
@@ -18,8 +20,32 @@ class IconFactory:
     Produces default, hover, and checked color variants for a given SVG asset.
     """
     @staticmethod
+    def make_single_icon(file_name: str, size: QSize, variant: str = "default") -> QIcon:
+        from core.controllers.icon_controller import IconController
+
+        palette = IconController().palette
+        styles = palette.get("ICON_STYLES", {})
+
+        # NEW: Check if the style is a dict (style set) or a direct color key
+        style = styles.get(variant, "ICON_COLOR")
+        if isinstance(style, dict):
+            default_key = style.get("default", "ICON_COLOR")
+        else:
+            default_key = style
+
+        effective_color = palette.get(default_key, "#FFFFFF")
+
+        return SVGLoader.load(
+            AppPaths.ICONS_DIR / file_name,
+            effective_color,
+            size,
+            source="#000",
+            as_icon=True
+        )
+
+    @staticmethod
     def make_icons(
-        path: str,
+        file_name: str,
         size: QSize,
         default_color: str,
         hover_color:   str,
@@ -40,9 +66,9 @@ class IconFactory:
             tuple[QIcon, QIcon, QIcon]: A tuple containing (default_icon, hover_icon, checked_icon).
         """
         # ── Resolve File Path ──
-        resolved_path = icon_path(path)
-        if not resolved_path:
-            DebugLogger.log(f"Icon path for '{path}' could not be resolved.", "error")
+        resolved_path = AppPaths.ICONS_DIR / file_name
+        if not resolved_path.exists():
+            DebugLogger.log(f"Icon path for '{file_name}' could not be resolved.", "error")
 
         # ── Load Icon ──
         return (

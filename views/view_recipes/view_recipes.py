@@ -1,18 +1,16 @@
-# Package: app.view_recipes
+"""views/view_recipes/view_recipes.py
 
-# Description: This module defines the ViewRecipes class, which is responsible for displaying
-# a grid of recipe cards in a scrollable area. It fetches recipes from the database and dynamically
-# creates recipe cards for each recipe. The layout is designed to be responsive, with three columns
-# per row. The class also includes methods for clearing the display and loading recipes.
+This module defines the ViewRecipes class, which displays a list of recipes in a scrollable layout.
+"""
 
 
-# 🔸 Third-Party Imports
-from core.helpers.qt_imports import (QScrollArea, QSizePolicy, QSpacerItem, Qt,
-                                     QVBoxLayout, QWidget, Signal)
-# 🔸 Local Imports
-from database import DB_INSTANCE
+# ── Imports ─────────────────────────────────────────────────────────────────────
+from PySide6.QtCore import Qt, Signal, QSize, QRect, QPoint
+from PySide6.QtWidgets import QSpacerItem, QSizePolicy, QVBoxLayout, QWidget, QScrollArea, QLayout
+from database.models import Recipe
 
 
+# ── Class Definition ────────────────────────────────────────────────────────────
 class ViewRecipes(QWidget):
     """Dynamically displays all recipes in a responsive scrollable layout using RecipeCard wrappers."""
 
@@ -59,8 +57,6 @@ class ViewRecipes(QWidget):
 
     def create_flow_layout(self, parent):
         """Returns a responsive flow layout for displaying cards, with centered alignment."""
-        from core.helpers.qt_imports import QLayout, QPoint, QRect, QSize
-
         class FlowLayout(QLayout):
             def __init__(self, parent=None, margin=0, spacing=45):
                 super().__init__(parent)
@@ -151,7 +147,7 @@ class ViewRecipes(QWidget):
         from recipe_widget.constants import LayoutSize
         from recipe_widget.recipe_slot import RecipeSlot
 
-        recipes = DB_INSTANCE.get_all_recipes()
+        recipes = Recipe.all()  # fetch all recipes from the database
         if not recipes:
             return
 

@@ -1,13 +1,16 @@
 import sys
 
-from config.config import (ERROR_COLOR, INFO_COLOR, SUCCESS_COLOR,
-                           WARNING_COLOR, icon_path)
+from config import AppPaths
+from core.controllers import ThemeController
 from core.helpers.debug_logger import DebugLogger
-from core.helpers.qt_imports import (QApplication, QColor, QDialog,
-                                     QDialogButtonBox,
-                                     QGraphicsDropShadowEffect, QGridLayout,
-                                     QLabel, QPixmap, QSizePolicy, QSpacerItem,
-                                     Qt, QVBoxLayout)
+from ui.iconkit import StandardIcon
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor, QPixmap
+from PySide6.QtWidgets import (QApplication, QDialog, QDialogButtonBox,
+                               QGraphicsDropShadowEffect, QGridLayout,
+                               QLabel, QSizePolicy, QSpacerItem,
+                               QVBoxLayout)
+
 
 
 class MessageDialog(QDialog):
@@ -18,6 +21,14 @@ class MessageDialog(QDialog):
         self.setObjectName("DialogWidget")
         self.setFixedSize(400, 220)
         self.setWindowFlags(Qt.FramelessWindowHint)
+
+        # ── Fetch Theme ──
+        self.theme = ThemeController().get_current_palette()
+        self.success_color = self.theme["SUCCESS_COLOR"]
+        self.error_color = self.theme["ERROR_COLOR"]
+        self.warning_color = self.theme["WARNING_COLOR"]
+        self.info_color = self.theme["INFO_COLOR"]
+
 
         DebugLogger.log("DialogWidget initialized", "info")
 
@@ -97,21 +108,22 @@ class MessageDialog(QDialog):
             self.buttonBox.addButton("OK", QDialogButtonBox.AcceptRole).clicked.connect(self.accept)
 
     def _set_messages(self, message, description):
-        from core.helpers.ui_helpers import \
-            svg_loader  # Local import for button icons⚠️⚠️⚠️
         self.lbl_message.setText(message)
         self.lbl_description.setText(description)
 
-        color = INFO_COLOR
+        color = self.theme["INFO_COLOR"]
         if self.message_type == "success":
-            color = SUCCESS_COLOR
+            color = self.theme["SUCCESS_COLOR"]
         elif self.message_type == "warning":
-            color = WARNING_COLOR
+            color = self.theme["WARNING_COLOR"]
         elif self.message_type == "error":
-            color = ERROR_COLOR
+            color = self.theme["ERROR_COLOR"]
 
-        pixmap = svg_loader(icon_path("success"), color, size=self.lbl_icon.size(), return_type=QPixmap, source_color="#000")
-        self.lbl_icon.setPixmap(pixmap)
+        self.ico_message = StandardIcon(
+            file_path=AppPaths.ICONS_DIR / "message.svg",
+            size=self.lbl_icon.size(),
+            icon_color=color
+        )
 
     def discard_changes(self):
         DebugLogger.log("Changes discarded!", "warning")

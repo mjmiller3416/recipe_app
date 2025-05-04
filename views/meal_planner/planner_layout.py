@@ -4,8 +4,6 @@
 from PySide6.QtCore import QEvent, Qt
 from PySide6.QtWidgets import QHBoxLayout, QToolTip, QVBoxLayout, QWidget
 
-from database import DB_INSTANCE
-from database.modules.recipe_module import Recipe
 from recipe_widget.constants import LayoutSize
 from recipe_widget.recipe_slot import RecipeSlot
 
@@ -95,8 +93,8 @@ class PlannerLayout(QWidget):
         for key, slot in self.meal_slots.items():
             rid = meal_dict.get(key)
             if rid:
-                recipe = DB_INSTANCE.get_recipe(rid)
-                slot.set_recipe(recipe)
+                """ recipe = DB_INSTANCE.get_recipe(rid) ⚠️⚠️⚠️⚠️
+                slot.set_recipe(recipe) """
 
                 if key == "main": # ensure main dish is enabled
                     for side in ["side1", "side2", "side3"]:

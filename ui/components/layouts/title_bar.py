@@ -1,19 +1,19 @@
 """ui/components/title_bar.py
 
+Defines the TitleBar class, a custom title bar for a frameless application window.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
+from ui.iconkit import ToolButtonIcon
 
-from config.config import ICON_COLOR, icon_path
-
-# 🔸 Local Application Imports
-# 🔸 Constants
+# ── Constants ───────────────────────────────────────────────────────────────────
 ICON_SIZE = QSize(12, 12)
 BUTTON_SIZE = QSize(38, 38)
 
+# ── Class Definition ────────────────────────────────────────────────────────────
 class TitleBar(QWidget):
     """
     Custom title bar widget for a frameless application window.
@@ -32,7 +32,7 @@ class TitleBar(QWidget):
         btn_close (QPushButton): Closes the application.
     """
 
-    # 🔹 Signals
+    # ── Signals ─────────────────────────────────────────────────────────────────────
     sidebar_toggled = Signal()   # To toggle sidebar visibility
     close_clicked = Signal()     # To signal a close event
     minimize_clicked = Signal()  # To signal a minimize event
@@ -45,10 +45,7 @@ class TitleBar(QWidget):
         Args:
             parent (QWidget): The parent widget of the title bar.
         """
-
-        from core.helpers.ui_helpers import \
-            svg_loader  # Local import for SVG loader⚠️⚠️⚠️
-
+        # ── Properties ──
         super().__init__(parent)
         self.setObjectName("TitleBar")
         self.setAttribute(Qt.WA_StyledBackground)
@@ -56,57 +53,50 @@ class TitleBar(QWidget):
 
         self.old_pos = None  # Initialize old position for dragging
 
-        # 🔹 Load Icons
-        self.icon_minimize = svg_loader(icon_path("minimize"), ICON_COLOR, ICON_SIZE, return_type=QIcon, source_color="#000")
-        self.icon_maximize = svg_loader(icon_path("maximize"), ICON_COLOR, ICON_SIZE, return_type=QIcon, source_color="#000")
-        self.icon_restore = svg_loader(icon_path("restore"), ICON_COLOR, ICON_SIZE, return_type=QIcon, source_color="#000")
-        self.icon_close = svg_loader(icon_path("close"), ICON_COLOR, ICON_SIZE, return_type=QIcon, source_color="#000")
-        self.icon_toggle = svg_loader(icon_path("toggle"), ICON_COLOR, ICON_SIZE, return_type=QIcon, source_color="#000")
-
-        # 🔹 Title Label
+        # ── Title Label ──
         self.lbl_title = QLabel("MealGenie", self)
         self.lbl_title.setObjectName("lbl_title")
 
-        # 🔹 Sidebar Toggle Button
-        self.btn_toggle_sidebar = QPushButton(self)
-        self.btn_toggle_sidebar.setObjectName("btn_toggle_sidebar")
-        self.btn_toggle_sidebar.setFixedSize(BUTTON_SIZE)
-        self.btn_toggle_sidebar.setIcon(self.icon_toggle)
-        self.btn_toggle_sidebar.setIconSize(QSize(20, 20))
-        self.btn_toggle_sidebar.clicked.connect(self.sidebar_toggled.emit)
+        # ── Sidebar Toggle Button ──
+        self.btn_ico_toggle_sidebar = ToolButtonIcon(
+            file_name="toggle_sidebar.svg",
+            size=QSize(20, 20),
+            parent=self
+        )
+        self.btn_ico_toggle_sidebar.clicked.connect(self.sidebar_toggled.emit)
 
-        # 🔹 Minimize Button
-        self.btn_minimize = QPushButton(self)
-        self.btn_minimize.setObjectName("btn_minimize")
-        self.btn_minimize.setFixedSize(BUTTON_SIZE)
-        self.btn_minimize.setIcon(self.icon_minimize)
-        self.btn_minimize.setIconSize(ICON_SIZE)
-        self.btn_minimize.clicked.connect(lambda: self.minimize_clicked.emit())
+        # ── Minimize Button ──
+        self.btn_ico_minimize = ToolButtonIcon(
+            file_name="minimize.svg",
+            size=ICON_SIZE,
+            parent=self
+        )
+        self.btn_ico_minimize.clicked.connect(lambda: self.minimize_clicked.emit())
 
-        # 🔹 Maximize/Restore Button
-        self.btn_maximize = QPushButton(self)
-        self.btn_maximize.setObjectName("btn_maximize")
-        self.btn_maximize.setFixedSize(BUTTON_SIZE)
-        self.btn_maximize.setIcon(self.icon_maximize)
-        self.btn_maximize.setIconSize(ICON_SIZE)
-        self.btn_maximize.clicked.connect(lambda: self.maximize_clicked.emit())
+        # ── Maximize/Restore Button ──
+        self.btn_ico_maximize = ToolButtonIcon(
+            file_name="maximize.svg",
+            size=ICON_SIZE,
+            parent=self
+        )
+        self.btn_ico_maximize.clicked.connect(lambda: self.maximize_clicked.emit())
 
-        # Close Button
-        self.btn_close = QPushButton(self)
-        self.btn_close.setObjectName("btn_close")
-        self.btn_close.setFixedSize(BUTTON_SIZE)
-        self.btn_close.setIcon(self.icon_close)
-        self.btn_close.setIconSize(ICON_SIZE)
-        self.btn_close.clicked.connect(lambda: self.close_clicked.emit())
+        # ── Close Button ──
+        self.btn_ico_close = ToolButtonIcon(
+            file_name="close.svg",
+            size=ICON_SIZE,
+            parent=self
+        )
+        self.btn_ico_close.clicked.connect(lambda: self.close_clicked.emit())
 
         # 🔹 Layout For Title Bar
         title_bar_layout = QHBoxLayout(self)
-        title_bar_layout.addWidget(self.btn_toggle_sidebar)
+        title_bar_layout.addWidget(self.btn_ico_toggle_sidebar)
         title_bar_layout.addWidget(self.lbl_title)
         title_bar_layout.addStretch(1)  # Push buttons to the right
-        title_bar_layout.addWidget(self.btn_minimize)
-        title_bar_layout.addWidget(self.btn_maximize)
-        title_bar_layout.addWidget(self.btn_close)
+        title_bar_layout.addWidget(self.btn_ico_minimize)
+        title_bar_layout.addWidget(self.btn_ico_maximize)
+        title_bar_layout.addWidget(self.btn_ico_close)
         title_bar_layout.setContentsMargins(0, 0, 0, 0)
 
     @property

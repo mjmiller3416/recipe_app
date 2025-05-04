@@ -144,4 +144,11 @@
         "ignoreInnerIndentation": false
         }
     },
+
+    //** EXTENSION: PYTEST **//
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+      "tests"
+    ]
+    
   }

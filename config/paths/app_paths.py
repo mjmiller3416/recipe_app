@@ -1,4 +1,4 @@
-""" config/paths.py
+"""config/paths.py
 
 This module defines a class that centralizes the static paths used in the MealGenie application
 """
@@ -13,8 +13,8 @@ class AppPaths:
     """
 
     # ── Root Directories ───────────────────────────────────────────────────────
-    ROOT_DIR = Path(__file__).resolve().parent.parent
-    CONFIG_DIR = Path.home() / ".mealgenie"
+    ROOT_DIR = Path(__file__).resolve().parents[2]
+    CONFIG_DIR = ROOT_DIR / "config"
     ASSETS_DIR = ROOT_DIR / "assets"
     DATA_DIR = ROOT_DIR / "data"
     STYLES_DIR = ROOT_DIR / "ui" / "styles"
@@ -33,21 +33,21 @@ class AppPaths:
 
     # ── Path Utilities ──────────────────────────────────────────────────────────
     @staticmethod
-    def image_path(name: str) -> str:
+    def image_path(file_name: str) -> str:
         """Get path to general image (SVG format)."""
-        return str(AppPaths.IMAGES_DIR / f"{name}")
+        return str(AppPaths.IMAGES_DIR / f"{file_name}")
 
     @staticmethod
-    def recipe_image_path(name: str) -> str:
+    def recipe_image_path(file_name: str) -> str:
         """Get path to saved recipe image (PNG format)."""
-        return str(AppPaths.RECIPE_IMAGES_DIR / f"{name}")
+        return str(AppPaths.RECIPE_IMAGES_DIR / f"{file_name}")
 
     @staticmethod
-    def icon_path(name: str) -> str:
+    def icon_path(file_name: str) -> str:
         """Get path to UI icon (SVG format)."""
-        return str(AppPaths.ICONS_DIR / f"{name}")
+        return str(AppPaths.ICONS_DIR / f"{file_name}")
 
     @staticmethod
-    def qss_path(name: str) -> str:
+    def qss_path(file_name: str) -> str:
         """Get path to a QSS file by name."""
-        return str(AppPaths.QSS_DIR / f"{name}")
+        return str(AppPaths.QSS_DIR / f"{file_name}")

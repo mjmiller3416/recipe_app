@@ -6,14 +6,13 @@
 # input of individual ingredients.
 
 from config.config import INT, NAME, RECIPE_CATEGORIES
-from core.application.helpers.app_helpers import DebugLogger
-from core.controllers import StyleManager
-from core.helpers import clear_error_styles, dynamic_validation
-from core.helpers.app_helpers import populate_combobox
-#🔸Third-party Imports
-from core.helpers.qt_imports import QFileDialog, Qt, QVBoxLayout, QWidget
-from core.widgets.dialog_widget import DialogWidget
-from database.database import ApplicationDatabase
+from core.helpers import DebugLogger
+from ui.tools import clear_error_styles, dynamic_validation
+
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QVBoxLayout, QWidget
+from ui.components.dialogs import MessageDialog
+from ui.tools.form_utilities import populate_combobox
 
 from .crop_image_dialog import CropImageDialog
 from .ingredient_widget import IngredientWidget
@@ -36,9 +35,6 @@ class AddRecipes(QWidget):
         self.ingredient_widgets = []  # List to store ingredient widgets
         self.stored_ingredients = []  # List to store ingredient data
 
-        # Initialize StyleManager
-        self.style_manager = StyleManager(self) # Initialize StyleManager
-
         # Set up widgets
         self.setup_widgets()
 
@@ -50,7 +46,6 @@ class AddRecipes(QWidget):
 
         # Store the selected image path
         self.selected_image_path = None
-
 
     @property
     def recipe_data(self):
@@ -102,36 +97,34 @@ class AddRecipes(QWidget):
         """
         Validates and formats recipe data, saves the recipe, then saves all ingredients.
         """
-        from database.db_formatters import format_recipe_data
-        from database.db_validators import validate_data_fields
 
         # 1️⃣: Collect raw widget data
         recipe_fields = self.recipe_data
 
         # 2️⃣: Validate recipe data
-        if validate_data_fields(recipe_fields):
-            DebugLogger().log("🔵 Recipe Validation Passed", "info")
+        #if validate_data_fields(recipe_fields):
+            #DebugLogger().log("🔵 Recipe Validation Passed", "info")
 
             # 3️⃣: Format recipe data
-            formatted_data = format_recipe_data(**recipe_fields)
-            DebugLogger().log("🟢 Recipe Formatted: {formatted_data}\n", "debug")
+            #formatted_data = format_recipe_data(**recipe_fields)
+            #DebugLogger().log("🟢 Recipe Formatted: {formatted_data}\n", "debug")
 
             # 4️⃣: Insert recipe, get its new ID
-            recipe_id = ApplicationDatabase().save_recipe(formatted_data)
-            if recipe_id:
+            #recipe_id = ApplicationDatabase().save_recipe(formatted_data)
+            #if recipe_id:
                 # 5️⃣: Save all ingredients for this recipe
-                self.save_ingredients(recipe_id)
-                DebugLogger().log("🟢 Recipe Saved Successfully with ID: {recipe_id}", "debug")
+                #self.save_ingredients(recipe_id)
+                #DebugLogger().log("🟢 Recipe Saved Successfully with ID: {recipe_id}", "debug")
 
                 # Show success message
-                DialogWidget(
-                    message_type="info",
-                    message="Success!",
-                    description="Your recipe has been saved!",
-                    parent=self
-                ).exec()
-        else:
-            DebugLogger().log("🔴 Recipe Validation Failed", "error")
+                #MessageDialog(
+                    #message_type="info",
+                    #message="Success!",
+                    #description="Your recipe has been saved!",
+                    #parent=self
+                #).exec()
+        #else:
+            #DebugLogger().log("🔴 Recipe Validation Failed", "error")
 
     def save_ingredients(self, recipe_id):
         """
@@ -139,7 +132,7 @@ class AddRecipes(QWidget):
         linking each ingredient to the specified recipe_id.
         """
         DebugLogger().log("🔵 Saving Ingredients...", "info")
-        ApplicationDatabase().save_ingredients(recipe_id, self.stored_ingredients)
+        # ApplicationDatabase().save_ingredients(recipe_id, self.stored_ingredients) ⚠️
 
     def add_new_ingredient(self, ingredient_widget):
         """Adds a new ingredient widget to the layout."""
@@ -160,10 +153,10 @@ class AddRecipes(QWidget):
         # Add new widget to layout
         self.sa_lyt.addWidget(new_widget)
 
-        # Reapply hover effects since it's now enabled
+        """ # Reapply hover effects since it's now enabled ⚠️
         StyleManager.apply_hover_effects(
             [new_widget.ui.btn_add, new_widget.ui.btn_subtract], (12, 12)
-        )
+        ) """
 
     def remove_ingredient(self, ingredient_widget):
         """Removes an ingredient widget from the layout."""

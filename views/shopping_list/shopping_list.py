@@ -1,4 +1,5 @@
-from core.helpers.qt_imports import QLabel, Qt, QVBoxLayout, QWidget
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QVBoxLayout, QLabel, QWidget
 
 
 class ShoppingList(QWidget):

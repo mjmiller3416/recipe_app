@@ -8,13 +8,15 @@ multiple meal planning tabs and integrates with the database to load and save me
 """
 
 # 🔸 Local Application Imports
-from helpers.app_helpers.debug_logger import DebugLogger
+from core.helpers import DebugLogger
 
-from config.config import icon_path
+from config import AppPaths
+from ui.iconkit import IconFactory
 # 🔸 Third-party Imports
-from core.helpers.qt_imports import (QIcon, QSize, QTabWidget, QVBoxLayout,
-                                     QWidget)
-from core.helpers.ui_helpers import svg_loader
+from PySide6.QtCore import QSize
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
+
 
 from .meal_helpers import load_meal_plan, save_all_meals, save_meal_plan
 from .planner_layout import PlannerLayout
@@ -62,7 +64,7 @@ class MealPlanner(QWidget):
     def add_meal_tab(self):
         """Add the last "+" tab to create new custom meals."""
         plus_tab = QWidget()
-        icon = svg_loader(icon_path("add"), "#949aa7", size=(16, 16), return_type=QIcon, source_color="#000")
+        icon = IconFactory.make_single_icon("add.svg", size=QSize(16, 16), variant="default")
         index = self.meal_tabs.addTab(plus_tab, icon, "")
         self.meal_tabs.setTabToolTip(index, "Add Meal")
 

@@ -3,12 +3,13 @@
 # Description: This module defines a custom QComboBox that uses a QListView as the popup view.
 # It allows for a more customized appearance and behavior, such as hiding scrollbars.
 
-from helpers.app_helpers.debug_logger import DebugLogger
+#🔸Third-Party Imports
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import QComboBox, QListView
 
 #🔸Local Imports
 from config.config import INGREDIENT_CATEGORIES, MEASUREMENT_UNITS
-#🔸Third-Party Imports
-from core.helpers.qt_imports import QComboBox, QListView, Qt, Signal
+from core.helpers import DebugLogger
 
 
 class CustomComboBox(QComboBox):

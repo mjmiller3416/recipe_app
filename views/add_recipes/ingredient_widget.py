@@ -1,16 +1,15 @@
 import sys
 
-from helpers.app_helpers.debug_logger import DebugLogger
+from core.helpers import DebugLogger
 
-from config.config import (FLOAT, INGREDIENT_CATEGORIES, MEASUREMENT_UNITS,
-                           NAME, icon_path)
-from core.controllers.style_controller import StyleManager
-from core.helpers.app_helpers import populate_combobox
-from core.helpers.qt_imports import (QApplication, QGridLayout, QIcon,
-                                     QLineEdit, QPushButton, QSize,
-                                     QSizePolicy, QWidget, Signal)
-from core.helpers.ui_helpers import clear_error_styles, dynamic_validation
-from core.widgets.combobox import CustomComboBox
+from config import FLOAT, INGREDIENT_CATEGORIES, MEASUREMENT_UNITS, NAME, AppPaths
+from ui.tools import populate_combobox
+from PySide6.QtCore import QSize, Signal
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QGridLayout, QLineEdit, QPushButton, QWidget, QApplication
+from ui.tools import clear_error_styles, dynamic_validation
+from ui.components.inputs import CustomComboBox
+from ui.iconkit import ToolButtonIcon
 
 
 class IngredientWidget(QWidget):
@@ -24,7 +23,6 @@ class IngredientWidget(QWidget):
         self._setup_ui()
         self.populate_comboboxes()
         self.setup_event_logic()
-        self.apply_styles()
 
     def _setup_ui(self):
         self.gridLayout = QGridLayout(self)
@@ -47,13 +45,19 @@ class IngredientWidget(QWidget):
         self.cb_ingredient_category.setPlaceholderText("Category")
         self.gridLayout.addWidget(self.cb_ingredient_category, 0, 3, 1, 1)
 
-        self.btn_subtract = QPushButton(self)
-        self.btn_subtract.setIcon(QIcon(icon_path("subtract")))
-        self.gridLayout.addWidget(self.btn_subtract, 0, 4, 1, 1)
+        self.btn_ico_subtract = ToolButtonIcon(
+            AppPaths.ICONS_DIR / "subtract.svg",
+            QSize(24, 24),
+            parent=self,
+        )
+        self.gridLayout.addWidget(self.btn_ico_subtract, 0, 4, 1, 1)
 
-        self.btn_add = QPushButton(self)
-        self.btn_add.setIcon(QIcon(icon_path("add")))
-        self.gridLayout.addWidget(self.btn_add, 0, 5, 1, 1)
+        self.btn_ico_add = ToolButtonIcon(
+            AppPaths.ICONS_DIR / "add.svg",
+            QSize(24, 24),
+            parent=self,
+        )
+        self.gridLayout.addWidget(self.btn_ico_add, 0, 5, 1, 1)
 
     @property
     def ingredient_data(self):
@@ -65,9 +69,9 @@ class IngredientWidget(QWidget):
         }
 
     def setup_event_logic(self):
-        self.btn_add.clicked.connect(self.validate_and_format)
+        #self.btn_ico_add.clicked.connect(self.validate_and_format) # ⚠️⚠️⚠️⚠️
         self.ingredient_validated.connect(self.add_ingredient)
-        self.btn_subtract.clicked.connect(self.request_removal)
+        self.btn_ico_subtract.clicked.connect(self.request_removal)
 
         dynamic_validation(self.le_quantity, FLOAT)
         dynamic_validation(self.le_ingredient_name, NAME)
@@ -75,10 +79,7 @@ class IngredientWidget(QWidget):
         self.cb_unit.cb_validated.connect(lambda: clear_error_styles(self.cb_unit))
         self.cb_ingredient_category.cb_validated.connect(lambda: clear_error_styles(self.cb_ingredient_category))
 
-    def validate_and_format(self):
-        from database.db_formatters import format_ingredient_data
-        from database.db_validators import validate_data_fields
-
+    """ def validate_and_format(self): ⚠️⚠️⚠️⚠️
         ingredient_data = self.ingredient_data
 
         if validate_data_fields(ingredient_data):
@@ -88,7 +89,7 @@ class IngredientWidget(QWidget):
             DebugLogger().log("🔵 Emitting Ingredient Data 🔵\n", "info")
             self.ingredient_validated.emit(formatted_data)
         else:
-            DebugLogger().log("🔴 Ingredient Validation Failed", "error")
+            DebugLogger().log("🔴 Ingredient Validation Failed", "error") """
 
     def add_ingredient(self):
         self.add_ingredient_requested.emit(self)
@@ -100,10 +101,6 @@ class IngredientWidget(QWidget):
     def populate_comboboxes(self):
         populate_combobox(self.cb_ingredient_category, INGREDIENT_CATEGORIES)
         populate_combobox(self.cb_unit, MEASUREMENT_UNITS)
-
-    def apply_styles(self):
-        StyleManager.apply_hover_effects(self.btn_add, (12, 12))
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

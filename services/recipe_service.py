@@ -1,3 +1,8 @@
+"""services/recipe_service.py
+
+This module provides functions to interact with the recipe database.
+"""
+
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from typing import List
 
@@ -6,51 +11,67 @@ from database.models.ingredient import Ingredient
 from database.models.recipe import Recipe
 from database.models.recipe_ingredient import RecipeIngredient
 
+# ── Query Helpers ───────────────────────────────────────────────────────────────
+def list_all() -> list[Recipe]:
+    """Return every recipe in creation-date order."""
+    return Recipe.all(order_by="created_at DESC")
 
-# ── Public Methods ──────────────────────────────────────────────────────────────
+
+def get(recipe_id: int) -> Recipe | None:
+    """Fetch a single recipe or None."""
+    return Recipe.get(recipe_id)
+
+
+def recent(days: int = 30) -> list[Recipe]:
+    """Recipes created in the last *n* days."""
+    sql = (
+        "SELECT * FROM recipes "
+        "WHERE DATE(created_at) >= DATE('now', ? || ' days') "
+        "ORDER BY created_at DESC"
+    )
+    return Recipe.raw_query(sql, params=(-days,))
+
+# ── Transactional Helpers ───────────────────────────────────────────────────────
 def create_recipe_with_ingredients(
     recipe_data: dict,
-    ingredients: List[dict]  # each dict: {"ingredient_name", "ingredient_category", "quantity", "unit"}
+    ingredients: List[dict],
 ) -> Recipe:
     """
-    Atomically create a Recipe, its Ingredients (or get existing),
-    and the RecipeIngredient join rows.
+    Atomically create a recipe plus all ingredient links.
+    Uses the new context-managed connection so the whole
+    operation is one tidy transaction.
     """
-    # use a single connection/transaction
-    conn = get_connection()
-    cursor = conn.cursor()
-    try:
-        # ── Save Recipe ──
-        recipe = Recipe.model_validate(recipe_data).save()
+    # get connection
+    with get_connection() as conn:             
+        # save recipe
+        recipe = Recipe.model_validate(recipe_data).save(conn)
 
-        # ── Get Each Ingredient ──
+        # insert ingredients
         for ing in ingredients:
-            # check if ingredient already exists
-            existing = conn.execute(
-                "SELECT id FROM ingredients WHERE ingredient_name = ? AND ingredient_category = ?",
-                (ing["ingredient_name"], ing["ingredient_category"])
+            # try existing first
+            row = conn.execute(
+                """
+                SELECT id FROM ingredients
+                WHERE ingredient_name = ? AND ingredient_category = ?
+                """,
+                (ing["ingredient_name"], ing["ingredient_category"]),
             ).fetchone()
 
-            if existing:
-                ingredient_id = existing["id"]
+            if row:
+                ingredient_id = row["id"]
             else:
                 ingredient = Ingredient(
                     ingredient_name=ing["ingredient_name"],
-                    ingredient_category=ing["ingredient_category"]
-                ).save()
+                    ingredient_category=ing["ingredient_category"],
+                ).save(conn)
                 ingredient_id = ingredient.id
 
-            # ── Create Join ──
             RecipeIngredient(
                 recipe_id=recipe.id,
                 ingredient_id=ingredient_id,
                 quantity=ing.get("quantity"),
-                unit=ing.get("unit")
-            ).save()
+                unit=ing.get("unit"),
+            ).save(conn)
 
-        conn.commit()
+        # commit transaction
         return recipe
-
-    except Exception:
-        conn.rollback()
-        raise

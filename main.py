@@ -1,21 +1,20 @@
-# Description: Main entry point for the MealGenie application.
+""" main.py 
 
-#🔸System Imports
+This module serves as the main entry point for the MealGenie application.
+"""
+
+# ── Imports ─────────────────────────────────────────────────────────────────────
 import sys
 
-from helpers.app_helpers.debug_logger import DebugLogger
-from PySide6.QtCore import QCoreApplication
-#🔸Third-Party Imports
 from PySide6.QtWidgets import QApplication
 
-#🔸Local Imports
 from core.application import Application
-from core.controllers import StyleManager
-from database import DB_INSTANCE
-from database.initialize_db import reset_to_version
-from ui.tools.layout_debugger import DebugLayout
+from database.init_db import init_db
+from core.controllers import ThemeController # TODO: Refactor to use core/controllers/theme_controller.py
+from core.helpers import DebugLogger
+from ui.tools.layout_debugger import LayoutDebugger
 
-
+# ── Class Definition ────────────────────────────────────────────────────────────
 class MealPlannerApp:
     """
     Main application class for MealGenie.
@@ -28,7 +27,6 @@ class MealPlannerApp:
         run(): Starts the application's main event loop.
     """
 
-
     def __init__(self):
         """
         Initialize the application:
@@ -36,24 +34,24 @@ class MealPlannerApp:
         - Database initialization.
         - Theme loading.
         """
+        
 
-        # Initialize the PySide6 application
+        # ── Initialize Application ──
         self.app = QApplication(sys.argv)
         self.app.setApplicationName("MealGenie")
+        init_db() # initialize the database
 
-        # Apply the stylesheet
-        self.style_manager = StyleManager(self.app)
+        # ── Apply Theme ──
+        #self.style_manager = StyleManager(self.app) # TODO: Refactor to use core/controllers/theme_controller.py
 
-        # Set up the main application window
+        # ── Setup Window ──
         self.main_window = Application()
         self.main_window.setWindowTitle("MealGenie")
         self.main_window.resize(1330, 800)
         self.main_window.show()
 
     def run(self):
-        """
-        Run the application's main event loop.
-        """
+        """ Run the application's main event loop. """
         DebugLogger().log("Application initializing...\n", "info")
         sys.exit(self.app.exec())
 
@@ -62,45 +60,33 @@ if "--reset" in sys.argv:
     db_path = "database/app_data.db"
     sql_file = "database/db_tables.sql"
 
-    # Ensure database connection is closed before reset
-    DB_INSTANCE.close_connection()
-
-    # Perform the reset
-    reset_to_version(db_path, sql_file)
+    # perform the reset
+    # TODO: recreate reset_to_version function to use the new database structure
     DebugLogger().log("Database reset complete.\n", "info")
 
 elif "--test" in sys.argv:
     print("Launching in TEST MODE...\n")
 
-    # 🔹 Minimal test setup (no main window!)
+    # ── Test Setup ──
     app = QApplication(sys.argv)
     app.setApplicationName("Test App")
+    #StyleManager(app)  # apply the theme
 
-    # 🔹 Initialize DB + Styles (just like MealPlannerApp does)
-    DB_INSTANCE.connect()  # Just in case
-    StyleManager(app)
-
-    # 🔹 Run your test harness
-    from dev_sandbox.test_app import run_test
+    from tests.dev.test_app import run_test
     test_window = run_test(app)
 
     sys.exit(app.exec())
 
 elif "--import-recipes" in sys.argv:
-    print("Importing recipes from CSV...\n")
+    DebugLogger.log("Importing recipes from CSV...\n", "info")
 
-    # 🔹 Initialize minimal app environment (optional if needed)
-    DB_INSTANCE.connect()
-
-    # 🔹 Import your function
+    # ── Import Recipes ──
     from scripts.db.recipes_with_ingredients import insert_recipes_from_csv
-
-    # 🔹 Run it!
     insert_recipes_from_csv("database/recipes_with_ingredients.csv")
 
-    DebugLogger().log("✅ Recipe import complete.\n", "success")
+    DebugLogger().log("Recipe import complete.\n", "success")
 
 else:
-    # Regular launch
+    # ── Regular Launch ──
     app = MealPlannerApp()
     app.run()

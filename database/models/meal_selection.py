@@ -1,3 +1,7 @@
+""" database/models/meal_selection.py
+
+Meal Selection model for selecting meals and their recipes.
+"""
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 

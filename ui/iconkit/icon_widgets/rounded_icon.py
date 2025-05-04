@@ -4,19 +4,21 @@ Defines the RoundedIcon class, a QLabel subclass for displaying SVG icons
 within a colored rounded rectangle background.
 """
 
-from helpers.app_helpers.debug_logger import DebugLogger
+
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QLabel, QWidget
 
-from config.config import ICON_COLOR
+from config import AppPaths
+from core.helpers import DebugLogger
 
-from ..loader import SVGLoader, icon_path
+from ..loader import SVGLoader
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class RoundedIcon(QLabel):
-    """
+    """ ui/iconkit.icon_widgets.rounded_icon.py
+
     A QLabel subclass that displays an SVG icon centered within a colored
     rounded rectangle background.
 
@@ -25,14 +27,14 @@ class RoundedIcon(QLabel):
 
     def __init__(
         self,
-        name:   str,                    # Name of the SVG file (e.g., "my_icon.svg" or "my_icon")
-        size:   QSize,                  # Logical size of the entire widget (background included)
-        icon_color:  str = ICON_COLOR,  # Color for the SVG icon itself
+        name:   str,                         # Name of the SVG file (e.g., "my_icon.svg" or "my_icon")
+        size:   QSize,                       # Logical size of the entire widget (background included)
+        icon_color:  str,                    # Color for the SVG icon itself
         background_color: str = "#E0E0E0", # Default background color (light gray)
-        border_radius: int = 4,         # Corner radius in logical pixels
-        icon_padding: int = 3,          # Padding around icon in logical pixels
-        source_color: str = "#000",     # Original color in SVG to replace
-        parent: QWidget | None = None   # Parent widget
+        border_radius: int = 4,              # Corner radius in logical pixels
+        icon_padding: int = 3,               # Padding around icon in logical pixels
+        source_color: str = "#000",        # Original color in SVG to replace
+        parent: QWidget | None = None        # Parent widget
     ):
         """
         Initialize the RoundedIcon.
@@ -50,21 +52,20 @@ class RoundedIcon(QLabel):
         super().__init__(parent)
 
         # ── Resolve SVG Path ──
-        # Use the imported icon_path function
-        full_path = icon_path(name)
-        # Basic check if path resolution worked (icon_path should handle logging)
+        full_path = AppPaths.icon_path(name)
+        # basic check if path resolution worked (icon_path should handle logging)
         if "invalid.svg" in full_path: # Check against the default invalid path from icon_path
              DebugLogger.log(f"RoundedIcon path for '{name}' could not be resolved or is invalid.", "error")
-             # Optionally set a default placeholder or leave blank
-             self.setText("?") # Placeholder text
+             # optionally set a default placeholder or leave blank
+             self.setText("?") # placeholder text
              self.setFixedSize(size)
              self.setAlignment(Qt.AlignCenter)
              self.setStyleSheet(f"background-color: {background_color}; "
                                 f"border-radius: {border_radius}px; "
-                                f"color: {icon_color};") # Basic fallback style
+                                f"color: {icon_color};") # basic fallback style
              return
 
-        # ── Load SVG Icon with Background using the new loader method ──
+        # ── Load SVG Icon ──
         pix = SVGLoader.load_with_background(
             path=full_path,
             icon_color=icon_color,
@@ -73,26 +74,26 @@ class RoundedIcon(QLabel):
             size=size,
             icon_padding=icon_padding,
             source=source_color,
-            as_icon=False # We need the QPixmap for QLabel
+            as_icon=False # we need the QPixmap for QLabel
         )
 
         # ── Set Widget Properties ──
-        if not pix.isNull(): # Check if pixmap loading was successful
+        if not pix.isNull(): # check if pixmap loading was successful
             self.setPixmap(pix)
         else:
-            # Fallback if pixmap is null after loading attempt
+            # fallback if pixmap is null after loading attempt
             DebugLogger.log(f"RoundedIcon failed to load pixmap for '{name}'.", "error")
-            self.setText("!") # Error placeholder
+            self.setText("!") # error placeholder
             self.setStyleSheet(f"background-color: {background_color}; "
                                f"border-radius: {border_radius}px; "
-                               f"color: red;") # Error indication style
+                               f"color: red;") # error indication style
 
-        # Set the size of the QLabel widget itself to the requested logical size
+        # set the size of the QLabel widget itself to the requested logical size
         self.setFixedSize(size)
-        # Center the pixmap within the label area
+        # center the pixmap within the label area
         self.setAlignment(Qt.AlignCenter)
-        # Remove any default margins the label might have
+        # remove any default margins the label might have
         self.setContentsMargins(0, 0, 0, 0)
-        # Ensure the QLabel background is transparent, as the pixmap handles the visual background
+        # ensure the QLabel background is transparent, as the pixmap handles the visual background
         self.setStyleSheet("background-color: transparent; border: none;")
 
