@@ -34,6 +34,7 @@ class ViewRecipes(QWidget):
         self.build_ui()
         self.recipes_loaded = False
         self.load_recipes()
+        self.setAttribute(Qt.WA_StyledBackground, True)
 
     def build_ui(self):
          """Initializes layout with a scrollable, responsive recipe area."""

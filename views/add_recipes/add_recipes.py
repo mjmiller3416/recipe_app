@@ -31,6 +31,8 @@ class AddRecipes(QWidget):
         self.ui.setupUi(self)
         self.setObjectName("AddRecipes")
 
+        self.setAttribute(Qt.WA_StyledBackground, True)
+
         # Initialize ingredient widgets and stored ingredients list
         self.ingredient_widgets = []  # List to store ingredient widgets
         self.stored_ingredients = []  # List to store ingredient data
