@@ -1,50 +1,53 @@
-"""core/helpers/icon_helpers/effects.py
+"""ui/iconkit/effects.py
 
 Provides the ApplyHoverEffects class for dynamically changing button icons on hover and toggle events.
 """
 
+from PySide6.QtCore import QSize
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from functools import partial
-
-from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QAbstractButton
+
+from .themed_icon import ThemedIcon
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class ApplyHoverEffects:
-    """Provides static methods to wire dynamic hover and toggle icon effects onto buttons.
-
-    Allows swapping between default, hover, and checked icons based on user interaction.
-    """
-
     @staticmethod
-    def apply(
+    def recolor(
         button: QAbstractButton,
-        default_icon: QIcon,
-        hover_icon:   QIcon,
-        checked_icon: QIcon,
-    ) -> None:
-        """Apply dynamic icon effects to a QAbstractButton.
+        file_name: str,
+        size: QSize,
+        variant: str
+    ):
+        """Apply dynamic icon recoloring for hover/checked states."""
+        # Load all icon states
+        icon_default = ThemedIcon(file_name, size, variant).icon()
+        icon_hover = ThemedIcon(file_name, size, variant).icon_for_state("hover")
+        icon_checked = ThemedIcon(file_name, size, variant).icon_for_state("checked")
 
-        Args:
-            button (QAbstractButton): The button to which effects are applied.
-            default_icon (QIcon): Icon displayed normally.
-            hover_icon (QIcon): Icon displayed when the mouse hovers over the button.
-            checked_icon (QIcon): Icon displayed when the button is checked.
+        # Apply default icon and size
+        button.setIcon(icon_default)
+        button.setIconSize(size)
 
-        Returns:
-            None
-        """
-        button.setMouseTracking(True)
+        # Store icons for use in events
+        button._icon_default = icon_default
+        button._icon_hover = icon_hover
+        button._icon_checked = icon_checked
 
-        # ── Wire Hover Events ──
-        def on_enter(e, b=button, ic=hover_icon):
-            if not b.isChecked(): b.setIcon(ic)
-        def on_leave(e, b=button, ic=default_icon):
-            if not b.isChecked(): b.setIcon(ic)
-        button.enterEvent = partial(on_enter)
-        button.leaveEvent = partial(on_leave)
+        # Event overrides
+        def enterEvent(event):
+            if not button.isChecked():
+                button.setIcon(button._icon_hover)
 
-        # ── Wire Toggle Events ──
-        button.toggled.connect(lambda chk, b=button, d=default_icon, c=checked_icon:
-                               b.setIcon(c if chk else d))
+        def leaveEvent(event):
+            if not button.isChecked():
+                button.setIcon(button._icon_default)
+
+        def updateCheckedState():
+            icon = button._icon_checked if button.isChecked() else button._icon_default
+            button.setIcon(icon)
+
+        # Patch events
+        button.enterEvent = enterEvent
+        button.leaveEvent = leaveEvent
+        button.toggled.connect(updateCheckedState)

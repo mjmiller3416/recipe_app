@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (QFrame, QGridLayout, QLabel, QLineEdit,
 from config import AppPaths
 from core.controllers import ThemeController
 from core.helpers import DebugLogger
-from ui.iconkit import StandardIcon, ButtonIcon, ToolButtonIcon
+from ui.iconkit import ButtonIcon, Icon, ToolButtonIcon
 
 
 class SearchWidget(QFrame):
@@ -41,7 +41,7 @@ class SearchWidget(QFrame):
         self.layout.setSpacing(5)
 
         # 🔹 Search Icon
-        self.ico_search = StandardIcon(
+        self.ico_search = Icon(
             file_name=AppPaths.ICONS_DIR / "search.svg",
             size=self.ICON_SIZE,
         )

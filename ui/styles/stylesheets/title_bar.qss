@@ -1,0 +1,34 @@
+/* ------------------------------------------------------------------
+   TITLEBAR STYLING
+   ------------------------------------------------------------------ */
+
+#TitleBar {
+    background-color: #1b1d23;
+    border-top-left-radius: 0px; /* App Window Border Radius */
+    border-top-right-radius: 0px; /* App Window Border Radius */
+    border-bottom: 2px solid #343b48;
+}
+
+#TitleBar QLabel {
+    padding-left: 10px;
+    background-color: transparent;
+
+    /* Font */
+    font-size: 16px;
+    font-weight: 600
+}
+
+#TitleBar QPushButton {
+    background-color: transparent;
+    border-radius: 0px;
+    margin-bottom: 2px; /* Button Margin */
+
+    /* Font */
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+}
+
+#TitleBar QPushButton:hover {
+    background-color: #3B575B; /* Button Hover Background Color */
+}

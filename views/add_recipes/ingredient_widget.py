@@ -1,15 +1,16 @@
 import sys
 
-from core.helpers import DebugLogger
-
-from config import FLOAT, INGREDIENT_CATEGORIES, MEASUREMENT_UNITS, NAME, AppPaths
-from ui.tools import populate_combobox
 from PySide6.QtCore import QSize, Signal
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QGridLayout, QLineEdit, QPushButton, QWidget, QApplication
-from ui.tools import clear_error_styles, dynamic_validation
+from PySide6.QtWidgets import (QApplication, QGridLayout, QLineEdit,
+                               QPushButton, QWidget)
+
+from config import (FLOAT, INGREDIENT_CATEGORIES, MEASUREMENT_UNITS, NAME,
+                    AppPaths)
+from core.helpers import DebugLogger
 from ui.components.inputs import CustomComboBox
 from ui.iconkit import ToolButtonIcon
+from ui.tools import clear_error_styles, dynamic_validation, populate_combobox
 
 
 class IngredientWidget(QWidget):

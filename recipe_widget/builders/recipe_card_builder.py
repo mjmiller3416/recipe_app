@@ -6,15 +6,15 @@ Defines the RecipeCardBuilder class for generating recipe card layouts (small, m
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from dataclasses import dataclass
 
-from core.helpers import DebugLogger
-from ui.components.images import RoundedImage
-from ui.components import Separator
-from ui.iconkit import StandardIcon
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
+from core.helpers import DebugLogger
 from database.models.recipe import Recipe
+from ui.components import Separator
+from ui.components.images import RoundedImage
+from ui.iconkit import Icon
 
 from ..constants import ICON_COLOR, LAYOUT_SIZE, LayoutSize
 
@@ -164,11 +164,10 @@ class RecipeCardBuilder:
         lyt.setSpacing(2)
 
         # icon
-        ico_meta = StandardIcon(
+        ico_meta = Icon(
             name=icon_name,
             size=ICON_SIZE,
-            color=ICON_COLOR,
-            source="#000",
+            variant="default",
         )
         ico_meta.setContentsMargins(0, 0, 0, 4)
         lyt.addWidget(ico_meta) # add to layout

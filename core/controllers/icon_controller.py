@@ -3,16 +3,17 @@
 Central registry that recolors every theme-aware icon when the palette flips.
 """
 
+from typing import Dict
 # ── Imports ────────────────────────────────────────────────────────────────
 from weakref import WeakSet
-from typing import Dict
 
 from PySide6.QtCore import QObject, Signal
 
+from core.controllers.theme_controller import ThemeController
 from core.helpers.debug_logger import DebugLogger
 from core.helpers.singleton_mixin import SingletonMixin
-from core.helpers.types import ThemedIcon                   
-from core.controllers.theme_controller import ThemeController
+from core.helpers.types import ThemedIcon
+
 
 # ── Class Definition ────────────────────────────────────────────────────────
 class IconController(QObject, SingletonMixin):

@@ -3,35 +3,37 @@
 Defines the ToolButtonIcon class, a QToolButton subclass with theme-aware dynamic SVG icon states.
 """
 
-# ── Imports ────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize
+# ── Imports ────────────────────────────────────────────────────────
 from PySide6.QtWidgets import QToolButton
 
-from ui.iconkit.base_button_icon import BaseButtonIcon
+from ui.iconkit.effects import ApplyHoverEffects
+from ui.iconkit.icon_mixin import IconMixin
 
-# ── Class Definition ────────────────────────────────────────────────
-class ToolButtonIcon(QToolButton, BaseButtonIcon):
-    """QToolButton variant with the themed-icon mix-in."""
 
+class ToolButtonIcon(QToolButton, IconMixin):
     def __init__(
-            self,
-            file_name: str,
-            size: QSize,
-            variant: str = "default",
-            object_name: str = "",
-            checked: bool = False,
-            parent=None
-        ) -> None:
-        """Initialize the ToolButtonIcon with a name and size.
-        Args:
-            name (str): The name of the icon.
-            size (QSize): The size of the icon.
-            variant (str): The variant of the icon. Defaults to "default".
-            object_name (str): The object name of the icon. Defaults to "".
-            checked (bool): Whether the icon is checked. Defaults to False.
-            parent (QWidget, optional): The parent widget. Defaults to None.
+        self,
+        file_name: str,
+        size: QSize,
+        variant: str = "default",
+        object_name: str = "",
+        checked: bool = False,
+        hover_effects: bool = False,
+        parent=None
+    ):
         """
-        super().__init__(parent)  
+        Initializes a ToolButtonIcon instance.
+
+        Args:
+            file_name (str): The path to the SVG icon file.
+            size (QSize): The size of the icon.
+            variant (str, optional): The variant of the icon. Defaults to "default".
+            object_name (str, optional): The object name for the widget. Defaults to "".
+            checked (bool, optional): Whether the button is checked. Defaults to False.
+            parent: The parent widget. Defaults to None.
+        """
+        super().__init__(parent)
 
         if object_name:
             self.setObjectName(object_name)
@@ -39,4 +41,8 @@ class ToolButtonIcon(QToolButton, BaseButtonIcon):
         self.setCheckable(True)
         self.setChecked(checked)
 
-        self._init_button_icon(file_name, size, variant)
+        self._use_hover_effects = hover_effects
+        if self._use_hover_effects:
+            ApplyHoverEffects.recolor(self, file_name, size, variant)
+
+        self._init_themed_icon(file_name, size, variant)

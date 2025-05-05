@@ -3,9 +3,9 @@
 Database connection manager for SQLite.
 """
 
+import contextlib
 # ── Imports ─────────────────────────────────────────────────────────────────────
 import sqlite3
-import contextlib
 from pathlib import Path
 
 # ── Constants ───────────────────────────────────────────────────────────────────

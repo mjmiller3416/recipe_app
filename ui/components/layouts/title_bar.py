@@ -5,8 +5,8 @@ Defines the TitleBar class, a custom title bar for a frameless application windo
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
+
 from ui.iconkit import ToolButtonIcon
 
 # ── Constants ───────────────────────────────────────────────────────────────────
@@ -26,10 +26,10 @@ class TitleBar(QWidget):
     Attributes:
         sidebarToggled (Signal): Emitted when the sidebar toggle button is clicked.
         lbl_title (QLabel): Displays the app name.
-        btn_toggle_sidebar (QPushButton): Toggles sidebar visibility.
-        btn_minimize (QPushButton): Minimizes the window.
-        btn_maximize (QPushButton): Maximizes or restores the window.
-        btn_close (QPushButton): Closes the application.
+        btn_ico_toggle_sidebar (QPushButton): Toggles sidebar visibility.
+        btn_ico_minimize (QPushButton): Minimizes the window.
+        btn_ico_maximize (QPushButton): Maximizes or restores the window.
+        btn_ico_close (QPushButton): Closes the application.
     """
 
     # ── Signals ─────────────────────────────────────────────────────────────────────
@@ -108,10 +108,10 @@ class TitleBar(QWidget):
             dict: A dictionary of QPushButton widgets.
         """
         return {
-            "toggle_sidebar": self.btn_toggle_sidebar,
-            "minimize": self.btn_minimize,
-            "maximize": self.btn_maximize,
-            "close": self.btn_close,
+            "toggle_sidebar": self.btn_ico_toggle_sidebar,
+            "minimize": self.btn_ico_minimize,
+            "maximize": self.btn_ico_maximize,
+            "close": self.btn_ico_close,
         }
 
     def updateMaximizeIcon(self, maximized: bool):
@@ -122,9 +122,9 @@ class TitleBar(QWidget):
             maximized (bool): True if the window is maximized, False otherwise.
         """
         if maximized:
-            self.btn_maximize.setIcon(self.icon_restore)
+            self.btn_ico_maximize.setIcon(self.icon_restore)
         else:
-            self.btn_maximize.setIcon(self.icon_maximize)
+            self.btn_ico_maximize.setIcon(self.icon_maximize)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:

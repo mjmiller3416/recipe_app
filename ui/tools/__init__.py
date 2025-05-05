@@ -1,2 +1,3 @@
 from .form_utilities import populate_combobox
-from .validation import dynamic_validation, clear_error_styles, apply_error_style
+from .validation import (apply_error_style, clear_error_styles,
+                         dynamic_validation)

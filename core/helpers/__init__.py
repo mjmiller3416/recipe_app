@@ -1,16 +1,10 @@
-"""
-Helpers Package
+"""core/helpers/__init__.py
 
-Includes general-purpose utility functions and classes for:
-- app-level control
-- UI interaction/styling
-- debug logging
+This package provides utility functions, logging capabilities, and other shared functionalities
 """
 
 from core.helpers.debug_logger import DebugLogger
-from core.helpers.types import ThemedIcon
 
 __all__ = [
     "DebugLogger",
-    "ThemedIcon",
 ]

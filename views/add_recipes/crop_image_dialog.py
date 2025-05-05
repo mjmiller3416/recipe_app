@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import (QDialog, QVBoxLayout, QLabel, QPushButton,
-                               QFileDialog)
+from PySide6.QtWidgets import (QDialog, QFileDialog, QLabel, QPushButton,
+                               QVBoxLayout)
 
 
 class CropImageDialog(QDialog):

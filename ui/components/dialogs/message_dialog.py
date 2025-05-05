@@ -1,16 +1,15 @@
 import sys
 
-from config import AppPaths
-from core.controllers import ThemeController
-from core.helpers.debug_logger import DebugLogger
-from ui.iconkit import StandardIcon
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QPixmap
 from PySide6.QtWidgets import (QApplication, QDialog, QDialogButtonBox,
-                               QGraphicsDropShadowEffect, QGridLayout,
-                               QLabel, QSizePolicy, QSpacerItem,
-                               QVBoxLayout)
+                               QGraphicsDropShadowEffect, QGridLayout, QLabel,
+                               QSizePolicy, QSpacerItem, QVBoxLayout)
 
+from config import AppPaths
+from core.controllers import ThemeController
+from core.helpers.debug_logger import DebugLogger
+from ui.iconkit import Icon
 
 
 class MessageDialog(QDialog):
@@ -18,17 +17,9 @@ class MessageDialog(QDialog):
 
     def __init__(self, message_type="info", message="", description="", parent=None):
         super().__init__(parent)
-        self.setObjectName("DialogWidget")
+        self.setObjectName("MessageDialog")
         self.setFixedSize(400, 220)
         self.setWindowFlags(Qt.FramelessWindowHint)
-
-        # ── Fetch Theme ──
-        self.theme = ThemeController().get_current_palette()
-        self.success_color = self.theme["SUCCESS_COLOR"]
-        self.error_color = self.theme["ERROR_COLOR"]
-        self.warning_color = self.theme["WARNING_COLOR"]
-        self.info_color = self.theme["INFO_COLOR"]
-
 
         DebugLogger.log("DialogWidget initialized", "info")
 
@@ -119,10 +110,10 @@ class MessageDialog(QDialog):
         elif self.message_type == "error":
             color = self.theme["ERROR_COLOR"]
 
-        self.ico_message = StandardIcon(
+        self.ico_message = Icon(
             file_path=AppPaths.ICONS_DIR / "message.svg",
             size=self.lbl_icon.size(),
-            icon_color=color
+            variant="msgbox",
         )
 
     def discard_changes(self):

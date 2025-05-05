@@ -18,6 +18,12 @@ class QssCombiner:
     @staticmethod
     def get_for_view(view_name: str) -> list[str]:
         view_map = {
+            "application": [
+                QssPaths.APPLICATION,
+                QssPaths.Components.TITLE_BAR,
+                QssPaths.Components.SIDEBAR_WIDGET,
+                QssPaths.Components.SEARCH_WIDGET,
+            ],
             "dashboard": [
                 QssPaths.APPLICATION,
                 QssPaths.Views.DASHBOARD,
@@ -26,7 +32,6 @@ class QssCombiner:
                 QssPaths.APPLICATION,
                 QssPaths.Views.ADD_RECIPES,
                 QssPaths.Components.MESSAGE_DIALOG,
-                QssPaths.Components.INGREDIENT_WIDGET,
             ],
             "view_recipes": [
                 QssPaths.APPLICATION,

@@ -1,6 +1,7 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QLabel
-from ui.iconkit import StandardIcon
+from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
+
+from ui.iconkit import Icon
 
 
 class Dashboard(QWidget):

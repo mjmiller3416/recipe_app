@@ -3,13 +3,16 @@
 Defines the ButtonIcon class, a QPushButton subclass with theme-aware dynamic SVG icon states.
 """
 
-# ── Imports ────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize
+# ── Imports ────────────────────────────────────────────────────────
 from PySide6.QtWidgets import QPushButton
-from ui.iconkit.base_button_icon import BaseButtonIcon
 
-# ── Class Definition ────────────────────────────────────────────────
-class ButtonIcon(QPushButton, BaseButtonIcon):
+from ui.iconkit.effects import ApplyHoverEffects
+from ui.iconkit.icon_mixin import IconMixin
+
+
+# ── Class Definition ────────────────────────────────────────────────────────────
+class ButtonIcon(QPushButton, IconMixin):
     def __init__(
         self,
         file_name: str,
@@ -18,19 +21,20 @@ class ButtonIcon(QPushButton, BaseButtonIcon):
         label: str = "",
         object_name: str = "",
         checked: bool = False,
+        hover_effects: bool = False,
         parent=None
     ):
         """
-        Flexible QPushButton that supports SVG icons, theming, labels, and object naming.
+        Initializes a ButtonIcon instance.
 
         Args:
-            file_name (str): The name of the SVG file.
+            file_name (str): The path to the SVG icon file.
             size (QSize): The size of the icon.
-            variant (str): The color variant to use (e.g., "default", "nav", "error").
-            label (str): Optional button label (for sidebar or general use).
-            object_name (str): Optional objectName for styling and querying.
-            checked (bool): Initial checked state (for toggle-style buttons).
-            parent (QWidget, optional): Parent widget.
+            variant (str, optional): The variant of the icon. Defaults to "default".
+            label (str, optional): The text label for the button. Defaults to "".
+            object_name (str, optional): The object name for the widget. Defaults to "".
+            checked (bool, optional): Whether the button is checked. Defaults to False.
+            parent: The parent widget. Defaults to None.
         """
         super().__init__(label, parent)
 
@@ -40,4 +44,8 @@ class ButtonIcon(QPushButton, BaseButtonIcon):
         self.setCheckable(True)
         self.setChecked(checked)
 
-        self._init_button_icon(file_name, size, variant)
+        self._use_hover_effects = hover_effects
+        if hasattr(self, "_use_hover_effects") and self._use_hover_effects:
+            ApplyHoverEffects.recolor(self, file_name, size, variant)
+        
+        self._init_themed_icon(file_name, size, variant)

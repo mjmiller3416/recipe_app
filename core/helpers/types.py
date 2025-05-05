@@ -1,4 +1,5 @@
-from typing import Protocol, runtime_checkable, Dict
+from typing import Dict, Protocol, runtime_checkable
+
 
 @runtime_checkable
 class ThemedIcon(Protocol):

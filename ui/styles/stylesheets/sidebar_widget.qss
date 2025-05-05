@@ -1,0 +1,34 @@
+/* ------------------------------------------------------------------
+   SIDEBAR WIDGET STYLING
+   ------------------------------------------------------------------ */
+
+#SidebarWidget {
+background-color: #272C36; /* Sidebar Background Color */
+border-bottom-left-radius: 8px; /* App Window Border Radius */
+}
+
+#SidebarWidget QPushButton {
+    background-color: transparent;
+    border-radius: 0px;
+    padding: 10px 20px 10px 40px;
+
+   /* Font */
+    font-family: 'Baby Girly Script';
+    font-size: 16px;
+    text-align: left;
+}
+
+#SidebarWidget QPushButton:hover {
+    background-color: #3B575B;
+}
+
+#SidebarWidget QPushButton:checked {
+    background-color: #3B575B;
+
+    /* Font */
+    font-weight: 600;
+}
+
+#SidebarWidget #lbl_logo {
+    background-color: transparent;
+}

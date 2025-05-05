@@ -5,16 +5,14 @@ ingredients, and directions.
 """
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import (
-    QFrame, QHBoxLayout, QLabel, QSizePolicy,
-    QSpacerItem, QVBoxLayout, QWidget
-)
+from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QSizePolicy,
+                               QSpacerItem, QVBoxLayout, QWidget)
 
 from database.models.recipe import Recipe
 from ui.components.dialogs.styled_dialog import StyledDialog
-from ui.components.separator import Separator
 from ui.components.images import SquareImage
-from ui.iconkit import StandardIcon
+from ui.components.separator import Separator
+from ui.iconkit import Icon
 from ui.tools.layout_debugger import LayoutDebugger
 
 # ── Constants ───────────────────────────────────────────────────────────────────
@@ -300,7 +298,7 @@ class FullRecipe(StyledDialog):
         lyt.setSpacing(20)
 
         # ── Create Icon & Label ──
-        icon = StandardIcon(icon_name, ICON_SIZE, ICON_COLOR)
+        icon = Icon(icon_name, ICON_SIZE, "default")
         lbl = QLabel(text)
         lbl.setProperty("metaTitle", True)
         lbl.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)

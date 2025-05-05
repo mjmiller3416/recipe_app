@@ -5,8 +5,10 @@ This module defines the ViewRecipes class, which displays a list of recipes in a
 
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import Qt, Signal, QSize, QRect, QPoint
-from PySide6.QtWidgets import QSpacerItem, QSizePolicy, QVBoxLayout, QWidget, QScrollArea, QLayout
+from PySide6.QtCore import QPoint, QRect, QSize, Qt, Signal
+from PySide6.QtWidgets import (QLayout, QScrollArea, QSizePolicy, QSpacerItem,
+                               QVBoxLayout, QWidget)
+
 from database.models import Recipe
 
 
@@ -33,27 +35,26 @@ class ViewRecipes(QWidget):
         self.recipes_loaded = False
         self.load_recipes()
 
-
     def build_ui(self):
-        """Initializes layout with a scrollable, responsive recipe area."""
-        self.main_layout = QVBoxLayout(self)
-        self.main_layout.setSpacing(0)
-
-        self.scroll_area = QScrollArea()
-        self.scroll_area.setWidgetResizable(True)
-        self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
-
-        self.scroll_container = QWidget()
-        self.flow_layout = self.create_flow_layout(self.scroll_container)
-        self.scroll_container.setLayout(self.flow_layout)
-
-        spacer = QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
-        self.flow_layout.addItem(spacer)
-
-        self.scroll_area.setWidget(self.scroll_container)
-        self.main_layout.addWidget(self.scroll_area)
+         """Initializes layout with a scrollable, responsive recipe area."""
+         self.main_layout = QVBoxLayout(self)
+         self.main_layout.setSpacing(0)
+ 
+         self.scroll_area = QScrollArea()
+         self.scroll_area.setWidgetResizable(True)
+         self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+         self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+         self.scroll_area.viewport().setStyleSheet("background-color: transparent;")
+ 
+         self.scroll_container = QWidget()
+         self.flow_layout = self.create_flow_layout(self.scroll_container)
+         self.scroll_container.setLayout(self.flow_layout)
+ 
+         spacer = QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+         self.flow_layout.addItem(spacer)
+ 
+         self.scroll_area.setWidget(self.scroll_container)
+         self.main_layout.addWidget(self.scroll_area)
 
     def create_flow_layout(self, parent):
         """Returns a responsive flow layout for displaying cards, with centered alignment."""

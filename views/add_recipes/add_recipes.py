@@ -5,13 +5,13 @@
 # with the ApplicationDatabase class to save the recipe data to the database. It also uses the IngredientWidget class to manage the
 # input of individual ingredients.
 
-from config.config import INT, NAME, RECIPE_CATEGORIES
-from core.helpers import DebugLogger
-from ui.tools import clear_error_styles, dynamic_validation
-
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QVBoxLayout, QWidget
+
+from config.config import INT, NAME, RECIPE_CATEGORIES
+from core.helpers import DebugLogger
 from ui.components.dialogs import MessageDialog
+from ui.tools import clear_error_styles, dynamic_validation
 from ui.tools.form_utilities import populate_combobox
 
 from .crop_image_dialog import CropImageDialog

@@ -8,12 +8,14 @@ import re
 from pathlib import Path
 from typing import Union
 
-from core.helpers import DebugLogger
-from config import AppPaths
 from PySide6.QtCore import QByteArray, QRectF, QSize, Qt
 from PySide6.QtGui import QIcon, QPainter, QPixmap
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtWidgets import QApplication
+
+from config import AppPaths
+from core.helpers import DebugLogger
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class SVGLoader:

@@ -4,10 +4,9 @@ config package
 Centralized configuration access for paths, constants, and user preferences.
 """
 
-from .config import (
-    DEBUG_LAYOUT_BORDERS,ICON_SIZE, INGREDIENT_CATEGORIES,
-    MEASUREMENT_UNITS, RECIPE_CATEGORIES, INT, NAME, FLOAT
-)
+from .config import (DEBUG_LAYOUT_BORDERS, FLOAT, ICON_SIZE,
+                     INGREDIENT_CATEGORIES, INT, MEASUREMENT_UNITS, NAME,
+                     RECIPE_CATEGORIES)
 from .paths import AppPaths, QssPaths
 from .user_settings import UserSettings
 

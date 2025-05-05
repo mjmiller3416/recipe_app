@@ -11,6 +11,7 @@ from database.models.ingredient import Ingredient
 from database.models.recipe import Recipe
 from database.models.recipe_ingredient import RecipeIngredient
 
+
 # ── Query Helpers ───────────────────────────────────────────────────────────────
 def list_all() -> list[Recipe]:
     """Return every recipe in creation-date order."""

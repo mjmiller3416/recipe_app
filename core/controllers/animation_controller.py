@@ -4,8 +4,9 @@ AnimationManager provides methods for fading widgets in and out using QPropertyA
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QPropertyAnimation, QEasingCurve, QTimer
+from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QTimer
 from PySide6.QtWidgets import QGraphicsOpacityEffect
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class AnimationManager:

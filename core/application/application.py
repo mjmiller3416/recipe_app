@@ -13,6 +13,7 @@ from core.controllers.animation_controller import AnimationManager
 from core.helpers import DebugLogger
 from ui.animations import SidebarAnimator
 from ui.components.inputs.search_widget import SearchWidget
+from ui.components.layouts.title_bar import TitleBar
 from ui.tools.layout_debugger import LayoutDebugger
 from views.add_recipes import AddRecipes
 from views.dashboard import Dashboard
@@ -20,8 +21,8 @@ from views.meal_planner import MealPlanner
 from views.shopping_list import ShoppingList
 from views.view_recipes import ViewRecipes
 
-from ui.components.layouts.title_bar import TitleBar
 from .sidebar_widget import SidebarWidget
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class Application(QMainWindow):
@@ -175,7 +176,6 @@ class Application(QMainWindow):
 
             if current_widget != next_widget:
                 AnimationManager.transition_stack(current_widget, next_widget, self.sw_pages)
-
 
     def toggle_maximize_restore(self):
         if self.isMaximized():

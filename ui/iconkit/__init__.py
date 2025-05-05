@@ -1,16 +1,12 @@
 # helpers/icons/__init__.py
-from .effects import ApplyHoverEffects
-from .factory import IconFactory
-from .icon_widgets import ButtonIcon, StandardIcon, ToolButtonIcon
-from .loader import SVGLoader
-from .base_icon import BaseIcon
+from .icon_widgets import ButtonIcon, Icon, ToolButtonIcon
+from .kit import IconKit
+from .themed_icon import ThemedIcon
 
 __all__ = [
-    "SVGLoader","icon_path",
-    "IconFactory",
-    "StandardIcon","ButtonIcon",
-    "ApplyHoverEffects",
-    "StandardIcon",
+    "IconKit",
     "ToolButtonIcon",
     "ButtonIcon",
+    "Icon",
+    "ThemedIcon",
 ]
