@@ -48,71 +48,33 @@ class ThemeController(QObject, SingletonMixin):
         self._name: str   = "dark"
         self._palette: Dict = self._themes["dark"]
         self._loader = ThemedStyleLoader(self._palette)
-
-        self._load_user_theme()
-        # initial QSS apply
-        self.apply_theme()       
-        
+           
     # ── Public Methods ────────────────────────────────────
     def get_current_palette(self) -> Dict:
         return self._palette
 
-    def set_theme(self, name: str, extra_sheet: str = QssPaths.APPLICATION) -> None:
-
-        if name not in self._themes:
-            DebugLogger.log(f"Unknown theme '{name}'", "error")
-            return
-
-        self._name = name
-        self._palette = self._themes[name]
-        self._loader = ThemedStyleLoader(self._palette)
-        self._save_user_theme()
-        self.apply_theme(extra_sheet)
-
-    def apply_theme(self, view_sheet: Optional[str] = None) -> None:
-       """Alias for backward compatibility. Calls the new internal logic."""
-       self._apply_qss_and_emit(view_sheet)
-
-    def _apply_qss_and_emit(self, view_sheet: Optional[str] = None) -> None:
+    def apply_full_theme(self) -> None:
+        """
+        Load and apply all available QSS files at startup.
+        """
         app = QApplication.instance()
         if not app:
-            DebugLogger.log("No QApplication instance, skipping QSS apply.", "warning")
-            return
-        # combine global and view-specific QSS
-        qss_parts = [self._loader.load(QssPaths.APPLICATION)]
-        if view_sheet:
-            qss_parts.append(self._loader.load(view_sheet))
-        combined = "".join(qss_parts)
-        app.setStyleSheet(combined)
-        # notify icons and other listeners
-        self.theme_changed.emit(self._palette)      
-
-    def apply_theme_from_view(self, view: str) -> None:
-        """Swap in the per-view bundle (called by your screen manager)."""
-        app = QApplication.instance()
-        if not app:
+            DebugLogger.log("No QApplication instance, skipping full QSS load.", "warning")
             return
 
-        sheets = [self._loader.load(path) for path in QssCombiner.get_for_view(view)]
-        app.setStyleSheet("".join(sheets))
+        all_views = QssCombiner.get_for_view("application")  # base + shared
+        # Append every known view manually (or loop through map if you refactor)
+        all_views += QssCombiner.get_for_view("dashboard")
+        all_views += QssCombiner.get_for_view("add_recipes")
+        all_views += QssCombiner.get_for_view("view_recipes")
+        all_views += QssCombiner.get_for_view("meal_planner")
+        all_views += QssCombiner.get_for_view("shopping_list")
 
+        loaded = [self._loader.load(path) for path in all_views]
+        final_qss = "".join(loaded)
+        app.setStyleSheet(final_qss)
+
+        self.theme_changed.emit(self._palette)
+        DebugLogger.log("[Theme] Full QSS applied (all views)", "info")
     # ── Private Methods ────────────────────────────────────
-    def _save_user_theme(self) -> None:
-        try:
-            with open(CONFIG_PATH, "w", encoding="utf-8") as f:
-                json.dump({"theme": self._name}, f)
-        except Exception as e:
-            DebugLogger.log(f"Failed to save theme config: {e}", "error")
 
-    def _load_user_theme(self) -> None:
-        if not CONFIG_PATH.exists():
-            return
-        try:
-            data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-            name = data.get("theme")
-            if name in self._themes:
-                self._name = name
-                self._palette = self._themes[name]
-                self._loader = ThemedStyleLoader(self._palette)
-        except Exception as e:
-            DebugLogger.log(f"Loading saved theme failed: {e}", "error")

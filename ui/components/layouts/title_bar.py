@@ -4,14 +4,16 @@ Defines the TitleBar class, a custom title bar for a frameless application windo
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
+from pathlib import Path
+
 from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
+from PySide6.QtGui import QIcon
 
+from config import TITLE_BAR
+from ui.iconkit import ThemedIcon
 from ui.iconkit import ToolButtonIcon
 
-# ── Constants ───────────────────────────────────────────────────────────────────
-ICON_SIZE = QSize(12, 12)
-BUTTON_SIZE = QSize(38, 38)
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class TitleBar(QWidget):
@@ -54,39 +56,43 @@ class TitleBar(QWidget):
         self.old_pos = None  # Initialize old position for dragging
 
         # ── Title Label ──
-        self.lbl_title = QLabel("MealGenie", self)
+        self.lbl_title = QLabel(TITLE_BAR["APP_NAME"], self)
         self.lbl_title.setObjectName("lbl_title")
 
         # ── Sidebar Toggle Button ──
         self.btn_ico_toggle_sidebar = ToolButtonIcon(
-            file_name="toggle_sidebar.svg",
+            file_path=TITLE_BAR["ICON_TOGGLE_SIDEBAR"],
             size=QSize(20, 20),
-            parent=self
+            variant=TITLE_BAR["VARIANT"],
         )
+        self.btn_ico_toggle_sidebar.setFixedSize(TITLE_BAR["BUTTON_SIZE"])
         self.btn_ico_toggle_sidebar.clicked.connect(self.sidebar_toggled.emit)
 
         # ── Minimize Button ──
         self.btn_ico_minimize = ToolButtonIcon(
-            file_name="minimize.svg",
-            size=ICON_SIZE,
-            parent=self
+            file_path=TITLE_BAR["ICON_MINIMIZE"],
+            size=TITLE_BAR["ICON_SIZE"],
+            variant=TITLE_BAR["VARIANT"],
         )
+        self.btn_ico_minimize.setFixedSize(TITLE_BAR["BUTTON_SIZE"])
         self.btn_ico_minimize.clicked.connect(lambda: self.minimize_clicked.emit())
 
         # ── Maximize/Restore Button ──
         self.btn_ico_maximize = ToolButtonIcon(
-            file_name="maximize.svg",
-            size=ICON_SIZE,
-            parent=self
+            file_path=TITLE_BAR["ICON_MAXIMIZE"],
+            size=TITLE_BAR["ICON_SIZE"],
+            variant=TITLE_BAR["VARIANT"],
         )
+        self.btn_ico_maximize.setFixedSize(TITLE_BAR["BUTTON_SIZE"])
         self.btn_ico_maximize.clicked.connect(lambda: self.maximize_clicked.emit())
 
         # ── Close Button ──
         self.btn_ico_close = ToolButtonIcon(
-            file_name="close.svg",
-            size=ICON_SIZE,
-            parent=self
+            file_path=TITLE_BAR["ICON_CLOSE"],
+            size=TITLE_BAR["ICON_SIZE"],
+            variant=TITLE_BAR["VARIANT"],
         )
+        self.btn_ico_close.setFixedSize(TITLE_BAR["BUTTON_SIZE"])
         self.btn_ico_close.clicked.connect(lambda: self.close_clicked.emit())
 
         # 🔹 Layout For Title Bar
@@ -114,30 +120,35 @@ class TitleBar(QWidget):
             "close": self.btn_ico_close,
         }
 
-    def updateMaximizeIcon(self, maximized: bool):
-        """
-        Updates the maximize/restore icon based on the maximized state.
+    
+    def update_maximize_icon(self, maximized: bool):
+        target_path = (
+            TITLE_BAR["ICON_RESTORE"] if maximized else TITLE_BAR["ICON_MAXIMIZE"]
+        )
 
-        Args:
-            maximized (bool): True if the window is maximized, False otherwise.
-        """
-        if maximized:
-            self.btn_ico_maximize.setIcon(self.icon_restore)
-        else:
-            self.btn_ico_maximize.setIcon(self.icon_maximize)
+        icon = ThemedIcon(
+            file_path=target_path,
+            size=self.btn_ico_maximize.size(),
+            variant=TITLE_BAR["VARIANT"],
+        ).icon()
+
+        self.btn_ico_maximize.setIcon(icon)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.old_pos = event.globalPos()
             self.setCursor(Qt.SizeAllCursor)
+        super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
         if self.old_pos:
             delta = event.globalPos() - self.old_pos
-            # Let the parent window manage the drag action
-            self.parent().move(self.parent().x() + delta.x(), self.parent().y() + delta.y())
+            win = self.window()
+            win.move(win.x() + delta.x(), win.y() + delta.y())
             self.old_pos = event.globalPos()
+        super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
         self.old_pos = None
         self.setCursor(Qt.ArrowCursor)
+        super().mouseReleaseEvent(event)

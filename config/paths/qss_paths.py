@@ -32,3 +32,22 @@ class QssPaths:
         SEARCH_WIDGET = AppPaths.qss_path("search_widget.qss")
         SIDEBAR_WIDGET = AppPaths.qss_path("sidebar_widget.qss")
         TITLE_BAR = AppPaths.qss_path("title_bar.qss")
+
+    @staticmethod
+    def get_view_styles() -> dict:
+        """
+        Returns a mapping of view names to their associated QSS paths.
+        """
+        return {
+            "application": [
+                QssPaths.APPLICATION,
+                QssPaths.Components.TITLE_BAR,
+                QssPaths.Components.SIDEBAR_WIDGET,
+                QssPaths.Components.SEARCH_WIDGET,
+            ],
+            "dashboard": [QssPaths.Views.DASHBOARD],
+            "add_recipes": [QssPaths.Views.ADD_RECIPES, QssPaths.Components.MESSAGE_DIALOG],
+            "view_recipes": [QssPaths.Views.VIEW_RECIPES, QssPaths.Components.RECIPE_WIDGET],
+            "meal_planner": [QssPaths.Views.MEAL_PLANNER],
+            "shopping_list": [QssPaths.Views.SHOPPING_LIST],
+        }

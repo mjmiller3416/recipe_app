@@ -9,7 +9,8 @@ import sys
 from PySide6.QtWidgets import QApplication
 
 from core.application import Application
-from core.controllers import ThemeController  # TODO: Refactor to use core/controllers/theme_controller.py
+from core.controllers import \
+    ThemeController  # TODO: Refactor to use core/controllers/theme_controller.py
 from core.helpers import DebugLogger
 from database.init_db import init_db
 from ui.tools.layout_debugger import LayoutDebugger

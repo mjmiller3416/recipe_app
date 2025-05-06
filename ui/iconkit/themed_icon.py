@@ -4,6 +4,8 @@ Provides ThemedIcon a utility class for generating themed icons (QIcon/QPixmap) 
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
+from pathlib import Path
+
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon, QPixmap
 
@@ -17,14 +19,14 @@ class ThemedIcon:
     Creates a themed QIcon or QPixmap from an SVG file, using a color variant from the active theme.
     """
 
-    def __init__(self, file_name: str, size: QSize, variant: str = "default"):
+    def __init__(self, file_path: Path, size: QSize, variant: str = "default"):
         """
         Args:
-            file_name (str): SVG file name (relative to icon dir)
+            file_path (Path): SVG file name (relative to icon dir)
             size (QSize): Desired icon size
             variant (str): Variant used in theme's ICON_STYLES (e.g., "default", "nav", etc.)
         """
-        self.file_name = file_name
+        self.file_path = file_path
         self.size = size
         self.variant = variant
         self.palette = IconController().palette
@@ -32,7 +34,7 @@ class ThemedIcon:
     def icon_for_state(self, state: str = "default") -> QIcon:
         """Returns a themed QIcon for the given state (default, hover, checked)."""
         return SVGLoader.load(
-            file_path=self.get_path(),
+            file_path=self.file_path,
             color=self.resolve_color(state),
             size=self.size,
             as_icon=True
@@ -41,7 +43,7 @@ class ThemedIcon:
     def icon(self) -> QIcon:
         """Returns a themed QIcon"""
         return SVGLoader.load(
-            file_path=self.get_path(),
+            file_path=self.file_path,
             color=self.resolve_color("default"),
             size=self.size,
             as_icon=True
@@ -50,7 +52,7 @@ class ThemedIcon:
     def pixmap(self) -> QPixmap:
         """Returns a themed QPixmap"""
         return SVGLoader.load(
-            file_path=self.get_path(),
+            file_path=self.file_path,
             color=self.resolve_color("default"),
             size=self.size,
             as_icon=False
@@ -71,8 +73,3 @@ class ThemedIcon:
         theme_key = variant_map.get(state, "ICONS.DEFAULT.DEFAULT")
 
         return self.palette.get(theme_key, "#FFFFFF")
-
-    def get_path(self):
-        """Returns full path to icon file"""
-        from config import AppPaths
-        return AppPaths.ICONS_DIR / self.file_name

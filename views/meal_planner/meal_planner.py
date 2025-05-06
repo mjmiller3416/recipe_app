@@ -7,16 +7,15 @@ It allows users to create, edit, and save meal plans. The MealPlanner uses QTabW
 multiple meal planning tabs and integrates with the database to load and save meal data.
 """
 
-# 🔸 Third-party Imports
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
 
-# 🔸 Local Application Imports
 from core.helpers import DebugLogger
 from ui.iconkit import ThemedIcon
-
 from .meal_helpers import load_meal_plan, save_all_meals, save_meal_plan
 from .planner_layout import PlannerLayout
+from config import MEAL_PLANNER
 
 
 class MealPlanner(QWidget):
@@ -61,7 +60,11 @@ class MealPlanner(QWidget):
     def add_meal_tab(self):
         """Add the last "+" tab to create new custom meals."""
         plus_tab = QWidget()
-        icon_asset = ThemedIcon("add.svg", size=QSize(16, 16), variant="default")
+        icon_asset = ThemedIcon(
+            file_path=MEAL_PLANNER["ICON_ADD"],
+            size=MEAL_PLANNER["ICON_SIZE"],
+            variant=MEAL_PLANNER["VARIANT"]
+        )
         icon = icon_asset.pixmap()
         index = self.meal_tabs.addTab(plus_tab, icon, "")
         self.meal_tabs.setTabToolTip(index, "Add Meal")

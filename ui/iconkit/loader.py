@@ -26,7 +26,7 @@ class SVGLoader:
 
     @staticmethod
     def load(
-        file_path: str,
+        file_path: Path,
         color: str,
         size: Union[QSize, tuple[int, int]] = QSize(24, 24),
         source: str = "#000",

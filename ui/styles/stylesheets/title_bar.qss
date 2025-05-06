@@ -18,17 +18,12 @@
     font-weight: 600
 }
 
-#TitleBar QPushButton {
+#TitleBar QToolButton {
     background-color: transparent;
     border-radius: 0px;
     margin-bottom: 2px; /* Button Margin */
-
-    /* Font */
-    font-size: 20px;
-    font-weight: 500;
-    text-align: center;
 }
 
-#TitleBar QPushButton:hover {
+#TitleBar QToolButton:hover {
     background-color: #3B575B; /* Button Hover Background Color */
 }

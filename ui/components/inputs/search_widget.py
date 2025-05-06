@@ -1,15 +1,11 @@
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtGui import QIcon, QPixmap
-from PySide6.QtWidgets import (QFrame, QGridLayout, QLabel, QLineEdit,
-                               QSizePolicy, QToolButton)
+from PySide6.QtWidgets import QGridLayout, QLineEdit, QSizePolicy, QFrame
 
-from config import AppPaths
-from core.controllers import ThemeController
-from core.helpers import DebugLogger
-from ui.iconkit import ButtonIcon, Icon, ToolButtonIcon
+from config import SEARCH
+from ui.iconkit import Icon, ToolButtonIcon
 
-
+# ── Class Definition ────────────────────────────────────────────────────────────
 class SearchWidget(QFrame):
     """
     A custom search bar widget with a search icon, text input, and clear button.
@@ -18,8 +14,7 @@ class SearchWidget(QFrame):
         - search_triggered(str): when text is entered or Enter is pressed.
         - recipe_selected(str): placeholder for future recipe selection support.
     """
-    # 🔹 Constants
-    ICON_SIZE = QSize(16, 16)
+    
 
     # 🔹 Signals
     recipe_selected = Signal(str)
@@ -42,8 +37,9 @@ class SearchWidget(QFrame):
 
         # 🔹 Search Icon
         self.ico_search = Icon(
-            file_name=AppPaths.ICONS_DIR / "search.svg",
-            size=self.ICON_SIZE,
+            file_path=SEARCH["ICON_SEARCH"],
+            size=SEARCH["ICON_SIZE"],
+            variant=SEARCH["VARIANT"],
         )
         self.layout.addWidget(self.ico_search, 0, 0)
 
@@ -58,8 +54,9 @@ class SearchWidget(QFrame):
 
         # 🔹 Clear Button
         self.btn_ico_clear = ToolButtonIcon(
-            file_name=AppPaths.ICONS_DIR / "clear.svg",
-            size=self.ICON_SIZE,
+            file_path=SEARCH["ICON_CLEAR"],
+            size=SEARCH["ICON_SIZE"],
+            variant=SEARCH["VARIANT"],
         )
         self.btn_ico_clear.setVisible(False) # Testing visibility based on text input
         self.btn_ico_clear.setFixedSize(24, 24)

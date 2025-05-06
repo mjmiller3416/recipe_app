@@ -1,4 +1,4 @@
-""" core/application/application.py
+"""core/application/application.py
 
 Main application window with a custom title bar, sidebar, header, and dynamic stacked content.
 """
@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
                                QWidget)
 
 from core.controllers.animation_controller import AnimationManager
+from core.controllers.theme_controller import ThemeController
 from core.helpers import DebugLogger
 from ui.animations import SidebarAnimator
 from ui.components.inputs.search_widget import SearchWidget
@@ -32,7 +33,10 @@ class Application(QMainWindow):
     """
     def __init__(self):
         super().__init__()
-
+        # ── Initialize Controller ──
+        self.theme_controller = ThemeController()
+        self.theme_controller.apply_full_theme()
+        
         # ── Window Setup ──
         self.setObjectName("Application")
         self.setWindowFlags(Qt.FramelessWindowHint)
@@ -85,24 +89,25 @@ class Application(QMainWindow):
         self.header_layout.setSpacing(20)
 
         # ── Welcome Message Group ──
-        self.greeting_container = QWidget(self.header) # Create a container for the greeting labels
+        self.greeting_container = QWidget(self.header) # create a container for the greeting labels
         self.greeting_container.setObjectName("greeting_container")
 
-        greeting_layout = QVBoxLayout(self.greeting_container) # Use a vertical layout for the greeting labels
+        greeting_layout = QVBoxLayout(self.greeting_container) 
         greeting_layout.setContentsMargins(0, 0, 0, 0)
         greeting_layout.setSpacing(0)
 
-        self.lbl_greeting = QLabel("Welcome Back,", self.greeting_container) # Greeting label
+        self.lbl_greeting = QLabel("Welcome Back,", self.greeting_container) 
         self.lbl_greeting.setObjectName("lbl_greeting")
 
-        self.lbl_username = QLabel("MARYANN", self.greeting_container) # Username label
+        self.lbl_username = QLabel("MARYANN", self.greeting_container) 
         self.lbl_username.setObjectName("lbl_username")
 
-        greeting_layout.addWidget(self.lbl_greeting) # Add labels to the layout
+        greeting_layout.addWidget(self.lbl_greeting) # add to the layout
         greeting_layout.addWidget(self.lbl_username)
 
-        self.header_layout.addWidget(self.greeting_container) # Add the greeting container to the header layout
+        self.header_layout.addWidget(self.greeting_container) # add to the header layout
 
+        # Instantiate Search Widget
         self.search_widget = SearchWidget()
         self.search_widget.setMaximumHeight(36)
         self.search_widget.setFixedWidth(300)
@@ -157,6 +162,7 @@ class Application(QMainWindow):
             page_name (str): The name of the page to switch to.
         """
         DebugLogger.log("Switching to page: {page_name}", "info")
+        # ── Check if Page Exists ──
         if page_name in self.page_instances:
             # ── Set Button States ──
             for btn_name, page_key in {

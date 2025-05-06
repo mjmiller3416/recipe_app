@@ -5,12 +5,9 @@ SidebarWidget class for managing the sidebar of the application.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtGui import QIcon, QPixmap
-from PySide6.QtWidgets import (QLabel, QPushButton, QSizePolicy, QSpacerItem,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import QSizePolicy, QSpacerItem, QVBoxLayout, QWidget
 
-from config import ICON_SIZE, AppPaths
-from core.controllers import ThemeController
+from config import SIDEBAR, ICON_SIZE
 from ui.iconkit import ButtonIcon, Icon
 
 
@@ -47,7 +44,7 @@ class SidebarWidget(QWidget):
         self.logo_layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
 
         # ── Logo Label ──
-        self.lbl_logo = Icon(file_name="logo.svg", size=QSize(215, 215))
+        self.lbl_logo = Icon(file_path="logo.svg", size=QSize(215, 215))
 
         self.logo_layout.addWidget(self.lbl_logo)
         self.verticalLayout.addWidget(self.logo_container)
@@ -58,52 +55,42 @@ class SidebarWidget(QWidget):
 
         # ── Navigation Buttons ──
         self.btn_dashboard = ButtonIcon(
-            file_name     = "dashboard.svg",
-            size          = ICON_SIZE,
-            label         = "Dashboard",
-            object_name   = "btn_dashboard",
-            hover_effects = True,
-            checked       = True
+            file_path = SIDEBAR["ICON_DASHBOARD"],
+            size      = ICON_SIZE,
+            label     = "Dashboard",
+            variant   = SIDEBAR["VARIANT"],
         )
         self.verticalLayout.addWidget(self.btn_dashboard)
 
         self.btn_meal_planner = ButtonIcon( # Meal Planner button
-            file_name     = "meal_planner.svg",
-            size          = ICON_SIZE,
-            label         = "Meal Planner",
-            object_name   = "btn_meal_planner",
-            hover_effects = True,
-            checked       = False
+            file_path = SIDEBAR["ICON_MEAL_PLANNER"],
+            size      = ICON_SIZE,
+            label     = "Meal Planner",
+            variant   = SIDEBAR["VARIANT"],
         )
         self.verticalLayout.addWidget(self.btn_meal_planner)
 
         self.btn_view_recipes = ButtonIcon( # View Recipes button
-            file_name     = "view_recipes.svg",
-            size          = ICON_SIZE,
-            label         = "View Recipes",
-            object_name   = "btn_view_recipes",
-            hover_effects = True,
-            checked       = False
+            file_path = SIDEBAR["ICON_RECIPES"],
+            size      = ICON_SIZE,
+            label     = "View Recipes",
+            variant   = SIDEBAR["VARIANT"],
         )
         self.verticalLayout.addWidget(self.btn_view_recipes)
 
         self.btn_shopping_list = ButtonIcon( # Shopping List button
-            file_name     = "shopping_list.svg",
-            size          = ICON_SIZE,
-            label         = "Shopping List",
-            object_name   = "btn_shopping_list",
-            hover_effects = True,
-            checked       = False
+            file_path = SIDEBAR["ICON_SHOPPING_LIST"],
+            size      = ICON_SIZE,
+            label     = "Shopping List",
+            variant   = SIDEBAR["VARIANT"],
         )
         self.verticalLayout.addWidget(self.btn_shopping_list)
 
         self.btn_add_recipes = ButtonIcon( # Add Recipes button
-            file_name     = "add_recipes.svg",
-            size          = ICON_SIZE,
-            label         = "Add Recipes",
-            object_name   = "btn_add_recipes",
-            hover_effects = True,
-            checked       = False
+            file_path = SIDEBAR["ICON_RECIPES"],
+            size      = ICON_SIZE,
+            label     = "Add Recipes",
+            variant   = SIDEBAR["VARIANT"],
         )
         self.verticalLayout.addWidget(self.btn_add_recipes)
 
@@ -112,27 +99,22 @@ class SidebarWidget(QWidget):
 
         # ── Settings & Exist Buttons ──
         self.btn_settings = ButtonIcon( # Settings button
-            file_name     = "settings.svg",
-            size          = ICON_SIZE,
-            label         = "Settings",
-            object_name   = "btn_settings",
-            hover_effects = True,
-            checked       = False
+            file_path = SIDEBAR["ICON_SETTINGS"],
+            size      = ICON_SIZE,
+            label     = "Settings",
+            variant   = SIDEBAR["VARIANT"],
         )
         self.verticalLayout.addWidget(self.btn_settings)
 
         self.btn_exit = ButtonIcon( # Exit button
-            file_name     = "exit.svg",
-            size          = ICON_SIZE,
-            label         = "Exit",
-            object_name   = "btn_exit",
-            hover_effects = True,
-            checked       = False
+            file_path = SIDEBAR["ICON_EXIT"],
+            size      = ICON_SIZE,
+            label     = "Exit",
+            variant   = SIDEBAR["VARIANT"],
         )
         self.btn_exit.clicked.connect(self.close_app.emit) # connect exit button to close_app signal
         self.verticalLayout.addWidget(self.btn_exit)
         self.verticalLayout.setContentsMargins(0, 18, 0, 18)
-
 
     @property
     def buttons(self):

@@ -26,7 +26,18 @@ class IconMixin:
         self.setIcon(themed_icon.icon())
         self.setIconSize(size)
 
-    def refresh_theme_icon(self):
-        """Refreshes the icon using the current theme."""
-        themed_icon = ThemedIcon(self._icon_file, self._icon_size, self._icon_variant)
-        self.setIcon(themed_icon.icon())
+    # ── Public Methods ──────────────────────────────────────────────────────────────
+    def refresh_theme_icon(self, palette: dict) -> None:
+        """
+        Applies the current theme palette to the icon.
+        Should be implemented by subclasses if needed.
+        """
+        if hasattr(self, "_themed_icon") and self._themed_icon:
+            self._themed_icon.refresh(palette)
+
+    def refresh_theme(self, palette: dict) -> None:
+        """
+        Protocol-compliant wrapper for refresh_theme_icon.
+        Used by IconController to trigger icon repaints.
+        """
+        self.refresh_theme_icon(palette)

@@ -5,21 +5,19 @@ Defines the RecipeCardBuilder class for generating recipe card layouts (small, m
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from dataclasses import dataclass
+from pathlib import Path
 
-from PySide6.QtCore import QSize, Qt
-from PySide6.QtGui import QPixmap
+from PySide6.QtCore import Qt
+
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
-from core.helpers import DebugLogger
 from database.models.recipe import Recipe
 from ui.components import Separator
 from ui.components.images import RoundedImage
 from ui.iconkit import Icon
 
-from ..constants import ICON_COLOR, LAYOUT_SIZE, LayoutSize
-
-# ── Constants ───────────────────────────────────────────────────────────────────
-ICON_SIZE = QSize(30, 30)
+from ..constants import LAYOUT_SIZE, LayoutSize
+from config import RECIPE_CARD
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 @dataclass(frozen=True, slots=True)
@@ -115,7 +113,7 @@ class RecipeCardBuilder:
         # add servings
         lyt_meta.addLayout(
             self._create_meta_section(
-                icon_name="servings.svg",
+                icon_name=RECIPE_CARD["ICON_SERVINGS"],
                 heading="Servings",
                 value=self.recipe.formatted_servings(),
             )
@@ -127,7 +125,7 @@ class RecipeCardBuilder:
         # add total time
         lyt_meta.addLayout(
             self._create_meta_section(
-                icon_name="total_time.svg",
+                file_path=RECIPE_CARD["ICON_TOTAL_TIME"],
                 heading="Time",
                 value=self.recipe.formatted_total_time(),
             )
@@ -147,11 +145,11 @@ class RecipeCardBuilder:
         """
         raise NotImplementedError("Large frame layout is not yet implemented.")
 
-    def _create_meta_section(self, *, icon_name: str, heading: str, value: str) -> QVBoxLayout:
+    def _create_meta_section(self, *, file_path: Path, heading: str, value: str) -> QVBoxLayout:
         """Create a vertical layout section for displaying metadata with an icon, heading, and value.
 
         Args:
-            icon_name (str): Filename of the icon to display (e.g., "servings.svg").
+            file_path (path): File path of the icon to display (e.g., "servings.svg").
             heading (str): Label heading (e.g., "Servings", "Time").
             value (str): Value associated with the heading (e.g., "4", "30 min").
 
@@ -165,9 +163,9 @@ class RecipeCardBuilder:
 
         # icon
         ico_meta = Icon(
-            name=icon_name,
-            size=ICON_SIZE,
-            variant="default",
+            file_path=file_path,
+            size=RECIPE_CARD["ICON_SIZE"],
+            variant=RECIPE_CARD["VARIANT"]
         )
         ico_meta.setContentsMargins(0, 0, 0, 4)
         lyt.addWidget(ico_meta) # add to layout

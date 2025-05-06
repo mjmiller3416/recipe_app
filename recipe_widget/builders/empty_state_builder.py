@@ -10,11 +10,9 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QFrame, QVBoxLayout
 
 from ui.iconkit import ButtonIcon
+from config import EMPTY_STATE
 
 from ..constants import LAYOUT_SIZE, LayoutSize
-
-# ── Constants ───────────────────────────────────────────────────────────────────
-ICON_SIZE = QSize(60, 60)
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 @dataclass(frozen=True, slots=True)
@@ -46,8 +44,9 @@ class EmptyStateBuilder:
 
         # add meal button
         btn_add = ButtonIcon(
-            file_name="add_meal.svg",
-            size=ICON_SIZE
+            file_path=EMPTY_STATE["ICON_ADD_MEAL"],
+            size=EMPTY_STATE["ICON_SIZE"],
+            variant=EMPTY_STATE["VARIANT"],
         )
         btn_add.setObjectName("AddMealButton") # slot looks for this
         btn_add.setCursor(Qt.PointingHandCursor)

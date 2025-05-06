@@ -24,6 +24,7 @@ class ThemedStyleLoader:
 
     def __init__(self, theme: dict):
         self.theme = theme
+        self._cache: dict[str, str] = {}  # 🔹 Caches already-loaded QSS content
 
     def load(self, qss_file_path: str) -> str:
         """
@@ -35,19 +36,23 @@ class ThemedStyleLoader:
         Returns:
             str: QSS content with placeholders replaced by themed values.
         """
+        if qss_file_path in self._cache:
+            return self._cache[qss_file_path]
+
         try:
-            with open(qss_file_path, "r", encoding="utf-8") as f:
-                raw_qss = f.read()
+            raw_qss = Path(qss_file_path).read_text(encoding="utf-8")
+            DebugLogger.log(f"[Loader] Opening QSS: {qss_file_path}", "debug")
 
-                for key, value in self.theme.items():
-                    if key in NON_QSS_KEYS:
-                        continue
-                    if not isinstance(value, str):
-                        DebugLogger.log(f"[ThemedStyleLoader] ⚠️ Skipped non-str key: {key} → {type(value).__name__}", "warning")
-                        continue
-                    raw_qss = raw_qss.replace(f"{{{key}}}", value)
+            for key, value in self.theme.items():
+                if key in NON_QSS_KEYS:
+                    continue
+                if not isinstance(value, str):
+                    DebugLogger.log(f"[ThemedStyleLoader] ⚠️ Skipped non-str key: {key} → {type(value).__name__}", "warning")
+                    continue
+                raw_qss = raw_qss.replace(f"{{{key}}}", value)
 
-                return raw_qss
+            self._cache[qss_file_path] = raw_qss  # ✅ Cache result
+            return raw_qss
 
         except FileNotFoundError:
             DebugLogger.log(f"[ThemedStyleLoader] QSS file not found: {qss_file_path}", "error")

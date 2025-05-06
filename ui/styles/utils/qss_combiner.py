@@ -11,41 +11,34 @@ from config.paths.qss_paths import QssPaths
 # ── Class Definition ────────────────────────────────────────────────────────────
 class QssCombiner:
     """
-    Centralized mapping of which QSS files to apply per view.
-    Used by ThemeController to build the correct style stack.
+    Fetches QSS paths for a specific view or for the entire app.
     """
 
     @staticmethod
     def get_for_view(view_name: str) -> list[str]:
-        view_map = {
-            "application": [
-                QssPaths.APPLICATION,
-                QssPaths.Components.TITLE_BAR,
-                QssPaths.Components.SIDEBAR_WIDGET,
-                QssPaths.Components.SEARCH_WIDGET,
-            ],
-            "dashboard": [
-                QssPaths.APPLICATION,
-                QssPaths.Views.DASHBOARD,
-            ],
-            "add_recipes": [
-                QssPaths.APPLICATION,
-                QssPaths.Views.ADD_RECIPES,
-                QssPaths.Components.MESSAGE_DIALOG,
-            ],
-            "view_recipes": [
-                QssPaths.APPLICATION,
-                QssPaths.Views.VIEW_RECIPES,
-                QssPaths.Components.RECIPE_WIDGET,
-            ],
-            "meal_planner": [
-                QssPaths.APPLICATION,
-                QssPaths.Views.MEAL_PLANNER,
-            ],
-            "shopping_list": [
-                QssPaths.APPLICATION,
-                QssPaths.Views.SHOPPING_LIST,
-            ],
-        }
+        """
+        Get QSS files for a specific view including application base.
 
-        return view_map.get(view_name.lower(), [QssPaths.APPLICATION])
+        Args:
+            view_name (str): Name of the view (e.g. 'dashboard')
+
+        Returns:
+            list[str]: List of QSS file paths for the view.
+        """
+        view_map = QssPaths.get_view_styles()
+        common = view_map.get("application", [])
+        specific = view_map.get(view_name.lower(), [])
+        return common + specific
+
+    @staticmethod
+    def get_all_styles() -> list[str]:
+        """
+        Returns a deduplicated, flattened list of all QSS file paths.
+
+        Returns:
+            list[str]: All QSS paths across all views/components.
+        """
+        all_paths = []
+        for paths in QssPaths.get_view_styles().values():
+            all_paths.extend(paths)
+        return list(dict.fromkeys(all_paths))  # preserve order

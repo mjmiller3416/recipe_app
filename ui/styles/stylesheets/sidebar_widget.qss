@@ -29,6 +29,6 @@ border-bottom-left-radius: 8px; /* App Window Border Radius */
     font-weight: 600;
 }
 
-#SidebarWidget #lbl_logo {
+#SidebarWidget #logo {
     background-color: transparent;
 }

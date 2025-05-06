@@ -1,13 +1,12 @@
 import sys
 
 from PySide6.QtCore import QSize, Signal
-from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import (QApplication, QGridLayout, QLineEdit,
-                               QPushButton, QWidget)
+from PySide6.QtWidgets import QApplication, QGridLayout, QLineEdit, QWidget
 
-from config import (FLOAT, INGREDIENT_CATEGORIES, MEASUREMENT_UNITS, NAME,
-                    AppPaths)
-from core.helpers import DebugLogger
+from config import (
+    FLOAT, INGREDIENT_CATEGORIES, MEASUREMENT_UNITS, NAME,
+    INGREDIENT_WIDGET
+)
 from ui.components.inputs import CustomComboBox
 from ui.iconkit import ToolButtonIcon
 from ui.tools import clear_error_styles, dynamic_validation, populate_combobox
@@ -47,16 +46,16 @@ class IngredientWidget(QWidget):
         self.gridLayout.addWidget(self.cb_ingredient_category, 0, 3, 1, 1)
 
         self.btn_ico_subtract = ToolButtonIcon(
-            AppPaths.ICONS_DIR / "subtract.svg",
-            QSize(24, 24),
-            parent=self,
+            file_path=INGREDIENT_WIDGET["ICON_SUBTRACT"],
+            size=INGREDIENT_WIDGET["ICON_SIZE"],
+            variant=INGREDIENT_WIDGET["VARIANT"]
         )
         self.gridLayout.addWidget(self.btn_ico_subtract, 0, 4, 1, 1)
 
         self.btn_ico_add = ToolButtonIcon(
-            AppPaths.ICONS_DIR / "add.svg",
-            QSize(24, 24),
-            parent=self,
+            file_path=INGREDIENT_WIDGET["ICON_ADD"],
+            size=INGREDIENT_WIDGET["ICON_SIZE"],
+            variant=INGREDIENT_WIDGET["VARIANT"]
         )
         self.gridLayout.addWidget(self.btn_ico_add, 0, 5, 1, 1)
 
