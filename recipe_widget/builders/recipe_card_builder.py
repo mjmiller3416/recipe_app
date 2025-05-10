@@ -9,7 +9,7 @@ from pathlib import Path
 
 from PySide6.QtCore import Qt
 
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout, QSizePolicy
 
 from database.models.recipe import Recipe
 from ui.components import Separator
@@ -18,6 +18,7 @@ from ui.iconkit import Icon
 
 from ..constants import LAYOUT_SIZE, LayoutSize
 from config import RECIPE_CARD
+from ui.styles.themes.dark_theme import THEME
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 @dataclass(frozen=True, slots=True)
@@ -42,6 +43,7 @@ class RecipeCardBuilder:
         # ── Create Frame ──
         frame = QFrame()
         frame.setProperty("layout_size", self.size.value)
+        frame.setAttribute(Qt.WA_StyledBackground, True)
 
         # ── Set Frame Properties ──
         match self.size:
@@ -99,6 +101,8 @@ class RecipeCardBuilder:
         )
         lyt.addWidget(img_recipe) # add to layout
 
+        print(f"🖼 Image path for recipe '{self.recipe.recipe_name}': {self.recipe.image_path}")
+
         # recipe name
         lbl_name = QLabel(self.recipe.recipe_name)
         lbl_name.setProperty("title_text", "true")
@@ -113,7 +117,7 @@ class RecipeCardBuilder:
         # add servings
         lyt_meta.addLayout(
             self._create_meta_section(
-                icon_name=RECIPE_CARD["ICON_SERVINGS"],
+                file_path=RECIPE_CARD["ICON_SERVINGS"],
                 heading="Servings",
                 value=self.recipe.formatted_servings(),
             )
@@ -127,7 +131,7 @@ class RecipeCardBuilder:
             self._create_meta_section(
                 file_path=RECIPE_CARD["ICON_TOTAL_TIME"],
                 heading="Time",
-                value=self.recipe.formatted_total_time(),
+                value=self.recipe.formatted_time(),
             )
         )
 
@@ -165,10 +169,11 @@ class RecipeCardBuilder:
         ico_meta = Icon(
             file_path=file_path,
             size=RECIPE_CARD["ICON_SIZE"],
-            variant=RECIPE_CARD["VARIANT"]
+            variant=RECIPE_CARD["VARIANT"],
         )
-        ico_meta.setContentsMargins(0, 0, 0, 4)
-        lyt.addWidget(ico_meta) # add to layout
+        ico_meta.setContentsMargins(0, 0, 0, 0)
+        ico_meta.setAlignment(Qt.AlignCenter)
+        lyt.addWidget(ico_meta, 0, Qt.AlignCenter) # add to layout
 
         # heading
         lbl_heading = QLabel(heading)

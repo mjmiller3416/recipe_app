@@ -9,12 +9,10 @@ import sys
 from PySide6.QtWidgets import QApplication
 
 from core.application import Application
-from core.controllers import \
-    ThemeController  # TODO: Refactor to use core/controllers/theme_controller.py
+from database.db_reset import reset_database
 from core.helpers import DebugLogger
 from database.init_db import init_db
 from ui.tools.layout_debugger import LayoutDebugger
-
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class MealPlannerApp:
@@ -58,13 +56,7 @@ class MealPlannerApp:
         sys.exit(self.app.exec())
 
 if "--reset" in sys.argv:
-    print("Resetting database...")
-    db_path = "database/app_data.db"
-    sql_file = "database/db_tables.sql"
-
-    # perform the reset
-    # TODO: recreate reset_to_version function to use the new database structure
-    DebugLogger().log("Database reset complete.\n", "info")
+        reset_database()
 
 elif "--test" in sys.argv:
     print("Launching in TEST MODE...\n")

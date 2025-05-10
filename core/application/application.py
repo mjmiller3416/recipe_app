@@ -12,17 +12,20 @@ from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
 from core.controllers.animation_controller import AnimationManager
 from core.controllers.theme_controller import ThemeController
 from core.helpers import DebugLogger
+
 from ui.animations import SidebarAnimator
 from ui.components.inputs.search_widget import SearchWidget
 from ui.components.layouts.title_bar import TitleBar
-from ui.tools.layout_debugger import LayoutDebugger
+
 from views.add_recipes import AddRecipes
 from views.dashboard import Dashboard
 from views.meal_planner import MealPlanner
 from views.shopping_list import ShoppingList
 from views.view_recipes import ViewRecipes
+from ui.tools.layout_debugger import LayoutDebugger
 
 from .sidebar_widget import SidebarWidget
+
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -186,10 +189,10 @@ class Application(QMainWindow):
     def toggle_maximize_restore(self):
         if self.isMaximized():
             self.showNormal()
-            self.title_bar.updateMaximizeIcon(False)
+            self.title_bar.update_maximize_icon(False)
         else:
             self.showMaximized()
-            self.title_bar.updateMaximizeIcon(True)
+            self.title_bar.update_maximize_icon(True)
 
     def toggle_sidebar(self):
         """ Toggle the sidebar's expanded/collapsed state with animation."""

@@ -9,6 +9,7 @@ from PySide6.QtCore import QRegularExpression, QSize
 from PySide6.QtGui import QRegularExpressionValidator
 
 from config.paths import AppPaths
+from ui.styles.themes.dark_theme import THEME
 
 # ── Icon Defaults ──
 ICON_SIZE = QSize(20, 20)
@@ -17,11 +18,15 @@ ICON_SIZE = QSize(20, 20)
 SIDEBAR = {
     "ICON_DASHBOARD": AppPaths.ICONS_DIR / "dashboard.svg",
     "ICON_MEAL_PLANNER": AppPaths.ICONS_DIR / "meal_planner.svg",
-    "ICON_RECIPES": AppPaths.ICONS_DIR / "recipes.svg",
+    "ICON_VIEW_RECIPES": AppPaths.ICONS_DIR / "view_recipes.svg",
     "ICON_SHOPPING_LIST": AppPaths.ICONS_DIR / "shopping_list.svg",
+    "ICON_ADD_RECIPES": AppPaths.ICONS_DIR / "add_recipes.svg",
     "ICON_SETTINGS": AppPaths.ICONS_DIR / "settings.svg",
     "ICON_EXIT": AppPaths.ICONS_DIR / "exit.svg",
-    "VARIANT": "default"
+    "LOGO": AppPaths.ICONS_DIR / "logo.svg",
+    "LOGO_SIZE": QSize(180, 180),
+    "LOGO_COLOR": THEME["BRAND"]["MAIN"],
+    "VARIANT": THEME["BRAND"]["MAIN"]
 }
 
 # ── Search Widget ──
@@ -29,7 +34,7 @@ SEARCH = {
     "ICON_SIZE": QSize(16, 16),
     "ICON_SEARCH": AppPaths.ICONS_DIR / "search.svg",
     "ICON_CLEAR": AppPaths.ICONS_DIR / "clear.svg",
-    "VARIANT": "default",
+    "VARIANT": THEME["BRAND"]["MAIN"],
 }
 
 # ── Title Bar ──
@@ -42,7 +47,7 @@ TITLE_BAR = {
     "ICON_CLOSE": AppPaths.ICONS_DIR / "close.svg",
     "ICON_TOGGLE_SIDEBAR": AppPaths.ICONS_DIR / "toggle_sidebar.svg",
     "APP_NAME": "MealGenie",
-    "VARIANT": "default"
+    "VARIANT": THEME["BRAND"]["MAIN"]
 }
 
 # ── Ingredient Widget ──
@@ -50,27 +55,27 @@ INGREDIENT_WIDGET = {
     "ICON_SIZE": QSize(24, 24),
     "ICON_ADD": AppPaths.ICONS_DIR / "add.svg",
     "ICON_SUBTRACT": AppPaths.ICONS_DIR / "subtract.svg",
-    "VARIANT": "default",
+    "VARIANT": THEME["BRAND"]["MAIN"],
 }
 
 # ── Meal Planner ──
 MEAL_PLANNER = {
     "ICON_SIZE": QSize(16, 16),
     "ICON_ADD": AppPaths.ICONS_DIR / "add.svg",
-    "VARIANT": "default",
+    "VARIANT": THEME["BRAND"]["MAIN"],
 }
 
 # ── Recipe Widget ──
 EMPTY_STATE = {
     "ICON_SIZE": QSize(60, 60),
     "ICON_ADD_MEAL": AppPaths.ICONS_DIR / "add_meal.svg",
-    "VARIANT": "default",
+    "VARIANT": THEME["BRAND"]["MAIN"],
 }
 RECIPE_CARD = {
     "ICON_SIZE": QSize(30, 30),
-    "ICON_TIME": AppPaths.ICONS_DIR / "total_time.svg",
+    "ICON_TOTAL_TIME": AppPaths.ICONS_DIR / "total_time.svg",
     "ICON_SERVINGS": AppPaths.ICONS_DIR / "servings.svg",
-    "VARIANT": "default",
+    "VARIANT": THEME["RECIPE_CARD"]["DEFAULT"],
 }
 
 # ── Combobox Values ──

@@ -5,7 +5,7 @@ from PySide6.QtCore import QEvent, Qt
 from PySide6.QtWidgets import QHBoxLayout, QToolTip, QVBoxLayout, QWidget
 
 from recipe_widget.constants import LayoutSize
-from recipe_widget.recipe_slot import RecipeSlot
+from recipe_widget.recipe_widget import RecipeWidget
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -32,7 +32,7 @@ class PlannerLayout(QWidget):
         self.main_layout.setSpacing(10)
 
         #🔹Main Dish Widget
-        self.main_slot = RecipeSlot(size=LayoutSize.MEDIUM)
+        self.main_slot = RecipeWidget(size=LayoutSize.MEDIUM)
         self.meal_slots["main"] = self.main_slot
         self.main_layout.addWidget(self.main_slot)
 
@@ -41,7 +41,7 @@ class PlannerLayout(QWidget):
         self.side_layout.setSpacing(10)
 
         for i in range(1, 4):
-            side_slot = RecipeSlot(size=LayoutSize.SMALL) # create side dish slot
+            side_slot = RecipeWidget(size=LayoutSize.SMALL) # create side dish slot
 
             # set tooltip for disabled side slots
             side_slot.setEnabled(False)

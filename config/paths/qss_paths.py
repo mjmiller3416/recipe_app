@@ -40,6 +40,7 @@ class QssPaths:
         """
         return {
             "application": [
+                QssPaths.BASE,
                 QssPaths.APPLICATION,
                 QssPaths.Components.TITLE_BAR,
                 QssPaths.Components.SIDEBAR_WIDGET,

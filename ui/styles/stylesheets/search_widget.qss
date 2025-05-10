@@ -18,9 +18,9 @@ border-radius: 10px;
     outline: none;
 }
 
-#SearchWidget #btn_clear {
+#SearchWidget #clear {
     background-color: transparent;
 }
-#SearchWidget #btn_clear:hover {
+#SearchWidget #btn_ico_clear:hover {
     border-radius: 10px;
 }

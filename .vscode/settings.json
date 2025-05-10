@@ -29,6 +29,52 @@
     "editor.acceptSuggestionOnCommitCharacter": false, // Prevent auto-accepting with punctuation
     "editor.acceptSuggestionOnEnter": "smart", // Avoid accidental 'Enter' acceptance
 
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+          {
+            "scope": "entity.pseudo-class.qss",
+            "settings": {
+              "foreground": "#DCDCAA",  // Teal-ish, change this to whatever
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "scope": "support.constant.property-value.themed-qss",
+            "settings": {
+              "foreground": "#CE9178",  // Pinky-purple, nice for {PLACEHOLDER}
+            }
+          },
+          {
+            "scope": "entity.name.tag.themed-qss",
+            "settings": {
+              "foreground": "#4EC9B0",  // Pinky-purple, nice for {PLACEHOLDER}
+            }
+          },
+          {
+            "scope": "entity.other.attribute-name.id.qss",
+            "settings": {
+              "foreground": "#6dba6f",  // Pinky-purple, nice for {PLACEHOLDER}
+              "fontStyle": "bold"
+            }
+          },
+          {
+            "scope": "entity.other.attribute-name.id.themed-qss",
+            "settings": {
+              "foreground": "#569CD6",  // Pinky-purple, nice for {PLACEHOLDER}
+            }
+          },
+
+          {
+            "scope": "support.type.property-name.themed-qss",
+            "settings": {
+              "foreground": "#9CDCFE",  // Bright amber
+              "fontStyle": ""
+            }
+          }
+        ]
+      },
+    
+
     //** Window settings **//
     "window.zoomLevel": 0.6, // 0 = 100% zoom level, 1 = 110% zoom level, -1 = 90% zoom level
 

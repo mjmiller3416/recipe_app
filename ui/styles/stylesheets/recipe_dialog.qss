@@ -1,0 +1,40 @@
+#RecipeDialog #RecipeName {
+    color: #1B1D23;
+    font-family: 'Sakitu Baelah Clean';
+    font-size: 80px;
+    font-weight: 400;
+}
+
+#RecipeDialog [metaTitle="true"] {
+    color: #040404;
+    font-family: 'Montserrat Regular';
+    font-size: 22px;
+    font-weight: 400;
+}
+
+#RecipeDialog [textHeader="true"] {
+    background-color: #2C313C;  /* or whatever color you want */
+    color: #E1E1E1;               /* text color */
+    padding: 16px;
+    font-family: "Montserrat Bold";
+    font-size: 16px;
+    font-weight: 600;
+}
+
+#RecipeDialog [textIngredients="true"] {
+    color: #040404;               /* text color */
+    font-family: "Roboto Regular";
+    font-size: 16px;
+    font-weight: 300;
+}
+
+#RecipeDialog #DirectionsFrame {
+    background-color: #2C313C;  /* or whatever color you want */
+}
+
+#RecipeDialog [textDirections="true"] {
+    color: #E1E1E1;               /* text color */
+    font-family: "Roboto Regular";
+    font-size: 14px;
+    font-weight: 300;
+}

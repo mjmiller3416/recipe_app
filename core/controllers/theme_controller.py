@@ -44,6 +44,7 @@ class ThemeController(QObject, SingletonMixin):
             "dark":  flatten_theme_dict(DARK_THEME),
             "light": flatten_theme_dict(LIGHT_THEME),
         }
+            
         # start with saved or default
         self._name: str   = "dark"
         self._palette: Dict = self._themes["dark"]

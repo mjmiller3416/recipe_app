@@ -43,15 +43,22 @@ class ThemedStyleLoader:
             raw_qss = Path(qss_file_path).read_text(encoding="utf-8")
             DebugLogger.log(f"[Loader] Opening QSS: {qss_file_path}", "debug")
 
+            injected_count = 0
             for key, value in self.theme.items():
                 if key in NON_QSS_KEYS:
                     continue
                 if not isinstance(value, str):
                     DebugLogger.log(f"[ThemedStyleLoader] ⚠️ Skipped non-str key: {key} → {type(value).__name__}", "warning")
                     continue
-                raw_qss = raw_qss.replace(f"{{{key}}}", value)
 
-            self._cache[qss_file_path] = raw_qss  # ✅ Cache result
+                placeholder = f"{{{key}}}"
+                if placeholder in raw_qss:
+                    DebugLogger.log(f"[ThemedStyleLoader] Injecting: {placeholder} → {value}", "info")
+                    raw_qss = raw_qss.replace(placeholder, value)
+                    injected_count += 1
+
+            DebugLogger.log(f"[ThemedStyleLoader] Completed injection for {qss_file_path} ({injected_count} keys replaced)", "info")
+            self._cache[qss_file_path] = raw_qss
             return raw_qss
 
         except FileNotFoundError:

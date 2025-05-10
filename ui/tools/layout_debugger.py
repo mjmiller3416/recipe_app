@@ -207,7 +207,8 @@ class LayoutDebugger(QWidget):
                 if not w.isVisible() or has_layout:
                     continue
 
-                ov = QRect(self.mapFromGlobal(w.mapToGlobal(QPoint(0, 0))), w.size())
+                size = w.size() if callable(w.size) else w.size
+                ov = QRect(self.mapFromGlobal(w.mapToGlobal(QPoint(0, 0))), size)
                 p.drawRect(ov)
 
         # ── focus widget (independent) ─────────────────────────────────

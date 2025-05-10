@@ -7,16 +7,14 @@ Dialog for selecting a recipe from a list.
 from typing import List, Optional
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QAbstractItemView, QDialogButtonBox,
-                               QListWidget, QListWidgetItem, QPushButton,
-                               QVBoxLayout)
+from PySide6.QtWidgets import QAbstractItemView, QDialogButtonBox, QListWidget, QListWidgetItem
 
 from database.models.recipe import Recipe
-from ui.components.dialogs.styled_dialog import StyledDialog
+from ui.components.dialogs.dialog_window import DialogWindow
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
-class RecipeSelectionDialog(StyledDialog):
+class RecipeSelectionDialog(DialogWindow):
     """
     A dialog that displays a list of available recipes for selection.
     """

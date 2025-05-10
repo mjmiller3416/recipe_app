@@ -58,6 +58,10 @@ class Recipe(ModelBase):
             return ""
         hrs, mins = divmod(self.total_time, 60)
         return f"{hrs}h {mins}m" if hrs else f"{mins}m"
+    
+    def formatted_servings(self) -> str:
+        """Return servings with label."""
+        return f"{self.servings}" if self.servings else ""
 
     def get_recipe_ingredients(self) -> List[RecipeIngredient]:
         with get_connection() as conn:

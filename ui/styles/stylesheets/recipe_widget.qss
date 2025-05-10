@@ -1,76 +1,35 @@
 /* recipe_widget.qss */
 
-#RecipeDialog #RecipeName {
-    color: #1B1D23;
-    font-family: 'Sakitu Baelah Clean';
-    font-size: 80px;
-    font-weight: 400;
-}
-
-#RecipeDialog [metaTitle="true"] {
-    color: #040404;
-    font-family: 'Montserrat Regular';
-    font-size: 22px;
-    font-weight: 400;
-}
-
-#RecipeDialog [textHeader="true"] {
-    background-color: #2C313C;  /* or whatever color you want */
-    color: #E1E1E1;               /* text color */
-    padding: 16px;
-    font-family: "Montserrat Bold";
-    font-size: 16px;
-    font-weight: 600;
-}
-
-#RecipeDialog [textIngredients="true"] {
-    color: #040404;               /* text color */
-    font-family: "Roboto Regular";
-    font-size: 16px;
-    font-weight: 300;
-}
-
-#RecipeDialog #DirectionsFrame {
-    background-color: #2C313C;  /* or whatever color you want */
-}
-
-#RecipeDialog [textDirections="true"] {
-    color: #E1E1E1;               /* text color */
-    font-family: "Roboto Regular";
-    font-size: 14px;
-    font-weight: 300;
-}
-
 #RecipeStateFrame, #EmptyStateFrame, #ErrorStateFrame {
-    background-color: #2C2F33;  /* Flat dark background */
+    background-color: {BACKGROUND_WIDGET};  /* Flat dark background */
     border-radius: 10px; /* Rounded corners */
 }
 
 #RecipeStateFrame QLabel {
     color: #E1E1E1;
-    font-family: 'Montserrat Bold';
-    font-size: 16px;
+    font-size: {FONTS_SIZE_NORMAL};
+    font-family: {FONTS_HEADER};
     font-weight: 600;
 
 }
 
 #RecipeStateFrame[layout_size="medium"] [title_text="true"] {
-    font-size: 22px;
+    font-size: {FONTS_SIZE_LARGE};
     font-weight: 600;
 }
 
 #RecipeStateFrame [label_text="true"] {
     color: #B0B0B0;
-    font-family: 'Roboto Regular';
+    font-family: {FONTS_BODY};
     font-weight: 400;
 }
 
 #RecipeStateFrame [value_text="true"] {
-    color: #6ad7ca;
+    color: {BRAND_PRIMARY};
 }
 
 /* INTERACTIVE ELEMENTS */
 
 #RecipeStateFrame:hover, #ErrorStateFrame:hover {
-    background-color: #3A3D41; /* Slightly lighter on hover */
+    background-color: {HOVER_BACKGROUND}; /* Slightly lighter on hover */
 }

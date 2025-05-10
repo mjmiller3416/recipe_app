@@ -22,7 +22,7 @@ class ToolButtonIcon(QToolButton, IconMixin):
         size: QSize = ICON_SIZE,
         variant: str = "default",
         object_name: str = "",
-        checked: bool = False,
+        checkable: bool = False,
         hover_effects: bool = True,
         parent=None
     ):
@@ -45,8 +45,8 @@ class ToolButtonIcon(QToolButton, IconMixin):
         elif not self.objectName():
             self.setObjectName(Path(file_path).stem)
 
-        self.setCheckable(True)
-        self.setChecked(checked)
+        self.setCheckable(checkable)
+  
 
         if hover_effects:
             ApplyHoverEffects.recolor(self, file_path, size, variant)

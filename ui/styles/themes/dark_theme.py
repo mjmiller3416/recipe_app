@@ -7,7 +7,7 @@ THEME = {
         "PRIMARY":   "#03B79E",
         "SECONDARY": "#3B575B",
         "ACCENT":    "#03B79E",
-        "LOGO":      "#949AA7",
+        "MAIN":      "#949AA7",
     },
 
     # ── Backgrounds ──────────────────────────────────────────────────────────
@@ -18,10 +18,15 @@ THEME = {
         "WIDGET":  "#272C36",   # Inputs / sidebar
     },
 
+    # ── Hover ────────────────────────────────────────────────────────────────
+    "HOVER": {
+        "BACKGROUND": "#3A4048",
+        "CHECKED":    "#3A4048",
+    },
     # ── Text Colors ──────────────────────────────────────────────────────────
     "TEXT": {
-        "PRIMARY":   "#E1E1E3",
-        "SECONDARY": "#9DA1A5",
+        "PRIMARY":   "#9DA1A5",
+        "SECONDARY": "#E1E1E3",
     },
 
     # ── Borders & Highlights ─────────────────────────────────────────────────
@@ -57,51 +62,36 @@ THEME = {
 
         "SIZE": {
             "SMALL":  "12px",
-            "NORMAL": "14px",
+            "NORMAL": "16px",
             "LARGE":  "18px",
+            "XLARGE": "22px",
         }
     },
 
-    # ── Icon Styles (Per Variant) ────────────────────────────────────────────
-    "ICON_STYLES": {
-        "default": {
-            "default": "ICON_COLOR",
-            "hover":   "ICON_COLOR_HOVER",
-            "checked": "ICON_COLOR_CHECKED",
-        },
-        "nav": {
-            "default": "NAV_ICON_DEFAULT",
-            "hover":   "NAV_ICON_HOVER",
-            "checked": "NAV_ICON_CHECKED",
-        },
-        "titlebar": {
-            "default": "TITLEBAR_ICON_DEFAULT",
-            "hover":   "TITLEBAR_ICON_HOVER",
-            "checked": "TITLEBAR_ICON_CHECKED",
-        },
-        "msgbox": {
-            "info":    "MSGBOX_ICON_INFO",
-            "error":   "MSGBOX_ICON_ERROR",
-            "success": "MSGBOX_ICON_SUCCESS",
-            "warning": "MSGBOX_ICON_WARNING",
-        },
+    # ── Styles Per Variant) ────────────────────────────────────────────
+    "DEFAULT": {
+        "DEFAULT": "#949AA7",
+        "HOVER":   "#6AD7CA",
+        "CHECKED": "#6AD7CA",
     },
-
-    # ── Icon Color Values ────────────────────────────────────────────────────
-    "ICON_COLOR":            "#949AA7",
-    "ICON_COLOR_HOVER":      "#6AD7CA",
-    "ICON_COLOR_CHECKED":    "#6AD7CA",
-
-    "NAV_ICON_DEFAULT":      "#949AA7",
-    "NAV_ICON_HOVER":        "#6AD7CA",
-    "NAV_ICON_CHECKED":      "#6AD7CA",
-
-    "TITLEBAR_ICON_DEFAULT": "#949AA7",
-    "TITLEBAR_ICON_HOVER":   "#6AD7CA",
-    "TITLEBAR_ICON_CHECKED": "#6AD7CA",
-
-    "MSGBOX_ICON_INFO":      "#6AD7CA",
-    "MSGBOX_ICON_ERROR":     "#FF4D4D",
-    "MSGBOX_ICON_SUCCESS":   "#5CDE42",
-    "MSGBOX_ICON_WARNING":   "#FFCC00",
+    "NAV": {
+        "DEFAULT": "#949AA7",
+        "HOVER":   "#6AD7CA",
+        "CHECKED": "#6AD7CA",
+    },
+    "TITLEBAR": {
+        "DEFAULT": "#949AA7",
+        "HOVER":   "#6AD7CA",
+        "CHECKED": "#6AD7CA",
+    },
+    "MSGBOX": {
+        "INFO":    "MSGBOX_ICON_INFO",
+        "ERROR":   "MSGBOX_ICON_ERROR",
+        "SUCCESS": "MSGBOX_ICON_SUCCESS",
+        "WARNING": "MSGBOX_ICON_WARNING",
+    },
+    "RECIPE_CARD": {
+        "DEFAULT": "#6AD7CA",
+        "HOVER":   "#3A4048",
+    },
 }

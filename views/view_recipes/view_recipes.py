@@ -9,7 +9,7 @@ from PySide6.QtCore import QPoint, QRect, QSize, Qt, Signal
 from PySide6.QtWidgets import (QLayout, QScrollArea, QSizePolicy, QSpacerItem,
                                QVBoxLayout, QWidget)
 
-from database.models import Recipe
+from database.models.recipe import Recipe
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -147,7 +147,7 @@ class ViewRecipes(QWidget):
 
     def load_recipes(self) -> None:
         from recipe_widget.constants import LayoutSize
-        from recipe_widget.recipe_slot import RecipeSlot
+        from recipe_widget.recipe_widget import RecipeWidget
 
         recipes = Recipe.all()  # fetch all recipes from the database
         if not recipes:
@@ -156,7 +156,7 @@ class ViewRecipes(QWidget):
         self.clear_recipe_display()
 
         for recipe in recipes:
-            slot = RecipeSlot(LayoutSize.MEDIUM, parent=self.scroll_container)
+            slot = RecipeWidget(LayoutSize.MEDIUM, parent=self.scroll_container)
             slot.set_recipe(recipe)
 
             if self.meal_selection:

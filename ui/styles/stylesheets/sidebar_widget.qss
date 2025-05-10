@@ -3,8 +3,7 @@
    ------------------------------------------------------------------ */
 
 #SidebarWidget {
-background-color: #272C36; /* Sidebar Background Color */
-border-bottom-left-radius: 8px; /* App Window Border Radius */
+background-color: {BACKGROUND_WIDGET}; /* Sidebar Background Color */
 }
 
 #SidebarWidget QPushButton {
@@ -13,17 +12,17 @@ border-bottom-left-radius: 8px; /* App Window Border Radius */
     padding: 10px 20px 10px 40px;
 
    /* Font */
-    font-family: 'Baby Girly Script';
-    font-size: 16px;
+    font-family: {FONTS_UI};
+    font-size: {FONTS_SIZE_LARGE};
     text-align: left;
 }
 
 #SidebarWidget QPushButton:hover {
-    background-color: #3B575B;
+    background-color: {HOVER_BACKGROUND};
 }
 
 #SidebarWidget QPushButton:checked {
-    background-color: #3B575B;
+    background-color: {HOVER_CHECKED};
 
     /* Font */
     font-weight: 600;

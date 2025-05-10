@@ -34,17 +34,21 @@ class SidebarWidget(QWidget):
 
         # ── Main Layout ──
         self.verticalLayout = QVBoxLayout(self)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setSpacing(10)  # space between buttons
+        self.verticalLayout.setContentsMargins(0, 18, 0, 18) 
+        self.verticalLayout.setSpacing(1)  # space between buttons
 
         # ── Logo Container ──
         self.logo_container = QWidget()
         self.logo_layout = QVBoxLayout(self.logo_container)
-        self.logo_layout.setContentsMargins(0, 0, 0, 0)
+        self.logo_layout.setContentsMargins(18, 0, 18, 0)
         self.logo_layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
 
         # ── Logo Label ──
-        self.lbl_logo = Icon(file_path="logo.svg", size=QSize(215, 215))
+        self.lbl_logo = Icon(
+            file_path = SIDEBAR["LOGO"], 
+            size      = SIDEBAR["LOGO_SIZE"],
+            variant   = SIDEBAR["LOGO_COLOR"],
+        )
 
         self.logo_layout.addWidget(self.lbl_logo)
         self.verticalLayout.addWidget(self.logo_container)
@@ -55,55 +59,61 @@ class SidebarWidget(QWidget):
 
         # ── Navigation Buttons ──
         self.btn_dashboard = ButtonIcon(
-            file_path = SIDEBAR["ICON_DASHBOARD"],
-            size      = ICON_SIZE,
-            label     = "Dashboard",
-            variant   = SIDEBAR["VARIANT"],
+            file_path      = SIDEBAR["ICON_DASHBOARD"],
+            size           = ICON_SIZE,
+            label          = "Dashboard",
+            variant        = SIDEBAR["VARIANT"],
         )
+        self.btn_dashboard.setFixedHeight(55)  # set fixed height for the button
         self.verticalLayout.addWidget(self.btn_dashboard)
 
         self.btn_meal_planner = ButtonIcon( # Meal Planner button
-            file_path = SIDEBAR["ICON_MEAL_PLANNER"],
-            size      = ICON_SIZE,
-            label     = "Meal Planner",
-            variant   = SIDEBAR["VARIANT"],
+            file_path         = SIDEBAR["ICON_MEAL_PLANNER"],
+            size              = ICON_SIZE,
+            label             = "Meal Planner",
+            variant           = SIDEBAR["VARIANT"],
         )
+        self.btn_meal_planner.setFixedHeight(55)  # set fixed height for the button
         self.verticalLayout.addWidget(self.btn_meal_planner)
 
         self.btn_view_recipes = ButtonIcon( # View Recipes button
-            file_path = SIDEBAR["ICON_RECIPES"],
-            size      = ICON_SIZE,
-            label     = "View Recipes",
-            variant   = SIDEBAR["VARIANT"],
+            file_path         = SIDEBAR["ICON_VIEW_RECIPES"],
+            size              = ICON_SIZE,
+            label             = "View Recipes",
+            variant           = SIDEBAR["VARIANT"],
         )
+        self.btn_view_recipes.setFixedHeight(55)  # set fixed height for the button
         self.verticalLayout.addWidget(self.btn_view_recipes)
 
         self.btn_shopping_list = ButtonIcon( # Shopping List button
-            file_path = SIDEBAR["ICON_SHOPPING_LIST"],
-            size      = ICON_SIZE,
-            label     = "Shopping List",
-            variant   = SIDEBAR["VARIANT"],
+            file_path          = SIDEBAR["ICON_SHOPPING_LIST"],
+            size               = ICON_SIZE,
+            label              = "Shopping List",
+            variant            = SIDEBAR["VARIANT"],
         )
+        self.btn_shopping_list.setFixedHeight(55)  # set fixed height for the button
         self.verticalLayout.addWidget(self.btn_shopping_list)
 
         self.btn_add_recipes = ButtonIcon( # Add Recipes button
-            file_path = SIDEBAR["ICON_RECIPES"],
-            size      = ICON_SIZE,
-            label     = "Add Recipes",
-            variant   = SIDEBAR["VARIANT"],
+            file_path        = SIDEBAR["ICON_ADD_RECIPES"],
+            size             = ICON_SIZE,
+            label            = "Add Recipes",
+            variant          = SIDEBAR["VARIANT"],
         )
+        self.btn_add_recipes.setFixedHeight(55)  # set fixed height for the button
         self.verticalLayout.addWidget(self.btn_add_recipes)
 
         # bottom spacer
         self.verticalLayout.addItem(QSpacerItem(212, 39, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
-        # ── Settings & Exist Buttons ──
+        # ── Settings & Exit Buttons ──
         self.btn_settings = ButtonIcon( # Settings button
-            file_path = SIDEBAR["ICON_SETTINGS"],
-            size      = ICON_SIZE,
-            label     = "Settings",
-            variant   = SIDEBAR["VARIANT"],
+            file_path     = SIDEBAR["ICON_SETTINGS"],
+            size          = ICON_SIZE,
+            label         = "Settings",
+            variant       = SIDEBAR["VARIANT"],
         )
+        self.btn_settings.setFixedHeight(55)  # set fixed height for the button
         self.verticalLayout.addWidget(self.btn_settings)
 
         self.btn_exit = ButtonIcon( # Exit button
@@ -112,9 +122,9 @@ class SidebarWidget(QWidget):
             label     = "Exit",
             variant   = SIDEBAR["VARIANT"],
         )
+        self.btn_exit.setFixedHeight(55)  # set fixed height for the button
         self.btn_exit.clicked.connect(self.close_app.emit) # connect exit button to close_app signal
         self.verticalLayout.addWidget(self.btn_exit)
-        self.verticalLayout.setContentsMargins(0, 18, 0, 18)
 
     @property
     def buttons(self):

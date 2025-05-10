@@ -64,6 +64,7 @@ class TitleBar(QWidget):
             file_path=TITLE_BAR["ICON_TOGGLE_SIDEBAR"],
             size=QSize(20, 20),
             variant=TITLE_BAR["VARIANT"],
+            checkable=True,
         )
         self.btn_ico_toggle_sidebar.setFixedSize(TITLE_BAR["BUTTON_SIZE"])
         self.btn_ico_toggle_sidebar.clicked.connect(self.sidebar_toggled.emit)

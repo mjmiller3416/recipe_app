@@ -3,7 +3,7 @@ import sys
 
 #🔸Local Imports
 # Use the new slot widget and enum
-from dev_sandbox.recipe_widget.recipe_slot import LayoutSize, RecipeSlot
+from dev_sandbox.recipe_widget.recipe_slot import LayoutSize, RecipeWidget
 # Debug logging
 from helpers.app_helpers.debug_logger import DebugLogger
 from PySide6.QtCore import Qt
@@ -64,14 +64,14 @@ def create_test_widget(recipes: dict[int, Recipe]) -> QWidget:
         row.setSpacing(15)
 
         # 1) Empty slot
-        empty_slot = RecipeSlot(size)
+        empty_slot = RecipeWidget(size)
         row.addWidget(empty_slot)
 
         # 2) Up to two filled slots
         for rid in recipe_ids:
             recipe = recipes.get(rid)
             if recipe:
-                slot = RecipeSlot(size)
+                slot = RecipeWidget(size)
                 slot.set_recipe(recipe)
                 row.addWidget(slot)
             else:
@@ -91,7 +91,7 @@ def run_test(app):
         DebugLogger.log("No recipes loaded; slots will remain empty or show errors.", "critical")
 
     win = QScrollArea()
-    win.setWindowTitle("RecipeSlot Refactor Test")
+    win.setWindowTitle("RecipeWidget Refactor Test")
     win.setWidgetResizable(True)
     win.setMinimumSize(1000, 800)
 
