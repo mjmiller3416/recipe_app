@@ -3,7 +3,9 @@
    ------------------------------------------------------------------ */
 
 #ShoppingList {
-    background-color: green;
+    background-color: #3A4048;
+    border-radius: 0px;
+    padding: 15px;
 }
 
 #ShoppingList QWidget{

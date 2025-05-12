@@ -99,8 +99,8 @@
       "**/config/isort.cfg": true,
     },
 
-    "files.associations": { // Associate certain file types with certain languages
-      "*.qss": "css"
+    "files.associations": {
+      "*.qss": "themed-qss"
     },
 
     //** Explorer settings **//

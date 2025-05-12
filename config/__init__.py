@@ -8,7 +8,7 @@ from .config import (DEBUG_LAYOUT_BORDERS, FLOAT, ICON_SIZE,
                      INGREDIENT_CATEGORIES, INT, MEASUREMENT_UNITS, NAME,
                      RECIPE_CATEGORIES, SEARCH, NON_EMPTY, TITLE_BAR,
                      INGREDIENT_WIDGET, MEAL_PLANNER, RECIPE_CARD,
-                     EMPTY_STATE, SIDEBAR,
+                     EMPTY_STATE, SIDEBAR, ICON_COLOR
 )
 from .paths import AppPaths, QssPaths
 from .user_settings import UserSettings

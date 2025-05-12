@@ -2,8 +2,8 @@
    ADD RECIPE STYLSHEET
    ------------------------------------------------------------------ */
 #AddRecipes {
-    background-color: #3A4048;
-    border-radius: 10px;
+    background-color: {BACKGROUND_WIDGET};
+    border-radius: 0px;
     padding: 15px;
 }
 

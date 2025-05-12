@@ -1,59 +1,51 @@
 THEME = {
-    # ── Metadata ─────────────────────────────────────────────────────────────
+    # ── Meta ───────────────────────────────────────────────────────────────
     "NAME": "Dark Theme",
 
-    # ── Brand Colors ─────────────────────────────────────────────────────────
-    "BRAND": {
-        "PRIMARY":   "#03B79E",
-        "SECONDARY": "#3B575B",
-        "ACCENT":    "#03B79E",
-        "MAIN":      "#949AA7",
+    # ── Accent Colors (Brand/Highlighting) ─────────────────────────────────
+    "ACCENT": {
+        "DEFAULT":    "#03B79E",  
+        "SECONDARY":   "#6AD7CA",  
+        "HIGHLIGHT":   "#3B575B",  
     },
 
-    # ── Backgrounds ──────────────────────────────────────────────────────────
+    # ── Surface / Backgrounds ──────────────────────────────────────────────
     "BACKGROUND": {
-        "DARK":    "#1B1D23",   # Window, title bar
-        "MEDIUM":  "#2C313C",   # Panels / wrappers
-        "LIGHT":   "#3A4048",   # Cards / secondary panels
-        "WIDGET":  "#272C36",   # Inputs / sidebar
+        "DEFAULT":     "#1B1D23",  
+        "MUTED":    "#2C313C",  
+        "RAISED":   "#3A4048",  
+        "WIDGET":   "#272C36",  
+        "INPUT":    "#525861",  
     },
 
-    # ── Hover ────────────────────────────────────────────────────────────────
-    "HOVER": {
-        "BACKGROUND": "#3A4048",
-        "CHECKED":    "#3A4048",
-    },
-    # ── Text Colors ──────────────────────────────────────────────────────────
+    # ── Text ───────────────────────────────────────────────────────────────
     "TEXT": {
-        "PRIMARY":   "#9DA1A5",
-        "SECONDARY": "#E1E1E3",
+        "DEFAULT":    "#9DA1A5",  
+        "STRONG":  "#E1E1E3",  
+        "DISABLED": "#6A6D72", 
     },
 
-    # ── Borders & Highlights ─────────────────────────────────────────────────
+    # ── Borders ────────────────────────────────────────────────────────────
     "BORDER": {
-        "DEFAULT":   "#424951",
-        "ERROR":     "#FF4F4F",
-        "HIGHLIGHT": "#6AD7CA",
+        "DEFAULT":  "#424951",  
+        "ACTIVE":   "#6AD7CA",  
+        "ERROR":    "#FF4F4F",  
     },
 
-    # ── Input Fields ─────────────────────────────────────────────────────────
-    "INPUT": {
-        "BACKGROUND": "#525861",
+    # ── Control States ─────────────────────────────────────────────────────
+    "CONTROL": {
+        "DEFAULT": "#949AA7",  
+        "HOVER":   "#6AD7CA",   
+        "CHECKED": "#949AA7",
     },
 
-    # ── Scrollbars ───────────────────────────────────────────────────────────
+    # ── Scrollbars ─────────────────────────────────────────────────────────
     "SCROLLBAR": {
-        "TRACK":  "#424951",
-        "HANDLE": "#03B79E",
+        "TRACK":  "#424951", 
+        "HANDLE": "#03B79E",  
     },
 
-    # ── Spacing ──────────────────────────────────────────────────────────────
-    "SPACING": {
-        "UNIT":          "8px",
-        "BORDER_RADIUS": "8px",
-    },
-
-    # ── Typography ───────────────────────────────────────────────────────────
+    # ── Typography ─────────────────────────────────────────────────────────
     "FONTS": {
         "DISPLAY": "Sakitu Baelah Clean",
         "HEADER":  "Montserrat",
@@ -65,33 +57,44 @@ THEME = {
             "NORMAL": "16px",
             "LARGE":  "18px",
             "XLARGE": "22px",
-        }
+        },
     },
 
-    # ── Styles Per Variant) ────────────────────────────────────────────
-    "DEFAULT": {
-        "DEFAULT": "#949AA7",
-        "HOVER":   "#6AD7CA",
-        "CHECKED": "#6AD7CA",
+    # ── Spacing ────────────────────────────────────────────────────────────
+    "SPACING": {
+        "UNIT":          "8px",
+        "BORDER_RADIUS": "8px",
     },
-    "NAV": {
-        "DEFAULT": "#949AA7",
-        "HOVER":   "#6AD7CA",
-        "CHECKED": "#6AD7CA",
+
+    # ── Icon Colors ──────────────────────────────────────────────────────────────
+    "ICON": {
+        "DEFAULT": "#949AA7",  # Neutral icon color
+        "ACCENT":  "#03B79E",  # Main accent — formerly BRAND.PRIMARY
+        "HOVER":   "#6AD7CA",  # Icon hover glow
+        "DISABLED": "#5A5E66", # Dimmed look when disabled
+
+        # ── Status Indicators ─────────────────────────────────────────────
+        "INFO":    "#4FD1C5",  # Teal
+        "SUCCESS": "#6ACB81",  # Green
+        "WARNING": "#FBBF24",  # Yellow
+        "ERROR":   "#FF4F4F",  # Red
     },
-    "TITLEBAR": {
-        "DEFAULT": "#949AA7",
-        "HOVER":   "#6AD7CA",
-        "CHECKED": "#6AD7CA",
-    },
-    "MSGBOX": {
-        "INFO":    "MSGBOX_ICON_INFO",
-        "ERROR":   "MSGBOX_ICON_ERROR",
-        "SUCCESS": "MSGBOX_ICON_SUCCESS",
-        "WARNING": "MSGBOX_ICON_WARNING",
-    },
-    "RECIPE_CARD": {
-        "DEFAULT": "#6AD7CA",
-        "HOVER":   "#3A4048",
+
+    # ── Components / Variants ──────────────────────────────────────────────
+    "VARIANT": {
+        "NAV": {
+            "DEFAULT": "#949AA7",
+            "HOVER":   "#3A4048",
+            "CHECKED": "#3A4048",
+        },
+        "TITLEBAR": {
+            "DEFAULT": "#949AA7",
+            "HOVER":   "#6AD7CA",
+            "CHECKED": "#6AD7CA",
+        },
+        "RECIPE_CARD": {
+            "DEFAULT": "#6AD7CA",
+            "HOVER":   "#3B575B",
+        },
     },
 }

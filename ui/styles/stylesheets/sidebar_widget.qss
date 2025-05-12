@@ -18,11 +18,11 @@ background-color: {BACKGROUND_WIDGET}; /* Sidebar Background Color */
 }
 
 #SidebarWidget QPushButton:hover {
-    background-color: {HOVER_BACKGROUND};
+    background-color: {CONTROL_HOVER}; /* Slightly lighter on hover */
 }
 
 #SidebarWidget QPushButton:checked {
-    background-color: {HOVER_CHECKED};
+    background-color: {CONTROL_CHECKED}";
 
     /* Font */
     font-weight: 600;

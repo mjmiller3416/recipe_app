@@ -1,7 +1,7 @@
 /* recipe_widget.qss */
 
 #RecipeStateFrame, #EmptyStateFrame, #ErrorStateFrame {
-    background-color: {BACKGROUND_WIDGET};  /* Flat dark background */
+    background-color: "red";  /* Flat dark background */
     border-radius: 10px; /* Rounded corners */
 }
 

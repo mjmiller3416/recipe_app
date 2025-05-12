@@ -35,6 +35,7 @@ class RecipeWidget(QFrame):
     def __init__(self, size: LayoutSize, parent=None) -> None:
         """Initialize the RecipeWidget with stacked empty, recipe, and error states."""
         super().__init__(parent, objectName="RecipeWidget")
+        self.setAttribute(Qt.WA_StyledBackground, True)
         self._size:   LayoutSize      = size
         self._recipe: Optional[Recipe] = None
 
@@ -118,6 +119,7 @@ class RecipeWidget(QFrame):
         old.deleteLater()
 
         new_frame.setObjectName("RecipeStateFrame") # set object name
+        new_frame.setAttribute(Qt.WA_StyledBackground, True) # Ensure styled background is enabled
 
         # add new frame (index 1) and set it as the current page
         self._stack.insertWidget(1, new_frame)

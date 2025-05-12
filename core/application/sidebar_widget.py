@@ -7,7 +7,7 @@ SidebarWidget class for managing the sidebar of the application.
 from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtWidgets import QSizePolicy, QSpacerItem, QVBoxLayout, QWidget
 
-from config import SIDEBAR, ICON_SIZE
+from config import SIDEBAR, ICON_SIZE, ICON_COLOR
 from ui.iconkit import ButtonIcon, Icon
 
 
@@ -47,7 +47,7 @@ class SidebarWidget(QWidget):
         self.lbl_logo = Icon(
             file_path = SIDEBAR["LOGO"], 
             size      = SIDEBAR["LOGO_SIZE"],
-            variant   = SIDEBAR["LOGO_COLOR"],
+            variant   = ICON_COLOR,
         )
 
         self.logo_layout.addWidget(self.lbl_logo)

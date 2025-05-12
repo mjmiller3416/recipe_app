@@ -44,6 +44,7 @@ class RecipeCardBuilder:
         frame = QFrame()
         frame.setProperty("layout_size", self.size.value)
         frame.setAttribute(Qt.WA_StyledBackground, True)
+        frame.setObjectName("RecipeStateFrame")
 
         # ── Set Frame Properties ──
         match self.size:
@@ -53,7 +54,10 @@ class RecipeCardBuilder:
             case _:                 raise ValueError(f"Unsupported size: {self.size}")
 
         frame.setFixedSize(LAYOUT_SIZE[self.size.value]) # apply fixed geometry
-
+        frame.setStyleSheet(
+            "background-color: #1B1D23;"
+            "border-radius: 10px;" 
+        )
         return frame
 
     # ── Private Methods ─────────────────────────────────────────────────────────────
@@ -171,7 +175,6 @@ class RecipeCardBuilder:
             size=RECIPE_CARD["ICON_SIZE"],
             variant=RECIPE_CARD["VARIANT"],
         )
-        ico_meta.setContentsMargins(0, 0, 0, 0)
         ico_meta.setAlignment(Qt.AlignCenter)
         lyt.addWidget(ico_meta, 0, Qt.AlignCenter) # add to layout
 
@@ -179,6 +182,7 @@ class RecipeCardBuilder:
         lbl_heading = QLabel(heading)
         lbl_heading.setProperty("label_text", True)
         lbl_heading.setAlignment(Qt.AlignCenter)
+        lbl_heading.setContentsMargins(0, 4, 0, 0) # remove margins
         lyt.addWidget(lbl_heading) # add to layout
 
         # value
