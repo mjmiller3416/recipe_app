@@ -55,26 +55,19 @@ class ThemeController(QObject, SingletonMixin):
         return self._palette
 
     def apply_full_theme(self) -> None:
-        """
-        Load and apply all available QSS files at startup.
-        """
         app = QApplication.instance()
         if not app:
             DebugLogger.log("No QApplication instance, skipping full QSS load.", "warning")
             return
 
-        all_views = QssCombiner.get_for_view("application")  # base + shared
-        # Append every known view manually (or loop through map if you refactor)
-        all_views += QssCombiner.get_for_view("dashboard")
-        all_views += QssCombiner.get_for_view("add_recipes")
-        all_views += QssCombiner.get_for_view("view_recipes")
-        all_views += QssCombiner.get_for_view("meal_planner")
-        all_views += QssCombiner.get_for_view("shopping_list")
+        # ← REPLACED: manual view-by-view loading
+        all_views = QssCombiner.get_all_styles()   # grabs every stylesheet exactly once
 
         loaded = [self._loader.load(path) for path in all_views]
         final_qss = "".join(loaded)
         app.setStyleSheet(final_qss)
 
+        print(app.styleSheet())  # sanity-check dump
         self.theme_changed.emit(self._palette)
         DebugLogger.log("[Theme] Full QSS applied (all views)", "info")
     # ── Private Methods ────────────────────────────────────
