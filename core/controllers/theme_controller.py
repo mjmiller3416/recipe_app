@@ -59,7 +59,7 @@ class ThemeController(QObject, SingletonMixin):
         if not app:
             DebugLogger.log("No QApplication instance, skipping full QSS load.", "warning")
             return
-
+dsds
         # ← REPLACED: manual view-by-view loading
         all_views = QssCombiner.get_all_styles()   # grabs every stylesheet exactly once
 
