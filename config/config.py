@@ -26,7 +26,7 @@ SIDEBAR = {
     "ICON_EXIT": AppPaths.ICONS_DIR / "exit.svg",
     "LOGO": AppPaths.ICONS_DIR / "logo.svg",
     "LOGO_SIZE": QSize(180, 180),
-    "VARIANT": THEME["ICON"]["ACCENT"]
+    "VARIANT": THEME["ICON_STYLES"]["NAV"]
 }
 
 # ── Search Widget ──

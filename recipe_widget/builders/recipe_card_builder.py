@@ -105,8 +105,6 @@ class RecipeCardBuilder:
         )
         lyt.addWidget(img_recipe) # add to layout
 
-        print(f"🖼 Image path for recipe '{self.recipe.recipe_name}': {self.recipe.image_path}")
-
         # recipe name
         lbl_name = QLabel(self.recipe.recipe_name)
         lbl_name.setProperty("title_text", "true")

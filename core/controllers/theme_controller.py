@@ -59,16 +59,16 @@ class ThemeController(QObject, SingletonMixin):
         if not app:
             DebugLogger.log("No QApplication instance, skipping full QSS load.", "warning")
             return
-dsds
-        # ← REPLACED: manual view-by-view loading
+
+        # ── Load QSS Files ──
         all_views = QssCombiner.get_all_styles()   # grabs every stylesheet exactly once
 
         loaded = [self._loader.load(path) for path in all_views]
         final_qss = "".join(loaded)
         app.setStyleSheet(final_qss)
 
-        print(app.styleSheet())  # sanity-check dump
         self.theme_changed.emit(self._palette)
-        DebugLogger.log("[Theme] Full QSS applied (all views)", "info")
+        loaded_files = "\n  • ".join(all_views) + "\n"
+        DebugLogger.log("[Theme] Full QSS applied. Loaded stylesheets:\n  • {loaded_files}", "info")
     # ── Private Methods ────────────────────────────────────
 

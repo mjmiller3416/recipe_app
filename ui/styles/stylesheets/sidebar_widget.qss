@@ -23,9 +23,6 @@ background-color: {BACKGROUND_WIDGET}; /* Sidebar Background Color */
 
 #SidebarWidget QPushButton:checked {
     background-color: {CONTROL_CHECKED};
-
-    /* Font */
-    font-weight: 600;
 }
 
 #SidebarWidget #logo {

@@ -19,11 +19,11 @@ class ApplyHoverEffects:
         size: QSize,
         variant: str
     ):
-        """Apply dynamic icon recoloring for hover/checked states."""
+        """Apply dynamic icon recoloring for HOVER/checked states."""
         # Load all icon states
         icon_default = ThemedIcon(file_name, size, variant).icon()
-        icon_hover = ThemedIcon(file_name, size, variant).icon_for_state("hover")
-        icon_checked = ThemedIcon(file_name, size, variant).icon_for_state("checked")
+        icon_hover = ThemedIcon(file_name, size, variant).icon_for_state("HOVER")
+        icon_checked = ThemedIcon(file_name, size, variant).icon_for_state("CHECKED")
 
         # Apply default icon and size
         button.setIcon(icon_default)

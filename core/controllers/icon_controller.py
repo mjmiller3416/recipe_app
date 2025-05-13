@@ -34,7 +34,7 @@ class IconController(QObject, SingletonMixin):
         """Track a theme-aware icon and paint it immediately."""
         if icon not in self._icons:
             self._icons.add(icon)
-            DebugLogger.log(f"🟢 Icon registered: {icon.objectName()}", "debug")
+            #DebugLogger.log(f"🟢 Icon registered: {icon.objectName()}", "debug")
             icon.refresh_theme(self._palette)
 
     def unregister(self, icon: ThemedIcon) -> None:

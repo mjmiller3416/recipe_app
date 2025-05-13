@@ -3,7 +3,7 @@
    ------------------------------------------------------------------ */
 
 #Dashboard{
-   background-color: #3A4048;
+   background-color: {CONTROL_CHECKED};
    border-radius: 0px;
    padding: 15px;
 }
