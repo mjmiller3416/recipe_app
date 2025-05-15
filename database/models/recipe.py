@@ -15,6 +15,7 @@ from database.base_model import ModelBase
 from database.db import get_connection
 from database.models.recipe_ingredient import RecipeIngredient
 from database.models.recipe_ingredient_detail import RecipeIngredientDetail
+from database.models.ingredient import Ingredient
 
 if TYPE_CHECKING:
     from database.models.ingredient import Ingredient

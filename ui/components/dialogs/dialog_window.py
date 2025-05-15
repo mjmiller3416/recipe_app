@@ -7,7 +7,7 @@ Defines the BaseDialog class, a frameless QDialog with a custom title bar and st
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QWidget
 
-from ui.components.layouts.title_bar import TitleBar
+from ui.components.title_bar import TitleBar
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

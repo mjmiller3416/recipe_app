@@ -8,7 +8,7 @@ from .config import (DEBUG_LAYOUT_BORDERS, FLOAT, ICON_SIZE,
                      INGREDIENT_CATEGORIES, INT, MEASUREMENT_UNITS, NAME,
                      RECIPE_CATEGORIES, SEARCH, NON_EMPTY, TITLE_BAR,
                      INGREDIENT_WIDGET, MEAL_PLANNER, RECIPE_CARD,
-                     EMPTY_STATE, SIDEBAR, ICON_COLOR
+                     EMPTY_STATE, SIDEBAR, ICON_COLOR, RECIPE_DIALOG,
 )
 from .paths import AppPaths, QssPaths
 from .user_settings import UserSettings
@@ -21,5 +21,5 @@ __all__ = [
     "DEBUG_LAYOUT_BORDERS", "INT", "NAME",
     "FLOAT", "SEARCH", "NON_EMPTY", "TITLE_BAR",
     "INGREDIENT_WIDGET","MEAL_PLANNER", "RECIPE_WIDGET",
-    "EMPTY_STATE", "RECIPE_CARD", "SIDEBAR",
+    "EMPTY_STATE", "RECIPE_CARD", "SIDEBAR", "RECIPE_DIALOG",
 ]

@@ -26,8 +26,8 @@ class RecipeSelectionDialog(DialogWindow):
         # ── Window Properties ──
         self.setWindowTitle("Select a Recipe")
         self.setMinimumSize(400, 500)
-        self.title_bar.btn_maximize.setVisible(False)
-        self.title_bar.btn_toggle_sidebar.setVisible(False)
+        self.title_bar.btn_ico_maximize.setVisible(False)
+        self.title_bar.btn_ico_toggle_sidebar.setVisible(False)
 
         # ── Widgets ──
         self.list_widget = QListWidget()

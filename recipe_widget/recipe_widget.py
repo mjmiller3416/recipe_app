@@ -119,7 +119,7 @@ class RecipeWidget(QFrame):
         old.deleteLater()
 
         new_frame.setObjectName("RecipeStateFrame") # set object name
-        new_frame.setAttribute(Qt.WA_StyledBackground, True) # Ensure styled background is enabled
+        new_frame.setAttribute(Qt.WA_StyledBackground, True) # styled background is enabled
 
         # add new frame (index 1) and set it as the current page
         self._stack.insertWidget(1, new_frame)
@@ -134,7 +134,7 @@ class RecipeWidget(QFrame):
             self.card_clicked.emit(self._recipe)
 
             # open the recipe dialog
-            dlg = FullRecipe(self._recipe, self)
+            dlg = FullRecipe(self._recipe, self.window())
             dlg.exec()
 
     def _handle_add_meal_click(self):

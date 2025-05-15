@@ -1,12 +1,12 @@
 /* recipe_widget.qss */
 
 #RecipeStateFrame, #EmptyStateFrame, #ErrorStateFrame {
-    background-color: red;  /* Flat dark background */
+    background-color: {BACKGROUND_RAISED};  /* Flat dark background */
     border-radius: 10px; /* Rounded corners */
 }
 
 #RecipeStateFrame QLabel {
-    color: #E1E1E1;
+    color: {TEXT_STRONG};
     font-size: {FONTS_SIZE_NORMAL};
     font-family: {FONTS_HEADER};
     font-weight: 600;
@@ -19,13 +19,9 @@
 }
 
 #RecipeStateFrame [label_text="true"] {
-    color: #B0B0B0;
     font-family: {FONTS_BODY};
+    color: {TEXT_DEFAULT};
     font-weight: 400;
-}
-
-#RecipeStateFrame [value_text="true"] {
-    color: {BRAND_PRIMARY};
 }
 
 /* INTERACTIVE ELEMENTS */

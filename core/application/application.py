@@ -15,7 +15,7 @@ from core.helpers import DebugLogger
 
 from ui.animations import SidebarAnimator
 from ui.components.inputs.search_widget import SearchWidget
-from ui.components.layouts.title_bar import TitleBar
+from ui.components.title_bar import TitleBar
 
 from views.add_recipes import AddRecipes
 from views.dashboard import Dashboard

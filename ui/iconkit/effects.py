@@ -24,6 +24,7 @@ class ApplyHoverEffects:
         icon_default = ThemedIcon(file_name, size, variant).icon()
         icon_hover = ThemedIcon(file_name, size, variant).icon_for_state("HOVER")
         icon_checked = ThemedIcon(file_name, size, variant).icon_for_state("CHECKED")
+        icon_disabled = ThemedIcon(file_name, size, variant).icon_for_state("DISABLED")
 
         # Apply default icon and size
         button.setIcon(icon_default)
@@ -33,6 +34,7 @@ class ApplyHoverEffects:
         button._icon_default = icon_default
         button._icon_hover = icon_hover
         button._icon_checked = icon_checked
+        button._icon_disabled = icon_disabled
 
         # Event overrides
         def enterEvent(event):

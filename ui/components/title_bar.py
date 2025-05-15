@@ -35,8 +35,8 @@ class TitleBar(QWidget):
     """
 
     # ── Signals ─────────────────────────────────────────────────────────────────────
-    sidebar_toggled = Signal()   # To toggle sidebar visibility
-    close_clicked = Signal()     # To signal a close event
+    sidebar_toggled  = Signal()  # To toggle sidebar visibility
+    close_clicked    = Signal()  # To signal a close event
     minimize_clicked = Signal()  # To signal a minimize event
     maximize_clicked = Signal()  # To signal a maximize/restore event
 

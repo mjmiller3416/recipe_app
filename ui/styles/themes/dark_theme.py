@@ -77,7 +77,7 @@ THEME = {
         "DEFAULT":  "#949AA7",
         "ACCENT":   "#03B79E",
         "HOVER":    "#6AD7CA",
-        "disabled": "#5A5E66",
+        "DISABLED": "#5A5E66",
 
         # ── Status Indicators ─────────────────────────────────────────────
         "INFO":     "#4FD1C5",

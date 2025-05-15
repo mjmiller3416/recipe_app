@@ -47,7 +47,7 @@ TITLE_BAR = {
     "ICON_CLOSE": AppPaths.ICONS_DIR / "close.svg",
     "ICON_TOGGLE_SIDEBAR": AppPaths.ICONS_DIR / "toggle_sidebar.svg",
     "APP_NAME": "MealGenie",
-    "VARIANT": THEME["ICON"]["ACCENT"]
+    "VARIANT": THEME["ICON_STYLES"]["TITLEBAR"]
 }
 
 # ── Ingredient Widget ──
@@ -75,6 +75,13 @@ RECIPE_CARD = {
     "ICON_SIZE": QSize(30, 30),
     "ICON_TOTAL_TIME": AppPaths.ICONS_DIR / "total_time.svg",
     "ICON_SERVINGS": AppPaths.ICONS_DIR / "servings.svg",
+    "VARIANT": THEME["ICON"]["ACCENT"],
+}
+RECIPE_DIALOG = {
+    "ICON_SIZE": QSize(30, 30),
+    "ICON_SERVINGS": AppPaths.ICONS_DIR / "servings.svg",
+    "ICON_TOTAL_TIME": AppPaths.ICONS_DIR / "total_time.svg",
+    "ICON_CATEGORY": AppPaths.ICONS_DIR / "category.svg",
     "VARIANT": THEME["ICON"]["ACCENT"],
 }
 

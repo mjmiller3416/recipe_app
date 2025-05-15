@@ -13,9 +13,10 @@ from ui.components.images import SquareImage
 from ui.components.separator import Separator
 from ui.iconkit import Icon
 from ui.tools.layout_debugger import LayoutDebugger
+from config import RECIPE_DIALOG
 
 # ── Constants ───────────────────────────────────────────────────────────────────
-ICON_SIZE = QSize(30,30)
+
 ICON_COLOR = "#3B575B"  # Example color, adjust as needed
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -36,14 +37,15 @@ class FullRecipe(DialogWindow):
         self.recipe = recipe
 
         # ── Window Properties ──
-        self.setFixedSize(760, 983.25)  # roughly 8.5 x 10.35 inches at 96 DPI
-        self.title_bar.btn_maximize.setVisible(False)
-        self.title_bar.btn_toggle_sidebar.setVisible(False)
+        self.setFixedSize(760, 980)  # roughly 8.5 x 10.35 inches at 96 DPI
+        self.title_bar.btn_ico_maximize.setVisible(False)
+        self.title_bar.btn_ico_toggle_sidebar.setVisible(False)
         self.setObjectName("RecipeDialog")
 
         # ── Setup UI ──
         self.setup_ui()
-        self.overlay = LayoutDebugger(self)
+
+        LayoutDebugger(self) # for debugging layout issues
 
     # ── Public Methods ──────────────────────────────────────────────────────────────
     def setup_ui(self) -> None:
@@ -51,7 +53,7 @@ class FullRecipe(DialogWindow):
         # ── Create Main Layout ──
         lyt_main = QVBoxLayout()
         lyt_main.setSpacing(30)
-        lyt_main.setContentsMargins(20, 20, 20, 20)
+        lyt_main.setContentsMargins(20, 0, 20, 20)
 
         # add header
         header_frame = self.build_header_frame()
@@ -76,11 +78,10 @@ class FullRecipe(DialogWindow):
         self.lbl_recipe_name = QLabel(self.recipe.recipe_name)
         self.lbl_recipe_name.setObjectName("RecipeName")
         self.lbl_recipe_name.setAlignment(Qt.AlignCenter)
-        lyt_header.addWidget(self.lbl_recipe_name) # add to layout
-
+        lyt_header.addWidget(self.lbl_recipe_name, 0, Qt.AlignHCenter) # add to layout
         # separator
         self.separator = Separator.horizontal(690)
-        lyt_header.addWidget(self.separator, 0, Qt.AlignCenter) # add to layout
+        lyt_header.addWidget(self.separator, 0, Qt.AlignHCenter) # add to layout
 
         return self.header_frame
 
@@ -99,9 +100,9 @@ class FullRecipe(DialogWindow):
         self.meta_info_widget, lyt_meta = self._create_framed_layout(line_width=0)
 
         # add meta info to layout
-        lyt_meta.addWidget(self._build_meta_row("servings.svg", str(self.recipe.servings)))
-        lyt_meta.addWidget(self._build_meta_row("total_time.svg", str(self.recipe.total_time)))
-        lyt_meta.addWidget(self._build_meta_row("category.svg", self.recipe.recipe_category))
+        lyt_meta.addWidget(self._build_meta_row(RECIPE_DIALOG["ICON_SERVINGS"], str(self.recipe.servings)))
+        lyt_meta.addWidget(self._build_meta_row(RECIPE_DIALOG["ICON_TOTAL_TIME"], str(self.recipe.total_time)))
+        lyt_meta.addWidget(self._build_meta_row(RECIPE_DIALOG["ICON_CATEGORY"], self.recipe.recipe_category))
 
         return self.meta_info_widget
 
@@ -114,17 +115,28 @@ class FullRecipe(DialogWindow):
         lbl_ingredients_header.setProperty("textHeader", True)
         lyt_ingredients.addWidget(lbl_ingredients_header, 0, Qt.AlignTop) # add to layout
 
-        # ingredients list
-        if self.recipe.ingredients:
+        # pull in the flattened details (quantity + unit + name)
+        details = self.recipe.get_ingredient_details()
+
+        if details:
+            # format them into human‐readable strings:
+            lines = []
+            for d in details:
+                qty = f"{d.quantity:g}" if d.quantity is not None else ""
+                unit = d.unit or ""
+                prefix = f"{qty} {unit}".strip()
+                label = f"{prefix} - {d.ingredient_name}" if prefix else d.ingredient_name
+                lines.append(label)
+
             ingredients_block = self.build_list_block(
-                items=self.recipe.ingredients,
+                items=lines,
                 bullet_symbol="•",
                 bullet_color="#3B575B",
                 margins=(12, 20, 4, 4),
-                spacing=12, #space between items
+                spacing=12,
                 label_property="textIngredients",
             )
-            lyt_ingredients.addWidget(ingredients_block) # add to layout
+            lyt_ingredients.addWidget(ingredients_block)
         else:
             lyt_ingredients.addWidget(QLabel("No ingredients available."))
 
@@ -297,7 +309,11 @@ class FullRecipe(DialogWindow):
         lyt.setSpacing(20)
 
         # ── Create Icon & Label ──
-        icon = Icon(icon_name, ICON_SIZE, "default")
+        icon = Icon(
+            file_path=icon_name, 
+            size=RECIPE_DIALOG["ICON_SIZE"], 
+            variant=RECIPE_DIALOG["VARIANT"],
+        )
         lbl = QLabel(text)
         lbl.setProperty("metaTitle", True)
         lbl.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)

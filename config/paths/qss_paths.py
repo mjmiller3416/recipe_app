@@ -28,6 +28,7 @@ class QssPaths:
 
     class Components:
         MESSAGE_DIALOG = AppPaths.qss_path("message_dialog.qss")
+        RECIPE_DIALOG = AppPaths.qss_path("recipe_dialog.qss")
         RECIPE_WIDGET = AppPaths.qss_path("recipe_widget.qss")
         SEARCH_WIDGET = AppPaths.qss_path("search_widget.qss")
         SIDEBAR_WIDGET = AppPaths.qss_path("sidebar_widget.qss")
@@ -48,7 +49,11 @@ class QssPaths:
             ],
             "dashboard": [QssPaths.Views.DASHBOARD],
             "add_recipes": [QssPaths.Views.ADD_RECIPES, QssPaths.Components.MESSAGE_DIALOG],
-            "view_recipes": [QssPaths.Views.VIEW_RECIPES, QssPaths.Components.RECIPE_WIDGET],
+            "view_recipes": [
+                QssPaths.Views.VIEW_RECIPES,
+                QssPaths.Components.RECIPE_WIDGET,
+                QssPaths.Components.RECIPE_DIALOG
+            ],
             "meal_planner": [QssPaths.Views.MEAL_PLANNER],
             "shopping_list": [QssPaths.Views.SHOPPING_LIST],
         }
