@@ -33,6 +33,7 @@ class QssPaths:
         SEARCH_WIDGET = AppPaths.qss_path("search_widget.qss")
         SIDEBAR_WIDGET = AppPaths.qss_path("sidebar_widget.qss")
         TITLE_BAR = AppPaths.qss_path("title_bar.qss")
+        EMPTY_STATE_FRAME = AppPaths.qss_path("empty_state_frame.qss")
 
     @staticmethod
     def get_view_styles() -> dict:
@@ -54,6 +55,9 @@ class QssPaths:
                 QssPaths.Components.RECIPE_WIDGET,
                 QssPaths.Components.RECIPE_DIALOG
             ],
-            "meal_planner": [QssPaths.Views.MEAL_PLANNER],
+            "meal_planner": [
+                QssPaths.Views.MEAL_PLANNER,
+                QssPaths.Components.EMPTY_STATE_FRAME
+                ],
             "shopping_list": [QssPaths.Views.SHOPPING_LIST],
         }

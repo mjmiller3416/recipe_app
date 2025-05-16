@@ -1,6 +1,4 @@
-# recipe_app/meal_planner/meal_planner.py
-"""
-Module: meal_planner.meal_planner
+""" views/meal_planner/meal_planner.py
 
 This module defines the MealPlanner class, which provides a tabbed interface for meal planning.
 It allows users to create, edit, and save meal plans. The MealPlanner uses QTabWidget to manage
@@ -13,11 +11,17 @@ from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
 
 from core.helpers import DebugLogger
 from ui.iconkit import ThemedIcon
-from .meal_helpers import load_meal_plan, save_all_meals, save_meal_plan
 from .planner_layout import PlannerLayout
 from config import MEAL_PLANNER
+from services.meal_planner_service import (
+    get_saved_meal_ids,
+    get_meal_by_id,
+    save_meal,
+    update_meal,
+    save_active_meal_ids,
+)
 
-
+# ── Class Definition ────────────────────────────────────────────────────────────
 class MealPlanner(QWidget):
     """
     The MealPlanner class manages a tabbed interface for creating, editing,
@@ -54,16 +58,25 @@ class MealPlanner(QWidget):
     def init_ui(self):
         """Initialize UI by adding the '+' tab and loading saved meals."""
         self.add_meal_tab()  # add the "+" tab (used to add new meals)
-        if not load_meal_plan(callback=self.meal_tab):
-            self.meal_tab()  # load an empty meal tab if no saved meals found
+
+        loaded = False
+        meal_ids = get_saved_meal_ids()
+        DebugLogger.log(f"[MealPlanner.init_ui] Loaded saved meal IDs: {meal_ids}", "info")
+        for meal_id in get_saved_meal_ids():
+            data = get_meal_by_id(meal_id)
+            self.meal_tab(meal_data=data, meal_id=meal_id)
+            loaded = True
+
+        if not loaded:
+            self.meal_tab()  # load a blank custom meal tab
 
     def add_meal_tab(self):
         """Add the last "+" tab to create new custom meals."""
         plus_tab = QWidget()
         icon_asset = ThemedIcon(
-            file_path=MEAL_PLANNER["ICON_ADD"],
-            size=MEAL_PLANNER["ICON_SIZE"],
-            variant=MEAL_PLANNER["VARIANT"]
+            file_path = MEAL_PLANNER["ICON_ADD"],
+            size      = MEAL_PLANNER["ICON_SIZE"],
+            variant   = MEAL_PLANNER["VARIANT"]
         )
         icon = icon_asset.pixmap()
         index = self.meal_tabs.addTab(plus_tab, icon, "")
@@ -100,16 +113,27 @@ class MealPlanner(QWidget):
 
         DebugLogger.log(f"New meal tab added. Index: {index}, Meal ID: {meal_id}", "info")
 
-    def save_meal_plan(self):
-        """Save the list of currently open meal IDs to QSettings."""
-        save_meal_plan(self.tab_map)
-
     def save_all_meals(self):
         """
         Save all open meals to the database.
         New meals are inserted, while existing ones are updated.
         """
-        save_all_meals(self.tab_map)
+        for index, tab_info in self.tab_map.items():
+            layout = tab_info["layout"]
+            meal_id = tab_info.get("meal_id")
+            data = layout.get_meal_data()
+
+            if not data.get("main"):
+                DebugLogger.log(f"[MealPlanner] Skipped saving tab {index}: No main recipe selected.", "warning")
+                continue
+
+            if meal_id is None:
+                new_id = save_meal(data)
+                self.tab_map[index]["meal_id"] = new_id
+                DebugLogger.log(f"[MealPlanner] Created meal ID: {new_id} for tab {index}", "success")
+            else:
+                update_meal(meal_id, data)
+                DebugLogger.log(f"[MealPlanner] Updated meal ID: {meal_id} for tab {index}", "info")
 
     def get_current_meal_data(self):
         """
@@ -128,3 +152,16 @@ class MealPlanner(QWidget):
         self.meal_tabs.clear()
         self.tab_map.clear()
         DebugLogger.log("All meal planner tabs cleared.", "warning")
+
+    def save_meal_plan(self):
+        """
+        Save currently open meal IDs to persistent storage for restoration.
+        """
+
+        meal_ids = [
+            tab_info["meal_id"]
+            for tab_info in self.tab_map.values()
+            if tab_info.get("meal_id") is not None
+        ]
+        save_active_meal_ids(meal_ids)
+        DebugLogger.log(f"[MealPlanner] Saved tab meal IDs: {meal_ids}", "info")

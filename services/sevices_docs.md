@@ -71,6 +71,32 @@ Applies conversion logic (e.g. butter sticks ↔ tablespoons) using a `_CONVERSI
 
 ---
 
+## 📄 meal_planner_service.py
+
+**Purpose**: Orchestrates loading, saving, and updating meals in the planner. Replaces the legacy meal_helpers.py logic and interacts directly with the MealSelection model.
+
+## 🔧 Core Methods
+
+`load_saved_meal_ids() -> list[int]`
+
+- Fetches a list of previously saved meal IDs (from DB or other persistent source).
+
+`get_meal_by_id(meal_id: int) -> dict[str, Optional[int]]`
+
+- Returns the structured {main, side1, side2, side3} dictionary for a given meal ID.
+
+`save_meal(data: dict[str, Optional[int]]) -> int`
+
+- Creates a new meal in the MealSelection table and returns its ID.
+
+`update_meal(meal_id: int, data: dict[str, Optional[int]])`
+
+- Updates an existing meal using the given recipe IDs.
+
+`delete_meal(meal_id: int)`
+
+- Deletes the specified meal selection by ID.
+
 ## 📋 To-Do: Future Service Modules
 
 These service modules are not yet implemented but are strongly recommended based on existing architecture and schema:

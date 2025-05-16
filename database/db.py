@@ -8,6 +8,8 @@ import contextlib
 import sqlite3
 from pathlib import Path
 
+from core.helpers import DebugLogger
+
 # ── Constants ───────────────────────────────────────────────────────────────────
 DB_PATH = Path(__file__).parent / "app_data.db"
 
