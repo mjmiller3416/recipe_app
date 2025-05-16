@@ -1,4 +1,7 @@
-# recipe_app/meal_planner/planner_layout.py
+"""views/meal_planner/planner_layout.py
+
+Defines the PlannerLayout widget, which organizes recipe slots for a main dish and up to three side dishes.
+"""
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QEvent, Qt
@@ -10,6 +13,10 @@ from recipe_widget.recipe_widget import RecipeWidget
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class PlannerLayout(QWidget):
+    """A QWidget layout that organizes a main dish and side dish RecipeWidgets.
+
+Handles layout creation, user interaction, and internal meal state tracking.
+"""
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -31,17 +38,17 @@ class PlannerLayout(QWidget):
         self.main_layout.setContentsMargins(10, 10, 10, 10)
         self.main_layout.setSpacing(10)
 
-        #🔹Main Dish Widget
+        # ── Main Dish ──
         self.main_slot = RecipeWidget(size=LayoutSize.MEDIUM)
         self.meal_slots["main"] = self.main_slot
         self.main_layout.addWidget(self.main_slot)
 
-        #🔹Side Dishes (vertical stack)
+        # ── Side Dishes ──
         self.side_layout = QVBoxLayout()
         self.side_layout.setSpacing(10)
 
         for i in range(1, 4):
-            side_slot = RecipeWidget(size=LayoutSize.SMALL) # create side dish slot
+            side_slot = RecipeWidget(size=LayoutSize.SMALL) # side slot (disabled until main is selected)
 
             # set tooltip for disabled side slots
             side_slot.setEnabled(False)
@@ -64,7 +71,7 @@ class PlannerLayout(QWidget):
             # k=key closes over current loop variable
             slot.recipe_selected.connect(lambda rid, k=key: self.update_meal(k, rid))
 
-    def update_meal(self, key, recipe_id):
+    def update_meal(self, key: str, recipe_id: str) -> None:
         """
         Update the meal selection for the given key (main or side).
 
@@ -81,10 +88,10 @@ class PlannerLayout(QWidget):
             for side in ["side1", "side2", "side3"]:
                 self.meal_slots[side].setEnabled(True)
         elif key.startswith("side") and self.current_meal["main"] is None:
-            # Failsafe (should never trigger)
+            # failsafe (should never trigger)
             return
 
-    def get_meal_data(self):
+    def get_meal_data(self) -> dict[str, str | None]:
         """Returns the internal meal selection state."""
         return self.current_meal.copy()
 
@@ -93,8 +100,10 @@ class PlannerLayout(QWidget):
         for key, slot in self.meal_slots.items():
             rid = meal_dict.get(key)
             if rid:
-                """ recipe = DB_INSTANCE.get_recipe(rid) ⚠️⚠️⚠️⚠️
-                slot.set_recipe(recipe) """
+                # ── Note ──────────────────────────────────────────────────────────────────────── #
+                # TODO: Fetch recipe object and set it here
+                # update to new db structure
+                # ──────────────────────────────────────────────────────────────────────────────── #
 
                 if key == "main": # ensure main dish is enabled
                     for side in ["side1", "side2", "side3"]:

@@ -86,7 +86,7 @@ class Application(QMainWindow):
 
         # ── Header ──
         self.header = QWidget()
-        self.header.setObjectName("Header")
+        self.header.setObjectName("header")
         self.header_layout = QHBoxLayout(self.header)
         self.header_layout.setContentsMargins(20, 12, 20, 12)
         self.header_layout.setSpacing(20)

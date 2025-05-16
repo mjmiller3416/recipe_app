@@ -1,6 +1,5 @@
-# recipe_app/meal_planner/meal_helpers.py
 """
-Module: meal_planner.meal_helpers
+views/meal_planner/meal_helpers.py
 
 This module provides helper functions for loading, saving, and updating meal plans in the MealPlanner.
 It includes functions to load saved meal plans from QSettings, save the current meal plan, and save all meals in the planner.
@@ -11,10 +10,9 @@ Main Functions:
     - save_all_meals(tab_map): Saves or updates all open meals in the database based on the current tab map.
 """
 
-# 🔸 Third-party Imports
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSettings
 
-# 🔸 Local Application Imports
 from core.helpers import DebugLogger
 
 

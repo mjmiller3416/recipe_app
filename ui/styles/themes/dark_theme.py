@@ -4,20 +4,34 @@ Dark Theme definition used across the MealGenie application.
 Supports dynamic QSS injection, theme-aware icons, and centralized style access.
 """
 
+# ── Constants ───────────────────────────────────────────────────────────────────
+PRIMARY_ACCENT = "#03B79E"
+SECONDARY_ACCENT = "#3B575B"
+
+SURFACE_LIGHT = "#3A4048"
+SURFACE_DEFAULT = "#2C313C"
+SURFACE_DARK = "#272C36"
+
+BORDER = "#1B1D23"
+
+TEXT_DEFAULT = "#9DA1A5"
+TEXT_STRONG = "#E1E1E3"
+TEXT_DISABLED = "#6A6D72"
+
 THEME = {
     # ── Meta ───────────────────────────────────────────────────────────────
     "NAME": "Dark Theme",
 
     # ── Accent Colors (Brand/Highlighting) ─────────────────────────────────
     "ACCENT": {
-        "DEFAULT":    "#03B79E",  # primary accent color
-        "SECONDARY":  "#6AD7CA",
-        "HIGHLIGHT":  "#3B575B",
+        "DEFAULT":   PRIMARY_ACCENT,  
+        "SECONDARY": SECONDARY_ACCENT,
+        "HIGHLIGHT": SURFACE_DARK,
     },
 
     # ── Surface / Backgrounds ──────────────────────────────────────────────
     "BACKGROUND": {
-        "DEFAULT":  "#1B1D23",
+        "DEFAULT":  SURFACE_DEFAULT,
         "MUTED":    "#2C313C",
         "RAISED":   "#3A4048",
         "WIDGET":   "#272C36",
@@ -26,22 +40,22 @@ THEME = {
 
     # ── Text ───────────────────────────────────────────────────────────────
     "TEXT": {
-        "DEFAULT":   "#9DA1A5",
-        "STRONG":    "#E1E1E3",
-        "DISABLED":  "#6A6D72",
+        "DEFAULT":   TEXT_DEFAULT,
+        "STRONG":    TEXT_STRONG,
+        "DISABLED":  TEXT_DISABLED,
     },
 
     # ── Borders ────────────────────────────────────────────────────────────
     "BORDER": {
-        "DEFAULT": "#424951",
-        "ACTIVE":  "#6AD7CA",
+        "DEFAULT": BORDER,
+        "ACTIVE":  PRIMARY_ACCENT,
         "ERROR":   "#FF4F4F",
     },
 
     # ── Control States ─────────────────────────────────────────────────────
     "CONTROL": {
         "DEFAULT": "#949AA7",
-        "HOVER":   "#6AD7CA",
+        "HOVER":   SECONDARY_ACCENT,
         "CHECKED": "#3A4048",
     },
 
@@ -74,10 +88,10 @@ THEME = {
 
     # ── Icon Colors ────────────────────────────────────────────────────────
     "ICON": {
-        "DEFAULT":  "#949AA7",
-        "ACCENT":   "#03B79E",
-        "HOVER":    "#6AD7CA",
-        "DISABLED": "#5A5E66",
+        "DEFAULT":  TEXT_DEFAULT,
+        "ACCENT":   PRIMARY_ACCENT,
+        "HOVER":    SECONDARY_ACCENT,
+        "DISABLED": SURFACE_LIGHT,
 
         # ── Status Indicators ─────────────────────────────────────────────
         "INFO":     "#4FD1C5",
@@ -89,9 +103,9 @@ THEME = {
     # ── Themed Icon Variants ───────────────────────────────────────────────
     "ICON_STYLES": {
         "NAV": {
-            "DEFAULT":  "#949AA7",
-            "HOVER":    "#3A4048",
-            "CHECKED":  "#006eff",
+            "DEFAULT":  TEXT_DEFAULT,
+            "HOVER":    TEXT_DEFAULT,
+            "CHECKED":  PRIMARY_ACCENT,
             "DISABLED": "#5A5E66",
         },
         "TITLEBAR": {

@@ -34,18 +34,18 @@ class MealPlanner(QWidget):
 
         self.setObjectName("MealPlanner")
 
-        # Create a QTabWidget to manage multiple meal plan tabs
+        # ── Create QTab Widget ──
         self.meal_tabs = QTabWidget()
         self.meal_tabs.setIconSize(QSize(16, 16))
         self.meal_tabs.setTabsClosable(False)
         self.meal_tabs.setMovable(True)
 
-        # Layout setup
+        # ── Layout Setup ──
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(20, 20, 20, 20)
         self.layout.addWidget(self.meal_tabs)
 
-        # Mapping of tab index to its layout and associated meal_id (if saved)
+        # ── Map Tab Index ──
         self.tab_map = {}  # {index: {"layout": PlannerLayout, "meal_id": int or None}}
 
         self.init_ui()
@@ -53,9 +53,9 @@ class MealPlanner(QWidget):
 
     def init_ui(self):
         """Initialize UI by adding the '+' tab and loading saved meals."""
-        self.add_meal_tab()  # Add the "+" tab (used to add new meals)
+        self.add_meal_tab()  # add the "+" tab (used to add new meals)
         if not load_meal_plan(callback=self.meal_tab):
-            self.meal_tab()  # Load an empty meal tab if no saved meals found
+            self.meal_tab()  # load an empty meal tab if no saved meals found
 
     def add_meal_tab(self):
         """Add the last "+" tab to create new custom meals."""
