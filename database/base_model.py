@@ -103,3 +103,26 @@ class ModelBase(PydanticBaseModel):
             conn.execute(
                 f"DELETE FROM {self.table_name()} WHERE id = ?", (self.id,)
             )
+
+    @classmethod
+    def first(cls, **filters):
+        """Return the first matching row (or None)."""
+        results = cls.filter(**filters)
+        return results[0] if results else None
+    
+    @classmethod
+    def filter(cls, **filters):
+        """
+        Return a list of rows matching the given filters.
+
+        Args:
+            **filters: Field-value pairs to match exactly.
+
+        Returns:
+            list[cls]: Matching model instances.
+        """
+        results = []
+        for row in cls.all():
+            if all(getattr(row, k, None) == v for k, v in filters.items()):
+                results.append(row)
+        return results

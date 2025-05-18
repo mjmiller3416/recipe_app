@@ -14,6 +14,7 @@ from database.models.ingredient import Ingredient
 from database.models.recipe_ingredient import RecipeIngredient
 from database.models.shopping_item import ShoppingItem
 from database.models.shopping_list import ShoppingList
+from database.models.shopping_state import ShoppingState
 from services.meal_service import MealService
 
 
@@ -60,7 +61,8 @@ class ShoppingService:
     @staticmethod
     def generate_shopping_list(recipe_ids: List[int]) -> List[ShoppingItem]:
         """
-        Generate a shopping list based on the provided recipe IDs.
+        Generate a shopping list based on the provided recipe IDs,
+        restoring 'checked' states from persisted ShoppingState.
 
         Args:
             recipe_ids (List[int]): A list of recipe IDs.
@@ -68,9 +70,21 @@ class ShoppingService:
         Returns:
             List[ShoppingItem]: A list of ShoppingItem objects representing the shopping list.
         """
-        result = ShoppingService._aggregate_recipe_ingredients(recipe_ids)
+        result = []
+
+        # ── Load from Recipes ──
+        for item in ShoppingService._aggregate_recipe_ingredients(recipe_ids):
+            from database.models.shopping_state import ShoppingState  # local import to avoid circular refs
+
+            state = ShoppingState.get_state(item.key())
+            if state:
+                item.have = state.checked
+            result.append(item)
+
+        # ── Append Manual Items ──
         for m in ShoppingList.all():
             result.append(m.to_item())
+
         DebugLogger.log(f"[ShoppingService] Total ingredients generated: {len(result)}", "info")
         return result
 
@@ -92,6 +106,7 @@ class ShoppingService:
             "name": None
         })
 
+        # ── Aggregate Ingredients ──
         for ri in RecipeIngredient.all():
             if ri.recipe_id in recipe_ids:
                 ing = Ingredient.get(ri.ingredient_id)
@@ -103,16 +118,25 @@ class ShoppingService:
                 data["qty"]     += ri.quantity or 0
 
         items: List[ShoppingItem] = []
+
+        # ── Convert and Create ShoppingItem ──
         for ing_id, data in agg.items():
             q, u = ShoppingService._convert_qty(data["name"], data["qty"], data["unit"] or "")
-            items.append(ShoppingItem(
+            item = ShoppingItem(
                 ingredient_name=data["name"],
                 quantity=q,
                 unit=u,
                 category=data["category"],
                 source="recipe",
-                have=False
-            ))
+                have=False  # will be updated if a state exists
+            )
+
+            # check if we’ve seen this item before and apply its state
+            state = ShoppingState.get_state(item.key())
+            if state:
+                item.have = state.checked
+
+            items.append(item)
         return items
 
     @staticmethod

@@ -89,16 +89,16 @@ RECIPE_DIALOG = {
 MEASUREMENT_UNITS = [
     "bag", "box", "can", "cap-full", "cup", "gallon", "half", "jar",
     "oz.", "pack", "pinch", "pint", "lb.", "quarter", "slice",
-    "square", "strip", "Tbs", "tsp", "whole"
+    "square", "strip", "Tbs", "tsp", "whole",
 ]
 
 INGREDIENT_CATEGORIES = [
-    "bakery", "baking", "dairy", "deli", "oils", "frozen",
-    "meat", "pantry", "produce", "seafood", "spices", "other"
+    "produce", "meat", "seafood", "pantry", "dairy", "deli", "frozen",
+    "bakery", "baking", "condiments", "spices", "other",
 ]
 
 RECIPE_CATEGORIES = [
-    "Breakfast", "Lunch", "Dinner", "Snack", "Dessert"
+    "Breakfast", "Lunch", "Dinner", "Sauce", "Appetizer", "Snack", "Dessert",
 ]
 
 # ── Validation Rules ──

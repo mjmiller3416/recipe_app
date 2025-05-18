@@ -102,13 +102,7 @@ class ShoppingList(QWidget):
                 category = item.category or "Other"
                 grouped[category].append(item)
 
-        # ── Display Recipe Ingredients ──
-        for category in sorted(grouped.keys()):
-            self._render_two_column_section(category, grouped[category], is_manual=False)
-
-        # ── Display Manual Items ──
-        if manual_items:
-            self._render_two_column_section("Manual Entries", manual_items, is_manual=True)
+        self._render_category_columns(grouped, manual_items) # render the list
 
         self.scroll_layout.addSpacerItem(QSpacerItem(0, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
@@ -130,42 +124,85 @@ class ShoppingList(QWidget):
         except ValueError:
             pass  # Optionally show “Invalid quantity” feedback
 
-    def _render_two_column_section(self, title: str, items: list, is_manual: bool = False) -> None:
+    def _render_category_columns(self, grouped: dict, manual_items: list) -> None:
         """
-        Render a section with a two-column layout of ingredients.
+        Renders all category sections in two vertical columns, splitting by category (not by ingredient).
 
         Args:
-            title (str): Section title to display above the group.
-            items (list): List of ShoppingItem instances.
-            is_manual (bool): Whether to wire up toggle/save logic for manual items.
+            grouped (dict): Dict of {category: [ShoppingItem]}
+            manual_items (list): List of manual entry ShoppingItems
         """
+        column_layout = QHBoxLayout()
+
+        left_container = QWidget()
+        left_column = QVBoxLayout(left_container)
+        left_column.setAlignment(Qt.AlignTop)
+
+        right_container = QWidget()
+        right_column = QVBoxLayout(right_container)
+        right_column.setAlignment(Qt.AlignTop)
+
+        all_sections = list(grouped.items())
+        if manual_items:
+            all_sections.append(("Manual Entries", manual_items))
+
+        midpoint = (len(all_sections) + 1) // 2
+        left_sections = all_sections[:midpoint]
+        right_sections = all_sections[midpoint:]
+
+        for target_column, section_group in ((left_column, left_sections), (right_column, right_sections)):
+            for category, items in section_group:
+                target_column.addLayout(self._build_category_section(category, items, is_manual=(category == "Manual Entries")))
+
+        # Make columns expand evenly
+        left_container.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        right_container.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+
+        column_layout.addWidget(left_container)
+        column_layout.addSpacing(40)
+        column_layout.addWidget(right_container)
+        self.scroll_layout.addLayout(column_layout)
+
+
+    def _build_category_section(self, title: str, items: list, is_manual: bool = False) -> QVBoxLayout:
+        """
+        Creates a category header and its associated checkboxes as a vertical layout.
+
+        Args:
+            title (str): The section header title
+            items (list): List of ShoppingItem objects
+            is_manual (bool): If True, connects toggle/save logic
+
+        Returns:
+            QVBoxLayout: Complete layout ready to be added to a column
+        """
+        from database.models.shopping_state import ShoppingState  # Avoid early import
+
+        layout = QVBoxLayout()
+
         header = QLabel(title.title())
         header.setStyleSheet("font-weight: bold; font-size: 16px; margin-top: 20px;")
-        self.scroll_layout.addWidget(header)
+        layout.addWidget(header)
 
-        row_layout = QHBoxLayout()
-        left_column = QVBoxLayout()
-        right_column = QVBoxLayout()
-
-        midpoint = (len(items) + 1) // 2
-        left_items = items[:midpoint]
-        right_items = items[midpoint:]
-
-        for column, col_items in zip((left_column, right_column), (left_items, right_items)):
-            for item in col_items:
-                checkbox = QCheckBox(item.label())
-                checkbox.setChecked(item.have)
-
+        def create_toggle_handler(item, checkbox):
+            def handle_toggle(state):
+                item.toggle_have()
                 if is_manual:
-                    def on_toggle(state, i=item):
-                        i.toggle_have()
-                        model = i.to_model()
-                        model.save()
-                    checkbox.stateChanged.connect(on_toggle)
+                    item.to_model().save()
+                else:
+                    ShoppingState.update_state(
+                        key=item.key(),
+                        quantity=item.quantity,
+                        unit=item.unit or "",
+                        checked=item.have  # ✅ use the model's updated state
+                    )
+            return handle_toggle
 
-                column.addWidget(checkbox)
+        for item in items:
+            checkbox = QCheckBox(item.label())
+            checkbox.setChecked(item.have)
+            checkbox.stateChanged.connect(create_toggle_handler(item, checkbox))
+            layout.addWidget(checkbox)
 
-        row_layout.addLayout(left_column)
-        row_layout.addSpacing(40)
-        row_layout.addLayout(right_column)
-        self.scroll_layout.addLayout(row_layout)
+        return layout
+
