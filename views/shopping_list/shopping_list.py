@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (QCheckBox, QComboBox, QFrame, QHBoxLayout,
 
 from config import MEASUREMENT_UNITS
 from database.models.meal_selection import MealSelection
-from views.shopping_list.shopping_service import ShoppingService
+from services.shopping_service import ShoppingService
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

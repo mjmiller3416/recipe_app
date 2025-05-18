@@ -15,7 +15,7 @@ from database.models.recipe_ingredient import RecipeIngredient
 from database.models.shopping_item import ShoppingItem
 from database.models.shopping_list import ShoppingList
 from database.models.shopping_state import ShoppingState
-from views.meal_planner.meal_service import MealService
+from services.meal_service import MealService
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

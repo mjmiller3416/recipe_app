@@ -1,4 +1,4 @@
--- migrations/003_create_recipe_history.sql
+-- This migration adds a new table to track recipe history.
 CREATE TABLE IF NOT EXISTS recipe_histories (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   recipe_id INTEGER NOT NULL,

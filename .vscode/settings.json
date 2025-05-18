@@ -133,6 +133,7 @@
       "iconkit": "Mojo",
       "controllers": "Console",
       "inputs": "Src-tauri",
+      "todo": "Tasks",
 
       //** Subfolders **//
       "app_helpers": "App",

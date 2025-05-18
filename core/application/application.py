@@ -13,7 +13,7 @@ from core.controllers.animation_controller import AnimationManager
 from core.controllers.theme_controller import ThemeController
 from core.helpers import DebugLogger
 from views.meal_planner.planner_service import PlannerService
-from views.shopping_list.shopping_service import ShoppingService
+from services.shopping_service import ShoppingService
 from ui.animations import SidebarAnimator
 from ui.components.inputs.search_widget import SearchWidget
 from ui.components.title_bar import TitleBar
