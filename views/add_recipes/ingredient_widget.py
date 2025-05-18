@@ -3,10 +3,8 @@ import sys
 from PySide6.QtCore import QSize, Signal
 from PySide6.QtWidgets import QApplication, QGridLayout, QLineEdit, QWidget
 
-from config import (
-    FLOAT, INGREDIENT_CATEGORIES, MEASUREMENT_UNITS, NAME,
-    INGREDIENT_WIDGET
-)
+from config import (FLOAT, INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,
+                    MEASUREMENT_UNITS, NAME)
 from ui.components.inputs import CustomComboBox
 from ui.iconkit import ToolButtonIcon
 from ui.tools import clear_error_styles, dynamic_validation, populate_combobox

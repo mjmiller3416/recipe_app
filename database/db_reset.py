@@ -7,9 +7,9 @@ import os
 import sys
 from pathlib import Path
 
+from core.helpers import DebugLogger
 from database.db import DB_PATH
 from database.init_db import init_db
-from core.helpers import DebugLogger
 
 
 def reset_database():

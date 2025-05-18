@@ -14,6 +14,7 @@ from core.controllers.icon_controller import IconController
 from ui.iconkit.effects import ApplyHoverEffects
 from ui.iconkit.icon_mixin import IconMixin
 
+
 # ── Class Definition ────────────────────────────────────────────────────────────
 class ToolButtonIcon(QToolButton, IconMixin):
     def __init__(

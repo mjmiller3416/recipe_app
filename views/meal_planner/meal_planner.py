@@ -9,17 +9,13 @@ multiple meal planning tabs and integrates with the database to load and save me
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
 
-from core.helpers import DebugLogger
-from ui.iconkit import ThemedIcon
-from .planner_layout import PlannerLayout
 from config import MEAL_PLANNER
-from services.meal_planner_service import (
-    get_saved_meal_ids,
-    get_meal_by_id,
-    save_meal,
-    update_meal,
-    save_active_meal_ids,
-)
+from core.helpers import DebugLogger
+from services.planner_service import PlannerService
+from ui.iconkit import ThemedIcon
+
+from .meal_widget import MealWidget
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class MealPlanner(QWidget):
@@ -30,7 +26,7 @@ class MealPlanner(QWidget):
     Atributes:
         meal_tabs (QTabWidget): The tab widget to manage meal planning tabs.
         layout (QVBoxLayout): The main layout for the MealPlanner widget.
-        tab_map (dict): Maps tab indices to their respective PlannerLayout and meal_id.
+        tab_map (dict): Maps tab indices to their respective MealWidget and meal_id.
     """
 
     def __init__(self, parent=None):
@@ -38,130 +34,77 @@ class MealPlanner(QWidget):
 
         self.setObjectName("MealPlanner")
 
-        # ── Create QTab Widget ──
+        # ── Create Layout ──
         self.meal_tabs = QTabWidget()
         self.meal_tabs.setIconSize(QSize(16, 16))
         self.meal_tabs.setTabsClosable(False)
         self.meal_tabs.setMovable(True)
+        self.meal_tabs.tabBarClicked.connect(self.handle_tab_click)
 
-        # ── Layout Setup ──
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(20, 20, 20, 20)
         self.layout.addWidget(self.meal_tabs)
 
-        # ── Map Tab Index ──
-        self.tab_map = {}  # {index: {"layout": PlannerLayout, "meal_id": int or None}}
+        self.tab_map = {} # {tab_index: MealWidget}
 
         self.init_ui()
-        self.meal_tabs.tabBarClicked.connect(self.handle_tab_click)
 
     def init_ui(self):
         """Initialize UI by adding the '+' tab and loading saved meals."""
-        self.add_meal_tab()  # add the "+" tab (used to add new meals)
+        self.new_meal_tab()  # add the "+" tab (used to add new meals)
 
-        loaded = False
-        meal_ids = get_saved_meal_ids()
-        DebugLogger.log(f"[MealPlanner.init_ui] Loaded saved meal IDs: {meal_ids}", "info")
-        for meal_id in get_saved_meal_ids():
-            data = get_meal_by_id(meal_id)
-            self.meal_tab(meal_data=data, meal_id=meal_id)
-            loaded = True
+        meal_ids = PlannerService.load_saved_meal_ids()
+        DebugLogger.log(f"[MealPlanner] Restoring saved meal IDs: {meal_ids}", "info")
 
-        if not loaded:
-            self.meal_tab()  # load a blank custom meal tab
+        for meal_id in meal_ids:
+            self.add_meal_tab(meal_id=meal_id)
 
-    def add_meal_tab(self):
+        if not meal_ids:
+            self.add_meal_tab()
+
+    def new_meal_tab(self):
         """Add the last "+" tab to create new custom meals."""
-        plus_tab = QWidget()
+        new_meal_tab = QWidget()
         icon_asset = ThemedIcon(
             file_path = MEAL_PLANNER["ICON_ADD"],
             size      = MEAL_PLANNER["ICON_SIZE"],
             variant   = MEAL_PLANNER["VARIANT"]
         )
         icon = icon_asset.pixmap()
-        index = self.meal_tabs.addTab(plus_tab, icon, "")
+
+        index = self.meal_tabs.addTab(new_meal_tab, icon, "")
         self.meal_tabs.setTabToolTip(index, "Add Meal")
 
-    def handle_tab_click(self, index):
+    def add_meal_tab(self, meal_id: int = None):
         """
-        Check if '+' tab was clicked, and open a new meal tab if so.
+        Add a new MealWidget tab just before the '+' tab.
 
         Args:
-            index (int): The index of the clicked tab.
+            meal_id (int, optional): If provided, loads the meal with this ID.
         """
-        if index == self.meal_tabs.count() - 1:
-            self.meal_tab()
-
-    def meal_tab(self, meal_data=None, meal_id=None):
-        """
-        Create a new meal planning tab and insert it before the '+' tab.
-
-        Args:
-            meal_data (dict, optional): Pre-populated meal data to set in the new tab.
-            meal_id (int, optional): Meal ID for existing meals to update.
-        """
-        layout = PlannerLayout()
-
-        if meal_data:
-            layout.set_meal_data(meal_data)
+        widget = MealWidget()
+        if meal_id:
+            widget.load_meal(meal_id)
 
         insert_index = self.meal_tabs.count() - 1
-        index = self.meal_tabs.insertTab(insert_index, layout, "Custom Meal")
-
-        self.tab_map[index] = {"layout": layout, "meal_id": meal_id}
+        index = self.meal_tabs.insertTab(insert_index, widget, "Custom Meal")
+        self.tab_map[index] = widget
         self.meal_tabs.setCurrentIndex(index)
 
-        DebugLogger.log(f"New meal tab added. Index: {index}, Meal ID: {meal_id}", "info")
+    def handle_tab_click(self, index: int):
+        """Handle when the '+' tab is clicked to add a new tab."""
+        if index == self.meal_tabs.count() - 1:
+            self.add_meal_tab()
 
-    def save_all_meals(self):
-        """
-        Save all open meals to the database.
-        New meals are inserted, while existing ones are updated.
-        """
-        for index, tab_info in self.tab_map.items():
-            layout = tab_info["layout"]
-            meal_id = tab_info.get("meal_id")
-            data = layout.get_meal_data()
+    def save_current_state(self):
+        """Save all meals and their corresponding tab state."""
+        saved_ids = []
 
-            if not data.get("main"):
-                DebugLogger.log(f"[MealPlanner] Skipped saving tab {index}: No main recipe selected.", "warning")
-                continue
+        for index, widget in self.tab_map.items():
+            widget.save_meal()
+            meal_id = widget._meal_model.id if widget._meal_model else None
+            if meal_id:
+                saved_ids.append(meal_id)
 
-            if meal_id is None:
-                new_id = save_meal(data)
-                self.tab_map[index]["meal_id"] = new_id
-                DebugLogger.log(f"[MealPlanner] Created meal ID: {new_id} for tab {index}", "success")
-            else:
-                update_meal(meal_id, data)
-                DebugLogger.log(f"[MealPlanner] Updated meal ID: {meal_id} for tab {index}", "info")
-
-    def get_current_meal_data(self):
-        """
-        Return meal data from the currently active tab, or None if unavailable.
-
-        Returns:
-            dict or None: The meal data from the currently active tab's PlannerLayout, or None if no valid layout is found.
-        """
-        index = self.meal_tabs.currentIndex()
-        if index in self.tab_map:
-            return self.tab_map[index]["layout"].get_meal_data()
-        return None
-
-    def clear_all_tabs(self):
-        """Remove all meal tabs and reset internal state."""
-        self.meal_tabs.clear()
-        self.tab_map.clear()
-        DebugLogger.log("All meal planner tabs cleared.", "warning")
-
-    def save_meal_plan(self):
-        """
-        Save currently open meal IDs to persistent storage for restoration.
-        """
-
-        meal_ids = [
-            tab_info["meal_id"]
-            for tab_info in self.tab_map.values()
-            if tab_info.get("meal_id") is not None
-        ]
-        save_active_meal_ids(meal_ids)
-        DebugLogger.log(f"[MealPlanner] Saved tab meal IDs: {meal_ids}", "info")
+        PlannerService.save_active_meal_ids(saved_ids)
+        DebugLogger.log(f"[MealPlanner] Saved planner state with meal IDs: {saved_ids}", "info")

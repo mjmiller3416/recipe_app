@@ -9,10 +9,11 @@ from dataclasses import dataclass
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QFrame, QVBoxLayout
 
-from ui.iconkit import ButtonIcon
 from config import EMPTY_STATE
+from ui.iconkit import ButtonIcon
 
 from ..constants import LAYOUT_SIZE, LayoutSize
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 @dataclass(frozen=True, slots=True)

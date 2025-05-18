@@ -41,3 +41,7 @@ class MealSelection(ModelBase):
             if sid is not None:
                 sides.append(Recipe.get(sid))
         return sides
+
+    def get_all_recipes(self) -> List[Recipe]:
+        """Return all recipes (main and sides) for this meal."""
+        return [self.get_main_recipe()] + self.get_side_recipes()

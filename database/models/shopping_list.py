@@ -1,11 +1,19 @@
-# ── Imports ─────────────────────────────────────────────────────────────────────
-from __future__ import annotations
+"""database/models/shopping_list.py
 
-from typing import Optional
+Structured data model for a shopping list item.
+Combines ingredients from recipes and manual entries for unified display and processing.
+"""
+
+# ── Imports ─────────────────────────────────────────────────────────────────────
+from typing import TYPE_CHECKING, Optional
 
 from pydantic import Field, model_validator
 
 from database.base_model import ModelBase
+from database.models.shopping_item import ShoppingItem
+
+if TYPE_CHECKING:
+    from database.models.shopping_item import ShoppingItem
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -18,6 +26,9 @@ class ShoppingList(ModelBase):
 
     @model_validator(mode="before")
     def strip_strings(cls, values):
+        """
+        Strip whitespace from string fields before validation.
+        """
         for fld in ("ingredient_name", "unit"):
             v = values.get(fld)
             if isinstance(v, str):
@@ -28,3 +39,22 @@ class ShoppingList(ModelBase):
         """Return a checklist-style label for UI display."""
         icon = "✔" if self.have else "✖"
         return f"{icon} {self.ingredient_name}: {self.quantity} {self.unit}"
+    
+    def to_item(self) -> "ShoppingItem":
+        """
+        Convert this database row to a ShoppingItem (for unified display).
+
+        Returns:
+            ShoppingItem: A UI-friendly model with manual source.
+        """
+        from database.models.shopping_item import \
+            ShoppingItem  # avoid circular import
+
+        return ShoppingItem(
+            ingredient_name=self.ingredient_name,
+            quantity=self.quantity,
+            unit=self.unit,
+            category=None,
+            source="manual",
+            have=self.have
+        )

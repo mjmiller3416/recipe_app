@@ -1,9 +1,10 @@
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import QGridLayout, QLineEdit, QSizePolicy, QFrame
+from PySide6.QtWidgets import QFrame, QGridLayout, QLineEdit, QSizePolicy
 
 from config import SEARCH
 from ui.iconkit import Icon, ToolButtonIcon
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class SearchWidget(QFrame):

@@ -8,17 +8,18 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QSizePolicy,
+                               QVBoxLayout)
 
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout, QSizePolicy
-
+from config import RECIPE_CARD
 from database.models.recipe import Recipe
 from ui.components import Separator
 from ui.components.images import RoundedImage
 from ui.iconkit import Icon
+from ui.styles.themes.dark_theme import THEME
 
 from ..constants import LAYOUT_SIZE, LayoutSize
-from config import RECIPE_CARD
-from ui.styles.themes.dark_theme import THEME
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 @dataclass(frozen=True, slots=True)

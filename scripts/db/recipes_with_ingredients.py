@@ -2,14 +2,15 @@
 
 # ── Imports ───────────────────────────────────────────────────────────────
 import csv
+import sys
+from pathlib import Path
 from typing import List
 
 # 🔹 Local Imports
 from database.db import get_connection
 from database.models.recipe import Recipe as RecipeModel
-from database.models.recipe_ingredient_detail import RecipeIngredientDetail as IngredientModel
-import sys
-from pathlib import Path
+from database.models.recipe_ingredient_detail import \
+    RecipeIngredientDetail as IngredientModel
 
 # Add root directory to sys.path (adjust as needed!)
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))

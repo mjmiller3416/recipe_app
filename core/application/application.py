@@ -12,20 +12,19 @@ from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
 from core.controllers.animation_controller import AnimationManager
 from core.controllers.theme_controller import ThemeController
 from core.helpers import DebugLogger
-
+from services.planner_service import PlannerService
+from services.shopping_service import ShoppingService
 from ui.animations import SidebarAnimator
 from ui.components.inputs.search_widget import SearchWidget
 from ui.components.title_bar import TitleBar
-
+from ui.tools.layout_debugger import LayoutDebugger
 from views.add_recipes import AddRecipes
 from views.dashboard import Dashboard
 from views.meal_planner import MealPlanner
 from views.shopping_list import ShoppingList
 from views.view_recipes import ViewRecipes
-from ui.tools.layout_debugger import LayoutDebugger
 
 from .sidebar_widget import SidebarWidget
-
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -183,6 +182,14 @@ class Application(QMainWindow):
             next_widget = self.page_instances[page_name]
             current_widget = self.sw_pages.currentWidget()
 
+            # ── Refresh ShoppingList ──
+            if page_name == "shopping_list":
+
+                if isinstance(next_widget, ShoppingList):
+                    meal_ids = PlannerService.load_saved_meal_ids()  # Get current active meals
+                    recipe_ids = ShoppingService.get_recipe_ids_from_meals(meal_ids)
+                    next_widget.load_shopping_list(recipe_ids)
+        
             if current_widget != next_widget:
                 AnimationManager.transition_stack(current_widget, next_widget, self.sw_pages)
 
@@ -215,8 +222,7 @@ class Application(QMainWindow):
 
     def handle_close(self):
         """Custom logic before application closes."""
-        self.page_instances["meal_planner"].save_all_meals()
-        self.page_instances["meal_planner"].save_meal_plan()
+        MealPlanner.save_current_state(self.page_instances["meal_planner"])
         QApplication.quit()
 
 

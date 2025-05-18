@@ -1,0 +1,73 @@
+"""services/meal_service.py
+
+Handles CRUD operations for individual MealSelection entries.
+"""
+
+# ── Imports ─────────────────────────────────────────────────────────────────────
+from typing import Optional
+
+from core.helpers import DebugLogger
+from database.models.meal_selection import MealSelection
+
+
+# ── Class Definition ────────────────────────────────────────────────────────────
+class MealService:
+
+    @staticmethod
+    def create_meal(meal: MealSelection) -> MealSelection:
+        """
+        Create and persist a new MealSelection to the database.
+
+        Args:
+            meal (MealSelection): Unsaved model instance (meal.id should be None)
+
+        Returns:
+            MealSelection: Saved instance with assigned ID
+        """
+        if meal.id is not None:
+            raise ValueError("Cannot create a meal that already has an ID.")
+
+        meal.save()
+        DebugLogger.log(f"[MealService] Created new meal: {meal}", "success")
+        return meal
+
+    @staticmethod
+    def update_meal(meal: MealSelection) -> None:
+        """
+        Update an existing MealSelection in the database.
+
+        Args:
+            meal (MealSelection): Model instance with valid ID
+        """
+        if meal.id is None:
+            raise ValueError("Cannot update a meal without an ID.")
+
+        MealSelection.update(
+            meal.id,
+            meal_name=meal.meal_name,
+            main_recipe_id=meal.main_recipe_id,
+            side_recipe_1=meal.side_recipe_1,
+            side_recipe_2=meal.side_recipe_2,
+            side_recipe_3=meal.side_recipe_3,
+        )
+        DebugLogger.log(f"[MealService] Updated meal: {meal}", "info")
+
+    @staticmethod
+    def load_meal(meal_id: int) -> Optional[MealSelection]:
+        """
+        Load a MealSelection from the database by ID.
+
+        Args:
+            meal_id (int): ID of the meal to load
+
+        Returns:
+            MealSelection or None: Loaded model or None if not found
+        """
+        meal = MealSelection.get(meal_id)
+
+        if not meal:
+            DebugLogger.log(f"[MealService] No meal found with ID: {meal_id}", "warning")
+            return None
+
+        DebugLogger.log(f"[MealService] Loaded meal: {meal}", "info")
+        return meal

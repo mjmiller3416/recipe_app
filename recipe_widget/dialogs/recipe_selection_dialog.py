@@ -7,7 +7,8 @@ Dialog for selecting a recipe from a list.
 from typing import List, Optional
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QAbstractItemView, QDialogButtonBox, QListWidget, QListWidgetItem
+from PySide6.QtWidgets import (QAbstractItemView, QDialogButtonBox,
+                               QListWidget, QListWidgetItem)
 
 from database.models.recipe import Recipe
 from ui.components.dialogs.dialog_window import DialogWindow

@@ -71,7 +71,7 @@ Applies conversion logic (e.g. butter sticks ↔ tablespoons) using a `_CONVERSI
 
 ---
 
-## 📄 meal_planner_service.py
+## 📄 planner_service.py
 
 **Purpose**: Orchestrates loading, saving, and updating meals in the planner. Replaces the legacy meal_helpers.py logic and interacts directly with the MealSelection model.
 
@@ -101,7 +101,7 @@ Applies conversion logic (e.g. butter sticks ↔ tablespoons) using a `_CONVERSI
 
 These service modules are not yet implemented but are strongly recommended based on existing architecture and schema:
 
-### 🗓️ `meal_planner_service.py`
+### 🗓️ `planner_service.py`
 Handles meal selection, weekly scheduling, and completion tracking.
 - `suggest_meals(limit: int)`
 - `schedule_weekly_menu(selection_ids: list[int])`

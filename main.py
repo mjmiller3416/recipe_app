@@ -9,10 +9,11 @@ import sys
 from PySide6.QtWidgets import QApplication
 
 from core.application import Application
-from database.db_reset import reset_database
 from core.helpers import DebugLogger
+from database.db_reset import reset_database
 from database.init_db import init_db
 from ui.tools.layout_debugger import LayoutDebugger
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class MealPlannerApp:

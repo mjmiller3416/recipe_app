@@ -5,11 +5,13 @@ Defines the RecipeWidget class that acts as a dynamic container for different re
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from typing import Optional
+
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QPushButton, QStackedWidget, QVBoxLayout
 
 from core.helpers import DebugLogger
 from database.models.recipe import Recipe
+
 from .builders.full_recipe_builder import FullRecipe
 from .constants import LayoutSize
 from .dialogs.recipe_selection_dialog import RecipeSelectionDialog

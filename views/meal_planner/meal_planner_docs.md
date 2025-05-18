@@ -10,7 +10,7 @@ This document outlines the proposed refactor plan for the MealPlanner package in
 Refactor `meal_planner`, `planner_layout`, and `meal_helpers` to:
 - Eliminate reliance on `QSettings`
 - Use `MealSelection` table for persistence
-- Delegate business logic to a new `meal_planner_service`
+- Delegate business logic to a new `planner_service`
 - Keep `planner_layout` purely focused on UI
 
 ---
@@ -24,13 +24,13 @@ Refactor `meal_planner`, `planner_layout`, and `meal_helpers` to:
 | `meal_planner.py`     | UI controller, manages tab state and user interaction |
 | `planner_layout.py`   | Pure UI layout, renders RecipeWidgets for meals |
 | `meal_helpers.py`     | To be deprecated / absorbed into new service |
-| `meal_planner_service.py` | Handles all database logic for loading/saving/updating meals |
+| `planner_service.py` | Handles all database logic for loading/saving/updating meals |
 
 ---
 
 ## 🔨 Implementation Steps
 
-### Step 1: Create `meal_planner_service.py`
+### Step 1: Create `planner_service.py`
 
 Move business logic from `meal_helpers.py` into service functions:
 
@@ -48,14 +48,14 @@ Use `MealSelection` model for all reads/writes.
 
 ### Step 2: Refactor `meal_planner.py`
 
-- Replace `load_meal_plan()` and `save_all_meals()` with calls to `meal_planner_service`
-- Pass raw data between `PlannerLayout` and service layer
-- Maintain `tab_map` structure: `{index: {"layout": PlannerLayout, "meal_id": int}}`
+- Replace `load_meal_plan()` and `save_meal_plan()` with calls to `planner_service`
+- Pass raw data between `MealWidget` and service layer
+- Maintain `tab_map` structure: `{index: {"layout": MealWidget, "meal_id": int}}`
 
 Example:
 ```python
 data = layout.get_meal_data()
-meal_id = meal_planner_service.save_meal(data)
+meal_id = planner_service.save_meal(data)
 ```
 
 ---
@@ -73,7 +73,7 @@ meal_id = meal_planner_service.save_meal(data)
 ### Step 4: Phase Out `meal_helpers.py`
 
 - Fully deprecate QSettings
-- If anything useful remains (e.g. formatters), move to `ui_helpers` or `meal_planner_service`
+- If anything useful remains (e.g. formatters), move to `ui_helpers` or `planner_service`
 
 ---
 
@@ -94,4 +94,4 @@ The MealPlanner package will be cleaner, modular, and fully database-integrated.
 
 ---
 
-Ready to begin scaffolding `meal_planner_service.py`?
+Ready to begin scaffolding `planner_service.py`?

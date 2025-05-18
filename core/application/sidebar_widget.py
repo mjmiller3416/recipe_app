@@ -7,7 +7,7 @@ SidebarWidget class for managing the sidebar of the application.
 from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtWidgets import QSizePolicy, QSpacerItem, QVBoxLayout, QWidget
 
-from config import SIDEBAR, ICON_SIZE, ICON_COLOR
+from config import ICON_COLOR, ICON_SIZE, SIDEBAR
 from ui.iconkit import ButtonIcon, Icon
 
 
