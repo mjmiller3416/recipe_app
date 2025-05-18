@@ -65,3 +65,4 @@ class PlannerService:
             if MealSelection.get(mid):
                 valid_ids.append(mid)
         return valid_ids
+    

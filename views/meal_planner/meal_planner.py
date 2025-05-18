@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
 
 from config import MEAL_PLANNER
 from core.helpers import DebugLogger
-from services.planner_service import PlannerService
+from views.meal_planner.planner_service import PlannerService
 from ui.iconkit import ThemedIcon
 
 from .meal_widget import MealWidget
@@ -96,15 +96,26 @@ class MealPlanner(QWidget):
         if index == self.meal_tabs.count() - 1:
             self.add_meal_tab()
 
-    def save_current_state(self):
+    def get_active_meal_ids(self) -> list[int]:
+        """
+        Collect and return all valid meal IDs from current tabs.
+
+        Returns:
+            list[int]: List of meal IDs currently active in the planner.
+        """
+        ids = []
+        for widget in self.tab_map.values():
+            if widget._meal_model and widget._meal_model.id:
+                ids.append(widget._meal_model.id)
+        return ids
+
+    def save_meal_plan(self):
         """Save all meals and their corresponding tab state."""
-        saved_ids = []
-
-        for index, widget in self.tab_map.items():
+        for widget in self.tab_map.values():
             widget.save_meal()
-            meal_id = widget._meal_model.id if widget._meal_model else None
-            if meal_id:
-                saved_ids.append(meal_id)
 
+        saved_ids = self.get_active_meal_ids()
         PlannerService.save_active_meal_ids(saved_ids)
         DebugLogger.log(f"[MealPlanner] Saved planner state with meal IDs: {saved_ids}", "info")
+
+    

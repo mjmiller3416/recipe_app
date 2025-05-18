@@ -15,7 +15,7 @@ from database.models.meal_selection import MealSelection
 from database.models.recipe import Recipe
 from recipe_widget.constants import LayoutSize
 from recipe_widget.recipe_widget import RecipeWidget
-from services.meal_service import MealService
+from views.meal_planner.meal_service import MealService
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

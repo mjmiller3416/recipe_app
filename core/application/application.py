@@ -12,8 +12,8 @@ from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
 from core.controllers.animation_controller import AnimationManager
 from core.controllers.theme_controller import ThemeController
 from core.helpers import DebugLogger
-from services.planner_service import PlannerService
-from services.shopping_service import ShoppingService
+from views.meal_planner.planner_service import PlannerService
+from views.shopping_list.shopping_service import ShoppingService
 from ui.animations import SidebarAnimator
 from ui.components.inputs.search_widget import SearchWidget
 from ui.components.title_bar import TitleBar
@@ -164,8 +164,15 @@ class Application(QMainWindow):
             page_name (str): The name of the page to switch to.
         """
         DebugLogger.log("Switching to page: {page_name}", "info")
+
         # ── Check if Page Exists ──
         if page_name in self.page_instances:
+            next_widget = self.page_instances[page_name]
+            current_widget = self.sw_pages.currentWidget()
+
+            if isinstance(current_widget, MealPlanner):
+                current_widget.save_meal_plan()
+
             # ── Set Button States ──
             for btn_name, page_key in {
                 "btn_dashboard": "dashboard",
@@ -222,7 +229,7 @@ class Application(QMainWindow):
 
     def handle_close(self):
         """Custom logic before application closes."""
-        MealPlanner.save_current_state(self.page_instances["meal_planner"])
+        MealPlanner.save_meal_plan(self.page_instances["meal_planner"])
         QApplication.quit()
 
 
