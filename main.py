@@ -65,7 +65,6 @@ elif "--test" in sys.argv:
     # ── Test Setup ──
     app = QApplication(sys.argv)
     app.setApplicationName("Test App")
-    #StyleManager(app)  # apply the theme
 
     from tests.dev.test_app import run_test
     test_window = run_test(app)
