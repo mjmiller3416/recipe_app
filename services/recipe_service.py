@@ -45,7 +45,7 @@ def create_recipe_with_ingredients(
     # get connection
     with get_connection() as conn:             
         # save recipe
-        recipe = Recipe.model_validate(recipe_data).save(conn)
+        recipe = Recipe.model_validate(recipe_data).save()
 
         # insert ingredients
         for ing in ingredients:
@@ -64,7 +64,7 @@ def create_recipe_with_ingredients(
                 ingredient = Ingredient(
                     ingredient_name=ing["ingredient_name"],
                     ingredient_category=ing["ingredient_category"],
-                ).save(conn)
+                ).save()
                 ingredient_id = ingredient.id
 
             RecipeIngredient(
@@ -72,7 +72,7 @@ def create_recipe_with_ingredients(
                 ingredient_id=ingredient_id,
                 quantity=ing.get("quantity"),
                 unit=ing.get("unit"),
-            ).save(conn)
+            ).save()
 
         # commit transaction
         return recipe

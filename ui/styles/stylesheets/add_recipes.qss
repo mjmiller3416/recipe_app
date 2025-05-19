@@ -13,8 +13,14 @@
     font-weight: 500;
 }
 
+#AddRecipes QScrollArea {
+    background-color: #525861;
+    border: 1px solid #666;
+    border-radius: 4px;
+}
+
 #AddRecipes QLineEdit, 
-#AddRecipes QComboBox, 
+#AddRecipes QComboBox,
 #AddRecipes QTextEdit {
     background-color: #525861;
     border: 1px solid #666;
@@ -30,6 +36,10 @@
 #AddRecipes QTextEdit:focus {
     border: 1px solid #03B79E;
     outline: none;
+}
+
+#AddRecipes #ingredients_container {
+    background-color: transparent;
 }
 
 #AddRecipes QComboBox QAbstractItemView {
@@ -92,4 +102,11 @@
 #IngredientWidget QComboBox:focus {
     border: 1px solid #03B79E;  /* Teal highlight */
     outline: none;
+}
+
+#IngredientWidget QToolButton {
+    background-color: {BACKGROUND_WIDGET};
+    border-radius: 6px;
+    padding: 4px;
+    border: none;
 }

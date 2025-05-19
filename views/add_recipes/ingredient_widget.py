@@ -8,6 +8,8 @@ from config import (FLOAT, INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,
 from ui.components.inputs import CustomComboBox
 from ui.iconkit import ToolButtonIcon
 from ui.tools import clear_error_styles, dynamic_validation, populate_combobox
+from ui.tools.form_utilities import populate_combobox
+from services.ingredient_service import IngredientService
 
 
 class IngredientWidget(QWidget):
@@ -57,19 +59,10 @@ class IngredientWidget(QWidget):
         )
         self.gridLayout.addWidget(self.btn_ico_add, 0, 5, 1, 1)
 
-    @property
-    def ingredient_data(self):
-        return {
-            "le_quantity": self.le_quantity,
-            "cb_unit": self.cb_unit,
-            "le_ingredient_name": self.le_ingredient_name,
-            "cb_ingredient_category": self.cb_ingredient_category,
-        }
-
     def setup_event_logic(self):
-        #self.btn_ico_add.clicked.connect(self.validate_and_format) # ⚠️⚠️⚠️⚠️
-        self.ingredient_validated.connect(self.add_ingredient)
+        self.btn_ico_add.clicked.connect(self.emit_ingredient_data)
         self.btn_ico_subtract.clicked.connect(self.request_removal)
+        self.ingredient_validated.connect(self.add_ingredient)
 
         dynamic_validation(self.le_quantity, FLOAT)
         dynamic_validation(self.le_ingredient_name, NAME)
@@ -77,17 +70,9 @@ class IngredientWidget(QWidget):
         self.cb_unit.cb_validated.connect(lambda: clear_error_styles(self.cb_unit))
         self.cb_ingredient_category.cb_validated.connect(lambda: clear_error_styles(self.cb_ingredient_category))
 
-    """ def validate_and_format(self): ⚠️⚠️⚠️⚠️
-        ingredient_data = self.ingredient_data
-
-        if validate_data_fields(ingredient_data):
-            DebugLogger().log("🔵 Ingredient Validation Passed", "info")
-            formatted_data = format_ingredient_data(**ingredient_data)
-            DebugLogger().log(f"🟢 Ingredient Formatted: {formatted_data}", "debug")
-            DebugLogger().log("🔵 Emitting Ingredient Data 🔵\n", "info")
-            self.ingredient_validated.emit(formatted_data)
-        else:
-            DebugLogger().log("🔴 Ingredient Validation Failed", "error") """
+    def emit_ingredient_data(self):
+        payload = IngredientService.build_payload_from_widget(self)
+        self.ingredient_validated.emit(payload)
 
     def add_ingredient(self):
         self.add_ingredient_requested.emit(self)

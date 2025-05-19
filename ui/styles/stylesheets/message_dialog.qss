@@ -1,11 +1,12 @@
 /* - message_dialog.qss - */
 
 
-#DialogWidget {
+#MessageDialog {
     background-color: #3A4048;
     /* Slightly lighter dark gray */
     color: #E1E1E3;
     border: 4px solid #3a3a3a;
+    border-radius: 10px;
     /* Padding */
 }
 

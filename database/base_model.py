@@ -126,3 +126,17 @@ class ModelBase(PydanticBaseModel):
             if all(getattr(row, k, None) == v for k, v in filters.items()):
                 results.append(row)
         return results
+    
+    @classmethod
+    def get_by_field(cls, **fields):
+        """
+        Return a single row matching the given field-value pairs.
+
+        Args:
+            **fields: Field-value pairs to match exactly.
+
+        Returns:
+            cls: Matching model instance or None if not found.
+        """
+        results = cls.filter(**fields)
+        return results[0] if results else None

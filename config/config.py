@@ -52,10 +52,10 @@ TITLE_BAR = {
 
 # ── Ingredient Widget ──
 INGREDIENT_WIDGET = {
-    "ICON_SIZE": QSize(24, 24),
+    "ICON_SIZE": QSize(20, 20),
     "ICON_ADD": AppPaths.ICONS_DIR / "add.svg",
     "ICON_SUBTRACT": AppPaths.ICONS_DIR / "subtract.svg",
-    "VARIANT": THEME["ICON"]["ACCENT"],
+    "VARIANT": THEME["ICON_STYLES"]["INGREDIENT_WIDGET"],
 }
 
 # ── Meal Planner ──
@@ -83,6 +83,26 @@ RECIPE_DIALOG = {
     "ICON_TOTAL_TIME": AppPaths.ICONS_DIR / "total_time.svg",
     "ICON_CATEGORY": AppPaths.ICONS_DIR / "category.svg",
     "VARIANT": THEME["ICON"]["ACCENT"],
+}
+
+MESSAGE_DIALOG = {
+    "ICON_SIZE": QSize(50, 50),
+    "ICON_INFO": {
+        "ICON_PATH": AppPaths.ICONS_DIR / "info.svg",
+        "ICON_COLOR": THEME["ICON"]["INFO"],
+    },
+    "ICON_WARNING": {
+        "ICON_PATH": AppPaths.ICONS_DIR / "warning.svg",
+        "ICON_COLOR": THEME["ICON"]["WARNING"],
+    },
+    "ICON_ERROR": {
+        "ICON_PATH": AppPaths.ICONS_DIR / "error.svg",
+        "ICON_COLOR": THEME["ICON"]["ERROR"],
+    },
+    "ICON_SUCCESS": {
+        "ICON_PATH": AppPaths.ICONS_DIR / "success.svg",
+        "ICON_COLOR": THEME["ICON"]["SUCCESS"],
+    },
 }
 
 # ── Combobox Values ──
