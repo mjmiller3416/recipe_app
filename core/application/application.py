@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
 from core.controllers.animation_controller import AnimationManager
 from core.controllers.theme_controller import ThemeController
 from core.helpers import DebugLogger
-from views.meal_planner.planner_service import PlannerService
+from services.planner_service import PlannerService
 from services.shopping_service import ShoppingService
 from ui.animations import SidebarAnimator
 from ui.components.inputs.search_widget import SearchWidget

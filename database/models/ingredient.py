@@ -6,11 +6,11 @@ Ingredient model for the recipe database."""
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, Optional
+import sqlite3
 
 from pydantic import Field, model_validator
 
 from database.base_model import ModelBase
-from database.db import get_connection
 
 if TYPE_CHECKING:
     from database.models.recipe import Recipe
@@ -34,16 +34,18 @@ class Ingredient(ModelBase):
         """Return a human-friendly label for this ingredient."""
         return f"{self.ingredient_name} ({self.ingredient_category})"
 
-    def get_recipes(self) -> List[Recipe]:
+    def get_recipes(
+        self,
+        connection: Optional[sqlite3.Connection] = None
+    ) -> List[Recipe]:
         """
-        Traverse the recipe_ingredients join table to return all Recipes
-        that include this ingredient.
+        Return all Recipes that include this ingredient.
         """
-        with get_connection() as conn:
-            rows = conn.execute(
-                "SELECT recipe_id FROM recipe_ingredients WHERE ingredient_id = ?",
-                (self.id,),
-            ).fetchall()
-        # convert the rows to Recipe objects
-        return [Recipe.get(row["recipe_id"]) for row in rows]
+        sql = (
+            "SELECT recipes.* "
+            "FROM recipes "
+            "JOIN recipe_ingredients ON recipes.id = recipe_ingredients.recipe_id "
+            "WHERE recipe_ingredients.ingredient_id = ?"
+        )
+        return Recipe.raw_query(sql, (self.id,), connection=connection)
 

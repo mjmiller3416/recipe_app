@@ -1,142 +1,139 @@
 """ database/base_model.py
 
-Base model for CRUD operations with SQLite and Pydantic. 
+Base model for CRUD operations with SQLite and Pydantic.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 import re
-from typing import List, Optional, Type, TypeVar
+import sqlite3
+from typing import Any, List, Optional, Type, TypeVar, Tuple
 
 from pydantic import BaseModel as PydanticBaseModel
 
 from .db import get_connection
 
-# ── Constants ───────────────────────────────────────────────────────────────────
+# ── Type Variables ─────────────────────────────────────────────────────────────
 T = TypeVar("T", bound="ModelBase")
 
-# ── Classes ─────────────────────────────────────────────────────────────────────
+# ── Model Base Class ───────────────────────────────────────────────────────────
 class ModelBase(PydanticBaseModel):
     """ Base class providing generic CRUD operations for Pydantic models. """
+
     id: Optional[int] = None
 
-# ── Public Methods ──────────────────────────────────────────────────────────────
     @classmethod
     def table_name(cls) -> str:
         # CamelCase → snake_case
         snake = re.sub(r'(?<!^)(?=[A-Z])', '_', cls.__name__).lower()
-        # if it ends in 'y', drop it and add 'ies'
         if snake.endswith("y"):
             return snake[:-1] + "ies"
-        # otherwise just add a simple 's'
         return snake + "s"
 
     @classmethod
     def all(cls: Type[T]) -> List[T]:
         """ Fetch all records from the table. """
-        with get_connection() as conn:
-            rows = conn.execute(f"SELECT * FROM {cls.table_name()}").fetchall() 
-        
-        return [cls.model_validate(dict(row)) for row in rows] 
+        return cls.raw_query(f"SELECT * FROM {cls.table_name()}")
 
     @classmethod
     def get(cls: Type[T], id: int) -> Optional[T]:
         """ Fetch a record by its ID. """
-        with get_connection() as conn:
-            row = conn.execute(
-                f"SELECT * FROM {cls.table_name()} WHERE id = ?", (id,)
-            ).fetchone()
-
-        return cls.model_validate(dict(row)) if row else None
+        results = cls.raw_query(
+            f"SELECT * FROM {cls.table_name()} WHERE id = ?", (id,)
+        )
+        return results[0] if results else None
 
     @classmethod
-    def update(cls: Type[T], id: int, **fields) -> Optional[T]:
+    def raw_query(
+        cls: Type[T],
+        sql: str,
+        params: Tuple[Any, ...] = (),
+        connection: Optional[sqlite3.Connection] = None
+    ) -> List[T]:
+        """ Execute raw SQL and return model instances. """
+        def _run(conn: sqlite3.Connection) -> List[T]:
+            cursor = conn.execute(sql, params)
+            rows = cursor.fetchall()
+            return [cls.model_validate(dict(row)) for row in rows]
+
+        if connection:
+            return _run(connection)
+        with get_connection() as conn:
+            return _run(conn)
+
+    @classmethod
+    def update(
+        cls: Type[T],
+        id: int,
+        *,
+        connection: Optional[sqlite3.Connection] = None,
+        **fields: Any
+    ) -> Optional[T]:
         """ Shortcut to patch specific columns on a record. """
         instance = cls.get(id)
         if not instance:
             return None
         for k, v in fields.items():
             setattr(instance, k, v)
-
-        return instance.save()
+        return instance.save(connection=connection)
 
     @classmethod
-    def exists(cls, **fields) -> bool:
-        """ 
-        Quickly checks if a record matching the given field values exists.
-        Usage: Recipe.exists(recipe_name="Pancakes", servings=4)
-        """
+    def exists(cls, **fields: Any) -> bool:
         cols = " AND ".join(f"{k}=?" for k in fields)
         vals = tuple(fields.values())
-
+        sql = f"SELECT 1 FROM {cls.table_name()} WHERE {cols} LIMIT 1"
         with get_connection() as conn:
-            row = conn.execute( 
-                f"SELECT 1 FROM {cls.table_name()} WHERE {cols} LIMIT 1",
-                vals
-            ).fetchone() 
+            row = conn.execute(sql, vals).fetchone()
+        return bool(row)
 
-        return bool(row) 
-
-    def save(self) -> "ModelBase":
-        """ Save the current instance to the database. """
+    def save(self, connection: Optional[sqlite3.Connection] = None) -> T:
+        """ Insert or replace this model into the database. """
         data = self.model_dump(exclude_none=True)
         cols, vals = zip(*data.items())
         placeholders = ", ".join("?" for _ in cols)
+        sql = (
+            f"INSERT OR REPLACE INTO {self.table_name()} "
+            f"({', '.join(cols)}) VALUES ({placeholders})"
+        )
 
-        with get_connection() as conn:
-            result = conn.execute(
-                f"INSERT OR REPLACE INTO {self.table_name()} ({', '.join(cols)}) "
-                f"VALUES ({placeholders})",
-                tuple(vals),
-            )
-            # context manager will commit on success
+        def _run(conn: sqlite3.Connection) -> T:
+            cursor = conn.execute(sql, tuple(vals))
             if self.id is None:
-                self.id = result.lastrowid
+                self.id = cursor.lastrowid
+            return self
 
-        return self
+        if connection:
+            return _run(connection)
+        with get_connection() as conn:
+            return _run(conn)
 
-    def delete(self):
-        """ Delete the current instance from the database. """
+    def delete(self, connection: Optional[sqlite3.Connection] = None) -> None:
+        """ Delete this model's record from the database. """
         if self.id is None:
             raise ValueError("Cannot delete unsaved record")
-        
-        with get_connection() as conn:
-            conn.execute(
-                f"DELETE FROM {self.table_name()} WHERE id = ?", (self.id,)
-            )
+        sql = f"DELETE FROM {self.table_name()} WHERE id = ?"
+
+        def _run(conn: sqlite3.Connection) -> None:
+            conn.execute(sql, (self.id,))
+
+        if connection:
+            _run(connection)
+        else:
+            with get_connection() as conn:
+                _run(conn)
 
     @classmethod
-    def first(cls, **filters):
-        """Return the first matching row (or None)."""
+    def first(cls: Type[T], **filters: Any) -> Optional[T]:
+        """ Return the first matching row (or None). """
         results = cls.filter(**filters)
         return results[0] if results else None
-    
+
     @classmethod
-    def filter(cls, **filters):
-        """
-        Return a list of rows matching the given filters.
+    def filter(cls: Type[T], **filters: Any) -> List[T]:
+        """ Return a list of rows matching the filters. """
+        all_rows = cls.all()
+        return [row for row in all_rows if all(getattr(row, k) == v for k, v in filters.items())]
 
-        Args:
-            **filters: Field-value pairs to match exactly.
-
-        Returns:
-            list[cls]: Matching model instances.
-        """
-        results = []
-        for row in cls.all():
-            if all(getattr(row, k, None) == v for k, v in filters.items()):
-                results.append(row)
-        return results
-    
     @classmethod
-    def get_by_field(cls, **fields):
-        """
-        Return a single row matching the given field-value pairs.
-
-        Args:
-            **fields: Field-value pairs to match exactly.
-
-        Returns:
-            cls: Matching model instance or None if not found.
-        """
-        results = cls.filter(**fields)
-        return results[0] if results else None
+    def get_by_field(cls: Type[T], **fields: Any) -> Optional[T]:
+        """ Return a single row matching the given field-value pairs. """
+        return cls.first(**fields)

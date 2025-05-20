@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
 
 from config import MEAL_PLANNER
 from core.helpers import DebugLogger
-from views.meal_planner.planner_service import PlannerService
+from services.planner_service import PlannerService
 from ui.iconkit import ThemedIcon
 
 from .meal_widget import MealWidget

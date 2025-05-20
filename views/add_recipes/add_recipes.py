@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
 
 from config.config import INT, NAME, RECIPE_CATEGORIES
 from core.helpers import DebugLogger
-from services import recipe_service
+from services.recipe_service import RecipeService
 from ui.components.dialogs import MessageDialog
 from ui.components.inputs import CustomComboBox
 from ui.tools import clear_error_styles, dynamic_validation
@@ -149,7 +149,7 @@ class AddRecipes(QWidget):
 
         # Call service
         try:
-            recipe = recipe_service.create_recipe_with_ingredients(
+            recipe = RecipeService.create_recipe_with_ingredients(
                 recipe_data,
                 self.stored_ingredients
             )

@@ -1,12 +1,13 @@
-"""services/shopping_service.py
+""" services/shopping_service.py
 
 Structured service for managing shopping lists.
 Combines ingredients from recipes and manual entries for unified display and processing.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
+import sqlite3
 from collections import defaultdict
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Tuple
 
 from core.helpers.debug_logger import DebugLogger
 from database.db import get_connection
@@ -18,32 +19,24 @@ from database.models.shopping_state import ShoppingState
 from services.meal_service import MealService
 
 
-# ── Class Definition ────────────────────────────────────────────────────────────
 class ShoppingService:
     """
     Structured service for managing shopping lists.
     Combines ingredients from recipes and manual entries for unified display and processing.
     """
 
-    # ── Constants ───────────────────────────────────────────────────────────────────
-    _CONVERSIONS = {
-        "butter": {"stick": 8, "tbsp": 1},
-        # Add more: e.g. sugar: {"cup":1, "tbsp":1/16}
+    # ── Constants ───────────────────────────────────────────────────────────────
+    _CONVERSIONS: Dict[str, Dict[str, float]] = {
+        "butter": {"stick": 8.0, "tbsp": 1.0},
+        # Add more conversions as needed
     }
 
     @staticmethod
-    def _convert_qty(name: str, qty: float, unit: str) -> tuple[float, str]:
-        """
-        Convert quantity and unit to a base unit for consistent representation.
-
-        Args:
-            name (str): The name of the ingredient.
-            qty (float): The quantity of the ingredient.
-            unit (str): The unit of measurement.
-
-        Returns:
-            tuple[float, str]: A tuple containing the converted quantity and unit.
-        """
+    def _convert_qty(
+        name: str,
+        qty: float,
+        unit: str
+    ) -> Tuple[float, str]:
         key = name.lower()
         if key in ShoppingService._CONVERSIONS:
             group = ShoppingService._CONVERSIONS[key]
@@ -59,68 +52,71 @@ class ShoppingService:
         return qty, unit
 
     @staticmethod
-    def generate_shopping_list(recipe_ids: List[int]) -> List[ShoppingItem]:
+    def generate_shopping_list(
+        recipe_ids: List[int],
+        connection: Optional[sqlite3.Connection] = None
+    ) -> List[ShoppingItem]:
         """
-        Generate a shopping list based on the provided recipe IDs,
-        restoring 'checked' states from persisted ShoppingState.
-
-        Args:
-            recipe_ids (List[int]): A list of recipe IDs.
-
-        Returns:
-            List[ShoppingItem]: A list of ShoppingItem objects representing the shopping list.
+        Generate a shopping list based on recipe IDs, restoring 'have' states.
         """
-        result = []
+        if connection is None:
+            with get_connection() as conn:
+                return ShoppingService.generate_shopping_list(recipe_ids, connection=conn)
 
-        # ── Load from Recipes ──
-        for item in ShoppingService._aggregate_recipe_ingredients(recipe_ids):
-            from database.models.shopping_state import ShoppingState  # local import to avoid circular refs
-
-            state = ShoppingState.get_state(item.key())
+        result: List[ShoppingItem] = []
+        # Load from Recipes
+        for item in ShoppingService._aggregate_recipe_ingredients(recipe_ids, connection=connection):
+            state = ShoppingState.get_state(item.key(), connection=connection)
             if state:
                 item.have = state.checked
             result.append(item)
 
-        # ── Append Manual Items ──
-        for m in ShoppingList.all():
+        # Append Manual Items
+        manual_rows = ShoppingList.raw_query(
+            f"SELECT * FROM {ShoppingList.table_name()}",
+            (),
+            connection=connection
+        )
+        for m in manual_rows:
             result.append(m.to_item())
 
         DebugLogger.log(f"[ShoppingService] Total ingredients generated: {len(result)}", "info")
         return result
 
     @staticmethod
-    def _aggregate_recipe_ingredients(recipe_ids: List[int]) -> List[ShoppingItem]:
+    def _aggregate_recipe_ingredients(
+        recipe_ids: List[int],
+        connection: Optional[sqlite3.Connection] = None
+    ) -> List[ShoppingItem]:
         """
         Aggregate ingredients from recipes into a shopping list.
-
-        Args:
-            recipe_ids (List[int]): A list of recipe IDs.
-
-        Returns:
-            List[ShoppingItem]: A list of ShoppingItem objects representing the aggregated ingredients.
         """
+        if connection is None:
+            with get_connection() as conn:
+                return ShoppingService._aggregate_recipe_ingredients(recipe_ids, connection=conn)
+
         agg: Dict[int, Dict[str, Any]] = defaultdict(lambda: {
-            "qty": 0,
+            "qty": 0.0,
             "unit": None,
             "category": None,
             "name": None
         })
 
-        # ── Aggregate Ingredients ──
-        for ri in RecipeIngredient.all():
-            if ri.recipe_id in recipe_ids:
-                ing = Ingredient.get(ri.ingredient_id)
+        # Query only relevant recipe_ingredients
+        placeholders = ",".join("?" for _ in recipe_ids)
+        sql = f"SELECT * FROM recipe_ingredients WHERE recipe_id IN ({placeholders})"
+        rows = RecipeIngredient.raw_query(sql, tuple(recipe_ids), connection=connection)
 
-                data = agg[ri.ingredient_id]
-                data["name"]     = ing.ingredient_name
-                data["category"] = ing.ingredient_category
-                data["unit"]     = ri.unit or data["unit"]
-                data["qty"]     += ri.quantity or 0
+        for ri in rows:
+            ing = Ingredient.get(ri.ingredient_id)
+            data = agg[ri.ingredient_id]
+            data["name"] = ing.ingredient_name
+            data["category"] = ing.ingredient_category
+            data["unit"] = ri.unit or data["unit"]
+            data["qty"] += ri.quantity or 0.0
 
         items: List[ShoppingItem] = []
-
-        # ── Convert and Create ShoppingItem ──
-        for ing_id, data in agg.items():
+        for data in agg.values():
             q, u = ShoppingService._convert_qty(data["name"], data["qty"], data["unit"] or "")
             item = ShoppingItem(
                 ingredient_name=data["name"],
@@ -128,29 +124,16 @@ class ShoppingService:
                 unit=u,
                 category=data["category"],
                 source="recipe",
-                have=False  # will be updated if a state exists
+                have=False
             )
-
-            # check if we’ve seen this item before and apply its state
-            state = ShoppingState.get_state(item.key())
-            if state:
-                item.have = state.checked
-
             items.append(item)
         return items
 
     @staticmethod
-    def get_recipe_ids_from_meals(meal_ids: List[int]) -> List[int]:
-        """
-        Get recipe IDs from a list of meal IDs.
-
-        Args:
-            meal_ids (List[int]): A list of meal IDs.
-
-        Returns:
-            List[int]: A list of recipe IDs associated with the meals.
-        """
-        recipe_ids = []
+    def get_recipe_ids_from_meals(
+        meal_ids: List[int]
+    ) -> List[int]:
+        recipe_ids: List[int] = []
         for meal_id in meal_ids:
             meal = MealService.load_meal(meal_id)
             if not meal:
@@ -165,39 +148,59 @@ class ShoppingService:
         return recipe_ids
 
     @staticmethod
-    def add_manual_item(name: str, qty: float, unit: str) -> None:
+    def add_manual_item(
+        name: str,
+        qty: float,
+        unit: str,
+        connection: Optional[sqlite3.Connection] = None
+    ) -> None:
         """
         Add a manual item to the shopping list.
-
-        Args:
-            name (str): The name of the ingredient.
-            qty (float): The quantity of the ingredient.
-            unit (str): The unit of measurement.
         """
+        if connection is None:
+            with get_connection() as conn:
+                return ShoppingService.add_manual_item(name, qty, unit, connection=conn)
+
         item = ShoppingList(
             ingredient_name=name,
             quantity=qty,
             unit=unit,
             have=False
-        )
-        item.save()
+        ).save(connection=connection)
 
     @staticmethod
-    def clear_manual_items() -> None:
+    def clear_manual_items(
+        connection: Optional[sqlite3.Connection] = None
+    ) -> None:
         """Clear all manual items from the shopping list."""
-        for item in ShoppingList.all():
-            item.delete()
+        if connection is None:
+            with get_connection() as conn:
+                return ShoppingService.clear_manual_items(connection=conn)
+
+        ShoppingList.raw_query(
+            f"DELETE FROM {ShoppingList.table_name()}",
+            (),
+            connection=connection
+        )
 
     @staticmethod
-    def toggle_have_status(item_name: str) -> None:
+    def toggle_have_status(
+        item_name: str,
+        connection: Optional[sqlite3.Connection] = None
+    ) -> None:
         """
         Toggle the 'have' status of a shopping list item.
-        
-        Args:
-            item_name (str): The name of the ingredient.
         """
-        for item in ShoppingList.all():
-            if item.ingredient_name == item_name:
-                item.have = not item.have
-                item.save()
-                break
+        if connection is None:
+            with get_connection() as conn:
+                return ShoppingService.toggle_have_status(item_name, connection=conn)
+
+        items = ShoppingList.raw_query(
+            f"SELECT * FROM {ShoppingList.table_name()} WHERE ingredient_name = ?",
+            (item_name,),
+            connection=connection
+        )
+        if items:
+            item = items[0]
+            item.have = not item.have
+            item.save(connection=connection)
