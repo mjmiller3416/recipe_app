@@ -126,3 +126,13 @@ class RecipeService:
         WHERE ri.recipe_id = ?
         """
         return RecipeIngredientDetail.raw_query(sql, (recipe_id,))
+
+    @staticmethod
+    def toggle_favorite(recipe_id: int) -> Recipe:
+        """Flip the is_favorite flag and persist."""
+        recipe = Recipe.get(recipe_id)
+        if not recipe:
+            raise ValueError(f"No recipe with id={recipe_id}")
+        recipe.is_favorite = not recipe.is_favorite
+        recipe.save()
+        return recipe

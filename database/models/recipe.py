@@ -5,10 +5,10 @@ This module defines the Recipe class, which represents a recipe in the database.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
-
-from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, List, Optional
 import sqlite3
+
+from datetime import datetime, timedelta, timezone
+from typing import TYPE_CHECKING, List, Optional
 
 from pydantic import Field, model_validator
 
@@ -23,13 +23,15 @@ if TYPE_CHECKING:
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class Recipe(ModelBase):
-    id: Optional[int] = None
-    recipe_name: str = Field(..., min_length=1)
-    recipe_category: str = Field(..., min_length=1)
+    id: Optional[int]         = None
+    recipe_name: str          = Field(..., min_length=1)
+    recipe_category: str      = Field(..., min_length=1)
     total_time: Optional[int] = None
-    servings: Optional[int] = None
+    servings: Optional[int]   = None
     directions: Optional[str] = None
     image_path: Optional[str] = None
+    created_at: datetime      = Field(default_factory=lambda: datetime.now(timezone.utc))
+    is_favorite: bool         = Field(default=False)
 
     @model_validator(mode="before")
     def strip_strings(cls, values):
