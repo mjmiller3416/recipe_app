@@ -56,3 +56,14 @@ class ToolButtonIcon(QToolButton, IconMixin):
 
         # ── Register with IconController ──
         IconController().register(self)
+    
+    def set_icon_size(self, size: QSize):
+        """
+        Dynamically update the icon size and refresh the icon rendering.
+
+        Args:
+            size (QSize): New size for the icon.
+        """
+        self.setIconSize(size)      
+        self._icon_size = size        
+        self.update()                  

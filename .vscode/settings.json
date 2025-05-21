@@ -32,6 +32,20 @@
     "editor.tokenColorCustomizations": {
         "textMateRules": [
           {
+            "scope": "entity.other.attribute-name.themed-qss",
+            "settings": {
+              "foreground": "#7dd3fc", // Light blue
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "scope": "string.quoted.attribute-value.themed-qss",
+            "settings": {
+              "foreground": "#4EC9B0", // Yellow
+              "fontStyle": ""
+            }
+          },
+          {
             "scope": "entity.pseudo-class.qss",
             "settings": {
               "foreground": "#DCDCAA",  // Teal-ish, change this to whatever

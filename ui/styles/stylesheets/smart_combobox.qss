@@ -1,0 +1,41 @@
+/* ------------------------------------------------------------------
+   SMART COMBOBOX STYLSHEET
+   ------------------------------------------------------------------ */
+#SmartComboBox {
+    border: 1px solid {BORDER_DEFAULT}; /* Dynamic */
+    border-radius: 5px;
+    padding: 4px 24px 4px 6px; 
+    min-width: 8em;
+    background-color: {BACKGROUND_WIDGET}; /* Dynamic */
+    color: {TEXT_STRONG}; /* Dynamic */
+    font-size: {FONTS_SIZE_NORMAL}; /* Dynamic */
+}
+
+#SmartComboBox QToolButton {
+    background-color: transparent;
+    border-top: none;
+    border-right: none;
+    border-bottom: none;
+    border-left: 1px solid {BORDER_DEFAULT}; /* Dynamic */
+    padding: 5px;
+}
+
+#SmartComboBox QAbstractItemView { /* Styling the popup list */
+    border: 1px solid {BORDER_DEFAULT}; /* Dynamic */
+    background-color: {BACKGROUND_INPUT}; /* Dynamic */
+    padding: 2px;
+    color: {TEXT_DEFAULT}; /* Dynamic */
+    outline: none;
+}
+
+#SmartComboBox QAbstractItemView:item {
+    padding: 6px 8px;
+    border: none;
+}
+
+#SmartComboBox QAbstractItemView:item:hover {
+    background-color: {CONTROL_HOVER};
+    border: none;
+    border-radius: 5px;
+    outline: none;
+}

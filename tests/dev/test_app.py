@@ -1,111 +1,64 @@
-#🔸System Imports
+# ── Imports ─────────────────────────────────────────────────────────────────────
 import sys
 
-#🔸Local Imports
-# Use the new slot widget and enum
-from dev_sandbox.recipe_widget.recipe_slot import LayoutSize, RecipeWidget
-# Debug logging
-from helpers.app_helpers.debug_logger import DebugLogger
 from PySide6.QtCore import Qt
-#🔸Third-party Imports
-from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QScrollArea,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QScrollArea
 
-# Load stylesheet helper
-from core.helpers.app_helpers import load_stylesheet_for_widget
-# Database
-from database.database import DB_INSTANCE
-# Recipe model
-from database.modules.recipe_module import Recipe
+from core.helpers.debug_logger import DebugLogger
+from ui.components.inputs.smart_combobox import SmartComboBox
 
 
-# --- Fetch Recipe Data from DB ---
-def fetch_recipes_for_test(recipe_ids: list[int]) -> dict[int, Recipe]:
-    """Fetch and wrap recipes from the DB."""
-    fetched: dict[int, Recipe] = {}
-    if not DB_INSTANCE:
-        DebugLogger.log("DB_INSTANCE is not available. Cannot fetch recipes.", "error")
-        return fetched
-
-    for rid in recipe_ids:
-        try:
-            data = DB_INSTANCE.get_recipe(rid)
-            if data:
-                fetched[rid] = Recipe(data)
-                DebugLogger.log(f"Fetched recipe ID {rid}", "info")
-            else:
-                DebugLogger.log(f"Recipe ID {rid} not found", "warning")
-        except Exception as e:
-            DebugLogger.log(f"Error fetching recipe {rid}: {e}", "error", exc_info=True)
-    return fetched
-
-def create_test_widget(recipes: dict[int, Recipe]) -> QWidget:
+def run_test(app: QApplication) -> QScrollArea:
     """
-    Build a vertical list of rows, each showing:
-      - one empty slot
-      - up to two slots with recipes loaded
-    for each LayoutSize (SMALL, MEDIUM, LARGE).
+    Launch the test window. This method is required by main.py --test entry point.
+
+    Args:
+        app (QApplication): The active QApplication instance.
+
+    Returns:
+        QScrollArea: The main test window with your test widget content.
     """
-    container = QWidget()
-    main_lyt = QVBoxLayout(container)
-    main_lyt.setAlignment(Qt.AlignmentFlag.AlignTop)
-    main_lyt.setSpacing(20)
 
-    sizes = [LayoutSize.SMALL, LayoutSize.MEDIUM, LayoutSize.LARGE]
-    recipe_ids = list(recipes.keys())[:2]  # show at most two recipes per size
+    # Build your test widget here 👇
+    test_content = SmartComboBox(
+        values=["Apple", "Banana", "Cherry", "Date", "Elderberry"],
+        placeholder="Select a fruit",
+    )
 
-    for size in sizes:
-        # Section label
-        lbl = QLabel(f"{size.name.capitalize()} Size ({size.value})")
-        main_lyt.addWidget(lbl)
+    # Wrap in scrollable test window
+    scroll_window = QScrollArea()
+    scroll_window.setWindowTitle("Test App")
+    scroll_window.setWidgetResizable(True)
+    scroll_window.setMinimumSize(1000, 800)
+    scroll_window.setWidget(test_content)
 
-        row = QHBoxLayout()
-        row.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        row.setSpacing(15)
+    # Load stylesheet if needed
 
-        # 1) Empty slot
-        empty_slot = RecipeWidget(size)
-        row.addWidget(empty_slot)
+    scroll_window.show()
+    return scroll_window
 
-        # 2) Up to two filled slots
-        for rid in recipe_ids:
-            recipe = recipes.get(rid)
-            if recipe:
-                slot = RecipeWidget(size)
-                slot.set_recipe(recipe)
-                row.addWidget(slot)
-            else:
-                DebugLogger.log(f"Skipping missing recipe {rid} for size {size}", "warning")
 
-        main_lyt.addLayout(row)
+def create_test_widget() -> QWidget:
+    """
+    Construct and return your custom widget to test.
 
-    main_lyt.addStretch(1)
-    return container
+    Returns:
+        QWidget: Your widget or test layout container.
+    """
+    widget = QWidget()
+    layout = QVBoxLayout(widget)
+    layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+    layout.setSpacing(20)
 
-def run_test(app):
-    # IDs to test—adjust as needed
-    ids_to_load = [1, 2, 3]
-    live_recipes = fetch_recipes_for_test(ids_to_load)
+    # 👇 Add your test widgets here
+    # e.g., layout.addWidget(MyCustomWidget())
 
-    if not live_recipes:
-        DebugLogger.log("No recipes loaded; slots will remain empty or show errors.", "critical")
+    return widget
 
-    win = QScrollArea()
-    win.setWindowTitle("RecipeWidget Refactor Test")
-    win.setWidgetResizable(True)
-    win.setMinimumSize(1000, 800)
-
-    content = create_test_widget(live_recipes)
-    win.setWidget(content)
-    win.show()
-
-    load_stylesheet_for_widget(win, "dev_sandbox/recipe_widget/stylesheet.qss")
-    return win
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    if not DB_INSTANCE:
-        print("ERROR: DB_INSTANCE not initialized.")
-        sys.exit(1)
+    app.setApplicationName("Test App")
+
     test_win = run_test(app)
     sys.exit(app.exec())

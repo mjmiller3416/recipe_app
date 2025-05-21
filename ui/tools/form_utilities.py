@@ -12,12 +12,6 @@ def populate_combobox(combobox: QComboBox, *values):
     Args:
         combobox (QComboBox): The combobox to populate.
         *values (str or list): A list of values or multiple string arguments.
-
-    Example usage:
-        populate_combobox(self.ui.my_combobox, "Option1", "Option2", "Option3")
-        OR
-        options = ["Option1", "Option2", "Option3"]
-        populate_combobox(self.ui.my_combobox, *options)
     """
     if len(values) == 1 and isinstance(values[0], list):
         values = values[0]  # Unpack list if a single list argument is passed

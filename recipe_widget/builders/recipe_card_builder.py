@@ -8,15 +8,16 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QSizePolicy,
-                               QVBoxLayout)
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
-from config import RECIPE_CARD
+from config import RECIPE_CARD, ICON_SIZE
 from database.models.recipe import Recipe
 from ui.components import Separator
 from ui.components.images import RoundedImage
 from ui.iconkit import Icon
-from ui.styles.themes.dark_theme import THEME
+from ui.iconkit import ToolButtonIcon
+from core.helpers.ui_helpers import make_overlay
+from services.recipe_service import RecipeService
 
 from ..constants import LAYOUT_SIZE, LayoutSize
 
@@ -55,10 +56,10 @@ class RecipeCardBuilder:
             case _:                 raise ValueError(f"Unsupported size: {self.size}")
 
         frame.setFixedSize(LAYOUT_SIZE[self.size.value]) # apply fixed geometry
-        frame.setStyleSheet(
-            "background-color: #1B1D23;"
-            "border-radius: 10px;" 
-        )
+
+        # ⚠️ temporary fix for transparency
+        frame.setStyleSheet("background-color: #1B1D23; border-radius: 10px;") 
+
         return frame
 
     # ── Private Methods ─────────────────────────────────────────────────────────────
@@ -100,11 +101,27 @@ class RecipeCardBuilder:
 
         # recipe image
         img_recipe = RoundedImage(
-            image_path=(self.recipe.image_path),
+            image_path=self.recipe.image_path,
             size=280,
             radii=(10, 10, 0, 0)
         )
-        lyt.addWidget(img_recipe) # add to layout
+
+        # favorite button
+        btn_fav = ToolButtonIcon(
+            file_path=RECIPE_CARD["ICON_FAVORITE"],
+            size=ICON_SIZE,
+            variant=RECIPE_CARD["DYNAMIC"],
+            checkable=True,
+        )
+        btn_fav.setCursor(Qt.PointingHandCursor)
+        btn_fav.setChecked(bool(self.recipe.is_favorite)) # set initial state
+        btn_fav.toggled.connect(
+            lambda checked, rid=self.recipe.id: RecipeService.toggle_favorite(rid)
+        )
+
+        # create overlay
+        overlay = make_overlay(img_recipe, btn_fav)
+        lyt.addWidget(overlay) # add to layout
 
         # recipe name
         lbl_name = QLabel(self.recipe.recipe_name)
@@ -172,7 +189,7 @@ class RecipeCardBuilder:
         ico_meta = Icon(
             file_path=file_path,
             size=RECIPE_CARD["ICON_SIZE"],
-            variant=RECIPE_CARD["VARIANT"],
+            variant=RECIPE_CARD["STATIC"],
         )
         ico_meta.setAlignment(Qt.AlignCenter)
         lyt.addWidget(ico_meta, 0, Qt.AlignCenter) # add to layout

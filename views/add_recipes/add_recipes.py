@@ -29,7 +29,7 @@ class AddRecipes(QWidget):
 
         self._build_ui()
         self._connect_signals()
-        self._populate_categories()
+        #self._populate_categories()
 
     # ── UI Setup ────────────────────────────────────────────────────────────────
     def _build_ui(self):
@@ -53,7 +53,7 @@ class AddRecipes(QWidget):
 
         self.le_name = QLineEdit()
         self.le_name.setPlaceholderText("Enter recipe name")
-        self.cb_category = CustomComboBox()
+        self.cb_category = CustomComboBox(list=RECIPE_CATEGORIES, placeholder="Meal Type")
         self.cb_category.setPlaceholderText("Meal Type")
         self.le_time = QLineEdit()
         self.le_time.setPlaceholderText("e.g., 45")

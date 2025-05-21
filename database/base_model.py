@@ -129,9 +129,17 @@ class ModelBase(PydanticBaseModel):
 
     @classmethod
     def filter(cls: Type[T], **filters: Any) -> List[T]:
-        """ Return a list of rows matching the filters. """
-        all_rows = cls.all()
-        return [row for row in all_rows if all(getattr(row, k) == v for k, v in filters.items())]
+        """
+        SQL‐powered filter: only returns rows where each column == value.
+        """
+        if not filters:
+            return cls.all()
+
+        # Build WHERE clause: "col1 = ? AND col2 = ?"
+        cols = " AND ".join(f"{k}=?" for k in filters)
+        sql = f"SELECT * FROM {cls.table_name()} WHERE {cols}"
+        params = tuple(filters.values())
+        return cls.raw_query(sql, params)
 
     @classmethod
     def get_by_field(cls: Type[T], **fields: Any) -> Optional[T]:

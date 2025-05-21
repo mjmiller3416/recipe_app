@@ -10,7 +10,11 @@ from PySide6.QtWidgets import (QLayout, QScrollArea, QSizePolicy, QSpacerItem,
                                QVBoxLayout, QWidget)
 
 from database.models.recipe import Recipe
+from ui.components.inputs import SmartComboBox
+from config import RECIPE_CATEGORIES
 
+# ── Constants ───────────────────────────────────────────────────────────────────
+SORT_OPTIONS = ["A-Z", "Z-A", "Recently Created", "Favorites"] # mock sort options
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class ViewRecipes(QWidget):
@@ -28,7 +32,7 @@ class ViewRecipes(QWidget):
         """
         super().__init__(parent)
 
-        # Initialize & Setup UI
+        # ── Initialize & Setup UI ──
         self.setObjectName("ViewRecipes")
         self.meal_selection = meal_selection
         self.build_ui()
@@ -37,25 +41,91 @@ class ViewRecipes(QWidget):
         self.setAttribute(Qt.WA_StyledBackground, True)
 
     def build_ui(self):
-         """Initializes layout with a scrollable, responsive recipe area."""
-         self.main_layout = QVBoxLayout(self)
-         self.main_layout.setSpacing(0)
- 
-         self.scroll_area = QScrollArea()
-         self.scroll_area.setWidgetResizable(True)
-         self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-         self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-         self.scroll_area.viewport().setStyleSheet("background-color: transparent;")
- 
-         self.scroll_container = QWidget()
-         self.flow_layout = self.create_flow_layout(self.scroll_container)
-         self.scroll_container.setLayout(self.flow_layout)
- 
-         spacer = QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
-         self.flow_layout.addItem(spacer)
- 
-         self.scroll_area.setWidget(self.scroll_container)
-         self.main_layout.addWidget(self.scroll_area)
+        """Initializes layout with a scrollable, responsive recipe area."""
+
+        # ── Create Main Layout ──
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setSpacing(10)
+
+        # create filter & sort dropdowns
+        self.cb_filter = SmartComboBox(list = RECIPE_CATEGORIES, placeholder = "Filter", editable=True)
+        self.cb_filter.setPlaceholderText("Filter")
+        self.cb_sort = SmartComboBox(list = SORT_OPTIONS, placeholder = "Sort")
+        self.cb_sort.setPlaceholderText("Sort")
+
+        # create scroll area
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll_area.viewport().setStyleSheet("background-color: transparent;")
+
+        # create scroll container
+        self.scroll_container = QWidget()
+        self.flow_layout = self.create_flow_layout(self.scroll_container)
+        self.scroll_container.setLayout(self.flow_layout)
+
+        spacer = QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.flow_layout.addItem(spacer) # add top padding
+    
+        self.scroll_area.setWidget(self.scroll_container) # add to scroll area
+
+        # add widgets to main layout
+        for widget in (self.cb_filter, self.cb_sort, self.scroll_area):
+            self.main_layout.addWidget(widget)
+
+    def clear_recipe_display(self):
+        """Removes all recipe widgets from the layout."""
+        while self.flow_layout.count():
+            item = self.flow_layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+    def load_recipes(self) -> None:
+        from recipe_widget.constants import LayoutSize
+        from recipe_widget.recipe_widget import RecipeWidget
+
+        recipes = Recipe.all()  # fetch all recipes from the database
+        if not recipes:
+            return
+
+        self.clear_recipe_display()
+
+        for recipe in recipes:
+            slot = RecipeWidget(LayoutSize.MEDIUM, parent=self.scroll_container)
+            slot.set_recipe(recipe)
+
+            if self.meal_selection:
+                slot.card_clicked.connect(
+                    lambda r, self=self: self.select_recipe(r.id)
+                )
+
+            self.flow_layout.addWidget(slot)
+
+        self.recipes_loaded = True
+
+    def select_recipe(self, recipe_id):
+        """Emit the selected recipe's ID and close the selection dialog.
+
+        Args:
+            recipe_id (int): The ID of the selected recipe.
+        """
+        self.recipe_selected.emit(recipe_id)
+
+    def refresh(self):
+        """Force refresh all recipe cards (used when returning from Add/Edit views)."""
+        self.recipes_loaded = False
+        self.load_recipes()
+
+    def showEvent(self, event):
+        """Override showEvent to load recipes if not already loaded.
+
+        Args:
+            event (QShowEvent): The show event triggered when the widget is displayed.
+        """
+        super().showEvent(event)
+        if not self.recipes_loaded:
+            self.load_recipes()
 
     def create_flow_layout(self, parent):
         """Returns a responsive flow layout for displaying cards, with centered alignment."""
@@ -138,56 +208,4 @@ class ViewRecipes(QWidget):
 
         return FlowLayout(parent)
 
-    def clear_recipe_display(self):
-        """Removes all recipe widgets from the layout."""
-        while self.flow_layout.count():
-            item = self.flow_layout.takeAt(0)
-            if item.widget():
-                item.widget().deleteLater()
-
-    def load_recipes(self) -> None:
-        from recipe_widget.constants import LayoutSize
-        from recipe_widget.recipe_widget import RecipeWidget
-
-        recipes = Recipe.all()  # fetch all recipes from the database
-        if not recipes:
-            return
-
-        self.clear_recipe_display()
-
-        for recipe in recipes:
-            slot = RecipeWidget(LayoutSize.MEDIUM, parent=self.scroll_container)
-            slot.set_recipe(recipe)
-
-            if self.meal_selection:
-                slot.card_clicked.connect(
-                    lambda r, self=self: self.select_recipe(r.id)
-                )
-
-            self.flow_layout.addWidget(slot)
-
-        self.recipes_loaded = True
-
-    def select_recipe(self, recipe_id):
-        """Emit the selected recipe's ID and close the selection dialog.
-
-        Args:
-            recipe_id (int): The ID of the selected recipe.
-        """
-        self.recipe_selected.emit(recipe_id)
-
-    def refresh(self):
-        """Force refresh all recipe cards (used when returning from Add/Edit views)."""
-        self.recipes_loaded = False
-        self.load_recipes()
-
-    def showEvent(self, event):
-        """Override showEvent to load recipes if not already loaded.
-
-        Args:
-            event (QShowEvent): The show event triggered when the widget is displayed.
-        """
-        super().showEvent(event)
-        if not self.recipes_loaded:
-            self.load_recipes()
-#🔸END
+    

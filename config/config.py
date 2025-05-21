@@ -12,95 +12,117 @@ from config.paths import AppPaths
 from ui.styles.themes.dark_theme import THEME
 
 # ── Icon Defaults ──
-ICON_SIZE = QSize(20, 20)
+ICON_SIZE  = QSize(20, 20)
 ICON_COLOR = THEME["ICON"]["DEFAULT"]
 
 # ── Sidebar Widget ──
 SIDEBAR = {
-    "ICON_DASHBOARD": AppPaths.ICONS_DIR / "dashboard.svg",
-    "ICON_MEAL_PLANNER": AppPaths.ICONS_DIR / "meal_planner.svg",
-    "ICON_VIEW_RECIPES": AppPaths.ICONS_DIR / "view_recipes.svg",
-    "ICON_SHOPPING_LIST": AppPaths.ICONS_DIR / "shopping_list.svg",
-    "ICON_ADD_RECIPES": AppPaths.ICONS_DIR / "add_recipes.svg",
-    "ICON_SETTINGS": AppPaths.ICONS_DIR / "settings.svg",
-    "ICON_EXIT": AppPaths.ICONS_DIR / "exit.svg",
-    "LOGO": AppPaths.ICONS_DIR / "logo.svg",
     "LOGO_SIZE": QSize(180, 180),
-    "VARIANT": THEME["ICON_STYLES"]["NAV"]
+    "ICON_DASHBOARD":     AppPaths.ICONS_DIR / "dashboard.svg",
+    "ICON_MEAL_PLANNER":  AppPaths.ICONS_DIR / "meal_planner.svg",
+    "ICON_VIEW_RECIPES":  AppPaths.ICONS_DIR / "view_recipes.svg",
+    "ICON_SHOPPING_LIST": AppPaths.ICONS_DIR / "shopping_list.svg",
+    "ICON_ADD_RECIPES":   AppPaths.ICONS_DIR / "add_recipes.svg",
+    "ICON_SETTINGS":      AppPaths.ICONS_DIR / "settings.svg",
+    "ICON_EXIT":          AppPaths.ICONS_DIR / "exit.svg",
+    "LOGO":               AppPaths.ICONS_DIR / "logo.svg",
+    "VARIANT":            THEME["ICON_STYLES"]["NAV"]
 }
 
 # ── Search Widget ──
 SEARCH = {
-    "ICON_SIZE": QSize(16, 16),
-    "ICON_SEARCH": AppPaths.ICONS_DIR / "search.svg",
-    "ICON_CLEAR": AppPaths.ICONS_DIR / "clear.svg",
-    "VARIANT": THEME["ICON"]["ACCENT"],
+    "ICON_SEARCH": {
+        "FILE_PATH": AppPaths.ICONS_DIR / "search.svg",
+        "ICON_SIZE": QSize(16, 16),
+        "STATIC":    THEME["ICON"]["ACCENT"],
+    },
+    "ICON_CLEAR":  {
+        "FILE_PATH": AppPaths.ICONS_DIR / "clear.svg",
+        "ICON_SIZE": QSize(20, 20),
+        "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"]
+    }
 }
 
 # ── Title Bar ──
 TITLE_BAR = {
-    "ICON_SIZE": QSize(12, 12),
-    "BUTTON_SIZE": QSize(38, 38),
-    "ICON_MINIMIZE": AppPaths.ICONS_DIR / "minimize.svg",
-    "ICON_MAXIMIZE": AppPaths.ICONS_DIR / "maximize.svg",
-    "ICON_RESTORE": AppPaths.ICONS_DIR / "restore.svg",
-    "ICON_CLOSE": AppPaths.ICONS_DIR / "close.svg",
+    "ICON_SIZE":           QSize(12, 12),
+    "BUTTON_SIZE":         QSize(38, 38),
+    "ICON_MINIMIZE":       AppPaths.ICONS_DIR / "minimize.svg",
+    "ICON_MAXIMIZE":       AppPaths.ICONS_DIR / "maximize.svg",
+    "ICON_RESTORE":        AppPaths.ICONS_DIR / "restore.svg",
+    "ICON_CLOSE":          AppPaths.ICONS_DIR / "close.svg",
     "ICON_TOGGLE_SIDEBAR": AppPaths.ICONS_DIR / "toggle_sidebar.svg",
-    "APP_NAME": "MealGenie",
-    "VARIANT": THEME["ICON_STYLES"]["TITLEBAR"]
+    "VARIANT":             THEME["ICON_STYLES"]["TOOLBUTTON"],
+    "APP_NAME":            "MealGenie",
 }
 
 # ── Ingredient Widget ──
 INGREDIENT_WIDGET = {
-    "ICON_SIZE": QSize(20, 20),
-    "ICON_ADD": AppPaths.ICONS_DIR / "add.svg",
+    "ICON_SIZE":     QSize(20, 20),
+    "ICON_ADD":      AppPaths.ICONS_DIR / "add.svg",
     "ICON_SUBTRACT": AppPaths.ICONS_DIR / "subtract.svg",
-    "VARIANT": THEME["ICON_STYLES"]["INGREDIENT_WIDGET"],
+    "VARIANT":       THEME["ICON_STYLES"]["INGREDIENT_WIDGET"],
+}
+
+# ── Smart ComboBox ──
+SMART_COMBOBOX = {
+    "ICON_ARROW":  {
+        "FILE_PATH": AppPaths.ICONS_DIR / "down_arrow.svg",
+        "ICON_SIZE": QSize(16, 16),
+        "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"]
+    },
+    "ICON_CLEAR":  {
+        "FILE_PATH": AppPaths.ICONS_DIR / "clear.svg",
+        "ICON_SIZE": QSize(20, 20),
+        "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"]
+    },
 }
 
 # ── Meal Planner ──
 MEAL_PLANNER = {
     "ICON_SIZE": QSize(16, 16),
-    "ICON_ADD": AppPaths.ICONS_DIR / "add.svg",
-    "VARIANT": THEME["ICON"]["ACCENT"],
+    "ICON_ADD":  AppPaths.ICONS_DIR / "add.svg",
+    "VARIANT":   THEME["ICON"]["ACCENT"],
 }
 
 # ── Recipe Widget ──
 EMPTY_STATE = {
-    "ICON_SIZE": QSize(60, 60),
+    "ICON_SIZE":     QSize(60, 60),
     "ICON_ADD_MEAL": AppPaths.ICONS_DIR / "add_meal.svg",
-    "VARIANT": THEME["ICON"]["ACCENT"],
+    "VARIANT":       THEME["ICON"]["ACCENT"],
 }
 RECIPE_CARD = {
-    "ICON_SIZE": QSize(30, 30),
+    "ICON_SIZE":       QSize(30, 30),
     "ICON_TOTAL_TIME": AppPaths.ICONS_DIR / "total_time.svg",
-    "ICON_SERVINGS": AppPaths.ICONS_DIR / "servings.svg",
-    "VARIANT": THEME["ICON"]["ACCENT"],
+    "ICON_SERVINGS":   AppPaths.ICONS_DIR / "servings.svg",
+    "ICON_FAVORITE":   AppPaths.ICONS_DIR / "favorite.svg",
+    "STATIC":         THEME["ICON"]["ACCENT"],
+    "DYNAMIC":        THEME["ICON_STYLES"]["NAV"],
 }
 RECIPE_DIALOG = {
-    "ICON_SIZE": QSize(30, 30),
-    "ICON_SERVINGS": AppPaths.ICONS_DIR / "servings.svg",
+    "ICON_SIZE":       QSize(30, 30),
+    "ICON_SERVINGS":   AppPaths.ICONS_DIR / "servings.svg",
     "ICON_TOTAL_TIME": AppPaths.ICONS_DIR / "total_time.svg",
-    "ICON_CATEGORY": AppPaths.ICONS_DIR / "category.svg",
-    "VARIANT": THEME["ICON"]["ACCENT"],
+    "ICON_CATEGORY":   AppPaths.ICONS_DIR / "category.svg",
+    "VARIANT":         THEME["ICON"]["ACCENT"],
 }
 
 MESSAGE_DIALOG = {
     "ICON_SIZE": QSize(50, 50),
     "ICON_INFO": {
-        "ICON_PATH": AppPaths.ICONS_DIR / "info.svg",
+        "ICON_PATH":  AppPaths.ICONS_DIR / "info.svg",
         "ICON_COLOR": THEME["ICON"]["INFO"],
     },
     "ICON_WARNING": {
-        "ICON_PATH": AppPaths.ICONS_DIR / "warning.svg",
+        "ICON_PATH":  AppPaths.ICONS_DIR / "warning.svg",
         "ICON_COLOR": THEME["ICON"]["WARNING"],
     },
     "ICON_ERROR": {
-        "ICON_PATH": AppPaths.ICONS_DIR / "error.svg",
+        "ICON_PATH":  AppPaths.ICONS_DIR / "error.svg",
         "ICON_COLOR": THEME["ICON"]["ERROR"],
     },
     "ICON_SUCCESS": {
-        "ICON_PATH": AppPaths.ICONS_DIR / "success.svg",
+        "ICON_PATH":  AppPaths.ICONS_DIR / "success.svg",
         "ICON_COLOR": THEME["ICON"]["SUCCESS"],
     },
 }
@@ -121,10 +143,14 @@ RECIPE_CATEGORIES = [
     "Breakfast", "Lunch", "Dinner", "Sauce", "Appetizer", "Snack", "Dessert",
 ]
 
+SORT_OPTIONS = [
+    "A-Z", "Z-A", "Newest", "Oldest", "Favorites"
+]
+
 # ── Validation Rules ──
-NAME = lambda parent: QRegularExpressionValidator(QRegularExpression(r"^[a-zA-Z0-9\s\-]+$"), parent)
-FLOAT = lambda parent: QRegularExpressionValidator(QRegularExpression(r"^\d{1,2}(\.\d{0,2})?$"), parent)
-INT = lambda parent: QRegularExpressionValidator(QRegularExpression(r"^\d{1,3}$"), parent)
+NAME = lambda parent:      QRegularExpressionValidator(QRegularExpression(r"^[a-zA-Z0-9\s\-]+$"), parent)
+FLOAT = lambda parent:     QRegularExpressionValidator(QRegularExpression(r"^\d{1,2}(\.\d{0,2})?$"), parent)
+INT = lambda parent:       QRegularExpressionValidator(QRegularExpression(r"^\d{1,3}$"), parent)
 NON_EMPTY = lambda parent: QRegularExpressionValidator(QRegularExpression(r"^(?!\s*$).+"), parent)
 
 # ── Debug Flags ──

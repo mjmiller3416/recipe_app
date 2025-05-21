@@ -1,3 +1,8 @@
+"""ui/components/inputs/search_widget.py
+
+This module defines a custom search widget that includes a search icon, a text input field,
+"""
+
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtWidgets import QFrame, QGridLayout, QLineEdit, QSizePolicy
@@ -16,8 +21,7 @@ class SearchWidget(QFrame):
         - recipe_selected(str): placeholder for future recipe selection support.
     """
     
-
-    # 🔹 Signals
+    # ── Signals ─────────────────────────────────────────────────────────────────────
     recipe_selected = Signal(str)
     search_triggered = Signal(str)
 
@@ -36,15 +40,15 @@ class SearchWidget(QFrame):
         self.layout.setContentsMargins(12, 0, 8, 0)  # Left/right padding for breathing room
         self.layout.setSpacing(5)
 
-        # 🔹 Search Icon
+        # ── Search Icon ──
         self.ico_search = Icon(
-            file_path=SEARCH["ICON_SEARCH"],
-            size=SEARCH["ICON_SIZE"],
-            variant=SEARCH["VARIANT"],
+            file_path=SEARCH["ICON_SEARCH"]["FILE_PATH"],
+            size=SEARCH["ICON_SEARCH"]["ICON_SIZE"],
+            variant=SEARCH["ICON_SEARCH"]["STATIC"],
         )
         self.layout.addWidget(self.ico_search, 0, 0)
 
-        # 🔹 Input Field
+        # ── Input Field ──
         self.le_search = QLineEdit(self)
         self.le_search.setObjectName("le_search")
         self.le_search.setPlaceholderText("Search...")
@@ -53,16 +57,13 @@ class SearchWidget(QFrame):
         self.le_search.setAlignment(Qt.AlignVCenter)
         self.layout.addWidget(self.le_search, 0, 1)
 
-        # 🔹 Clear Button
+        # ── Clear Button ──
         self.btn_ico_clear = ToolButtonIcon(
-            file_path=SEARCH["ICON_CLEAR"],
-            size=SEARCH["ICON_SIZE"],
-            variant=SEARCH["VARIANT"],
+            file_path=SEARCH["ICON_CLEAR"]["FILE_PATH"],
+            size=SEARCH["ICON_CLEAR"]["ICON_SIZE"],
+            variant=SEARCH["ICON_CLEAR"]["DYNAMIC"],
         )
-        self.btn_ico_clear.setVisible(False) # Testing visibility based on text input
-        self.btn_ico_clear.setFixedSize(24, 24)
-        self.btn_ico_clear.setIconSize(QSize(20, 20))  # Set icon size for the button
-        self.btn_ico_clear.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.btn_ico_clear.setVisible(False) # visibility based on text input
         self.layout.addWidget(self.btn_ico_clear, 0, 2)
 
     def _setup_events(self):

@@ -89,6 +89,7 @@ THEME = {
     # ── Icon Colors ────────────────────────────────────────────────────────
     "ICON": {
         "DEFAULT":  TEXT_DEFAULT,
+        "BOLD": SURFACE_DARK,
         "ACCENT":   PRIMARY_ACCENT,
         "HOVER":    SECONDARY_ACCENT,
         "DISABLED": SURFACE_LIGHT,
@@ -108,7 +109,7 @@ THEME = {
             "CHECKED":  PRIMARY_ACCENT,
             "DISABLED": "#5A5E66",
         },
-        "TITLEBAR": {
+        "TOOLBUTTON": {
             "DEFAULT":  "#949AA7",
             "HOVER":    "#6AD7CA",
             "CHECKED":  "#6AD7CA",

@@ -2,6 +2,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 from ui.iconkit import Icon
+from ui.components.inputs.custom_combobox import CustomComboBox
 
 
 class Dashboard(QWidget):
@@ -18,8 +19,4 @@ class Dashboard(QWidget):
         self.setMinimumSize(984, 818)
 
         self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(0, 0, 0, 0)
-
-        self.label = QLabel("Dashboard", self)
-
-        self.layout.addWidget(self.label, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.layout.setContentsMargins(0, 0, 0, 0)  
