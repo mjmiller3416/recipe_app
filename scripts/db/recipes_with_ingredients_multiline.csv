@@ -1,5 +1,5 @@
 recipe_name,recipe_category,total_time,servings,directions,image_path,ingredient_name,quantity,unit,ingredient_category
-Spaghetti Bolognese,Dinner,45,4,"Heat olive oil in a large pan over medium heat
+Spaghetti Bolognese,Ground Beef,45,4,"Heat olive oil in a large pan over medium heat
  Add onion and minced garlic and sauté until translucent
  Add ground beef and cook until browned
  Stir in tomato paste and crushed tomatoes
@@ -7,7 +7,7 @@ Spaghetti Bolognese,Dinner,45,4,"Heat olive oil in a large pan over medium heat
  Meanwhile, cook spaghetti according to package instructions
  Drain pasta and combine with sauce
  Garnish with fresh basil and serve.",data/recipe_images/spaghetti_bolognese.png,Spaghetti,8,oz.,pantry
-Spaghetti Bolognese,Dinner,45,4,"Heat olive oil in a large pan over medium heat
+Spaghetti Bolognese,Ground Beef,45,4,"Heat olive oil in a large pan over medium heat
  Add onion and minced garlic and sauté until translucent
  Add ground beef and cook until browned
  Stir in tomato paste and crushed tomatoes
@@ -15,7 +15,7 @@ Spaghetti Bolognese,Dinner,45,4,"Heat olive oil in a large pan over medium heat
  Meanwhile, cook spaghetti according to package instructions
  Drain pasta and combine with sauce
  Garnish with fresh basil and serve.",data/recipe_images/spaghetti_bolognese.png,Ground beef,1,lb.,meat
-Spaghetti Bolognese,Dinner,45,4,"Heat olive oil in a large pan over medium heat
+Spaghetti Bolognese,Ground Beef,45,4,"Heat olive oil in a large pan over medium heat
  Add onion and minced garlic and sauté until translucent
  Add ground beef and cook until browned
  Stir in tomato paste and crushed tomatoes
@@ -23,7 +23,7 @@ Spaghetti Bolognese,Dinner,45,4,"Heat olive oil in a large pan over medium heat
  Meanwhile, cook spaghetti according to package instructions
  Drain pasta and combine with sauce
  Garnish with fresh basil and serve.",data/recipe_images/spaghetti_bolognese.png,Onion,1,whole,produce
-Spaghetti Bolognese,Dinner,45,4,"Heat olive oil in a large pan over medium heat
+Spaghetti Bolognese,Ground Beef,45,4,"Heat olive oil in a large pan over medium heat
  Add onion and minced garlic and sauté until translucent
  Add ground beef and cook until browned
  Stir in tomato paste and crushed tomatoes
@@ -31,7 +31,7 @@ Spaghetti Bolognese,Dinner,45,4,"Heat olive oil in a large pan over medium heat
  Meanwhile, cook spaghetti according to package instructions
  Drain pasta and combine with sauce
  Garnish with fresh basil and serve.",data/recipe_images/spaghetti_bolognese.png,Garlic,3,tsp,produce
-Spaghetti Bolognese,Dinner,45,4,"Heat olive oil in a large pan over medium heat
+Spaghetti Bolognese,Ground Beef,45,4,"Heat olive oil in a large pan over medium heat
  Add onion and minced garlic and sauté until translucent
  Add ground beef and cook until browned
  Stir in tomato paste and crushed tomatoes
@@ -39,7 +39,7 @@ Spaghetti Bolognese,Dinner,45,4,"Heat olive oil in a large pan over medium heat
  Meanwhile, cook spaghetti according to package instructions
  Drain pasta and combine with sauce
  Garnish with fresh basil and serve.",data/recipe_images/spaghetti_bolognese.png,Tomato paste,2,Tbs,pantry
-Spaghetti Bolognese,Dinner,45,4,"Heat olive oil in a large pan over medium heat
+Spaghetti Bolognese,Ground Beef,45,4,"Heat olive oil in a large pan over medium heat
  Add onion and minced garlic and sauté until translucent
  Add ground beef and cook until browned
  Stir in tomato paste and crushed tomatoes
@@ -47,7 +47,7 @@ Spaghetti Bolognese,Dinner,45,4,"Heat olive oil in a large pan over medium heat
  Meanwhile, cook spaghetti according to package instructions
  Drain pasta and combine with sauce
  Garnish with fresh basil and serve.",data/recipe_images/spaghetti_bolognese.png,Crushed tomatoes,1,can,pantry
-Spaghetti Bolognese,Dinner,45,4,"Heat olive oil in a large pan over medium heat
+Spaghetti Bolognese,Ground Beef,45,4,"Heat olive oil in a large pan over medium heat
  Add onion and minced garlic and sauté until translucent
  Add ground beef and cook until browned
  Stir in tomato paste and crushed tomatoes
@@ -55,7 +55,7 @@ Spaghetti Bolognese,Dinner,45,4,"Heat olive oil in a large pan over medium heat
  Meanwhile, cook spaghetti according to package instructions
  Drain pasta and combine with sauce
  Garnish with fresh basil and serve.",data/recipe_images/spaghetti_bolognese.png,Olive oil,2,Tbs,oils
-Spaghetti Bolognese,Dinner,45,4,"Heat olive oil in a large pan over medium heat
+Spaghetti Bolognese,Ground Beef,45,4,"Heat olive oil in a large pan over medium heat
  Add onion and minced garlic and sauté until translucent
  Add ground beef and cook until browned
  Stir in tomato paste and crushed tomatoes
@@ -63,7 +63,7 @@ Spaghetti Bolognese,Dinner,45,4,"Heat olive oil in a large pan over medium heat
  Meanwhile, cook spaghetti according to package instructions
  Drain pasta and combine with sauce
  Garnish with fresh basil and serve.",data/recipe_images/spaghetti_bolognese.png,Fresh basil,0.25,cup,produce
-Chicken Stir Fry,Dinner,30,4,"Cut chicken into strips
+Chicken Stir Fry,Chicken,30,4,"Cut chicken into strips
  Heat vegetable oil in a wok over high heat
  Add chicken and cook until no longer pink
  Add garlic and ginger and stir-fry for 1 minute
@@ -71,7 +71,7 @@ Chicken Stir Fry,Dinner,30,4,"Cut chicken into strips
  Stir in soy sauce and sesame oil
  Cook for another 2 minutes
  Serve immediately.",data/recipe_images/chicken_stir_fry.png,Chicken breast,1.5,lb.,meat
-Chicken Stir Fry,Dinner,30,4,"Cut chicken into strips
+Chicken Stir Fry,Chicken,30,4,"Cut chicken into strips
  Heat vegetable oil in a wok over high heat
  Add chicken and cook until no longer pink
  Add garlic and ginger and stir-fry for 1 minute
@@ -79,7 +79,7 @@ Chicken Stir Fry,Dinner,30,4,"Cut chicken into strips
  Stir in soy sauce and sesame oil
  Cook for another 2 minutes
  Serve immediately.",data/recipe_images/chicken_stir_fry.png,Broccoli florets,2,cup,produce
-Chicken Stir Fry,Dinner,30,4,"Cut chicken into strips
+Chicken Stir Fry,Chicken,30,4,"Cut chicken into strips
  Heat vegetable oil in a wok over high heat
  Add chicken and cook until no longer pink
  Add garlic and ginger and stir-fry for 1 minute
@@ -87,7 +87,7 @@ Chicken Stir Fry,Dinner,30,4,"Cut chicken into strips
  Stir in soy sauce and sesame oil
  Cook for another 2 minutes
  Serve immediately.",data/recipe_images/chicken_stir_fry.png,Bell pepper,1,whole,produce
-Chicken Stir Fry,Dinner,30,4,"Cut chicken into strips
+Chicken Stir Fry,Chicken,30,4,"Cut chicken into strips
  Heat vegetable oil in a wok over high heat
  Add chicken and cook until no longer pink
  Add garlic and ginger and stir-fry for 1 minute
@@ -95,7 +95,7 @@ Chicken Stir Fry,Dinner,30,4,"Cut chicken into strips
  Stir in soy sauce and sesame oil
  Cook for another 2 minutes
  Serve immediately.",data/recipe_images/chicken_stir_fry.png,Carrot,1,whole,produce
-Chicken Stir Fry,Dinner,30,4,"Cut chicken into strips
+Chicken Stir Fry,Chicken,30,4,"Cut chicken into strips
  Heat vegetable oil in a wok over high heat
  Add chicken and cook until no longer pink
  Add garlic and ginger and stir-fry for 1 minute
@@ -103,7 +103,7 @@ Chicken Stir Fry,Dinner,30,4,"Cut chicken into strips
  Stir in soy sauce and sesame oil
  Cook for another 2 minutes
  Serve immediately.",data/recipe_images/chicken_stir_fry.png,Soy sauce,3,Tbs,pantry
-Chicken Stir Fry,Dinner,30,4,"Cut chicken into strips
+Chicken Stir Fry,Chicken,30,4,"Cut chicken into strips
  Heat vegetable oil in a wok over high heat
  Add chicken and cook until no longer pink
  Add garlic and ginger and stir-fry for 1 minute
@@ -111,7 +111,7 @@ Chicken Stir Fry,Dinner,30,4,"Cut chicken into strips
  Stir in soy sauce and sesame oil
  Cook for another 2 minutes
  Serve immediately.",data/recipe_images/chicken_stir_fry.png,Sesame oil,1,Tbs,oils
-Chicken Stir Fry,Dinner,30,4,"Cut chicken into strips
+Chicken Stir Fry,Chicken,30,4,"Cut chicken into strips
  Heat vegetable oil in a wok over high heat
  Add chicken and cook until no longer pink
  Add garlic and ginger and stir-fry for 1 minute
@@ -119,7 +119,7 @@ Chicken Stir Fry,Dinner,30,4,"Cut chicken into strips
  Stir in soy sauce and sesame oil
  Cook for another 2 minutes
  Serve immediately.",data/recipe_images/chicken_stir_fry.png,Garlic,2,tsp,produce
-Chicken Stir Fry,Dinner,30,4,"Cut chicken into strips
+Chicken Stir Fry,Chicken,30,4,"Cut chicken into strips
  Heat vegetable oil in a wok over high heat
  Add chicken and cook until no longer pink
  Add garlic and ginger and stir-fry for 1 minute
@@ -127,243 +127,243 @@ Chicken Stir Fry,Dinner,30,4,"Cut chicken into strips
  Stir in soy sauce and sesame oil
  Cook for another 2 minutes
  Serve immediately.",data/recipe_images/chicken_stir_fry.png,Fresh ginger,1,Tbs,produce
-Beef Tacos,Dinner,30,4,"Brown ground beef in a skillet over medium heat
+Beef Tacos,Ground Beef,30,4,"Brown ground beef in a skillet over medium heat
  Stir in taco seasoning and water according to package instructions
  Cook until sauce thickens
  Warm taco shells according to package directions
  Assemble tacos with beef, shredded lettuce, diced tomato, diced onion, shredded cheddar, and a dollop of sour cream
  Serve immediately.",data/recipe_images/beef_tacos.png,Ground beef,1,lb.,meat
-Beef Tacos,Dinner,30,4,"Brown ground beef in a skillet over medium heat
+Beef Tacos,Ground Beef,30,4,"Brown ground beef in a skillet over medium heat
  Stir in taco seasoning and water according to package instructions
  Cook until sauce thickens
  Warm taco shells according to package directions
  Assemble tacos with beef, shredded lettuce, diced tomato, diced onion, shredded cheddar, and a dollop of sour cream
  Serve immediately.",data/recipe_images/beef_tacos.png,Taco seasoning,2,Tbs,spices
-Beef Tacos,Dinner,30,4,"Brown ground beef in a skillet over medium heat
+Beef Tacos,Ground Beef,30,4,"Brown ground beef in a skillet over medium heat
  Stir in taco seasoning and water according to package instructions
  Cook until sauce thickens
  Warm taco shells according to package directions
  Assemble tacos with beef, shredded lettuce, diced lettuce, diced tomato, diced onion, shredded cheddar, and a dollop of sour cream
  Serve immediately.",data/recipe_images/beef_tacos.png,Taco shells,8,whole,other
-Beef Tacos,Dinner,30,4,"Brown ground beef in a skillet over medium heat
+Beef Tacos,Ground Beef,30,4,"Brown ground beef in a skillet over medium heat
  Stir in taco seasoning and water according to package instructions
  Cook until sauce thickens
  Warm taco shells according to package directions
  Assemble tacos with beef, shredded lettuce, diced tomato, diced onion, shredded cheddar, and a dollop of sour cream
  Serve immediately.",data/recipe_images/beef_tacos.png,Lettuce,1,whole,produce
-Beef Tacos,Dinner,30,4,"Brown ground beef in a skillet over medium heat
+Beef Tacos,Ground Beef,30,4,"Brown ground beef in a skillet over medium heat
  Stir in taco seasoning and water according to package instructions
  Cook until sauce thickens
  Warm taco shells according to package directions
  Assemble tacos with beef, shredded lettuce, diced tomato, diced onion, shredded cheddar, and a dollop of sour cream
  Serve immediately.",data/recipe_images/beef_tacos.png,Tomato,1,whole,produce
-Beef Tacos,Dinner,30,4,"Brown ground beef in a skillet over medium heat
+Beef Tacos,Ground Beef,30,4,"Brown ground beef in a skillet over medium heat
  Stir in taco seasoning and water according to package instructions
  Cook until sauce thickens
  Warm taco shells according to package directions
  Assemble tacos with beef, shredded lettuce, diced tomato, diced onion, shredded cheddar, and a dollop of sour cream
  Serve immediately.",data/recipe_images/beef_tacos.png,Cheddar cheese,1,cup,dairy
-Beef Tacos,Dinner,30,4,"Brown ground beef in a skillet over medium heat
+Beef Tacos,Ground Beef,30,4,"Brown ground beef in a skillet over medium heat
  Stir in taco seasoning and water according to package instructions
  Cook until sauce thickens
  Warm taco shells according to package directions
  Assemble tacos with beef, shredded lettuce, diced tomato, diced onion, shredded cheddar, and a dollop of sour cream
  Serve immediately.",data/recipe_images/beef_tacos.png,Onion,0.5,cup,produce
-Beef Tacos,Dinner,30,4,"Brown ground beef in a skillet over medium heat
+Beef Tacos,Ground Beef,30,4,"Brown ground beef in a skillet over medium heat
  Stir in taco seasoning and water according to package instructions
  Cook until sauce thickens
  Warm taco shells according to package directions
  Assemble tacos with beef, shredded lettuce, diced tomato, diced onion, shredded cheddar, and a dollop of sour cream
  Serve immediately.",data/recipe_images/beef_tacos.png,Sour cream,0.5,cup,dairy
-Lemon Garlic Salmon,Dinner,25,4,"Preheat oven to 400°F
+Lemon Garlic Salmon,Seafood,25,4,"Preheat oven to 400°F
  Place salmon fillets on a baking sheet lined with foil
  In a bowl, mix olive oil, minced garlic, lemon juice, salt, and pepper
  Brush mixture over salmon
  Bake for 12-15 minutes until cooked through
  Garnish with chopped parsley and serve.",data/recipe_images/lemon_garlic_salmon.png,Salmon fillet,1,lb.,seafood
-Lemon Garlic Salmon,Dinner,25,4,"Preheat oven to 400°F
+Lemon Garlic Salmon,Seafood,25,4,"Preheat oven to 400°F
  Place salmon fillets on a baking sheet lined with foil
  In a bowl, mix olive oil, minced garlic, lemon juice, salt, and pepper
  Brush mixture over salmon
  Bake for 12-15 minutes until cooked through
  Garnish with chopped parsley and serve.",data/recipe_images/lemon_garlic_salmon.png,Lemon,1,whole,produce
-Lemon Garlic Salmon,Dinner,25,4,"Preheat oven to 400°F
+Lemon Garlic Salmon,Seafood,25,4,"Preheat oven to 400°F
  Place salmon fillets on a baking sheet lined with foil
  In a bowl, mix olive oil, minced garlic, lemon juice, salt, and pepper
  Brush mixture over salmon
  Bake for 12-15 minutes until cooked through
  Garnish with chopped parsley and serve.",data/recipe_images/lemon_garlic_salmon.png,Garlic,2,tsp,produce
-Lemon Garlic Salmon,Dinner,25,4,"Preheat oven to 400°F
+Lemon Garlic Salmon,Seafood,25,4,"Preheat oven to 400°F
  Place salmon fillets on a baking sheet lined with foil
  In a bowl, mix olive oil, minced garlic, lemon juice, salt, and pepper
  Brush mixture over salmon
  Bake for 12-15 minutes until cooked through
  Garnish with chopped parsley and serve.",data/recipe_images/lemon_garlic_salmon.png,Olive oil,2,Tbs,oils
-Lemon Garlic Salmon,Dinner,25,4,"Preheat oven to 400°F
+Lemon Garlic Salmon,Seafood,25,4,"Preheat oven to 400°F
  Place salmon fillets on a baking sheet lined with foil
  In a bowl, mix olive oil, minced garlic, lemon juice, salt, and pepper
  Brush mixture over salmon
  Bake for 12-15 minutes until cooked through
  Garnish with chopped parsley and serve.",data/recipe_images/lemon_garlic_salmon.png,Fresh parsley,0.25,cup,produce
-Lemon Garlic Salmon,Dinner,25,4,"Preheat oven to 400°F
+Lemon Garlic Salmon,Seafood,25,4,"Preheat oven to 400°F
  Place salmon fillets on a baking sheet lined with foil
  In a bowl, mix olive oil, minced garlic, lemon juice, salt, and pepper
  Brush mixture over salmon
  Bake for 12-15 minutes until cooked through
  Garnish with chopped parsley and serve.",data/recipe_images/lemon_garlic_salmon.png,Butter,2,Tbs,dairy
-Vegetable Curry,Dinner,40,4,"Heat vegetable oil in a large pot over medium heat
+Vegetable Curry,Veggie,40,4,"Heat vegetable oil in a large pot over medium heat
  Add chopped onion and minced garlic and sauté until fragrant
  Stir in curry powder and cook for 1 minute
  Add mixed vegetables, tomato paste, and coconut milk
  Bring to a simmer and cook for 20 minutes
  Garnish with fresh cilantro
  Serve hot.",data/recipe_images/vegetable_curry.png,Mixed vegetables,4,cup,frozen
-Vegetable Curry,Dinner,40,4,"Heat vegetable oil in a large pot over medium heat
+Vegetable Curry,Veggie,40,4,"Heat vegetable oil in a large pot over medium heat
  Add chopped onion and minced garlic and sauté until fragrant
  Stir in curry powder and cook for 1 minute
  Add mixed vegetables, tomato paste, and coconut milk
  Bring to a simmer and cook for 20 minutes
  Garnish with fresh cilantro
  Serve hot.",data/recipe_images/vegetable_curry.png,Onion,1,whole,produce
-Vegetable Curry,Dinner,40,4,"Heat vegetable oil in a large pot over medium heat
+Vegetable Curry,Veggie,40,4,"Heat vegetable oil in a large pot over medium heat
  Add chopped onion and minced garlic and sauté until fragrant
  Stir in curry powder and cook for 1 minute
  Add mixed vegetables, tomato paste, and coconut milk
  Bring to a simmer and cook for 20 minutes
  Garnish with fresh cilantro
  Serve hot.",data/recipe_images/vegetable_curry.png,Garlic,3,tsp,produce
-Vegetable Curry,Dinner,40,4,"Heat vegetable oil in a large pot over medium heat
+Vegetable Curry,Veggie,40,4,"Heat vegetable oil in a large pot over medium heat
  Add chopped onion and minced garlic and sauté until fragrant
  Stir in curry powder and cook for 1 minute
  Add mixed vegetables, tomato paste, and coconut milk
  Bring to a simmer and cook for 20 minutes
  Garnish with fresh cilantro
  Serve hot.",data/recipe_images/vegetable_curry.png,Curry powder,2,Tbs,spices
-Vegetable Curry,Dinner,40,4,"Heat vegetable oil in a large pot over medium heat
+Vegetable Curry,Veggie,40,4,"Heat vegetable oil in a large pot over medium heat
  Add chopped onion and minced garlic and sauté until fragrant
  Stir in curry powder and cook for 1 minute
  Add mixed vegetables, tomato paste, and coconut milk
  Bring to a simmer and cook for 20 minutes
  Garnish with fresh cilantro
  Serve hot.",data/recipe_images/vegetable_curry.png,Coconut milk,1,can,other
-Vegetable Curry,Dinner,40,4,"Heat vegetable oil in a large pot over medium heat
+Vegetable Curry,Veggie,40,4,"Heat vegetable oil in a large pot over medium heat
  Add chopped onion and minced garlic and sauté until fragrant
  Stir in curry powder and cook for 1 minute
  Add mixed vegetables, tomato paste, and coconut milk
  Bring to a simmer and cook for 20 minutes
  Garnish with fresh cilantro
  Serve hot.",data/recipe_images/vegetable_curry.png,Tomato paste,2,Tbs,pantry
-Vegetable Curry,Dinner,40,4,"Heat vegetable oil in a large pot over medium heat
+Vegetable Curry,Veggie,40,4,"Heat vegetable oil in a large pot over medium heat
  Add chopped onion and minced garlic and sauté until fragrant
  Stir in curry powder and cook for 1 minute
  Add mixed vegetables, tomato paste, and coconut milk
  Bring to a simmer and cook for 20 minutes
  Garnish with fresh cilantro
  Serve hot.",data/recipe_images/vegetable_curry.png,Vegetable oil,2,Tbs,oils
-Vegetable Curry,Dinner,40,4,"Heat vegetable oil in a large pot over medium heat
+Vegetable Curry,Veggie,40,4,"Heat vegetable oil in a large pot over medium heat
  Add chopped onion and minced garlic and sauté until fragrant
  Stir in curry powder and cook for 1 minute
  Add mixed vegetables, tomato paste, and coconut milk
  Bring to a simmer and cook for 20 minutes
  Garnish with fresh cilantro
  Serve hot.",data/recipe_images/vegetable_curry.png,Fresh cilantro,0.25,cup,produce
-Chicken Parmesan,Dinner,50,4,"Preheat oven to 375°F
+Chicken Parmesan,Chicken,50,4,"Preheat oven to 375°F
  Pound chicken breasts to even thickness
  Dredge chicken in flour, dip in beaten eggs, and coat with breadcrumbs
  Heat olive oil in a skillet and fry chicken until golden brown
  Place chicken in a baking dish, top with tomato sauce and mozzarella
  Bake for 20 minutes until cheese is melted
  Sprinkle with parmesan and serve.",data/recipe_images/chicken_parmesan.png,Chicken breast,1,lb.,meat
-Chicken Parmesan,Dinner,50,4,"Preheat oven to 375°F
+Chicken Parmesan,Chicken,50,4,"Preheat oven to 375°F
  Pound chicken breasts to even thickness
  Dredge chicken in flour, dip in beaten eggs, and coat with breadcrumbs
  Heat olive oil in a skillet and fry chicken until golden brown
  Place chicken in a baking dish, top with tomato sauce and mozzarella
  Bake for 20 minutes until cheese is melted
  Sprinkle with parmesan and serve.",data/recipe_images/chicken_parmesan.png,Breadcrumbs,1,cup,pantry
-Chicken Parmesan,Dinner,50,4,"Preheat oven to 375°F
+Chicken Parmesan,Chicken,50,4,"Preheat oven to 375°F
  Pound chicken breasts to even thickness
  Dredge chicken in flour, dip in beaten eggs, and coat with breadcrumbs
  Heat olive oil in a skillet and fry chicken until golden brown
  Place chicken in a baking dish, top with tomato sauce and mozzarella
  Bake for 20 minutes until cheese is melted
  Sprinkle with parmesan and serve.",data/recipe_images/chicken_parmesan.png,Parmesan cheese,0.5,cup,dairy
-Chicken Parmesan,Dinner,50,4,"Preheat oven to 375°F
+Chicken Parmesan,Chicken,50,4,"Preheat oven to 375°F
  Pound chicken breasts to even thickness
  Dredge chicken in flour, dip in beaten eggs, and coat with breadcrumbs
  Heat olive oil in a skillet and fry chicken until golden brown
  Place chicken in a baking dish, top with tomato sauce and mozzarella
  Bake for 20 minutes until cheese is melted
  Sprinkle with parmesan and serve.",data/recipe_images/chicken_parmesan.png,Mozzarella cheese,1,cup,dairy
-Chicken Parmesan,Dinner,50,4,"Preheat oven to 375°F
+Chicken Parmesan,Chicken,50,4,"Preheat oven to 375°F
  Pound chicken breasts to even thickness
  Dredge chicken in flour, dip in beaten eggs, and coat with breadcrumbs
  Heat olive oil in a skillet and fry chicken until golden brown
  Place chicken in a baking dish, top with tomato sauce and mozzarella
  Bake for 20 minutes until cheese is melted
  Sprinkle with parmesan and serve.",data/recipe_images/chicken_parmesan.png,Egg,2,whole,other
-Chicken Parmesan,Dinner,50,4,"Preheat oven to 375°F
+Chicken Parmesan,Chicken,50,4,"Preheat oven to 375°F
  Pound chicken breasts to even thickness
  Dredge chicken in flour, dip in beaten eggs, and coat with breadcrumbs
  Heat olive oil in a skillet and fry chicken until golden brown
  Place chicken in a baking dish, top with tomato sauce and mozzarella
  Bake for 20 minutes until cheese is melted
  Sprinkle with parmesan and serve.",data/recipe_images/chicken_parmesan.png,Flour,0.5,cup,pantry
-Chicken Parmesan,Dinner,50,4,"Preheat oven to 375°F
+Chicken Parmesan,Chicken,50,4,"Preheat oven to 375°F
  Pound chicken breasts to even thickness
  Dredge chicken in flour, dip in beaten eggs, and coat with breadcrumbs
  Heat olive oil in a skillet and fry chicken until golden brown
  Place chicken in a baking dish, top with tomato sauce and mozzarella
  Bake for 20 minutes until cheese is melted
  Sprinkle with parmesan and serve.",data/recipe_images/chicken_parmesan.png,Tomato sauce,1,cup,pantry
-Chicken Parmesan,Dinner,50,4,"Preheat oven to 375°F
+Chicken Parmesan,Chicken,50,4,"Preheat oven to 375°F
  Pound chicken breasts to even thickness
  Dredge chicken in flour, dip in beaten eggs, and coat with breadcrumbs
  Heat olive oil in a skillet and fry chicken until golden brown
  Place chicken in a baking dish, top with tomato sauce and mozzarella
  Bake for 20 minutes until cheese is melted
  Sprinkle with parmesan and serve.",data/recipe_images/chicken_parmesan.png,Olive oil,2,Tbs,oils
-Shrimp Scampi,Dinner,20,4,"In a large skillet, melt butter with olive oil over medium heat
+Shrimp Scampi,Seafood,20,4,"In a large skillet, melt butter with olive oil over medium heat
  Add minced garlic and red pepper flakes and cook for 1 minute
  Add shrimp and cook until pink
  Stir in white wine and lemon juice and simmer for 2 minutes
  Sprinkle with parsley and serve.",data/recipe_images/shrimp_scampi.png,Shrimp,1,lb.,seafood
-Shrimp Scampi,Dinner,20,4,"In a large skillet, melt butter with olive oil over medium heat
+Shrimp Scampi,Seafood,20,4,"In a large skillet, melt butter with olive oil over medium heat
  Add minced garlic and red pepper flakes and cook for 1 minute
  Add shrimp and cook until pink
  Stir in white wine and lemon juice and simmer for 2 minutes
  Sprinkle with parsley and serve.",data/recipe_images/shrimp_scampi.png,Garlic,4,tsp,produce
-Shrimp Scampi,Dinner,20,4,"In a large skillet, melt butter with olive oil over medium heat
+Shrimp Scampi,Seafood,20,4,"In a large skillet, melt butter with olive oil over medium heat
  Add minced garlic and red pepper flakes and cook for 1 minute
  Add shrimp and cook until pink
  Stir in white wine and lemon juice and simmer for 2 minutes
  Sprinkle with parsley and serve.",data/recipe_images/shrimp_scampi.png,Butter,4,Tbs,dairy
-Shrimp Scampi,Dinner,20,4,"In a large skillet, melt butter with olive oil over medium heat
+Shrimp Scampi,Seafood,20,4,"In a large skillet, melt butter with olive oil over medium heat
  Add minced garlic and red pepper flakes and cook for 1 minute
  Add shrimp and cook until pink
  Stir in white wine and lemon juice and simmer for 2 minutes
  Sprinkle with parsley and serve.",data/recipe_images/shrimp_scampi.png,Olive oil,2,Tbs,oils
-Shrimp Scampi,Dinner,20,4,"In a large skillet, melt butter with olive oil over medium heat
+Shrimp Scampi,Seafood,20,4,"In a large skillet, melt butter with olive oil over medium heat
  Add minced garlic and red pepper flakes and cook for 1 minute
  Add shrimp and cook until pink
  Stir in white wine and lemon juice and simmer for 2 minutes
  Sprinkle with parsley and serve.",data/recipe_images/shrimp_scampi.png,Lemon,1,whole,produce
-Shrimp Scampi,Dinner,20,4,"In a large skillet, melt butter with olive oil over medium heat
+Shrimp Scampi,Seafood,20,4,"In a large skillet, melt butter with olive oil over medium heat
  Add minced garlic and red pepper flakes and cook for 1 minute
  Add shrimp and cook until pink
  Stir in white wine and lemon juice and simmer for 2 minutes
  Sprinkle with parsley and serve.",data/recipe_images/shrimp_scampi.png,Fresh parsley,0.25,cup,produce
-Shrimp Scampi,Dinner,20,4,"In a large skillet, melt butter with olive oil over medium heat
+Shrimp Scampi,Seafood,20,4,"In a large skillet, melt butter with olive oil over medium heat
  Add minced garlic and red pepper flakes and cook for 1 minute
  Add shrimp and cook until pink
  Stir in white wine and lemon juice and simmer for 2 minutes
  Sprinkle with parsley and serve.",data/recipe_images/shrimp_scampi.png,White wine,0.5,cup,pantry
-Shrimp Scampi,Dinner,20,4,"In a large skillet, melt butter with olive oil over medium heat
+Shrimp Scampi,Seafood,20,4,"In a large skillet, melt butter with olive oil over medium heat
  Add minced garlic and red pepper flakes and cook for 1 minute
  Add shrimp and cook until pink
  Stir in white wine and lemon juice and simmer for 2 minutes
  Sprinkle with parsley and serve.",data/recipe_images/shrimp_scampi.png,Red pepper flakes,0.5,tsp,spices
-Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions and set aside
+Beef Stroganoff,Ground Beef,40,4,"Cook egg noodles according to package instructions and set aside
  In a skillet, melt butter over medium heat
  Add sliced mushrooms, onion, and garlic and cook until softened
  Add beef strips and cook until browned
@@ -371,7 +371,7 @@ Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions 
  Add beef broth and simmer until sauce thickens
  Remove from heat and stir in sour cream
  Serve over noodles.",data/recipe_images/beef_stroganoff.png,Beef sirloin,1,lb.,meat
-Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions and set aside
+Beef Stroganoff,Ground Beef,40,4,"Cook egg noodles according to package instructions and set aside
  In a skillet, melt butter over medium heat
  Add sliced mushrooms, onion, and garlic and cook until softened
  Add beef strips and cook until browned
@@ -379,7 +379,7 @@ Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions 
  Add beef broth and simmer until sauce thickens
  Remove from heat and stir in sour cream
  Serve over noodles.",data/recipe_images/beef_stroganoff.png,Mushrooms,8,oz.,produce
-Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions and set aside
+Beef Stroganoff,Ground Beef,40,4,"Cook egg noodles according to package instructions and set aside
  In a skillet, melt butter over medium heat
  Add sliced mushrooms, onion, and garlic and cook until softened
  Add beef strips and cook until browned
@@ -387,7 +387,7 @@ Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions 
  Add beef broth and simmer until sauce thickens
  Remove from heat and stir in sour cream
  Serve over noodles.",data/recipe_images/beef_stroganoff.png,Onion,1,whole,produce
-Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions and set aside
+Beef Stroganoff,Ground Beef,40,4,"Cook egg noodles according to package instructions and set aside
  In a skillet, melt butter over medium heat
  Add sliced mushrooms, onion, and garlic and cook until softened
  Add beef strips and cook until browned
@@ -395,7 +395,7 @@ Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions 
  Add beef broth and simmer until sauce thickens
  Remove from heat and stir in sour cream
  Serve over noodles.",data/recipe_images/beef_stroganoff.png,Garlic,2,tsp,produce
-Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions and set aside
+Beef Stroganoff,Ground Beef,40,4,"Cook egg noodles according to package instructions and set aside
  In a skillet, melt butter over medium heat
  Add sliced mushrooms, onion, and garlic and cook until softened
  Add beef strips and cook until browned
@@ -403,7 +403,7 @@ Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions 
  Add beef broth and simmer until sauce thickens
  Remove from heat and stir in sour cream
  Serve over noodles.",data/recipe_images/beef_stroganoff.png,Beef broth,2,cup,pantry
-Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions and set aside
+Beef Stroganoff,Ground Beef,40,4,"Cook egg noodles according to package instructions and set aside
  In a skillet, melt butter over medium heat
  Add sliced mushrooms, onion, and garlic and cook until softened
  Add beef strips and cook until browned
@@ -411,7 +411,7 @@ Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions 
  Add beef broth and simmer until sauce thickens
  Remove from heat and stir in sour cream
  Serve over noodles.",data/recipe_images/beef_stroganoff.png,Sour cream,0.5,cup,dairy
-Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions and set aside
+Beef Stroganoff,Ground Beef,40,4,"Cook egg noodles according to package instructions and set aside
  In a skillet, melt butter over medium heat
  Add sliced mushrooms, onion, and garlic and cook until softened
  Add beef strips and cook until browned
@@ -419,7 +419,7 @@ Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions 
  Add beef broth and simmer until sauce thickens
  Remove from heat and stir in sour cream
  Serve over noodles.",data/recipe_images/beef_stroganoff.png,Flour,2,Tbs,pantry
-Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions and set aside
+Beef Stroganoff,Ground Beef,40,4,"Cook egg noodles according to package instructions and set aside
  In a skillet, melt butter over medium heat
  Add sliced mushrooms, onion, and garlic and cook until softened
  Add beef strips and cook until browned
@@ -427,7 +427,7 @@ Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions 
  Add beef broth and simmer until sauce thickens
  Remove from heat and stir in sour cream
  Serve over noodles.",data/recipe_images/beef_stroganoff.png,Butter,2,Tbs,dairy
-Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions and set aside
+Beef Stroganoff,Ground Beef,40,4,"Cook egg noodles according to package instructions and set aside
  In a skillet, melt butter over medium heat
  Add sliced mushrooms, onion, and garlic and cook until softened
  Add beef strips and cook until browned
@@ -435,7 +435,7 @@ Beef Stroganoff,Dinner,40,4,"Cook egg noodles according to package instructions 
  Add beef broth and simmer until sauce thickens
  Remove from heat and stir in sour cream
  Serve over noodles.",data/recipe_images/beef_stroganoff.png,Egg noodles,8,oz.,pantry
-Stuffed Bell Peppers,Dinner,60,4,"Preheat oven to 375°F
+Stuffed Bell Peppers,Ground Beef,60,4,"Preheat oven to 375°F
  Cook rice according to package instructions
  Cut tops off bell peppers and remove seeds
  In a skillet, heat olive oil and sauté chopped onion and garlic until translucent
@@ -445,7 +445,7 @@ Stuffed Bell Peppers,Dinner,60,4,"Preheat oven to 375°F
  Top with cheddar cheese
  9. Bake for 30 minutes
  10. Serve hot.",data/recipe_images/stuffed_peppers.png,Bell pepper,4,whole,produce
-Stuffed Bell Peppers,Dinner,60,4,"Preheat oven to 375°F
+Stuffed Bell Peppers,Ground Beef,60,4,"Preheat oven to 375°F
  Cook rice according to package instructions
  Cut tops off bell peppers and remove seeds
  In a skillet, heat olive oil and sauté chopped onion and garlic until translucent
@@ -455,7 +455,7 @@ Stuffed Bell Peppers,Dinner,60,4,"Preheat oven to 375°F
  Top with cheddar cheese
  9. Bake for 30 minutes
  10. Serve hot.",data/recipe_images/stuffed_peppers.png,Ground beef,1,lb.,meat
-Stuffed Bell Peppers,Dinner,60,4,"Preheat oven to 375°F
+Stuffed Bell Peppers,Ground Beef,60,4,"Preheat oven to 375°F
  Cook rice according to package instructions
  Cut tops off bell peppers and remove seeds
  In a skillet, heat olive oil and sauté chopped onion and garlic until translucent
@@ -465,7 +465,7 @@ Stuffed Bell Peppers,Dinner,60,4,"Preheat oven to 375°F
  Top with cheddar cheese
  9. Bake for 30 minutes
  10. Serve hot.",data/recipe_images/stuffed_peppers.png,Rice,1,cup,pantry
-Stuffed Bell Peppers,Dinner,60,4,"Preheat oven to 375°F
+Stuffed Bell Peppers,Ground Beef,60,4,"Preheat oven to 375°F
  Cook rice according to package instructions
  Cut tops off bell peppers and remove seeds
  In a skillet, heat olive oil and sauté chopped onion and garlic until translucent
@@ -475,7 +475,7 @@ Stuffed Bell Peppers,Dinner,60,4,"Preheat oven to 375°F
  Top with cheddar cheese
  9. Bake for 30 minutes
  10. Serve hot.",data/recipe_images/stuffed_peppers.png,Onion,1,whole,produce
-Stuffed Bell Peppers,Dinner,60,4,"Preheat oven to 375°F
+Stuffed Bell Peppers,Ground Beef,60,4,"Preheat oven to 375°F
  Cook rice according to package instructions
  Cut tops off bell peppers and remove seeds
  In a skillet, heat olive oil and sauté chopped onion and garlic until translucent
@@ -485,7 +485,7 @@ Stuffed Bell Peppers,Dinner,60,4,"Preheat oven to 375°F
  Top with cheddar cheese
  9. Bake for 30 minutes
  10. Serve hot.",data/recipe_images/stuffed_peppers.png,Garlic,2,tsp,produce
-Stuffed Bell Peppers,Dinner,60,4,"Preheat oven to 375°F
+Stuffed Bell Peppers,Ground Beef,60,4,"Preheat oven to 375°F
  Cook rice according to package instructions
  Cut tops off bell peppers and remove seeds
  In a skillet, heat olive oil and sauté chopped onion and garlic until translucent
@@ -495,7 +495,7 @@ Stuffed Bell Peppers,Dinner,60,4,"Preheat oven to 375°F
  Top with cheddar cheese
  9. Bake for 30 minutes
  10. Serve hot.",data/recipe_images/stuffed_peppers.png,Tomato sauce,1,cup,pantry
-Stuffed Bell Peppers,Dinner,60,4,"Preheat oven to 375°F
+Stuffed Bell Peppers,Ground Beef,60,4,"Preheat oven to 375°F
  Cook rice according to package instructions
  Cut tops off bell peppers and remove seeds
  In a skillet, heat olive oil and sauté chopped onion and garlic until translucent
@@ -505,7 +505,7 @@ Stuffed Bell Peppers,Dinner,60,4,"Preheat oven to 375°F
  Top with cheddar cheese
  9. Bake for 30 minutes
  10. Serve hot.",data/recipe_images/stuffed_peppers.png,Cheddar cheese,1,cup,dairy
-Stuffed Bell Peppers,Dinner,60,4,"Preheat oven to 375°F
+Stuffed Bell Peppers,Ground Beef,60,4,"Preheat oven to 375°F
  Cook rice according to package instructions
  Cut tops off bell peppers and remove seeds
  In a skillet, heat olive oil and sauté chopped onion and garlic until translucent
@@ -515,35 +515,35 @@ Stuffed Bell Peppers,Dinner,60,4,"Preheat oven to 375°F
  Top with cheddar cheese
  9. Bake for 30 minutes
  10. Serve hot.",data/recipe_images/stuffed_peppers.png,Olive oil,1,Tbs,oils
-Slow Cooker Chili,Dinner,480,6,"Add ground beef, onion, garlic, chili powder, cumin, diced tomatoes, kidney beans, and beef broth to slow cooker
+Slow Cooker Chili,Ground Beef,480,6,"Add ground beef, onion, garlic, chili powder, cumin, diced tomatoes, kidney beans, and beef broth to slow cooker
  Stir to combine
  Cook on low for 8 hours or high for 4 hours
  Serve warm.",data/recipe_images/slow_cooker_chili.png,Ground beef,1,lb.,meat
-Slow Cooker Chili,Dinner,480,6,"Add ground beef, onion, garlic, chili powder, cumin, diced tomatoes, kidney beans, and beef broth to slow cooker
+Slow Cooker Chili,Ground Beef,480,6,"Add ground beef, onion, garlic, chili powder, cumin, diced tomatoes, kidney beans, and beef broth to slow cooker
  Stir to combine
  Cook on low for 8 hours or high for 4 hours
  Serve warm.",data/recipe_images/slow_cooker_chili.png,Onion,1,whole,produce
-Slow Cooker Chili,Dinner,480,6,"Add ground beef, onion, garlic, chili powder, cumin, diced tomatoes, kidney beans, and beef broth to slow cooker
+Slow Cooker Chili,Ground Beef,480,6,"Add ground beef, onion, garlic, chili powder, cumin, diced tomatoes, kidney beans, and beef broth to slow cooker
  Stir to combine
  Cook on low for 8 hours or high for 4 hours
  Serve warm.",data/recipe_images/slow_cooker_chili.png,Garlic,3,tsp,produce
-Slow Cooker Chili,Dinner,480,6,"Add ground beef, onion, garlic, chili powder, cumin, diced tomatoes, kidney beans, and beef broth to slow cooker
+Slow Cooker Chili,Ground Beef,480,6,"Add ground beef, onion, garlic, chili powder, cumin, diced tomatoes, kidney beans, and beef broth to slow cooker
  Stir to combine
  Cook on low for 8 hours or high for 4 hours
  Serve warm.",data/recipe_images/slow_cooker_chili.png,Chili powder,2,Tbs,spices
-Slow Cooker Chili,Dinner,480,6,"Add ground beef, onion, garlic, chili powder, cumin, diced tomatoes, kidney beans, and beef broth to slow cooker
+Slow Cooker Chili,Ground Beef,480,6,"Add ground beef, onion, garlic, chili powder, cumin, diced tomatoes, kidney beans, and beef broth to slow cooker
  Stir to combine
  Cook on low for 8 hours or high for 4 hours
  Serve warm.",data/recipe_images/slow_cooker_chili.png,Cumin,1,Tbs,spices
-Slow Cooker Chili,Dinner,480,6,"Add ground beef, onion, garlic, chili powder, cumin, diced tomatoes, kidney beans, and beef broth to slow cooker
+Slow Cooker Chili,Ground Beef,480,6,"Add ground beef, onion, garlic, chili powder, cumin, diced tomatoes, kidney beans, and beef broth to slow cooker
  Stir to combine
  Cook on low for 8 hours or high for 4 hours
  Serve warm.",data/recipe_images/slow_cooker_chili.png,Diced tomatoes,1,can,pantry
-Slow Cooker Chili,Dinner,480,6,"Add ground beef, onion, garlic, chili powder, cumin, diced tomatoes, kidney beans, and beef broth to slow cooker
+Slow Cooker Chili,Ground Beef,480,6,"Add ground beef, onion, garlic, chili powder, cumin, diced tomatoes, kidney beans, and beef broth to slow cooker
  Stir to combine
  Cook on low for 8 hours or high for 4 hours
  Serve warm.",data/recipe_images/slow_cooker_chili.png,Kidney beans,1,can,pantry
-Slow Cooker Chili,Dinner,480,6,"Add ground beef, onion, garlic, chili powder, cumin, diced tomatoes, kidney beans, and beef broth to slow cooker
+Slow Cooker Chili,Ground Beef,480,6,"Add ground beef, onion, garlic, chili powder, cumin, diced tomatoes, kidney beans, and beef broth to slow cooker
  Stir to combine
  Cook on low for 8 hours or high for 4 hours
  Serve warm.",data/recipe_images/slow_cooker_chili.png,Beef broth,1,cup,pantry

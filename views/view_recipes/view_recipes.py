@@ -7,7 +7,7 @@ This module defines the ViewRecipes class, which displays a list of recipes in a
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QPoint, QRect, QSize, Qt, Signal
 from PySide6.QtWidgets import (QLayout, QScrollArea, QSizePolicy, QSpacerItem,
-                               QVBoxLayout, QWidget)
+                               QVBoxLayout, QHBoxLayout, QWidget)
 
 from database.models.recipe import Recipe
 from ui.components.inputs import SmartComboBox
@@ -47,11 +47,20 @@ class ViewRecipes(QWidget):
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setSpacing(10)
 
+
+
         # create filter & sort dropdowns
-        self.cb_filter = SmartComboBox(list = RECIPE_CATEGORIES, placeholder = "Filter", editable=True)
+        self.lyt_cb = QHBoxLayout()
+        self.lyt_cb.setSpacing(10)
+        self.lyt_cb.setContentsMargins(0, 0, 0, 0)
+
+        self.cb_filter = SmartComboBox(list = RECIPE_CATEGORIES, placeholder = "Filter")
         self.cb_filter.setPlaceholderText("Filter")
         self.cb_sort = SmartComboBox(list = SORT_OPTIONS, placeholder = "Sort")
         self.cb_sort.setPlaceholderText("Sort")
+
+        self.lyt_cb.addWidget(self.cb_filter) # add filter dropdown
+        self.lyt_cb.addWidget(self.cb_sort) # add sort dropdown
 
         # create scroll area
         self.scroll_area = QScrollArea()
@@ -71,9 +80,9 @@ class ViewRecipes(QWidget):
         self.scroll_area.setWidget(self.scroll_container) # add to scroll area
 
         # add widgets to main layout
-        for widget in (self.cb_filter, self.cb_sort, self.scroll_area):
-            self.main_layout.addWidget(widget)
-
+        self.main_layout.addLayout(self.lyt_cb) # add filter & sort dropdowns
+        self.main_layout.addWidget(self.scroll_area)
+        
     def clear_recipe_display(self):
         """Removes all recipe widgets from the layout."""
         while self.flow_layout.count():

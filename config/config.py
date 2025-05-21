@@ -140,7 +140,7 @@ INGREDIENT_CATEGORIES = [
 ]
 
 RECIPE_CATEGORIES = [
-    "Breakfast", "Lunch", "Dinner", "Sauce", "Appetizer", "Snack", "Dessert",
+    "Ground Beef", "Chicken", "Seafood", "Veggie",
 ]
 
 SORT_OPTIONS = [
