@@ -15,6 +15,13 @@ from ui.styles.themes.dark_theme import THEME
 ICON_SIZE  = QSize(20, 20)
 ICON_COLOR = THEME["ICON"]["DEFAULT"]
 
+# ── Meal Planner ──
+MEAL_PLANNER = {
+    "ICON_SIZE": QSize(16, 16),
+    "ICON_ADD":  AppPaths.ICONS_DIR / "add.svg",
+    "VARIANT":   THEME["ICON"]["ACCENT"],
+}
+
 # ── Sidebar Widget ──
 SIDEBAR = {
     "LOGO_SIZE": QSize(180, 180),
@@ -78,13 +85,6 @@ SMART_COMBOBOX = {
     },
 }
 
-# ── Meal Planner ──
-MEAL_PLANNER = {
-    "ICON_SIZE": QSize(16, 16),
-    "ICON_ADD":  AppPaths.ICONS_DIR / "add.svg",
-    "VARIANT":   THEME["ICON"]["ACCENT"],
-}
-
 # ── Recipe Widget ──
 EMPTY_STATE = {
     "ICON_SIZE":     QSize(60, 60),
@@ -127,7 +127,7 @@ MESSAGE_DIALOG = {
     },
 }
 
-# ── Combobox Values ──
+# ── General ──
 MEASUREMENT_UNITS = [
     "bag", "box", "can", "cap-full", "cup", "gallon", "half", "jar",
     "oz.", "pack", "pinch", "pint", "lb.", "quarter", "slice",
@@ -137,6 +137,10 @@ MEASUREMENT_UNITS = [
 INGREDIENT_CATEGORIES = [
     "produce", "meat", "seafood", "pantry", "dairy", "deli", "frozen",
     "bakery", "baking", "condiments", "spices", "other",
+]
+
+MEAL_CATEGORIES = [
+    "All", "Breakfast", "Lunch", "Dinner", "Snack", "Dessert",
 ]
 
 RECIPE_CATEGORIES = [

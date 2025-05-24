@@ -111,6 +111,7 @@
       "**/config/.editorconfig": true,
       "**/config/.env": true,
       "**/config/isort.cfg": true,
+      "**/.pytest_cache": true,
     },
 
     "files.associations": {
@@ -157,6 +158,7 @@
       "models": "Packages",
       "icon_widgets": "Element",
       "dtos": "Packages",
+      "builders": "Tools",
 
       //** Assets **//
       "assets": "Shader",

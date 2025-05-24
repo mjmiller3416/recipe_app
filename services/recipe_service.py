@@ -102,7 +102,8 @@ class RecipeService:
 
     @staticmethod
     def list_filtered(
-        category: str | None = None,
+        recipe_category: str | None = None,
+        meal_category: str | None = None,
         sort_by: str | None = None,
         favorites_only: bool = False
     ) -> list[Recipe]:
@@ -115,13 +116,16 @@ class RecipeService:
         Returns:
             list[Recipe]: List of filtered and sorted recipes.
         """
-        # apply category filter
-        recs = (
-            Recipe.filter(recipe_category=category)
-            if category and category != "All"
-            else Recipe.list_all()
-        )
+        recs = Recipe.list_all()
 
+        # apply recipe category filter
+        if recipe_category and recipe_category != "All":
+            recs = [r for r in recs if r.recipe_category == recipe_category]
+
+        # apply meal category filter
+        if meal_category and meal_category != "All":
+            recs = [r for r in recs if r.meal_category == meal_category]
+        
         # apply favorites filter
         if favorites_only:
             recs = [r for r in recs if r.is_favorite]
