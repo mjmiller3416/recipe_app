@@ -140,24 +140,25 @@ class RecipeService:
     @staticmethod
     def list_filtered(
         category: str | None = None,
-        sort_by: str | None = None
+        sort_by: str | None = None,
+        favorites_only: bool = False
     ) -> list[Recipe]:
-        # 1) filter via SQL if category is truthy & not “All”
-        if category and category != "All":
-            recs = Recipe.filter(recipe_category=category)
-        else:
-            recs = RecipeService.list_all()
+        # 1. Filter by category first
+        recs = (
+            Recipe.filter(recipe_category=category)
+            if category and category != "All"
+            else RecipeService.list_all()
+        )
 
-        # 2) then sort in‐memory, based on your sort keys
+        # 2. Apply favorites filter
+        if favorites_only:
+            recs = [r for r in recs if r.is_favorite]
+
+        # 3. Apply sort
         match sort_by:
-            case "Name ↑":
+            case "A-Z":
                 recs.sort(key=lambda r: r.recipe_name.lower())
-            case "Name ↓":
+            case "Z-A":
                 recs.sort(key=lambda r: r.recipe_name.lower(), reverse=True)
-            case "Newest":
-                recs.sort(key=lambda r: r.created_at, reverse=True)
-            case "Oldest":
-                recs.sort(key=lambda r: r.created_at)
-            # …etc.
 
         return recs

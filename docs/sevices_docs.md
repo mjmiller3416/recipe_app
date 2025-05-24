@@ -1,6 +1,6 @@
 # 📦 Services Package Overview
 
-This section documents the structure and functionality of the services package for the MealGenie application. This package provides a higher-level API for interacting with the application's data, encapsulating business logic and data manipulation tasks.
+This section documents the structure and functionality of the services package for the MealGenie application. This package provides a higher-level API for interacting with the application\'s data, encapsulating business logic and data manipulation tasks.
 
 ---
 
@@ -9,10 +9,48 @@ This section documents the structure and functionality of the services package f
 ```
 └── 📁services
     ├── __init__.py
+    ├── ingredient_service.py
     ├── meal_service.py
+    ├── planner_service.py
     ├── recipe_service.py
     └── shopping_service.py
 ```
+
+---
+
+## 📄 ingredient_service.py
+
+**Path:** ingredient_service.py
+
+### 📝 Purpose
+
+This module provides service methods for managing `Ingredient` entities. It includes functions for listing, finding, and creating ingredients, often with transactional support to ensure data integrity.
+
+### ⚙️ Core Class: `IngredientService`
+
+This class provides static methods to interact with `Ingredient` data.
+
+#### Methods
+
+-   **`list_all_ingredient_names(connection: Optional[sqlite3.Connection] = None) -> list[str]`**:
+    -   Retrieves a list of all distinct ingredient names from the `ingredients` table.
+    -   Can optionally use an existing database `connection`.
+
+-   **`find_matching_ingredients(query: str, connection: Optional[sqlite3.Connection] = None) -> list[Ingredient]`**:
+    -   Searches for ingredients whose names match the given `query` (case-insensitive, partial match).
+    -   Returns a list of `Ingredient` model instances.
+    -   Can optionally use an existing database `connection`.
+
+-   **`get_or_create_ingredient(name: str, category: str, connection: Optional[sqlite3.Connection] = None) -> Ingredient`**:
+    -   Attempts to find an existing ingredient by `name` and `category`.
+    -   If found, returns the existing `Ingredient` instance.
+    -   If not found, creates a new `Ingredient` with the given details and returns it.
+    -   This operation is transactional: if no `connection` is provided, it creates one to ensure atomicity.
+
+-   **`build_payload_from_widget(widget) -> dict`**:
+    -   A utility method designed to extract ingredient data from a UI widget (presumably an `IngredientWidget`).
+    -   It formats this data into a dictionary (payload) suitable for use with other service methods, such as `RecipeService.create_recipe_with_ingredients()`.
+    -   The payload includes `ingredient_name`, `ingredient_category`, `unit`, and `quantity`.
 
 ---
 
@@ -89,6 +127,44 @@ This class provides static methods to interact with `MealSelection` data.
     -   Returns the `MealSelection` object if found.
     -   If no meal is found with the given ID, it logs a warning and returns `None`.
     -   Logs the load event.
+
+---
+
+## 📄 planner_service.py
+
+**Path:** planner_service.py
+
+### 📝 Purpose
+
+This module provides services for managing the state of the Meal Planner feature. It handles loading and saving the list of meal IDs that are currently active or selected in the planner.
+
+### ⚙️ Core Class: `PlannerService`
+
+This class uses static methods to manage the `SavedMealState` data.
+
+#### Methods
+
+-   **`load_saved_meal_ids(connection: Optional[sqlite3.Connection] = None) -> List[int]`**:
+    -   Retrieves all `meal_id`s stored in the `SavedMealState` table.
+    -   These represent the meals that were previously active in the meal planner.
+    -   Returns a list of integers (meal IDs).
+    -   Can optionally use an existing database `connection`.
+    -   Logs the loaded IDs.
+
+-   **`save_active_meal_ids(meal_ids: List[int], connection: Optional[sqlite3.Connection] = None) -> None`**:
+    -   Saves a list of `meal_ids` as the current active state of the meal planner.
+    -   This operation is atomic: it first deletes all existing entries in `SavedMealState` and then inserts the new `meal_ids`.
+    -   If no `connection` is provided, it creates one to ensure the transactionality of clearing and saving.
+    -   Logs the saved IDs.
+
+-   **`clear_planner_state(connection: Optional[sqlite3.Connection] = None) -> None`**:
+    -   Deletes all entries from the `SavedMealState` table, effectively clearing the saved state of the meal planner.
+    -   If no `connection` is provided, it creates one for the transaction.
+    -   Logs the clear event.
+
+-   **`validate_meal_ids(meal_ids: List[int]) -> List[int]`**:
+    -   Checks a list of `meal_ids` against the `MealSelection` table to ensure they correspond to existing meals.
+    -   Returns a new list containing only the `meal_ids` that are valid (i.e., exist in the database).
 
 ---
 

@@ -140,11 +140,11 @@ INGREDIENT_CATEGORIES = [
 ]
 
 RECIPE_CATEGORIES = [
-    "Ground Beef", "Chicken", "Seafood", "Veggie",
+    "All", "Ground Beef", "Chicken", "Seafood", "Veggie",
 ]
 
 SORT_OPTIONS = [
-    "A-Z", "Z-A", "Newest", "Oldest", "Favorites"
+    "A-Z", "Z-A"
 ]
 
 # ── Validation Rules ──
