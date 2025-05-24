@@ -19,7 +19,9 @@ This section documents the structure and functionality of the database folder fo
     │   ├── 002_meal_logs.sql
     │   ├── 003_recipe_history.sql
     │   ├── 004_saved_meal_state.sql
-    │   └── 005_shopping_state.sql
+    │   ├── 005_shopping_state.sql
+    │   ├── 006_add_created_at.sql
+    │   └── 007_add_favorites.sql
     └── 📁models
         ├── __init__.py
         ├── ingredient.py
@@ -29,8 +31,11 @@ This section documents the structure and functionality of the database folder fo
         ├── recipe_ingredient_detail.py
         ├── recipe_ingredient.py
         ├── recipe.py
+        ├── saved_meal_state.py
         ├── schema_version.py
+        ├── shopping_item.py
         ├── shopping_list.py
+        ├── shopping_state.py
         └── weekly_menu.py
 ```
 
@@ -219,6 +224,14 @@ Adds a `meal_state` table to store the state of saved meals in the database.
 Creates the `shopping_states` table to persist checkbox state for ingredients, including `key`, `quantity`, `unit`, and `checked` status.
 The purpose of this table is to store the existing state of the ShoppingList (e.g., if an ingredient is 'checked' or not). Additionally, its `quantity` and `unit` fields are used when the ShoppingList is refreshed. This helps determine if a previously 'checked' item should remain checked or be unchecked if, for example, a new recipe alters the total required quantity of that ingredient.
 
+### 📜 `006_add_created_at.sql`
+
+Adds a `created_at` column to the `recipes` table with a default timestamp value.
+
+### 📜 `007_add_favorites.sql`
+
+Adds an `is_favorite` boolean column to the `recipes` table to track favorite recipes.
+
 > All migrations typically use `IF NOT EXISTS` to prevent duplicate table creation.
 
 ---
@@ -228,6 +241,49 @@ The purpose of this table is to store the existing state of the ShoppingList (e.
 **Path:** models
 
 This section documents each Pydantic-backed model in the models directory. These models define the structure, validation, and behavior for interacting with the MealGenie database schema. They inherit from `ModelBase`.
+
+---
+
+## 📄 `saved_meal_state.py`
+
+**Path:** saved_meal_state.py
+**Represents**: Tracks which meals are currently active/selected in the meal planner.
+
+-   🔸 `meal_id`: int (foreign key to `MealSelection`).
+-   🔹 `all()` — Fetches all saved meal states with debug logging.
+-   🔹 `clear_all()` — Deletes all entries from the saved meal state table.
+
+---
+
+## 📄 `shopping_item.py`
+
+**Path:** shopping_item.py
+**Represents**: A unified data model for shopping list items that combines ingredients from recipes and manual entries.
+
+-   🔸 `ingredient_name`: required string.
+-   🔸 `quantity`: float (must be >= 0).
+-   🔸 `unit`: optional string.
+-   🔸 `category`: optional string.
+-   🔸 `source`: literal "recipe" or "manual".
+-   🔸 `have`: boolean (default False).
+-   🔹 `label()` — Returns formatted display label (e.g., "2 cups • Flour").
+-   🔹 `toggle_have()` — Toggles the 'have' status for checkbox state.
+-   🔹 `key()` — Returns normalized key for grouping ingredients (name + unit).
+-   🔹 `to_model()` — Converts to `ShoppingList` DB model (manual items only).
+
+---
+
+## 📄 `shopping_state.py`
+
+**Path:** shopping_state.py
+**Represents**: Persists the checked state and quantities of shopping list items across sessions.
+
+-   🔸 `key`: string (normalized identifier for grouping).
+-   🔸 `quantity`: float.
+-   🔸 `unit`: string.
+-   🔸 `checked`: boolean (default False).
+-   🔹 `get_state(key, connection=None)` — Fetches saved state by key.
+-   🔹 `update_state(key, quantity, unit, checked, connection=None)` — Adds or updates checkbox state for a shopping item.
 
 ---
 

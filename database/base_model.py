@@ -17,7 +17,7 @@ T = TypeVar("T", bound="ModelBase")
 
 # ── Model Base Class ───────────────────────────────────────────────────────────
 class ModelBase(PydanticBaseModel):
-    """ Base class providing generic CRUD operations for Pydantic models. """
+    """Base class providing generic CRUD operations for Pydantic models."""
 
     id: Optional[int] = None
 
@@ -31,7 +31,7 @@ class ModelBase(PydanticBaseModel):
 
     @classmethod
     def all(cls: Type[T]) -> List[T]:
-        """ Fetch all records from the table. """
+        """Fetch all records from the table."""
         return cls.raw_query(f"SELECT * FROM {cls.table_name()}")
 
     @classmethod
@@ -49,7 +49,16 @@ class ModelBase(PydanticBaseModel):
         params: Tuple[Any, ...] = (),
         connection: Optional[sqlite3.Connection] = None
     ) -> List[T]:
-        """ Execute raw SQL and return model instances. """
+        """
+        Execute raw SQL and return model instances.
+        
+        Args:
+            sql (str): The SQL query to execute.
+            params (Tuple[Any, ...]): Parameters for the SQL query.
+            connection (Optional[sqlite3.Connection]): Optional database connection.
+        Returns:
+            List[T]: List of model instances matching the query.
+        """
         def _run(conn: sqlite3.Connection) -> List[T]:
             cursor = conn.execute(sql, params)
             rows = cursor.fetchall()
@@ -68,7 +77,16 @@ class ModelBase(PydanticBaseModel):
         connection: Optional[sqlite3.Connection] = None,
         **fields: Any
     ) -> Optional[T]:
-        """ Shortcut to patch specific columns on a record. """
+        """
+        Shortcut to patch specific columns on a record.
+        
+        Args:
+            id (int): The ID of the record to update.
+            connection (Optional[sqlite3.Connection]): Optional database connection.
+            **fields: Column-value pairs to update.
+        Returns:
+            Optional[T]: The updated model instance, or None if not found.
+        """
         instance = cls.get(id)
         if not instance:
             return None
@@ -78,6 +96,14 @@ class ModelBase(PydanticBaseModel):
 
     @classmethod
     def exists(cls, **fields: Any) -> bool:
+        """
+        Check if a record exists with the given field-value pairs.
+
+        Args:
+            **fields: Column-value pairs to check for existence.
+        Returns:
+            bool: True if a matching record exists, False otherwise.
+        """
         cols = " AND ".join(f"{k}=?" for k in fields)
         vals = tuple(fields.values())
         sql = f"SELECT 1 FROM {cls.table_name()} WHERE {cols} LIMIT 1"
@@ -86,7 +112,7 @@ class ModelBase(PydanticBaseModel):
         return bool(row)
 
     def save(self, connection: Optional[sqlite3.Connection] = None) -> T:
-        """ Insert or replace this model into the database. """
+        """Insert or replace this model into the database."""
         data = self.model_dump(exclude_none=True)
         cols, vals = zip(*data.items())
         placeholders = ", ".join("?" for _ in cols)
@@ -107,7 +133,7 @@ class ModelBase(PydanticBaseModel):
             return _run(conn)
 
     def delete(self, connection: Optional[sqlite3.Connection] = None) -> None:
-        """ Delete this model's record from the database. """
+        """Delete this model's record from the database."""
         if self.id is None:
             raise ValueError("Cannot delete unsaved record")
         sql = f"DELETE FROM {self.table_name()} WHERE id = ?"
@@ -123,7 +149,7 @@ class ModelBase(PydanticBaseModel):
 
     @classmethod
     def first(cls: Type[T], **filters: Any) -> Optional[T]:
-        """ Return the first matching row (or None). """
+        """Return the first matching row (or None)."""
         results = cls.filter(**filters)
         return results[0] if results else None
 
@@ -131,11 +157,16 @@ class ModelBase(PydanticBaseModel):
     def filter(cls: Type[T], **filters: Any) -> List[T]:
         """
         SQL‐powered filter: only returns rows where each column == value.
+
+        Args:
+            **filters: Column-value pairs to filter by.
+        Returns:
+            List[T]: List of model instances matching the filters.
         """
         if not filters:
             return cls.all()
 
-        # Build WHERE clause: "col1 = ? AND col2 = ?"
+        # build WHERE clause: "col1 = ? AND col2 = ?"
         cols = " AND ".join(f"{k}=?" for k in filters)
         sql = f"SELECT * FROM {cls.table_name()} WHERE {cols}"
         params = tuple(filters.values())
@@ -143,5 +174,27 @@ class ModelBase(PydanticBaseModel):
 
     @classmethod
     def get_by_field(cls: Type[T], **fields: Any) -> Optional[T]:
-        """ Return a single row matching the given field-value pairs. """
+        """Return a single row matching the given field-value pairs."""
         return cls.first(**fields)
+    
+    @classmethod
+    def join_query(
+        cls: Type[T],
+        join_clause: str,
+        where_clause: str = "",
+        params: Tuple[Any, ...] = ()
+    ) -> List[T]:
+        """
+        Execute a JOIN query and return model instances.
+        
+        Args:
+            join_clause (str): The JOIN clause to use in the SQL query.
+            where_clause (str): Optional WHERE clause to filter results.
+            params (Tuple[Any, ...]): Parameters for the SQL query.
+        Returns:
+            List[T]: List of model instances matching the query.
+        """
+        base_sql = f"SELECT {cls.table_name()}.* FROM {cls.table_name()} {join_clause}"
+        if where_clause:
+            base_sql += f" WHERE {where_clause}"
+        return cls.raw_query(base_sql, params)

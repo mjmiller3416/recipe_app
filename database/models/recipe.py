@@ -16,12 +16,12 @@ from database.base_model import ModelBase
 from database.db import get_connection
 from database.models.ingredient import Ingredient
 from database.models.recipe_ingredient import RecipeIngredient
-from database.models.recipe_ingredient_detail import RecipeIngredientDetail
+from database.models.recipe_ingredient import IngredientDetail
 
 if TYPE_CHECKING:
     from database.models.ingredient import Ingredient
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── Recipe Model Definition ─────────────────────────────────────────────────────
 class Recipe(ModelBase):
     id: Optional[int]         = None
     recipe_name: str          = Field(..., min_length=1)
@@ -44,14 +44,48 @@ class Recipe(ModelBase):
         return values
 
     @classmethod
+    def recent(cls, days: int = 30) -> List[Recipe]:
+        """
+        Recipes created in the last *n* days.
+        
+        Args:
+            days (int): Number of days to look back for recent recipes.
+        Returns:
+            List[Recipe]: List of recipes created in the last `days` days.
+        """
+        sql = (
+            "SELECT * FROM recipes "
+            "WHERE DATE(created_at) >= DATE('now', ? || ' days') "
+            "ORDER BY created_at DESC"
+        )
+        return Recipe.raw_query(sql, params=(-days,))
+
+    @classmethod  
+    def list_all(cls) -> List[Recipe]:
+        """
+        Return every recipe in creation-date order.
+        
+        Returns:
+            List[Recipe]: List of all recipes ordered by creation date.
+        """
+        sql = "SELECT * FROM recipes ORDER BY created_at DESC"
+        return Recipe.raw_query(sql)
+
+    @classmethod
     def suggest(cls, days: int) -> List[Recipe]:
         """
         Return all recipes whose last_cooked is None or older than `days` ago.
+
+        Args:
+            days (int): Number of days to consider for suggesting recipes.
+        Returns:
+            List[Recipe]: List of recipes that have not been cooked in the last `days` days.
         """
         cutoff = datetime.now() - timedelta(days=days)
         return [r for r in cls.all() if (last := r.last_cooked()) is None or last <= cutoff]
 
     def formatted_time(self) -> str:
+        """Return total_time formatted as "Xh Ym" or "Ym" if less than 1 hour."""
         if not self.total_time:
             return ""
         hrs, mins = divmod(self.total_time, 60)
@@ -65,7 +99,16 @@ class Recipe(ModelBase):
         self,
         connection: Optional[sqlite3.Connection] = None
     ) -> List[RecipeIngredient]:
-        """Return all RecipeIngredient link objects for this recipe."""
+        """
+        Return all RecipeIngredient link objects for this recipe.
+        
+        Args:
+            connection (Optional[sqlite3.Connection]): Optional database connection.
+        Returns:
+            List[RecipeIngredient]: List of RecipeIngredient models for this recipe.
+        """
+        if not self.id:
+            raise ValueError("Recipe must be saved before fetching ingredients.")
         sql = (
             "SELECT * FROM recipe_ingredients WHERE recipe_id = ?"
         )
@@ -75,7 +118,14 @@ class Recipe(ModelBase):
         self,
         connection: Optional[sqlite3.Connection] = None
     ) -> List[Ingredient]:
-        """Return all Ingredient models linked to this recipe."""
+        """
+        Return all Ingredient models linked to this recipe.
+        
+        Args:
+            connection (Optional[sqlite3.Connection]): Optional database connection.
+        Returns:
+            List[Ingredient]: List of Ingredient models for this recipe.
+        """
         links = self.get_recipe_ingredients(connection=connection)
         return [Ingredient.get(link.ingredient_id) for link in links]
 
@@ -84,8 +134,12 @@ class Recipe(ModelBase):
         connection: Optional[sqlite3.Connection] = None
     ) -> Optional[datetime]:
         """
-        Return the most recent cooked_at timestamp for this recipe,
-        or None if it’s never been cooked.
+        Return the last time this recipe was cooked, or None if never cooked.
+
+        Args:
+            connection (Optional[sqlite3.Connection]): Optional database connection.
+        Returns:
+            Optional[datetime]: The last cooked datetime, or None if never cooked.
         """
         sql = (
             "SELECT MAX(cooked_at) AS last FROM recipe_histories"
@@ -103,28 +157,22 @@ class Recipe(ModelBase):
             return _run(conn)
 
     def get_directions_list(self) -> list[str]:
-        """
-        Return each non-empty line as a step.
-        """
+        """Return each non-empty line as a step."""
         if not self.directions:
             return []
         return [line.strip() for line in self.directions.splitlines() if line.strip()]
 
     def get_ingredient_details(
-        self,
-        connection: Optional[sqlite3.Connection] = None
-    ) -> list[RecipeIngredientDetail]:
+            self, 
+            connection: Optional[sqlite3.Connection] = None
+    ) -> List[IngredientDetail]:
         """
-        Fetch ingredient name, category, quantity, and unit for this recipe in one JOIN.
+        Get ingredient details using the consolidated approach.
+        
+        Args:
+            connection (Optional[sqlite3.Connection]): Optional database connection.
+        Returns:
+            List[IngredientDetail]: List of ingredient details for this recipe.
         """
-        sql = """
-        SELECT
-          i.ingredient_name,
-          i.ingredient_category,
-          ri.quantity,
-          ri.unit
-        FROM recipe_ingredients ri
-        JOIN ingredients i ON ri.ingredient_id = i.id
-        WHERE ri.recipe_id = ?
-        """
-        return RecipeIngredientDetail.raw_query(sql, (self.id,), connection=connection)
+        recipe_ingredients = self.get_recipe_ingredients(connection)
+        return [ri.get_ingredient_detail() for ri in recipe_ingredients]

@@ -156,6 +156,7 @@
       "services": "Tasks",
       "models": "Packages",
       "icon_widgets": "Element",
+      "dtos": "Packages",
 
       //** Assets **//
       "assets": "Shader",

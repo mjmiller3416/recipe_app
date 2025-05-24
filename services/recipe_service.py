@@ -5,15 +5,12 @@ This module provides the RecipeService class for transactional recipe operations
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 import sqlite3
-from typing import List, Optional
-
-from pydantic import BaseModel, Field, field_validator
 
 from database.db import get_connection
 from database.models.ingredient import Ingredient
 from database.models.recipe import Recipe
 from database.models.recipe_ingredient import RecipeIngredient
-from database.models.recipe_ingredient_detail import RecipeIngredientDetail
+from services.dtos.recipe_dtos import RecipeCreateDTO
 
 # ── Exceptions ──────────────────────────────────────────────────────────────────
 class RecipeSaveError(Exception):
@@ -24,64 +21,38 @@ class DuplicateRecipeError(Exception):
     """Raised when trying to save a recipe that already exists."""
     pass
 
-# ── DTO for Ingredient Input ─────────────────────────────────────────────────────
-class RecipeIngredientInputDTO(BaseModel):
-    ingredient_name: str = Field(..., min_length=1)
-    ingredient_category: str = Field(..., min_length=1)
-    quantity: Optional[float] = None
-    unit: Optional[str] = None
-
-    @field_validator("ingredient_name", "ingredient_category", mode="before")
-    def strip_strings(cls, v: str) -> str:
-        return v.strip()
-
 # ── Recipe Service Definition ───────────────────────────────────────────────────
 class RecipeService:
-    @staticmethod
-    def list_all() -> List[Recipe]:
-        """Return every recipe in creation-date order."""
-        sql = "SELECT * FROM recipes ORDER BY created_at DESC"
-        return Recipe.raw_query(sql)
-
-    @staticmethod
-    def get(recipe_id: int) -> Optional[Recipe]:
-        """Fetch a single recipe or None by ID."""
-        return Recipe.get(recipe_id)
-
-    @staticmethod
-    def recent(days: int = 30) -> List[Recipe]:
-        """Recipes created in the last *n* days."""
-        sql = (
-            "SELECT * FROM recipes "
-            "WHERE DATE(created_at) >= DATE('now', ? || ' days') "
-            "ORDER BY created_at DESC"
-        )
-        return Recipe.raw_query(sql, params=(-days,))
-
+    """Service class for transactional recipe operations."""
     @staticmethod
     def create_recipe_with_ingredients(
-        recipe_data: dict,
-        ingredients: List[RecipeIngredientInputDTO],
+        recipe_dto: RecipeCreateDTO,  # Use the DTO instead of dict
     ) -> Recipe:
         """
         Atomically create a recipe plus all ingredient links.
+
+        Args:
+            recipe_dto (RecipeCreateDTO): DTO containing recipe and ingredient data.
+        Returns:
+            Recipe: The created recipe object.
         """
-        # Check for duplicate recipe name
+        # check if recipe already exists
         if Recipe.exists(
-        recipe_name=recipe_data["recipe_name"],
-        recipe_category=recipe_data["recipe_category"]
+            recipe_name=recipe_dto.recipe_name,
+            recipe_category=recipe_dto.recipe_category
         ):
-            raise DuplicateRecipeError(f"Recipe '{recipe_data['recipe_name']}' already exists.")
+            raise DuplicateRecipeError(f"Recipe '{recipe_dto.recipe_name}' already exists.")
 
         try:
             with get_connection() as conn:
-                # Validate and save recipe
+                # convert DTO to model and save recipe
+                recipe_data = recipe_dto.model_dump(exclude={'ingredients'})
                 recipe = Recipe.model_validate(recipe_data)
                 recipe.save(connection=conn)
 
-                # Process each ingredient DTO
-                for ing in ingredients:
-                    # Try to find existing ingredient
+                # process each ingredient
+                for ing in recipe_dto.ingredients:
+                    # check if ingredient already exists
                     existing = Ingredient.get_by_field(
                         ingredient_name=ing.ingredient_name,
                         ingredient_category=ing.ingredient_category,
@@ -94,7 +65,7 @@ class RecipeService:
                             ingredient_category=ing.ingredient_category,
                         ).save(connection=conn)
 
-                    # Link ingredient to recipe
+                    # link ingredient to recipe
                     RecipeIngredient(
                         recipe_id=recipe.id,
                         ingredient_id=ingredient.id,
@@ -103,33 +74,25 @@ class RecipeService:
                     ).save(connection=conn)
 
                 return recipe
-            
+                
         except sqlite3.Error as db_err:
-            # any constraint violation, disk full, etc. bubbles in here
+            # raise custom error with context
             raise RecipeSaveError(
-                f"Unable to save recipe '{recipe_data.get('recipe_name')}'"
+                f"Unable to save recipe '{recipe_dto.recipe_name}'" 
             ) from db_err
-        
-    @staticmethod
-    def get_ingredient_details(recipe_id: int) -> List[RecipeIngredientDetail]:
-        """
-        Return flattened ingredient details for a recipe.
-        """
-        sql = """
-        SELECT
-          i.ingredient_name,
-          i.ingredient_category,
-          ri.quantity,
-          ri.unit
-        FROM recipe_ingredients ri
-        JOIN ingredients i ON ri.ingredient_id = i.id
-        WHERE ri.recipe_id = ?
-        """
-        return RecipeIngredientDetail.raw_query(sql, (recipe_id,))
 
     @staticmethod
     def toggle_favorite(recipe_id: int) -> Recipe:
-        """Flip the is_favorite flag and persist."""
+        """
+        Flip the is_favorite flag and persist.
+        
+        Args:
+            recipe_id (int): The ID of the recipe to toggle.
+        Returns:
+            Recipe: The updated recipe object.
+        Raises:
+            ValueError: If no recipe with the given ID exists.
+        """
         recipe = Recipe.get(recipe_id)
         if not recipe:
             raise ValueError(f"No recipe with id={recipe_id}")
@@ -143,18 +106,27 @@ class RecipeService:
         sort_by: str | None = None,
         favorites_only: bool = False
     ) -> list[Recipe]:
-        # 1. Filter by category first
+        """
+        List recipes filtered by category, sorted, and optionally favorited.
+        Args:
+            category (str | None): Category to filter by, or None for all.
+            sort_by (str | None): Sort order, e.g. "A-Z", "Z-A".
+            favorites_only (bool): If True, only return favorite recipes.
+        Returns:
+            list[Recipe]: List of filtered and sorted recipes.
+        """
+        # apply category filter
         recs = (
             Recipe.filter(recipe_category=category)
             if category and category != "All"
-            else RecipeService.list_all()
+            else Recipe.list_all()
         )
 
-        # 2. Apply favorites filter
+        # apply favorites filter
         if favorites_only:
             recs = [r for r in recs if r.is_favorite]
 
-        # 3. Apply sort
+        # apply sorting
         match sort_by:
             case "A-Z":
                 recs.sort(key=lambda r: r.recipe_name.lower())

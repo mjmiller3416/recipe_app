@@ -9,8 +9,7 @@ from typing import List
 # 🔹 Local Imports
 from database.db import get_connection
 from database.models.recipe import Recipe as RecipeModel
-from database.models.recipe_ingredient_detail import \
-    RecipeIngredientDetail as IngredientModel
+from database.models.recipe_ingredient import IngredientDetail
 
 # Add root directory to sys.path (adjust as needed!)
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
@@ -44,7 +43,7 @@ def insert_recipes_from_csv(csv_file: str) -> None:
                 }
 
             # Add ingredient
-            recipes[name]["ingredients"].append(IngredientModel(
+            recipes[name]["ingredients"].append(IngredientDetail(
                 ingredient_name=row["ingredient_name"],
                 ingredient_category=row["ingredient_category"],
                 quantity=float(row["quantity"]),
@@ -57,7 +56,7 @@ def insert_recipes_from_csv(csv_file: str) -> None:
 
     for name, data in recipes.items():
         recipe = data["recipe_data"]
-        ingredients: List[IngredientModel] = data["ingredients"]
+        ingredients: List[IngredientDetail] = data["ingredients"]
 
         if RecipeModel.exists(recipe_name=recipe.recipe_name, recipe_category=recipe.recipe_category):
             print(f"⚠️ Skipped existing Recipe: {name}")
