@@ -13,7 +13,7 @@ from pathlib import Path
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon, QPixmap
 
-from core.controllers.icon_controller import IconController
+from theme_loader import IconController
 from ui.iconkit.loader import SVGLoader
 
 

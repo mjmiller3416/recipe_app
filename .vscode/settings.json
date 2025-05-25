@@ -149,6 +149,7 @@
       "controllers": "Console",
       "inputs": "Src-tauri",
       "todo": "Tasks",
+      "theme_loader": "Plugin",
 
       //** Subfolders **//
       "app_helpers": "App",

@@ -9,8 +9,8 @@ from PySide6.QtCore import QRegularExpression, QSize
 from PySide6.QtGui import QRegularExpressionValidator
 
 from config.paths import AppPaths
-from ui.styles.themes.dark_theme import THEME
-from ui.styles.utils.qss_loader import ThemedStyleLoader
+from theme_loader.themes.dark_theme import THEME
+from theme_loader.utils.qss_loader import ThemedStyleLoader
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 STYLE_LOADER = ThemedStyleLoader(THEME)

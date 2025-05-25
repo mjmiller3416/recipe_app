@@ -10,7 +10,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QToolButton
 
 from config import ICON_SIZE
-from core.controllers.icon_controller import IconController
+from theme_loader import IconController
 from ui.iconkit.effects import ApplyHoverEffects
 from ui.iconkit.icon_mixin import IconMixin
 

@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (QDialog, QDialogButtonBox,
                                QGraphicsDropShadowEffect, QGridLayout, QLabel,
                                QSizePolicy, QSpacerItem, QVBoxLayout)
 
-from core.controllers import ThemeController
+from theme_loader import ThemeController
 from core.helpers.debug_logger import DebugLogger
 from ui.iconkit import Icon
 from config import MESSAGE_DIALOG

@@ -9,9 +9,9 @@ from weakref import WeakSet
 
 from PySide6.QtCore import QObject, Signal
 
-from core.controllers.theme_controller import ThemeController
+from theme_loader import ThemeController
 from core.helpers.debug_logger import DebugLogger
-from core.helpers.singleton_mixin import SingletonMixin
+from theme_loader.utils import SingletonMixin
 from core.helpers.types import ThemedIcon
 
 

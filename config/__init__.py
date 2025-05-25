@@ -10,11 +10,11 @@ from .config import (DEBUG_LAYOUT_BORDERS, EMPTY_STATE, FLOAT, ICON_COLOR,
                      RECIPE_CARD, RECIPE_CATEGORIES, RECIPE_DIALOG, SEARCH,
                      SIDEBAR, TITLE_BAR, MESSAGE_DIALOG, SMART_COMBOBOX,
                      SORT_OPTIONS, ADD_RECIPES)
-from .paths import AppPaths, QssPaths
+from .paths import AppPaths
 from .user_settings import UserSettings
 
 __all__ = [
-    "AppPaths", "QssPaths",
+    "AppPaths",
     "UserSettings",
     "ICON_SIZE", "INGREDIENT_CATEGORIES",
     "MEASUREMENT_UNITS", "RECIPE_CATEGORIES",

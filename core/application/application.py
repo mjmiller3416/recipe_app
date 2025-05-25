@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
                                QWidget)
 
 from core.controllers.animation_controller import AnimationManager
-from core.controllers.theme_controller import ThemeController
+from theme_loader import ThemeController
 from core.helpers import DebugLogger
 from services.planner_service import PlannerService
 from services.shopping_service import ShoppingService
