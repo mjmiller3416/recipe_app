@@ -39,34 +39,32 @@ class QssPaths:
         WIDGET_FRAME      = AppPaths.qss_path("widget_frame.qss")
 
     @staticmethod
-    def get_view_styles() -> dict:
+    def get_styles() -> dict:
         """
         Returns a mapping of view names to their associated QSS paths.
         """
         return {
-            "application": [
-                QssPaths.BASE,
+            "core": [
                 QssPaths.APPLICATION,
-                QssPaths.Components.TITLE_BAR,
-                QssPaths.Components.SIDEBAR_WIDGET,
-                QssPaths.Components.SEARCH_WIDGET,
+                QssPaths.BASE,
             ],
-            "dashboard": [QssPaths.Views.DASHBOARD],
-            "add_recipes": [
+            "views": [
                 QssPaths.Views.ADD_RECIPES,
-                QssPaths.Components.MESSAGE_DIALOG,
-                QssPaths.Components.INGREDIENT_WIDGET,
-                QssPaths.Components.SMART_COMBOBOX
-            ],
-            "view_recipes": [
-                QssPaths.Views.VIEW_RECIPES,
-                QssPaths.Components.RECIPE_WIDGET,
-                QssPaths.Components.RECIPE_DIALOG,
-                QssPaths.Components.SMART_COMBOBOX,
-            ],
-            "meal_planner": [
+                QssPaths.Views.DASHBOARD,
                 QssPaths.Views.MEAL_PLANNER,
-                QssPaths.Components.EMPTY_STATE_FRAME
-                ],
-            "shopping_list": [QssPaths.Views.SHOPPING_LIST],
+                QssPaths.Views.SHOPPING_LIST,
+                QssPaths.Views.VIEW_RECIPES,
+            ],
+            "components": [
+                QssPaths.Components.EMPTY_STATE_FRAME,
+                QssPaths.Components.INGREDIENT_WIDGET,
+                QssPaths.Components.MESSAGE_DIALOG,
+                QssPaths.Components.RECIPE_DIALOG,
+                QssPaths.Components.RECIPE_WIDGET,
+                QssPaths.Components.SEARCH_WIDGET,
+                QssPaths.Components.SIDEBAR_WIDGET,
+                QssPaths.Components.SMART_COMBOBOX,
+                QssPaths.Components.TITLE_BAR,
+                QssPaths.Components.WIDGET_FRAME,
+            ],
         }

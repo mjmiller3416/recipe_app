@@ -12,6 +12,7 @@ from ui.components.dialogs import MessageDialog
 from ui.components.inputs import SmartComboBox
 from ui.tools import clear_error_styles, dynamic_validation
 from ui.tools.form_utilities import populate_combobox
+from ui.components.widget_frame import WidgetFrame
 from .ingredient_widget import IngredientWidget
 from .add_recipe_image import AddRecipeImage
 
@@ -140,16 +141,17 @@ class AddRecipes(QWidget):
         main_content_layout.addLayout(left_section, 2)  # ~2/3 width
 
         # ── Right Section (Directions) ──
-        directions_frame = QFrame()
-        directions_frame.setObjectName("directions_frame")
-        directions_frame.setFrameShape(QFrame.Box)
-        directions_layout = QVBoxLayout(directions_frame)
-        directions_layout.setSpacing(20)
-        directions_layout.addWidget(QLabel("Directions"))
-        self.te_directions = QTextEdit()
-        directions_layout.addWidget(self.te_directions)
+        lyt_directions = QVBoxLayout()
+        lyt_directions.addWidget(QLabel("Directions"))
 
-        main_content_layout.addWidget(directions_frame, 1)  # ~1/3 width
+        directions_frame = WidgetFrame()
+        directions_frame.setFrameShape(QFrame.Box)
+        
+        self.te_directions = QTextEdit()
+        directions_frame.add_widget(self.te_directions, stretch=1)
+
+        lyt_directions.addWidget(directions_frame)  # add directions frame to layout
+        main_content_layout.addLayout(lyt_directions, 1) # add directions layout to main content
 
         self.lyt_main.addLayout(main_content_layout)
 

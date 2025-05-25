@@ -25,7 +25,7 @@ class QssCombiner:
         Returns:
             list[str]: List of QSS file paths for the view.
         """
-        view_map = QssPaths.get_view_styles()
+        view_map = QssPaths.get_styles()
         common = view_map.get("application", [])
         specific = view_map.get(view_name.lower(), [])
         return common + specific
@@ -39,6 +39,6 @@ class QssCombiner:
             list[str]: All QSS paths across all views/components.
         """
         all_paths = []
-        for paths in QssPaths.get_view_styles().values():
+        for paths in QssPaths.get_styles().values():
             all_paths.extend(paths)
         return list(dict.fromkeys(all_paths))  # preserve order
