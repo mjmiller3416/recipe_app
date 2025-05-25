@@ -21,7 +21,6 @@ class AddRecipes(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("AddRecipes")
-        self.setAttribute(Qt.WA_StyledBackground, True)
 
         self.ingredient_widgets = []
         self.stored_ingredients = []

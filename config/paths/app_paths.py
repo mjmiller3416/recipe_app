@@ -17,7 +17,7 @@ class AppPaths:
     CONFIG_DIR = ROOT_DIR / "config"
     ASSETS_DIR = ROOT_DIR / "assets"
     DATA_DIR = ROOT_DIR / "data"
-    TL_DIR = ROOT_DIR / "theme_loader"
+    TL_DIR = ROOT_DIR / "style_manager"
 
     # ── Asset Directories ───────────────────────────────────────────────────────
     ICONS_DIR = ASSETS_DIR / "icons"
@@ -48,6 +48,6 @@ class AppPaths:
         return str(AppPaths.ICONS_DIR / f"{file_name}")
 
     @staticmethod
-    def qss_path(file_name: str) -> str:
-        """Get path to a QSS file by name."""
-        return str(AppPaths.QSS_DIR / f"{file_name}")
+    def qss_path(*path_parts: str) -> str:
+        """Get path to a QSS file by category and name."""
+        return str(AppPaths.QSS_DIR.joinpath(*path_parts))

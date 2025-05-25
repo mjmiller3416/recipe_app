@@ -9,12 +9,7 @@ from PySide6.QtCore import QRegularExpression, QSize
 from PySide6.QtGui import QRegularExpressionValidator
 
 from config.paths import AppPaths
-from theme_loader.themes.dark_theme import THEME
-from theme_loader.utils.qss_loader import ThemedStyleLoader
-
-# ── Constants ───────────────────────────────────────────────────────────────────
-STYLE_LOADER = ThemedStyleLoader(THEME)
-
+from style_manager.themes.dark_theme import THEME
 
 # ── Icon Defaults ──
 ICON_SIZE  = QSize(20, 20)

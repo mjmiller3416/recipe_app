@@ -84,9 +84,3 @@ class IngredientWidget(QWidget):
     def populate_comboboxes(self):
         populate_combobox(self.cb_ingredient_category, INGREDIENT_CATEGORIES)
         populate_combobox(self.cb_unit, MEASUREMENT_UNITS)
-
-if __name__ == "__main__":   
-    app = QApplication(sys.argv)
-    test_widget = IngredientWidget()
-    test_widget.show()
-    sys.exit(app.exec())

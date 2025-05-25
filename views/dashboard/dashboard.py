@@ -13,7 +13,6 @@ class Dashboard(QWidget):
         
         # Initialize & Setup UI
         self.setObjectName("Dashboard")
-        self.setAttribute(Qt.WA_StyledBackground, True)
 
         self.setObjectName("Dashboard")
         self.setMinimumSize(984, 818)

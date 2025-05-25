@@ -16,7 +16,7 @@ This file defines the `ViewRecipes` class, which is the primary component for vi
 **Inherits from:** `PySide6.QtWidgets.QWidget`
 
 **Purpose:**
-The `ViewRecipes` class dynamically displays recipes in a responsive and scrollable layout. It uses `RecipeWidget` instances to represent individual recipes. Users can filter recipes by category, sort them (e.g., A-Z), and toggle a "Show Favorites Only" view. It also supports a "meal selection" mode where clicking a recipe emits a signal, useful for integrating with features like a meal planner.
+The `ViewRecipes` class dynamically displays recipes in a responsive and scrollable layout. It uses `RecipeCard` instances to represent individual recipes. Users can filter recipes by category, sort them (e.g., A-Z), and toggle a "Show Favorites Only" view. It also supports a "meal selection" mode where clicking a recipe emits a signal, useful for integrating with features like a meal planner.
 
 **Signals:**
 
@@ -53,7 +53,7 @@ The `ViewRecipes` class dynamically displays recipes in a responsive and scrolla
         *   Sort `SmartComboBox` (`cb_sort`) populated with `SORT_OPTIONS`.
         *   "Show Favorites Only" `QCheckBox` (`chk_favorites`).
         *   `QScrollArea` (`scroll_area`) for recipe display.
-        *   `QWidget` (`scroll_container`) and the custom `FlowLayout` (`flow_layout`) to hold `RecipeWidget` instances.
+        *   `QWidget` (`scroll_container`) and the custom `FlowLayout` (`flow_layout`) to hold `RecipeCard` instances.
     *   Connects signals from `cb_filter`, `cb_sort`, and `chk_favorites` to their respective handler methods (`handle_filter_change`, `handle_sort_change`, `load_filtered_sorted_recipes`).
 
 *   `handle_filter_change(self, selected_category: str)`:
@@ -70,7 +70,7 @@ The `ViewRecipes` class dynamically displays recipes in a responsive and scrolla
     *   Retrieves the current filter category from `cb_filter`, sort option from `cb_sort`, and the state of `chk_favorites`.
     *   Calls `clear_recipe_display()` to remove existing recipe widgets.
     *   Fetches filtered and sorted recipes using `RecipeService.list_filtered()`.
-    *   For each fetched recipe, creates a `RecipeWidget`, sets its recipe data, connects its `card_clicked` signal if in `meal_selection` mode, and adds it to the `flow_layout`.
+    *   For each fetched recipe, creates a `RecipeCard`, sets its recipe data, connects its `card_clicked` signal if in `meal_selection` mode, and adds it to the `flow_layout`.
 
 *   `clear_recipe_display(self)`:
     *   Removes all recipe widgets currently displayed in the `flow_layout`.
@@ -79,8 +79,8 @@ The `ViewRecipes` class dynamically displays recipes in a responsive and scrolla
 *   `load_recipes(self)`:
     *   Fetches all recipes from the database using `Recipe.all()`.
     *   Clears the current display using `clear_recipe_display()`.
-    *   Populates the `flow_layout` with `RecipeWidget` instances for each recipe.
-    *   If `meal_selection` is `True`, connects the `card_clicked` signal of each `RecipeWidget` to `self.select_recipe`.
+    *   Populates the `flow_layout` with `RecipeCard` instances for each recipe.
+    *   If `meal_selection` is `True`, connects the `card_clicked` signal of each `RecipeCard` to `self.select_recipe`.
     *   Sets `self.recipes_loaded` to `True`.
 
 *   `select_recipe(self, recipe_id: int)`:
@@ -105,7 +105,7 @@ The `ViewRecipes` class dynamically displays recipes in a responsive and scrolla
 **Inherits from:** `PySide6.QtWidgets.QLayout`
 
 **Purpose:**
-A custom layout manager that arranges child widgets (e.g., `RecipeWidget` instances) in a flow. Widgets are added horizontally until the available width is exceeded, at which point they wrap to the next line. The layout attempts to center the items in each row.
+A custom layout manager that arranges child widgets (e.g., `RecipeCard` instances) in a flow. Widgets are added horizontally until the available width is exceeded, at which point they wrap to the next line. The layout attempts to center the items in each row.
 
 **Key Methods (Overrides from `QLayout`):**
 

@@ -7,7 +7,7 @@ This document provides a detailed overview of the Meal Planner package, its comp
 The Meal Planner package is responsible for allowing users to create, view, and manage meal plans. It consists of several key components:
 
 -   **`MealPlanner` (QWidget)**: The main UI container for the meal planning interface. It uses a `QTabWidget` to manage multiple meal tabs.
--   **`MealWidget` (QWidget)**: Represents a single meal, containing a main dish and up to three side dishes. Each dish is represented by a `RecipeWidget`.
+-   **`MealWidget` (QWidget)**: Represents a single meal, containing a main dish and up to three side dishes. Each dish is represented by a `RecipeCard`.
 -   **`PlannerService`**: Handles the business logic for loading and saving the state of the meal planner, such as which meal tabs are open.
 -   **`MealService` (from `services` package)**: Handles CRUD operations for individual `MealSelection` objects (the data model for a meal).
 
@@ -56,21 +56,21 @@ The `MealWidget` class represents the UI for a single meal.
 
 -   **Purpose**: To display and manage the selection of a main recipe and up to three side recipes for a meal.
 -   **Key Features**:
-    -   Contains one `RecipeWidget` for the main dish (medium size) and three `RecipeWidget` instances for side dishes (small size).
-    -   Side dish `RecipeWidget`s are initially disabled and enabled only after a main dish is selected.
+    -   Contains one `RecipeCard` for the main dish (medium size) and three `RecipeCard` instances for side dishes (small size).
+    -   Side dish `RecipeCard`s are initially disabled and enabled only after a main dish is selected.
     -   Holds an internal `_meal_model` (an instance of `MealSelection` from `database.models`) which stores the data for the current meal.
-    -   Connects signals from its child `RecipeWidget`s to update its `_meal_model` when a recipe is selected or changed.
+    -   Connects signals from its child `RecipeCard`s to update its `_meal_model` when a recipe is selected or changed.
 -   **UI Setup (`_setup_ui`)**:
-    -   Arranges `RecipeWidget`s in a horizontal layout (main dish on the left, side dishes stacked vertically on the right).
+    -   Arranges `RecipeCard`s in a horizontal layout (main dish on the left, side dishes stacked vertically on the right).
 -   **Loading a Meal (`load_meal`)**:
     -   Takes a `meal_id`.
     -   Uses `MealService.load_meal()` to fetch the `MealSelection` data.
-    -   Populates its main and side dish `RecipeWidget`s with the recipes from the loaded `_meal_model`.
+    -   Populates its main and side dish `RecipeCard`s with the recipes from the loaded `_meal_model`.
 -   **Saving a Meal (`save_meal`)**:
     -   If the `_meal_model` does not have an ID (i.e., it's a new meal), it calls `MealService.create_meal()` to save it to the database and updates `_meal_model` with the returned instance (which now has an ID).
     -   If the `_meal_model` already has an ID, it calls `MealService.update_meal()` to save any changes.
 -   **Recipe Selection (`update_recipe_selection`)**:
-    -   Called when a `RecipeWidget` within the `MealWidget` signals a recipe change.
+    -   Called when a `RecipeCard` within the `MealWidget` signals a recipe change.
     -   Updates the corresponding field in its `_meal_model` (e.g., `main_recipe_id`, `side_recipe_1`).
 
 ### 3. `PlannerService` (`planner_service.py`)
@@ -124,13 +124,13 @@ While not part of the `views/meal_planner` directory, `MealService` is crucial f
     c.  The new `MealWidget` calls its `load_meal(meal_id)` method.
     d.  `MealWidget.load_meal()` calls `MealService.load_meal(meal_id)` to fetch the `MealSelection` data.
     e.  The `MealSelection` data is used to populate the `_meal_model` of the `MealWidget`.
-    f.  The `RecipeWidget`s within the `MealWidget` are updated to display the main and side recipes based on the IDs in `_meal_model`.
+    f.  The `RecipeCard`s within the `MealWidget` are updated to display the main and side recipes based on the IDs in `_meal_model`.
 5.  The `MealPlanner` displays the tabs, each populated with the corresponding meal information.
 
 ## Workflow Example: Saving a Meal
 
 1.  A user modifies a recipe selection in a `MealWidget`.
-2.  The `RecipeWidget` signals the change.
+2.  The `RecipeCard` signals the change.
 3.  `MealWidget.update_recipe_selection()` updates its internal `_meal_model` with the new `recipe_id`.
 4.  When the application is about to close or when a save action is triggered, `MealPlanner.save_meal_plan()` is called.
 5.  `save_meal_plan()` iterates through each `MealWidget` in its `tab_map`:

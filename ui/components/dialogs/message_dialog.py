@@ -1,17 +1,22 @@
-import sys
+"""ui/components/dialogs/message_dialog.py
 
+Custom dialog for displaying messages with dynamic button visibility.
+"""
+
+
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor
-from PySide6.QtWidgets import (QDialog, QDialogButtonBox,
-                               QGraphicsDropShadowEffect, QGridLayout, QLabel,
-                               QSizePolicy, QSpacerItem, QVBoxLayout)
+from PySide6.QtWidgets import (
+    QDialog, QDialogButtonBox, QGraphicsDropShadowEffect, 
+    QGridLayout, QLabel, QSizePolicy, QSpacerItem, QVBoxLayout
+)
 
-from theme_loader import ThemeController
 from core.helpers.debug_logger import DebugLogger
 from ui.iconkit import Icon
 from config import MESSAGE_DIALOG
 
-
+# ── Class Definition ────────────────────────────────────────────────────────────
 class MessageDialog(QDialog):
     """Custom dialog for displaying messages with dynamic button visibility."""
 

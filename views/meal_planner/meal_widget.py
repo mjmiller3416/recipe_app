@@ -13,15 +13,15 @@ from PySide6.QtWidgets import QHBoxLayout, QToolTip, QVBoxLayout, QWidget
 from core.helpers import DebugLogger
 from database.models.meal_selection import MealSelection
 from database.models.recipe import Recipe
-from recipe_widget.constants import LayoutSize
-from recipe_widget.recipe_widget import RecipeWidget
+from recipe_viewer.constants import LayoutSize
+from recipe_viewer import RecipeViewer
 from services.meal_service import MealService
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class MealWidget(QWidget):
     """
-    A QWidget layout that organizes a main dish and side dish RecipeWidgets.
+    A QWidget layout that organizes a main dish and side dish RecipeViewers.
     Handles layout creation, user interaction, and internal meal state tracking.
     """
 
@@ -38,7 +38,7 @@ class MealWidget(QWidget):
         """
         Setup the UI layout for the MealWidget.
 
-        This method initializes the layout and adds RecipeWidgets for main and side dishes.
+        This method initializes the layout and adds RecipeViewers for main and side dishes.
         """
         self.setObjectName("MealWidget")
         self.main_layout = QHBoxLayout(self)
@@ -46,7 +46,7 @@ class MealWidget(QWidget):
         self.main_layout.setSpacing(10)
 
         # ── Main Dish ──
-        self.main_slot = RecipeWidget(size=LayoutSize.MEDIUM)
+        self.main_slot = RecipeViewer(size=LayoutSize.MEDIUM)
         self.meal_slots["main"] = self.main_slot
         self.main_layout.addWidget(self.main_slot)
 
@@ -55,7 +55,7 @@ class MealWidget(QWidget):
         self.side_layout.setSpacing(10)
 
         for i in range(1, 4):
-            side_slot = RecipeWidget(size=LayoutSize.SMALL)
+            side_slot = RecipeViewer(size=LayoutSize.SMALL)
             side_slot.setEnabled(False) # initially disabled
             side_slot.setToolTip("Select a main dish first") # tooltip for disabled state
             self.side_layout.addWidget(side_slot)
@@ -65,7 +65,7 @@ class MealWidget(QWidget):
 
     def _connect_signals(self):
         """
-        Connect signal from RecipeWidget to the update_recipe_selection method.
+        Connect signal from RecipeViewer to the update_recipe_selection method.
         """
         for key, slot in self.meal_slots.items():
             slot.recipe_selected.connect(lambda rid, k=key: self.update_recipe_selection(k, rid))
@@ -106,7 +106,7 @@ class MealWidget(QWidget):
 
     def load_meal(self, meal_id: int):
         """
-        Load a meal by its ID and populate the RecipeWidgets.
+        Load a meal by its ID and populate the RecipeViewers.
 
         Args:
             meal_id (int): The ID of the meal to load.
@@ -124,7 +124,7 @@ class MealWidget(QWidget):
 
     def eventFilter(self, obj, event):
         """
-        Show tooltip on disabled RecipeWidgets.
+        Show tooltip on disabled RecipeViewers.
 
         Args:
             obj: The object receiving the event.

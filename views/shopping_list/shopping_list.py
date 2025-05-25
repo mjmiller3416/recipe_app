@@ -21,7 +21,6 @@ class ShoppingList(QWidget):
         
         # Initialize & Setup UI
         self.setObjectName("ShoppingList")
-        self.setAttribute(Qt.WA_StyledBackground, True)
         self.setMinimumSize(984, 818)
 
         self.active_recipe_ids: list[int] = []  # store latest recipe list

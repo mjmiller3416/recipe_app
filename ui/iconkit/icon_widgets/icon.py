@@ -9,7 +9,7 @@ from pathlib import Path
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QLabel
 
-from theme_loader import IconController
+from style_manager import IconLoader
 from ui.iconkit.themed_icon import ThemedIcon
 
 
@@ -37,8 +37,8 @@ class Icon(QLabel):
         self.setStyleSheet("background-color: transparent;")
         self.setObjectName(Path(file_path).stem)
 
-        IconController().register(self)  # auto-tracked for theme refresh
-        self.refresh_theme(IconController().palette)
+        IconLoader().register(self)  # auto-tracked for theme refresh
+        self.refresh_theme(IconLoader().palette)
 
     def refresh_theme(self, palette: dict):
         """Refreshes the displayed icon with current theme colors."""

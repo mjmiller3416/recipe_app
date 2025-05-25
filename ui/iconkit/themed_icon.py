@@ -13,7 +13,7 @@ from pathlib import Path
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon, QPixmap
 
-from theme_loader import IconController
+from style_manager import IconLoader
 from ui.iconkit.loader import SVGLoader
 
 
@@ -35,7 +35,7 @@ class ThemedIcon:
         self.file_path = file_path
         self.size = size
         self.variant = variant
-        self.palette = IconController().palette
+        self.palette = IconLoader().palette
 
     def icon_for_state(self, state: str = "DEFAULT") -> QIcon:
         """Returns a themed QIcon for a specific state (e.g., 'HOVER', 'CHECKED')."""

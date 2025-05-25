@@ -10,7 +10,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QPushButton
 
 from config import ICON_SIZE
-from theme_loader import IconController
+from style_manager import IconLoader
 from ui.iconkit.effects import ApplyHoverEffects
 from ui.iconkit.icon_mixin import IconMixin
 
@@ -56,5 +56,5 @@ class ButtonIcon(QPushButton, IconMixin):
         
         self._init_themed_icon(file_path, size, variant)
 
-        # ── Register with IconController ──
-        IconController().register(self)
+        # ── Register with IconLoader ──
+        IconLoader().register(self)

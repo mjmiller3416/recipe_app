@@ -149,7 +149,7 @@
       "controllers": "Console",
       "inputs": "Src-tauri",
       "todo": "Tasks",
-      "theme_loader": "Plugin",
+      "style_manager": "Plugin",
 
       //** Subfolders **//
       "app_helpers": "App",
@@ -160,6 +160,7 @@
       "icon_widgets": "Element",
       "dtos": "Packages",
       "builders": "Tools",
+      "loaders": "Download",
 
       //** Assets **//
       "assets": "Shader",

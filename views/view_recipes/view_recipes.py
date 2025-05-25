@@ -12,13 +12,13 @@ from PySide6.QtWidgets import (QLayout, QScrollArea, QSizePolicy, QSpacerItem,
 from database.models.recipe import Recipe
 from ui.components.inputs import SmartComboBox
 from config import RECIPE_CATEGORIES, SORT_OPTIONS
-from recipe_widget.constants import LayoutSize
-from recipe_widget.recipe_widget import RecipeWidget
+from recipe_viewer.constants import LayoutSize
+from recipe_viewer.recipe_viewer import RecipeViewer
 from services.recipe_service import RecipeService
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class ViewRecipes(QWidget):
-    """Dynamically displays all recipes in a responsive scrollable layout using RecipeCard wrappers."""
+    """Dynamically displays all recipes in a responsive scrollable layout using RecipeViewer wrappers."""
 
     recipe_selected = Signal(int)  # Signal that emits selected recipe ID
 
@@ -38,7 +38,6 @@ class ViewRecipes(QWidget):
         self.build_ui()
         self.recipes_loaded = False
         self.load_recipes()
-        self.setAttribute(Qt.WA_StyledBackground, True)
 
     def build_ui(self):
         """Initializes layout with a scrollable, responsive recipe area."""
@@ -114,7 +113,7 @@ class ViewRecipes(QWidget):
         )
 
         for recipe in recipes:
-            slot = RecipeWidget(LayoutSize.MEDIUM, parent=self.scroll_container)
+            slot = RecipeViewer(LayoutSize.MEDIUM, parent=self.scroll_container)
             slot.set_recipe(recipe)
 
             if self.meal_selection:
@@ -132,8 +131,8 @@ class ViewRecipes(QWidget):
                 item.widget().deleteLater()
 
     def load_recipes(self) -> None:
-        from recipe_widget.constants import LayoutSize
-        from recipe_widget.recipe_widget import RecipeWidget
+        from recipe_viewer.constants import LayoutSize
+        from recipe_viewer.recipe_viewer import RecipeViewer
 
         recipes = Recipe.all()  # fetch all recipes from the database
         if not recipes:
@@ -142,7 +141,7 @@ class ViewRecipes(QWidget):
         self.clear_recipe_display()
 
         for recipe in recipes:
-            slot = RecipeWidget(LayoutSize.MEDIUM, parent=self.scroll_container)
+            slot = RecipeViewer(LayoutSize.MEDIUM, parent=self.scroll_container)
             slot.set_recipe(recipe)
 
             if self.meal_selection:

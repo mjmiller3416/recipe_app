@@ -1,19 +1,19 @@
 # QSS Loader Refactor Plan
 
 ## Goal
-Refactor the existing `StyleLoader` class to support both basic stylesheet loading and runtime variable injection using theme variables. This will improve flexibility, readability, and scalability for theme management across the application.
+Refactor the existing `ThemeLoader` class to support both basic stylesheet loading and runtime variable injection using theme variables. This will improve flexibility, readability, and scalability for theme management across the application.
 
 ---
 
 ## Overview
 We will split the loader functionality into two classes:
 
-### 1. `BaseStyleLoader`
+### 1. `BaseThemeLoader`
 - Responsibility: Load `.qss` files from disk without modifications.
 - Use case: Basic style loading when theme injection is not needed.
 
-### 2. `ThemedStyleLoader`
-- Inherits from: `BaseStyleLoader`
+### 2. `ThemeLoader`
+- Inherits from: `BaseThemeLoader`
 - Responsibility: Loads QSS files and injects `{VARIABLE}` placeholders using a `theme` dictionary.
 - Use case: All runtime styling needs where centralized themes are applied (colors, fonts, etc.).
 
@@ -25,8 +25,8 @@ Place in:
 styles/
 ├── theme_variables.py
 ├── utils/
-│   ├── base_loader.py       # <- BaseStyleLoader
-│   └── themed_loader.py     # <- ThemedStyleLoader
+│   ├── base_loader.py       # <- BaseThemeLoader
+│   └── themed_loader.py     # <- ThemeLoader
 ```
 
 ---
@@ -37,7 +37,7 @@ styles/
 ```python
 from pathlib import Path
 
-class BaseStyleLoader:
+class BaseThemeLoader:
     def load(self, path: str) -> str:
         with open(Path(path), "r", encoding="utf-8") as f:
             return f.read()
@@ -45,10 +45,10 @@ class BaseStyleLoader:
 
 ### themed_loader.py
 ```python
-from styles.utils.base_loader import BaseStyleLoader
+from styles.utils.base_loader import BaseThemeLoader
 from styles.theme_variables import THEME
 
-class ThemedStyleLoader(BaseStyleLoader):
+class ThemeLoader(BaseThemeLoader):
     def __init__(self, theme: dict = None):
         self.theme = theme or THEME
 
@@ -64,7 +64,7 @@ class ThemedStyleLoader(BaseStyleLoader):
 ## Future Integration Steps
 
 1. **Update StyleManager**
-   - Replace existing `StyleLoader()` with `ThemedStyleLoader()`
+   - Replace existing `ThemeLoader()` with `ThemeLoader()`
    - Load your themed QSS dynamically and apply to `QApplication`
 
 2. **Theme Switching (Optional)**
@@ -72,7 +72,7 @@ class ThemedStyleLoader(BaseStyleLoader):
    - Allow user preference or runtime switching
 
 3. **Testing and Fallbacks**
-   - Add error handling in `ThemedStyleLoader` for missing keys or malformed placeholders
+   - Add error handling in `ThemeLoader` for missing keys or malformed placeholders
    - Log any unresolved `{VAR}` markers as warnings
 
 4. **Component-based Styling**

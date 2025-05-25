@@ -1,2 +1,0 @@
-from .theme_controller import ThemeController
-from .icon_controller import IconController

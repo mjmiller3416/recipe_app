@@ -1,0 +1,35 @@
+/* ------------------------------------------------------------------
+   INGREDIENT WIDGET STYLING
+   ------------------------------------------------------------------ */
+#IngredientWidget {
+    background-color: {BACKGROUND_WIDGET}; /* Dark background */
+    border-radius: 6px;
+    padding: 5px;
+}
+
+#cb_recipie_category {
+    background: #525861;  /* Slightly lighter than background */
+}
+
+/* Ensure QLineEdit and QComboBox in IngredientWidget are properly styled */
+#IngredientWidget > QLineEdit {
+    background-color: {BACKGROUND_INPUT};  /* Dark background */
+    border: 1px solid #555A60;
+    border-radius: 4px;
+    padding: 4px;
+    color: #E1E1E3;
+    font: 14px 'Montserrat';
+}
+
+/* Focus effect for better visibility */
+#IngredientWidget > QLineEdit:focus {
+    border: 1px solid #03B79E;  /* Teal highlight */
+    outline: none;
+}
+
+#IngredientWidget > QToolButton {
+    background-color: {BACKGROUND_WIDGET};
+    border-radius: 6px;
+    padding: 4px;
+    border: none;
+}

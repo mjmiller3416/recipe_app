@@ -38,6 +38,6 @@ class IconMixin:
     def refresh_theme(self, palette: dict) -> None:
         """
         Protocol-compliant wrapper for refresh_theme_icon.
-        Used by IconController to trigger icon repaints.
+        Used by IconLoader to trigger icon repaints.
         """
         self.refresh_theme_icon(palette)

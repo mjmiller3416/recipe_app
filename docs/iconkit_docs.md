@@ -62,11 +62,11 @@ Defines the `ThemedIcon` class, a core utility for creating individual themed ic
         - `variant`: Defines the color styling. Can be:
             - A dictionary with state keys (e.g., `{"DEFAULT": "#AAA", "HOVER": "#BBB"}`).
             - A direct hex color string (e.g., `"#6AD7CA"`).
-            - A string key that maps to a predefined style in `ICON_STYLES` (managed by `IconController`).
+            - A string key that maps to a predefined style in `ICON_STYLES` (managed by `IconLoader`).
     - **`icon_for_state(self, state)`**: Returns a themed `QIcon` for a specific state (e.g., "HOVER", "CHECKED").
     - **`icon(self)`**: Returns the default themed `QIcon`.
     - **`pixmap(self)`**: Returns the default themed `QPixmap`.
-    - **`resolve_color(self, state)`**: Determines the appropriate hex color string for a given state based on the `variant` and the application's theme palette (accessed via `IconController`).
+    - **`resolve_color(self, state)`**: Determines the appropriate hex color string for a given state based on the `variant` and the application's theme palette (accessed via `IconLoader`).
     - Uses `SVGLoader.load` internally for icon creation.
 
 ### `icon_mixin.py`
@@ -81,12 +81,12 @@ Provides the `IconMixin` class, designed to be mixed into `QAbstractButton` subc
     - **`refresh_theme_icon(self, palette)`**:
         - Intended to be called when the application theme changes.
         - Refreshes the button's icon using the new `palette`. (Note: The provided code shows `self._themed_icon.refresh(palette)`, implying `ThemedIcon` might have a `refresh` method not detailed in `themed_icon.py`'s content, or this part might be a placeholder for more complex refresh logic).
-    - **`refresh_theme(self, palette)`**: A wrapper for `refresh_theme_icon`, likely to ensure a consistent interface for theme updates, possibly used by `IconController`.
+    - **`refresh_theme(self, palette)`**: A wrapper for `refresh_theme_icon`, likely to ensure a consistent interface for theme updates, possibly used by `IconLoader`.
 
 ## Workflow
 
 1.  **Loading SVGs (`loader.py`)**: `SVGLoader` reads SVG files, replaces specified color placeholders with new theme colors, and renders them into `QPixmap` or `QIcon` objects, handling DPI scaling.
-2.  **Creating Themed Icons (`themed_icon.py`)**: `ThemedIcon` uses `SVGLoader` to generate icons. It resolves colors based on a `variant` argument, which can be a direct color, a dictionary of state-specific colors, or a named theme style. It interacts with `IconController` to access the current theme's color palette.
+2.  **Creating Themed Icons (`themed_icon.py`)**: `ThemedIcon` uses `SVGLoader` to generate icons. It resolves colors based on a `variant` argument, which can be a direct color, a dictionary of state-specific colors, or a named theme style. It interacts with `IconLoader` to access the current theme's color palette.
 3.  **Generating Icon Sets (`kit.py`)**: `IconKit` simplifies creating sets of icons (default, hover, checked) for UI elements by calling `SVGLoader` multiple times with different colors.
 4.  **Applying Dynamic Effects (`effects.py`)**: `ApplyHoverEffects` uses `ThemedIcon` to get all necessary icon states (default, hover, checked, disabled) and then patches a button's event handlers (`enterEvent`, `leaveEvent`) and `toggled` signal to dynamically change its displayed icon based on user interaction.
 5.  **Integrating with Widgets (`icon_mixin.py`)**: `IconMixin` provides a convenient way for button widgets to incorporate `ThemedIcon` functionality, allowing them to display themed icons and refresh them when the application theme changes.
@@ -96,7 +96,7 @@ Provides the `IconMixin` class, designed to be mixed into `QAbstractButton` subc
 -   **PySide6**: For Qt GUI elements (`QIcon`, `QPixmap`, `QSvgRenderer`, `QPainter`, `QAbstractButton`, etc.).
 -   **`config.AppPaths`**: To resolve icon file paths.
 -   **`core.helpers.DebugLogger`**: For logging errors and warnings.
--   **`core.controllers.icon_controller.IconController`**: To access the application's theme palette and icon styles.
+-   **`core.controllers.icon_controller.IconLoader`**: To access the application's theme palette and icon styles.
 
 ## Usage Example (Conceptual)
 

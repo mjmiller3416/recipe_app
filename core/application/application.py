@@ -5,26 +5,27 @@ Main application window with a custom title bar, sidebar, header, and dynamic st
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt
-from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
-                               QMainWindow, QStackedWidget, QVBoxLayout,
-                               QWidget)
+from PySide6.QtWidgets import (
+    QApplication, QFrame, QHBoxLayout, QLabel,
+    QMainWindow, QStackedWidget, QVBoxLayout,
+    QWidget
+)
 
 from core.controllers.animation_controller import AnimationManager
-from theme_loader import ThemeController
+from style_manager.theme_controller import ThemeController
 from core.helpers import DebugLogger
 from services.planner_service import PlannerService
 from services.shopping_service import ShoppingService
 from ui.animations import SidebarAnimator
-from ui.components.inputs.search_widget import SearchWidget
+from ui.components.inputs.search_bar import SearchBar
 from ui.components.title_bar import TitleBar
-from ui.tools.layout_debugger import LayoutDebugger
 from views.add_recipes import AddRecipes
 from views.dashboard import Dashboard
 from views.meal_planner import MealPlanner
 from views.shopping_list import ShoppingList
 from views.view_recipes import ViewRecipes
 
-from .sidebar_widget import SidebarWidget
+from .sidebar import Sidebar
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -67,7 +68,7 @@ class Application(QMainWindow):
         self.outer_layout.addLayout(self.main_layout)
 
         # ── Instantiate Sidebar ──
-        self.sidebar = SidebarWidget()
+        self.sidebar = Sidebar()
         self.main_layout.addWidget(self.sidebar)
 
         # ── Connect Signals ──
@@ -110,10 +111,10 @@ class Application(QMainWindow):
         self.header_layout.addWidget(self.greeting_container) # add to the header layout
 
         # Instantiate Search Widget
-        self.search_widget = SearchWidget()
-        self.search_widget.setMaximumHeight(36)
-        self.search_widget.setFixedWidth(300)
-        self.header_layout.addWidget(self.search_widget, alignment=Qt.AlignRight)
+        self.search_bar = SearchBar()
+        self.search_bar.setMaximumHeight(36)
+        self.search_bar.setFixedWidth(300)
+        self.header_layout.addWidget(self.search_bar, alignment=Qt.AlignRight)
 
         self.content_wrapper.addWidget(self.header)
 

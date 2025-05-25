@@ -10,7 +10,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QToolButton
 
 from config import ICON_SIZE
-from theme_loader import IconController
+from style_manager import IconLoader
 from ui.iconkit.effects import ApplyHoverEffects
 from ui.iconkit.icon_mixin import IconMixin
 
@@ -54,8 +54,8 @@ class ToolButtonIcon(QToolButton, IconMixin):
 
         self._init_themed_icon(file_path, size, variant)
 
-        # ── Register with IconController ──
-        IconController().register(self)
+        # ── Register with IconLoader ──
+        IconLoader().register(self)
     
     def set_icon_size(self, size: QSize):
         """
