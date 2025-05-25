@@ -19,9 +19,7 @@
     border-radius: 4px;
 }
 
-#AddRecipes QLineEdit, 
-#AddRecipes QComboBox,
-#AddRecipes QTextEdit {
+#AddRecipes QLineEdit {
     background-color: #525861;
     border: 1px solid #666;
     border-radius: 4px;
@@ -32,18 +30,10 @@
 }
 
 #AddRecipes QLineEdit:focus, 
-#AddRecipes QComboBox:focus, 
 #AddRecipes QTextEdit:focus {
     border: 1px solid #03B79E;
     outline: none;
 }
-
-#AddRecipes QComboBox QAbstractItemView {
-        background-color: #424951; /* Dark background for dropdown */
-        color: white;
-        
-        border: 1px solid #777;
-    }
 
 #AddRecipes QPushButton {
     background-color: #3B575B;
@@ -71,9 +61,8 @@
     padding: 10px;
 }
 
-#AddRecipes #directions_frame {
-    background-color: {BACKGROUND_WIDGET};
-    border: 2px solid {BORDER_DEFAULT};
-    border-radius: 10px;
-    padding: 10px;
+#AddRecipes #WidgetFrame QTextEdit,
+#AddRecipes #WidgetFrame QScrollArea {
+    background-color: transparent;
+    border: none;
 }

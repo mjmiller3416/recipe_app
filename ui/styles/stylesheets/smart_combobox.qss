@@ -7,7 +7,7 @@
     padding: 4px 24px 4px 6px; 
     min-width: 8em;
     background-color: {BACKGROUND_WIDGET}; /* Dynamic */
-    color: {TEXT_STRONG}; /* Dynamic */
+    color: {TEXT_DEFAULT}; /* Dynamic */
     font-size: {FONTS_SIZE_NORMAL}; /* Dynamic */
 }
 
@@ -20,11 +20,11 @@
     padding: 5px;
 }
 
-#SmartComboBox QAbstractItemView { /* Styling the popup list */
-    border: 1px solid {BORDER_DEFAULT}; /* Dynamic */
-    background-color: {BACKGROUND_INPUT}; /* Dynamic */
+#SmartComboBox QListView {
+    border: 1px solid {BORDER_DEFAULT};
+    background-color: {BACKGROUND_WIDGET};
     padding: 2px;
-    color: {TEXT_DEFAULT}; /* Dynamic */
+    color: {TEXT_DEFAULT};
     outline: none;
 }
 

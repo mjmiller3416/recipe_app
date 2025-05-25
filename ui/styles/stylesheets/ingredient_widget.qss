@@ -12,8 +12,7 @@
 }
 
 /* Ensure QLineEdit and QComboBox in IngredientWidget are properly styled */
-#IngredientWidget QLineEdit,
-#IngredientWidget QComboBox {
+#IngredientWidget > QLineEdit {
     background: #424951;  /* Slightly lighter than background */
     border: 1px solid #555A60;
     border-radius: 4px;
@@ -23,13 +22,12 @@
 }
 
 /* Focus effect for better visibility */
-#IngredientWidget QLineEdit:focus,
-#IngredientWidget QComboBox:focus {
+#IngredientWidget > QLineEdit:focus {
     border: 1px solid #03B79E;  /* Teal highlight */
     outline: none;
 }
 
-#IngredientWidget QToolButton {
+#IngredientWidget > QToolButton {
     background-color: {BACKGROUND_WIDGET};
     border-radius: 6px;
     padding: 4px;

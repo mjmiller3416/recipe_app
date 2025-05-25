@@ -142,12 +142,16 @@ class AddRecipes(QWidget):
 
         # ── Right Section (Directions) ──
         lyt_directions = QVBoxLayout()
-        lyt_directions.addWidget(QLabel("Directions"))
 
-        directions_frame = WidgetFrame()
-        directions_frame.setFrameShape(QFrame.Box)
+        directions_frame = WidgetFrame(
+            header_text="Directions",
+            layout_type="vertical",
+            frame_shape=QFrame.Box,
+        )
         
         self.te_directions = QTextEdit()
+        self.te_directions.setPlaceholderText("Enter cooking directions here...")
+        self.te_directions.setObjectName("directions_text_edit")
         directions_frame.add_widget(self.te_directions, stretch=1)
 
         lyt_directions.addWidget(directions_frame)  # add directions frame to layout

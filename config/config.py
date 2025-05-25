@@ -82,7 +82,7 @@ INGREDIENT_WIDGET = {
     "ICON_SIZE":     QSize(20, 20),
     "ICON_ADD":      AppPaths.ICONS_DIR / "add.svg",
     "ICON_SUBTRACT": AppPaths.ICONS_DIR / "subtract.svg",
-    "VARIANT":       THEME["ICON_STYLES"]["INGREDIENT_WIDGET"],
+    "DYNAMIC":       THEME["ICON_STYLES"]["TOOLBUTTON"],
 }
 
 # ── Smart ComboBox ──

@@ -48,14 +48,14 @@ class IngredientWidget(QWidget):
         self.btn_ico_subtract = ToolButtonIcon(
             file_path=INGREDIENT_WIDGET["ICON_SUBTRACT"],
             size=INGREDIENT_WIDGET["ICON_SIZE"],
-            variant=INGREDIENT_WIDGET["VARIANT"]
+            variant=INGREDIENT_WIDGET["DYNAMIC"]
         )
         self.gridLayout.addWidget(self.btn_ico_subtract, 0, 4, 1, 1)
 
         self.btn_ico_add = ToolButtonIcon(
             file_path=INGREDIENT_WIDGET["ICON_ADD"],
             size=INGREDIENT_WIDGET["ICON_SIZE"],
-            variant=INGREDIENT_WIDGET["VARIANT"]
+            variant=INGREDIENT_WIDGET["DYNAMIC"]
         )
         self.gridLayout.addWidget(self.btn_ico_add, 0, 5, 1, 1)
 

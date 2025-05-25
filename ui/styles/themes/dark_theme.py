@@ -115,17 +115,5 @@ THEME = {
             "CHECKED":  "#6AD7CA",
             "DISABLED": "#5A5E66",
         },
-        "RECIPE_CARD": {
-            "DEFAULT":  "#6AD7CA",
-            "HOVER":    "#3B575B",
-            "CHECKED":  "#6AD7CA",
-            "DISABLED": "#5A5E66",
-        },
-        "INGREDIENT_WIDGET": {
-            "DEFAULT":  "#949AA7",
-            "HOVER":    "#6AD7CA",
-            "CHECKED":  "#6AD7CA",
-            "DISABLED": "#5A5E66",
-        },
     },
 }
