@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QApplication, QGridLayout, QLineEdit, QWidget
 
 from config import (FLOAT, INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,
                     MEASUREMENT_UNITS, NAME)
-from ui.components.inputs import CustomComboBox
+from ui.components.inputs import SmartComboBox
 from ui.iconkit import ToolButtonIcon
 from ui.tools import clear_error_styles, dynamic_validation, populate_combobox
 from ui.tools.form_utilities import populate_combobox
@@ -33,7 +33,7 @@ class IngredientWidget(QWidget):
         self.le_quantity.setPlaceholderText("Qty.")
         self.gridLayout.addWidget(self.le_quantity, 0, 0, 1, 1)
 
-        self.cb_unit = CustomComboBox(self)
+        self.cb_unit = SmartComboBox(self)
         self.cb_unit.setPlaceholderText("Unit")
         self.gridLayout.addWidget(self.cb_unit, 0, 1, 1, 1)
 
@@ -41,7 +41,7 @@ class IngredientWidget(QWidget):
         self.le_ingredient_name.setPlaceholderText("Ingredient Name")
         self.gridLayout.addWidget(self.le_ingredient_name, 0, 2, 1, 1)
 
-        self.cb_ingredient_category = CustomComboBox(self)
+        self.cb_ingredient_category = SmartComboBox(self)
         self.cb_ingredient_category.setPlaceholderText("Category")
         self.gridLayout.addWidget(self.cb_ingredient_category, 0, 3, 1, 1)
 
@@ -67,8 +67,8 @@ class IngredientWidget(QWidget):
         dynamic_validation(self.le_quantity, FLOAT)
         dynamic_validation(self.le_ingredient_name, NAME)
 
-        self.cb_unit.cb_validated.connect(lambda: clear_error_styles(self.cb_unit))
-        self.cb_ingredient_category.cb_validated.connect(lambda: clear_error_styles(self.cb_ingredient_category))
+        self.cb_unit.selection_validated.connect(lambda: clear_error_styles(self.cb_unit))
+        self.cb_ingredient_category.selection_validated.connect(lambda: clear_error_styles(self.cb_ingredient_category))
 
     def emit_ingredient_data(self):
         payload = IngredientService.build_payload_from_widget(self)

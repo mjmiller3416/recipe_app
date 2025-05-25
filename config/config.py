@@ -10,10 +10,24 @@ from PySide6.QtGui import QRegularExpressionValidator
 
 from config.paths import AppPaths
 from ui.styles.themes.dark_theme import THEME
+from ui.styles.utils.qss_loader import ThemedStyleLoader
+
+# ── Constants ───────────────────────────────────────────────────────────────────
+STYLE_LOADER = ThemedStyleLoader(THEME)
+
 
 # ── Icon Defaults ──
 ICON_SIZE  = QSize(20, 20)
 ICON_COLOR = THEME["ICON"]["DEFAULT"]
+
+# ── Add Recipes ──
+ADD_RECIPES = {
+    "ADD_IMAGE": {
+        "FILE_PATH": AppPaths.ICONS_DIR / "add.svg",
+        "ICON_SIZE": QSize(200, 200),
+        "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"],
+    },
+}
 
 # ── Meal Planner ──
 MEAL_PLANNER = {

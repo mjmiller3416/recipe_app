@@ -1,22 +1,21 @@
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtWidgets import (
-    QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QScrollArea,
-    QLineEdit, QTextEdit, QFrame
+    QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout,
+    QLineEdit, QTextEdit, QFrame, QScrollArea, QSizePolicy
 )
 
-from config.config import INT, NAME, RECIPE_CATEGORIES
+from config.config import INT, NAME, RECIPE_CATEGORIES, MEAL_CATEGORIES
 from core.helpers import DebugLogger
 from services.recipe_service import RecipeService
 from ui.components.dialogs import MessageDialog
-from ui.components.inputs import CustomComboBox
+from ui.components.inputs import SmartComboBox
 from ui.tools import clear_error_styles, dynamic_validation
 from ui.tools.form_utilities import populate_combobox
 from .ingredient_widget import IngredientWidget
-from .crop_image_dialog import CropImageDialog
+from .add_recipe_image import AddRecipeImage
 
 
-# ── Class Definition ────────────────────────────────────────────────────────────
 class AddRecipes(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -29,89 +28,145 @@ class AddRecipes(QWidget):
 
         self._build_ui()
         self._connect_signals()
-        #self._populate_categories()
 
-    # ── UI Setup ────────────────────────────────────────────────────────────────
     def _build_ui(self):
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(20, 20, 20, 20)
-        layout.setSpacing(16)
+        # ── Main Layout ──
+        self.lyt_main = QVBoxLayout(self)
+        self.lyt_main.setContentsMargins(20, 20, 20, 20)
+        self.lyt_main.setSpacing(16)
 
-        # Header
-        header = QHBoxLayout()
-        lbl_title = QLabel("Recipe Details")
-        btn_save = QPushButton("Save Recipe")
-        btn_save.setObjectName("btn_save_recipes")
-        self.btn_save = btn_save
-        header.addWidget(lbl_title)
-        header.addStretch()
-        header.addWidget(btn_save)
-        layout.addLayout(header)
+        # ── Header Row ──
+        header_layout = QHBoxLayout()
+        self.lbl_header = QLabel("Recipe Details")
+        self.lbl_header.setObjectName("header_label")
+        header_layout.addWidget(self.lbl_header, alignment=Qt.AlignLeft)
 
-        # Recipe Fields
-        fields = QHBoxLayout()
+        self.btn_save = QPushButton("Save")
+        self.btn_save.setObjectName("btn_save_recipes")
+        header_layout.addWidget(self.btn_save, alignment=Qt.AlignRight)
+        self.lyt_main.addLayout(header_layout)
 
+        # ── Main Content ──
+        main_content_layout = QHBoxLayout()
+        main_content_layout.setSpacing(16)
+
+        # ── Left Section (Inputs + Ingredients) ──
+        left_section = QVBoxLayout()
+        left_section.setSpacing(12)
+
+       # ── Create vertical layout container ──
+        input_vbox = QVBoxLayout()
+        input_vbox.setSpacing(12)
+
+        # ── Name Row ──
+        name_widget = QWidget()
+        name_layout = QHBoxLayout(name_widget)
+        name_layout.setContentsMargins(0, 0, 0, 0)
+        name_layout.setSpacing(10)
+        name_layout.addWidget(QLabel("Name:"))
         self.le_name = QLineEdit()
-        self.le_name.setPlaceholderText("Enter recipe name")
-        self.cb_category = CustomComboBox(list=RECIPE_CATEGORIES, placeholder="Meal Type")
-        self.cb_category.setPlaceholderText("Meal Type")
+        name_layout.addWidget(self.le_name)
+        input_vbox.addWidget(name_widget)
+
+        # ── Category & Type Row ──
+        category_widget = QWidget()
+        category_layout = QHBoxLayout(category_widget)
+        category_layout.setContentsMargins(0, 0, 0, 0)
+        category_layout.setSpacing(10)
+
+        # Category label + combo
+        category_label = QLabel("Category:")
+        category_label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+        category_layout.addWidget(category_label)
+
+        self.cb_recipe_category = SmartComboBox(list=RECIPE_CATEGORIES)
+        category_layout.addWidget(self.cb_recipe_category, stretch=1)
+
+        # Type label + combo
+        type_label = QLabel("Type:")
+        type_label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+        category_layout.addWidget(type_label)
+
+        self.cb_meal_type = SmartComboBox(list=MEAL_CATEGORIES)
+        category_layout.addWidget(self.cb_meal_type, stretch=1)
+
+        input_vbox.addWidget(category_widget)
+
+
+        # ── Total Time & Servings Row ──
+        time_widget = QWidget()
+        time_layout = QHBoxLayout(time_widget)
+        time_layout.setContentsMargins(0, 0, 0, 0)
+        time_layout.setSpacing(10)
+        time_layout.addWidget(QLabel("Total Time:"))
         self.le_time = QLineEdit()
-        self.le_time.setPlaceholderText("e.g., 45")
+        time_layout.addWidget(self.le_time)
+        time_layout.addWidget(QLabel("Servings:"))
         self.le_servings = QLineEdit()
-        self.le_servings.setPlaceholderText("e.g., 4")
-        self.btn_image = QPushButton("Browse")
-        self.btn_image.setMaximumWidth(75)
-        self.btn_image.setObjectName("btn_image_path")
+        time_layout.addWidget(self.le_servings)
+        input_vbox.addWidget(time_widget)
 
-        fields.addWidget(QLabel("Recipe Name:"))
-        fields.addWidget(self.le_name)
-        fields.addWidget(QLabel("Category:"))
-        fields.addWidget(self.cb_category)
-        fields.addWidget(QLabel("Total Time:"))
-        fields.addWidget(self.le_time)
-        fields.addWidget(QLabel("Servings:"))
-        fields.addWidget(self.le_servings)
-        fields.addWidget(QLabel("Image Path:"))
-        fields.addWidget(self.btn_image)
-        layout.addLayout(fields)
+        # ── Wrap Inputs + Image ──
+        top_hbox = QHBoxLayout()
+        top_hbox.setSpacing(20)
+        top_hbox.addLayout(input_vbox, stretch=2)
 
-        # Ingredient Section
-        layout.addWidget(QLabel("Ingredients:"))
+        self.btn_add_image = QPushButton("+\nAdd Image")
+        self.btn_add_image.setFixedSize(180, 180)
+        top_hbox.addWidget(self.btn_add_image, alignment=Qt.AlignTop)
+
+        left_section.addLayout(top_hbox)
+
+
+        # Ingredients Section
+        ingredients_frame = QFrame()
+        ingredients_frame.setObjectName("ingredients_frame")
+        ingredients_frame.setFrameShape(QFrame.Box)
+        ingredients_layout = QVBoxLayout(ingredients_frame)
+        ingredients_layout.setSpacing(20)
+        ingredients_layout.addWidget(QLabel("Ingredients"))
+
         scroll = QScrollArea()
-        scroll.setContentsMargins(0, 0, 0, 0)
         scroll.setWidgetResizable(True)
         self.ingredients_container = QWidget()
         self.ingredients_container.setObjectName("ingredients_container")
         self.ingredients_layout = QVBoxLayout(self.ingredients_container)
         self.ingredients_layout.setAlignment(Qt.AlignTop)
         scroll.setWidget(self.ingredients_container)
-        layout.addWidget(scroll)
+        ingredients_layout.addWidget(scroll)
 
-        # First Ingredient (non-removable)
+        left_section.addWidget(ingredients_frame)
+
+        main_content_layout.addLayout(left_section, 2)  # ~2/3 width
+
+        # ── Right Section (Directions) ──
+        directions_frame = QFrame()
+        directions_frame.setObjectName("directions_frame")
+        directions_frame.setFrameShape(QFrame.Box)
+        directions_layout = QVBoxLayout(directions_frame)
+        directions_layout.setSpacing(20)
+        directions_layout.addWidget(QLabel("Directions"))
+        self.te_directions = QTextEdit()
+        directions_layout.addWidget(self.te_directions)
+
+        main_content_layout.addWidget(directions_frame, 1)  # ~1/3 width
+
+        self.lyt_main.addLayout(main_content_layout)
+
+        # ── Initial Ingredient Slot ──
         self._add_ingredient(removable=False)
 
-        # Directions
-        layout.addWidget(QLabel("Directions:"))
-        self.te_directions = QTextEdit()
-        layout.addWidget(self.te_directions)
-
-    # ── Signal Connections ───────────────────────────────────────────────────────
     def _connect_signals(self):
         self.btn_save.clicked.connect(self.save_recipe)
-        self.btn_image.clicked.connect(self.select_image)
-
+        #self.btn_add_image.image_selected.connect(self._update_image_path)
+        
         dynamic_validation(self.le_name, NAME)
         dynamic_validation(self.le_servings, INT)
-        dynamic_validation(self.le_time, INT)
-
-        self.cb_category.cb_validated.connect(lambda: clear_error_styles(self.cb_category))
+        
+        self.cb_recipe_category.selection_validated.connect(lambda: clear_error_styles(self.cb_recipe_category))
+        self.cb_meal_type.selection_validated.connect(lambda: clear_error_styles(self.cb_meal_type))
         self.te_directions.textChanged.connect(lambda: clear_error_styles(self.te_directions))
 
-    # ── Combobox Setup ───────────────────────────────────────────────────────────
-    def _populate_categories(self):
-        populate_combobox(self.cb_category, *RECIPE_CATEGORIES)
-
-    # ── Ingredient Management ────────────────────────────────────────────────────
     def _add_ingredient(self, removable=True):
         widget = IngredientWidget(removable=removable)
         widget.remove_ingredient_requested.connect(self._remove_ingredient)
@@ -128,32 +183,49 @@ class AddRecipes(QWidget):
     def _store_ingredient(self, data):
         self.stored_ingredients.append(data)
 
-    # ── Image Picker ────────────────────────────────────────────────────────────
-    def select_image(self):
-        dialog = CropImageDialog(self)
-        if dialog.exec():
-            self.selected_image_path = dialog.get_image_path()
-            if self.selected_image_path:
-                self.btn_image.setText("Image Selected")
+    def _update_image_path(self, image_path: str):
+        """Update the selected image path when an image is selected."""
+        self.selected_image_path = image_path if image_path else None
 
-    # ── Save Logic ──────────────────────────────────────────────────────────────
     def save_recipe(self):
         recipe_data = {
             "recipe_name": self.le_name.text().strip(),
-            "recipe_category": self.cb_category.currentText().strip(),
+            "recipe_category": self.cb_recipe_category.currentText().strip(),
+            "meal_type": self.cb_meal_type.currentText().strip(),
             "total_time": int(self.le_time.text().strip() or 0),
             "servings": int(self.le_servings.text().strip() or 0),
             "directions": self.te_directions.toPlainText().strip(),
             "image_path": self.selected_image_path or ""
         }
 
-        # Call service
         try:
             recipe = RecipeService.create_recipe_with_ingredients(
                 recipe_data,
                 self.stored_ingredients
             )
             MessageDialog("info", "Success!", "Recipe saved successfully.", self).exec()
+            self._clear_form()  # Clear the form after successful save
         except Exception as e:
             DebugLogger().log(f"[AddRecipes] Error saving recipe: {e}", "error")
             MessageDialog("warning", "Failed to Save", str(e), self).exec()
+
+    def _clear_form(self):
+        """Clear all form fields after successful save."""
+        self.le_name.clear()
+        self.cb_recipe_category.setCurrentIndex(-1)
+        self.cb_meal_type.setCurrentIndex(-1)
+        self.le_time.clear()
+        self.le_servings.clear()
+        self.te_directions.clear()
+        self.btn_add_image.clear_image()
+        self.selected_image_path = None
+        
+        # Clear stored ingredients and widgets
+        self.stored_ingredients.clear()
+        for widget in self.ingredient_widgets:
+            self.ingredients_layout.removeWidget(widget)
+            widget.deleteLater()
+        self.ingredient_widgets.clear()
+        
+        # Add back the initial ingredient widget
+        self._add_ingredient(removable=False)

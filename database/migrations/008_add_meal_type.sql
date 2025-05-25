@@ -1,12 +1,12 @@
--- migrations/008_add_meal_category.sql
+-- migrations/008_add_meal_type.sql
 
 ALTER TABLE recipes
-  ADD COLUMN meal_category TEXT;
+  ADD COLUMN meal_type TEXT;
 
 -- Set default values for existing recipes
 UPDATE recipes 
-SET meal_category = 'Dinner' 
-WHERE meal_category IS NULL;
+SET meal_type = 'Dinner' 
+WHERE meal_type IS NULL;
 
 -- Make the column NOT NULL after setting defaults
 -- Note: SQLite doesn't support ALTER COLUMN, so we'll handle this in the model validation

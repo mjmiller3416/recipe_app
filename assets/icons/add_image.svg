@@ -1,0 +1,8 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300" fill="#000">
+  <g fill="none" stroke="#333" stroke-width="20" stroke-linecap="round">
+    <line x1="150" y1="60" x2="150" y2="180"/>
+    <line x1="90" y1="120" x2="210" y2="120"/>
+  </g>
+  <text x="150" y="250" font-family="Arial, sans-serif" font-size="24" fill="#333" text-anchor="middle">Add Image</text>
+</svg>

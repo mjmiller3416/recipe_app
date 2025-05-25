@@ -9,7 +9,7 @@ from .config import (DEBUG_LAYOUT_BORDERS, EMPTY_STATE, FLOAT, ICON_COLOR,
                      MEAL_PLANNER, MEASUREMENT_UNITS, NAME, NON_EMPTY,
                      RECIPE_CARD, RECIPE_CATEGORIES, RECIPE_DIALOG, SEARCH,
                      SIDEBAR, TITLE_BAR, MESSAGE_DIALOG, SMART_COMBOBOX,
-                     SORT_OPTIONS)
+                     SORT_OPTIONS, ADD_RECIPES)
 from .paths import AppPaths, QssPaths
 from .user_settings import UserSettings
 
@@ -22,5 +22,5 @@ __all__ = [
     "FLOAT", "SEARCH", "NON_EMPTY", "TITLE_BAR",
     "INGREDIENT_WIDGET","MEAL_PLANNER", "RECIPE_WIDGET",
     "EMPTY_STATE", "RECIPE_CARD", "SIDEBAR", "RECIPE_DIALOG",
-    "MESSAGE_DIALOG","SMART_COMBOBOX", "SORT_OPTIONS",
+    "MESSAGE_DIALOG","SMART_COMBOBOX", "SORT_OPTIONS", "ADD_RECIPES",
 ]

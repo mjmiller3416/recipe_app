@@ -101,14 +101,14 @@ class ViewRecipes(QWidget):
 
     def load_filtered_sorted_recipes(self):
         """Loads recipes using current filter, sort, and favorites-only flag."""
-        category = self.cb_filter.currentText()
+        recipe_category = self.cb_filter.currentText()
         sort = self.cb_sort.currentText()
         favorites_only = self.chk_favorites.isChecked()
 
         self.clear_recipe_display()
 
         recipes = RecipeService.list_filtered(
-            category=category,
+            recipe_category=recipe_category,
             sort_by=sort,
             favorites_only=favorites_only,
         )

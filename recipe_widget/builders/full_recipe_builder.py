@@ -11,10 +11,11 @@ from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QSizePolicy,
 from config import RECIPE_DIALOG
 from database.models.recipe import Recipe
 from ui.components.dialogs.dialog_window import DialogWindow
-from ui.components.images import SquareImage
+from ui.components.images import RoundedImage
 from ui.components.separator import Separator
 from ui.iconkit import Icon
 from ui.tools.layout_debugger import LayoutDebugger
+from core.helpers.ui_helpers import create_framed_layout
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 
@@ -73,7 +74,7 @@ class FullRecipe(DialogWindow):
 
     def build_header_frame(self) -> QFrame:
         """Creates the recipe image widget."""
-        self.header_frame, lyt_header = self._create_framed_layout(line_width=0)
+        self.header_frame, lyt_header = create_framed_layout(line_width=0)
 
         # recipe name
         self.lbl_recipe_name = QLabel(self.recipe.recipe_name)
@@ -88,17 +89,21 @@ class FullRecipe(DialogWindow):
 
     def build_image_frame(self) -> QFrame:
         """Creates the recipe image widget."""
-        self.image_frame, lyt_image = self._create_framed_layout(line_width=0)
+        self.image_frame, lyt_image = create_framed_layout(line_width=0)
 
         # add image to layout
-        self.recipe_image = SquareImage(self.recipe.image_path, 280, self.image_frame)
+        self.recipe_image = RoundedImage(
+            image_path = (self.recipe.image_path),
+            size = 280, 
+            radii= (0, 0, 0, 0)  # no rounded corners for full image
+        )
         lyt_image.addWidget(self.recipe_image, 0, Qt.AlignCenter)
 
         return self.image_frame
 
     def build_meta_frame(self) -> QFrame:
         """Creates the meta information widget."""
-        self.meta_info_widget, lyt_meta = self._create_framed_layout(line_width=0)
+        self.meta_info_widget, lyt_meta = create_framed_layout(line_width=0)
 
         # add meta info to layout
         lyt_meta.addWidget(self._build_meta_row(RECIPE_DIALOG["ICON_SERVINGS"], str(self.recipe.servings)))
@@ -109,7 +114,7 @@ class FullRecipe(DialogWindow):
 
     def build_ingredients_frame(self) -> QFrame:
         """Creates the ingredients list widget with bulleted items."""
-        self.ingredients_widget, lyt_ingredients = self._create_framed_layout(line_width=0)
+        self.ingredients_widget, lyt_ingredients = create_framed_layout(line_width=0)
 
         # header
         lbl_ingredients_header = QLabel("Ingredients")
@@ -149,7 +154,7 @@ class FullRecipe(DialogWindow):
 
     def build_directions_frame(self) -> QFrame:
         """Creates the directions list widget with each step on its own line."""
-        self.directions_widget, lyt_directions = self._create_framed_layout(line_width=0)
+        self.directions_widget, lyt_directions = create_framed_layout(line_width=0)
         self.directions_widget.setObjectName("DirectionsFrame")
 
         # ── Header ──
@@ -206,7 +211,7 @@ class FullRecipe(DialogWindow):
             QFrame: A framed widget containing the formatted list.
         """
         # ── Create sub-frame ──
-        frame, layout = self._create_framed_layout(
+        frame, layout = create_framed_layout(
             frame_shape=QFrame.NoFrame,
             margins=margins,
             spacing=0,
@@ -244,43 +249,6 @@ class FullRecipe(DialogWindow):
         return frame
 
     # ── Private Methods ─────────────────────────────────────────────────────────────
-    def _create_framed_layout(
-        self,
-        frame_shape:  QFrame.Shape = QFrame.Box,
-        frame_shadow: QFrame.Shadow = QFrame.Plain,
-        line_width:   int = 1,
-        size_policy:  tuple = (QSizePolicy.Expanding, QSizePolicy.Expanding),
-        margins:      tuple = (0, 0, 0, 0),
-        spacing:      int = 0,
-    ) -> tuple[QFrame, QVBoxLayout]:
-        """Create a QFrame with a QVBoxLayout inside, with standardized styling.
-
-        Args:
-            frame_shape (QFrame.Shape): Shape of the frame (Box, NoFrame, etc.)
-            frame_shadow (QFrame.Shadow): Shadow style of the frame.
-            line_width (int): Line width for the frame border.
-            size_policy (tuple): (horizontal, vertical) QSizePolicy values.
-            margins (tuple): Layout margins (left, top, right, bottom).
-            spacing (int): Spacing between layout elements.
-
-        Returns:
-            tuple[QFrame, QVBoxLayout]: The created frame and its layout.
-        """
-        # ── Create Frame & Layout ──
-        frame = QFrame()
-        frame.setFrameShape(frame_shape)
-        frame.setFrameShadow(frame_shadow)
-        frame.setLineWidth(line_width)
-        frame.setSizePolicy(*size_policy)
-
-        # ── Set Frame Properties ──
-        layout = QVBoxLayout(frame)
-        layout.setContentsMargins(*margins)
-        layout.setSpacing(spacing)
-
-        return frame, layout
-
-
     def _build_left_column(self) -> QVBoxLayout:
         """Constructs the left side of the dialog (Image + Ingredients)."""
         lyt = QVBoxLayout()

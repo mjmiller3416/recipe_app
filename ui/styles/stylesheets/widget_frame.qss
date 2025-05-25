@@ -1,0 +1,9 @@
+/* ------------------------------------------------------------------
+   WIDGET FRAME STYLESHEET
+   ------------------------------------------------------------------ */
+
+#WidgetFrame {
+    background-color: {BACKGROUND_WIDGET}; /* Widget Background Color */
+    border: 1px solid {BORDER_DEFAULT}; /* Widget Border Color */
+    border-radius: 5px; /* Rounded corners */
+}

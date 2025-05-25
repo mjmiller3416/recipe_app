@@ -26,7 +26,7 @@ class Recipe(ModelBase):
     id: Optional[int]         = None
     recipe_name: str          = Field(..., min_length=1)
     recipe_category: str      = Field(..., min_length=1)
-    meal_category: str        = Field(default="Dinner", min_length=1)
+    meal_type: str        = Field(default="Dinner", min_length=1)
     total_time: Optional[int] = None
     servings: Optional[int]   = None
     directions: Optional[str] = None
@@ -36,7 +36,7 @@ class Recipe(ModelBase):
 
     @model_validator(mode="before")
     def strip_strings(cls, values):
-        for fld in ("recipe_name", "recipe_category", "meal_category", "image_path"):
+        for fld in ("recipe_name", "recipe_category", "meal_type", "image_path"):
             v = values.get(fld)
             if isinstance(v, str):
                 values[fld] = v.strip()

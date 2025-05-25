@@ -38,10 +38,6 @@
     outline: none;
 }
 
-#AddRecipes #ingredients_container {
-    background-color: transparent;
-}
-
 #AddRecipes QComboBox QAbstractItemView {
         background-color: #424951; /* Dark background for dropdown */
         color: white;
@@ -64,12 +60,20 @@
     color: #353535;
 }
 
-#sa_ingredients {
-    background: transparent;
-    border: none;
+#AddRecipes #ingredients_container {
+    background-color: transparent;
 }
 
-#sa_ingredients QWidget {
-    background: #525861; /* Set the color for the viewport */
+#AddRecipes #ingredients_frame {
+    background-color: {BACKGROUND_WIDGET};
+    border: 2px solid {BORDER_DEFAULT};
+    border-radius: 10px;
+    padding: 10px;
 }
 
+#AddRecipes #directions_frame {
+    background-color: {BACKGROUND_WIDGET};
+    border: 2px solid {BORDER_DEFAULT};
+    border-radius: 10px;
+    padding: 10px;
+}

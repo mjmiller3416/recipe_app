@@ -35,7 +35,8 @@ class QssPaths:
         TITLE_BAR         = AppPaths.qss_path("title_bar.qss")
         EMPTY_STATE_FRAME = AppPaths.qss_path("empty_state_frame.qss")
         INGREDIENT_WIDGET = AppPaths.qss_path("ingredient_widget.qss")
-        SMART_COMBOBOX   = AppPaths.qss_path("smart_combobox.qss")
+        SMART_COMBOBOX    = AppPaths.qss_path("smart_combobox.qss")
+        WIDGET_FRAME      = AppPaths.qss_path("widget_frame.qss")
 
     @staticmethod
     def get_view_styles() -> dict:
@@ -54,7 +55,8 @@ class QssPaths:
             "add_recipes": [
                 QssPaths.Views.ADD_RECIPES,
                 QssPaths.Components.MESSAGE_DIALOG,
-                QssPaths.Components.INGREDIENT_WIDGET
+                QssPaths.Components.INGREDIENT_WIDGET,
+                QssPaths.Components.SMART_COMBOBOX
             ],
             "view_recipes": [
                 QssPaths.Views.VIEW_RECIPES,
