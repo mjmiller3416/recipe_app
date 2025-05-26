@@ -4,8 +4,7 @@ Singleton that owns the current palette and broadcasts changes.
 """
 
 # ── Imports ────────────────────────────────────────────────────────────────
-import json
-from typing import Dict, Optional
+from typing import Dict
 
 from PySide6.QtCore import QObject, Signal
 from PySide6.QtWidgets import QApplication

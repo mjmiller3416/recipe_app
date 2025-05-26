@@ -68,7 +68,7 @@ class MealPlanner(QWidget):
         icon_asset = ThemedIcon(
             file_path = MEAL_PLANNER["ICON_ADD"],
             size      = MEAL_PLANNER["ICON_SIZE"],
-            variant   = MEAL_PLANNER["VARIANT"]
+            variant   = MEAL_PLANNER["STATIC"]
         )
         icon = icon_asset.pixmap()
 

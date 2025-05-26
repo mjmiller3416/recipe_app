@@ -8,7 +8,7 @@ from pathlib import Path
 from PySide6.QtCore import QRegularExpression, QSize
 from PySide6.QtGui import QRegularExpressionValidator
 
-from config.paths import AppPaths
+from config.paths import AppPaths, QssPaths
 from style_manager.themes.dark_theme import THEME
 
 # ── Icon Defaults ──
@@ -28,7 +28,7 @@ ADD_RECIPES = {
 MEAL_PLANNER = {
     "ICON_SIZE": QSize(16, 16),
     "ICON_ADD":  AppPaths.ICONS_DIR / "add.svg",
-    "VARIANT":   THEME["ICON"]["ACCENT"],
+    "STATIC":   THEME["ICON"]["ACCENT"],
 }
 
 # ── Sidebar Widget ──
@@ -42,7 +42,7 @@ SIDEBAR = {
     "ICON_SETTINGS":      AppPaths.ICONS_DIR / "settings.svg",
     "ICON_EXIT":          AppPaths.ICONS_DIR / "exit.svg",
     "LOGO":               AppPaths.ICONS_DIR / "logo.svg",
-    "VARIANT":            THEME["ICON_STYLES"]["NAV"]
+    "DYNAMIC":            THEME["ICON_STYLES"]["NAV"]
 }
 
 # ── Search Widget ──
@@ -68,7 +68,7 @@ TITLE_BAR = {
     "ICON_RESTORE":        AppPaths.ICONS_DIR / "restore.svg",
     "ICON_CLOSE":          AppPaths.ICONS_DIR / "close.svg",
     "ICON_TOGGLE_SIDEBAR": AppPaths.ICONS_DIR / "toggle_sidebar.svg",
-    "VARIANT":             THEME["ICON_STYLES"]["TOOLBUTTON"],
+    "DYNAMIC":             THEME["ICON_STYLES"]["TOOLBUTTON"],
     "APP_NAME":            "MealGenie",
 }
 
@@ -92,13 +92,14 @@ SMART_COMBOBOX = {
         "ICON_SIZE": QSize(20, 20),
         "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"]
     },
+    "QSS_PATH": QssPaths.Components.SMART_COMBOBOX,
 }
 
 # ── Recipe Widget ──
 EMPTY_STATE = {
     "ICON_SIZE":     QSize(60, 60),
     "ICON_ADD_MEAL": AppPaths.ICONS_DIR / "add_meal.svg",
-    "VARIANT":       THEME["ICON"]["ACCENT"],
+    "STATIC":       THEME["ICON"]["ACCENT"],
 }
 RECIPE_CARD = {
     "ICON_SIZE":       QSize(30, 30),
@@ -113,7 +114,7 @@ RECIPE_DIALOG = {
     "ICON_SERVINGS":   AppPaths.ICONS_DIR / "servings.svg",
     "ICON_TOTAL_TIME": AppPaths.ICONS_DIR / "total_time.svg",
     "ICON_CATEGORY":   AppPaths.ICONS_DIR / "category.svg",
-    "VARIANT":         THEME["ICON"]["ACCENT"],
+    "STATIC":         THEME["ICON"]["ACCENT"],
 }
 
 MESSAGE_DIALOG = {

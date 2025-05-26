@@ -1,6 +1,11 @@
 /* ------------------------------------------------------------------
    SMART COMBOBOX STYLSHEET
    ------------------------------------------------------------------ */
+QComboBox#SmartComboBox:drop-down {    /* More specific if objectName is set */
+    border: none;
+    width: 0px;
+}
+
 #SmartComboBox {
     border: 1px solid {BORDER_DEFAULT}; /* Dynamic */
     border-radius: 5px;
@@ -34,7 +39,7 @@
 }
 
 #SmartComboBox QAbstractItemView:item:hover {
-    background-color: {STATE_HOVER}; /* Dynamic */
+    background-color: {STATE_SECONDARY_HOVER}; /* Dynamic */
     border: none;
     border-radius: 5px;
     outline: none;

@@ -62,7 +62,7 @@ class Sidebar(QWidget):
             file_path      = SIDEBAR["ICON_DASHBOARD"],
             size           = ICON_SIZE,
             label          = "Dashboard",
-            variant        = SIDEBAR["VARIANT"],
+            variant        = SIDEBAR["DYNAMIC"],
         )
         self.btn_dashboard.setFixedHeight(55)  # set fixed height for the button
         self.verticalLayout.addWidget(self.btn_dashboard)
@@ -71,7 +71,7 @@ class Sidebar(QWidget):
             file_path         = SIDEBAR["ICON_MEAL_PLANNER"],
             size              = ICON_SIZE,
             label             = "Meal Planner",
-            variant           = SIDEBAR["VARIANT"],
+            variant           = SIDEBAR["DYNAMIC"],
         )
         self.btn_meal_planner.setFixedHeight(55)  # set fixed height for the button
         self.verticalLayout.addWidget(self.btn_meal_planner)
@@ -80,7 +80,7 @@ class Sidebar(QWidget):
             file_path         = SIDEBAR["ICON_VIEW_RECIPES"],
             size              = ICON_SIZE,
             label             = "View Recipes",
-            variant           = SIDEBAR["VARIANT"],
+            variant           = SIDEBAR["DYNAMIC"],
         )
         self.btn_view_recipes.setFixedHeight(55)  # set fixed height for the button
         self.verticalLayout.addWidget(self.btn_view_recipes)
@@ -89,7 +89,7 @@ class Sidebar(QWidget):
             file_path          = SIDEBAR["ICON_SHOPPING_LIST"],
             size               = ICON_SIZE,
             label              = "Shopping List",
-            variant            = SIDEBAR["VARIANT"],
+            variant            = SIDEBAR["DYNAMIC"],
         )
         self.btn_shopping_list.setFixedHeight(55)  # set fixed height for the button
         self.verticalLayout.addWidget(self.btn_shopping_list)
@@ -98,7 +98,7 @@ class Sidebar(QWidget):
             file_path        = SIDEBAR["ICON_ADD_RECIPES"],
             size             = ICON_SIZE,
             label            = "Add Recipes",
-            variant          = SIDEBAR["VARIANT"],
+            variant          = SIDEBAR["DYNAMIC"],
         )
         self.btn_add_recipes.setFixedHeight(55)  # set fixed height for the button
         self.verticalLayout.addWidget(self.btn_add_recipes)
@@ -111,7 +111,7 @@ class Sidebar(QWidget):
             file_path     = SIDEBAR["ICON_SETTINGS"],
             size          = ICON_SIZE,
             label         = "Settings",
-            variant       = SIDEBAR["VARIANT"],
+            variant       = SIDEBAR["DYNAMIC"],
         )
         self.btn_settings.setFixedHeight(55)  # set fixed height for the button
         self.verticalLayout.addWidget(self.btn_settings)
@@ -120,7 +120,7 @@ class Sidebar(QWidget):
             file_path = SIDEBAR["ICON_EXIT"],
             size      = ICON_SIZE,
             label     = "Exit",
-            variant   = SIDEBAR["VARIANT"],
+            variant   = SIDEBAR["DYNAMIC"],
         )
         self.btn_exit.setFixedHeight(55)  # set fixed height for the button
         self.btn_exit.clicked.connect(self.close_app.emit) # connect exit button to close_app signal

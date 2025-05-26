@@ -1,10 +1,15 @@
+"""views/dashboard/dashboard.py
+
+Placeholder class for the Dashboard screen.
+"""
+
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 from ui.iconkit import Icon
-from ui.components.inputs.custom_combobox import CustomComboBox
 
-
+# ── Class Definition ────────────────────────────────────────────────────────────
 class Dashboard(QWidget):
     """Placeholder class for the Dashboard screen."""
 

@@ -1,3 +1,8 @@
+"""view/add_recipes/add_recipes.py
+
+AddRecipes widget for creating new recipes with ingredients and directions.
+"""
+
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtWidgets import (
@@ -11,13 +16,13 @@ from services.recipe_service import RecipeService
 from ui.components.dialogs import MessageDialog
 from ui.components.inputs import SmartComboBox
 from ui.tools import clear_error_styles, dynamic_validation
-from ui.tools.form_utilities import populate_combobox
 from ui.components.widget_frame import WidgetFrame
 from .ingredient_widget import IngredientWidget
-from .add_recipe_image import AddRecipeImage
 
-
+# ── Class Definition ────────────────────────────────────────────────────────────
 class AddRecipes(QWidget):
+    """AddRecipes widget for creating new recipes with ingredients and directions."""
+    
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("AddRecipes")
@@ -51,8 +56,8 @@ class AddRecipes(QWidget):
         main_content_layout.setSpacing(16)
 
         # ── Left Section (Inputs + Ingredients) ──
-        left_section = QVBoxLayout()
-        left_section.setSpacing(12)
+        lyt_recipe_details = QVBoxLayout()
+        lyt_recipe_details.setSpacing(12)
 
        # ── Create vertical layout container ──
         input_vbox = QVBoxLayout()
@@ -115,7 +120,7 @@ class AddRecipes(QWidget):
         self.btn_add_image.setFixedSize(180, 180)
         top_hbox.addWidget(self.btn_add_image, alignment=Qt.AlignTop)
 
-        left_section.addLayout(top_hbox)
+        lyt_recipe_details.addLayout(top_hbox)
 
 
         # Ingredients Section
@@ -135,26 +140,20 @@ class AddRecipes(QWidget):
         scroll.setWidget(self.ingredients_container)
         ingredients_layout.addWidget(scroll)
 
-        left_section.addWidget(ingredients_frame)
+        lyt_recipe_details.addWidget(ingredients_frame)
 
-        main_content_layout.addLayout(left_section, 2)  # ~2/3 width
+        main_content_layout.addLayout(lyt_recipe_details, 2)  # ~2/3 width
 
-        # ── Right Section (Directions) ──
-        lyt_directions = QVBoxLayout()
-
-        directions_frame = WidgetFrame(
-            header_text="Directions",
-            layout_type="vertical",
-            frame_shape=QFrame.Box,
+        # ── Directions──
+        directions_frame = WidgetFrame( # frame for directions
+            header_text = "Directions", 
+            layout_type = "vertical"
         )
-        
-        self.te_directions = QTextEdit()
+        self.te_directions = QTextEdit() # text edit for directions
         self.te_directions.setPlaceholderText("Enter cooking directions here...")
-        self.te_directions.setObjectName("directions_text_edit")
+        self.te_directions.setObjectName("DirectionsTextEdit")
         directions_frame.add_widget(self.te_directions, stretch=1)
-
-        lyt_directions.addWidget(directions_frame)  # add directions frame to layout
-        main_content_layout.addLayout(lyt_directions, 1) # add directions layout to main content
+        main_content_layout.addWidget(directions_frame, 1) # add directions frame to main content
 
         self.lyt_main.addLayout(main_content_layout)
 

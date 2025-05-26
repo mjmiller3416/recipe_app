@@ -9,7 +9,7 @@ from pathlib import Path
 from core.helpers import DebugLogger
 
 # ── Constants ───────────────────────────────────────────────────────────────────
-NON_QSS_KEYS = {"ICON_STYLES"}  # Skip injecting these into QSS
+NON_QSS_KEYS = {"ICON_STYLES"}  # skip injecting these into QSS
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -21,7 +21,7 @@ class ThemeLoader:
 
     def __init__(self, theme: dict):
         self.theme = theme
-        self._cache: dict[str, str] = {}  # 🔹 Caches already-loaded QSS content
+        self._cache: dict[str, str] = {}  # cache for loaded QSS files
 
     def load(self, qss_file_path: str) -> str:
         """
@@ -38,7 +38,6 @@ class ThemeLoader:
 
         try:
             raw_qss = Path(qss_file_path).read_text(encoding="utf-8")
-            # DebugLogger.log(f"[Loader] Opening QSS: {qss_file_path}", "debug")
 
             injected_count = 0
             for key, value in self.theme.items():

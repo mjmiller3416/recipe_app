@@ -16,15 +16,16 @@ ACCENT_SECONDARY_ACTIVE    = "#2D4547"
 
 # Surfaces / Backgrounds
 SURFACE_MAIN               = "#3A4048"
-SURFACE_RAISED            = "#2C313C"
+SURFACE_RAISED             = "#2C313C"
 BACKGROUND_WIDGET          = "#272C36"
 BACKGROUND_PANEL           = "#323742"
 BACKGROUND_INPUT           = "#525861"
 
 # Borders
-BORDER_DEFAULT             = "#1B1D23"
+BORDER_DEFAULT             = "#1B1D23" 
+BORDER_WIDGET              = "#555A60"
 BORDER_ERROR               = "#FF4F4F"
-DIVIDER                    = "#4A4D52"
+DIVIDER                    = "#343b48"
 
 # Text
 TEXT_DEFAULT               = "#9DA1A5"
@@ -82,6 +83,7 @@ THEME = {
     # ── Borders & Dividers ──────────────────────────────────────────────────────
     "BORDER": {
         "DEFAULT":      BORDER_DEFAULT,
+        "WIDGET":       BORDER_WIDGET,
         "ACTIVE":       ACCENT_PRIMARY,
         "ERROR":        BORDER_ERROR,
         "DIVIDER":      DIVIDER,

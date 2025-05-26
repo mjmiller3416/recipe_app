@@ -1,16 +1,10 @@
 /* ------------------------------------------------------------------
    APPLICATION GLOBAl STYLSHEET
    ------------------------------------------------------------------ */
-QWidget {
 
-    /*Font */
-    color: #949aa7;
-    font-family: {FONTS_UI};
-}
-
-#ApplicationWrapper {
+#Application {
     background-color: {BACKGROUND_DEFAULT}; /* App Background Color */
-    border: 0px solid #343b48; /* App Window Border */
+    border: 0px solid {BORDER_DEFAULT}; /* App Window Border */
     border-radius: 0px; /* App Window Border Radius */
 }
 
@@ -22,7 +16,7 @@ QWidget {
     padding-left: 10px;
 
     /* Font */
-    color: #6ad7ca;
+    color: {ACCENT_PRIMARY};
     font-size: 26px;
     font-weight: bold;
 

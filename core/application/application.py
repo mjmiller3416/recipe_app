@@ -24,6 +24,7 @@ from views.dashboard import Dashboard
 from views.meal_planner import MealPlanner
 from views.shopping_list import ShoppingList
 from views.view_recipes import ViewRecipes
+from config import SMART_COMBOBOX
 
 from .sidebar import Sidebar
 
@@ -36,20 +37,19 @@ class Application(QMainWindow):
     """
     def __init__(self):
         super().__init__()
+
         # ── Initialize Controller ──
         self.theme_controller = ThemeController()
         self.theme_controller.apply_full_theme()
         
         # ── Window Setup ──
-        self.setObjectName("Application")
         self.setWindowFlags(Qt.FramelessWindowHint)
-        self.setAttribute(Qt.WA_TranslucentBackground)
         self.setMinimumSize(1280, 720) # Set minimum size for the window
         self.sidebar_is_expanded = True
 
         # ── Outter Wrapper ──
         self.wrapper = QFrame()
-        self.wrapper.setObjectName("ApplicationWrapper")
+        self.wrapper.setObjectName("Application")
         self.setCentralWidget(self.wrapper)
 
         # ── Layouts ──

@@ -9,7 +9,7 @@
 }
 
 #AddRecipes QScrollArea {
-    background-color: {BACKGROUND_INPUT};
+    background-color: {BACKGROUND_RAISED};
     border: 1px solid #666;
     border-radius: 4px;
 }

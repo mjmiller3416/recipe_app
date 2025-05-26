@@ -8,13 +8,13 @@
 }
 
 #cb_recipie_category {
-    background: #525861;  /* Slightly lighter than background */
+    background: {BACKGROUND_INPUT};  /* Slightly lighter than background */
 }
 
 /* Ensure QLineEdit and QComboBox in IngredientWidget are properly styled */
-#IngredientWidget > QLineEdit {
+#IngredientWidget QLineEdit {
     background-color: {BACKGROUND_INPUT};  /* Dark background */
-    border: 1px solid #555A60;
+    border: 1px solid {BORDER_DEFAULT};
     border-radius: 4px;
     padding: 4px;
     color: #E1E1E3;
@@ -22,14 +22,18 @@
 }
 
 /* Focus effect for better visibility */
-#IngredientWidget > QLineEdit:focus {
-    border: 1px solid #03B79E;  /* Teal highlight */
+#IngredientWidget QLineEdit:focus {
+    border: 1px solid {ACCENT_PRIMARY};  /* Teal highlight */
     outline: none;
 }
 
-#IngredientWidget > QToolButton {
+#IngredientWidget QToolButton {
     background-color: {BACKGROUND_WIDGET};
     border-radius: 6px;
     padding: 4px;
     border: none;
+}
+
+#IngredientWidget #SmartComboBox {
+    border-radius: 0px;
 }

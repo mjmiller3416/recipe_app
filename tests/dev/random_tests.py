@@ -1,35 +1,63 @@
 import sys
+from PySide6.QtWidgets import (
+    QApplication,
+    QWidget,
+    QFormLayout,
+    QLineEdit,
+    QSpinBox,
+    QComboBox,
+    QPushButton,
+    QVBoxLayout,
+    QMessageBox
+)
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QApplication, QListView, QSplitter, QTextEdit,
-                               QVBoxLayout, QWidget)
 
-
-class SplitterExample(QWidget):
+class FormExample(QWidget):
     def __init__(self):
         super().__init__()
-        self.init_ui()
+        self.setWindowTitle("QFormLayout Test Example")
+        self.setMinimumWidth(300)
 
-    def init_ui(self):
-        layout = QVBoxLayout(self)
+        # Create the form layout
+        form_layout = QFormLayout()
 
-        splitter = QSplitter(Qt.Horizontal)  # Split left and right
+        # Add fields
+        self.name_input = QLineEdit()
+        form_layout.addRow("Name:", self.name_input)
 
-        text_edit = QTextEdit()
-        text_edit.setPlainText("This is a QTextEdit.")
+        self.age_input = QSpinBox()
+        self.age_input.setRange(0, 120)
+        form_layout.addRow("Age:", self.age_input)
 
-        list_view = QListView()
+        self.gender_input = QComboBox()
+        self.gender_input.addItems(["Select...", "Male", "Female", "Other"])
+        form_layout.addRow("Gender:", self.gender_input)
 
-        splitter.addWidget(text_edit)
-        splitter.addWidget(list_view)
+        # Add a submit button below the form
+        submit_button = QPushButton("Submit")
+        submit_button.clicked.connect(self.handle_submit)
 
-        layout.addWidget(splitter)
+        # Combine form + button in a vertical layout
+        main_layout = QVBoxLayout()
+        main_layout.addLayout(form_layout)
+        main_layout.addWidget(submit_button)
 
-        self.setWindowTitle('QSplitter Example')
-        self.resize(600, 400)
-        self.show()
+        self.setLayout(main_layout)
+
+    def handle_submit(self):
+        name = self.name_input.text()
+        age = self.age_input.value()
+        gender = self.gender_input.currentText()
+
+        QMessageBox.information(
+            self,
+            "Form Submitted",
+            f"Name: {name}\nAge: {age}\nGender: {gender}"
+        )
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = SplitterExample()
-    sys.exit(app.exec_())
+    window = FormExample()
+    window.show()
+    sys.exit(app.exec())

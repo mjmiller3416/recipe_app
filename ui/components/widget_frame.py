@@ -24,7 +24,8 @@ class WidgetFrame(QFrame):
                  size_policy: tuple = (QSizePolicy.Expanding, QSizePolicy.Expanding),
                  margins: tuple = (0, 0, 0, 0),
                  spacing: int = 0,
-                 parent: Optional[QFrame] = None):
+                 parent: Optional[QFrame] = None
+    ):
         """Initialize the WidgetFrame.
         
         Args:

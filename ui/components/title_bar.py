@@ -60,37 +60,37 @@ class TitleBar(QWidget):
 
         # ── Sidebar Toggle Button ──
         self.btn_ico_toggle_sidebar = ToolButtonIcon(
-            file_path=TITLE_BAR["ICON_TOGGLE_SIDEBAR"],
-            size=QSize(20, 20),
-            variant=TITLE_BAR["VARIANT"],
-            checkable=True,
+            file_path = TITLE_BAR["ICON_TOGGLE_SIDEBAR"],
+            size      = QSize(20, 20),
+            variant   = TITLE_BAR["DYNAMIC"],
+            checkable = True,
         )
         self.btn_ico_toggle_sidebar.setFixedSize(TITLE_BAR["BUTTON_SIZE"])
         self.btn_ico_toggle_sidebar.clicked.connect(self.sidebar_toggled.emit)
 
         # ── Minimize Button ──
         self.btn_ico_minimize = ToolButtonIcon(
-            file_path=TITLE_BAR["ICON_MINIMIZE"],
-            size=TITLE_BAR["ICON_SIZE"],
-            variant=TITLE_BAR["VARIANT"],
+            file_path = TITLE_BAR["ICON_MINIMIZE"],
+            size      = TITLE_BAR["ICON_SIZE"],
+            variant   = TITLE_BAR["DYNAMIC"],
         )
         self.btn_ico_minimize.setFixedSize(TITLE_BAR["BUTTON_SIZE"])
         self.btn_ico_minimize.clicked.connect(lambda: self.minimize_clicked.emit())
 
         # ── Maximize/Restore Button ──
         self.btn_ico_maximize = ToolButtonIcon(
-            file_path=TITLE_BAR["ICON_MAXIMIZE"],
-            size=TITLE_BAR["ICON_SIZE"],
-            variant=TITLE_BAR["VARIANT"],
+            file_path = TITLE_BAR["ICON_MAXIMIZE"],
+            size      = TITLE_BAR["ICON_SIZE"],
+            variant   = TITLE_BAR["DYNAMIC"],
         )
         self.btn_ico_maximize.setFixedSize(TITLE_BAR["BUTTON_SIZE"])
         self.btn_ico_maximize.clicked.connect(lambda: self.maximize_clicked.emit())
 
         # ── Close Button ──
         self.btn_ico_close = ToolButtonIcon(
-            file_path=TITLE_BAR["ICON_CLOSE"],
-            size=TITLE_BAR["ICON_SIZE"],
-            variant=TITLE_BAR["VARIANT"],
+            file_path = TITLE_BAR["ICON_CLOSE"],
+            size      = TITLE_BAR["ICON_SIZE"],
+            variant   = TITLE_BAR["DYNAMIC"],
         )
         self.btn_ico_close.setFixedSize(TITLE_BAR["BUTTON_SIZE"])
         self.btn_ico_close.clicked.connect(lambda: self.close_clicked.emit())
@@ -129,7 +129,7 @@ class TitleBar(QWidget):
         icon = ThemedIcon(
             file_path=target_path,
             size=self.btn_ico_maximize.size(),
-            variant=TITLE_BAR["VARIANT"],
+            variant=TITLE_BAR["DYNAMIC"],
         ).icon()
 
         self.btn_ico_maximize.setIcon(icon)

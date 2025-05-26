@@ -16,8 +16,10 @@ class QssPaths:
 
     # ── Core Styles ─────────────────────────────────────────────────────────────────
     class Core:
-        BASE              = AppPaths.qss_path("core", "base.qss")
         APPLICATION       = AppPaths.qss_path("core", "application.qss")
+        BASE              = AppPaths.qss_path("core", "base.qss")
+        SIDE_BAR          = AppPaths.qss_path("core", "side_bar.qss")
+        TITLE_BAR         = AppPaths.qss_path("core", "title_bar.qss")
 
     # ── View Styles ─────────────────────────────────────────────────────────────────
     class Views:
@@ -31,20 +33,12 @@ class QssPaths:
     class Components:
         EMPTY_STATE_FRAME = AppPaths.qss_path("components", "empty_state_frame.qss")
         INGREDIENT_WIDGET = AppPaths.qss_path("components", "ingredient_widget.qss")
+        MESSAGE_DIALOG    = AppPaths.qss_path("components", "message_dialog.qss")
         RECIPE_CARD       = AppPaths.qss_path("components", "recipe_card.qss")
+        RECIPE_DIALOG     = AppPaths.qss_path("components", "recipe_dialog.qss")
         SEARCH_BAR        = AppPaths.qss_path("components", "search_bar.qss")
-        SIDE_BAR          = AppPaths.qss_path("components", "side_bar.qss")
-        TITLE_BAR         = AppPaths.qss_path("components", "title_bar.qss")
-
-    # ── Dialog Styles ───────────────────────────────────────────────────────────────
-    class Dialogs:
-        MESSAGE_DIALOG    = AppPaths.qss_path("dialogs", "message_dialog.qss")
-        RECIPE_DIALOG     = AppPaths.qss_path("dialogs", "recipe_dialog.qss")
-
-    # ── Widget Styles (Override-Protected) ──────────────────────────────────────────
-    class Widgets:
-        SMART_COMBOBOX    = AppPaths.qss_path("widgets", "smart_combobox.qss")
-        WIDGET_FRAME      = AppPaths.qss_path("widgets", "widget_frame.qss")
+        SMART_COMBOBOX    = AppPaths.qss_path("components", "smart_combobox.qss")
+        WIDGET_FRAME      = AppPaths.qss_path("components", "widget_frame.qss")
 
     @staticmethod
     def get_styles() -> dict:
@@ -56,6 +50,8 @@ class QssPaths:
             "core": [
                 QssPaths.Core.APPLICATION,
                 QssPaths.Core.BASE,
+                QssPaths.Core.SIDE_BAR,
+                QssPaths.Core.TITLE_BAR,
             ],
             "views": [
                 QssPaths.Views.ADD_RECIPES,
@@ -67,19 +63,12 @@ class QssPaths:
             "components": [
                 QssPaths.Components.EMPTY_STATE_FRAME,
                 QssPaths.Components.INGREDIENT_WIDGET,
+                QssPaths.Components.MESSAGE_DIALOG,
                 QssPaths.Components.RECIPE_CARD,
+                QssPaths.Components.RECIPE_DIALOG,
                 QssPaths.Components.SEARCH_BAR,
-                QssPaths.Components.SIDE_BAR,
-                QssPaths.Components.TITLE_BAR,
-            ],
-            "dialogs": [
-                QssPaths.Dialogs.MESSAGE_DIALOG,
-                QssPaths.Dialogs.RECIPE_DIALOG,
-
-            ],
-            "widgets": [
-                QssPaths.Widgets.SMART_COMBOBOX,
-                QssPaths.Widgets.WIDGET_FRAME,
+                #QssPaths.Components.SMART_COMBOBOX,
+                QssPaths.Components.WIDGET_FRAME,
             ]
         }
 

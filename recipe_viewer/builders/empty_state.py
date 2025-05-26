@@ -47,7 +47,7 @@ class EmptyState:
         btn_add = ButtonIcon(
             file_path=EMPTY_STATE["ICON_ADD_MEAL"],
             size=EMPTY_STATE["ICON_SIZE"],
-            variant=EMPTY_STATE["VARIANT"],
+            variant=EMPTY_STATE["STATIC"],
         )
         btn_add.setObjectName("AddMealButton") # slot looks for this
         btn_add.setCursor(Qt.PointingHandCursor)

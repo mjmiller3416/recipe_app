@@ -10,8 +10,8 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QComboBox, QListView, QWidget 
 
 from ui.iconkit import ToolButtonIcon
-from config import SMART_COMBOBOX, QssPaths
-#from style_manager import WidgetLoader
+from config import SMART_COMBOBOX
+from style_manager import WidgetLoader
 
 # ── Class Definition: SmartComboBox ─────────────────────────────────────────────
 class SmartComboBox(QComboBox):
@@ -44,7 +44,7 @@ class SmartComboBox(QComboBox):
         # ── Initialize & Setup UI ──
         self.setObjectName("SmartComboBox")
         self.setEditable(editable)
-        self.setStyleSheet("QComboBox::drop-down { border: none; width: 0px; }") 
+        #WidgetLoader.apply_widget_style(self, SMART_COMBOBOX["QSS_PATH"])
         
         # ── Create Custom Button ──
         self.cb_btn = ToolButtonIcon(
@@ -56,13 +56,12 @@ class SmartComboBox(QComboBox):
         # assign button properties
         self.cb_btn.setParent(self)
         self.cb_btn.setCursor(Qt.PointingHandCursor)
-
         self.cb_btn.clicked.connect(self.showPopup) # connect button to show popup
 
         # ── Create List ──
         list_view = QListView(self)
-        list_view.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff) # use full enum path
-        list_view.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff) # use full enum path
+        list_view.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff) 
+        list_view.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff) 
         self.setView(list_view)
 
         # ── Populate List ──
