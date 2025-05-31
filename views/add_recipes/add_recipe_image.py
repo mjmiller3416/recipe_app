@@ -39,9 +39,9 @@ class AddRecipeImage(QWidget):
         
         # Create the icon button
         self.btn_add_image = ToolButtonIcon(
-            file_path=ADD_RECIPES["ADD_IMAGE"]["FILE_PATH"],
-            size=ADD_RECIPES["ADD_IMAGE"]["ICON_SIZE"],
-            variant=ADD_RECIPES["ADD_IMAGE"]["DYNAMIC"]
+            file_path = ADD_RECIPES["ADD_IMAGE"]["FILE_PATH"],
+            icon_size = ADD_RECIPES["ADD_IMAGE"]["ICON_SIZE"],
+            variant   = ADD_RECIPES["ADD_IMAGE"]["DYNAMIC"]
         )
         self.btn_add_image.setToolTip("Click to add recipe image")
         

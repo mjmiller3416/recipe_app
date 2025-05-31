@@ -39,7 +39,7 @@ class QssPaths:
         SEARCH_BAR        = AppPaths.qss_path("components", "search_bar.qss")
         SMART_COMBOBOX    = AppPaths.qss_path("components", "smart_combobox.qss")
         WIDGET_FRAME      = AppPaths.qss_path("components", "widget_frame.qss")
-
+        UPLOAD_IMAGE      = AppPaths.qss_path("components", "upload_image.qss")
     @staticmethod
     def get_styles() -> dict:
         """
@@ -62,13 +62,14 @@ class QssPaths:
             ],
             "components": [
                 QssPaths.Components.EMPTY_STATE_FRAME,
-                QssPaths.Components.INGREDIENT_WIDGET,
                 QssPaths.Components.MESSAGE_DIALOG,
                 QssPaths.Components.RECIPE_CARD,
                 QssPaths.Components.RECIPE_DIALOG,
                 QssPaths.Components.SEARCH_BAR,
-                #QssPaths.Components.SMART_COMBOBOX,
+                QssPaths.Components.INGREDIENT_WIDGET,
+                QssPaths.Components.SMART_COMBOBOX,
                 QssPaths.Components.WIDGET_FRAME,
+                QssPaths.Components.UPLOAD_IMAGE,
             ]
         }
 

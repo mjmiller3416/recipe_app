@@ -1,29 +1,22 @@
 /* ------------------------------------------------------------------
    INGREDIENT WIDGET STYLING
    ------------------------------------------------------------------ */
-#IngredientWidget {
-    background-color: {BACKGROUND_WIDGET}; /* Dark background */
+#IngredientWidget QLineEdit {
+    background-color: {BACKGROUND_WIDGET};
+    border: 1px solid {BORDER_DEFAULT};
     border-radius: 6px;
     padding: 5px;
+    color: {TEXT_DEFAULT};
+    font: 14px {FONT_BODY};
+    padding-left: 4px;
 }
 
-#cb_recipie_category {
-    background: {BACKGROUND_INPUT};  /* Slightly lighter than background */
+#IngredientWidget QLineEdit[text=""]{ 
+    font-style: italic; 
 }
 
-/* Ensure QLineEdit and QComboBox in IngredientWidget are properly styled */
-#IngredientWidget QLineEdit {
-    background-color: {BACKGROUND_INPUT};  /* Dark background */
-    border: 1px solid {BORDER_DEFAULT};
-    border-radius: 4px;
-    padding: 4px;
-    color: #E1E1E3;
-    font: 14px 'Montserrat';
-}
-
-/* Focus effect for better visibility */
 #IngredientWidget QLineEdit:focus {
-    border: 1px solid {ACCENT_PRIMARY};  /* Teal highlight */
+    border: 1px solid #03B79E;
     outline: none;
 }
 
@@ -34,6 +27,3 @@
     border: none;
 }
 
-#IngredientWidget #SmartComboBox {
-    border-radius: 0px;
-}

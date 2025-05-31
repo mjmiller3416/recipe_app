@@ -7,19 +7,19 @@
 
 #RecipeCard QLabel {
     color: {TEXT_STRONG};
-    font-size: {FONTS_SIZE_NORMAL};
-    font-family: {FONTS_HEADER};
+    font-size: {FONT_SIZE_NORMAL};
+    font-family: {FONT_HEADER};
     font-weight: 600;
 
 }
 
 #RecipeCard[layout_size="medium"] [title_text="true"] {
-    font-size: {FONTS_SIZE_LARGE};
+    font-size: {FONT_SIZE_LARGE};
     font-weight: 600;
 }
 
 #RecipeCard [label_text="true"] {
-    font-family: {FONTS_BODY};
+    font-family: {FONT_BODY};
     color: {TEXT_DEFAULT};
     font-weight: 400;
 }

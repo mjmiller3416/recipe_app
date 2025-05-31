@@ -89,6 +89,7 @@ class ShoppingList(QWidget):
                 widget.deleteLater()
 
         ingredients = ShoppingService.generate_shopping_list(recipe_ids) # fetch ingredients from the service
+        self._breakdown_map = ShoppingService.get_ingredient_breakdown(recipe_ids) # get breakdown for tooltips
 
         # ── Group By Category ──
         grouped = defaultdict(list)
@@ -200,6 +201,17 @@ class ShoppingList(QWidget):
         for item in items:
             checkbox = QCheckBox(item.label())
             checkbox.setChecked(item.have)
+
+            # add tooltip for recipe parts if applicable
+            if item.source == "recipe":
+                parts = self._breakdown_map.get(item.key(), [])
+                if parts:
+                    # build a multiline tooltip
+                    text = "\n".join(
+                        f"{name}\n- {qty} {unit}" for name, qty, unit in parts
+                    )
+                    checkbox.setToolTip(text)
+            
             checkbox.stateChanged.connect(create_toggle_handler(item, checkbox))
             layout.addWidget(checkbox)
 

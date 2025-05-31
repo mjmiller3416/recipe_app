@@ -20,7 +20,7 @@ THEME = {
     "ERROR_COLOR": "#D9534F",            # Red for errors
 
     # ── Inputs / Scrollbars ────────────────────────────────────
-    "INPUT_BG": "#FFFFFF",               # Clean white inputs
+    "PANEL_BG": "#FFFFFF",               # Clean white inputs
     "SCROLLBAR_BG": "#E0E3E7",           # Scroll track
     "SCROLLBAR_HANDLE": "#A3B3B5",       # Scrollbar handle
 

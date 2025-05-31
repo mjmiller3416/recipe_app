@@ -1,6 +1,30 @@
 /* ─────── Global Defaults ─────── */
 * {
-  font-family: {FONTS_UI};
-  font-size: {FONTS_SIZE_NORMAL};
+  font-family: {FONT_UI};
+  font-size: {FONT_SIZE_NORMAL};
   color: {TEXT_DEFAULT};
+}
+QScrollArea {
+    background-color: transparent;
+    border: none;
+}
+
+QLineEdit {
+    background-color: {BACKGROUND_WIDGET};
+    border: 1px solid {BORDER_DEFAULT};
+    border-radius: 6px;
+    padding: 5px;
+    color: {TEXT_DEFAULT};
+    font: 14px {FONT_BODY};
+    padding-left: 4px;
+}
+
+QLineEdit[text=""]{ 
+    font-style: italic; 
+}
+
+QLineEdit:focus, 
+QTextEdit:focus {
+    border: 1px solid #03B79E;
+    outline: none;
 }

@@ -59,6 +59,16 @@ SEARCH = {
     }
 }
 
+# ── Upload Image ──
+UPLOAD_RECIPE_IMAGE = {
+    "ICON_UPLOAD": {
+        "FILE_PATH": AppPaths.ICONS_DIR / "plus.svg",
+        "ICON_SIZE": QSize(100, 100),
+        "BUTTON_SIZE": QSize(200, 200),
+        "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"],
+    },
+}
+
 # ── Title Bar ──
 TITLE_BAR = {
     "ICON_SIZE":           QSize(12, 12),
@@ -84,7 +94,7 @@ INGREDIENT_WIDGET = {
 SMART_COMBOBOX = {
     "ICON_ARROW":  {
         "FILE_PATH": AppPaths.ICONS_DIR / "down_arrow.svg",
-        "ICON_SIZE": QSize(16, 16),
+        "ICON_SIZE": QSize(30, 30),
         "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"]
     },
     "ICON_CLEAR":  {
@@ -92,7 +102,6 @@ SMART_COMBOBOX = {
         "ICON_SIZE": QSize(20, 20),
         "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"]
     },
-    "QSS_PATH": QssPaths.Components.SMART_COMBOBOX,
 }
 
 # ── Recipe Widget ──
@@ -135,6 +144,14 @@ MESSAGE_DIALOG = {
         "ICON_PATH":  AppPaths.ICONS_DIR / "success.svg",
         "ICON_COLOR": THEME["ICON"]["SUCCESS"],
     },
+}
+
+# ── Widget Styles ──
+STYLES = {
+    "SMART_COMBOBOX": QssPaths.Components.SMART_COMBOBOX,
+    "WIDGET_FRAME": QssPaths.Components.WIDGET_FRAME,
+    "INGREDIENT_WIDGET": QssPaths.Components.INGREDIENT_WIDGET,
+    "UPLOAD_IMAGE": QssPaths.Components.UPLOAD_IMAGE,
 }
 
 # ── General ──

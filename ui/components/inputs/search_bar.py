@@ -59,9 +59,9 @@ class SearchBar(QFrame):
 
         # ── Clear Button ──
         self.btn_ico_clear = ToolButtonIcon(
-            file_path=SEARCH["ICON_CLEAR"]["FILE_PATH"],
-            size=SEARCH["ICON_CLEAR"]["ICON_SIZE"],
-            variant=SEARCH["ICON_CLEAR"]["DYNAMIC"],
+            file_path = SEARCH["ICON_CLEAR"]["FILE_PATH"],
+            icon_size = SEARCH["ICON_CLEAR"]["ICON_SIZE"],
+            variant   = SEARCH["ICON_CLEAR"]["DYNAMIC"],
         )
         self.btn_ico_clear.setVisible(False) # visibility based on text input
         self.layout.addWidget(self.btn_ico_clear, 0, 2)

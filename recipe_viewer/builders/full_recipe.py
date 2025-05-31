@@ -281,7 +281,7 @@ class FullRecipe(DialogWindow):
         icon = Icon(
             file_path=icon_name, 
             size=RECIPE_DIALOG["ICON_SIZE"], 
-            variant=RECIPE_DIALOG["VARIANT"],
+            variant=RECIPE_DIALOG["STATIC"],
         )
         lbl = QLabel(text)
         lbl.setProperty("metaTitle", True)

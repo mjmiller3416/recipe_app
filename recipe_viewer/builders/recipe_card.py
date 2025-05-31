@@ -108,10 +108,10 @@ class RecipeCard:
 
         # favorite button
         btn_fav = ToolButtonIcon(
-            file_path=RECIPE_CARD["ICON_FAVORITE"],
-            size=ICON_SIZE,
-            variant=RECIPE_CARD["DYNAMIC"],
-            checkable=True,
+            file_path = RECIPE_CARD["ICON_FAVORITE"],
+            icon_size = ICON_SIZE,
+            variant   = RECIPE_CARD["DYNAMIC"],
+            checkable = True,
         )
         btn_fav.setCursor(Qt.PointingHandCursor)
         btn_fav.setChecked(bool(self.recipe.is_favorite)) # set initial state

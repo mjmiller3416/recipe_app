@@ -3,15 +3,15 @@
    ------------------------------------------------------------------ */
 
 #WidgetFrame {
-    background-color: {BACKGROUND_RAISED}; /* Widget Background Color */
+    background-color: {BACKGROUND_PANEL}; /* Widget Background Color */
     border: 2px solid {BORDER_DEFAULT}; /* Widget Border Color */
     border-radius: 8px; /* Rounded corners */
-    padding: 0px; /* Remove padding from main frame */
 }
 
 #WidgetFrameHeader {
     background-color: {BACKGROUND_WIDGET}; /* Header Background Color */
     color: {TEXT_DEFAULT}; /* Header Text Color */
+    font-family: {FONT_HEADER}; /* Font for the widget */
     font-weight: bold;
     font-size: 14px;
     padding: 10px 15px;
@@ -21,8 +21,12 @@
 }
 
 #WidgetFrameContent {
-    background-color: {BACKGROUND_INPUT}; /* Content Background Color */
-    padding: 15px;
+    background-color: {BACKGROUND_PANEL}; /* Content Background Color */
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
+}
+
+#WidgetFrameContentScrollArea {
+    background-color: transparent; /* Transparent Scroll Area Background */
+    border: none; /* No border for the scroll area */
 }

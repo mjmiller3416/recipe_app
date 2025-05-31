@@ -66,7 +66,7 @@ elif "--test" in sys.argv:
     app = QApplication(sys.argv)
     app.setApplicationName("Test App")
 
-    from tests.dev.test_app import run_test
+    from tests.dev.my_test_app import run_test
     test_window = run_test(app)
 
     sys.exit(app.exec())

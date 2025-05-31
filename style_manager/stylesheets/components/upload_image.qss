@@ -1,0 +1,9 @@
+QToolButton {
+    background-color: {BACKGROUND_WIDGET};
+    color: {TEXT_DEFAULT};
+}
+
+QToolButton:menu-indicator {
+    width: 0px;
+    height: 0px;
+}

@@ -7,8 +7,20 @@ Helper functions for creating UI components in PySide6.
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QGridLayout, QVBoxLayout, QWidget, QFrame,
-    QSizePolicy
+    QSizePolicy, QHBoxLayout
     )
+
+def create_hbox_with_widgets(*widgets, parent=None):
+    layout = QHBoxLayout(parent)
+    for w in widgets:
+        layout.addWidget(w)
+    return layout
+
+def create_vbox_with_widgets(*widgets, parent=None):
+    layout = QVBoxLayout(parent)
+    for w in widgets:
+        layout.addWidget(w)
+    return layout
 
 def make_overlay(base_widget: QWidget,
                  overlay_widget: QWidget,
@@ -75,3 +87,4 @@ def create_framed_layout(
         layout.setSpacing(spacing)
 
         return frame, layout
+

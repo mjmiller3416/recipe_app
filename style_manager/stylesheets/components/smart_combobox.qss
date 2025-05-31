@@ -1,19 +1,20 @@
 /* ------------------------------------------------------------------
    SMART COMBOBOX STYLSHEET
    ------------------------------------------------------------------ */
-QComboBox#SmartComboBox:drop-down {    /* More specific if objectName is set */
+QComboBox#SmartComboBox:drop-down {    /* Hide default QComboBox button */
     border: none;
     width: 0px;
 }
 
 #SmartComboBox {
     border: 1px solid {BORDER_DEFAULT}; /* Dynamic */
-    border-radius: 5px;
-    padding: 4px 24px 4px 6px; 
-    min-width: 8em;
+    border-radius: 6px;
+    padding: 4px 36px 4px 6px; 
     background-color: {BACKGROUND_WIDGET}; /* Dynamic */
     color: {TEXT_DEFAULT}; /* Dynamic */
-    font-size: {FONTS_SIZE_NORMAL}; /* Dynamic */
+    font: 14px {FONT_BODY}; /* Dynamic */
+    font-style: normals;
+
 }
 
 #SmartComboBox QToolButton {
@@ -22,6 +23,8 @@ QComboBox#SmartComboBox:drop-down {    /* More specific if objectName is set */
     border-right: none;
     border-bottom: none;
     border-left: 1px solid {BORDER_DEFAULT}; /* Dynamic */
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
     padding: 5px;
 }
 
@@ -30,6 +33,7 @@ QComboBox#SmartComboBox:drop-down {    /* More specific if objectName is set */
     background-color: {BACKGROUND_WIDGET};
     padding: 2px;
     color: {TEXT_DEFAULT};
+    font: 14px {FONT_BODY}; /* Dynamic */
     outline: none;
 }
 

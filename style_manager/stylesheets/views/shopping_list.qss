@@ -10,22 +10,6 @@
 
 #ShoppingList QWidget {
     background-color: {BACKGROUND_RAISED};
-    border-radius: 0px;
-    padding: 10px;
 }
 
-#ShoppingList QLineEdit {
-    background-color: {BACKGROUND_INPUT};
-    border: 1px solid {BORDER_DEFAULT};
-}
-
-#ShoppingList QComboBox {
-    background-color: {BACKGROUND_INPUT};
-    border: 1px solid {BORDER_DEFAULT};
-}
-
-#ShoppingList QPushButton {
-    border: 1px solid {BORDER_DEFAULT};
-    padding: 5px;
-}
 

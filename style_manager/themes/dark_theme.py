@@ -18,8 +18,8 @@ ACCENT_SECONDARY_ACTIVE    = "#2D4547"
 SURFACE_MAIN               = "#3A4048"
 SURFACE_RAISED             = "#2C313C"
 BACKGROUND_WIDGET          = "#272C36"
-BACKGROUND_PANEL           = "#323742"
-BACKGROUND_INPUT           = "#525861"
+BACKGROUND_INPUT           = "#B7BBC8"
+BACKGROUND_PANEL           = "#525861"
 
 # Borders
 BORDER_DEFAULT             = "#1B1D23" 
@@ -66,8 +66,8 @@ THEME = {
     "BACKGROUND": {
         "DEFAULT":      SURFACE_MAIN,
         "RAISED":       SURFACE_RAISED,
-        "PANEL":        BACKGROUND_PANEL,
         "WIDGET":       BACKGROUND_WIDGET,
+        "PANEL":        BACKGROUND_PANEL,
         "INPUT":        BACKGROUND_INPUT,
     },
 
@@ -117,7 +117,7 @@ THEME = {
 
     # ── Typography ──────────────────────────────────────────────────────────────
     
-    "FONTS": {
+    "FONT": {
         "TITLE":        "Sakitu Baelah Clean",
         "HEADER":       "Montserrat",
         "BODY":         "Roboto",

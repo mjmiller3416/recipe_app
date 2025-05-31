@@ -4,38 +4,16 @@
 
 #AddRecipes QLabel {
     color: #E1E1E3;
-    font: 16px 'Montserrat';
+    font: 16px {FONT_BODY};
     font-weight: 500;
-}
-
-#AddRecipes QScrollArea {
-    background-color: {BACKGROUND_RAISED};
-    border: 1px solid #666;
-    border-radius: 4px;
-}
-
-#AddRecipes QLineEdit {
-    background-color: {BACKGROUND_INPUT};
-    border: 1px solid #666;
-    border-radius: 4px;
-    padding: 5px;
-    color: #E1E1E3;
-    font: 14px 'Montserrat';
-    padding-left: 2px;
-}
-
-#AddRecipes QLineEdit:focus, 
-#AddRecipes QTextEdit:focus {
-    border: 1px solid #03B79E;
-    outline: none;
 }
 
 #AddRecipes QPushButton {
     background-color: #3B575B;
-    color: #E1E1E3;
+    color: {TEXT_DEFAULT};
     border-radius: 6px;
     padding: 8px 12px;
-    font: 14px 'Montserrat';
+    font: 14px {FONT_UI};
     font-weight: 600;
     border: none;
 }
@@ -43,17 +21,6 @@
 #AddRecipes QPushButton:hover {
     background-color: #03B79E;
     color: #353535;
-}
-
-#AddRecipes #ingredients_container {
-    background-color: transparent;
-}
-
-#AddRecipes #ingredients_frame {
-    background-color: {BACKGROUND_WIDGET};
-    border: 2px solid {BORDER_DEFAULT};
-    border-radius: 10px;
-    padding: 10px;
 }
 
 #AddRecipes #WidgetFrame QTextEdit,

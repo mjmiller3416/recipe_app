@@ -16,6 +16,7 @@ from database.models.recipe_ingredient import RecipeIngredient
 from database.models.shopping_item import ShoppingItem
 from database.models.shopping_list import ShoppingList
 from database.models.shopping_state import ShoppingState
+from database.models.recipe import Recipe
 from services.meal_service import MealService
 
 
@@ -50,6 +51,37 @@ class ShoppingService:
                     return qty_base // f, u
             return qty_base / group[base], base
         return qty, unit
+
+    @staticmethod
+    def get_ingredient_breakdown(
+        recipe_ids: list[int],
+        connection: Optional[sqlite3.Connection] = None
+    ) -> dict[str, list[tuple[str, float, str]]]:
+        """
+        Returns a mapping from ShoppingItem.key() →
+        list of (recipe_name, qty, unit) tuples.
+        """
+        if connection is None:
+            with get_connection() as conn:
+                return ShoppingService.get_ingredient_breakdown(recipe_ids, connection=conn)
+
+        # fetch all RecipeIngredient rows for these recipes
+        placeholders = ",".join("?" for _ in recipe_ids)
+        sql = f"SELECT * FROM recipe_ingredients WHERE recipe_id IN ({placeholders})"
+        rows = RecipeIngredient.raw_query(sql, tuple(recipe_ids), connection=connection)
+
+        breakdown: dict[str, list[tuple[str, float, str]]] = defaultdict(list)
+        for ri in rows:
+            ing = Ingredient.get(ri.ingredient_id)                    # :contentReference[oaicite:0]{index=0}
+            rec = Recipe.get(ri.recipe_id)                            # assumes a Recipe model
+            # normalize/convert qty exactly as in _aggregate_recipe_ingredients
+            qty, unit = ShoppingService._convert_qty(
+                ing.ingredient_name, ri.quantity or 0.0, ri.unit or ""
+            )
+            key = f"{ing.ingredient_name.lower()}::{unit}"
+            breakdown[key].append((rec.recipe_name, qty, unit))
+
+        return breakdown
 
     @staticmethod
     def generate_shopping_list(

@@ -7,10 +7,10 @@ This module defines a Smart ComboBox class that extends QComboBox.
 from typing import Sequence
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QComboBox, QListView, QWidget 
+from PySide6.QtWidgets import QComboBox, QListView, QWidget, QSizePolicy
 
 from ui.iconkit import ToolButtonIcon
-from config import SMART_COMBOBOX
+from config import SMART_COMBOBOX, STYLES
 from style_manager import WidgetLoader
 
 # ── Class Definition: SmartComboBox ─────────────────────────────────────────────
@@ -40,16 +40,15 @@ class SmartComboBox(QComboBox):
             editable (bool): If True, allows editing of the combo box text.
         """
         super().__init__(parent)
-
-        # ── Initialize & Setup UI ──
+        # ── Initialize Widget ──
+        #WidgetLoader.apply_widget_style(self, STYLES["SMART_COMBOBOX"])  # apply custom styles
         self.setObjectName("SmartComboBox")
         self.setEditable(editable)
-        #WidgetLoader.apply_widget_style(self, SMART_COMBOBOX["QSS_PATH"])
         
-        # ── Create Custom Button ──
+        # ── Setup UI ──
         self.cb_btn = ToolButtonIcon(
             file_path = SMART_COMBOBOX["ICON_ARROW"]["FILE_PATH"],
-            size      = SMART_COMBOBOX["ICON_ARROW"]["ICON_SIZE"],
+            icon_size = SMART_COMBOBOX["ICON_ARROW"]["ICON_SIZE"],
             variant   = SMART_COMBOBOX["ICON_ARROW"]["DYNAMIC"],
         )
 
@@ -115,3 +114,4 @@ class SmartComboBox(QComboBox):
         x = self.width() - self.cb_btn.width()  # adjust for margins
         y = (self.height() - self.cb_btn.height()) // 2
         self.cb_btn.move(x, y)
+        self.cb_btn.raise_()
