@@ -5,7 +5,7 @@ Service module for managing MealPlanner state.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 import sqlite3
-from typing import Optional, List
+from typing import List, Optional
 
 from core.helpers import DebugLogger
 from database.db import get_connection

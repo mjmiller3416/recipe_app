@@ -7,11 +7,12 @@ This module defines a Smart ComboBox class that extends QComboBox.
 from typing import Sequence
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QComboBox, QListView, QWidget, QSizePolicy
+from PySide6.QtWidgets import QComboBox, QListView, QSizePolicy, QWidget
 
-from ui.iconkit import ToolButtonIcon
 from config import SMART_COMBOBOX, STYLES
 from style_manager import WidgetLoader
+from ui.iconkit import ToolButtonIcon
+
 
 # ── Class Definition: SmartComboBox ─────────────────────────────────────────────
 class SmartComboBox(QComboBox):

@@ -13,8 +13,8 @@ from PySide6.QtWidgets import QHBoxLayout, QToolTip, QVBoxLayout, QWidget
 from core.helpers import DebugLogger
 from database.models.meal_selection import MealSelection
 from database.models.recipe import Recipe
-from recipe_viewer.constants import LayoutSize
 from recipe_viewer import RecipeViewer
+from recipe_viewer.constants import LayoutSize
 from services.meal_service import MealService
 
 

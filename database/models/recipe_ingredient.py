@@ -4,10 +4,12 @@ This module defines the RecipeIngredient model, which represents the join table
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from typing import Optional, NamedTuple
+from typing import NamedTuple, Optional
+
 from pydantic import Field
 
 from database.base_model import ModelBase
+
 
 # ── Ingredient Detail Tuple ─────────────────────────────────────────────────────
 class IngredientDetail(NamedTuple):

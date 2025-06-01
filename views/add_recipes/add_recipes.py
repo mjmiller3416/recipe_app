@@ -4,25 +4,23 @@ AddRecipes widget for creating new recipes with ingredients and directions.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import Qt, QSize
-from PySide6.QtWidgets import (
-    QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout,
-    QLineEdit, QTextEdit, QFrame, QScrollArea, QSizePolicy,
-    QGridLayout,
-)
+from PySide6.QtCore import QSize, Qt
+from PySide6.QtWidgets import (QGridLayout, QHBoxLayout, QLabel, QPushButton,
+                               QTextEdit, QVBoxLayout, QWidget)
 
-from config.config import INT, NAME, RECIPE_CATEGORIES, MEAL_CATEGORIES
+from config import STYLES, UPLOAD_RECIPE_IMAGE
+from config.config import INT, MEAL_CATEGORIES, NAME, RECIPE_CATEGORIES
 from core.helpers import DebugLogger
-from core.helpers.ui_helpers import create_hbox_with_widgets
 from services.recipe_service import RecipeService
-from ui.components.dialogs import MessageDialog
-from ui.components.inputs import SmartComboBox
-from ui.tools import clear_error_styles, dynamic_validation
-from ui.components.widget_frame import WidgetFrame
-from ui.components.form_field import LineEditField, ComboBoxField
-from .ingredient_widget import IngredientWidget
 from style_manager import WidgetLoader
-from config import STYLES
+from ui.components.dialogs import MessageDialog
+from ui.components.form_field import ComboBoxField, LineEditField
+from ui.components.widget_frame import WidgetFrame
+from ui.tools import clear_error_styles, dynamic_validation
+
+from .ingredient_widget import IngredientWidget
+from .upload_recipe import UploadRecipeImage
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class AddRecipes(QWidget):
@@ -110,11 +108,8 @@ class AddRecipes(QWidget):
         self.lyt_recipe_details.addWidget(self.recipe_details)  # add details frame to details layout
 
         # ── Create Image & Save Buttons ──
-        self.btn_add_image = QPushButton("+\nAdd Image")  # button to add an image
-        # set button dimensions to match recipe details height
-        self.btn_add_image.setFixedWidth(self.recipe_details.sizeHint().height())
-        self.btn_add_image.setFixedHeight(self.recipe_details.sizeHint().height())
-        self.lyt_recipe_details.addWidget(self.btn_add_image, alignment=Qt.AlignTop | Qt.AlignLeft)
+        self.btn_upload_image = UploadRecipeImage()  # widget for uploading recipe image
+        self.lyt_recipe_details.addWidget(self.btn_upload_image, alignment=Qt.AlignVCenter)
        
         self.lyt_left_section.addLayout(self.lyt_recipe_details)  # add recipe details to left section
 
@@ -147,7 +142,7 @@ class AddRecipes(QWidget):
 
     def _connect_signals(self):
         self.btn_save.clicked.connect(self.save_recipe)
-        #self.btn_add_image.image_selected.connect(self._update_image_path)
+        self.btn_upload_image.image_uploaded.connect(self._update_image_path)
         
         dynamic_validation(self.le_recipe_name, NAME)
         dynamic_validation(self.le_servings, INT)
@@ -206,7 +201,7 @@ class AddRecipes(QWidget):
         self.le_time.clear()
         self.le_servings.clear()
         self.te_directions.clear()
-        self.btn_add_image.clear_image()
+        self.btn_upload_image.clear_image()
         self.selected_image_path = None
         
         # Clear stored ingredients and widgets

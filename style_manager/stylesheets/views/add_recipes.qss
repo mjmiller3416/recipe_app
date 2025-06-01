@@ -4,7 +4,7 @@
 
 #AddRecipes QLabel {
     color: #E1E1E3;
-    font: 16px {FONT_BODY};
+    font: 16px {FONT_FAMILY_BODY};
     font-weight: 500;
 }
 
@@ -13,7 +13,7 @@
     color: {TEXT_DEFAULT};
     border-radius: 6px;
     padding: 8px 12px;
-    font: 14px {FONT_UI};
+    font: 14px {FONT_FAMILY_UI};
     font-weight: 600;
     border: none;
 }

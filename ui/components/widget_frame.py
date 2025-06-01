@@ -3,16 +3,16 @@
 A container widget that combines QFrame with integrated layout management and optional header.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtWidgets import (
-    QFrame, QVBoxLayout, QHBoxLayout, QGridLayout, QSizePolicy, 
-    QLabel, QWidget, QScrollArea,
-    )
-from PySide6.QtCore import Qt
-from typing import Union, Optional
+from typing import Optional, Union
 
-from style_manager import WidgetLoader
+from PySide6.QtCore import Qt
+# ── Imports ─────────────────────────────────────────────────────────────────────
+from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
+                               QScrollArea, QSizePolicy, QVBoxLayout, QWidget)
+
 from config import STYLES
+from style_manager import WidgetLoader
+
 
 class WidgetFrame(QFrame):
     """A QFrame container with integrated layout management and optional header.

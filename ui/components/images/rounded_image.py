@@ -51,7 +51,7 @@ class RoundedImage(QLabel):
         # ── Construct Stylesheet ──
         stylesheet = f"""
         QLabel {{
-            border-image: url({image_path}) 0 0 0 0 stretch stretch;
+            border-image: url('{image_path}') 0 0 0 0 stretch stretch;
             border-top-left-radius: {tl}px;
             border-top-right-radius: {tr}px;
             border-bottom-right-radius: {br}px;

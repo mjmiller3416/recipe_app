@@ -10,14 +10,13 @@ from pathlib import Path
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
-from config import RECIPE_CARD, ICON_SIZE
+from config import ICON_SIZE, RECIPE_CARD
+from core.helpers.ui_helpers import make_overlay
 from database.models.recipe import Recipe
+from services.recipe_service import RecipeService
 from ui.components import Separator
 from ui.components.images import RoundedImage
-from ui.iconkit import Icon
-from ui.iconkit import ToolButtonIcon
-from core.helpers.ui_helpers import make_overlay
-from services.recipe_service import RecipeService
+from ui.iconkit import Icon, ToolButtonIcon
 
 from ..constants import LAYOUT_SIZE, LayoutSize
 

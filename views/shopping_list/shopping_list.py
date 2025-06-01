@@ -176,7 +176,8 @@ class ShoppingList(QWidget):
         Returns:
             QVBoxLayout: Complete layout ready to be added to a column
         """
-        from database.models.shopping_state import ShoppingState  # Avoid early import
+        from database.models.shopping_state import \
+            ShoppingState  # Avoid early import
 
         layout = QVBoxLayout()
 

@@ -11,7 +11,7 @@
 #WidgetFrameHeader {
     background-color: {BACKGROUND_WIDGET}; /* Header Background Color */
     color: {TEXT_DEFAULT}; /* Header Text Color */
-    font-family: {FONT_HEADER}; /* Font for the widget */
+    font-family: {FONT_FAMILY_HEADER}; /* Font for the widget */
     font-weight: bold;
     font-size: 14px;
     padding: 10px 15px;

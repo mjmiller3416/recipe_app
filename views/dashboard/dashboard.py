@@ -9,6 +9,7 @@ from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 from ui.iconkit import Icon
 
+
 # ── Class Definition ────────────────────────────────────────────────────────────
 class Dashboard(QWidget):
     """Placeholder class for the Dashboard screen."""

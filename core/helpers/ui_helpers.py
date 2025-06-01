@@ -5,10 +5,9 @@ Helper functions for creating UI components in PySide6.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
-    QGridLayout, QVBoxLayout, QWidget, QFrame,
-    QSizePolicy, QHBoxLayout
-    )
+from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QSizePolicy,
+                               QVBoxLayout, QWidget)
+
 
 def create_hbox_with_widgets(*widgets, parent=None):
     layout = QHBoxLayout(parent)
@@ -30,6 +29,12 @@ def make_overlay(base_widget: QWidget,
     """
     Stacks `overlay_widget` on top of `base_widget` at the given alignment,
     with optional padding (left, top, right, bottom).
+
+    Args:
+        base_widget (QWidget): The base widget to overlay on.
+        overlay_widget (QWidget): The widget to overlay on top of the base.
+        margins (tuple[int, int, int, int]): Padding around the overlay (left, top, right, bottom).
+        align (Qt.AlignmentFlag): Alignment for the overlay widget.
     """
     container = QWidget()
     grid = QGridLayout(container)

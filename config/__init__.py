@@ -4,12 +4,13 @@ config package
 Centralized configuration access for paths, constants, and user preferences.
 """
 
-from .config import (DEBUG_LAYOUT_BORDERS, EMPTY_STATE, FLOAT, ICON_COLOR,
-                     ICON_SIZE, INGREDIENT_CATEGORIES, INGREDIENT_WIDGET, INT,
-                     MEAL_PLANNER, MEASUREMENT_UNITS, NAME, NON_EMPTY,
-                     RECIPE_CARD, RECIPE_CATEGORIES, RECIPE_DIALOG, SEARCH,
-                     SIDEBAR, TITLE_BAR, MESSAGE_DIALOG, SMART_COMBOBOX,
-                     SORT_OPTIONS, ADD_RECIPES, STYLES, UPLOAD_RECIPE_IMAGE,)
+from .config import (ADD_RECIPES, DEBUG_LAYOUT_BORDERS, EMPTY_STATE, FLOAT,
+                     ICON_COLOR, ICON_SIZE, INGREDIENT_CATEGORIES,
+                     INGREDIENT_WIDGET, INT, MEAL_PLANNER, MEASUREMENT_UNITS,
+                     MESSAGE_DIALOG, NAME, NON_EMPTY, RECIPE_CARD,
+                     RECIPE_CATEGORIES, RECIPE_DIALOG, SEARCH, SIDEBAR,
+                     SMART_COMBOBOX, SORT_OPTIONS, STYLES, TITLE_BAR,
+                     UPLOAD_RECIPE_IMAGE)
 from .paths import AppPaths, QssPaths
 from .user_settings import UserSettings
 

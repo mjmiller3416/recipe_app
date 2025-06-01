@@ -12,7 +12,7 @@ background-color: {BACKGROUND_WIDGET}; /* Sidebar Background Color */
     padding: 10px 20px 10px 40px;
 
    /* Font */
-    font-family: {FONT_UI};
+    font-family: {FONT_FAMILY_UI};
     font-size: {FONT_SIZE_LARGE};
     text-align: left;
 }

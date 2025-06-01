@@ -8,15 +8,17 @@ import os
 import shutil
 from pathlib import Path
 
-from PySide6.QtCore import Signal, Qt
-from PySide6.QtWidgets import QWidget, QFileDialog, QVBoxLayout, QLabel, QSizePolicy
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import (QFileDialog, QLabel, QSizePolicy, QVBoxLayout,
+                               QWidget)
 
-from ui.iconkit import ToolButtonIcon
 from config.config import ADD_RECIPES
 from config.paths import AppPaths
 from core.helpers import DebugLogger
 from ui.components.dialogs import MessageDialog
+from ui.iconkit import ToolButtonIcon
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class AddRecipeImage(QWidget):

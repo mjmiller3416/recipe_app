@@ -11,6 +11,7 @@ from typing import Optional
 from database.db import get_connection
 from database.models.ingredient import Ingredient
 
+
 # ── Class Definition ────────────────────────────────────────────────────────────
 class IngredientService:
     """

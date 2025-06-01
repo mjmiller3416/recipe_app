@@ -5,8 +5,8 @@ This module defines the Recipe class, which represents a recipe in the database.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
-import sqlite3
 
+import sqlite3
 from datetime import datetime, timedelta, timezone
 from typing import TYPE_CHECKING, List, Optional
 
@@ -15,8 +15,8 @@ from pydantic import Field, model_validator
 from database.base_model import ModelBase
 from database.db import get_connection
 from database.models.ingredient import Ingredient
-from database.models.recipe_ingredient import RecipeIngredient
-from database.models.recipe_ingredient import IngredientDetail
+from database.models.recipe_ingredient import (IngredientDetail,
+                                               RecipeIngredient)
 
 if TYPE_CHECKING:
     from database.models.ingredient import Ingredient

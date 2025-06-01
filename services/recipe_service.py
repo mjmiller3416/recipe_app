@@ -12,6 +12,7 @@ from database.models.recipe import Recipe
 from database.models.recipe_ingredient import RecipeIngredient
 from services.dtos.recipe_dtos import RecipeCreateDTO
 
+
 # ── Exceptions ──────────────────────────────────────────────────────────────────
 class RecipeSaveError(Exception):
     """Raised when saving a recipe (and its ingredients) fails."""

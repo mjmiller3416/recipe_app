@@ -76,7 +76,8 @@ class ShoppingItem(BaseModel):
         """
         Convert this ShoppingItem back into a ShoppingList DB model (manual items only).
         """
-        from database.models.shopping_list import ShoppingList  # avoid circular import
+        from database.models.shopping_list import \
+            ShoppingList  # avoid circular import
 
         if self.source != "manual":
             raise ValueError("Only manual items can be saved to the ShoppingList model.")

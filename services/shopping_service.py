@@ -12,11 +12,11 @@ from typing import Any, Dict, List, Optional, Tuple
 from core.helpers.debug_logger import DebugLogger
 from database.db import get_connection
 from database.models.ingredient import Ingredient
+from database.models.recipe import Recipe
 from database.models.recipe_ingredient import RecipeIngredient
 from database.models.shopping_item import ShoppingItem
 from database.models.shopping_list import ShoppingList
 from database.models.shopping_state import ShoppingState
-from database.models.recipe import Recipe
 from services.meal_service import MealService
 
 

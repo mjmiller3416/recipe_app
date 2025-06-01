@@ -5,17 +5,16 @@ Main application window with a custom title bar, sidebar, header, and dynamic st
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt
-from PySide6.QtWidgets import (
-    QApplication, QFrame, QHBoxLayout, QLabel,
-    QMainWindow, QStackedWidget, QVBoxLayout,
-    QWidget
-)
+from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
+                               QMainWindow, QStackedWidget, QVBoxLayout,
+                               QWidget)
 
+from config import SMART_COMBOBOX
 from core.controllers.animation_controller import AnimationManager
-from style_manager.theme_controller import ThemeController
 from core.helpers import DebugLogger
 from services.planner_service import PlannerService
 from services.shopping_service import ShoppingService
+from style_manager.theme_controller import ThemeController
 from ui.animations import SidebarAnimator
 from ui.components.inputs.search_bar import SearchBar
 from ui.components.title_bar import TitleBar
@@ -24,7 +23,6 @@ from views.dashboard import Dashboard
 from views.meal_planner import MealPlanner
 from views.shopping_list import ShoppingList
 from views.view_recipes import ViewRecipes
-from config import SMART_COMBOBOX
 
 from .sidebar import Sidebar
 

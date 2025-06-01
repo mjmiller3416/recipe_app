@@ -6,14 +6,16 @@ Used to persist checkbox values across sessions while handling dynamic quantity 
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
+
 import sqlite3
 from typing import Optional
 
 from pydantic import Field, model_validator
 
-from database.base_model import ModelBase
 from core.helpers.debug_logger import DebugLogger
+from database.base_model import ModelBase
 from database.db import get_connection
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class ShoppingState(ModelBase):

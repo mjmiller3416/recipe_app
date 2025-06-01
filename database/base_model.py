@@ -6,7 +6,7 @@ Base model for CRUD operations with SQLite and Pydantic.
 # ── Imports ─────────────────────────────────────────────────────────────────────
 import re
 import sqlite3
-from typing import Any, List, Optional, Type, TypeVar, Tuple
+from typing import Any, List, Optional, Tuple, Type, TypeVar
 
 from pydantic import BaseModel as PydanticBaseModel
 

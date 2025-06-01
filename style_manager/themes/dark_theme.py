@@ -118,17 +118,28 @@ THEME = {
     # ── Typography ──────────────────────────────────────────────────────────────
     
     "FONT": {
-        "TITLE":        "Sakitu Baelah Clean",
-        "HEADER":       "Montserrat",
-        "BODY":         "Roboto",
-        "UI":           "Open Sans",
+        "FAMILY": {
+            "DEFAULT":  "Montserrat",
+            "TITLE":    "Sakitu Baelah Clean",
+            "HEADER":   "Montserrat",
+            "BODY":     "Roboto",
+            "UI":       "Open Sans",
+        },
 
         "SIZE": {
-            "SMALL":    "12px",
+            "XSMALL":   "12px",
+            "SMALL":    "14px",
             "NORMAL":   "16px",
             "LARGE":    "18px",
             "XLARGE":   "22px",
         },
+
+        "COLOR": {
+            "DEFAULT":   TEXT_DEFAULT,
+            "STRONG":    TEXT_STRONG,
+            "DISABLED":  TEXT_DISABLED,
+            "INVERSE":   TEXT_INVERSE,
+        }
     },
 
     # ── Spacing & Radius ────────────────────────────────────────────────────────

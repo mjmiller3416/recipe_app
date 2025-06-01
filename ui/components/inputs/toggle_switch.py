@@ -1,6 +1,6 @@
+from PySide6.QtCore import Property, Qt
+from PySide6.QtGui import QBrush, QColor, QPainter
 from PySide6.QtWidgets import QCheckBox
-from PySide6.QtCore import Qt, Property
-from PySide6.QtGui import QPainter, QColor, QBrush
 
 
 class ToggleSwitch(QCheckBox):

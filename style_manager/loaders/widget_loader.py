@@ -2,6 +2,7 @@
 
 Simplified WidgetLoader that reuses ThemeLoader for per-widget styling."""
 from typing import Optional
+
 from PySide6.QtWidgets import QWidget
 
 from core.helpers.debug_logger import DebugLogger

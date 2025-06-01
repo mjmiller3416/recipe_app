@@ -1,13 +1,15 @@
 """Test script for MyTestApp."""
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QVBoxLayout, QWidget, QGridLayout, QLineEdit
+from PySide6.QtWidgets import (QGridLayout, QLineEdit, QMainWindow,
+                               QVBoxLayout, QWidget)
 
-from config import INGREDIENT_CATEGORIES, MEASUREMENT_UNITS, INGREDIENT_WIDGET
-from ui.components.widget_frame import WidgetFrame
+from config import INGREDIENT_CATEGORIES, INGREDIENT_WIDGET, MEASUREMENT_UNITS
 from ui.components.inputs import SmartComboBox
+from ui.components.widget_frame import WidgetFrame
 from ui.iconkit import ToolButtonIcon
 from views.add_recipes.upload_recipe import UploadRecipeImage
+
 
 class MyTestApp(QMainWindow):
     """A test class for development testing."""

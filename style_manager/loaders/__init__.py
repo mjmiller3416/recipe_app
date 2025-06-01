@@ -3,9 +3,9 @@
 Centralized QSS loading utilities for the StyleManager
 """
 
+from .icon_loader import IconLoader
 from .theme_loader import ThemeLoader
 from .widget_loader import WidgetLoader
-from .icon_loader import IconLoader
 
 __all__ = [
     "ThemeLoader",

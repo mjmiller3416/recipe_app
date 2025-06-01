@@ -5,8 +5,8 @@ Ingredient model for the recipe database."""
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Optional
 import sqlite3
+from typing import TYPE_CHECKING, List, Optional
 
 from pydantic import Field, model_validator
 

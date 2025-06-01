@@ -7,7 +7,7 @@
     border-radius: 6px;
     padding: 5px;
     color: {TEXT_DEFAULT};
-    font: 14px {FONT_BODY};
+    font: 14px {FONT_FAMILY_BODY};
     padding-left: 4px;
 }
 

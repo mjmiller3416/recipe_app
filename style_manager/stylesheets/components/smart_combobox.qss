@@ -12,7 +12,7 @@ QComboBox#SmartComboBox:drop-down {    /* Hide default QComboBox button */
     padding: 4px 36px 4px 6px; 
     background-color: {BACKGROUND_WIDGET}; /* Dynamic */
     color: {TEXT_DEFAULT}; /* Dynamic */
-    font: 14px {FONT_BODY}; /* Dynamic */
+    font: 14px {FONT_FAMILY_BODY}; /* Dynamic */
     font-style: normals;
 
 }
@@ -33,7 +33,7 @@ QComboBox#SmartComboBox:drop-down {    /* Hide default QComboBox button */
     background-color: {BACKGROUND_WIDGET};
     padding: 2px;
     color: {TEXT_DEFAULT};
-    font: 14px {FONT_BODY}; /* Dynamic */
+    font: 14px {FONT_FAMILY_BODY}; /* Dynamic */
     outline: none;
 }
 

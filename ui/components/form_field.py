@@ -4,13 +4,13 @@ A set of form field components for creating structured input forms in a PySide6 
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from typing import Optional, Any
+from typing import Any, Optional
 
-from PySide6.QtWidgets import (
-    QWidget, QLabel, QSizePolicy, QLineEdit, QGridLayout
-)
+from PySide6.QtWidgets import (QGridLayout, QLabel, QLineEdit, QSizePolicy,
+                               QWidget)
 
 from ui.components.inputs import SmartComboBox
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class FormField(QWidget):
