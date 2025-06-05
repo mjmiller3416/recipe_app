@@ -136,7 +136,7 @@ class RecipeViewer(QFrame):
             self.card_clicked.emit(self._recipe)
 
             # open the recipe dialog
-            dlg = FullRecipe(self._recipe, self.window())
+            dlg = FullRecipe(self._recipe)
             dlg.exec()
 
     def _handle_add_meal_click(self):

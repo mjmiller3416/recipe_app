@@ -20,7 +20,8 @@ from ui.tools import clear_error_styles, dynamic_validation
 
 from .ingredient_widget import IngredientWidget
 from .upload_recipe import UploadRecipeImage
-
+from services.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
+from services.ingredient_service import IngredientService
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class AddRecipes(QWidget):
@@ -172,26 +173,96 @@ class AddRecipes(QWidget):
         self.selected_image_path = image_path if image_path else None
 
     def save_recipe(self):
-        recipe_data = {
+        """
+        Gathers all form data (recipe fields + ingredient widgets),
+        constructs a RecipeCreateDTO, and hands it to RecipeService.
+        """
+        # ── payload recipe data ──
+        recipe_data = self.to_payload()
+
+        # ── payload raw ingredients ──
+        raw_ingredients = [
+            widget.to_payload()
+            for widget in self.ingredient_widgets
+        ]
+
+        # ── convert raw_ingredients ──
+        try:
+            ingredient_dtos = [
+                RecipeIngredientInputDTO(
+                    ingredient_name=data["ingredient_name"],
+                    ingredient_category=data["ingredient_category"],
+                    quantity=data["quantity"],
+                    unit=data["unit"],
+                )
+                for data in raw_ingredients
+            ]
+        except Exception as dto_err:
+            DebugLogger().log(f"[AddRecipes] DTO construction failed: {dto_err}", "error")
+            MessageDialog(
+                "warning",
+                "Invalid Ingredient Data",
+                "One of your ingredients has missing/invalid fields. Please double-check.",
+                self
+            ).exec()
+            return  # show error dialog
+
+        # ── convert recipe_data ──
+        try:
+            recipe_dto = RecipeCreateDTO(
+                **recipe_data,
+                ingredients=ingredient_dtos,
+            )
+        except Exception as dto_err:
+            DebugLogger().log(f"[AddRecipes] RecipeCreateDTO validation failed: {dto_err}", "error")
+            MessageDialog(
+                "warning",
+                "Invalid Recipe Data",
+                "Your recipe form is missing something required or has an invalid value. Please review all fields.",
+                self
+            ).exec()
+            return
+
+        # ── create recipe with RecipeService ──
+        try:
+            new_recipe = RecipeService.create_recipe_with_ingredients(recipe_dto)
+        except Exception as svc_err:
+            DebugLogger().log(f"[AddRecipes.save_recipe] Error saving recipe: {svc_err}", "error")
+            MessageDialog(
+                "warning",
+                "Failed to Save Recipe",
+                f"Oops! Couldn’t save your recipe. 😢\n\nDetails: {svc_err}",
+                self
+            ).exec()
+            return
+
+        # ── success! ──
+        DebugLogger().log(f"[AddRecipes] Recipe '{new_recipe.recipe_name}' saved with ID={new_recipe.id}", "info")
+        MessageDialog(
+            "info",
+            "Success! 🎉",
+            f"Your recipe '{new_recipe.recipe_name}' was saved successfully.",
+            self
+        ).exec()
+
+        # ── clear form and reset state ──
+        self._clear_form()            
+        self.stored_ingredients.clear()
+        for widget in self.ingredient_widgets:
+            widget.deleteLater() # remove each IngredientWidget from the layout/UI
+        self.ingredient_widgets = [] 
+
+    def to_payload(self):
+        """Collect all recipe form data and return it as a dict for API calls."""
+        return {
             "recipe_name":     self.le_recipe_name.text().strip(),
             "recipe_category": self.cb_recipe_category.currentText().strip(),
             "meal_type":       self.cb_meal_type.currentText().strip(),
-            "total_time":  int(self.le_time.text().strip() or 0),
-            "servings":    int(self.le_servings.text().strip() or 0),
+            "total_time":      int(self.le_time.text().strip() or 0),
+            "servings":        int(self.le_servings.text().strip() or 0),
             "directions":      self.te_directions.toPlainText().strip(),
-            "image_path":      self.selected_image_path or ""
+            "image_path":      self.selected_image_path or "",
         }
-
-        try:
-            recipe = RecipeService.create_recipe_with_ingredients(
-                recipe_data,
-                self.stored_ingredients
-            )
-            MessageDialog("info", "Success!", "Recipe saved successfully.", self).exec()
-            self._clear_form()  # Clear the form after successful save
-        except Exception as e:
-            DebugLogger().log(f"[AddRecipes] Error saving recipe: {e}", "error")
-            MessageDialog("warning", "Failed to Save", str(e), self).exec()
 
     def _clear_form(self):
         """Clear all form fields after successful save."""
@@ -207,7 +278,7 @@ class AddRecipes(QWidget):
         # Clear stored ingredients and widgets
         self.stored_ingredients.clear()
         for widget in self.ingredient_widgets:
-            self.ingredients_layout.removeWidget(widget)
+            self.ingredients_frame.removeWidget(widget)
             widget.deleteLater()
         self.ingredient_widgets.clear()
         

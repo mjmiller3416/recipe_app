@@ -33,7 +33,7 @@ class QssPaths:
     class Components:
         EMPTY_STATE_FRAME = AppPaths.qss_path("components", "empty_state_frame.qss")
         INGREDIENT_WIDGET = AppPaths.qss_path("components", "ingredient_widget.qss")
-        MESSAGE_DIALOG    = AppPaths.qss_path("components", "message_dialog.qss")
+        DIALOG_WINDOW     = AppPaths.qss_path("components", "dialog_window.qss")
         RECIPE_CARD       = AppPaths.qss_path("components", "recipe_card.qss")
         RECIPE_DIALOG     = AppPaths.qss_path("components", "recipe_dialog.qss")
         SEARCH_BAR        = AppPaths.qss_path("components", "search_bar.qss")
@@ -62,7 +62,7 @@ class QssPaths:
             ],
             "components": [
                 QssPaths.Components.EMPTY_STATE_FRAME,
-                QssPaths.Components.MESSAGE_DIALOG,
+                QssPaths.Components.DIALOG_WINDOW,
                 QssPaths.Components.RECIPE_CARD,
                 QssPaths.Components.RECIPE_DIALOG,
                 QssPaths.Components.SEARCH_BAR,

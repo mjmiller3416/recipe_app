@@ -1,3 +1,7 @@
+/* ------------------------------------------------------------------
+   RECIPE DIALOG WINDOW STYLING
+   ------------------------------------------------------------------ */
+
 #RecipeDialog #RecipeName {
     color: #1B1D23;
     font-family: 'Sakitu Baelah Clean';

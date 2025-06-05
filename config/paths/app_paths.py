@@ -22,6 +22,7 @@ class AppPaths:
     # ── Asset Directories ───────────────────────────────────────────────────────
     ICONS_DIR = ASSETS_DIR / "icons"
     IMAGES_DIR = DATA_DIR / "images"
+    TEMP_CROP_DIR = DATA_DIR / "temp_crops"
     FONT_DIR = ASSETS_DIR / "fonts"
     RECIPE_IMAGES_DIR = DATA_DIR / "recipe_images"
 

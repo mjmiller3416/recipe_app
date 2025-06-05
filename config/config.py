@@ -152,12 +152,14 @@ STYLES = {
     "WIDGET_FRAME": QssPaths.Components.WIDGET_FRAME,
     "INGREDIENT_WIDGET": QssPaths.Components.INGREDIENT_WIDGET,
     "UPLOAD_IMAGE": QssPaths.Components.UPLOAD_IMAGE,
+    "DIALOG_WINDOW": QssPaths.Components.DIALOG_WINDOW,
+    "TITLE_BAR": QssPaths.Core.TITLE_BAR,
 }
 
 # ── General ──
 MEASUREMENT_UNITS = [
     "bag", "box", "can", "cap-full", "cup", "gallon", "half", "jar",
-    "oz.", "pack", "pinch", "pint", "lb.", "quarter", "slice",
+    "oz.", "pack", "pinch", "pint", "lb.", "liter", "quarter", "slice",
     "square", "strip", "Tbs", "tsp", "whole",
 ]
 

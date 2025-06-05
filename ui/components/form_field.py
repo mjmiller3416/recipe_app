@@ -104,6 +104,19 @@ class LineEditField(FormField):
         """Returns the text from the QLineEdit input widget."""
         return self.input_widget.text()
     
+    def clear(self):
+        """Clears the current selection in the SmartComboBox."""
+        self.input_widget.clear()
+
+    def strip(self):
+        """
+        Returns the text from the QLineEdit input widget with leading and trailing whitespace removed.
+        
+        Returns:
+            str: The stripped text.
+        """
+        return self.input_widget.text().strip()
+    
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -139,3 +152,14 @@ class ComboBoxField(FormField):
     def currentText(self):
         """Returns the current text from the SmartComboBox input widget."""
         return self.input_widget.currentText()
+    
+    def setCurrentIndex(self, index: int):
+        """
+        Sets the current index of the SmartComboBox.
+        
+        Args:
+            index (int): The index to set as current.
+        """
+        self.input_widget.setCurrentIndex(index)
+    
+    

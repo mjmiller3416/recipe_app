@@ -24,14 +24,13 @@ class RecipeCreateDTO(BaseModel):
     recipe_name: str = Field(..., min_length=1)
     recipe_category: str = Field(..., min_length=1)
     meal_type: str = Field(default="Dinner", min_length=1)
-    instructions: Optional[str] = None
-    prep_time: Optional[int] = None
-    cook_time: Optional[int] = None
+    total_time: Optional[int] = None
     servings: Optional[int] = None
+    directions: Optional[str] = None
     ingredients: List[RecipeIngredientInputDTO] = []
 
 class RecipeFilterDTO(BaseModel):
-    category: Optional[str] = None
+    recipe_category: Optional[str] = None
     meal_type: Optional[str] = None
     sort_by: Optional[str] = None
     favorites_only: bool = False

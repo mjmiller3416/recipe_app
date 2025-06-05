@@ -7,12 +7,11 @@ This module defines a Smart ComboBox class that extends QComboBox.
 from typing import Sequence
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QComboBox, QListView, QSizePolicy, QWidget
+from PySide6.QtWidgets import QComboBox, QListView, QWidget
 
-from config import SMART_COMBOBOX, STYLES
-from style_manager import WidgetLoader
+from config import SMART_COMBOBOX
 from ui.iconkit import ToolButtonIcon
-
+from services.ingredient_service import IngredientService
 
 # ── Class Definition: SmartComboBox ─────────────────────────────────────────────
 class SmartComboBox(QComboBox):
@@ -42,7 +41,6 @@ class SmartComboBox(QComboBox):
         """
         super().__init__(parent)
         # ── Initialize Widget ──
-        #WidgetLoader.apply_widget_style(self, STYLES["SMART_COMBOBOX"])  # apply custom styles
         self.setObjectName("SmartComboBox")
         self.setEditable(editable)
         
@@ -83,6 +81,20 @@ class SmartComboBox(QComboBox):
         """
         self.selection_validated.emit(bool(text))
 
+    def _filter_items(self, text: str):
+        """
+        Filter the items in the combo box based on the input text.
+        
+        Args:
+            text (str): The text to filter items by.
+        """
+        if hasattr(self, "_all_items"):
+            self.blockSignals(True)
+            self.clear()
+            self.addItems([item for item in self._all_items if text.lower() in item.lower()])
+            self.showPopup()
+            self.blockSignals(False)
+
     def populate_items(self, items_to_add: Sequence[str]):
         """
         Populate the combo box with a list of items.
@@ -90,8 +102,9 @@ class SmartComboBox(QComboBox):
         Args:
             items_to_add (Sequence[str]): List of items to add to the combo box.
         """
+        self._all_items = list(items_to_add)
         self.clear()
-        self.addItems(list(items_to_add))
+        self.addItems(self._all_items)
 
     def set_placeholder(self, placeholder: str):
         """

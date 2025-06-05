@@ -5,12 +5,14 @@ This module provides the RecipeService class for transactional recipe operations
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 import sqlite3
+from pydantic import ValidationError
 
 from database.db import get_connection
-from database.models.ingredient import Ingredient
 from database.models.recipe import Recipe
 from database.models.recipe_ingredient import RecipeIngredient
-from services.dtos.recipe_dtos import RecipeCreateDTO
+from services.dtos.recipe_dtos import RecipeCreateDTO, RecipeFilterDTO
+from services.dtos.ingredient_dtos import IngredientCreateDTO
+from services.ingredient_service import IngredientService
 
 
 # ── Exceptions ──────────────────────────────────────────────────────────────────
@@ -25,9 +27,10 @@ class DuplicateRecipeError(Exception):
 # ── Recipe Service Definition ───────────────────────────────────────────────────
 class RecipeService:
     """Service class for transactional recipe operations."""
+    
     @staticmethod
     def create_recipe_with_ingredients(
-        recipe_dto: RecipeCreateDTO,  # Use the DTO instead of dict
+        recipe_dto: RecipeCreateDTO,  # Use the DTO instead of raw dict
     ) -> Recipe:
         """
         Atomically create a recipe plus all ingredient links.
@@ -36,51 +39,68 @@ class RecipeService:
             recipe_dto (RecipeCreateDTO): DTO containing recipe and ingredient data.
         Returns:
             Recipe: The created recipe object.
+        Raises:
+            DuplicateRecipeError: if a recipe with the same name+category already exists.
+            RecipeSaveError: if any validation or database error occurs.
         """
-        # check if recipe already exists
+        # 1) Check for duplicate recipe before opening the transaction
         if Recipe.exists(
             recipe_name=recipe_dto.recipe_name,
             recipe_category=recipe_dto.recipe_category
         ):
-            raise DuplicateRecipeError(f"Recipe '{recipe_dto.recipe_name}' already exists.")
+            raise DuplicateRecipeError(
+                f"Recipe '{recipe_dto.recipe_name}' in category '{recipe_dto.recipe_category}' already exists."
+            )
 
         try:
+            # 2) Open a single connection/transaction
             with get_connection() as conn:
-                # convert DTO to model and save recipe
-                recipe_data = recipe_dto.model_dump(exclude={'ingredients'})
+                # 3) Convert DTO → model, validate & save the recipe itself
+                #    model_dump(exclude={"ingredients"}) returns a dict that matches Recipe fields
+                recipe_data = recipe_dto.model_dump(exclude={"ingredients"})
                 recipe = Recipe.model_validate(recipe_data)
                 recipe.save(connection=conn)
 
-                # process each ingredient
-                for ing in recipe_dto.ingredients:
-                    # check if ingredient already exists
-                    existing = Ingredient.get_by_field(
-                        ingredient_name=ing.ingredient_name,
-                        ingredient_category=ing.ingredient_category,
-                    )
-                    if existing:
-                        ingredient = existing
-                    else:
-                        ingredient = Ingredient(
-                            ingredient_name=ing.ingredient_name,
-                            ingredient_category=ing.ingredient_category,
-                        ).save(connection=conn)
+                # 4) Loop through each ingredient in the DTO, 
+                #    build an IngredientCreateDTO, and get_or_create via IngredientService
+                for ing_dto in recipe_dto.ingredients:
+                    # Build our IngredientCreateDTO (stripped/validated by Pydantic)
+                    try:
+                        ing_create_dto = IngredientCreateDTO(
+                            ingredient_name=ing_dto.ingredient_name,
+                            ingredient_category=ing_dto.ingredient_category,
+                            quantity=ing_dto.quantity,
+                            unit=ing_dto.unit,
+                        )
+                    except ValidationError as ve:
+                        # If any ingredient DTO fails validation, wrap it
+                        raise RecipeSaveError(
+                            f"Invalid ingredient data for '{ing_dto.ingredient_name}': {ve}"
+                        ) from ve
 
-                    # link ingredient to recipe
+                    # Use the service to fetch existing or create a new Ingredient row
+                    ingredient = IngredientService.get_or_create_ingredient(
+                        ing_create_dto,
+                        conn=conn
+                    )
+
+                    # 5) Create the linking row in RecipeIngredient
+                    #    We trust ing_dto.quantity/unit (they may be None)
                     RecipeIngredient(
                         recipe_id=recipe.id,
                         ingredient_id=ingredient.id,
-                        quantity=ing.quantity,
-                        unit=ing.unit,
+                        quantity=ing_dto.quantity,
+                        unit=ing_dto.unit,
                     ).save(connection=conn)
 
+                # 6) Return the newly created Recipe model
                 return recipe
-                
-        except sqlite3.Error as db_err:
-            # raise custom error with context
+
+        except (ValidationError, sqlite3.Error) as err:
+            # Wrap both Pydantic validation errors and SQLite errors
             raise RecipeSaveError(
-                f"Unable to save recipe '{recipe_dto.recipe_name}'" 
-            ) from db_err
+                f"Unable to save recipe '{recipe_dto.recipe_name}': {err}"
+            ) from err
 
     @staticmethod
     def toggle_favorite(recipe_id: int) -> Recipe:
@@ -103,36 +123,32 @@ class RecipeService:
 
     @staticmethod
     def list_filtered(
-        recipe_category: str | None = None,
-        meal_type: str | None = None,
-        sort_by: str | None = None,
-        favorites_only: bool = False
+        filter_dto: RecipeFilterDTO
     ) -> list[Recipe]:
         """
-        List recipes filtered by category, sorted, and optionally favorited.
+        List all recipes, applying optional filters and sorting.
+
         Args:
-            category (str | None): Category to filter by, or None for all.
-            sort_by (str | None): Sort order, e.g. "A-Z", "Z-A".
-            favorites_only (bool): If True, only return favorite recipes.
+            filter_dto (RecipeFilterDTO): DTO containing filter criteria.
         Returns:
-            list[Recipe]: List of filtered and sorted recipes.
+            list[Recipe]: List of filtered and sorted Recipe objects.
         """
         recs = Recipe.list_all()
 
         # apply recipe category filter
-        if recipe_category and recipe_category != "All":
-            recs = [r for r in recs if r.recipe_category == recipe_category]
+        if filter_dto.recipe_category and filter_dto.recipe_category != "All":
+            recs = [r for r in recs if r.recipe_category == filter_dto.recipe_category]
 
         # apply meal category filter
-        if meal_type and meal_type != "All":
-            recs = [r for r in recs if r.meal_type == meal_type]
+        if filter_dto.meal_type and filter_dto.meal_type != "All":
+            recs = [r for r in recs if r.meal_type == filter_dto.meal_type]
         
         # apply favorites filter
-        if favorites_only:
+        if filter_dto.favorites_only:
             recs = [r for r in recs if r.is_favorite]
 
         # apply sorting
-        match sort_by:
+        match filter_dto.sort_by:
             case "A-Z":
                 recs.sort(key=lambda r: r.recipe_name.lower())
             case "Z-A":

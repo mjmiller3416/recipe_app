@@ -53,6 +53,7 @@ class ToolButtonIcon(QToolButton, IconMixin):
             self.setObjectName(Path(file_path).stem)
 
         self.setCheckable(checkable)
+        self.button_size = button_size
   
         if hover_effects:
             ApplyHoverEffects.recolor(self, file_path, icon_size, variant)

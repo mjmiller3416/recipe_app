@@ -3,221 +3,203 @@
 UploadRecipeImage widget for uploading and cropping recipe images.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
-import shutil
-import time
+
+import tempfile 
+import uuid 
 from pathlib import Path
 
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import (QDialog, QFileDialog, QLabel, QVBoxLayout,
-                               QWidget)
+from PySide6.QtWidgets import (QFileDialog, QLabel, QVBoxLayout, QWidget,
+                               QStackedLayout) 
 
 from config import STYLES, UPLOAD_RECIPE_IMAGE
-from config.paths import AppPaths
+from config.paths import AppPaths 
 from core.helpers import DebugLogger
 from core.helpers.ui_helpers import make_overlay
 from style_manager import WidgetLoader
-from ui.components.dialogs import ImageCropDialog, MessageDialog
-from ui.components.dialogs.image_crop_dialog import CROP_SIZE
-from ui.components.images import RoundedImage
+from ui.components.images import RoundedImage 
 from ui.iconkit import ToolButtonIcon
+from .crop_dialog import RecipeImageCropDialog 
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+
+# Function to ensure a directory exists
+def ensure_directory_exists(dir_path: Path):
+    dir_path.mkdir(parents=True, exist_ok=True)
+
+# Try to get a dedicated temp dir from AppPaths, otherwise use system temp
+try:
+    # Assuming AppPaths.TEMP_CROP_DIR or similar might be defined
+    # If AppPaths has a general TEMP_DIR:
+    # TEMP_IMAGE_DIR = AppPaths.TEMP_DIR / "cropped_recipe_images"
+    # For this example, let's assume a specific one or create one.
+    if hasattr(AppPaths, 'TEMP_CROP_DIR'):
+        TEMP_IMAGE_DIR = Path(AppPaths.TEMP_CROP_DIR)
+    elif hasattr(AppPaths, 'TEMP_DIR'):
+        TEMP_IMAGE_DIR = Path(AppPaths.TEMP_DIR) / "cropped_recipe_images"
+    else: # Fallback if AppPaths has no temp dir defined
+        TEMP_IMAGE_DIR = Path(tempfile.gettempdir()) / "recipe_app_crops"
+except (ImportError, AttributeError): # Fallback if AppPaths or specific attrs don't exist
+    TEMP_IMAGE_DIR = Path(tempfile.gettempdir()) / "recipe_app_crops"
+
+ensure_directory_exists(TEMP_IMAGE_DIR)
+
+
 class UploadRecipeImage(QWidget):
-    """Widget for uploading and cropping a recipe image"""
-    
-    image_uploaded = Signal(str)  # emits the path to the cropped image
+    image_uploaded = Signal(str)  # emits the path to the CROPPED image
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("UploadRecipeImage")
-        WidgetLoader.apply_widget_style(self, STYLES["UPLOAD_IMAGE"]) # apply the upload image style
-        
-        self.selected_image_path = None
-        
+        self.selected_image_path: Path | None = None # Will store path to the final cropped image
+        self.original_selected_file_path: str | None = None # Path from QFileDialog
+
         self._build_ui()
         self._connect_signals()
 
     def _build_ui(self):
-        """Builds the UI components for uploading a recipe image."""        
-        self.layout = QVBoxLayout(self) # main layout for the widget
+        # Use QStackedLayout to switch between upload button and image display
+        self.stacked_layout = QStackedLayout(self)
+        self.stacked_layout.setContentsMargins(0,0,0,0)
+        self.setLayout(self.stacked_layout)
+
+        # --- Upload Button (Page 0) ---
+        self.upload_button_widget = QWidget() # Container for overlay
+        self.upload_button_layout = QVBoxLayout(self.upload_button_widget)
+        self.upload_button_layout.setContentsMargins(0,0,0,0)
+        self.upload_button_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
         self.upload_button = ToolButtonIcon(
-            file_path   = UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["FILE_PATH"],
-            icon_size   = UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["ICON_SIZE"],
-            button_size = UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["BUTTON_SIZE"],
-            variant     = UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["DYNAMIC"],
+            file_path=UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["FILE_PATH"],
+            icon_size=UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["ICON_SIZE"],
+            button_size=UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["BUTTON_SIZE"],
+            variant=UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["DYNAMIC"],
         )
         btn_lbl = QLabel("Upload Image")
 
-        # ── overlay label ──
         self.overlay_widget = make_overlay(
             base_widget=self.upload_button,
             overlay_widget=btn_lbl,
-            margins=(0, 0, 0, 10),  # left, top, right, bottom
-            align=Qt.AlignBottom | Qt.AlignCenter
+            margins=(0, 0, 0, 10),
+            align=Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignCenter
         )
+        self.upload_button_layout.addWidget(self.overlay_widget)
+        self.stacked_layout.addWidget(self.upload_button_widget)
 
-        self.layout.addWidget(self.overlay_widget) # add the upload button with label overlay
-
-        self.image_display = None # will hold the displayed image after upload
+        # --- Image Display (Page 1) ---
+        # RoundedImage will be created/updated when an image is processed
+        self.image_display: RoundedImage | None = None 
         
+        # Ensure the widget has a fixed size based on the button, important for layout stability
+        button_qsize = self.upload_button.button_size # This is QSize
+        self.setFixedSize(button_qsize)
+
+
     def _connect_signals(self):
-        """Connect button signals."""
-        self.upload_button.clicked.connect(self.upload_image)
-    
-    def _on_image_clicked(self, event):
-        """
-        Handle click on the displayed image to re-upload.
+        self.upload_button.clicked.connect(self.open_file_dialog_for_upload)
+
+    @Slot()
+    def open_file_dialog_for_upload(self):
+        """Open file dialog to select an image."""
+        # TODO: Define image file types (e.g., "Images (*.png *.jpg *.jpeg *.bmp)")
+        file_filter = "Images (*.png *.jpg *.jpeg *.bmp *.webp)"
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Select Recipe Image",
+            "",  # Start directory (e.g., QDir.homePath())
+            file_filter
+        )
+        if file_path:
+            self.original_selected_file_path = file_path
+            self._launch_crop_dialog(file_path)
+
+    def _launch_crop_dialog(self, image_path: str):
+        """Lauches the RecipeImageCropDialog with the selected image."""
+        crop_dialog = RecipeImageCropDialog(image_path, self)
+        crop_dialog.crop_finalized.connect(self._handle_crop_saved)
+        crop_dialog.select_new_image_requested.connect(self._handle_select_new_from_crop_dialog)
         
-        Args:
-            event (QMouseEvent): The mouse event containing button information.
-        """
-        if event.button() == Qt.LeftButton:
-            self.upload_image()
-    
-    def upload_image(self):
-        """Open file dialog to select an image, then crop it."""
+        # If you used custom result codes in dialog:
+        # result = crop_dialog.exec()
+        # if result == QDialog.DialogCode.Accepted:
+        #     # crop_finalized signal already handled this
+        #     pass
+        # elif result == RecipeImageCropDialog.SelectNewImageCode:
+        #     # select_new_image_requested signal already handled this
+        #     pass
+        crop_dialog.exec()
+
+
+    @Slot(QPixmap)
+    def _handle_crop_saved(self, cropped_pixmap: QPixmap):
+        """Saves the cropped pixmap and updates the UI."""
+        if cropped_pixmap.isNull():
+            DebugLogger().log("Cropped pixmap is null, not saving.", "warning")
+            return
+
+        # Save the cropped QPixmap to a temporary file
+        unique_filename = f"cropped_{uuid.uuid4().hex}.png" # Save as PNG for transparency
+        temp_image_path = TEMP_IMAGE_DIR / unique_filename
+        
         try:
-            # define supported image formats
-            image_filters = (
-                "Image Files (*.png *.jpg *.jpeg *.bmp *.gif *.tiff *.webp);;"
-                "PNG Files (*.png);;"
-                "JPEG Files (*.jpg *.jpeg);;"
-                "All Files (*)"
-            )
-            
-            # ── open file dialog ──
-            file_name, _ = QFileDialog.getOpenFileName(
-                self, 
-                "Select Recipe Image", 
-                "", 
-                image_filters
-            )
-            
-            if not file_name:
-                return
-            
-            # ── validate image ──
-            pixmap = QPixmap(file_name)
-            if pixmap.isNull():
-                MessageDialog("error", "Invalid Image", "The selected file is not a valid image.", self).exec()
-                return
-            
-            # ── check minimize size ──
-            if pixmap.width() < CROP_SIZE or pixmap.height() < CROP_SIZE:
-                MessageDialog(
-                    "error", 
-                    "Image Too Small", 
-                    f"Image must be at least {CROP_SIZE}×{CROP_SIZE} pixels.\n"
-                    f"Selected image is {pixmap.width()}×{pixmap.height()} pixels.",
-                    self
-                ).exec()
-                return
-            
-            # ── open crop dialog ──
-            crop_dialog = ImageCropDialog(file_name, self)
-            if crop_dialog.exec() == QDialog.Accepted:
-                cropped_path = crop_dialog.get_cropped_image_path()
-                if cropped_path:
-                    # copy cropped image to recipe images directory
-                    self._save_cropped_image(cropped_path)
-            
-        except Exception as e:
-            DebugLogger.log(f"Error in upload_image: {e}", "error")
-            MessageDialog("error", "Error", f"Failed to upload image: {str(e)}", self).exec()
-    
-    def _save_cropped_image(self, temp_cropped_path: str):
-        try:
-            # generate a unique filename with timestamp
-            timestamp = int(time.time())
-            temp_filename = Path(temp_cropped_path).stem
-            
-            # remove "recipe_cropped_" prefix if it already exists to avoid duplication
-            if temp_filename.startswith("recipe_cropped_"):
-                base_name = temp_filename[15:]  # remove "recipe_cropped_" (15 characters)
+            ensure_directory_exists(TEMP_IMAGE_DIR) # Ensure again just in case
+            if cropped_pixmap.save(str(temp_image_path), "PNG"):
+                self.selected_image_path = temp_image_path
+                DebugLogger().log(f"Cropped image saved to: {temp_image_path}", "info")
+                self._update_display_with_image(str(temp_image_path))
+                self.image_uploaded.emit(str(temp_image_path))
             else:
-                base_name = temp_filename
-                
-            final_filename = f"recipe_cropped_{base_name}_{timestamp}.png"
-            destination_path = AppPaths.RECIPE_IMAGES_DIR / final_filename
-            
-            # copy the cropped file to the recipe images directory
-            shutil.copy2(temp_cropped_path, destination_path) # store the path and update UI
-            self.selected_image_path = str(destination_path)
-            
-            # ── diaply cropped image ──
-            if self.image_display:
-                # remove existing image display
-                self.layout.removeWidget(self.image_display)
-                self.image_display.deleteLater()
-            
-            # ── create RoundedImage display ──
-            button_size = UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["BUTTON_SIZE"]
-            self.image_display = RoundedImage(
-                image_path=str(destination_path),
-                size=button_size,
-                radii=(16, 16, 16, 16)
-            )
-            
-            # make the image clickable for re-uploading
-            self.image_display.mousePressEvent = self._on_image_clicked
-            
-            # add to layout and show/hide appropriate widgets
-            self.layout.addWidget(self.image_display) #
-            self.overlay_widget.hide() #
-            self.image_uploaded.emit(str(destination_path)) #
-            DebugLogger.log(f"Cropped image saved: {destination_path}", "info") #
-
-            # ---- DIAGNOSTIC: DELAYED STYLE REFRESH ----
-            from PySide6.QtCore import QTimer
-
-            def refresh_image_style():
-                if self.image_display:
-                    DebugLogger.log(f"Attempting to refresh style for image_display. Current size: {self.image_display.size()}", "debug") # Add .size()
-                    self.image_display.style().unpolish(self.image_display)
-                    self.image_display.style().polish(self.image_display)
-                    self.image_display.update()
-                    DebugLogger.log(f"Style refreshed. Is image visible: {self.image_display.isVisible()}, New size: {self.image_display.size()}", "debug") # Add .size()
-
-            # Schedule the refresh to happen after a short moment (e.g., 100-250 milliseconds)
-            # This gives the file system and Qt's event loop a moment to settle.
-            QTimer.singleShot(250, refresh_image_style)
-            # ---- END DIAGNOSTIC ----
-
-            # clean up temporary file
-            try:
-                Path(temp_cropped_path).unlink() #
-            except Exception as e: # Be more specific with exception if possible
-                DebugLogger.log(f"Error deleting temp file {temp_cropped_path}: {e}", "warning")
-                pass  # don't fail if temp cleanup fails
-                
-                # ── Emit Signal ──
-                self.image_uploaded.emit(str(destination_path))
-                DebugLogger.log(f"Cropped image saved: {destination_path}", "info")
-                
-                # clean up temporary file
-                try:
-                    Path(temp_cropped_path).unlink()
-                except:
-                    pass  # don't fail if temp cleanup fails
-                
+                DebugLogger().log(f"Failed to save cropped image to: {temp_image_path}", "error")
+                # TODO: Show error to user?
         except Exception as e:
-            DebugLogger.log(f"Error saving cropped image: {e}", "error")            
-            MessageDialog("error", "Error", f"Failed to save cropped image: {str(e)}", self).exec()
-    
-    def get_image_path(self) -> str:
-        """Get the path to the selected and cropped image."""
-        return self.selected_image_path or ""
-    
+            DebugLogger().log(f"Exception saving cropped image: {e}", "error")
+
+    @Slot()
+    def _handle_select_new_from_crop_dialog(self):
+        """Handles the request to select a new image from the crop dialog."""
+        # The crop dialog would have closed. Now open the file dialog again.
+        self.open_file_dialog_for_upload()
+
+
+    def _update_display_with_image(self, image_path: str):
+        """Updates the UI to show the RoundedImage."""
+        if self.image_display is None:
+            # Create RoundedImage with the same size as the upload button
+            button_qsize = self.upload_button.button_size # This is QSize from config
+            # Determine radii (e.g., fixed, or from style)
+            radii = 15 # Example radius
+            
+            self.image_display = RoundedImage(image_path=image_path, size=button_qsize, radii=radii)
+            self.stacked_layout.addWidget(self.image_display) # Add to page 1 (index 1)
+        else:
+            self.image_display.set_image_path(image_path)
+        
+        self.stacked_layout.setCurrentWidget(self.image_display)
+
     def clear_image(self):
-        """Clear the selected image."""
+        """Resets the widget to show the upload button, clearing any displayed image."""
+        if self.selected_image_path:
+            # Optionally, delete the temporary cropped image file
+            try:
+                if self.selected_image_path.exists():
+                    self.selected_image_path.unlink()
+                    DebugLogger().log(f"Deleted temp cropped image: {self.selected_image_path}", "info")
+            except Exception as e:
+                DebugLogger().log(f"Error deleting temp image {self.selected_image_path}: {e}", "error")
+        
         self.selected_image_path = None
+        self.original_selected_file_path = None
         
-        # remove the image display if it exists
+        # Switch back to the upload button widget
+        self.stacked_layout.setCurrentWidget(self.upload_button_widget)
+        
+        # If RoundedImage was created, you might want to clear its path or hide it
+        # If it's on a different page of QStackedLayout, switching pages is enough.
+        # If you want to free resources, you could delete and None it:
+        # if self.image_display:
+        #     self.image_display.deleteLater()
+        #     self.image_display = None 
+        # However, for QStackedLayout, just switching is fine, it can be reused.
+        # Let's clear its path for tidiness if it exists:
         if self.image_display:
-            self.layout.removeWidget(self.image_display)
-            self.image_display.deleteLater()
-            self.image_display = None
-        
-        self.overlay_widget.show()  # show the upload button again
+            self.image_display.clear_image()

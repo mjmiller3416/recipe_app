@@ -34,12 +34,11 @@ class FullRecipe(DialogWindow):
         - Ingredients list
         - Step-by-step directions
     """
-    def __init__(self, recipe: Recipe, parent=None):
-        super().__init__(parent)
+    def __init__(self, recipe: Recipe):
+        super().__init__(width=720, height=980)
         self.recipe = recipe
 
         # ── Window Properties ──
-        self.setFixedSize(760, 980)  # roughly 8.5 x 10.35 inches at 96 DPI
         self.title_bar.btn_ico_maximize.setVisible(False)
         self.title_bar.btn_ico_toggle_sidebar.setVisible(False)
         self.setObjectName("RecipeDialog")

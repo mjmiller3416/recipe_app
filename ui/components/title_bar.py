@@ -4,14 +4,13 @@ Defines the TitleBar class, a custom title bar for a frameless application windo
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from pathlib import Path
-
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
 
-from config import TITLE_BAR
-from ui.iconkit import ThemedIcon, ToolButtonIcon
+from config import TITLE_BAR, STYLES
+from ui.iconkit import ToolButtonIcon, ApplyHoverEffects
+from style_manager import WidgetLoader
+
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -48,6 +47,7 @@ class TitleBar(QWidget):
         """
         # ── Properties ──
         super().__init__(parent)
+        WidgetLoader.apply_widget_style(self, STYLES["TITLE_BAR"])
         self.setObjectName("TitleBar")
         self.setAttribute(Qt.WA_StyledBackground)
         self.setFixedHeight(38)
@@ -85,6 +85,7 @@ class TitleBar(QWidget):
         )
         self.btn_ico_maximize.setFixedSize(TITLE_BAR["BUTTON_SIZE"])
         self.btn_ico_maximize.clicked.connect(lambda: self.maximize_clicked.emit())
+        
 
         # ── Close Button ──
         self.btn_ico_close = ToolButtonIcon(
@@ -120,19 +121,24 @@ class TitleBar(QWidget):
             "close": self.btn_ico_close,
         }
 
-    
     def update_maximize_icon(self, maximized: bool):
+        """
+        Updates the maximize/restore icon based on the window state.
+
+        Args:
+            maximized (bool): True if the window is maximized, False if restored.
+        """
         target_path = (
             TITLE_BAR["ICON_RESTORE"] if maximized else TITLE_BAR["ICON_MAXIMIZE"]
         )
 
-        icon = ThemedIcon(
-            file_path = target_path,
-            size      = self.btn_ico_maximize.size(),
-            variant   = TITLE_BAR["DYNAMIC"],
-        ).icon()
-
-        self.btn_ico_maximize.setIcon(icon)
+        # Reapply hover effects with the correct base icon
+        ApplyHoverEffects.recolor(
+            self.btn_ico_maximize,
+            file_name=target_path,
+            size=self.btn_ico_maximize.iconSize(),
+            variant=TITLE_BAR["DYNAMIC"],
+        )
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:

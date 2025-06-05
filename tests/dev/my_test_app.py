@@ -2,13 +2,15 @@
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QGridLayout, QLineEdit, QMainWindow,
-                               QVBoxLayout, QWidget)
+                               QVBoxLayout, QWidget, QPushButton)
 
 from config import INGREDIENT_CATEGORIES, INGREDIENT_WIDGET, MEASUREMENT_UNITS
 from ui.components.inputs import SmartComboBox
 from ui.components.widget_frame import WidgetFrame
+from ui.components.dialogs.dialog_window import DialogWindow
 from ui.iconkit import ToolButtonIcon
 from views.add_recipes.upload_recipe import UploadRecipeImage
+
 
 
 class MyTestApp(QMainWindow):
@@ -28,15 +30,34 @@ class MyTestApp(QMainWindow):
         self.setCentralWidget(self.central_widget)
         self.setObjectName("IngredientWidget")
 
-        self.build_ui()
+        #self.build_upload_test()
+        #self.build_dialog_test()
+        #self.build_ingredient_test()
+        self.build_smart_combobox_test()
 
-    def build_ui(self):
+    def build_dialog_test(self):
+        def show_custom_dialog(self):
+            dialog = DialogWindow(
+                width=800, 
+                height=600,
+                title="Custom Dialog"
+            )
+            dialog.exec()
+
+        self.button = QPushButton("Open Dialog", self)
+        self.button.setGeometry(80, 80, 140, 40)
+        self.button.clicked.connect(show_custom_dialog)
+
+        # add to the central layout
+        self.central_layout.addWidget(self.button)
+      
+    def build_upload_test(self):
         """Builds the UI components."""
         # Create widget frame, with embedded layout
         self.btn = UploadRecipeImage(self)
         self.central_layout.addWidget(self.btn)
 
-    def ingredient_row(self):
+    def build_ingredient_test(self):
         """Creates and returns an ingredient row widget."""
         ingredient_row = QWidget()
         grid_layout = QGridLayout()
@@ -79,10 +100,15 @@ class MyTestApp(QMainWindow):
         grid_layout.addWidget(btn_ico_add, 0, 5, 1, 1)
 
         return ingredient_row 
-
-
-
-        
+ 
+    def build_smart_combobox_test(self):
+        """Creates and returns a SmartComboBox widget."""
+        smart_combobox = SmartComboBox(
+            list=["Item 1", "Item 2", "Item 3"],
+            placeholder="Select an item"
+        )
+        smart_combobox.setFixedHeight(32)
+        self.central_layout.addWidget(smart_combobox)
         
 def run_test(app):
     """Runs the test window."""

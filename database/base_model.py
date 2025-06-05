@@ -74,7 +74,7 @@ class ModelBase(PydanticBaseModel):
         cls: Type[T],
         id: int,
         *,
-        connection: Optional[sqlite3.Connection] = None,
+        connection: Optional[sqlite3.Connection] = None, 
         **fields: Any
     ) -> Optional[T]:
         """
@@ -95,7 +95,12 @@ class ModelBase(PydanticBaseModel):
         return instance.save(connection=connection)
 
     @classmethod
-    def exists(cls, **fields: Any) -> bool:
+    def exists(
+        cls, 
+        *, 
+        connection: Optional[sqlite3.Connection] = None, 
+        **fields_criteria: Any
+    ) -> bool: 
         """
         Check if a record exists with the given field-value pairs.
 
@@ -104,14 +109,25 @@ class ModelBase(PydanticBaseModel):
         Returns:
             bool: True if a matching record exists, False otherwise.
         """
-        cols = " AND ".join(f"{k}=?" for k in fields)
-        vals = tuple(fields.values())
+        if not fields_criteria: # check if no criteria provided
+            return False
+        cols = " AND ".join(f"{k}=?" for k in fields_criteria)
+        vals = tuple(fields_criteria.values())
         sql = f"SELECT 1 FROM {cls.table_name()} WHERE {cols} LIMIT 1"
-        with get_connection() as conn:
-            row = conn.execute(sql, vals).fetchone()
-        return bool(row)
 
-    def save(self, connection: Optional[sqlite3.Connection] = None) -> T:
+        def _run_exists(conn_exec: sqlite3.Connection) -> bool:
+            row = conn_exec.execute(sql, vals).fetchone()
+            return bool(row)
+
+        if connection:
+            return _run_exists(connection)
+        with get_connection() as conn_internal:
+            return _run_exists(conn_internal)
+
+    def save(
+            self, 
+            connection: Optional[sqlite3.Connection] = None
+        ) -> T:
         """Insert or replace this model into the database."""
         data = self.model_dump(exclude_none=True)
         cols, vals = zip(*data.items())
@@ -148,13 +164,23 @@ class ModelBase(PydanticBaseModel):
                 _run(conn)
 
     @classmethod
-    def first(cls: Type[T], **filters: Any) -> Optional[T]:
+    def first(
+        cls: Type[T], 
+        *, 
+        connection: Optional[sqlite3.Connection] = None, 
+        **filters_criteria: Any
+    ) -> Optional[T]:
         """Return the first matching row (or None)."""
-        results = cls.filter(**filters)
+        results = cls.filter(connection=connection, **filters_criteria)
         return results[0] if results else None
 
     @classmethod
-    def filter(cls: Type[T], **filters: Any) -> List[T]:
+    def filter(
+        cls: Type[T], 
+        *, 
+        connection: Optional[sqlite3.Connection] = None, 
+        **filters_criteria: Any
+    ) -> List[T]:
         """
         SQL‐powered filter: only returns rows where each column == value.
 
@@ -163,19 +189,24 @@ class ModelBase(PydanticBaseModel):
         Returns:
             List[T]: List of model instances matching the filters.
         """
-        if not filters:
-            return cls.all()
+        if not filters_criteria:
+            return cls.all() 
 
-        # build WHERE clause: "col1 = ? AND col2 = ?"
-        cols = " AND ".join(f"{k}=?" for k in filters)
+        cols = " AND ".join(f"{k}=?" for k in filters_criteria)
         sql = f"SELECT * FROM {cls.table_name()} WHERE {cols}"
-        params = tuple(filters.values())
-        return cls.raw_query(sql, params)
+        params = tuple(filters_criteria.values())
+        # pass the explicit connection to raw_query
+        return cls.raw_query(sql, params, connection=connection)
 
     @classmethod
-    def get_by_field(cls: Type[T], **fields: Any) -> Optional[T]:
+    def get_by_field(
+        cls: Type[T], 
+        *, 
+        connection: Optional[sqlite3.Connection] = None, 
+        **fields_criteria: Any
+    ) -> Optional[T]:
         """Return a single row matching the given field-value pairs."""
-        return cls.first(**fields)
+        return cls.first(connection=connection, **fields_criteria)
     
     @classmethod
     def join_query(

@@ -5,6 +5,7 @@ Provides the RoundedImage class and a factory function for creating QLabel widge
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from typing import Tuple, Union
+from pathlib import Path
 
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QLabel
@@ -12,50 +13,66 @@ from PySide6.QtWidgets import QLabel
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class RoundedImage(QLabel):
-    """A QLabel subclass that displays an image with rounded corners.
-
-    Applies a Qt stylesheet mask to create smooth vector-rounded edges without manual painting.
-    """
-
     def __init__(
         self,
         image_path: str,
         size: Union[int, QSize] = 300,
         radii: Union[int, Tuple[int, int, int, int]] = 20
     ) -> None:
-        """Initialize the RoundedImage.
-
-        Args:
-            image_path (str): Path to the source image file.
-            size (int or QSize, optional): Dimension (square) or QSize object. Defaults to 300.
-            radii (int or Tuple[int, int, int, int], optional): Corner radius values.
-        """
         super().__init__()
+        self._image_path = image_path # Store original path
+        self._size_arg = size        # Store original size arg
+        self._radii_arg = radii      # Store original radii arg
+        self._apply_style()
 
-        # ── Normalize Size ──
-        if isinstance(size, int):
-            size = QSize(size, size)
-        elif not isinstance(size, QSize):
-            raise ValueError("size must be an int or QSize")
-
-        self.setFixedSize(size)
-
-        # ── Normalize Radii Values ──
-        if isinstance(radii, int):
-            tl = tr = br = bl = radii
-        elif isinstance(radii, (tuple, list)) and len(radii) == 4:
-            tl, tr, br, bl = radii
+    def _apply_style(self) -> None:
+        # Normalize Size
+        current_size: QSize
+        if isinstance(self._size_arg, int):
+            current_size = QSize(self._size_arg, self._size_arg)
+        elif isinstance(self._size_arg, QSize):
+            current_size = self._size_arg
         else:
-            raise ValueError("radii must be an int or a 4-tuple of ints")
+            # Fallback or raise error, for now, using a default
+            print(f"Warning: Invalid size '{self._size_arg}' for RoundedImage. Using 300x300.")
+            current_size = QSize(300, 300)
+        
+        self.setFixedSize(current_size)
 
-        # ── Construct Stylesheet ──
+        # Normalize Radii Values
+        tl: int; tr: int; br: int; bl: int
+        if isinstance(self._radii_arg, int):
+            tl = tr = br = bl = self._radii_arg
+        elif isinstance(self._radii_arg, (tuple, list)) and len(self._radii_arg) == 4:
+            tl, tr, br, bl = self._radii_arg
+        else:
+            # Fallback or raise error
+            print(f"Warning: Invalid radii '{self._radii_arg}' for RoundedImage. Using 20px.")
+            tl = tr = br = bl = 20
+            
+        # Construct Stylesheet
+        # Ensure the path is suitable for CSS url() (forward slashes)
+        css_path = Path(self._image_path).as_posix() if self._image_path else ""
+        
         stylesheet = f"""
         QLabel {{
-            border-image: url('{image_path}') 0 0 0 0 stretch stretch;
+            border-image: url('{css_path}') 0 0 0 0 stretch stretch;
             border-top-left-radius: {tl}px;
             border-top-right-radius: {tr}px;
             border-bottom-right-radius: {br}px;
             border-bottom-left-radius: {bl}px;
+            background-color: transparent; /* Ensure no opaque background interferes */
         }}
         """
         self.setStyleSheet(stylesheet)
+        self.update() # Ensure repaint
+
+    def set_image_path(self, image_path: str) -> None:
+        """Updates the image displayed by this widget."""
+        self._image_path = image_path
+        self._apply_style()
+
+    def clear_image(self) -> None:
+        """Clears the displayed image."""
+        self._image_path = "" # Or path to a transparent placeholder
+        self._apply_style() # Re-apply with empty path, effectively clearing

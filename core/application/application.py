@@ -8,6 +8,7 @@ from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt
 from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
                                QMainWindow, QStackedWidget, QVBoxLayout,
                                QWidget)
+from PySide6.QtGui import QGuiApplication
 
 from config import SMART_COMBOBOX
 from core.controllers.animation_controller import AnimationManager
@@ -57,6 +58,7 @@ class Application(QMainWindow):
 
         # ── Create Title Bar ──
         self.title_bar = TitleBar(self)
+        self._is_maximized = False
         self.outer_layout.addWidget(self.title_bar)
 
         # ── Main Layout ──
@@ -73,7 +75,7 @@ class Application(QMainWindow):
         self.title_bar.sidebar_toggled.connect(self.toggle_sidebar)
         self.title_bar.close_clicked.connect(self.handle_close)
         self.title_bar.minimize_clicked.connect(self.showMinimized)
-        self.title_bar.maximize_clicked.connect(self.toggle_maximize_restore)
+        self.title_bar.maximize_clicked.connect(self._toggle_maximize)
         self.sidebar.close_app.connect(self.handle_close)
 
         # ── Main Content Container ──
@@ -199,13 +201,19 @@ class Application(QMainWindow):
             if current_widget != next_widget:
                 AnimationManager.transition_stack(current_widget, next_widget, self.sw_pages)
 
-    def toggle_maximize_restore(self):
-        if self.isMaximized():
-            self.showNormal()
-            self.title_bar.update_maximize_icon(False)
+    def _toggle_maximize(self):
+        if not self._is_maximized:
+            # save current size and pos
+            self._normal_geometry = self.geometry()
+            screen_geometry = QGuiApplication.primaryScreen().availableGeometry()
+            self.setGeometry(screen_geometry)
         else:
-            self.showMaximized()
-            self.title_bar.update_maximize_icon(True)
+            # restore previous size and pos
+            if hasattr(self, '_normal_geometry'):
+                self.setGeometry(self._normal_geometry)
+
+        self._is_maximized = not self._is_maximized
+        self.title_bar.update_maximize_icon(self._is_maximized)
 
     def toggle_sidebar(self):
         """ Toggle the sidebar's expanded/collapsed state with animation."""
