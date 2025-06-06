@@ -8,8 +8,8 @@ IngredientWidget for managing individual ingredients in recipes.
 from PySide6.QtCore import Signal, Qt 
 from PySide6.QtWidgets import QGridLayout, QLineEdit, QWidget
 
-from config import (FLOAT, INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,
-                    MEASUREMENT_UNITS, NAME)
+from config import (FLOAT_VALIDATOR, INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,
+                    MEASUREMENT_UNITS, NAME_PATTERN)
 from ui.components.inputs import SmartComboBox
 from ui.iconkit import ToolButtonIcon
 from ui.tools import clear_error_styles, dynamic_validation
@@ -107,7 +107,7 @@ class IngredientWidget(QWidget):
         self.btn_ico_subtract.clicked.connect(self.request_removal)
         self.ingredient_validated.connect(self.add_ingredient)
 
-        dynamic_validation(self.le_quantity, FLOAT)
+        dynamic_validation(self.le_quantity, FLOAT_VALIDATOR)
         # dynamic_validation(self.le_ingredient_name, NAME) # Removed for SmartComboBox
 
         self.scb_ingredient_name.currentTextChanged.connect(self._ingredient_name_changed) # Connect new signal
@@ -134,7 +134,7 @@ class IngredientWidget(QWidget):
 
         # Validate ingredient name format (e.g., if it should not be empty after stripping)
         # This could be a simple check or use a regex from config if available
-        if not NAME.match(current_text):
+        if not NAME_PATTERN.match(current_text):
             self.scb_ingredient_name.setStyleSheet("border: 1px solid red;") # Example error style
             # self.cb_ingredient_category.setCurrentIndex(-1) # Optionally clear category on name error
             return
@@ -149,8 +149,8 @@ class IngredientWidget(QWidget):
         for ingredient in matching_ingredients:
             if ingredient.ingredient_name.lower() == current_text.lower():
                 exact_match = ingredient
+                self.exact_match = exact_match  # Store the exact match in self.exact_match
                 break
-        
         if exact_match:
             # Exact match found, auto-populate category
             category_index = self.scb_ingredient_category.findText(exact_match.ingredient_category, Qt.MatchFlag.MatchFixedString | Qt.MatchFlag.MatchCaseSensitive)

@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field, field_validator
 
 # ── DTOs for Recipe Operations ──────────────────────────────────────────────────
 class RecipeIngredientInputDTO(BaseModel):
+    existing_ingredient_id: Optional[int] = None
     ingredient_name: str = Field(..., min_length=1)
     ingredient_category: str = Field(..., min_length=1)
     quantity: Optional[float] = None

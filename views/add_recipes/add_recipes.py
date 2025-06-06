@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (QGridLayout, QHBoxLayout, QLabel, QPushButton,
                                QTextEdit, QVBoxLayout, QWidget)
 
 from config import STYLES, UPLOAD_RECIPE_IMAGE
-from config.config import INT, MEAL_CATEGORIES, NAME, RECIPE_CATEGORIES
+from config.config import INT_VALIDATOR, MEAL_CATEGORIES, NAME_VALIDATOR, RECIPE_CATEGORIES
 from core.helpers import DebugLogger
 from services.recipe_service import RecipeService
 from style_manager import WidgetLoader
@@ -145,8 +145,8 @@ class AddRecipes(QWidget):
         self.btn_save.clicked.connect(self.save_recipe)
         self.btn_upload_image.image_uploaded.connect(self._update_image_path)
         
-        dynamic_validation(self.le_recipe_name, NAME)
-        dynamic_validation(self.le_servings, INT)
+        dynamic_validation(self.le_recipe_name, NAME_VALIDATOR)
+        dynamic_validation(self.le_servings, INT_VALIDATOR)
         
         self.cb_recipe_category.selection_validated.connect(lambda: clear_error_styles(self.cb_recipe_category))
         self.cb_meal_type.selection_validated.connect(lambda: clear_error_styles(self.cb_meal_type))
@@ -161,7 +161,7 @@ class AddRecipes(QWidget):
         self.ingredients_frame.addWidget(widget)
 
     def _remove_ingredient(self, widget):
-        self.ingredients_frame.removeWidget(widget)
+        self.ingredients_frame.layout().removeWidget(widget)
         widget.deleteLater()
         self.ingredients_frame.update()
 

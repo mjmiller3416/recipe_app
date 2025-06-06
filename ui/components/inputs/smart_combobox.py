@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QComboBox, QListView, QWidget
 
 from config import SMART_COMBOBOX
 from ui.iconkit import ToolButtonIcon
-from services.ingredient_service import IngredientService
+# Removed unused import IngredientService
 
 # ── Class Definition: SmartComboBox ─────────────────────────────────────────────
 class SmartComboBox(QComboBox):
@@ -71,6 +71,10 @@ class SmartComboBox(QComboBox):
             self.set_placeholder(placeholder)
 
         self.currentTextChanged.connect(self.emit_validation) # connect signal to emit validation
+
+        # Connect textChanged signal to _filter_items for live filtering
+        if self.isEditable():
+            self.lineEdit().textChanged.connect(self._filter_items)
 
     def emit_validation(self, text: str):
         """

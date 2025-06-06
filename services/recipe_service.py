@@ -10,6 +10,7 @@ from pydantic import ValidationError
 from database.db import get_connection
 from database.models.recipe import Recipe
 from database.models.recipe_ingredient import RecipeIngredient
+from database.models.ingredient import Ingredient
 from services.dtos.recipe_dtos import RecipeCreateDTO, RecipeFilterDTO
 from services.dtos.ingredient_dtos import IngredientCreateDTO
 from services.ingredient_service import IngredientService
@@ -64,28 +65,26 @@ class RecipeService:
                 # 4) Loop through each ingredient in the DTO, 
                 #    build an IngredientCreateDTO, and get_or_create via IngredientService
                 for ing_dto in recipe_dto.ingredients:
-                    # Build our IngredientCreateDTO (stripped/validated by Pydantic)
-                    try:
-                        ing_create_dto = IngredientCreateDTO(
-                            ingredient_name=ing_dto.ingredient_name,
-                            ingredient_category=ing_dto.ingredient_category,
-                            quantity=ing_dto.quantity,
-                            unit=ing_dto.unit,
+                    if getattr(ing_dto, "existing_ingredient_id", None):
+                        ingredient = Ingredient.get(ing_dto.existing_ingredient_id)
+                    else:
+                        try:
+                            ing_create_dto = IngredientCreateDTO(
+                                ingredient_name=ing_dto.ingredient_name,
+                                ingredient_category=ing_dto.ingredient_category,
+                                quantity=ing_dto.quantity,
+                                unit=ing_dto.unit,
+                            )
+                        except ValidationError as ve:
+                            raise RecipeSaveError(
+                                f"Invalid ingredient data for '{ing_dto.ingredient_name}': {ve}"
+                            ) from ve
+
+                        ingredient = IngredientService.get_or_create_ingredient(
+                            ing_create_dto,
+                            conn=conn
                         )
-                    except ValidationError as ve:
-                        # If any ingredient DTO fails validation, wrap it
-                        raise RecipeSaveError(
-                            f"Invalid ingredient data for '{ing_dto.ingredient_name}': {ve}"
-                        ) from ve
 
-                    # Use the service to fetch existing or create a new Ingredient row
-                    ingredient = IngredientService.get_or_create_ingredient(
-                        ing_create_dto,
-                        conn=conn
-                    )
-
-                    # 5) Create the linking row in RecipeIngredient
-                    #    We trust ing_dto.quantity/unit (they may be None)
                     RecipeIngredient(
                         recipe_id=recipe.id,
                         ingredient_id=ingredient.id,

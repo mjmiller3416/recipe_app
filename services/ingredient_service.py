@@ -24,16 +24,12 @@ class IngredientService:
         conn: Optional[sqlite3.Connection] = None
     ) -> list[str]:
         """
-        Returns a list of all distinct ingredient names.
-        
-        Args:
-            connection (Optional[sqlite3.Connection]): Database connection to use.
-        Returns:
-            list[str]: List of distinct ingredient names.
+        Returns a list of all distinct ingredient names (no model validation needed).
         """
         sql = "SELECT DISTINCT ingredient_name FROM ingredients"
-        results = Ingredient.raw_query(sql, (), connection=conn)
-        return [r.ingredient_name for r in results]
+        with get_connection() as conn:
+            cursor = conn.execute(sql)
+            return [row["ingredient_name"] for row in cursor.fetchall()]
 
     @staticmethod
     def find_matching_ingredients(

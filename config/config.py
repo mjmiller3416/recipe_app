@@ -4,6 +4,7 @@
 """
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from pathlib import Path
+import re
 
 from PySide6.QtCore import QRegularExpression, QSize
 from PySide6.QtGui import QRegularExpressionValidator
@@ -181,10 +182,16 @@ SORT_OPTIONS = [
 ]
 
 # ── Validation Rules ──
-NAME = lambda parent:      QRegularExpressionValidator(QRegularExpression(r"^[a-zA-Z0-9\s\-]+$"), parent)
-FLOAT = lambda parent:     QRegularExpressionValidator(QRegularExpression(r"^\d{1,2}(\.\d{0,2})?$"), parent)
-INT = lambda parent:       QRegularExpressionValidator(QRegularExpression(r"^\d{1,3}$"), parent)
-NON_EMPTY = lambda parent: QRegularExpressionValidator(QRegularExpression(r"^(?!\s*$).+"), parent)
+NAME_PATTERN = re.compile(r"^[a-zA-Z0-9\s\-]+$")
+FLOAT_PATTERN = re.compile(r"^\d{1,2}(\.\d{0,2})?$")
+INT_PATTERN = re.compile(r"^\d{1,3}$")
+NON_EMPTY_PATTERN = re.compile(r"^(?!\s*$).+")
+
+# ── Validators ──
+NAME_VALIDATOR = lambda parent: QRegularExpressionValidator(QRegularExpression(NAME_PATTERN.pattern), parent)
+FLOAT_VALIDATOR = lambda parent: QRegularExpressionValidator(QRegularExpression(FLOAT_PATTERN.pattern), parent)
+INT_VALIDATOR = lambda parent: QRegularExpressionValidator(QRegularExpression(INT_PATTERN.pattern), parent)
+NON_EMPTY_VALIDATOR = lambda parent: QRegularExpressionValidator(QRegularExpression(NON_EMPTY_PATTERN.pattern), parent)
 
 # ── Debug Flags ──
 DEBUG_LAYOUT_BORDERS = True # set to True to draw layout borders
