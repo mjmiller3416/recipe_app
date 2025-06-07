@@ -5,16 +5,16 @@ IngredientWidget for managing individual ingredients in recipes.
 
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import Signal, Qt 
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QGridLayout, QLineEdit, QWidget
 
 from config import (FLOAT_VALIDATOR, INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,
                     MEASUREMENT_UNITS, NAME_PATTERN)
+from services.dtos.ingredient_dtos import IngredientSearchDTO
+from services.ingredient_service import IngredientService
 from ui.components.inputs import SmartComboBox
 from ui.iconkit import ToolButtonIcon
 from ui.tools import clear_error_styles, dynamic_validation
-from services.ingredient_service import IngredientService
-from services.dtos.ingredient_dtos import IngredientSearchDTO
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 FIXED_HEIGHT = 32  # fixed height for input fields in the ingredient widget
@@ -57,12 +57,11 @@ class IngredientWidget(QWidget):
         )
         self.grid_layout.addWidget(self.scb_unit, 0, 1, 1, 1)
 
-        # Replace QLineEdit with SmartComboBox for ingredient name
         all_ingredient_names = self.ingredient_service.list_all_ingredient_names()
         self.scb_ingredient_name = SmartComboBox(
             list=all_ingredient_names,
             placeholder="Ingredient Name",
-            editable=True  # Make the SmartComboBox editable
+            editable=True  # make the SmartComboBox editable
         )
         self.grid_layout.addWidget(self.scb_ingredient_name, 0, 2, 1, 1)
 
@@ -108,11 +107,8 @@ class IngredientWidget(QWidget):
         self.ingredient_validated.connect(self.add_ingredient)
 
         dynamic_validation(self.le_quantity, FLOAT_VALIDATOR)
-        # dynamic_validation(self.le_ingredient_name, NAME) # Removed for SmartComboBox
 
-        self.scb_ingredient_name.currentTextChanged.connect(self._ingredient_name_changed) # Connect new signal
-        # Ensure validation signal from SmartComboBox is handled if needed for styling, or rely on internal validation.
-        # self.scb_ingredient_name.selection_validated.connect(lambda: clear_error_styles(self.scb_ingredient_name))
+        self.scb_ingredient_name.currentTextChanged.connect(self._ingredient_name_changed) # connect new signal
 
         self.scb_unit.selection_validated.connect(lambda: clear_error_styles(self.scb_unit))
         self.scb_ingredient_category.selection_validated.connect(lambda: clear_error_styles(self.scb_ingredient_category))
@@ -125,50 +121,44 @@ class IngredientWidget(QWidget):
         Otherwise, the category ComboBox is enabled for manual input.
         """
         current_text = text.strip()
-        self.scb_ingredient_category.setEnabled(True) # Default to enabled
+        self.scb_ingredient_category.setEnabled(True) # default to enabled
 
         if not current_text:
-            self.scb_ingredient_category.setCurrentIndex(-1) # Clear category
-            clear_error_styles(self.scb_ingredient_name) # Clear any error style on name
+            self.scb_ingredient_category.setCurrentIndex(-1) # clear category
+            clear_error_styles(self.scb_ingredient_name) # clear any error style on name
             return
 
-        # Validate ingredient name format (e.g., if it should not be empty after stripping)
-        # This could be a simple check or use a regex from config if available
+        # validate the ingredient name against the NAME_PATTERN
         if not NAME_PATTERN.match(current_text):
-            self.scb_ingredient_name.setStyleSheet("border: 1px solid red;") # Example error style
-            # self.cb_ingredient_category.setCurrentIndex(-1) # Optionally clear category on name error
+            self.scb_ingredient_name.setStyleSheet("border: 1px solid red;") # error style
             return
         else:
-            clear_error_styles(self.scb_ingredient_name) # Clear error style if valid
+            clear_error_styles(self.scb_ingredient_name) # clear error style if valid
 
         search_dto = IngredientSearchDTO(search_term=current_text)
-        # Assuming find_matching_ingredients uses a connection managed by the service or ModelBase
         matching_ingredients = self.ingredient_service.find_matching_ingredients(search_dto)
 
         exact_match = None
         for ingredient in matching_ingredients:
             if ingredient.ingredient_name.lower() == current_text.lower():
                 exact_match = ingredient
-                self.exact_match = exact_match  # Store the exact match in self.exact_match
+                self.exact_match = exact_match  # store the exact match in self.exact_match
                 break
         if exact_match:
-            # Exact match found, auto-populate category
+            # exact match found, auto-populate category
             category_index = self.scb_ingredient_category.findText(exact_match.ingredient_category, Qt.MatchFlag.MatchFixedString | Qt.MatchFlag.MatchCaseSensitive)
-            # Try case-insensitive if sensitive fails or if that's preferred
+            # try case-insensitive if sensitive fails 
             if category_index < 0:
                  category_index = self.scb_ingredient_category.findText(exact_match.ingredient_category, Qt.MatchFlag.MatchFixedString | Qt.MatchFlag.MatchContains) # Broader match if needed
 
             if category_index >= 0:
                 self.scb_ingredient_category.setCurrentIndex(category_index)
-                # self.scb_ingredient_category.setEnabled(False) # Optionally disable category selection
             else:
-                # Category from DB not in standard list, add it, select, and then optionally disable
                 self.scb_ingredient_category.addItem(exact_match.ingredient_category)
                 self.scb_ingredient_category.setCurrentText(exact_match.ingredient_category)
-                # self.scb_ingredient_category.setEnabled(False) # Optionally disable category selection
-            clear_error_styles(self.scb_ingredient_category) # Clear error style on successful auto-population
+            clear_error_styles(self.scb_ingredient_category) # clear error style on successful auto-population
         else:
-            # No exact match, clear category and ensure it's enabled for manual input
+            # no exact match, clear category and ensure it's enabled for manual input
             self.scb_ingredient_category.setCurrentIndex(-1)
             self.scb_ingredient_category.setEnabled(True)
 

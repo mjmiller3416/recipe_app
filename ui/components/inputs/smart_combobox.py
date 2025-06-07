@@ -11,7 +11,6 @@ from PySide6.QtWidgets import QComboBox, QListView, QWidget
 
 from config import SMART_COMBOBOX
 from ui.iconkit import ToolButtonIcon
-# Removed unused import IngredientService
 
 # ── Class Definition: SmartComboBox ─────────────────────────────────────────────
 class SmartComboBox(QComboBox):

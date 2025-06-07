@@ -7,10 +7,9 @@ Defines the TitleBar class, a custom title bar for a frameless application windo
 from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
 
-from config import TITLE_BAR, STYLES
-from ui.iconkit import ToolButtonIcon, ApplyHoverEffects
+from config import STYLES, TITLE_BAR
 from style_manager import WidgetLoader
-
+from ui.iconkit import ApplyHoverEffects, ToolButtonIcon
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

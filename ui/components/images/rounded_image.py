@@ -3,9 +3,9 @@
 Provides the RoundedImage class and a factory function for creating QLabel widgets with rounded images.
 """
 
+from pathlib import Path
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from typing import Tuple, Union
-from pathlib import Path
 
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QLabel

@@ -8,6 +8,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QSizePolicy,
                                QVBoxLayout, QWidget)
 
+
 def create_hbox_with_widgets(*widgets, parent=None):
     layout = QHBoxLayout(parent)
     for w in widgets:

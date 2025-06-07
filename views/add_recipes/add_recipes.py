@@ -9,8 +9,11 @@ from PySide6.QtWidgets import (QGridLayout, QHBoxLayout, QLabel, QPushButton,
                                QTextEdit, QVBoxLayout, QWidget)
 
 from config import STYLES, UPLOAD_RECIPE_IMAGE
-from config.config import INT_VALIDATOR, MEAL_CATEGORIES, NAME_VALIDATOR, RECIPE_CATEGORIES
+from config.config import (INT_VALIDATOR, MEAL_CATEGORIES, NAME_VALIDATOR,
+                           RECIPE_CATEGORIES)
 from core.helpers import DebugLogger
+from services.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
+from services.ingredient_service import IngredientService
 from services.recipe_service import RecipeService
 from style_manager import WidgetLoader
 from ui.components.dialogs import MessageDialog
@@ -20,8 +23,7 @@ from ui.tools import clear_error_styles, dynamic_validation
 
 from .ingredient_widget import IngredientWidget
 from .upload_recipe import UploadRecipeImage
-from services.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
-from services.ingredient_service import IngredientService
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class AddRecipes(QWidget):

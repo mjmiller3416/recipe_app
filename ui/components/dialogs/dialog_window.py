@@ -5,12 +5,12 @@ Defines the BaseDialog class, a frameless QDialog with a custom title bar and st
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QWidget
 from PySide6.QtGui import QGuiApplication
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QWidget
 
-from ui.components.title_bar import TitleBar
-from style_manager import WidgetLoader
 from config import STYLES, TITLE_BAR
+from style_manager import WidgetLoader
+from ui.components.title_bar import TitleBar
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

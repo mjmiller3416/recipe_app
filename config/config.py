@@ -2,9 +2,9 @@
 
     This module contains configuration settings for the application.
 """
+import re
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from pathlib import Path
-import re
 
 from PySide6.QtCore import QRegularExpression, QSize
 from PySide6.QtGui import QRegularExpressionValidator

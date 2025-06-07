@@ -3,10 +3,10 @@
 This module defines the IngredientSearchDTO class for searching ingredients.
 """
 
+from typing import Optional
+
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from pydantic import BaseModel, Field, field_validator
-
-from typing import Optional
 
 
 # ── DTO for Ingredient Operations ───────────────────────────────────────────────

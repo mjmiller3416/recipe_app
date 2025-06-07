@@ -2,15 +2,15 @@
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QGridLayout, QLineEdit, QMainWindow,
-                               QVBoxLayout, QWidget, QPushButton)
+                               QPushButton, QVBoxLayout, QWidget)
 
 from config import INGREDIENT_CATEGORIES, INGREDIENT_WIDGET, MEASUREMENT_UNITS
+from ui.components.dialogs.dialog_window import DialogWindow
 from ui.components.inputs import SmartComboBox
 from ui.components.widget_frame import WidgetFrame
-from ui.components.dialogs.dialog_window import DialogWindow
 from ui.iconkit import ToolButtonIcon
 from views.add_recipes.upload_recipe import UploadRecipeImage
-
+from views.add_recipes.ingredient_widget import IngredientWidget
 
 
 class MyTestApp(QMainWindow):
@@ -32,8 +32,8 @@ class MyTestApp(QMainWindow):
 
         #self.build_upload_test()
         #self.build_dialog_test()
-        #self.build_ingredient_test()
-        self.build_smart_combobox_test()
+        self.build_ingredient_test()
+        #self.build_smart_combobox_test()
 
     def build_dialog_test(self):
         def show_custom_dialog(self):
@@ -59,47 +59,11 @@ class MyTestApp(QMainWindow):
 
     def build_ingredient_test(self):
         """Creates and returns an ingredient row widget."""
-        ingredient_row = QWidget()
-        grid_layout = QGridLayout()
-        ingredient_row.setLayout(grid_layout)
-
-        le_quantity = QLineEdit(self)
-        le_quantity.setFixedHeight(32)
-        le_quantity.setPlaceholderText("Qty.")
-        grid_layout.addWidget(le_quantity, 0, 0, 1, 1)
-
-        cb_unit = SmartComboBox(
-            list=MEASUREMENT_UNITS, 
-            placeholder="Unit"
+        ingredient_widget = IngredientWidget(
+            removable=False,
         )
-        grid_layout.addWidget(cb_unit, 0, 1, 1, 1)
-
-        le_ingredient_name = QLineEdit(self)
-        le_ingredient_name.setFixedHeight(32)
-        le_ingredient_name.setPlaceholderText("Ingredient Name")
-        grid_layout.addWidget(le_ingredient_name, 0, 2, 1, 1)
-
-        cb_ingredient_category = SmartComboBox(
-            list=INGREDIENT_CATEGORIES, 
-            placeholder="Category"
-        )
-        grid_layout.addWidget(cb_ingredient_category, 0, 3, 1, 1)
-
-        btn_ico_subtract = ToolButtonIcon(
-            file_path = INGREDIENT_WIDGET["ICON_SUBTRACT"],
-            icon_size = INGREDIENT_WIDGET["ICON_SIZE"],
-            variant   = INGREDIENT_WIDGET["DYNAMIC"]
-        )
-        grid_layout.addWidget(btn_ico_subtract, 0, 4, 1, 1)
-
-        btn_ico_add = ToolButtonIcon(
-            file_path = INGREDIENT_WIDGET["ICON_ADD"],
-            icon_size = INGREDIENT_WIDGET["ICON_SIZE"],
-            variant   = INGREDIENT_WIDGET["DYNAMIC"]
-        )
-        grid_layout.addWidget(btn_ico_add, 0, 5, 1, 1)
-
-        return ingredient_row 
+        ingredient_widget.setFixedHeight(32)
+        self.central_layout.addWidget(ingredient_widget)
  
     def build_smart_combobox_test(self):
         """Creates and returns a SmartComboBox widget."""

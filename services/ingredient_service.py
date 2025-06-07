@@ -10,7 +10,9 @@ from typing import Optional
 
 from database.db import get_connection
 from database.models.ingredient import Ingredient
-from services.dtos.ingredient_dtos import IngredientSearchDTO, IngredientCreateDTO
+from services.dtos.ingredient_dtos import (IngredientCreateDTO,
+                                           IngredientSearchDTO)
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class IngredientService:

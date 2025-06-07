@@ -5,10 +5,10 @@ Main application window with a custom title bar, sidebar, header, and dynamic st
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt
+from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
                                QMainWindow, QStackedWidget, QVBoxLayout,
                                QWidget)
-from PySide6.QtGui import QGuiApplication
 
 from config import SMART_COMBOBOX
 from core.controllers.animation_controller import AnimationManager

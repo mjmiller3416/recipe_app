@@ -5,15 +5,16 @@ import tempfile
 import uuid
 from pathlib import Path
 
-from PySide6.QtCore import (Qt, Signal, QRect, QPoint, QSize, Slot, QRectF, 
-                            QPointF, QSizeF)
-from PySide6.QtGui import (QPixmap, QPainter, QPen, QBrush, QColor, QMouseEvent,
-                           QPainterPath, QCursor)
-from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel,
-                               QPushButton, QSizePolicy, QFrame, QSpacerItem)
+from PySide6.QtCore import (QPoint, QPointF, QRect, QRectF, QSize, QSizeF, Qt,
+                            Signal, Slot)
+from PySide6.QtGui import (QBrush, QColor, QCursor, QMouseEvent, QPainter,
+                           QPainterPath, QPen, QPixmap)
+from PySide6.QtWidgets import (QDialog, QFrame, QHBoxLayout, QLabel,
+                               QPushButton, QSizePolicy, QSpacerItem,
+                               QVBoxLayout)
 
-from ui.components.dialogs.dialog_window import DialogWindow 
 from core.helpers.debug_logger import DebugLogger
+from ui.components.dialogs.dialog_window import DialogWindow
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 MIN_CROP_DIM_ORIGINAL = 280  # Minimum crop dimension on the original image
