@@ -1,134 +1,100 @@
-"""ui/components/inputs/smart_combobox.py
+"""ui/components/inputs/search_bar.py
 
-This module defines a Smart ComboBox class that extends QComboBox.
+This module defines a custom search widget that includes a search icon, a text input field,
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from typing import Sequence
-
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QComboBox, QListView, QWidget
+from PySide6.QtCore import Signal, Qt
+from PySide6.QtWidgets import QWidget, QLineEdit, QHBoxLayout, QCompleter
 
 from config import SMART_COMBOBOX
 from ui.iconkit import ToolButtonIcon
+from core.helpers import DebugLogger
 
-# ── Class Definition: SmartComboBox ─────────────────────────────────────────────
-class SmartComboBox(QComboBox):
-    """
-    Custom QComboBox that uses a QListView as the popup view and a themed dropdown arrow.
-    Optionally accepts a list of items to populate on creation.
-    """
 
-    # ── Signals ─────────────────────────────────────────────────────────────────
-    selection_validated = Signal(bool)  # emits when a valid selection is made
+# ── Class Definition ────────────────────────────────────────────────────────────
+class SmartComboBox(QWidget):
+    """
+    A custom search bar widget with a search icon, text input, and clear button.
+
+    Emits:
+        - search_triggered(str): when text is entered or Enter is pressed.
+        - recipe_selected(str): placeholder for future recipe selection support.
+    """
+    
+    # ── Signals ─────────────────────────────────────────────────────────────────────
+    selection_trigger = Signal(str)  # event for item selection
 
     def __init__(
-        self,
-        parent: QWidget | None = None, 
-        list: Sequence[str] | None = None, 
-        placeholder: str | None = None,     
-        editable: bool = False,
-    ):
-        """
-        Initialize SmartComboBox.
-        
-        Args:
-            parent (QWidget, optional): Parent widget.
-            items (Sequence[str], optional): List of items to populate the combo box.
-            placeholder (str, optional): Placeholder text for the combo box.
-            editable (bool): If True, allows editing of the combo box text.
-        """
+            self, 
+            parent = None,
+            list_items: list = None,
+            placeholder: str = None
+        ):
         super().__init__(parent)
-        # ── Initialize Widget ──
+        DebugLogger.log("Initializing SmartComboBox", log_type = "info")
         self.setObjectName("SmartComboBox")
-        self.setEditable(editable)
-        
-        # ── Setup UI ──
-        self.cb_btn = ToolButtonIcon(
+
+        # ── Input Field ──
+        self.line_edit = QLineEdit(self)
+        self.line_edit.setObjectName("SCBInput")
+        self.line_edit.setPlaceholderText(placeholder)
+    
+        # ── Completer ──
+        self.completer = QCompleter(list_items, self)
+        DebugLogger.log(f"Setting completer model with {len(list_items)} items", log_type = "debug")
+        self.completer.setCaseSensitivity(Qt.CaseInsensitive)
+        self.line_edit.setCompleter(self.completer)
+
+        # ── Dropdown Button ──
+        self.btn_dropdown = ToolButtonIcon(
             file_path = SMART_COMBOBOX["ICON_ARROW"]["FILE_PATH"],
             icon_size = SMART_COMBOBOX["ICON_ARROW"]["ICON_SIZE"],
             variant   = SMART_COMBOBOX["ICON_ARROW"]["DYNAMIC"],
         )
+        self.btn_dropdown.setVisible(True) # default visibility
 
-        # assign button properties
-        self.cb_btn.setParent(self)
-        self.cb_btn.setCursor(Qt.PointingHandCursor)
-        self.cb_btn.clicked.connect(self.showPopup) # connect button to show popup
+        # ── Clear Button ──
+        self.btn_clear = ToolButtonIcon(
+            file_path = SMART_COMBOBOX["ICON_CLEAR"]["FILE_PATH"],
+            icon_size = SMART_COMBOBOX["ICON_CLEAR"]["ICON_SIZE"],
+            variant   = SMART_COMBOBOX["ICON_CLEAR"]["DYNAMIC"],
+        )
+        self.btn_clear.setVisible(False) # toggle visibility based on input
 
-        # ── Create List ──
-        list_view = QListView(self)
-        list_view.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff) 
-        list_view.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff) 
-        self.setView(list_view)
+        # ── Layout ──
+        self._layout = QHBoxLayout(self)
+        self._layout.setContentsMargins(12, 0, 8, 0)  # Left/right padding for breathing room
+        self._layout.setSpacing(5)
+        self._layout.addWidget(self.line_edit)
+        self._layout.addWidget(self.btn_dropdown)
+        self._layout.addWidget(self.btn_clear)
 
-        # ── Populate List ──
-        if list is not None: 
-            self.populate_items(list)
+        # ── Signal Connections ──
+        self.line_edit.textChanged.connect(self._on_text_changed)
+        self.line_edit.returnPressed.connect(self._on_return_pressed)
+        self.btn_clear.clicked.connect(self._on_clear_input)
+        self.btn_dropdown.clicked.connect(self._on_completion)
 
-        # ── Set Placeholder ──
-        if placeholder: 
-            self.set_placeholder(placeholder)
-
-        self.currentTextChanged.connect(self.emit_validation) # connect signal to emit validation
-
-        # Connect textChanged signal to _filter_items for live filtering
-        if self.isEditable():
-            self.lineEdit().textChanged.connect(self._filter_items)
-
-    def emit_validation(self, text: str):
-        """
-        Emit a signal to indicate whether the current text is valid.
-
-        Args:
-            text (str): The current text in the combo box.
-        """
-        self.selection_validated.emit(bool(text))
-
-    def _filter_items(self, text: str):
-        """
-        Filter the items in the combo box based on the input text.
-        
-        Args:
-            text (str): The text to filter items by.
-        """
-        if hasattr(self, "_all_items"):
-            self.blockSignals(True)
-            self.clear()
-            self.addItems([item for item in self._all_items if text.lower() in item.lower()])
-            self.showPopup()
-            self.blockSignals(False)
-
-    def populate_items(self, items_to_add: Sequence[str]):
-        """
-        Populate the combo box with a list of items.
-
-        Args:
-            items_to_add (Sequence[str]): List of items to add to the combo box.
-        """
-        self._all_items = list(items_to_add)
-        self.clear()
-        self.addItems(self._all_items)
-
-    def set_placeholder(self, placeholder: str):
-        """
-        Set the placeholder text for the combo box.
-
-        Args:
-            placeholder (str): The placeholder text to set.
-        """
-
-        if not self.isEditable():
-            self.setPlaceholderText(placeholder)
-            self.setCurrentIndex(-1)
+    def _on_text_changed(self, text):
+        if text:
+            self.btn_dropdown.setVisible(False)
+            self.btn_clear.setVisible(True)
+            DebugLogger.log(f"Search text changed: {text}", log_type = "debug")
         else:
-            self.lineEdit().setPlaceholderText(placeholder)
-            self.setCurrentIndex(-1)
+            self.btn_dropdown.setVisible(True)
+            self.btn_clear.setVisible(False)
+            self._on_clear_input()
 
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        
-        # align it right inside the combo box frame
-        x = self.width() - self.cb_btn.width()  # adjust for margins
-        y = (self.height() - self.cb_btn.height()) // 2
-        self.cb_btn.move(x, y)
-        self.cb_btn.raise_()
+    def _on_return_pressed(self):
+        self.selection_trigger.emit(self.line_edit.text())
+        DebugLogger.log(f"{self.line_edit.text()} selected.", log_type = "info")
+
+    def _on_clear_input(self):
+        self.line_edit.clear()
+        self.completer.setCompletionPrefix("")
+        DebugLogger.log("Search input cleared", log_type = "info")
+    
+    def _on_completion(self):
+        DebugLogger.log("Displaying list items...", log_type = "info")
+        self.completer.complete()

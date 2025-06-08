@@ -52,21 +52,21 @@ class IngredientWidget(QWidget):
         self.grid_layout.addWidget(self.le_quantity, 0, 0, 1, 1)
 
         self.scb_unit = SmartComboBox(
-            list = MEASUREMENT_UNITS,
+            list_items  = MEASUREMENT_UNITS,
             placeholder = "Unit"
         )
         self.grid_layout.addWidget(self.scb_unit, 0, 1, 1, 1)
 
         all_ingredient_names = self.ingredient_service.list_all_ingredient_names()
         self.scb_ingredient_name = SmartComboBox(
-            list=all_ingredient_names,
-            placeholder="Ingredient Name",
-            editable=True  # make the SmartComboBox editable
+            list_items  = all_ingredient_names,
+            placeholder = "Ingredient Name",
+            editable    = True  # make the SmartComboBox editable
         )
         self.grid_layout.addWidget(self.scb_ingredient_name, 0, 2, 1, 1)
 
         self.scb_ingredient_category = SmartComboBox(
-            list = INGREDIENT_CATEGORIES,
+            list_items  = INGREDIENT_CATEGORIES,
             placeholder = "Category"
         )
         self.grid_layout.addWidget(self.scb_ingredient_category, 0, 3, 1, 1)

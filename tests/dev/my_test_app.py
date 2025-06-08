@@ -4,13 +4,14 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QGridLayout, QLineEdit, QMainWindow,
                                QPushButton, QVBoxLayout, QWidget)
 
-from config import INGREDIENT_CATEGORIES, INGREDIENT_WIDGET, MEASUREMENT_UNITS
+from config import INGREDIENT_CATEGORIES, INGREDIENT_WIDGET, MEASUREMENT_UNITS, STYLES
 from ui.components.dialogs.dialog_window import DialogWindow
 from ui.components.inputs import SmartComboBox
 from ui.components.widget_frame import WidgetFrame
 from ui.iconkit import ToolButtonIcon
 from views.add_recipes.upload_recipe import UploadRecipeImage
 from views.add_recipes.ingredient_widget import IngredientWidget
+from style_manager import WidgetLoader
 
 
 class MyTestApp(QMainWindow):
@@ -59,11 +60,28 @@ class MyTestApp(QMainWindow):
 
     def build_ingredient_test(self):
         """Creates and returns an ingredient row widget."""
-        ingredient_widget = IngredientWidget(
-            removable=False,
+        INGREDIENTS = [
+            "Almond milk", "Bacon", "Baking powder", "Baking soda", "BBQ sauce", "Bell pepper",
+            "Black beans", "Bread", "Broccoli", "Brown sugar", "Butter", "Carrot", "Cauliflower",
+            "Cheddar", "Chicken breast", "Chickpeas", "Chili flakes", "Cinnamon", "Corn",
+            "Couscous", "Crackers", "Cucumber", "Eggs", "Feta", "Flour", "Garlic", "Green beans",
+            "Ground beef", "Ground turkey", "Ham", "Heavy cream", "Honey", "Hot sauce", "Hummus",
+            "Jam", "Kale", "Ketchup", "Kidney beans", "Lettuce", "Maple syrup", "Mayonnaise",
+            "Milk", "Mozzarella", "Mushrooms", "Mustard", "Noodles", "Oat milk", "Oats",
+            "Olive Oil", "Onion", "Parmesan", "Pasta", "Peanut butter", "Pepper", "Pickles",
+            "Pita", "Pork chops", "Quinoa", "Relish", "Rice", "Salmon", "Salt", "Salsa",
+            "Sausage", "Shrimp", "Soy sauce", "Sour cream", "Spinach", "Sugar", "Sweet potato",
+            "Tempeh", "Tofu", "Tomato", "Tortilla", "Turkey", "Tuna", "Vinegar", "Vegetable oil",
+            "Yogurt", "Zucchini"
+        ]
+
+        scb = SmartComboBox(
+            list_items=INGREDIENTS,
+            placeholder="Search..."
         )
-        ingredient_widget.setFixedHeight(32)
-        self.central_layout.addWidget(ingredient_widget)
+        scb.setFixedHeight(32)
+        #WidgetLoader.apply_widget_style(scb, STYLES["SMART_COMBOBOX"]) 
+        self.central_layout.addWidget(scb, alignment=Qt.AlignCenter)
  
     def build_smart_combobox_test(self):
         """Creates and returns a SmartComboBox widget."""
@@ -73,7 +91,8 @@ class MyTestApp(QMainWindow):
         )
         smart_combobox.setFixedHeight(32)
         self.central_layout.addWidget(smart_combobox)
-        
+
+         
 def run_test(app):
     """Runs the test window."""
     window = MyTestApp(app)

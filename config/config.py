@@ -95,7 +95,7 @@ INGREDIENT_WIDGET = {
 SMART_COMBOBOX = {
     "ICON_ARROW":  {
         "FILE_PATH": AppPaths.ICONS_DIR / "down_arrow.svg",
-        "ICON_SIZE": QSize(30, 30),
+        "ICON_SIZE": QSize(20, 20),
         "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"]
     },
     "ICON_CLEAR":  {

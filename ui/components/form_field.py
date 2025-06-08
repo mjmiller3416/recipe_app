@@ -141,7 +141,7 @@ class ComboBoxField(FormField):
             item_list (list[str]): List of items to populate the combo box.
             parent (QWidget, optional): Parent widget for this field.
         """
-        widget = SmartComboBox(list=item_list)
+        widget = SmartComboBox(list_items=item_list)
         super().__init__(label_text, widget, parent)
 
     @property
