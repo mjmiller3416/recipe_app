@@ -103,6 +103,7 @@ SMART_COMBOBOX = {
         "ICON_SIZE": QSize(20, 20),
         "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"]
     },
+    "STYLE": QssPaths.Components.SMART_COMBOBOX,
 }
 
 # ── Recipe Widget ──

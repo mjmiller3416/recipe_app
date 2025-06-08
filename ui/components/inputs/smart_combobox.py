@@ -7,12 +7,14 @@ input field with auto-completion, a dropdown list, and a clear entry button.
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, Signal, QStringListModel, QSortFilterProxyModel, QTimer, QEvent 
 from PySide6.QtGui import QFocusEvent, QKeyEvent
-from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget
+from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget, QFrame
 
 from config import SMART_COMBOBOX
 from core.helpers import DebugLogger
-from ui.iconkit import ToolButtonIcon
+from ui.iconkit import ToolButtonIcon, ButtonIcon
 from ui.tools import IngredientProxyModel
+from style_manager import WidgetLoader
+from ui.components.widget_frame import WidgetFrame
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class SCBButton(ToolButtonIcon):
@@ -24,7 +26,6 @@ class SCBButton(ToolButtonIcon):
         else:
             super().keyPressEvent(event)
     # TODO: Possibly implment directly into ToolButtonIcon
-
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class FocusLineEdit(QLineEdit):
@@ -45,6 +46,7 @@ class SmartComboBox(QWidget):
     It allows users to type and select items from a list, with features like
     auto-completion and a clear button to reset the input field.
     """
+
     # ── Signals ─────────────────────────────────────────────────────────────────────
     selection_trigger = Signal(str)  # event for item selection
 
@@ -67,6 +69,7 @@ class SmartComboBox(QWidget):
         super().__init__(parent)
         DebugLogger.log("Initializing SmartComboBox", log_type = "info")
         self.setObjectName("SmartComboBox")
+        #WidgetLoader.apply_widget_style(self, SMART_COMBOBOX["STYLE"])
 
         """ # ── Source Model ──
         self.source = QStringListModel(list_items)
@@ -126,14 +129,29 @@ class SmartComboBox(QWidget):
         This method sets up the horizontal layout containing the input field,
         dropdown button, and clear button.
         """
-        # ── Layout ──
-        self._layout = QHBoxLayout(self)
-        self._layout.setContentsMargins(12, 0, 8, 0)
-        self._layout.setSpacing(5)
-        self._layout.addWidget(self.line_edit)
-        self._layout.addWidget(self.btn_dropdown)
-        self._layout.addWidget(self.btn_clear)
+        # ── Outer Layout for SmartComboBox ──
+        self.main_layout = QHBoxLayout(self)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.main_layout.setSpacing(0)
 
+        # ── QFrame Wrapper ──
+        self.frame = QFrame(self)
+        self.frame.setObjectName("SmartComboBox")  # optional for styling
+        self.frame.setFrameShape(QFrame.NoFrame)
+        self.frame.setFrameShadow(QFrame.Plain)
+
+        # ── Frame Layout ──
+        self.frame_layout = QHBoxLayout(self.frame)
+        self.frame_layout.setContentsMargins(0,0,0,0)
+        self.frame_layout.setSpacing(5)
+
+        # ── Add Widgets ──
+        self.frame_layout.addWidget(self.line_edit)
+        self.frame_layout.addWidget(self.btn_dropdown)
+        self.frame_layout.addWidget(self.btn_clear)
+
+        # ── Add Frame to Main Layout ──
+        self.main_layout.addWidget(self.frame)
 
         # ── Note ──────────────────────────────────────────────────────────────────────── 
         # Remove initial focus from the input field. This is to prevent the input field 
@@ -178,6 +196,8 @@ class SmartComboBox(QWidget):
         """ ⚠️ self.proxy.setFilterFixedString("") """
         DebugLogger.log("Filtered results have been reset.", log_type="info")
 
+
+    # ── Events ──────────────────────────────────────────────────────────────────────
     def _on_item_selected(self, text: str):
         """
         Handles item selection from the completer's popup list.
@@ -185,6 +205,7 @@ class SmartComboBox(QWidget):
         Args:
             text (str): The selected item text.
         """
+        DebugLogger.log("[_on_item_selected] event was triggered.", log_type = "debug")
         self.selection_trigger.emit(text) # emit the selected item for external handling
         DebugLogger.log("[SIGNAL] Item '{text}' selected from completer.", log_type="info")
 
@@ -200,6 +221,7 @@ class SmartComboBox(QWidget):
         Args:
             text (str): The current text in the input field.
         """
+        DebugLogger.log("[_on_text_changed] event was triggered.", log_type = "debug")
         has_text = bool(text) # check if the input field has text
         self._update_button_visibility(has_text) # update button visibility based on text presence
 
@@ -209,10 +231,11 @@ class SmartComboBox(QWidget):
         if text:
             DebugLogger.log("Search text changed: {text}", log_type = "debug")
         else:
-            self._on_clear_input()  # clear input if text is empty
+            self._reset_completer()  # reset completer if text is empty
 
     def _on_return_pressed(self):
         """Handles the return key press event to submit the current text."""
+        DebugLogger.log("[_on_return_pressed] event was triggered.", log_type = "debug")
         current_text = self.line_edit.text()
         self.selection_trigger.emit(current_text)
         DebugLogger.log(f"Text '{current_text}' submitted.", log_type="info")
@@ -221,14 +244,16 @@ class SmartComboBox(QWidget):
 
     def _on_clear_input(self):
         """Clears the input field and resets the completer."""
+        DebugLogger.log("[_on_clear_input] event was triggered.", log_type = "debug")
+        self.line_edit.setFocus() # keep focus on the input field
         self.line_edit.clear() # clear the input field
         self._reset_completer() # reset the completer
-        self.line_edit.setFocus() # keep focus on the input field
         
         DebugLogger.log("Search input cleared", log_type = "info")
     
     def _on_completion(self):
         """Triggers the completer to display the list items."""
+        DebugLogger.log("[_on_completion] event was triggered.", log_type = "debug")
         DebugLogger.log("Displaying list items...", log_type = "info")
         self.completer.complete()
         self._update_button_visibility(True) # show clear button when completer is activated

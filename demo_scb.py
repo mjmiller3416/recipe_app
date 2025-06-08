@@ -8,6 +8,7 @@ from PySide6.QtCore import Slot, Qt # Import Qt
 # or recipe_app is in PYTHONPATH.
 from ui.components.inputs.smart_combobox import SmartComboBox
 
+
 class SmartComboBoxDemo(QWidget):
     def __init__(self):
         super().__init__()
@@ -28,14 +29,45 @@ class SmartComboBoxDemo(QWidget):
 
         self.smart_comboboxes = []
         # Sample items for the comboboxes - ensure this list is not empty
-        sample_items = [f"Option {i}" for i in range(1, 21)] 
-        if not sample_items:
-            sample_items = ["Default Item 1", "Default Item 2"] # Fallback
+        INGREDIENTS = [
+            "All-purpose flour", "Almond milk", "Almonds", "Apple cider vinegar", "Apples", "Artichoke hearts",
+            "Arugula", "Asparagus", "Avocado", "Bacon", "Baking powder", "Baking soda", "Balsamic vinegar",
+            "Bananas", "Basil", "Bay leaves", "Beans", "Beef broth", "Beef, ground", "Beets", "Bell pepper",
+            "Black beans", "Black olives", "Black pepper", "Blueberries", "Bok choy", "Bread", "Broccoli",
+            "Brown rice", "Brown sugar", "Brussels sprouts", "Butter", "Cabbage", "Cacao powder", "Cajun seasoning",
+            "Canola oil", "Cantaloupe", "Capers", "Carrots", "Cauliflower", "Celery", "Cheddar cheese",
+            "Cherries", "Chia seeds", "Chicken breast", "Chicken broth", "Chicken thighs", "Chickpeas", "Chili flakes",
+            "Chili powder", "Chives", "Chocolate chips", "Cilantro", "Cinnamon", "Cloves", "Coconut milk",
+            "Coconut oil", "Coconut sugar", "Cocoa powder", "Coleslaw mix", "Condensed milk", "Coriander", "Corn",
+            "Corn flour", "Corn starch", "Cottage cheese", "Couscous", "Cream cheese", "Cucumber", "Cumin",
+            "Curry powder", "Deli turkey", "Dijon mustard", "Dill", "Egg noodles", "Eggplant", "Eggs",
+            "Evaporated milk", "Feta cheese", "Figs", "Fish sauce", "Flour tortillas", "Garbanzo beans", "Garlic",
+            "Garlic powder", "Ginger", "Gnocchi", "Goat cheese", "Grapes", "Green beans", "Green onions", "Ground cinnamon",
+            "Ground turkey", "Gruyere", "Ham", "Heavy cream", "Honey", "Hot sauce", "Hummus", "Iceberg lettuce",
+            "Italian seasoning", "Jalapeños", "Jam", "Jasmine rice", "Kale", "Ketchup", "Kidney beans",
+            "Kosher salt", "Lamb", "Lasagna noodles", "Lemon juice", "Lemons", "Lettuce", "Lima beans", "Lime juice",
+            "Limes", "Maple syrup", "Marinara sauce", "Marjoram", "Mayonnaise", "Milk", "Mint", "Monterey Jack",
+            "Mozzarella", "Mushrooms", "Mustard", "Nutmeg", "Nutritional yeast", "Oats", "Olive oil", "Onion",
+            "Onion powder", "Orange juice", "Oranges", "Oregano", "Paprika", "Parmesan", "Parsley", "Pasta",
+            "Peaches", "Peanut butter", "Peanuts", "Pears", "Peas", "Pecans", "Pepperoni", "Pesto", "Pickles",
+            "Pineapple", "Pinto beans", "Pita bread", "Plain yogurt", "Plums", "Pomegranate", "Poppy seeds",
+            "Pork chops", "Potatoes", "Powdered sugar", "Pretzels", "Provolone", "Pumpkin", "Pumpkin pie spice",
+            "Quinoa", "Radishes", "Raisins", "Raspberries", "Red bell pepper", "Red cabbage", "Red lentils",
+            "Red onion", "Red pepper flakes", "Refried beans", "Ricotta", "Rice noodles", "Rice vinegar",
+            "Roasted red peppers", "Romaine lettuce", "Rosemary", "Sage", "Salmon", "Salsa", "Salt", "Sausage",
+            "Scallions", "Sesame oil", "Sesame seeds", "Shallots", "Sharp cheddar", "Shrimp", "Sour cream",
+            "Soy milk", "Soy sauce", "Spaghetti", "Spinach", "Split peas", "Spring mix", "Squash", "Steak",
+            "Strawberries", "Sugar", "Sun-dried tomatoes", "Sunflower seeds", "Sweet corn", "Sweet potato", "Swiss cheese",
+            "Tahini", "Tarragon", "Thyme", "Tilapia", "Tofu", "Tomatillos", "Tomato paste", "Tomato sauce",
+            "Tomatoes", "Tuna", "Turkey", "Vanilla extract", "Vegetable broth", "Vegetable oil", "Vinegar",
+            "Walnuts", "Water", "Water chestnuts", "Watercress", "White beans", "White rice", "Whole wheat flour",
+            "Worcestershire sauce", "Yogurt", "Zucchini"
+        ]
 
         for i in range(3):  # 3 rows
             for j in range(3):  # 3 columns
                 scb = SmartComboBox(
-                    list_items=sample_items,
+                    list_items=INGREDIENTS,
                     placeholder=f"Select ({i+1},{j+1})"
                 )
                 # Connect the signal to the handler
