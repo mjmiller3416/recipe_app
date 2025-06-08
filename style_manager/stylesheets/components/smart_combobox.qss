@@ -1,10 +1,6 @@
 /* ------------------------------------------------------------------
    SMART COMBOBOX STYLSHEET
    ------------------------------------------------------------------ */
-QComboBox#SmartComboBox:drop-down {    /* Hide default QComboBox button */
-    border: none;
-    width: 0px;
-}
 
 #SmartComboBox {
     border: 1px solid {BORDER_DEFAULT}; /* Dynamic */
@@ -28,7 +24,7 @@ QComboBox#SmartComboBox:drop-down {    /* Hide default QComboBox button */
     padding: 5px;
 }
 
-#SmartComboBox QListView {
+#SmartComboBox QCompleter {
     border: 1px solid {BORDER_DEFAULT};
     background-color: {BACKGROUND_WIDGET};
     padding: 2px;
@@ -37,12 +33,12 @@ QComboBox#SmartComboBox:drop-down {    /* Hide default QComboBox button */
     outline: none;
 }
 
-#SmartComboBox QAbstractItemView:item {
+#SmartComboBox QCompleter:item {
     padding: 6px 8px;
     border: none;
 }
 
-#SmartComboBox QAbstractItemView:item:hover {
+#SmartComboBox QCompleter:item:hover {
     background-color: {STATE_SECONDARY_HOVER}; /* Dynamic */
     border: none;
     border-radius: 5px;

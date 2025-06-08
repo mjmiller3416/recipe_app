@@ -77,7 +77,8 @@ class MyTestApp(QMainWindow):
 
         scb = SmartComboBox(
             list_items=INGREDIENTS,
-            placeholder="Search..."
+            placeholder="Search...",
+            editable=True
         )
         scb.setFixedHeight(32)
         #WidgetLoader.apply_widget_style(scb, STYLES["SMART_COMBOBOX"]) 
