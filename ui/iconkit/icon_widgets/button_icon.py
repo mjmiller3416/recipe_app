@@ -20,7 +20,7 @@ class ButtonIcon(QPushButton, IconMixin):
     def __init__(
         self,
         file_path: Path,
-        size: QSize = ICON_SIZE,
+        icon_size: QSize = ICON_SIZE,
         variant: str = "default",
         label: str = "",
         object_name: str = "",
@@ -52,9 +52,9 @@ class ButtonIcon(QPushButton, IconMixin):
         self.setChecked(checked)
 
         if hover_effects:
-            ApplyHoverEffects.recolor(self, file_path, size, variant)
+            ApplyHoverEffects.recolor(self, file_path, icon_size, variant)
         
-        self._init_themed_icon(file_path, size, variant)
+        self._init_themed_icon(file_path, icon_size, variant)
 
         # ── Register with IconLoader ──
         IconLoader().register(self)

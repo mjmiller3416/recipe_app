@@ -5,13 +5,26 @@ input field with auto-completion, a dropdown list, and a clear entry button.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import Signal, Qt
-from PySide6.QtWidgets import QWidget, QLineEdit, QHBoxLayout, QCompleter
+from PySide6.QtCore import Qt, Signal, QStringListModel, QSortFilterProxyModel, QTimer, QEvent 
 from PySide6.QtGui import QFocusEvent, QKeyEvent
+from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget
 
 from config import SMART_COMBOBOX
-from ui.iconkit import ToolButtonIcon
 from core.helpers import DebugLogger
+from ui.iconkit import ToolButtonIcon
+from ui.tools import IngredientProxyModel
+
+# ── Class Definition ────────────────────────────────────────────────────────────
+class SCBButton(ToolButtonIcon):
+    """Overrides the ToolButtonIcon to handle Enter key presses."""
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+            self.click()
+            event.accept() # accept the event to prevent further processing
+        else:
+            super().keyPressEvent(event)
+    # TODO: Possibly implment directly into ToolButtonIcon
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class FocusLineEdit(QLineEdit):
@@ -55,58 +68,98 @@ class SmartComboBox(QWidget):
         DebugLogger.log("Initializing SmartComboBox", log_type = "info")
         self.setObjectName("SmartComboBox")
 
+        """ # ── Source Model ──
+        self.source = QStringListModel(list_items)
+
+        # ── Proxy Model ──
+        self.proxy = IngredientProxyModel(self)
+        self.proxy.setSourceModel(self.source)
+        self.proxy.setFilterCaseSensitivity(Qt.CaseInsensitive) 
+        
+        ⚠️ The proxy model disabled. 
+        TODO: Re-enable it when the filtering logic is fixed
+        Subsequent comments marked with ⚠️ indicate the proxy model usage.
+        """
+
+        # ── Completer ──
+        """ ⚠️ self.completer = QCompleter(self.proxy) """
+        self.completer = QCompleter(list_items)
+        DebugLogger.log(f"Setting completer model with {len(list_items)} items", log_type = "info")
+        self.completer.setCompletionMode(QCompleter.PopupCompletion)
+        self.completer.setCaseSensitivity(Qt.CaseInsensitive)
+        """ ⚠️ self.proxy.setFilterCaseSensitivity(Qt.CaseInsensitive) """
+        
         # ── Input Field ──
         self.line_edit = FocusLineEdit(self) 
         self.line_edit.setObjectName("SCBInput")
         self.line_edit.setPlaceholderText(placeholder)
         if not editable:
             self.line_edit.setReadOnly(True)
-    
-        # ── Completer ──
-        self.completer = QCompleter(list_items, self)
-        DebugLogger.log(f"Setting completer model with {len(list_items)} items", log_type = "info")
-        self.completer.setCaseSensitivity(Qt.CaseInsensitive)
-        self.line_edit.setCompleter(self.completer)
+
+        self.line_edit.setCompleter(self.completer)  # set the completer for the input field
+        self.line_edit.installEventFilter(self) # install event filter to handle focus events
 
         # ── Dropdown Button ──
-        self.btn_dropdown = ToolButtonIcon(
+        self.btn_dropdown = SCBButton(
             file_path = SMART_COMBOBOX["ICON_ARROW"]["FILE_PATH"],
             icon_size = SMART_COMBOBOX["ICON_ARROW"]["ICON_SIZE"],
             variant   = SMART_COMBOBOX["ICON_ARROW"]["DYNAMIC"],
         )
         self.btn_dropdown.setVisible(True) # default visibility
+        self.btn_dropdown.setFocusPolicy(Qt.NoFocus) # prevent from tabbing into the button
 
         # ── Clear Button ──
-        self.btn_clear = ToolButtonIcon(
+        self.btn_clear = SCBButton(
             file_path = SMART_COMBOBOX["ICON_CLEAR"]["FILE_PATH"],
             icon_size = SMART_COMBOBOX["ICON_CLEAR"]["ICON_SIZE"],
             variant   = SMART_COMBOBOX["ICON_CLEAR"]["DYNAMIC"],
         )
         self.btn_clear.setVisible(False) # toggle visibility based on text input
 
+        self._connect_signals()  # connect signals to slots
+        self._build_ui()  # build the UI layout
+    
+    def _build_ui(self):
+        """
+        Builds the UI layout for the SmartComboBox widget.
+        
+        This method sets up the horizontal layout containing the input field,
+        dropdown button, and clear button.
+        """
         # ── Layout ──
         self._layout = QHBoxLayout(self)
-        self._layout.setContentsMargins(12, 0, 8, 0)  # left/right padding for breathing room
+        self._layout.setContentsMargins(12, 0, 8, 0)
         self._layout.setSpacing(5)
         self._layout.addWidget(self.line_edit)
         self._layout.addWidget(self.btn_dropdown)
         self._layout.addWidget(self.btn_clear)
 
-        # ── Signal Connections ──
-        self.completer.activated.connect(
-            self._on_item_selected) # when an item is selected from the completer's popup
-        self.completer.setCompletionMode(
-            QCompleter.PopupCompletion)  # show popup completion
-        self.line_edit.textChanged.connect(
-            self._on_text_changed) # when text changes in the input field
-        self.line_edit.returnPressed.connect(
-            self._on_return_pressed) # when the return key is pressed in the input field
-        self.btn_clear.clicked.connect(
-            self._on_clear_input) # when the clear button is clicked
-        self.btn_dropdown.clicked.connect(
-            self._on_completion) # when the dropdown button is clicked to show the completer's popup
-        self.line_edit.focusIn.connect(
-            self._on_completion) # when the input field gains focus, show the completer's popup
+
+        # ── Note ──────────────────────────────────────────────────────────────────────── 
+        # Remove initial focus from the input field. This is to prevent the input field 
+        # from  stealing focus when the widget is created. May not be necessary in 
+        # production, but useful for testing
+        # ────────────────────────────────────────────────────────────────────────────────
+        QTimer.singleShot(0, lambda: self.parentWidget().setFocus())  
+
+    def _connect_signals(self):
+        """
+        Connects signals to their respective slots.
+        
+        Signals:
+            - completer.activated: Triggered when an item is selected from the completer.
+            - line_edit.textChanged: Triggered when the text in the input field changes.
+            - line_edit.returnPressed: Triggered when the return key is pressed.
+            - btn_clear.clicked: Triggered when the clear button is clicked.
+            - btn_dropdown.clicked: Triggered when the dropdown button is clicked.
+            - line_edit.focusIn: Triggered when the input field gains focus.
+        """
+        self.completer.activated.connect(self._on_item_selected)
+        self.line_edit.textChanged.connect(self._on_text_changed)
+        """ ⚠️ self.line_edit.returnPressed.connect(self._on_return_pressed) """
+        self.btn_clear.clicked.connect(self._on_clear_input)
+        self.btn_dropdown.clicked.connect(self._on_completion)
+        self.line_edit.focusIn.connect(self._on_completion)
 
     def _update_button_visibility(self, has_text: bool):
         """
@@ -119,9 +172,30 @@ class SmartComboBox(QWidget):
         self.btn_clear.setVisible(has_text) # show clear button when there is text
         self.btn_dropdown.setVisible(not has_text) # show dropdown button when there is no text
 
+    def _reset_completer(self):
+        """ Resets the completer by clearing the completion prefix and proxy filter."""
+        self.completer.setCompletionPrefix("")
+        """ ⚠️ self.proxy.setFilterFixedString("") """
+        DebugLogger.log("Filtered results have been reset.", log_type="info")
+
+    def _on_item_selected(self, text: str):
+        """
+        Handles item selection from the completer's popup list.
+        
+        Args:
+            text (str): The selected item text.
+        """
+        self.selection_trigger.emit(text) # emit the selected item for external handling
+        DebugLogger.log("[SIGNAL] Item '{text}' selected from completer.", log_type="info")
+
+        # self.line_edit.setText(text) # possibly redundant, as completer sets the text automatically. 
+
+        self._reset_completer()  # reset the completer after selection
+        self._update_button_visibility(False)
+        
     def _on_text_changed(self, text):
         """
-        Handles text changes in the input field.
+        Handles text changes in the input field and updates button visibility.
         
         Args:
             text (str): The current text in the input field.
@@ -129,36 +203,35 @@ class SmartComboBox(QWidget):
         has_text = bool(text) # check if the input field has text
         self._update_button_visibility(has_text) # update button visibility based on text presence
 
-        if text:
-            DebugLogger.log(f"Search text changed: {text}", log_type = "debug")
-        else:
-            self.completer.setCompletionPrefix("")
+        """ ⚠️ self.completer.model().setFilterFixedString(text) """
+        """ ⚠️ self.completer.complete() """
 
-    def _on_item_selected(self, text: str):
-        """Handles item selection from the completer's popup list."""
-        self.selection_trigger.emit(text)
-        self.line_edit.setText(text)
-        self.completer.setCompletionPrefix("")
-        self._update_button_visibility(False)
-        DebugLogger.log(f"Item '{text}' selected from completer.", log_type="info")
+        if text:
+            DebugLogger.log("Search text changed: {text}", log_type = "debug")
+        else:
+            self._on_clear_input()  # clear input if text is empty
 
     def _on_return_pressed(self):
         """Handles the return key press event to submit the current text."""
         current_text = self.line_edit.text()
         self.selection_trigger.emit(current_text)
         DebugLogger.log(f"Text '{current_text}' submitted.", log_type="info")
-        #self.line_edit.clearFocus()
+        # self.line_edit.clearFocus() 
+        # temporarily disabled to keep focus on the input field
 
     def _on_clear_input(self):
         """Clears the input field and resets the completer."""
-        self.line_edit.clear()
+        self.line_edit.clear() # clear the input field
+        self._reset_completer() # reset the completer
+        self.line_edit.setFocus() # keep focus on the input field
+        
         DebugLogger.log("Search input cleared", log_type = "info")
     
     def _on_completion(self):
         """Triggers the completer to display the list items."""
         DebugLogger.log("Displaying list items...", log_type = "info")
         self.completer.complete()
-        self._update_button_visibility(True)  # show clear button when completer is activated
+        self._update_button_visibility(True) # show clear button when completer is activated
 
     def keyPressEvent(self, event: QKeyEvent):
         """
@@ -169,7 +242,7 @@ class SmartComboBox(QWidget):
             
             DebugLogger.log(f"Focus Out.", "debug")
             self.line_edit.clearFocus()
-            self._update_button_visibility(False)  # hide clear button on escape
+            self._update_button_visibility(False) # hide clear button on escape
 
             event.accept() # accept the event to prevent further processing
             super().keyPressEvent(event) 

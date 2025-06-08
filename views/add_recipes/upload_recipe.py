@@ -71,10 +71,10 @@ class UploadRecipeImage(QWidget):
         self.upload_button_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.upload_button = ToolButtonIcon(
-            file_path=UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["FILE_PATH"],
-            icon_size=UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["ICON_SIZE"],
-            button_size=UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["BUTTON_SIZE"],
-            variant=UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["DYNAMIC"],
+            file_path   = UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["FILE_PATH"],
+            icon_size   = UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["ICON_SIZE"],
+            button_size = UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["BUTTON_SIZE"],
+            variant     = UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["DYNAMIC"],
         )
         btn_lbl = QLabel("Upload Image")
 

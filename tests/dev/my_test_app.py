@@ -4,14 +4,15 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QGridLayout, QLineEdit, QMainWindow,
                                QPushButton, QVBoxLayout, QWidget)
 
-from config import INGREDIENT_CATEGORIES, INGREDIENT_WIDGET, MEASUREMENT_UNITS, STYLES
+from config import (INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,
+                    MEASUREMENT_UNITS, STYLES)
+from style_manager import WidgetLoader
 from ui.components.dialogs.dialog_window import DialogWindow
 from ui.components.inputs import SmartComboBox
 from ui.components.widget_frame import WidgetFrame
 from ui.iconkit import ToolButtonIcon
-from views.add_recipes.upload_recipe import UploadRecipeImage
 from views.add_recipes.ingredient_widget import IngredientWidget
-from style_manager import WidgetLoader
+from views.add_recipes.upload_recipe import UploadRecipeImage
 
 
 class MyTestApp(QMainWindow):

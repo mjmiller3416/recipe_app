@@ -46,7 +46,7 @@ class Sidebar(QWidget):
         # ── Logo Label ──
         self.lbl_logo = Icon(
             file_path = SIDEBAR["LOGO"], 
-            size      = SIDEBAR["LOGO_SIZE"],
+            icon_size = SIDEBAR["LOGO_SIZE"],
             variant   = ICON_COLOR,
         )
 
@@ -60,7 +60,7 @@ class Sidebar(QWidget):
         # ── Navigation Buttons ──
         self.btn_dashboard = ButtonIcon(
             file_path      = SIDEBAR["ICON_DASHBOARD"],
-            size           = ICON_SIZE,
+            icon_size      = ICON_SIZE,
             label          = "Dashboard",
             variant        = SIDEBAR["DYNAMIC"],
         )
@@ -69,7 +69,7 @@ class Sidebar(QWidget):
 
         self.btn_meal_planner = ButtonIcon( # Meal Planner button
             file_path         = SIDEBAR["ICON_MEAL_PLANNER"],
-            size              = ICON_SIZE,
+            icon_size         = ICON_SIZE,
             label             = "Meal Planner",
             variant           = SIDEBAR["DYNAMIC"],
         )
@@ -78,7 +78,7 @@ class Sidebar(QWidget):
 
         self.btn_view_recipes = ButtonIcon( # View Recipes button
             file_path         = SIDEBAR["ICON_VIEW_RECIPES"],
-            size              = ICON_SIZE,
+            icon_size         = ICON_SIZE,
             label             = "View Recipes",
             variant           = SIDEBAR["DYNAMIC"],
         )
@@ -87,7 +87,7 @@ class Sidebar(QWidget):
 
         self.btn_shopping_list = ButtonIcon( # Shopping List button
             file_path          = SIDEBAR["ICON_SHOPPING_LIST"],
-            size               = ICON_SIZE,
+            icon_size          = ICON_SIZE,
             label              = "Shopping List",
             variant            = SIDEBAR["DYNAMIC"],
         )
@@ -96,7 +96,7 @@ class Sidebar(QWidget):
 
         self.btn_add_recipes = ButtonIcon( # Add Recipes button
             file_path        = SIDEBAR["ICON_ADD_RECIPES"],
-            size             = ICON_SIZE,
+            icon_size        = ICON_SIZE,
             label            = "Add Recipes",
             variant          = SIDEBAR["DYNAMIC"],
         )
@@ -109,7 +109,7 @@ class Sidebar(QWidget):
         # ── Settings & Exit Buttons ──
         self.btn_settings = ButtonIcon( # Settings button
             file_path     = SIDEBAR["ICON_SETTINGS"],
-            size          = ICON_SIZE,
+            icon_size     = ICON_SIZE,
             label         = "Settings",
             variant       = SIDEBAR["DYNAMIC"],
         )
@@ -118,7 +118,7 @@ class Sidebar(QWidget):
 
         self.btn_exit = ButtonIcon( # Exit button
             file_path = SIDEBAR["ICON_EXIT"],
-            size      = ICON_SIZE,
+            icon_size = ICON_SIZE,
             label     = "Exit",
             variant   = SIDEBAR["DYNAMIC"],
         )

@@ -20,6 +20,7 @@ class DebugLogger:
     VARIABLE_COLOR = '\033[35m'  # Purple for variables
     RESET_COLOR = '\033[0m'      # Reset to default color
     CONTEXT_COLOR = '\033[35m'   # Purple for context (class.method)
+    BRACKET_COLOR = '\033[38;2;255;165;0m'   # Green for brackets
 
     LOG_COLORS = {
         'DEBUG': 'green',
@@ -147,9 +148,24 @@ class DebugLogger:
         method_name = caller_frame.function
         context = f"{class_name}.{method_name}" if class_name else method_name
 
-        # Log the message with full color formatting
+         # ── NEW: Highlight any [...] except the log‐level tag ───────────────────────
+        def highlight_brackets(match):
+            inner = match.group(1)
+            if inner == log_type.upper():           # skip your [INFO]/[DEBUG]/etc.
+                return match.group(0)
+            return f"{cls.BRACKET_COLOR}[{inner}]{cls.RESET_COLOR}{log_color}"  
+                                                    # restore level-color  
+
+        message = re.sub(r"\[([^\]]+)\]", highlight_brackets, message)
+
+        # 2. Now wrap the whole thing in the level’s ANSI color:
+        formatted_message = f"{log_color}{message}{cls.RESET_COLOR}"
+        # ──────────────────────────────────────────────────────────────────────────────
+
+        # now actually log it
+        log_method = getattr(cls._logger, log_type.lower(), cls._logger.info)
         log_method(formatted_message, extra={"context": context, "message_log": formatted_message})
-        sys.stdout.flush()  # Force flush to remove extra formatting artifacts
+        sys.stdout.flush()
 
     @classmethod
     def log_and_raise(cls, message, exception_type=Exception):
