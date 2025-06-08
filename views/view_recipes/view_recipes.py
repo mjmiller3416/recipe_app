@@ -54,13 +54,11 @@ class ViewRecipes(QWidget):
 
         # filter combobox
         self.cb_filter = SmartComboBox(list_items = RECIPE_CATEGORIES, placeholder = "Filter")
-        self.cb_filter.setPlaceholderText("Filter")
         self.lyt_cb.addWidget(self.cb_filter) # add filter dropdown
         self.cb_filter.currentTextChanged.connect(self.handle_filter_change) # connect filter change event
 
         # sort combobox
         self.cb_sort = SmartComboBox(list_items = SORT_OPTIONS, placeholder = "Sort")
-        self.cb_sort.setPlaceholderText("Sort")
         self.lyt_cb.addWidget(self.cb_sort) # add sort dropdown
         self.cb_sort.currentTextChanged.connect(self.handle_sort_change) # connect sort change event
 
