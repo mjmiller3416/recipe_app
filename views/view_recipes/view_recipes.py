@@ -14,7 +14,7 @@ from database.models.recipe import Recipe
 from recipe_viewer.constants import LayoutSize
 from recipe_viewer.recipe_viewer import RecipeViewer
 from services.recipe_service import RecipeService
-from ui.components.inputs import SmartComboBox
+from ui.components.inputs import CustomComboBox
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -53,12 +53,12 @@ class ViewRecipes(QWidget):
         self.lyt_cb.setContentsMargins(0, 0, 0, 0)        
 
         # filter combobox
-        self.cb_filter = SmartComboBox(list_items = RECIPE_CATEGORIES, placeholder = "Filter")
+        self.cb_filter = CustomComboBox(list_items = RECIPE_CATEGORIES, placeholder = "Filter")
         self.lyt_cb.addWidget(self.cb_filter) # add filter dropdown
         self.cb_filter.currentTextChanged.connect(self.handle_filter_change) # connect filter change event
 
         # sort combobox
-        self.cb_sort = SmartComboBox(list_items = SORT_OPTIONS, placeholder = "Sort")
+        self.cb_sort = CustomComboBox(list_items = SORT_OPTIONS, placeholder = "Sort")
         self.lyt_cb.addWidget(self.cb_sort) # add sort dropdown
         self.cb_sort.currentTextChanged.connect(self.handle_sort_change) # connect sort change event
 

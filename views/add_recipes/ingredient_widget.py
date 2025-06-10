@@ -12,7 +12,7 @@ from config import (FLOAT_VALIDATOR, INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,
                     MEASUREMENT_UNITS, NAME_PATTERN)
 from services.dtos.ingredient_dtos import IngredientSearchDTO
 from services.ingredient_service import IngredientService
-from ui.components.inputs import SmartComboBox
+from ui.components.inputs import CustomComboBox
 from ui.iconkit import ToolButtonIcon
 from ui.tools import clear_error_styles, dynamic_validation
 
@@ -28,7 +28,7 @@ class IngredientWidget(QWidget):
     def __init__(self, removable=True, parent=None):
         """
         Initializes the IngredientWidget with a grid layout and sets up UI components.
-        The ingredient name input is an editable SmartComboBox populated with existing
+        The ingredient name input is an editable CustomComboBox populated with existing
         ingredient names. Selecting an existing ingredient auto-populates its category.
 
         Args:
@@ -51,21 +51,21 @@ class IngredientWidget(QWidget):
         self.le_quantity.setPlaceholderText("Qty.")
         self.grid_layout.addWidget(self.le_quantity, 0, 0, 1, 1)
 
-        self.scb_unit = SmartComboBox(
+        self.scb_unit = CustomComboBox(
             list_items  = MEASUREMENT_UNITS,
             placeholder = "Unit"
         )
         self.grid_layout.addWidget(self.scb_unit, 0, 1, 1, 1)
 
         all_ingredient_names = self.ingredient_service.list_all_ingredient_names()
-        self.scb_ingredient_name = SmartComboBox(
+        self.scb_ingredient_name = CustomComboBox(
             list_items  = all_ingredient_names,
             placeholder = "Ingredient Name",
-            editable    = True  # make the SmartComboBox editable
+            editable    = True  # make the CustomComboBox editable
         )
         self.grid_layout.addWidget(self.scb_ingredient_name, 0, 2, 1, 1)
 
-        self.scb_ingredient_category = SmartComboBox(
+        self.scb_ingredient_category = CustomComboBox(
             list_items  = INGREDIENT_CATEGORIES,
             placeholder = "Category"
         )
@@ -115,7 +115,7 @@ class IngredientWidget(QWidget):
 
     def _ingredient_name_changed(self, text: str):
         """
-        Handles changes in the ingredient name SmartComboBox.
+        Handles changes in the ingredient name CustomComboBox.
         If the entered text matches an existing ingredient (case-insensitive exact match),
         its category is auto-populated and the category ComboBox might be disabled.
         Otherwise, the category ComboBox is enabled for manual input.

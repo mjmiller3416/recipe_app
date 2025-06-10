@@ -15,6 +15,8 @@ from database.init_db import init_db
 from ui.tools.layout_debugger import LayoutDebugger
 
 
+
+
 # ── Class Definition ────────────────────────────────────────────────────────────
 class MealPlannerApp:
     """
@@ -65,6 +67,10 @@ elif "--test" in sys.argv:
     # ── Test Setup ──
     app = QApplication(sys.argv)
     app.setApplicationName("Test App")
+    
+    from style_manager.theme_controller import ThemeController
+    theme_controller = ThemeController()
+    theme_controller.apply_full_theme()
 
     from tests.dev.my_test_app import run_test
     test_window = run_test(app)

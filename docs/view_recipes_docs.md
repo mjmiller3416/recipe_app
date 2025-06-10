@@ -29,8 +29,8 @@ The `ViewRecipes` class dynamically displays recipes in a responsive and scrolla
 *   `meal_selection (bool)`: If `True`, enables a selection mode where clicking a recipe card triggers the `recipe_selected` signal.
 *   `main_layout (QVBoxLayout)`: The main vertical layout for the widget.
 *   `lyt_cb (QHBoxLayout)`: Horizontal layout for filter and sort controls.
-*   `cb_filter (SmartComboBox)`: Combobox for selecting a recipe category to filter by.
-*   `cb_sort (SmartComboBox)`: Combobox for selecting the sort order.
+*   `cb_filter (CustomComboBox)`: Combobox for selecting a recipe category to filter by.
+*   `cb_sort (CustomComboBox)`: Combobox for selecting the sort order.
 *   `chk_favorites (QCheckBox)`: Checkbox to toggle display of only favorite recipes.
 *   `scroll_area (QScrollArea)`: The area that allows scrolling through the recipe widgets.
 *   `scroll_container (QWidget)`: The widget placed inside the `scroll_area` that contains the `flow_layout`.
@@ -49,8 +49,8 @@ The `ViewRecipes` class dynamically displays recipes in a responsive and scrolla
 
 *   `build_ui(self)`:
     *   Creates and configures the main layout and all UI elements:
-        *   Filter `SmartComboBox` (`cb_filter`) populated with `RECIPE_CATEGORIES`.
-        *   Sort `SmartComboBox` (`cb_sort`) populated with `SORT_OPTIONS`.
+        *   Filter `CustomComboBox` (`cb_filter`) populated with `RECIPE_CATEGORIES`.
+        *   Sort `CustomComboBox` (`cb_sort`) populated with `SORT_OPTIONS`.
         *   "Show Favorites Only" `QCheckBox` (`chk_favorites`).
         *   `QScrollArea` (`scroll_area`) for recipe display.
         *   `QWidget` (`scroll_container`) and the custom `FlowLayout` (`flow_layout`) to hold `RecipeCard` instances.

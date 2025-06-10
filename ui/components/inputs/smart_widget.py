@@ -1,6 +1,6 @@
 """ui/components/inputs/search_bar.py
 
-This module defines a SmartComboBox widget that provides an enhanced
+This module defines a CustomComboBox widget that provides an enhanced
 input field with auto-completion, a dropdown list, and a clear entry button.
 """
 
@@ -9,7 +9,7 @@ from PySide6.QtCore import Qt, Signal, QStringListModel, QSortFilterProxyModel, 
 from PySide6.QtGui import QFocusEvent, QKeyEvent
 from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget, QFrame
 
-from config import SMART_COMBOBOX
+from config import CUSTOM_COMBOBOX
 from core.helpers import DebugLogger
 from ui.iconkit import ToolButtonIcon, ButtonIcon
 from ui.tools import IngredientProxyModel
@@ -20,7 +20,7 @@ from ui.components.widget_frame import WidgetFrame
 class SCBButton(ToolButtonIcon):
     """Overrides the ToolButtonIcon to handle Enter key presses."""
     def keyPressEvent(self, event: QKeyEvent):
-        if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+        if event.key() in (Qt.Key_Tab, Qt.Key_Tab):
             self.click()
             event.accept() # accept the event to prevent further processing
         else:
@@ -39,8 +39,8 @@ class FocusLineEdit(QLineEdit):
         super().focusInEvent(event)
 
 # ── Class Definition ────────────────────────────────────────────────────────────
-class SmartComboBox(QWidget):
-    """SmartComboBox is a custom widget that combines a QLineEdit with a QCompleter
+class SmartLineEdit(QWidget):
+    """CustomComboBox is a custom widget that combines a QLineEdit with a QCompleter
     and additional buttons for dropdown and clear functionality.
 
     It allows users to type and select items from a list, with features like
@@ -55,10 +55,11 @@ class SmartComboBox(QWidget):
             parent = None,
             list_items: list = None,
             placeholder: str = None,
-            editable: bool = True
+            editable: bool = True,
+            custom_selection = False,
         ):
         """
-        Initializes the SmartComboBox widget.
+        Initializes the CustomComboBox widget.
 
         Args:
             parent (QWidget): The parent widget.
@@ -67,9 +68,9 @@ class SmartComboBox(QWidget):
             editable (bool): Whether the input field is editable.
         """
         super().__init__(parent)
-        DebugLogger.log("Initializing SmartComboBox", log_type = "info")
-        self.setObjectName("SmartComboBox")
-        #WidgetLoader.apply_widget_style(self, SMART_COMBOBOX["STYLE"])
+        DebugLogger.log("Initializing CustomComboBox", log_type = "info")
+        self.setObjectName("CustomComboBox")
+        #WidgetLoader.apply_widget_style(self, CUSTOM_COMBOBOX["STYLE"])
 
         """ # ── Source Model ──
         self.source = QStringListModel(list_items)
@@ -104,18 +105,18 @@ class SmartComboBox(QWidget):
 
         # ── Dropdown Button ──
         self.btn_dropdown = SCBButton(
-            file_path = SMART_COMBOBOX["ICON_ARROW"]["FILE_PATH"],
-            icon_size = SMART_COMBOBOX["ICON_ARROW"]["ICON_SIZE"],
-            variant   = SMART_COMBOBOX["ICON_ARROW"]["DYNAMIC"],
+            file_path = CUSTOM_COMBOBOX["ICON_ARROW"]["FILE_PATH"],
+            icon_size = CUSTOM_COMBOBOX["ICON_ARROW"]["ICON_SIZE"],
+            variant   = CUSTOM_COMBOBOX["ICON_ARROW"]["DYNAMIC"],
         )
         self.btn_dropdown.setVisible(True) # default visibility
         self.btn_dropdown.setFocusPolicy(Qt.NoFocus) # prevent from tabbing into the button
 
         # ── Clear Button ──
         self.btn_clear = SCBButton(
-            file_path = SMART_COMBOBOX["ICON_CLEAR"]["FILE_PATH"],
-            icon_size = SMART_COMBOBOX["ICON_CLEAR"]["ICON_SIZE"],
-            variant   = SMART_COMBOBOX["ICON_CLEAR"]["DYNAMIC"],
+            file_path = CUSTOM_COMBOBOX["ICON_CLEAR"]["FILE_PATH"],
+            icon_size = CUSTOM_COMBOBOX["ICON_CLEAR"]["ICON_SIZE"],
+            variant   = CUSTOM_COMBOBOX["ICON_CLEAR"]["DYNAMIC"],
         )
         self.btn_clear.setVisible(False) # toggle visibility based on text input
 
@@ -124,19 +125,19 @@ class SmartComboBox(QWidget):
     
     def _build_ui(self):
         """
-        Builds the UI layout for the SmartComboBox widget.
+        Builds the UI layout for the CustomComboBox widget.
         
         This method sets up the horizontal layout containing the input field,
         dropdown button, and clear button.
         """
-        # ── Outer Layout for SmartComboBox ──
+        # ── Outer Layout for CustomComboBox ──
         self.main_layout = QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.setSpacing(0)
 
         # ── QFrame Wrapper ──
         self.frame = QFrame(self)
-        self.frame.setObjectName("SmartComboBox")  # optional for styling
+        self.frame.setObjectName("CustomComboBox")  # optional for styling
         self.frame.setFrameShape(QFrame.NoFrame)
         self.frame.setFrameShadow(QFrame.Plain)
 
@@ -209,8 +210,6 @@ class SmartComboBox(QWidget):
         self.selection_trigger.emit(text) # emit the selected item for external handling
         DebugLogger.log("[SIGNAL] Item '{text}' selected from completer.", log_type="info")
 
-        # self.line_edit.setText(text) # possibly redundant, as completer sets the text automatically. 
-
         self._reset_completer()  # reset the completer after selection
         self._update_button_visibility(False)
         
@@ -239,8 +238,6 @@ class SmartComboBox(QWidget):
         current_text = self.line_edit.text()
         self.selection_trigger.emit(current_text)
         DebugLogger.log(f"Text '{current_text}' submitted.", log_type="info")
-        # self.line_edit.clearFocus() 
-        # temporarily disabled to keep focus on the input field
 
     def _on_clear_input(self):
         """Clears the input field and resets the completer."""

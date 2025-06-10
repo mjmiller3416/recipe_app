@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
                                QMainWindow, QStackedWidget, QVBoxLayout,
                                QWidget)
 
-from config import SMART_COMBOBOX
+from config import CUSTOM_COMBOBOX
 from core.controllers.animation_controller import AnimationManager
 from core.helpers import DebugLogger
 from services.planner_service import PlannerService

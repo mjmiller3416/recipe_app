@@ -1,0 +1,93 @@
+/* ------------------------------------------------------------------
+   CUSTOM COMBOBOX STYLSHEET
+   ------------------------------------------------------------------ */
+
+#CustomComboBox {
+    border: 1px solid {BORDER_DEFAULT}; /* Dynamic */
+    border-radius: 6px;
+    background-color: {BACKGROUND_WIDGET}; /* Dynamic */
+}
+
+#CustomComboBox #LineEdit {
+    background-color: {BACKGROUND_PANEL};
+    border-radius: 4px;
+    padding: 5px;
+    color: {FONT_COLOR_STRONG};
+    font: 14px {FONT_FAMILY_BODY};
+    padding-left: 4px;
+}
+
+#CustomComboBox #Button {
+    background-color: transparent;
+    border: none;
+    border-radius: 0px;
+    padding: 3px;
+}
+
+#CompleterPopup {
+    border: 1px solid {BORDER_DEFAULT};
+    background-color: {BACKGROUND_WIDGET};
+    padding: 2px;
+    color: {TEXT_DEFAULT};
+    font: 14px {FONT_FAMILY_BODY}; /* Dynamic */
+    outline: none;
+}
+
+#CompleterPopup:item {
+    padding: 6px 8px;
+    border: none;
+}
+
+#CompleterPopup:item:selected {
+    background-color: {STATE_SECONDARY_HOVER}; /* Dynamic */
+    border: none;
+    border-radius: 5px;
+    outline: none;
+}
+
+/* ------------------------------------------------------------------
+    SCROLLBAR STYLES -- CORRECTED FOR TRACK BACKGROUND
+   ------------------------------------------------------------------ */
+
+/*
+ * Set the overall width and make the main background transparent.
+ * The actual track color will be handled by add-page and sub-page.
+ */
+#CompleterPopup QScrollBar:vertical {
+    border: none;
+    background: transparent; /* Set this to transparent */
+    width: 10px;
+    margin: 0px;
+}
+
+/*
+ * Style the handle (the draggable part) - This part is likely already working well.
+ */
+#CompleterPopup QScrollBar::handle:vertical {
+    background-color: {STATE_SECONDARY_HOVER}; /* Or your handle color */
+    border-radius: 5px;
+    min-height: 25px;
+}
+
+#CompleterPopup QScrollBar::handle:vertical:hover {
+    background-color: #4A90E2; /* Brighter hover color */
+}
+
+/*
+ * THIS IS THE KEY FIX:
+ * Apply your desired track color to the page areas.
+ */
+#CompleterPopup QScrollBar::add-page:vertical, #CompleterPopup QScrollBar::sub-page:vertical {
+    background-color: {BACKGROUND_PANEL}; /* Your desired track color */
+}
+
+/*
+ * To Hide the Arrow Buttons (Recommended for this style)
+ * The screenshot shows they are still visible, so ensure these rules are present.
+ */
+#CompleterPopup QScrollBar::sub-line:vertical, #CompleterPopup QScrollBar::add-line:vertical {
+    border: none;
+    background: none;
+    height: 0px;
+    width: 0px;
+}

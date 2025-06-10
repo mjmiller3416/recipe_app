@@ -9,7 +9,7 @@ from typing import Any, Optional
 from PySide6.QtWidgets import (QGridLayout, QLabel, QLineEdit, QSizePolicy,
                                QWidget)
 
-from ui.components.inputs import SmartComboBox
+from ui.components.inputs import CustomComboBox
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -105,7 +105,7 @@ class LineEditField(FormField):
         return self.input_widget.text()
     
     def clear(self):
-        """Clears the current selection in the SmartComboBox."""
+        """Clears the current selection in the CustomComboBox."""
         self.input_widget.clear()
 
     def strip(self):
@@ -122,9 +122,9 @@ class LineEditField(FormField):
 # ── Class Definition ────────────────────────────────────────────────────────────
 class ComboBoxField(FormField):
     """
-    Form field specifically for SmartComboBox input.
+    Form field specifically for CustomComboBox input.
     
-    Inherits from FormField and initializes with a SmartComboBox widget.
+    Inherits from FormField and initializes with a CustomComboBox widget.
     """
 
     def __init__(
@@ -134,28 +134,28 @@ class ComboBoxField(FormField):
             parent: Optional[QWidget] = None
     ):
         """
-        Initializes the ComboBoxField with a label and a SmartComboBox.
+        Initializes the ComboBoxField with a label and a CustomComboBox.
         
         Args:
             label_text (str): The text for the label.
             item_list (list[str]): List of items to populate the combo box.
             parent (QWidget, optional): Parent widget for this field.
         """
-        widget = SmartComboBox(list_items=item_list)
+        widget = CustomComboBox(list_items=item_list)
         super().__init__(label_text, widget, parent)
 
     @property
     def selection_validated(self):
-        """Exposes the SmartComboBox's selection_validated signal."""
+        """Exposes the CustomComboBox's selection_validated signal."""
         return self.input_widget.selection_validated
     
     def currentText(self):
-        """Returns the current text from the SmartComboBox input widget."""
+        """Returns the current text from the CustomComboBox input widget."""
         return self.input_widget.currentText()
     
     def setCurrentIndex(self, index: int):
         """
-        Sets the current index of the SmartComboBox.
+        Sets the current index of the CustomComboBox.
         
         Args:
             index (int): The index to set as current.

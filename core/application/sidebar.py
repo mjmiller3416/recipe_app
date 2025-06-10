@@ -46,7 +46,7 @@ class Sidebar(QWidget):
         # ── Logo Label ──
         self.lbl_logo = Icon(
             file_path = SIDEBAR["LOGO"], 
-            icon_size = SIDEBAR["LOGO_SIZE"],
+            size = SIDEBAR["LOGO_SIZE"],
             variant   = ICON_COLOR,
         )
 
