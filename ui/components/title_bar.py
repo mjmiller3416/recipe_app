@@ -8,7 +8,6 @@ from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
 
 from config import STYLES, TITLE_BAR
-from style_manager import WidgetLoader
 from ui.iconkit import ApplyHoverEffects, ToolButtonIcon
 
 
@@ -46,7 +45,6 @@ class TitleBar(QWidget):
         """
         # ── Properties ──
         super().__init__(parent)
-        WidgetLoader.apply_widget_style(self, STYLES["TITLE_BAR"])
         self.setObjectName("TitleBar")
         self.setAttribute(Qt.WA_StyledBackground)
         self.setFixedHeight(38)

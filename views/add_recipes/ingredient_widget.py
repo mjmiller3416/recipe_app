@@ -12,7 +12,7 @@ from config import (FLOAT_VALIDATOR, INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,
                     MEASUREMENT_UNITS, NAME_PATTERN)
 from services.dtos.ingredient_dtos import IngredientSearchDTO
 from services.ingredient_service import IngredientService
-from ui.components.inputs import CustomComboBox
+from ui.components.inputs import CustomComboBox, SmartLineEdit
 from ui.iconkit import ToolButtonIcon
 from ui.tools import clear_error_styles, dynamic_validation
 
@@ -58,10 +58,9 @@ class IngredientWidget(QWidget):
         self.grid_layout.addWidget(self.scb_unit, 0, 1, 1, 1)
 
         all_ingredient_names = self.ingredient_service.list_all_ingredient_names()
-        self.scb_ingredient_name = CustomComboBox(
+        self.scb_ingredient_name = SmartLineEdit(
             list_items  = all_ingredient_names,
             placeholder = "Ingredient Name",
-            editable    = True  # make the CustomComboBox editable
         )
         self.grid_layout.addWidget(self.scb_ingredient_name, 0, 2, 1, 1)
 
@@ -115,25 +114,25 @@ class IngredientWidget(QWidget):
 
     def _ingredient_name_changed(self, text: str):
         """
-        Handles changes in the ingredient name CustomComboBox.
+        Handles changes in the ingredient name field (SmartLineEdit).
         If the entered text matches an existing ingredient (case-insensitive exact match),
-        its category is auto-populated and the category ComboBox might be disabled.
+        its category is auto-populated and the category ComboBox may be disabled.
         Otherwise, the category ComboBox is enabled for manual input.
         """
         current_text = text.strip()
-        self.scb_ingredient_category.setEnabled(True) # default to enabled
+        self.scb_ingredient_category.setEnabled(True)
 
         if not current_text:
-            self.scb_ingredient_category.setCurrentIndex(-1) # clear category
-            clear_error_styles(self.scb_ingredient_name) # clear any error style on name
+            self.scb_ingredient_category.setCurrentIndex(-1)
+            clear_error_styles(self.scb_ingredient_name.line_edit)  # Access QLineEdit directly
             return
 
         # validate the ingredient name against the NAME_PATTERN
         if not NAME_PATTERN.match(current_text):
-            self.scb_ingredient_name.setStyleSheet("border: 1px solid red;") # error style
+            self.scb_ingredient_name.line_edit.setStyleSheet("border: 1px solid red;")
             return
         else:
-            clear_error_styles(self.scb_ingredient_name) # clear error style if valid
+            clear_error_styles(self.scb_ingredient_name.line_edit)
 
         search_dto = IngredientSearchDTO(search_term=current_text)
         matching_ingredients = self.ingredient_service.find_matching_ingredients(search_dto)
@@ -142,23 +141,29 @@ class IngredientWidget(QWidget):
         for ingredient in matching_ingredients:
             if ingredient.ingredient_name.lower() == current_text.lower():
                 exact_match = ingredient
-                self.exact_match = exact_match  # store the exact match in self.exact_match
+                self.exact_match = exact_match
                 break
+
         if exact_match:
-            # exact match found, auto-populate category
-            category_index = self.scb_ingredient_category.findText(exact_match.ingredient_category, Qt.MatchFlag.MatchFixedString | Qt.MatchFlag.MatchCaseSensitive)
-            # try case-insensitive if sensitive fails 
+            category_index = self.scb_ingredient_category.findText(
+                exact_match.ingredient_category,
+                Qt.MatchFlag.MatchFixedString | Qt.MatchFlag.MatchCaseSensitive,
+            )
+
             if category_index < 0:
-                 category_index = self.scb_ingredient_category.findText(exact_match.ingredient_category, Qt.MatchFlag.MatchFixedString | Qt.MatchFlag.MatchContains) # Broader match if needed
+                category_index = self.scb_ingredient_category.findText(
+                    exact_match.ingredient_category,
+                    Qt.MatchFlag.MatchFixedString | Qt.MatchFlag.MatchContains,
+                )
 
             if category_index >= 0:
                 self.scb_ingredient_category.setCurrentIndex(category_index)
             else:
                 self.scb_ingredient_category.addItem(exact_match.ingredient_category)
                 self.scb_ingredient_category.setCurrentText(exact_match.ingredient_category)
-            clear_error_styles(self.scb_ingredient_category) # clear error style on successful auto-population
+
+            clear_error_styles(self.scb_ingredient_category)
         else:
-            # no exact match, clear category and ensure it's enabled for manual input
             self.scb_ingredient_category.setCurrentIndex(-1)
             self.scb_ingredient_category.setEnabled(True)
 

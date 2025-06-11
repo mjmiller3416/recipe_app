@@ -8,14 +8,11 @@ and emits signals when a valid selection is made.
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from typing import Sequence
 
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, Signal, QStringListModel
 from PySide6.QtWidgets import QWidget, QLineEdit, QCompleter, QHBoxLayout
 
-from config import CUSTOM_COMBOBOX
+from config import CUSTOM_COMBOBOX, STYLES
 from ui.iconkit import ToolButtonIcon
-from services.ingredient_service import IngredientService
-from style_manager import WidgetLoader
-from config import STYLES
 from core.helpers import DebugLogger
 
 # ── Class Definition: CustomComboBox ─────────────────────────────────────────────
@@ -24,7 +21,8 @@ class CustomComboBox(QWidget):
     list of items."""
 
     # ── Signals ─────────────────────────────────────────────────────────────────
-    selection_validated = Signal(bool)  # emits when a valid selection is made
+    selection_validated = Signal(bool)
+    currentTextChanged = Signal(str)
 
     def __init__(
         self,
@@ -34,21 +32,22 @@ class CustomComboBox(QWidget):
     ):
         """
         Initialize CustomComboBox.
-        
+
         Args:
             parent (QWidget, optional): Parent widget.
-            items (Sequence[str], optional): List of items to populate the combo box.
+            list_items (Sequence[str], optional): Initial list of items.
             placeholder (str, optional): Placeholder text for the combo box.
         """
         super().__init__(parent)
         self.setObjectName("CustomComboBox")
         self.setAttribute(Qt.WA_StyledBackground, True)
 
+        self.model = QStringListModel(list_items or [])  # 🔹 Store the list model
+
         # ── Completer ──
-        self.completer = QCompleter(list_items, self)  # create a completer for the combo box
+        self.completer = QCompleter(self.model, self)
         self.completer.setCaseSensitivity(Qt.CaseInsensitive)
-        popup = self.completer.popup()
-        popup.setObjectName("CompleterPopup")
+        self.completer.popup().setObjectName("CompleterPopup")
 
         # ── Input Field ──
         self.line_edit = QLineEdit(self) 
@@ -65,32 +64,79 @@ class CustomComboBox(QWidget):
         )
         self.cb_btn.setObjectName("Button")
         self.cb_btn.setCursor(Qt.PointingHandCursor)
-        self.cb_btn.clicked.connect(self._show_popup) # connect button to show popup
 
-        self._build_ui()  # build the UI components
+        # ── Signals ──
+        self.line_edit.textChanged.connect(self._on_text_changed)
+        self.cb_btn.clicked.connect(self._show_popup)
+
+        self._build_ui()
 
     def _build_ui(self):
-        """
-        Build the UI components for the CustomComboBox.
-        """
-        # Set up the layout
+        """Builds the layout and adds components."""
         layout = QHBoxLayout(self)
         layout.setContentsMargins(5, 5, 2, 5)
         layout.setSpacing(0)
-
-        # Add the line edit and button to the layout
         layout.addWidget(self.line_edit)
         layout.addWidget(self.cb_btn)
 
+    def _on_text_changed(self, text: str):
+        self.currentTextChanged.emit(text)
+
     def _show_popup(self):
-        """Show the popup with the list of items."""
+        """Display the completer popup."""
         self.completer.complete()
 
-    def emit_validation(self, text: str):
+    def currentText(self) -> str:
+        return self.line_edit.text()
+
+    def setCurrentText(self, text: str):
+        self.line_edit.setText(text)
+        self.selection_validated.emit(bool(text))
+
+    def setCurrentIndex(self, index: int):
         """
-        Emit a signal to indicate whether the current text is valid.
+        Sets the current text based on index in the model.
 
         Args:
-            text (str): The current text in the combo box.
+            index (int): Index to select.
         """
-        self.selection_validated.emit(bool(text))
+        if 0 <= index < self.model.rowCount():
+            text = self.model.data(self.model.index(index, 0), Qt.DisplayRole)
+            self.line_edit.setText(text)
+            self.selection_validated.emit(True)
+        else:
+            self.line_edit.clear()
+            self.selection_validated.emit(False)
+
+    def findText(self, text: str, flags: Qt.MatchFlags = Qt.MatchExactly) -> int:
+        """
+        Searches for a string in the model.
+
+        Args:
+            text (str): String to find.
+            flags (Qt.MatchFlags): Match mode flags.
+
+        Returns:
+            int: Index of found string or -1.
+        """
+        for row in range(self.model.rowCount()):
+            item_text = self.model.data(self.model.index(row, 0), Qt.DisplayRole)
+            if flags & Qt.MatchExactly and item_text.lower() == text.lower():
+                return row
+            if flags & Qt.MatchFixedString and item_text == text:
+                return row
+            if flags & Qt.MatchContains and text.lower() in item_text.lower():
+                return row
+        return -1
+
+    def addItem(self, text: str):
+        """
+        Adds a new item if it doesn't already exist.
+
+        Args:
+            text (str): The text to add.
+        """
+        items = self.model.stringList()
+        if text not in items:
+            items.append(text)
+            self.model.setStringList(items)

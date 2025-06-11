@@ -7,7 +7,6 @@ from PySide6.QtWidgets import (QGridLayout, QLineEdit, QMainWindow,
 
 from config import (INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,
                     MEASUREMENT_UNITS, STYLES)
-from style_manager import WidgetLoader
 from ui.components.dialogs.dialog_window import DialogWindow
 from ui.components.inputs import CustomComboBox
 from ui.components.inputs import SmartLineEdit
@@ -102,10 +101,6 @@ class MyTestApp(QMainWindow):
         ingredient_widget = IngredientWidget(
             categories=INGREDIENT_CATEGORIES,
             units=MEASUREMENT_UNITS,
-            style_path=INGREDIENT_WIDGET["STYLE_PATH"]
-        )
-        WidgetLoader.apply_widget_style(
-            ingredient_widget, 
             style_path=INGREDIENT_WIDGET["STYLE_PATH"]
         )
         self.central_layout.addWidget(ingredient_widget)

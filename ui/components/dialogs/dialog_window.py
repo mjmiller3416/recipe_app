@@ -9,7 +9,6 @@ from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QWidget
 
 from config import STYLES, TITLE_BAR
-from style_manager import WidgetLoader
 from ui.components.title_bar import TitleBar
 
 
@@ -40,8 +39,6 @@ class DialogWindow(QDialog):
         """
         super().__init__(parent)
         self.setObjectName("DialogWindow")
-        WidgetLoader.apply_widget_style(self, STYLES["DIALOG_WINDOW"])  # load styles for this dialog
-
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Dialog) # remove native title bar
         self.resize(int(width), int(height))  # set initial size
 

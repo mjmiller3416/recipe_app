@@ -4,27 +4,3 @@
   font-size: {FONT_SIZE_NORMAL};
   color: {TEXT_DEFAULT};
 }
-QScrollArea {
-    background-color: transparent;
-    border: none;
-}
-
-QLineEdit {
-    background-color: {BACKGROUND_WIDGET};
-    border: 1px solid {BORDER_DEFAULT};
-    border-radius: 6px;
-    padding: 5px;
-    color: {TEXT_DEFAULT};
-    font: 14px {FONT_FAMILY_BODY};
-    padding-left: 4px;
-}
-
-QLineEdit[text=""]{ 
-    font-style: italic; 
-}
-
-QLineEdit:focus, 
-QTextEdit:focus {
-    border: 1px solid #03B79E;
-    outline: none;
-}

@@ -15,7 +15,6 @@ from core.helpers import DebugLogger
 from services.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
 from services.ingredient_service import IngredientService
 from services.recipe_service import RecipeService
-from style_manager import WidgetLoader
 from ui.components.dialogs import MessageDialog
 from ui.components.form_field import ComboBoxField, LineEditField
 from ui.components.widget_frame import WidgetFrame
@@ -32,7 +31,6 @@ class AddRecipes(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("AddRecipes")
-        WidgetLoader.apply_widget_style(self, STYLES["INGREDIENT_WIDGET"])
 
         self.ingredient_widgets = []
         self.stored_ingredients = []

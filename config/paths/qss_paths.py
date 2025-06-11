@@ -37,7 +37,7 @@ class QssPaths:
         RECIPE_CARD       = AppPaths.qss_path("components", "recipe_card.qss")
         RECIPE_DIALOG     = AppPaths.qss_path("components", "recipe_dialog.qss")
         SEARCH_BAR        = AppPaths.qss_path("components", "search_bar.qss")
-        CUSTOM_COMBOBOX    = AppPaths.qss_path("components", "custom_combobox.qss")
+        CUSTOM_COMBOBOX   = AppPaths.qss_path("components", "custom_combobox.qss")
         WIDGET_FRAME      = AppPaths.qss_path("components", "widget_frame.qss")
         UPLOAD_IMAGE      = AppPaths.qss_path("components", "upload_image.qss")
         #SMART_LINE_EDIT   = AppPaths.qss_path("components", "smart_line_edit.qss")
@@ -48,19 +48,19 @@ class QssPaths:
         Excludes widget-specific styles which are applied separately.
         """
         return {
-            """ "core": [
+            "core": [
                 QssPaths.Core.APPLICATION,
                 QssPaths.Core.BASE,
                 QssPaths.Core.SIDE_BAR,
                 QssPaths.Core.TITLE_BAR,
             ],
             "views": [
-                QssPaths.Views.ADD_RECIPES,
-                QssPaths.Views.DASHBOARD,
-                QssPaths.Views.MEAL_PLANNER,
-                QssPaths.Views.SHOPPING_LIST,
-                QssPaths.Views.VIEW_RECIPES,
-            ], """
+                #QssPaths.Views.ADD_RECIPES,
+                #QssPaths.Views.DASHBOARD,
+                #QssPaths.Views.MEAL_PLANNER,
+                #QssPaths.Views.SHOPPING_LIST,
+                #QssPaths.Views.VIEW_RECIPES,
+            ],
             "components": [
                 #QssPaths.Components.EMPTY_STATE_FRAME,
                 #QssPaths.Components.DIALOG_WINDOW,
@@ -68,7 +68,7 @@ class QssPaths:
                 #QssPaths.Components.RECIPE_DIALOG,
                 #QssPaths.Components.SEARCH_BAR,
                 #QssPaths.Components.INGREDIENT_WIDGET,
-                QssPaths.Components.CUSTOM_COMBOBOX,
+                #QssPaths.Components.CUSTOM_COMBOBOX,
                 #QssPaths.Components.WIDGET_FRAME,
                 #QssPaths.Components.UPLOAD_IMAGE,
             ]

@@ -13,7 +13,6 @@ from config import CUSTOM_COMBOBOX
 from core.helpers import DebugLogger
 from ui.iconkit import ToolButtonIcon, ButtonIcon
 from ui.tools import IngredientProxyModel
-from style_manager import WidgetLoader
 from ui.components.widget_frame import WidgetFrame
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -70,7 +69,6 @@ class SmartLineEdit(QWidget):
         super().__init__(parent)
         DebugLogger.log("Initializing CustomComboBox", log_type = "info")
         self.setObjectName("CustomComboBox")
-        #WidgetLoader.apply_widget_style(self, CUSTOM_COMBOBOX["STYLE"])
 
         """ # ── Source Model ──
         self.source = QStringListModel(list_items)

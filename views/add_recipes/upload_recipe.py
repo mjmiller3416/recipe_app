@@ -17,7 +17,6 @@ from config import STYLES, UPLOAD_RECIPE_IMAGE
 from config.paths import AppPaths
 from core.helpers import DebugLogger
 from core.helpers.ui_helpers import make_overlay
-from style_manager import WidgetLoader
 from ui.components.images import RoundedImage
 from ui.iconkit import ToolButtonIcon
 

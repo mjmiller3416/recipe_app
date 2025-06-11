@@ -11,7 +11,6 @@ from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
                                QScrollArea, QSizePolicy, QVBoxLayout, QWidget)
 
 from config import STYLES
-from style_manager import WidgetLoader
 
 
 class WidgetFrame(QFrame):
@@ -52,7 +51,6 @@ class WidgetFrame(QFrame):
             parent (Optional[QFrame]): Parent widget for this frame
         """
         super().__init__(parent)
-        WidgetLoader.apply_widget_style(self, STYLES["WIDGET_FRAME"]) # apply custom styles
 
         # ── Configure Frame Properties ──
         self.setFrameShape(frame_shape)

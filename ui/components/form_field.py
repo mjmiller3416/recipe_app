@@ -84,7 +84,7 @@ class LineEditField(FormField):
         if placeholder:
             widget.setPlaceholderText(placeholder)
         super().__init__(label_text, widget, parent)
-        self.setFixedHeight(50)  # set a fixed height for the input field
+
     
     @property
     def textChanged(self):

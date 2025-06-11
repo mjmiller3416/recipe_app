@@ -19,6 +19,9 @@ class SmartLineEdit(QWidget):
     a custom text is submitted.
     """
 
+
+    # ── Signals ──
+    currentTextChanged = Signal(str)
     item_selected = Signal(str)
     custom_text_submitted = Signal(str)
 
@@ -27,7 +30,6 @@ class SmartLineEdit(QWidget):
         parent: QWidget = None,
         list_items: list = None,
         placeholder: str = None,
-        editable: bool = True
         ):
         """
         Initializes the SmartLineEdit widget with a list of items for auto-completion.
@@ -56,8 +58,6 @@ class SmartLineEdit(QWidget):
         # ── Input Field ──
         self.line_edit = QLineEdit(self) 
         self.line_edit.setPlaceholderText(placeholder)
-        if not editable:
-            self.line_edit.setReadOnly(True)
         self.line_edit.setCompleter(self.completer)
 
         # ── Event Filters ──
@@ -83,10 +83,13 @@ class SmartLineEdit(QWidget):
             - completer.activated: Triggered when an item is selected from the completer.
             - line_edit.textEdited: Triggered when the text in the line edit changes.
             - line_edit.returnPressed: Triggered when the Enter key is pressed.
+            - line_edit.textChanged: Triggered when the text in the line edit changes.
         """
         self.completer.activated.connect(self._on_item_selected)
         self.line_edit.textEdited.connect(self._on_text_changed)
+        self.line_edit.textChanged.connect(self._on_text_changed)
         self.line_edit.returnPressed.connect(self._handle_submission)
+        
 
     def _reset_completer(self):
         """Resets the completer and proxy filter to a neutral state."""
@@ -143,6 +146,7 @@ class SmartLineEdit(QWidget):
             text (str): The text entered in the line edit.
         """
         self.proxy.setFilterFixedString(text)
+        self.currentTextChanged.emit(text)
         DebugLogger.log(f"Text changed: {text}", "debug")
 
     def eventFilter(self, obj: QWidget, event: QEvent) -> bool:
@@ -184,3 +188,6 @@ class SmartLineEdit(QWidget):
         """Triggers submission logic when the widget loses focus."""
         self._handle_submission()
         super().focusOutEvent(event)
+
+    def currentText(self) -> str:
+        return self.line_edit.text()
