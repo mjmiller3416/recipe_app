@@ -12,8 +12,8 @@ from PySide6.QtWidgets import (QDialog, QDialogButtonBox,
                                QSizePolicy, QSpacerItem, QVBoxLayout)
 
 from config import MESSAGE_DIALOG
-from core.helpers.debug_logger import DebugLogger
-from ui.iconkit import Icon
+from core.utilities.debug_logger import DebugLogger
+from ui.widgets import CTIcon
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -45,7 +45,7 @@ class MessageDialog(QDialog):
         self.lyt_message.setSpacing(0)
 
         icon_config = MESSAGE_DIALOG.get(f"ICON_{self.message_type.upper()}", MESSAGE_DIALOG["ICON_INFO"])
-        self.status_icon = Icon(
+        self.status_icon = CTIcon(
             file_path=icon_config["ICON_PATH"],
             size=MESSAGE_DIALOG["ICON_SIZE"],
             variant=icon_config["ICON_COLOR"]

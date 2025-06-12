@@ -71,16 +71,42 @@ UPLOAD_RECIPE_IMAGE = {
 }
 
 # ── Title Bar ──
-TITLE_BAR = {
-    "ICON_SIZE":           QSize(12, 12),
-    "BUTTON_SIZE":         QSize(38, 38),
-    "ICON_MINIMIZE":       AppPaths.ICONS_DIR / "minimize.svg",
-    "ICON_MAXIMIZE":       AppPaths.ICONS_DIR / "maximize.svg",
-    "ICON_RESTORE":        AppPaths.ICONS_DIR / "restore.svg",
-    "ICON_CLOSE":          AppPaths.ICONS_DIR / "close.svg",
-    "ICON_TOGGLE_SIDEBAR": AppPaths.ICONS_DIR / "toggle_sidebar.svg",
-    "DYNAMIC":             THEME["ICON_STYLES"]["TOOLBUTTON"],
-    "APP_NAME":            "MealGenie",
+APPLICATION_WINDOW = {
+    "SETTINGS": {
+        "APP_NAME":    "MealGenie",
+        "BTN_SIZE": QSize(38, 38),
+        "BTN_STYLE": {
+            "DYNAMIC": THEME["ICON_STYLES"]["TOOLBUTTON"],
+        }
+    },
+
+    "ICONS": {
+        "MINIMIZE": {
+            "PATH": AppPaths.ICONS_DIR / "minimize.svg",
+            "SIZE": QSize(12, 12),
+            "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"],
+        },
+        "MAXIMIZE": {
+            "PATH": AppPaths.ICONS_DIR / "maximize.svg",
+            "SIZE": QSize(12, 12),
+            "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"],
+        },
+        "RESTORE":  {
+            "PATH": AppPaths.ICONS_DIR / "restore.svg",
+            "SIZE": QSize(12, 12),
+            "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"],
+        },
+        "CLOSE": {
+            "PATH": AppPaths.ICONS_DIR / "close.svg",
+            "SIZE": QSize(12, 12),
+            "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"],
+        },
+        "TOGGLE_SIDEBAR": {
+            "PATH": AppPaths.ICONS_DIR / "toggle_sidebar.svg",
+            "SIZE": QSize(20, 20),
+            "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"],
+            },
+    }
 }
 
 # ── Ingredient Widget ──

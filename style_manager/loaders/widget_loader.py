@@ -5,7 +5,7 @@ from typing import Optional
 
 from PySide6.QtWidgets import QWidget
 
-from core.helpers.debug_logger import DebugLogger
+from core.utilities.debug_logger import DebugLogger
 from style_manager.theme_controller import ThemeController
 
 

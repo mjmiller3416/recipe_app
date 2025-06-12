@@ -5,6 +5,6 @@ Contains imports for the main Application class and its UI form.
 """
 
 # Import the main Application class
-from .application import Application
+from .old_application import Application
 # Import the Sidebar class for the sidebar navigation
 from .sidebar import Sidebar

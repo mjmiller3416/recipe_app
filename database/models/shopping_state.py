@@ -12,7 +12,7 @@ from typing import Optional
 
 from pydantic import Field, model_validator
 
-from core.helpers.debug_logger import DebugLogger
+from core.utilities.debug_logger import DebugLogger
 from database.base_model import ModelBase
 from database.db import get_connection
 

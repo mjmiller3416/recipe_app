@@ -11,8 +11,8 @@ from PySide6.QtWidgets import (QCheckBox, QHBoxLayout, QLayout, QScrollArea,
 
 from config import RECIPE_CATEGORIES, SORT_OPTIONS
 from database.models.recipe import Recipe
-from recipe_viewer.constants import LayoutSize
-from recipe_viewer.recipe_viewer import RecipeViewer
+from recipe_card.constants import LayoutSize
+from recipe_card.recipe_card import RecipeCard
 from services.recipe_service import RecipeService
 from ui.components.inputs import CustomComboBox
 
@@ -112,7 +112,7 @@ class ViewRecipes(QWidget):
         )
 
         for recipe in recipes:
-            slot = RecipeViewer(LayoutSize.MEDIUM, parent=self.scroll_container)
+            slot = RecipeCard(LayoutSize.MEDIUM, parent=self.scroll_container)
             slot.set_recipe(recipe)
 
             if self.meal_selection:
@@ -130,8 +130,8 @@ class ViewRecipes(QWidget):
                 item.widget().deleteLater()
 
     def load_recipes(self) -> None:
-        from recipe_viewer.constants import LayoutSize
-        from recipe_viewer.recipe_viewer import RecipeViewer
+        from recipe_card.constants import LayoutSize
+        from recipe_card.recipe_card import RecipeViewer
 
         recipes = Recipe.all()  # fetch all recipes from the database
         if not recipes:

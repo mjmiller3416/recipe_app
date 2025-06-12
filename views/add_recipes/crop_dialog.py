@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (QDialog, QFrame, QHBoxLayout, QLabel,
                                QPushButton, QSizePolicy, QSpacerItem,
                                QVBoxLayout)
 
-from core.helpers.debug_logger import DebugLogger
+from core.utilities.debug_logger import DebugLogger
 from ui.components.dialogs.dialog_window import DialogWindow
 
 # ── Constants ───────────────────────────────────────────────────────────────────

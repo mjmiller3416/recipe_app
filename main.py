@@ -1,6 +1,6 @@
-""" main.py 
-
-This module serves as the main entry point for the MealGenie application.
+"""MealGenie - A Meal Planning Application
+This script initializes and runs the MealGenie application, setting up the main window,
+database, and handling command-line arguments for special modes like testing and importing recipes.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
@@ -12,7 +12,7 @@ from core.application import Application
 from core.helpers import DebugLogger
 from database.db_reset import reset_database
 from database.init_db import init_db
-from ui.tools.layout_debugger import LayoutDebugger
+
 
 
 
@@ -37,15 +37,10 @@ class MealPlannerApp:
         - Database initialization.
         - Theme loading.
         """
-        
-
         # ── Initialize Application ──
         self.app = QApplication(sys.argv)
         self.app.setApplicationName("MealGenie")
         init_db() # initialize the database
-
-        # ── Apply Theme ──
-        #self.style_manager = StyleManager(self.app) # TODO: Refactor to use core/controllers/theme_controller.py
 
         # ── Setup Window ──
         self.main_window = Application()

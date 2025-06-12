@@ -13,8 +13,8 @@ from PySide6.QtWidgets import QHBoxLayout, QToolTip, QVBoxLayout, QWidget
 from core.helpers import DebugLogger
 from database.models.meal_selection import MealSelection
 from database.models.recipe import Recipe
-from recipe_viewer import RecipeViewer
-from recipe_viewer.constants import LayoutSize
+from recipe_card import RecipeCard
+from recipe_card.constants import LayoutSize
 from services.meal_service import MealService
 
 
@@ -46,7 +46,7 @@ class MealWidget(QWidget):
         self.main_layout.setSpacing(10)
 
         # ── Main Dish ──
-        self.main_slot = RecipeViewer(size=LayoutSize.MEDIUM)
+        self.main_slot = RecipeCard(size=LayoutSize.MEDIUM)
         self.meal_slots["main"] = self.main_slot
         self.main_layout.addWidget(self.main_slot)
 
@@ -55,7 +55,7 @@ class MealWidget(QWidget):
         self.side_layout.setSpacing(10)
 
         for i in range(1, 4):
-            side_slot = RecipeViewer(size=LayoutSize.SMALL)
+            side_slot = RecipeCard(size=LayoutSize.SMALL)
             side_slot.setEnabled(False) # initially disabled
             side_slot.setToolTip("Select a main dish first") # tooltip for disabled state
             self.side_layout.addWidget(side_slot)

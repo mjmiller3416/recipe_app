@@ -6,9 +6,9 @@ Displays a QLabel + QPushButton + QToolButton version of a themed icon variant.
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
-from ui.iconkit.icon_widgets.button_icon import ButtonIcon
-from ui.iconkit.icon_widgets.icon import Icon
-from ui.iconkit.icon_widgets.tool_button_icon import ToolButtonIcon
+from ui.iconkit.icon_widgets.ct_button import ButtonIcon
+from ui.iconkit.icon_widgets.ct_icon import Icon
+from ui.iconkit.icon_widgets.ct_tool_button import ToolButtonIcon
 
 
 class IconDisplayCard(QWidget):

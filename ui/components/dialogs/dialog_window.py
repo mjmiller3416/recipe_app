@@ -8,8 +8,6 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QWidget
 
-from config import STYLES, TITLE_BAR
-from ui.components.title_bar import TitleBar
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -27,7 +25,7 @@ class DialogWindow(QDialog):
             self, 
             width: int = 600, 
             height: int = 400,
-            title: str = TITLE_BAR["APP_NAME"],
+            #title: str = TITLE_BAR["APP_NAME"],
             parent: QWidget | None = None,
         ):
         """A frameless QDialog with a custom TitleBar widget.
@@ -43,11 +41,11 @@ class DialogWindow(QDialog):
         self.resize(int(width), int(height))  # set initial size
 
         # ── Instiate TileBar ──
-        self.title_bar = TitleBar(self)
+        """ self.title_bar = TitleBar(self)
         self.title_bar.lbl_title.setText(title)
         self.title_bar.close_clicked.connect(self.close)
         self.title_bar.minimize_clicked.connect(self.showMinimized)
-        self.title_bar.maximize_clicked.connect(self._toggle_maximize)
+        self.title_bar.maximize_clicked.connect(self._toggle_maximize) """
         self._is_maximized = False
 
         # ── Create Body Container ──
