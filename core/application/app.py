@@ -6,30 +6,28 @@ Main application window with a custom title bar, sidebar, header, and dynamic st
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt
 from PySide6.QtGui import QGuiApplication
-from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
-                               QMainWindow, QStackedWidget, QVBoxLayout,
-                               QWidget)
+from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QMainWindow,
+                               QStackedWidget, QVBoxLayout, QWidget)
 
-from config import CUSTOM_COMBOBOX
-from core.controllers.animation_controller import AnimationManager
-from core.helpers import DebugLogger
 from services.planner_service import PlannerService
 from services.shopping_service import ShoppingService
 from style_manager.theme_controller import ThemeController
 from ui.animations import SidebarAnimator
 from ui.components.inputs.search_bar import SearchBar
-from ui.components.title_bar import TitleBar
 from views.add_recipes import AddRecipes
 from views.dashboard import Dashboard
 from views.meal_planner import MealPlanner
 from views.shopping_list import ShoppingList
 from views.view_recipes import ViewRecipes
 
+from ..controllers import AnimationManager
+from ..helpers import DebugLogger
+from .app_window import ApplicationWindow
 from .sidebar import Sidebar
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
-class Application(QMainWindow):
+class Application(ApplicationWindow):
     """
     Main application window with a custom title bar, sidebar, header, and dynamic stacked content.
     Applies custom styling and manages navigation.
@@ -37,39 +35,14 @@ class Application(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # ── Initialize Controller ──
+        # ── Initialize ThemeController ──
         self.theme_controller = ThemeController()
         self.theme_controller.apply_full_theme()
         
-        # ── Window Setup ──
-        self.setWindowFlags(Qt.FramelessWindowHint)
-        self.setMinimumSize(1280, 720) # Set minimum size for the window
-        self.sidebar_is_expanded = True
-
-        # ── Outter Wrapper ──
-        self.wrapper = QFrame()
-        self.wrapper.setObjectName("Application")
-        self.setCentralWidget(self.wrapper)
-
-        # ── Layouts ──
-        self.outer_layout = QVBoxLayout(self.wrapper)
-        self.outer_layout.setContentsMargins(0, 0, 0, 0)
-        self.outer_layout.setSpacing(0)
-
-        # ── Create Title Bar ──
-        self.title_bar = TitleBar(self)
-        self._is_maximized = False
-        self.outer_layout.addWidget(self.title_bar)
-
-        # ── Main Layout ──
-        self.main_layout = QHBoxLayout()
-        self.main_layout.setContentsMargins(0, 0, 0, 0)
-        self.main_layout.setSpacing(0)
-        self.outer_layout.addLayout(self.main_layout)
-
         # ── Instantiate Sidebar ──
         self.sidebar = Sidebar()
-        self.main_layout.addWidget(self.sidebar)
+        self.content_layout.addWidget(self.sidebar)
+        self.sidebar_is_expanded = True
 
         # ── Connect Signals ──
         self.title_bar.sidebar_toggled.connect(self.toggle_sidebar)

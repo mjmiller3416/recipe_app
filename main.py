@@ -14,9 +14,6 @@ from database.db_reset import reset_database
 from database.init_db import init_db
 
 
-
-
-
 # ── Class Definition ────────────────────────────────────────────────────────────
 class MealPlannerApp:
     """

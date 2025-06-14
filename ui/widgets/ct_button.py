@@ -11,8 +11,8 @@ from PySide6.QtWidgets import QPushButton
 
 from config import ICON_SIZE
 from style_manager import IconLoader
-from .utils import ButtonEffects
-from .utils import IconMixin
+
+from .utils import ButtonEffects, IconMixin
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -22,6 +22,7 @@ class CTButton(QPushButton, IconMixin):
         file_path: Path,
         icon_size: QSize = ICON_SIZE,
         variant: str = "default",
+        height: int = 55,
         label: str = "",
         object_name: str = "",
         checked: bool = False,
@@ -50,6 +51,7 @@ class CTButton(QPushButton, IconMixin):
 
         self.setCheckable(True)
         self.setChecked(checked)
+        self.setFixedHeight(height)
 
         if hover_effects:
             ButtonEffects.recolor(self, file_path, icon_size, variant)

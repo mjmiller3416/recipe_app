@@ -1,5 +1,5 @@
-"""ui\animations\ct_button_effects.py
-
+# ui\widgets\utils\button_effects.py
+"""
 Provides the ApplyHoverEffects class for dynamically changing button icons on hover and toggle events.
 """
 

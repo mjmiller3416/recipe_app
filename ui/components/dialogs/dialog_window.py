@@ -9,7 +9,6 @@ from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QWidget
 
 
-
 # ── Class Definition ────────────────────────────────────────────────────────────
 class DialogWindow(QDialog):
     """A frameless QDialog with a custom TitleBar widget.

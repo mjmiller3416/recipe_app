@@ -8,12 +8,13 @@ and emits signals when a valid selection is made.
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from typing import Sequence
 
-from PySide6.QtCore import Qt, Signal, QStringListModel
-from PySide6.QtWidgets import QWidget, QLineEdit, QCompleter, QHBoxLayout
+from PySide6.QtCore import QStringListModel, Qt, Signal
+from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget
 
 from config import CUSTOM_COMBOBOX, STYLES
-from ui.iconkit import ToolButtonIcon
 from core.helpers import DebugLogger
+from ui.iconkit import ToolButtonIcon
+
 
 # ── Class Definition: CustomComboBox ─────────────────────────────────────────────
 class CustomComboBox(QWidget):

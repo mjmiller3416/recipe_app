@@ -8,11 +8,11 @@ This module defines the ViewRecipes class, which displays a list of recipes in a
 from PySide6.QtCore import QPoint, QRect, QSize, Qt, Signal
 from PySide6.QtWidgets import (QCheckBox, QHBoxLayout, QLayout, QScrollArea,
                                QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
+from recipe_card.constants import LayoutSize
+from recipe_card.recipe_card import RecipeCard
 
 from config import RECIPE_CATEGORIES, SORT_OPTIONS
 from database.models.recipe import Recipe
-from recipe_card.constants import LayoutSize
-from recipe_card.recipe_card import RecipeCard
 from services.recipe_service import RecipeService
 from ui.components.inputs import CustomComboBox
 

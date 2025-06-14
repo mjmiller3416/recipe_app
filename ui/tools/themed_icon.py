@@ -14,6 +14,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon, QPixmap
 
 from style_manager import IconLoader
+
 from .svg_loader import SVGLoader
 
 

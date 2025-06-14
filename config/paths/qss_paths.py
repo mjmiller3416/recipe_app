@@ -17,7 +17,7 @@ class QssPaths:
     # ── Core Styles ─────────────────────────────────────────────────────────────────
     class Core:
         APPLICATION       = AppPaths.qss_path("core", "application.qss")
-        BASE              = AppPaths.qss_path("core", "base.qss")
+        APP_WINDOW        = AppPaths.qss_path("core", "app_window.qss")
         SIDE_BAR          = AppPaths.qss_path("core", "side_bar.qss")
         TITLE_BAR         = AppPaths.qss_path("core", "title_bar.qss")
 
@@ -49,10 +49,10 @@ class QssPaths:
         """
         return {
             "core": [
-                QssPaths.Core.APPLICATION,
-                QssPaths.Core.BASE,
+                #QssPaths.Core.APPLICATION,
+                QssPaths.Core.APP_WINDOW,
                 QssPaths.Core.SIDE_BAR,
-                QssPaths.Core.TITLE_BAR,
+                #QssPaths.Core.TITLE_BAR,
             ],
             "views": [
                 #QssPaths.Views.ADD_RECIPES,

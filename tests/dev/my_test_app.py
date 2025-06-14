@@ -8,8 +8,7 @@ from PySide6.QtWidgets import (QGridLayout, QLineEdit, QMainWindow,
 from config import (INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,
                     MEASUREMENT_UNITS, STYLES)
 from ui.components.dialogs.dialog_window import DialogWindow
-from ui.components.inputs import CustomComboBox
-from ui.components.inputs import SmartLineEdit
+from ui.components.inputs import CustomComboBox, SmartLineEdit
 from ui.components.widget_frame import WidgetFrame
 from ui.iconkit import ToolButtonIcon
 from views.add_recipes.ingredient_widget import IngredientWidget

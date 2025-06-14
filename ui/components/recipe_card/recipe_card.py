@@ -11,9 +11,8 @@ from PySide6.QtWidgets import QFrame, QPushButton, QStackedWidget, QVBoxLayout
 
 from core.helpers import DebugLogger
 from database.models.recipe import Recipe
+from ui.dialogs import FullRecipe, RecipeSelection
 
-from ui.dialogs import FullRecipe
-from ui.dialogs import RecipeSelection
 from .constants import LayoutSize
 from .frame_factory import FrameFactory
 

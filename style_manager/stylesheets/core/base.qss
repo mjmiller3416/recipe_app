@@ -1,6 +1,0 @@
-/* ─────── Global Defaults ─────── */
-* {
-  font-family: {FONT_FAMILY_UI};
-  font-size: {FONT_SIZE_NORMAL};
-  color: {TEXT_DEFAULT};
-}

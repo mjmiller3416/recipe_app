@@ -5,11 +5,12 @@ input field with auto-completion using a proxy model for advanced filtering.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import Qt, Signal, QStringListModel, QTimer, QEvent
+from PySide6.QtCore import QEvent, QStringListModel, Qt, QTimer, Signal
 from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget
 
 from core.helpers import DebugLogger
 from ui.tools import IngredientProxyModel
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class SmartLineEdit(QWidget):

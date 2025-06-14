@@ -5,15 +5,18 @@ input field with auto-completion, a dropdown list, and a clear entry button.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import Qt, Signal, QStringListModel, QSortFilterProxyModel, QTimer, QEvent 
+from PySide6.QtCore import (QEvent, QSortFilterProxyModel, QStringListModel,
+                            Qt, QTimer, Signal)
 from PySide6.QtGui import QFocusEvent, QKeyEvent
-from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget, QFrame
+from PySide6.QtWidgets import (QCompleter, QFrame, QHBoxLayout, QLineEdit,
+                               QWidget)
 
 from config import CUSTOM_COMBOBOX
 from core.helpers import DebugLogger
-from ui.iconkit import ToolButtonIcon, ButtonIcon
-from ui.tools import IngredientProxyModel
 from ui.components.widget_frame import WidgetFrame
+from ui.iconkit import ButtonIcon, ToolButtonIcon
+from ui.tools import IngredientProxyModel
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class SCBButton(ToolButtonIcon):

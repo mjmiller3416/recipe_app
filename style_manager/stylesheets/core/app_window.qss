@@ -1,0 +1,58 @@
+/* ─────── Global Defaults ─────── */
+* {
+  font-family: {FONT_FAMILY_DEFAULT}; 
+  font-size: {FONT_SIZE_NORMAL}; 
+  color: {FONT_COLOR_DEFAULT};
+}
+
+/* ─────── Application Window ─────── */
+#ApplicationWindow {
+    background-color: {BACKGROUND_DEFAULT};
+    border-bottom-left-radius: 10px; /* App Window Border Radius */
+    border-bottom-right-radius: 10px; /* App Window Border Radius */
+    border-bottom: 1px solid {BORDER_WINDOW};
+    border-left: 1px solid {BORDER_WINDOW};
+    border-right: 1px solid {BORDER_WINDOW};
+}
+
+/* ─────── Title Bar ─────── */
+#TitleBar {
+    background-color: {BACKGROUND_RAISED};
+    border-top-left-radius: 10px; /* App Window Border Radius */
+    border-top-right-radius: 10px; /* App Window Border Radius */
+    border-left: 1px solid {BORDER_WINDOW};
+    border-right: 1px solid {BORDER_WINDOW};
+    border-top: 1px solid {BORDER_WINDOW};
+    border-bottom: 1px solid {BORDER_WINDOW};
+}
+
+#TitleBar QLabel {
+    font-size: {FONT_SIZE_DEFAULT};
+    padding-left: 10px;
+    background-color: transparent;
+    font-weight: 600;
+}
+
+#TitleBar QToolButton {
+    background-color: transparent;
+
+}
+
+#TitleBar QToolButton:hover {
+    background-color: {STATE_PRIMARY_HOVER}; /* Button Hover Background Color */
+    border: none;
+    margin-bottom: 2px;
+    margin-top: 2px;
+}
+
+#TitleBar #BtnToggleSidebar:hover {
+    background-color: {STATE_PRIMARY_HOVER}; /* Toggle Sidebar Button Background Color */
+    border-top-left-radius: 8px; /* App Window Border Radius */
+    margin-left: 2px;
+}
+
+#TitleBar #BtnClose:hover{
+    background-color: {STATE_CLOSE}; /* Close Button Background Color */
+    border-top-right-radius: 8px; /* App Window Border Radius */
+    margin-right: 2px;
+}

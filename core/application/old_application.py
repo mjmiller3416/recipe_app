@@ -18,7 +18,6 @@ from services.shopping_service import ShoppingService
 from style_manager.theme_controller import ThemeController
 from ui.animations import SidebarAnimator
 from ui.components.inputs.search_bar import SearchBar
-from ui.components.title_bar import TitleBar
 from views.add_recipes import AddRecipes
 from views.dashboard import Dashboard
 from views.meal_planner import MealPlanner

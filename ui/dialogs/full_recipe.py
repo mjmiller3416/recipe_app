@@ -10,12 +10,12 @@ from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QSizePolicy,
 
 from config import RECIPE_DIALOG
 from core.helpers.ui_helpers import create_framed_layout
+from core.utilities.layout_debugger import LayoutDebugger
 from database.models.recipe import Recipe
 from ui.components.dialogs.dialog_window import DialogWindow
 from ui.components.images import RoundedImage
 from ui.components.separator import Separator
 from ui.widgets import CTIcon
-from core.utilities.layout_debugger import LayoutDebugger
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 

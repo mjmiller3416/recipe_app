@@ -5,6 +5,7 @@ operating system in a platform-specific way.
 """
 import sys
 
+
 def get_taskbar_rect():
     """
     Gets the bounding rectangle of the Windows taskbar.
@@ -18,6 +19,7 @@ def get_taskbar_rect():
 
     try:
         import win32gui
+
         # the taskbar window class name is "Shell_TrayWnd"
         taskbar_hwnd = win32gui.FindWindow("Shell_TrayWnd", None)
         if taskbar_hwnd:

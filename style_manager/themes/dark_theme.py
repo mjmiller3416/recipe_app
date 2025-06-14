@@ -16,27 +16,31 @@ ACCENT_SECONDARY_ACTIVE    = "#2D4547"
 
 # Surfaces / Backgrounds
 SURFACE_MAIN               = "#3A4048"
-SURFACE_RAISED             = "#2C313C"
+SURFACE_RAISED             = "#1b1d23"
 BACKGROUND_WIDGET          = "#272C36"
 BACKGROUND_INPUT           = "#B7BBC8"
 BACKGROUND_PANEL           = "#525861"
 
 # Borders
 BORDER_DEFAULT             = "#1B1D23" 
+BORDER_WINNDOW             = "#2F2F2F"
 BORDER_WIDGET              = "#555A60"
 BORDER_ERROR               = "#FF4F4F"
 DIVIDER                    = "#343b48"
 
 # Text
 TEXT_DEFAULT               = "#9DA1A5"
-TEXT_STRONG                = "#E1E1E3"
+TEXT_CONTRAST              = "#E1E1E3"
+TEXT_INVERSE               = "#2F2F2F"
 TEXT_DISABLED              = "#6A6D72"
-TEXT_INVERSE               = "#FFFFFF"
+TEXT_ERROR                 = "#973B3B"
+TEXT_SUCCESS               = "#3D7D4C"
+
 
 # Control States
 STATE_HOVER                = "#424A52"
 STATE_ACTIVE               = "#2E333D"
-FOCUS_RING                 = "#1E90FF"
+IMPORTANT                  = "#1E90FF"
 
 # Scrollbars
 SCROLLBAR_TRACK            = "#424951"
@@ -52,6 +56,56 @@ STATUS_INFO                = "#17A2B8"
 THEME = {
     "NAME": "Dark Theme",
 
+    # ── Backgrounds & Surfaces ──────────────────────────────────────────────────
+    "BACKGROUND": {
+        "DEFAULT":      SURFACE_MAIN,
+        "RAISED":       SURFACE_RAISED,
+        "WIDGET":       BACKGROUND_WIDGET,
+        "PANEL":        BACKGROUND_PANEL,
+        "INPUT":        BACKGROUND_INPUT,
+    },
+
+    # ── Control States ──────────────────────────────────────────────────────────
+    "STATE": {
+        "PRIMARY": {
+            "HOVER":     STATE_HOVER,
+            "ACTIVE":    STATE_ACTIVE,
+        },
+        "SECONDARY": {
+            "HOVER":     ACCENT_SECONDARY,
+            "ACTIVE":    SURFACE_MAIN,
+        },  
+        "CLOSE":         TEXT_ERROR,
+    },
+
+    # ── Typography ──────────────────────────────────────────────────────────────
+    "FONT": {
+        "FAMILY": {
+            "DEFAULT":  "Roboto",
+            "TITLE":    "Sakitu Baelah Clean",
+            "HEADER":   "Montserrat",
+            "BODY":     "Roboto",
+            "UI":       "Open Sans",
+        },
+
+        "SIZE": {
+            "XSMALL":   "12px",
+            "SMALL":    "14px",
+            "DEFAULT":  "16px",
+            "LARGE":    "18px",
+            "XLARGE":   "22px",
+        },
+
+        "COLOR": {
+            "DEFAULT":  TEXT_DEFAULT,
+            "CONTRAST": TEXT_CONTRAST,
+            "INVERSE":  TEXT_INVERSE,
+            "DISABLED": TEXT_DISABLED,
+            "ERROR":    TEXT_ERROR,
+            "SUCCESS":  TEXT_SUCCESS,
+        }
+    },
+
     # ── Accent Colors ──────────────────────────────────────────────────────────
     "ACCENT": {
         "PRIMARY":          ACCENT_PRIMARY,
@@ -62,44 +116,17 @@ THEME = {
         "SECONDARY_ACTIVE": ACCENT_SECONDARY_ACTIVE,
     },
 
-    # ── Backgrounds & Surfaces ──────────────────────────────────────────────────
-    "BACKGROUND": {
-        "DEFAULT":      SURFACE_MAIN,
-        "RAISED":       SURFACE_RAISED,
-        "WIDGET":       BACKGROUND_WIDGET,
-        "PANEL":        BACKGROUND_PANEL,
-        "INPUT":        BACKGROUND_INPUT,
-    },
-
-    # ── Text Colors ─────────────────────────────────────────────────────────────
-    "TEXT": {
-        "DEFAULT":      TEXT_DEFAULT,
-        "STRONG":       TEXT_STRONG,
-        "DISABLED":     TEXT_DISABLED,
-        "INVERSE":      TEXT_INVERSE,
-        "LINK":         ACCENT_PRIMARY,
-    },
-
     # ── Borders & Dividers ──────────────────────────────────────────────────────
     "BORDER": {
         "DEFAULT":      BORDER_DEFAULT,
+        "WINDOW":       BORDER_WINNDOW,
         "WIDGET":       BORDER_WIDGET,
         "ACTIVE":       ACCENT_PRIMARY,
         "ERROR":        BORDER_ERROR,
         "DIVIDER":      DIVIDER,
     },
 
-    # ── Control States ──────────────────────────────────────────────────────────
-    "STATE": {
-        "PRIMARY": {
-            "HOVER":        STATE_HOVER,
-            "ACTIVE":       STATE_ACTIVE,
-        },
-        "SECONDARY": {
-            "HOVER":        ACCENT_SECONDARY,
-            "ACTIVE":       SURFACE_MAIN,
-        },  
-    },
+    
 
     # ── Scrollbars ──────────────────────────────────────────────────────────────
     "SCROLLBAR": {
@@ -113,33 +140,6 @@ THEME = {
         "WARNING":      STATUS_WARNING,
         "ERROR":        STATUS_ERROR,
         "INFO":         STATUS_INFO,
-    },
-
-    # ── Typography ──────────────────────────────────────────────────────────────
-    
-    "FONT": {
-        "FAMILY": {
-            "DEFAULT":  "Montserrat",
-            "TITLE":    "Sakitu Baelah Clean",
-            "HEADER":   "Montserrat",
-            "BODY":     "Roboto",
-            "UI":       "Open Sans",
-        },
-
-        "SIZE": {
-            "XSMALL":   "12px",
-            "SMALL":    "14px",
-            "NORMAL":   "16px",
-            "LARGE":    "18px",
-            "XLARGE":   "22px",
-        },
-
-        "COLOR": {
-            "DEFAULT":   TEXT_DEFAULT,
-            "STRONG":    TEXT_STRONG,
-            "DISABLED":  TEXT_DISABLED,
-            "INVERSE":   TEXT_INVERSE,
-        }
     },
 
     # ── Spacing & Radius ────────────────────────────────────────────────────────
@@ -172,6 +172,12 @@ THEME = {
         "TOOLBUTTON": {
             "DEFAULT":  TEXT_DEFAULT,
             "HOVER":    ACCENT_PRIMARY,
+            "CHECKED":  ACCENT_PRIMARY,
+            "DISABLED": TEXT_DISABLED,
+        },
+        "TITLEBAR": {
+            "DEFAULT":  TEXT_DEFAULT,
+            "HOVER":    TEXT_CONTRAST,
             "CHECKED":  ACCENT_SECONDARY,
             "DISABLED": TEXT_DISABLED,
         },

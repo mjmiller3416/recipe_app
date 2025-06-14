@@ -4,14 +4,15 @@ config package
 Centralized configuration access for paths, constants, and user preferences.
 """
 
-from .config import (ADD_RECIPES, DEBUG_LAYOUT_BORDERS, EMPTY_STATE,
-                     FLOAT_PATTERN, FLOAT_VALIDATOR, ICON_COLOR, ICON_SIZE,
+from .config import (ADD_RECIPES, APPLICATION_WINDOW, CUSTOM_COMBOBOX,
+                     DEBUG_LAYOUT_BORDERS, EMPTY_STATE, FLOAT_PATTERN,
+                     FLOAT_VALIDATOR, ICON_COLOR, ICON_SIZE,
                      INGREDIENT_CATEGORIES, INGREDIENT_WIDGET, INT_PATTERN,
                      INT_VALIDATOR, MEAL_PLANNER, MEASUREMENT_UNITS,
                      MESSAGE_DIALOG, NAME_PATTERN, NAME_VALIDATOR,
                      NON_EMPTY_PATTERN, RECIPE_CARD, RECIPE_CATEGORIES,
-                     RECIPE_DIALOG, SEARCH, SIDEBAR, CUSTOM_COMBOBOX,
-                     SORT_OPTIONS, STYLES, APPLICATION_WINDOW, UPLOAD_RECIPE_IMAGE)
+                     RECIPE_DIALOG, SEARCH, SIDEBAR, SORT_OPTIONS, STYLES,
+                     UPLOAD_RECIPE_IMAGE)
 from .paths import AppPaths, QssPaths
 from .user_settings import UserSettings
 

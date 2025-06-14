@@ -4,12 +4,13 @@
 
 #Sidebar {
 background-color: {BACKGROUND_WIDGET}; /* Sidebar Background Color */
+border-bottom-left-radius: 8px;
 }
 
 #Sidebar QPushButton {
     background-color: transparent;
-    border-radius: 0px;
     padding: 10px 20px 10px 40px;
+    border: none;
 
    /* Font */
     font-family: {FONT_FAMILY_UI};

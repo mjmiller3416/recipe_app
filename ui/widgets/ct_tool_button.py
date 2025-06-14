@@ -11,8 +11,8 @@ from PySide6.QtWidgets import QToolButton
 
 from config import ICON_SIZE
 from style_manager import IconLoader
-from .utils import ButtonEffects
-from .utils import IconMixin
+
+from .utils import ButtonEffects, IconMixin
 
 # ── Constants ───────────────────────────────────────────────────────────────────  
 PADDING = 4  # Padding around the icon

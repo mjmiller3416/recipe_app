@@ -1,10 +1,12 @@
 import sys
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QGridLayout, QLabel
-from PySide6.QtCore import Slot, Qt
 
+from PySide6.QtCore import Qt, Slot
+from PySide6.QtWidgets import (QApplication, QGridLayout, QLabel, QVBoxLayout,
+                               QWidget)
+
+from core.helpers import DebugLogger
 # Assuming the script is run from a location where this import is valid.
 from ui.components.inputs import SmartLineEdit
-from core.helpers import DebugLogger
 
 
 class SmartLineEditDemo(QWidget):

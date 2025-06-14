@@ -7,18 +7,36 @@ Sidebar class for managing the sidebar of the application.
 from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtWidgets import QSizePolicy, QSpacerItem, QVBoxLayout, QWidget
 
-from config import ICON_COLOR, ICON_SIZE, SIDEBAR
-from ui.iconkit import ButtonIcon, Icon
+from config import SIDEBAR
+from ui.widgets import CTButton, CTIcon
 
+# ── Constants ───────────────────────────────────────────────────────────────────
+SETTINGS = SIDEBAR["SETTINGS"]
+ICONS = SIDEBAR["ICONS"]
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class Sidebar(QWidget):
-    """
-    Sidebar widget for the application.
+    """Sidebar widget for the application.
 
     Contains the application logo and a vertical stack of navigation buttons,
     including dashboard, meal planning, recipe viewing, shopping list,
     settings, and exit controls.
+
+    Attributes:
+        verticalLayout (QVBoxLayout): The main layout for the sidebar.
+        logo_container (QWidget): Container for the application logo.
+        logo_layout (QVBoxLayout): Layout for the logo container.
+        lbl_logo (CTIcon): The application logo icon.
+        btn_dashboard (CTButton): Button for navigating to the dashboard.
+        btn_meal_planner (CTButton): Button for navigating to the meal planner.
+        btn_view_recipes (CTButton): Button for navigating to view recipes.
+        btn_shopping_list (CTButton): Button for navigating to the shopping list.
+        btn_add_recipes (CTButton): Button for navigating to add recipes.
+        btn_settings (CTButton): Button for accessing application settings.
+        btn_exit (CTButton): Button for exiting the application.
+
+    Signals:
+        close_app: Emitted when the exit button is clicked.
     """
 
     # ── Signals ─────────────────────────────────────────────────────────────────────
@@ -26,6 +44,11 @@ class Sidebar(QWidget):
 
 
     def __init__(self, parent=None):
+        """Initializes the Sidebar.
+
+        Args:
+            parent (QWidget, optional): The parent widget. Defaults to None.
+        """
         super().__init__(parent)
         # ── Attributes ──
         self.setObjectName("Sidebar")
@@ -33,106 +56,91 @@ class Sidebar(QWidget):
         self.setMinimumWidth(0)
 
         # ── Main Layout ──
-        self.verticalLayout = QVBoxLayout(self)
-        self.verticalLayout.setContentsMargins(0, 18, 0, 18) 
-        self.verticalLayout.setSpacing(1)  # space between buttons
+        self.mainLayout = QVBoxLayout(self)
+        self.mainLayout.setContentsMargins(0, 18, 0, 18) 
+        self.mainLayout.setSpacing(1)
 
-        # ── Logo Container ──
-        self.logo_container = QWidget()
-        self.logo_layout = QVBoxLayout(self.logo_container)
-        self.logo_layout.setContentsMargins(18, 0, 18, 0)
-        self.logo_layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-
-        # ── Logo Label ──
-        self.lbl_logo = Icon(
-            file_path = SIDEBAR["LOGO"], 
-            size = SIDEBAR["LOGO_SIZE"],
-            variant   = ICON_COLOR,
+        # ── Logo ──
+        self.logo = CTIcon(
+            file_path = SETTINGS["LOGO"]["PATH"], 
+            size      = SETTINGS["LOGO"]["SIZE"],
+            variant   = SETTINGS["LOGO"]["STATIC"],
         )
-
-        self.logo_layout.addWidget(self.lbl_logo)
-        self.verticalLayout.addWidget(self.logo_container)
-        self.logo_container.setFixedWidth(215)  # set fixed width for the logo container
+        self.mainLayout.addWidget(self.logo, alignment=Qt.AlignCenter)
 
         # top spacer
-        self.verticalLayout.addItem(QSpacerItem(212, 40, QSizePolicy.Minimum, QSizePolicy.Fixed))
-
+        self.mainLayout.addItem(QSpacerItem(212, 40, QSizePolicy.Minimum, QSizePolicy.Fixed))
+        
         # ── Navigation Buttons ──
-        self.btn_dashboard = ButtonIcon(
-            file_path      = SIDEBAR["ICON_DASHBOARD"],
-            icon_size      = ICON_SIZE,
+        self.btn_dashboard = CTButton(
+            file_path      = ICONS["DASHBOARD"]["PATH"],
+            icon_size      = ICONS["DASHBOARD"]["SIZE"],
+            variant        = ICONS["DASHBOARD"]["DYNAMIC"],
             label          = "Dashboard",
-            variant        = SIDEBAR["DYNAMIC"],
         )
-        self.btn_dashboard.setFixedHeight(55)  # set fixed height for the button
-        self.verticalLayout.addWidget(self.btn_dashboard)
+        self.mainLayout.addWidget(self.btn_dashboard)
 
-        self.btn_meal_planner = ButtonIcon( # Meal Planner button
-            file_path         = SIDEBAR["ICON_MEAL_PLANNER"],
-            icon_size         = ICON_SIZE,
+        self.btn_meal_planner = CTButton( # Meal Planner button
+            file_path         = ICONS["MEAL_PLANNER"]["PATH"],
+            icon_size         = ICONS["MEAL_PLANNER"]["SIZE"],
+            variant           = ICONS["MEAL_PLANNER"]["DYNAMIC"],
             label             = "Meal Planner",
-            variant           = SIDEBAR["DYNAMIC"],
         )
-        self.btn_meal_planner.setFixedHeight(55)  # set fixed height for the button
-        self.verticalLayout.addWidget(self.btn_meal_planner)
+        self.mainLayout.addWidget(self.btn_meal_planner)
 
-        self.btn_view_recipes = ButtonIcon( # View Recipes button
-            file_path         = SIDEBAR["ICON_VIEW_RECIPES"],
-            icon_size         = ICON_SIZE,
+        self.btn_view_recipes = CTButton( # View Recipes button
+            file_path         = ICONS["VIEW_RECIPES"]["PATH"],
+            icon_size         = ICONS["VIEW_RECIPES"]["SIZE"],
+            variant           = ICONS["VIEW_RECIPES"]["DYNAMIC"],
             label             = "View Recipes",
-            variant           = SIDEBAR["DYNAMIC"],
         )
-        self.btn_view_recipes.setFixedHeight(55)  # set fixed height for the button
-        self.verticalLayout.addWidget(self.btn_view_recipes)
+        self.mainLayout.addWidget(self.btn_view_recipes)
 
-        self.btn_shopping_list = ButtonIcon( # Shopping List button
-            file_path          = SIDEBAR["ICON_SHOPPING_LIST"],
-            icon_size          = ICON_SIZE,
+        self.btn_shopping_list = CTButton( # Shopping List button
+            file_path          = ICONS["SHOPPING_LIST"]["PATH"],
+            icon_size          = ICONS["SHOPPING_LIST"]["SIZE"],
+            variant            = ICONS["SHOPPING_LIST"]["DYNAMIC"],
             label              = "Shopping List",
-            variant            = SIDEBAR["DYNAMIC"],
         )
-        self.btn_shopping_list.setFixedHeight(55)  # set fixed height for the button
-        self.verticalLayout.addWidget(self.btn_shopping_list)
+        self.mainLayout.addWidget(self.btn_shopping_list)
 
-        self.btn_add_recipes = ButtonIcon( # Add Recipes button
-            file_path        = SIDEBAR["ICON_ADD_RECIPES"],
-            icon_size        = ICON_SIZE,
+        self.btn_add_recipes = CTButton( # Add Recipes button
+            file_path        = ICONS["ADD_RECIPES"]["PATH"],
+            icon_size        = ICONS["ADD_RECIPES"]["SIZE"],
+            variant          = ICONS["ADD_RECIPES"]["DYNAMIC"],
             label            = "Add Recipes",
-            variant          = SIDEBAR["DYNAMIC"],
         )
-        self.btn_add_recipes.setFixedHeight(55)  # set fixed height for the button
-        self.verticalLayout.addWidget(self.btn_add_recipes)
+        self.mainLayout.addWidget(self.btn_add_recipes)
 
         # bottom spacer
-        self.verticalLayout.addItem(QSpacerItem(212, 39, QSizePolicy.Minimum, QSizePolicy.Expanding))
+        self.mainLayout.addItem(QSpacerItem(212, 39, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
         # ── Settings & Exit Buttons ──
-        self.btn_settings = ButtonIcon( # Settings button
-            file_path     = SIDEBAR["ICON_SETTINGS"],
-            icon_size     = ICON_SIZE,
+        self.btn_settings = CTButton( # Settings button
+            file_path     = ICONS["SETTINGS"]["PATH"],
+            icon_size     = ICONS["SETTINGS"]["SIZE"],
+            variant       = ICONS["SETTINGS"]["DYNAMIC"],
             label         = "Settings",
-            variant       = SIDEBAR["DYNAMIC"],
         )
-        self.btn_settings.setFixedHeight(55)  # set fixed height for the button
-        self.verticalLayout.addWidget(self.btn_settings)
+        self.mainLayout.addWidget(self.btn_settings)
 
-        self.btn_exit = ButtonIcon( # Exit button
-            file_path = SIDEBAR["ICON_EXIT"],
-            icon_size = ICON_SIZE,
+        self.btn_exit = CTButton( # Exit button
+            file_path = ICONS["EXIT"]["PATH"],
+            icon_size = ICONS["EXIT"]["SIZE"],
+            variant   = ICONS["EXIT"]["DYNAMIC"],
             label     = "Exit",
-            variant   = SIDEBAR["DYNAMIC"],
         )
-        self.btn_exit.setFixedHeight(55)  # set fixed height for the button
+        self.btn_exit.setObjectName("ExitButton")
         self.btn_exit.clicked.connect(self.close_app.emit) # connect exit button to close_app signal
-        self.verticalLayout.addWidget(self.btn_exit)
+        self.mainLayout.addWidget(self.btn_exit)
 
     @property
     def buttons(self):
-        """
-        Exposes all sidebar buttons in a dictionary.
+        """Provides access to all sidebar buttons.
 
         Returns:
-            dict: A mapping of sidebar button names to their corresponding QPushButton objects.
+            dict[str, CTButton]: A dictionary mapping button names (e.g., "btn_dashboard")
+                to their corresponding CTButton instances.
         """
         return {
             "btn_dashboard": self.btn_dashboard,
