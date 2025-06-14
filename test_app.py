@@ -10,7 +10,7 @@ from ui.animations import SidebarAnimator
 
 
 
-class TestApplicationWindow: fesdfASfVWRSfGCEsdzfCEWSdFVEwsdf
+class TestApplicationWindow:
     def __init__(self):
         # ── Initialize Main Window ──
         self.app = QApplication(sys.argv)
