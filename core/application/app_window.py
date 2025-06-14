@@ -315,31 +315,40 @@ class ApplicationWindow(QDialog):
         """
         super().__init__()
         # ── Properties ──
+        self.setObjectName("ApplicationWindow")
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Dialog)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setMinimumSize(400, 300)
         self.start_geometry = self.geometry()
-        central_layout = QVBoxLayout(self) # for title bar + body
-        central_layout.setContentsMargins(0, 0, 0, 0)
-        central_layout.setSpacing(0)
+        self.central_layout = QVBoxLayout(self)
+        self.central_layout.setContentsMargins(0, 0, 0, 0)
+        self.central_layout.setSpacing(0)
 
         # ── Title Bar ──
         self.animator = WindowAnimator(self)
         self.title_bar = TitleBar(self)
         self._is_maximized = False
-        central_layout.addWidget(self.title_bar)
+        self.central_layout.addWidget(self.title_bar)
         self.title_bar.close_clicked.connect(self.close)
         self.title_bar.minimize_clicked.connect(self.animator.animate_minimize)
         self.title_bar.maximize_clicked.connect(self.animator.animate_toggle_maximize)
         self.title_bar.sidebar_toggled.connect(self.sidebar_toggle_requested.emit)
 
-        # ── Main Content Area ──
-        self.body = QWidget(self)
-        self.body.setObjectName("ApplicationWindow")
-        self.content_layout = QVBoxLayout(self.body)
+        # ── Window Body ──
+        self.window_body = QWidget(self)
+        self.window_body.setObjectName("ApplicationWindow")
+        self.body_layout = QHBoxLayout(self.window_body)
+        self.body_layout.setContentsMargins(0, 0, 0, 0)
+        self.body_layout.setSpacing(0)
+
+        # ── Content Area ──
+        self.content_area = QWidget()
+        self.content_area.setObjectName("ContentArea")
+        self.content_layout = QVBoxLayout(self.content_area)
         self.content_layout.setContentsMargins(1, 0, 0, 1)
         self.content_layout.setSpacing(8)
-        central_layout.addWidget(self.body)
+        self.body_layout.addWidget(self.content_area)
+        self.central_layout.addWidget(self.window_body)
 
         # ── Create Grips ──
         self.grips = {}        
