@@ -17,6 +17,7 @@ class AppPaths:
     CONFIG_DIR = ROOT_DIR / "config"
     ASSETS_DIR = ROOT_DIR / "assets"
     DATA_DIR = ROOT_DIR / "data"
+    USER_PROFILE_DIR = DATA_DIR / "user_profile"
     TL_DIR = ROOT_DIR / "style_manager"
 
     # ── Asset Directories ───────────────────────────────────────────────────────

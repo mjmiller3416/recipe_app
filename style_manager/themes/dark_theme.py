@@ -22,7 +22,7 @@ BACKGROUND_INPUT           = "#B7BBC8"
 BACKGROUND_PANEL           = "#525861"
 
 # Borders
-BORDER_DEFAULT             = "#1B1D23" 
+BORDER_DEFAULT             = "#231B1B" 
 BORDER_WINNDOW             = "#2F2F2F"
 BORDER_WIDGET              = "#555A60"
 BORDER_ERROR               = "#FF4F4F"
@@ -55,6 +55,8 @@ STATUS_INFO                = "#17A2B8"
 # ── Theme Dictionary ───────────────────────────────────────────────────────────
 THEME = {
     "NAME": "Dark Theme",
+    "WINDOW_RADIUS": "10px",
+    "CORNER_WIDGET_RADIUS": "9px",
 
     # ── Backgrounds & Surfaces ──────────────────────────────────────────────────
     "BACKGROUND": {
@@ -91,9 +93,9 @@ THEME = {
         "SIZE": {
             "XSMALL":   "12px",
             "SMALL":    "14px",
-            "DEFAULT":  "16px",
-            "LARGE":    "18px",
-            "XLARGE":   "22px",
+            "DEFAULT":  "22px",
+            "LARGE":    "24px",
+            "XLARGE":   "26px",
         },
 
         "COLOR": {

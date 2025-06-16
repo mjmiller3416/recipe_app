@@ -13,7 +13,7 @@ from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget
 
 from config import CUSTOM_COMBOBOX, STYLES
 from core.helpers import DebugLogger
-from ui.iconkit import ToolButtonIcon
+from ui.widgets import CTButton
 
 
 # ── Class Definition: CustomComboBox ─────────────────────────────────────────────
@@ -58,7 +58,7 @@ class CustomComboBox(QWidget):
         self.line_edit.setReadOnly(True)
 
         # ── List Button ──
-        self.cb_btn = ToolButtonIcon(
+        self.cb_btn = CTButton(
             file_path = CUSTOM_COMBOBOX["ICON_ARROW"]["FILE_PATH"],
             icon_size = CUSTOM_COMBOBOX["ICON_ARROW"]["ICON_SIZE"],
             variant   = CUSTOM_COMBOBOX["ICON_ARROW"]["DYNAMIC"],

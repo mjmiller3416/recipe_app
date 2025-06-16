@@ -4,7 +4,15 @@
 
 #Sidebar {
 background-color: {BACKGROUND_WIDGET}; /* Sidebar Background Color */
-border-bottom-left-radius: 8px;
+border-bottom-left-radius: {CORNER_WIDGET_RADIUS}; /* App Window Border Radius */
+}
+
+#Sidebar #UsernameLabel {
+    font-family: {FONT_FAMILY_UI};
+    font-size: {FONT_SIZE_LARGE};
+    font-weight: 600;
+    color: {FONT_COLOR_HIGHLIGHT};
+    padding-top: 5px;
 }
 
 #Sidebar QPushButton {
@@ -26,6 +34,8 @@ border-bottom-left-radius: 8px;
     background-color: {STATE_SECONDARY_ACTIVE};
 }
 
-#Sidebar #logo {
-    background-color: transparent;
+#Sidebar #AvatarImage {
+    qproperty-borderWidth: 6;
+    qproperty-borderColor: {ACCENT_PRIMARY};
 }
+

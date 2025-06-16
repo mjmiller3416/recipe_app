@@ -14,14 +14,14 @@ from its edges and corners.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QEvent, QPoint, QRect, Qt, Signal
+from PySide6.QtCore import QEvent, QPoint, QRect, Qt, Signal, QPropertyAnimation
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import (QDialog, QHBoxLayout, QLabel, QSizeGrip,
                                QVBoxLayout, QWidget)
 
 from config import APPLICATION_WINDOW
 from ui.animations.window_animator import WindowAnimator
-from ui.widgets import CTToolButton
+from ui.widgets import CTToolButton, CTIcon
 from ui.widgets.utils import ButtonEffects
 
 # ── Constants ───────────────────────────────────────────────────────────────────
@@ -66,12 +66,19 @@ class TitleBar(QWidget):
         super().__init__(parent)
         self.setObjectName("TitleBar")
         self.setAttribute(Qt.WA_StyledBackground)
-        self.setFixedHeight(38)
+        self.setFixedHeight(60)
 
         self.old_pos = None  # initialize old position for dragging
 
         # ── Title Label ──
-        self.lbl_title = QLabel(SETTINGS["APP_NAME"], self)
+        self.logo = CTIcon(
+            file_path = ICONS["LOGO"]["PATH"],
+            icon_size = ICONS["LOGO"]["SIZE"],
+            variant   = ICONS["LOGO"]["STATIC"],
+        )
+        self.logo.setFixedSize(32,32)
+        self.logo.setObjectName("AppLogo")
+        self.title = QLabel(SETTINGS["APP_NAME"])
 
         # ── Sidebar Toggle Button ──
         self.btn_ico_toggle_sidebar = CTToolButton(
@@ -122,7 +129,8 @@ class TitleBar(QWidget):
         """Builds the layout for the title bar, arranging buttons and title."""
         title_bar_layout = QHBoxLayout(self)
         title_bar_layout.addWidget(self.btn_ico_toggle_sidebar)
-        title_bar_layout.addWidget(self.lbl_title)
+        title_bar_layout.addWidget(self.logo)
+        title_bar_layout.addWidget(self.title)
         title_bar_layout.addStretch(1)  # push buttons to the right
         title_bar_layout.addWidget(self.btn_ico_minimize)
         title_bar_layout.addWidget(self.btn_ico_maximize)
@@ -306,7 +314,7 @@ class ApplicationWindow(QDialog):
     # ── Signals ─────────────────────────────────────────────────────────────────────
     sidebar_toggle_requested = Signal()
 
-    def __init__(self, width: int = 600, height: int = 400):
+    def __init__(self, width: int = 1330, height: int = 800):
         """Initializes the ApplicationWindow.
 
         Args:
@@ -315,10 +323,10 @@ class ApplicationWindow(QDialog):
         """
         super().__init__()
         # ── Properties ──
-        self.setObjectName("ApplicationWindow")
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Dialog)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setMinimumSize(400, 300)
+        self.setObjectName("App")
         self.start_geometry = self.geometry()
         self.central_layout = QVBoxLayout(self)
         self.central_layout.setContentsMargins(0, 0, 0, 0)
@@ -338,14 +346,14 @@ class ApplicationWindow(QDialog):
         self.window_body = QWidget(self)
         self.window_body.setObjectName("ApplicationWindow")
         self.body_layout = QHBoxLayout(self.window_body)
-        self.body_layout.setContentsMargins(0, 0, 0, 0)
+        self.body_layout.setContentsMargins(1, 0, 1, 1)
         self.body_layout.setSpacing(0)
 
         # ── Content Area ──
         self.content_area = QWidget()
         self.content_area.setObjectName("ContentArea")
         self.content_layout = QVBoxLayout(self.content_area)
-        self.content_layout.setContentsMargins(1, 0, 0, 1)
+        self.content_layout.setContentsMargins(0, 0, 0, 0)
         self.content_layout.setSpacing(8)
         self.body_layout.addWidget(self.content_area)
         self.central_layout.addWidget(self.window_body)
@@ -387,6 +395,9 @@ class ApplicationWindow(QDialog):
         super().resizeEvent(event)
         grip_size = self.grips["top"].grip_size
         w, h = self.width(), self.height()
+
+        if self.animator.animation_group and self.animator.animation_group.state() == QPropertyAnimation.Running:
+            return
 
         self.grips["top"].setGeometry(grip_size, 0, w - 2 * grip_size, grip_size)
         self.grips["bottom"].setGeometry(grip_size, h - grip_size, w - 2 * grip_size, grip_size)

@@ -4,11 +4,11 @@ This module defines a custom search widget that includes a search icon, a text i
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QSize, Qt, Signal
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QGridLayout, QLineEdit, QSizePolicy
 
 from config import SEARCH
-from ui.iconkit import Icon, ToolButtonIcon
+from ui.widgets import CTToolButton, CTIcon
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -41,7 +41,7 @@ class SearchBar(QFrame):
         self.layout.setSpacing(5)
 
         # ── Search Icon ──
-        self.ico_search = Icon(
+        self.ico_search = CTIcon(
             file_path=SEARCH["ICON_SEARCH"]["FILE_PATH"],
             size=SEARCH["ICON_SEARCH"]["ICON_SIZE"],
             variant=SEARCH["ICON_SEARCH"]["STATIC"],
@@ -58,7 +58,7 @@ class SearchBar(QFrame):
         self.layout.addWidget(self.le_search, 0, 1)
 
         # ── Clear Button ──
-        self.btn_ico_clear = ToolButtonIcon(
+        self.btn_ico_clear = CTToolButton(
             file_path = SEARCH["ICON_CLEAR"]["FILE_PATH"],
             icon_size = SEARCH["ICON_CLEAR"]["ICON_SIZE"],
             variant   = SEARCH["ICON_CLEAR"]["DYNAMIC"],

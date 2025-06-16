@@ -4,9 +4,10 @@ database, and handling command-line arguments for special modes like testing and
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-import sys
+import sys, os
 
 from PySide6.QtWidgets import QApplication
+os.environ["QT_FONT_DPI"] = "96"
 
 from core.application import Application
 from core.helpers import DebugLogger
@@ -41,8 +42,6 @@ class MealPlannerApp:
 
         # ── Setup Window ──
         self.main_window = Application()
-        self.main_window.setWindowTitle("MealGenie")
-        self.main_window.resize(1330, 800)
         self.main_window.show()
 
     def run(self):

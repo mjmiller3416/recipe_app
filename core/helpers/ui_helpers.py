@@ -8,14 +8,80 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QSizePolicy,
                                QVBoxLayout, QWidget)
 
+from typing import Union, Iterable
+from PySide6.QtWidgets import QWidget, QHBoxLayout
+from PySide6.QtCore import Qt
+
+
+from typing import Union, Iterable
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
+from PySide6.QtCore import Qt
+
+
+from typing import Union, Iterable
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
+from PySide6.QtCore import Qt
+
+
+def create_fixed_wrapper(
+    widgets: Union[QWidget, Iterable[QWidget]],
+    fixed_width: int,
+    alignment: Qt.Alignment = Qt.AlignCenter,
+    direction: str = "horizontal"
+) -> QWidget:
+    """
+    Wraps one or more widgets inside a QWidget with fixed width and layout.
+
+    Args:
+        widgets (QWidget or iterable of QWidget): Widget(s) to wrap.
+        fixed_width (int): Fixed width for the wrapper.
+        alignment (Qt.Alignment, optional): Alignment for each widget inside the layout.
+        direction (str, optional): 'horizontal' or 'vertical'. Defaults to 'horizontal'.
+
+    Returns:
+        QWidget: Wrapper widget with layout and given contents.
+    """
+    wrapper = QWidget()
+    wrapper.setFixedWidth(fixed_width)
+
+    LayoutClass = QVBoxLayout if direction == "vertical" else QHBoxLayout
+    layout = LayoutClass(wrapper)
+    layout.setContentsMargins(0, 0, 0, 0)
+
+    # Apply layout-wide alignment only if horizontal
+    if direction == "horizontal":
+        layout.setAlignment(alignment)
+
+    # Add each widget with its own alignment
+    if isinstance(widgets, QWidget):
+        layout.addWidget(widgets, alignment=alignment)
+    else:
+        for w in widgets:
+            layout.addWidget(w, alignment=alignment)
+
+    return wrapper
 
 def create_hbox_with_widgets(*widgets, parent=None):
+    """
+    Creates a QHBoxLayout and adds the given widgets to it.
+    
+    Args:
+        *widgets: Variable number of QWidget instances to add to the layout.
+        parent (QWidget, optional): Parent widget for the layout. Defaults to None.
+    """
     layout = QHBoxLayout(parent)
     for w in widgets:
         layout.addWidget(w)
     return layout
 
 def create_vbox_with_widgets(*widgets, parent=None):
+    """
+    Creates a QVBoxLayout and adds the given widgets to it.
+    
+    Args:
+        *widgets: Variable number of QWidget instances to add to the layout.
+        parent (QWidget, optional): Parent widget for the layout. Defaults to None.
+    """
     layout = QVBoxLayout(parent)
     for w in widgets:
         layout.addWidget(w)

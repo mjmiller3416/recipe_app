@@ -23,14 +23,14 @@ class CTIcon(QLabel):
     def __init__(
         self,
         file_path: Path,
-        size: QSize,
+        icon_size: QSize,
         variant: str = "default",
         parent=None
     ):
         super().__init__(parent)
 
         self.file_path = file_path
-        self.size = size
+        self.size = icon_size
         self.variant = variant
 
         self.setFixedSize(self.size)

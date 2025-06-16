@@ -7,9 +7,6 @@ Placeholder class for the Dashboard screen.
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
-from ui.iconkit import Icon
-
-
 # ── Class Definition ────────────────────────────────────────────────────────────
 class Dashboard(QWidget):
     """Placeholder class for the Dashboard screen."""

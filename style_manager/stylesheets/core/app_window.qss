@@ -8,8 +8,8 @@
 /* ─────── Application Window ─────── */
 #ApplicationWindow {
     background-color: {BACKGROUND_DEFAULT};
-    border-bottom-left-radius: 10px; /* App Window Border Radius */
-    border-bottom-right-radius: 10px; /* App Window Border Radius */
+    border-bottom-left-radius: {WINDOW_RADIUS}; /* App Window Border Radius */
+    border-bottom-right-radius: {WINDOW_RADIUS}; /* App Window Border Radius */
     border-bottom: 1px solid {BORDER_WINDOW};
     border-left: 1px solid {BORDER_WINDOW};
     border-right: 1px solid {BORDER_WINDOW};
@@ -18,23 +18,23 @@
 /* ─────── Title Bar ─────── */
 #TitleBar {
     background-color: {BACKGROUND_RAISED};
-    border-top-left-radius: 10px; /* App Window Border Radius */
-    border-top-right-radius: 10px; /* App Window Border Radius */
+    border-top-left-radius: {WINDOW_RADIUS}; /* App Window Border Radius */
+    border-top-right-radius: {WINDOW_RADIUS}; /* App Window Border Radius */
     border: 1px solid {BORDER_WINDOW};
 }
 
 #TitleBar QLabel {
-    font-size: {FONT_SIZE_DEFAULT};
-    padding-left: 10px;
+    font-size: {FONT_SIZE_LARGE};
     background-color: transparent;
     font-weight: 600;
 }
 
+#TitleBar #AppLogo {
+    margin-left: 2px;
+}
+
 #TitleBar QToolButton {
     background-color: transparent;
-    margin-top: 2px;
-    margin-bottom: 2px;
-
 }
 
 #TitleBar QToolButton:hover {
@@ -43,8 +43,8 @@
 }
 
 #TitleBar #BtnToggleSidebar {
-    margin-left: 2px;
-    border-top-left-radius: 8px;
+    margin-left: 1px;
+    border-top-left-radius: 8px; /* App Window Border Radius */
 }
 
 #TitleBar #BtnToggleSidebar:hover {
@@ -52,7 +52,7 @@
 }
 
 #TitleBar #BtnClose {
-    margin-right: 2px;
+    margin-right: 1px;
     border-top-right-radius: 8px; /* App Window Border Radius */
 }
 

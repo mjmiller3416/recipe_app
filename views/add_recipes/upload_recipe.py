@@ -18,9 +18,9 @@ from config.paths import AppPaths
 from core.helpers import DebugLogger
 from core.helpers.ui_helpers import make_overlay
 from ui.components.images import RoundedImage
-from ui.iconkit import ToolButtonIcon
+from ui.widgets import CTToolButton
 
-from .crop_dialog import RecipeImageCropDialog
+from ui.components.crop_dialog import CropDialog
 
 
 # Function to ensure a directory exists
@@ -69,7 +69,7 @@ class UploadRecipeImage(QWidget):
         self.upload_button_layout.setContentsMargins(0,0,0,0)
         self.upload_button_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.upload_button = ToolButtonIcon(
+        self.upload_button = CTToolButton(
             file_path   = UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["FILE_PATH"],
             icon_size   = UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["ICON_SIZE"],
             button_size = UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["BUTTON_SIZE"],
@@ -115,7 +115,7 @@ class UploadRecipeImage(QWidget):
 
     def _launch_crop_dialog(self, image_path: str):
         """Lauches the RecipeImageCropDialog with the selected image."""
-        crop_dialog = RecipeImageCropDialog(image_path, self)
+        crop_dialog = CropDialog(image_path, self)
         crop_dialog.crop_finalized.connect(self._handle_crop_saved)
         crop_dialog.select_new_image_requested.connect(self._handle_select_new_from_crop_dialog)
         

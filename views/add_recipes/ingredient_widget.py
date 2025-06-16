@@ -13,7 +13,7 @@ from config import (FLOAT_VALIDATOR, INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,
 from services.dtos.ingredient_dtos import IngredientSearchDTO
 from services.ingredient_service import IngredientService
 from ui.components.inputs import CustomComboBox, SmartLineEdit
-from ui.iconkit import ToolButtonIcon
+from ui.widgets import CTToolButton
 from ui.tools import clear_error_styles, dynamic_validation
 
 # ── Constants ───────────────────────────────────────────────────────────────────
@@ -70,7 +70,7 @@ class IngredientWidget(QWidget):
         )
         self.grid_layout.addWidget(self.scb_ingredient_category, 0, 3, 1, 1)
 
-        self.btn_ico_subtract = ToolButtonIcon(
+        self.btn_ico_subtract = CTToolButton(
             file_path = INGREDIENT_WIDGET["ICON_SUBTRACT"],
             icon_size = INGREDIENT_WIDGET["ICON_SIZE"],
             variant   = INGREDIENT_WIDGET["DYNAMIC"]
@@ -78,7 +78,7 @@ class IngredientWidget(QWidget):
         self.btn_ico_subtract.setFixedWidth(FIXED_HEIGHT) # square button
         self.grid_layout.addWidget(self.btn_ico_subtract, 0, 4, 1, 1)
 
-        self.btn_ico_add = ToolButtonIcon(
+        self.btn_ico_add = CTToolButton(
             file_path = INGREDIENT_WIDGET["ICON_ADD"],
             icon_size = INGREDIENT_WIDGET["ICON_SIZE"],
             variant   = INGREDIENT_WIDGET["DYNAMIC"]

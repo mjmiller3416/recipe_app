@@ -24,8 +24,7 @@ class CTButton(QPushButton, IconMixin):
         variant: str = "default",
         height: int = 55,
         label: str = "",
-        object_name: str = "",
-        checked: bool = False,
+        checkable: bool = True,
         hover_effects: bool = True,
         parent=None
     ):
@@ -44,13 +43,7 @@ class CTButton(QPushButton, IconMixin):
         """
         super().__init__(label, parent)
 
-        if object_name:
-            self.setObjectName(object_name)
-        elif not self.objectName():
-            self.setObjectName(Path(file_path).stem)
-
-        self.setCheckable(True)
-        self.setChecked(checked)
+        self.setCheckable(checkable)
         self.setFixedHeight(height)
 
         if hover_effects:

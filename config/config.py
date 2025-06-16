@@ -20,36 +20,41 @@ ICON_COLOR = THEME["ICON"]["DEFAULT"]
 APPLICATION_WINDOW = {
     "SETTINGS": {
         "APP_NAME":    "MealGenie",
-        "BTN_SIZE": QSize(38, 38),
+        "BTN_SIZE": QSize(58, 58),
         "BTN_STYLE": {
             "DYNAMIC": THEME["ICON_STYLES"]["TOOLBUTTON"],
         }
     },
 
     "ICONS": {
+        "LOGO": {
+            "PATH":    AppPaths.ICONS_DIR / "logo.svg",
+            "SIZE":    QSize(30, 30),
+            "STATIC":  THEME["ICON"]["ACCENT"],
+        },
         "MINIMIZE": {
             "PATH":   AppPaths.ICONS_DIR / "minimize.svg",
-            "SIZE":    QSize(12, 12),
+            "SIZE":    QSize(16, 16),
             "DYNAMIC": THEME["ICON_STYLES"]["TOOLBUTTON"],
         },
         "MAXIMIZE": {
             "PATH":    AppPaths.ICONS_DIR / "maximize.svg",
-            "SIZE":    QSize(12, 12),
+            "SIZE":    QSize(16, 16),
             "DYNAMIC": THEME["ICON_STYLES"]["TOOLBUTTON"],
         },
         "RESTORE":  {
             "PATH":    AppPaths.ICONS_DIR / "restore.svg",
-            "SIZE":    QSize(12, 12),
+            "SIZE":    QSize(16, 16),
             "DYNAMIC": THEME["ICON_STYLES"]["TOOLBUTTON"],
         },
         "CLOSE": {
             "PATH":    AppPaths.ICONS_DIR / "close.svg",
-            "SIZE":    QSize(12, 12),
+            "SIZE":    QSize(16, 16),
             "DYNAMIC": THEME["ICON_STYLES"]["TITLEBAR"],
         },
         "TOGGLE_SIDEBAR": {
             "PATH":    AppPaths.ICONS_DIR / "toggle_sidebar.svg",
-            "SIZE":    QSize(20, 20),
+            "SIZE":    QSize(24, 24),
             "DYNAMIC": THEME["ICON_STYLES"]["TOOLBUTTON"],
             },
     }
@@ -68,37 +73,37 @@ SIDEBAR = {
     "ICONS": {
         "DASHBOARD": {
             "PATH": AppPaths.ICONS_DIR / "dashboard.svg",
-            "SIZE": QSize(20, 20),
+            "SIZE": QSize(36, 36),
             "DYNAMIC": THEME["ICON_STYLES"]["NAV"]
         },
         "MEAL_PLANNER": {
             "PATH": AppPaths.ICONS_DIR / "meal_planner.svg",
-            "SIZE": QSize(20, 20),
+            "SIZE": QSize(36, 36),
             "DYNAMIC": THEME["ICON_STYLES"]["NAV"]
         },
         "VIEW_RECIPES":{
             "PATH": AppPaths.ICONS_DIR / "view_recipes.svg",
-            "SIZE": QSize(20, 20),
+            "SIZE": QSize(36, 36),
             "DYNAMIC": THEME["ICON_STYLES"]["NAV"]
         },
         "SHOPPING_LIST":{
             "PATH": AppPaths.ICONS_DIR / "shopping_list.svg",
-            "SIZE": QSize(20, 20),
+            "SIZE": QSize(36, 36),
             "DYNAMIC": THEME["ICON_STYLES"]["NAV"]
         },
         "ADD_RECIPES": {
             "PATH": AppPaths.ICONS_DIR / "add_recipes.svg",
-            "SIZE": QSize(20, 20),
+            "SIZE": QSize(36, 36),
             "DYNAMIC": THEME["ICON_STYLES"]["NAV"]
         },
         "SETTINGS": {
             "PATH": AppPaths.ICONS_DIR / "settings.svg",
-            "SIZE": QSize(20, 20),
+            "SIZE": QSize(36, 36),
             "DYNAMIC": THEME["ICON_STYLES"]["NAV"]
         },
         "EXIT": {
             "PATH": AppPaths.ICONS_DIR / "exit.svg",
-            "SIZE": QSize(20, 20),
+            "SIZE": QSize(36, 36),
             "DYNAMIC": THEME["ICON_STYLES"]["NAV"]
         },
     },

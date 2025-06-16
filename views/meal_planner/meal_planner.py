@@ -12,7 +12,7 @@ from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
 from config import MEAL_PLANNER
 from core.helpers import DebugLogger
 from services.planner_service import PlannerService
-from ui.iconkit import ThemedIcon
+from ui.widgets import CTIcon
 
 from .meal_widget import MealWidget
 
@@ -65,7 +65,7 @@ class MealPlanner(QWidget):
     def new_meal_tab(self):
         """Add the last "+" tab to create new custom meals."""
         new_meal_tab = QWidget()
-        icon_asset = ThemedIcon(
+        icon_asset = CTIcon(
             file_path = MEAL_PLANNER["ICON_ADD"],
             size      = MEAL_PLANNER["ICON_SIZE"],
             variant   = MEAL_PLANNER["STATIC"]

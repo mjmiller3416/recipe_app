@@ -8,8 +8,8 @@ This module defines the ViewRecipes class, which displays a list of recipes in a
 from PySide6.QtCore import QPoint, QRect, QSize, Qt, Signal
 from PySide6.QtWidgets import (QCheckBox, QHBoxLayout, QLayout, QScrollArea,
                                QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
-from recipe_card.constants import LayoutSize
-from recipe_card.recipe_card import RecipeCard
+from ui.components.recipe_card.constants import LayoutSize
+from ui.components.recipe_card.recipe_card import RecipeCard
 
 from config import RECIPE_CATEGORIES, SORT_OPTIONS
 from database.models.recipe import Recipe
@@ -130,8 +130,8 @@ class ViewRecipes(QWidget):
                 item.widget().deleteLater()
 
     def load_recipes(self) -> None:
-        from recipe_card.constants import LayoutSize
-        from recipe_card.recipe_card import RecipeViewer
+        from ui.components.recipe_card.constants import LayoutSize
+        from ui.components.recipe_card import RecipeCard
 
         recipes = Recipe.all()  # fetch all recipes from the database
         if not recipes:
@@ -140,7 +140,7 @@ class ViewRecipes(QWidget):
         self.clear_recipe_display()
 
         for recipe in recipes:
-            slot = RecipeViewer(LayoutSize.MEDIUM, parent=self.scroll_container)
+            slot = RecipeCard(LayoutSize.MEDIUM, parent=self.scroll_container)
             slot.set_recipe(recipe)
 
             if self.meal_selection:

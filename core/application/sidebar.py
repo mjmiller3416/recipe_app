@@ -5,10 +5,12 @@ Sidebar class for managing the sidebar of the application.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import QSizePolicy, QSpacerItem, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QSizePolicy, QSpacerItem, QVBoxLayout, QWidget, QLabel
 
 from config import SIDEBAR
+from core.helpers.ui_helpers import create_fixed_wrapper
 from ui.widgets import CTButton, CTIcon
+from ui.components import AvatarLoader
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 SETTINGS = SIDEBAR["SETTINGS"]
@@ -23,10 +25,8 @@ class Sidebar(QWidget):
     settings, and exit controls.
 
     Attributes:
-        verticalLayout (QVBoxLayout): The main layout for the sidebar.
-        logo_container (QWidget): Container for the application logo.
-        logo_layout (QVBoxLayout): Layout for the logo container.
-        lbl_logo (CTIcon): The application logo icon.
+        mainLayout: (QVBoxLayout): The main layout for the sidebar.
+        logo (CTIcon): The application logo icon.
         btn_dashboard (CTButton): Button for navigating to the dashboard.
         btn_meal_planner (CTButton): Button for navigating to the meal planner.
         btn_view_recipes (CTButton): Button for navigating to view recipes.
@@ -57,82 +57,40 @@ class Sidebar(QWidget):
 
         # ── Main Layout ──
         self.mainLayout = QVBoxLayout(self)
-        self.mainLayout.setContentsMargins(0, 18, 0, 18) 
+        self.mainLayout.setContentsMargins(0, 42, 0, 18) 
         self.mainLayout.setSpacing(1)
 
         # ── Logo ──
-        self.logo = CTIcon(
-            file_path = SETTINGS["LOGO"]["PATH"], 
-            size      = SETTINGS["LOGO"]["SIZE"],
-            variant   = SETTINGS["LOGO"]["STATIC"],
+        self.avatar = AvatarLoader(size=QSize(240, 240))
+        self.username = QLabel("@username")
+        self.username.setObjectName("UsernameLabel")
+        self.avatar_wrapper = create_fixed_wrapper(
+            widgets = [self.avatar, self.username],
+            fixed_width = 300,
+            alignment = Qt.AlignHCenter,  # Centers in vertical stack
+            direction = "vertical"
         )
-        self.mainLayout.addWidget(self.logo, alignment=Qt.AlignCenter)
+        self.mainLayout.addWidget(self.avatar_wrapper)
 
         # top spacer
         self.mainLayout.addItem(QSpacerItem(212, 40, QSizePolicy.Minimum, QSizePolicy.Fixed))
-        
+
         # ── Navigation Buttons ──
-        self.btn_dashboard = CTButton(
-            file_path      = ICONS["DASHBOARD"]["PATH"],
-            icon_size      = ICONS["DASHBOARD"]["SIZE"],
-            variant        = ICONS["DASHBOARD"]["DYNAMIC"],
-            label          = "Dashboard",
-        )
-        self.mainLayout.addWidget(self.btn_dashboard)
-
-        self.btn_meal_planner = CTButton( # Meal Planner button
-            file_path         = ICONS["MEAL_PLANNER"]["PATH"],
-            icon_size         = ICONS["MEAL_PLANNER"]["SIZE"],
-            variant           = ICONS["MEAL_PLANNER"]["DYNAMIC"],
-            label             = "Meal Planner",
-        )
-        self.mainLayout.addWidget(self.btn_meal_planner)
-
-        self.btn_view_recipes = CTButton( # View Recipes button
-            file_path         = ICONS["VIEW_RECIPES"]["PATH"],
-            icon_size         = ICONS["VIEW_RECIPES"]["SIZE"],
-            variant           = ICONS["VIEW_RECIPES"]["DYNAMIC"],
-            label             = "View Recipes",
-        )
-        self.mainLayout.addWidget(self.btn_view_recipes)
-
-        self.btn_shopping_list = CTButton( # Shopping List button
-            file_path          = ICONS["SHOPPING_LIST"]["PATH"],
-            icon_size          = ICONS["SHOPPING_LIST"]["SIZE"],
-            variant            = ICONS["SHOPPING_LIST"]["DYNAMIC"],
-            label              = "Shopping List",
-        )
-        self.mainLayout.addWidget(self.btn_shopping_list)
-
-        self.btn_add_recipes = CTButton( # Add Recipes button
-            file_path        = ICONS["ADD_RECIPES"]["PATH"],
-            icon_size        = ICONS["ADD_RECIPES"]["SIZE"],
-            variant          = ICONS["ADD_RECIPES"]["DYNAMIC"],
-            label            = "Add Recipes",
-        )
-        self.mainLayout.addWidget(self.btn_add_recipes)
+        self.btn_dashboard = self._create_nav_button("Dashboard")
+        self.btn_meal_planner = self._create_nav_button("Meal Planner")
+        self.btn_view_recipes = self._create_nav_button("View Recipes")
+        self.btn_shopping_list = self._create_nav_button("Shopping List")
+        self.btn_add_recipes = self._create_nav_button("Add Recipes")
 
         # bottom spacer
-        self.mainLayout.addItem(QSpacerItem(212, 39, QSizePolicy.Minimum, QSizePolicy.Expanding))
+        self.mainLayout.addItem(QSpacerItem(212, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
         # ── Settings & Exit Buttons ──
-        self.btn_settings = CTButton( # Settings button
-            file_path     = ICONS["SETTINGS"]["PATH"],
-            icon_size     = ICONS["SETTINGS"]["SIZE"],
-            variant       = ICONS["SETTINGS"]["DYNAMIC"],
-            label         = "Settings",
-        )
-        self.mainLayout.addWidget(self.btn_settings)
+        self.btn_settings = self._create_nav_button("Settings", is_checkable=False)
+        self.btn_exit = self._create_nav_button("Exit", is_checkable=False)
 
-        self.btn_exit = CTButton( # Exit button
-            file_path = ICONS["EXIT"]["PATH"],
-            icon_size = ICONS["EXIT"]["SIZE"],
-            variant   = ICONS["EXIT"]["DYNAMIC"],
-            label     = "Exit",
-        )
-        self.btn_exit.setObjectName("ExitButton")
+        # connect exit button to close_app signal
         self.btn_exit.clicked.connect(self.close_app.emit) # connect exit button to close_app signal
-        self.mainLayout.addWidget(self.btn_exit)
 
     @property
     def buttons(self):
@@ -151,3 +109,31 @@ class Sidebar(QWidget):
             "btn_settings": self.btn_settings,
             "btn_exit": self.btn_exit,
         }
+    
+    def _create_nav_button(self, label: str, is_checkable: bool = True) -> CTButton:
+        """Helper method to create a navigation button. 
+
+        Must have a label that matches an entry in the ICONS config.
+
+        Args:
+            name (str): The name of the button (used for object naming).
+            label (str): The text label for the button.
+
+        Returns:
+            CTButton: The created navigation button.
+        """
+
+        icon_info = ICONS[label.replace(" ", "_").upper()] # get icon info from config
+        object_name = f"{label.replace(' ', '_')}Button" # e.g., "Dashboard" -> "DashboardButton"
+
+        button = CTButton(
+            file_path = icon_info["PATH"],
+            icon_size = icon_info["SIZE"],
+            variant   = icon_info["DYNAMIC"],
+            label     = label,
+            checkable = is_checkable,
+        )
+        button.setObjectName(object_name)
+        button.setFixedHeight(82)
+        self.mainLayout.addWidget(button)
+        return button
