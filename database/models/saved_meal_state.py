@@ -6,7 +6,7 @@ SavedMealState model for storing the state of saved meals in the database.
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from typing import List
 
-from core.helpers import DebugLogger
+from core.utils import DebugLogger
 from database.base_model import ModelBase
 
 

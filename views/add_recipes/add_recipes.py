@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (QGridLayout, QHBoxLayout, QLabel, QPushButton,
 from config import STYLES, UPLOAD_RECIPE_IMAGE
 from config.config import (INT_VALIDATOR, MEAL_CATEGORIES, NAME_VALIDATOR,
                            RECIPE_CATEGORIES)
-from core.helpers import DebugLogger
+from core.utils import DebugLogger
 from services.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
 from services.ingredient_service import IngredientService
 from services.recipe_service import RecipeService

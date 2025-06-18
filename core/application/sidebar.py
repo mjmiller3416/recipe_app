@@ -5,18 +5,25 @@ Provides user avatar, navigation buttons, and settings/exit controls.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import QSizePolicy, QSpacerItem, QVBoxLayout, QWidget, QLabel, QButtonGroup
+from PySide6.QtCore import QSize, Qt
+from PySide6.QtWidgets import (
+    QSizePolicy, QSpacerItem, QVBoxLayout, 
+    QWidget, QButtonGroup, QLabel
+)
 
 from config import SIDEBAR
 from core.controllers import AnimationController
+from core.utils import DebugLogger
 from core.helpers.ui_helpers import create_fixed_wrapper
-from ui.widgets import NavButton
+from ui.animations import SidebarAnimator
 from ui.components import AvatarLoader
+from ui.widgets import NavButton
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 ICONS = SIDEBAR["ICONS"]
-SETTINGS = SIDEBAR["SETTINGS"]
+START = SIDEBAR["SETTINGS"]["EXPANDED_WIDTH"]
+END = SIDEBAR["SETTINGS"]["COLLAPSED_WIDTH"]
+DURATION = SIDEBAR["SETTINGS"]["DURATION"]
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class Sidebar(QWidget):
@@ -38,8 +45,6 @@ class Sidebar(QWidget):
         btn_settings (NavButton): button for accessing settings.
         btn_exit (NavButton): button for exiting the application.
 
-    Signals:
-        close_app: emitted when the exit button is clicked.
     """
 
     def __init__(self, parent=None):
@@ -52,6 +57,8 @@ class Sidebar(QWidget):
         # properties
         self.setObjectName("Sidebar")
         self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setMinimumWidth(0)
+        self.setMaximumWidth(START)  # start expanded
         self._is_expanded = True
 
         # main layout setup
@@ -59,25 +66,12 @@ class Sidebar(QWidget):
         self.mainLayout.setContentsMargins(0, 0, 0, 0)
         self.mainLayout.setSpacing(0)
 
-        # avatar section
-        self.avatar = AvatarLoader(size=QSize(240, 240))
-        self.username = QLabel("@username")  # placeholder for username, set dynamically
-        self.username.setObjectName("UsernameLabel")
-        self.username.setAlignment(Qt.AlignCenter)
-        self.avatar_wrapper = create_fixed_wrapper(
-            widgets     = [self.avatar, self.username],
-            fixed_width = 360,
-            alignment   = Qt.AlignHCenter,
-            direction   = "vertical",
-            margins= (0, 40, 0, 30)
-        )
-        self.mainLayout.addWidget(self.avatar_wrapper)
-
-        # button group for exclusive selection
-        self.nav_button_group = QButtonGroup(self)
-        self.nav_button_group.setExclusive(True)
+        # avatar and username
+        self._create_avatar()
 
         # navigation buttons
+        self.nav_button_group = QButtonGroup(self) # button group for exclusive selection
+        self.nav_button_group.setExclusive(True)
         self.btn_dashboard = self._create_nav_button("Dashboard")
         self.btn_meal_planner = self._create_nav_button("Meal Planner")
         self.btn_view_recipes = self._create_nav_button("View Recipes")
@@ -119,13 +113,22 @@ class Sidebar(QWidget):
     
     def toggle(self):
         """Toggle the sidebar's expanded/collapsed state."""
-        target_width = SETTINGS["COLLAPSED_WIDTH"] if self._is_expanded else SETTINGS["EXPANDED_WIDTH"]
-        AnimationController.animate_sidebar(self, self.width(), target_width)
+        DebugLogger.log(f"Toggling sidebar: currently {'expanded' if self._is_expanded else 'collapsed'}")
+
+        start = self.maximumWidth()
+        end = END if self._is_expanded else START
+        duration = DURATION
+
+        AnimationController.animate_width(self, start, end, duration)
+
         self._is_expanded = not self._is_expanded
-
-
+        
     # ── Private Methods ─────────────────────────────────────────────────────────────
-    def _create_nav_button(self, label: str, is_checkable: bool = True) -> NavButton:
+    def _create_nav_button(
+            self, 
+            label: str, 
+            is_checkable: bool = True
+    ) -> NavButton:
         """Create a navigation button for the sidebar.
 
         the label must match an entry in the ICONS config.
@@ -149,6 +152,7 @@ class Sidebar(QWidget):
             height    = 82,
         )
         button.setObjectName(object_name)
+        print(object_name)
         self.mainLayout.addWidget(button)
 
         if is_checkable:
@@ -157,3 +161,17 @@ class Sidebar(QWidget):
         print(icon_info)
 
         return button
+    
+    def _create_avatar(self) -> AvatarLoader:
+        avatar = AvatarLoader(size=QSize(240, 240))
+        username = QLabel("@username")  # placeholder for username, set dynamically
+        username.setObjectName("UsernameLabel")
+        username.setAlignment(Qt.AlignCenter)
+        avatar_wrapper = create_fixed_wrapper(
+            widgets     = [avatar, username],
+            fixed_width = self.width(),
+            alignment   = Qt.AlignHCenter,
+            direction   = "vertical",
+            margins= (0, 40, 0, 30)
+        )
+        self.mainLayout.addWidget(avatar_wrapper)

@@ -12,7 +12,7 @@ from PySide6.QtCore import QStringListModel, Qt, Signal
 from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget
 
 from config import CUSTOM_COMBOBOX, STYLES
-from core.helpers import DebugLogger
+from core.utils import DebugLogger
 from ui.widgets import CTButton
 
 

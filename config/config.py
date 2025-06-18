@@ -65,6 +65,7 @@ SIDEBAR = {
     "SETTINGS": {
         "EXPANDED_WIDTH": 360,
         "COLLAPSED_WIDTH": 0,
+        "DURATION": 800,  # animation duration in milliseconds
     },
 
     "ICONS": {

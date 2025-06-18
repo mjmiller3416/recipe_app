@@ -31,7 +31,11 @@ border-bottom-left-radius: {CORNER_WIDGET_RADIUS}; /* App Window Border Radius *
 
 #Sidebar NavButton:checked {
     background-color: {STATE_SECONDARY_ACTIVE}; /* Sidebar NavButton Active Background Color */
-    border-left: 4px solid {ACCENT_PRIMARY}; /* Sidebar NavButton Hover Border Color */
+    border-left: 4px solid {STATE_SECONDARY_HOVER}; /* Sidebar NavButton Hover Border Color */
+}
+
+#Sidebar #ExitButton:hover {
+    border-bottom-left-radius: {CORNER_WIDGET_RADIUS}; /* App Window Border Radius */
 }
 
 #Sidebar NavButton QLabel { 
@@ -47,6 +51,7 @@ border-bottom-left-radius: {CORNER_WIDGET_RADIUS}; /* App Window Border Radius *
 #Sidebar NavButton QLabel[state="checked"] {
     font-weight: 600; /* Active State Font Style */
 }
+
 
 /* Color States for NavButton QLabel 
 

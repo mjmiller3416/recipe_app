@@ -7,7 +7,7 @@ Handles CRUD operations for individual MealSelection entries.
 import sqlite3
 from typing import Optional
 
-from core.helpers import DebugLogger
+from core.utils import DebugLogger
 from database.db import get_connection
 from database.models.meal_selection import MealSelection
 

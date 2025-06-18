@@ -9,7 +9,7 @@ from typing import Optional
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QPushButton, QStackedWidget, QVBoxLayout
 
-from core.helpers import DebugLogger
+from core.utils import DebugLogger
 from database.models.recipe import Recipe
 from ui.dialogs import FullRecipe, RecipeSelection
 

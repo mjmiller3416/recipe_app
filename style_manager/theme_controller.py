@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QApplication
 
 from config.paths.app_paths import AppPaths
 from core.helpers import SingletonMixin
-from core.utilities.debug_logger import DebugLogger
+from core.utils import DebugLogger
 
 from .loaders.theme_loader import ThemeLoader
 from .themes.dark_theme import THEME as DARK_THEME

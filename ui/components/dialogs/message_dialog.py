@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (QDialog, QDialogButtonBox,
                                QSizePolicy, QSpacerItem, QVBoxLayout)
 
 from config import MESSAGE_DIALOG
-from core.utilities.debug_logger import DebugLogger
+from core.utils import DebugLogger
 from ui.widgets import CTIcon
 
 

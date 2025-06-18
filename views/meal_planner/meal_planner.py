@@ -10,7 +10,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
 
 from config import MEAL_PLANNER
-from core.helpers import DebugLogger
+from core.utils import DebugLogger
 from services.planner_service import PlannerService
 from ui.widgets import CTIcon
 

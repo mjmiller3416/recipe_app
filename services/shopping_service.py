@@ -9,7 +9,7 @@ import sqlite3
 from collections import defaultdict
 from typing import Any, Dict, List, Optional, Tuple
 
-from core.utilities.debug_logger import DebugLogger
+from core.utils import DebugLogger
 from database.db import get_connection
 from database.models.ingredient import Ingredient
 from database.models.recipe import Recipe

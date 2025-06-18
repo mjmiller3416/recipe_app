@@ -1,30 +1,39 @@
-""" core.controllers.animation_controller.py
+# core.controllers.animation_controller.py
+"""AnimationManager provides methods for animating widgets using QPropertyAnimation.
 
-AnimationManager provides methods for fading widgets in and out using QPropertyAnimation.
+Supports width animations, fade effects, and cross-fading between stacked widgets.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QTimer
 from PySide6.QtWidgets import QGraphicsOpacityEffect
 
-
 # ── Class Definition ────────────────────────────────────────────────────────────
 class AnimationController:
     active_animations = []  # store animations to prevent garbage collection
 
-    @staticmethod
-    def animate_sidebar(sidebar, duration=300, start_width=360, end_width=0):
-        """
-        Animate the sidebar width from `start_width` to `end_width`.
 
-        Args:
-            sidebar (QWidget): The sidebar widget to animate.
-            duration (int): Duration of the animation in milliseconds. Default is 300ms.
-            start_width (int): Starting width of the sidebar. Default is 360px.
-            end_width (int): Ending width of the sidebar. Default is 0px (collapsed).
-        """
-        if not sidebar.isVisible():
-            sidebar.setVisible(True)
+    @staticmethod
+    def animate_width(
+        widget, 
+        start: int, 
+        end: int, 
+        duration: int):
+        """Animate a widget's maximumWidth from start to end."""
+        animation = QPropertyAnimation(widget, b"maximumWidth")
+        animation.setDuration(duration)
+        animation.setStartValue(start)
+        animation.setEndValue(end)
+        animation.setEasingCurve(QEasingCurve.OutExpo)
+        animation.start()
+
+        AnimationController.active_animations.append(animation)
+
+        def cleanup():
+            if animation in AnimationController.active_animations:
+                AnimationController.active_animations.remove(animation)
+
+        animation.finished.connect(cleanup)
 
     @staticmethod
     def fade_widget(widget, duration=300, start=1.0, end=0.0):

@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (QFileDialog, QLabel, QStackedLayout,
 
 from config import STYLES, UPLOAD_RECIPE_IMAGE
 from config.paths import AppPaths
-from core.helpers import DebugLogger
+from core.utils import DebugLogger
 from core.helpers.ui_helpers import make_overlay
 from ui.components.images import RoundedImage
 from ui.widgets import CTToolButton

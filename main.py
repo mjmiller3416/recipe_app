@@ -10,10 +10,9 @@ from PySide6.QtWidgets import QApplication
 os.environ["QT_FONT_DPI"] = "96"
 
 from core.application import Application
-from core.helpers import DebugLogger
+from core.utils import DebugLogger
 from database.db_reset import reset_database
 from database.init_db import init_db
-
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class MealPlannerApp:

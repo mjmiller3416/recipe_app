@@ -7,7 +7,7 @@ Service module for managing MealPlanner state.
 import sqlite3
 from typing import List, Optional
 
-from core.helpers import DebugLogger
+from core.utils import DebugLogger
 from database.db import get_connection
 from database.models.meal_selection import MealSelection
 from database.models.saved_meal_state import SavedMealState

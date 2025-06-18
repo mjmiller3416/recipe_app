@@ -8,7 +8,7 @@ input field with auto-completion using a proxy model for advanced filtering.
 from PySide6.QtCore import QEvent, QStringListModel, Qt, QTimer, Signal
 from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget
 
-from core.helpers import DebugLogger
+from core.utils import DebugLogger
 from ui.tools import IngredientProxyModel
 
 
