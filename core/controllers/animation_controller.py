@@ -9,8 +9,22 @@ from PySide6.QtWidgets import QGraphicsOpacityEffect
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
-class AnimationManager:
+class AnimationController:
     active_animations = []  # store animations to prevent garbage collection
+
+    @staticmethod
+    def animate_sidebar(sidebar, duration=300, start_width=360, end_width=0):
+        """
+        Animate the sidebar width from `start_width` to `end_width`.
+
+        Args:
+            sidebar (QWidget): The sidebar widget to animate.
+            duration (int): Duration of the animation in milliseconds. Default is 300ms.
+            start_width (int): Starting width of the sidebar. Default is 360px.
+            end_width (int): Ending width of the sidebar. Default is 0px (collapsed).
+        """
+        if not sidebar.isVisible():
+            sidebar.setVisible(True)
 
     @staticmethod
     def fade_widget(widget, duration=300, start=1.0, end=0.0):
@@ -56,8 +70,8 @@ class AnimationManager:
             stacked_widget (QStackedWidget): The stacked widget managing the two widgets.
             duration (int): Duration of the fade animation in milliseconds. Default is 300ms.
         """
-        fade_out = AnimationManager.fade_widget(current_widget, duration, 1.0, 0.0)
-        fade_in = AnimationManager.fade_widget(next_widget, duration, 0.0, 1.0)
+        fade_out = AnimationController.fade_widget(current_widget, duration, 1.0, 0.0)
+        fade_in = AnimationController.fade_widget(next_widget, duration, 0.0, 1.0)
 
         # make sure fade-in is ready
         if not next_widget.isVisible():
@@ -72,12 +86,12 @@ class AnimationManager:
         QTimer.singleShot(duration // 3, start_fade_in)  # e.g. 100ms into 300ms fade-out
 
         # keep both animations alive
-        AnimationManager.active_animations.extend([fade_out, fade_in])
+        AnimationController.active_animations.extend([fade_out, fade_in])
 
         def cleanup():
             for anim in [fade_out, fade_in]:
-                if anim in AnimationManager.active_animations:
-                    AnimationManager.active_animations.remove(anim)
+                if anim in AnimationController.active_animations:
+                    AnimationController.active_animations.remove(anim)
 
         fade_in.finished.connect(cleanup)
         fade_out.start()

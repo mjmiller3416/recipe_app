@@ -63,13 +63,10 @@ APPLICATION_WINDOW = {
 # ── Sidebar Widget ──
 SIDEBAR = {
     "SETTINGS": {
-        "LOGO": {
-            "PATH": AppPaths.ICONS_DIR / "logo.svg",
-            "SIZE": QSize(180, 180),
-            "STATIC": THEME["ICON"]["DEFAULT"],
-        },
-
+        "EXPANDED_WIDTH": 360,
+        "COLLAPSED_WIDTH": 0,
     },
+
     "ICONS": {
         "DASHBOARD": {
             "PATH": AppPaths.ICONS_DIR / "dashboard.svg",

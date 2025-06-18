@@ -21,14 +21,14 @@ from views.meal_planner import MealPlanner
 from views.shopping_list import ShoppingList
 from views.view_recipes import ViewRecipes
 
-from ..controllers import AnimationManager
+from ..controllers import AnimationController
 from ..helpers import DebugLogger
 from .app_window import ApplicationWindow
 from .sidebar import Sidebar
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 COLLAPSED_SIDEBAR_WIDTH = 0
-EXPANDED_SIDEBAR_WIDTH = 400
+EXPANDED_SIDEBAR_WIDTH = 360
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class Application(ApplicationWindow):
@@ -46,6 +46,7 @@ class Application(ApplicationWindow):
         # ── Instantiate Sidebar ──
         self.sidebar = Sidebar()
         self.body_layout.insertWidget(0, self.sidebar)
+        self.sidebar.setMaximumWidth(EXPANDED_SIDEBAR_WIDTH)
         self.sidebar_is_expanded = True
 
         # ── Connect Signals ──
@@ -60,12 +61,12 @@ class Application(ApplicationWindow):
         """ Toggle the sidebar's expanded/collapsed state with animation."""
 
         start_width = self.sidebar.width()
-        end_width = COLLAPSED_SIDEBAR_WIDTH if self.sidebar_is_expanded else EXPANDED_SIDEBAR_WIDTH
+        end_width = COLLAPSED_SIDEBAR_WIDTH 
 
         self.sidebar_animator = SidebarAnimator(self.sidebar)
 
         self.sidebar_animation = QPropertyAnimation(self.sidebar_animator, b"value")
-        self.sidebar_animation.setDuration(500)
+        self.sidebar_animation.setDuration(800)
         self.sidebar_animation.setStartValue(start_width)
         self.sidebar_animation.setEndValue(end_width)
         self.sidebar_animation.setEasingCurve(QEasingCurve.OutExpo)

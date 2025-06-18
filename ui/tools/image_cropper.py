@@ -209,24 +209,22 @@ class ImageCropper(QLabel):
             hover_handle_key = self._get_handle_key_at(event.position())
             if hover_handle_key in ['tl', 'br']: self.setCursor(Qt.CursorShape.SizeFDiagCursor)
             elif hover_handle_key in ['tr', 'bl']: self.setCursor(Qt.CursorShape.SizeBDiagCursor)
-            # Add other cursor shapes for side handles if implemented
             elif self.crop_rect_on_scaled.contains(current_mouse_pos_on_scaled): self.setCursor(Qt.CursorShape.SizeAllCursor)
             else: self.setCursor(Qt.CursorShape.ArrowCursor)
             return
 
-        if not event.buttons() & Qt.MouseButton.LeftButton: # Should not happen if logic is correct
+        if not event.buttons() & Qt.MouseButton.LeftButton:
             self.is_dragging_rect = False
             self.active_handle_key = None
             return
 
         delta = current_mouse_pos_on_scaled - self.drag_start_mouse_pos
-        new_rect = QRectF(self.drag_start_crop_rect) # Work on a copy
-
-        min_dim_on_scaled = max(1.0, MIN_CROP_DIM_ORIGINAL * self.scale_factor)
-        max_dim_on_scaled = min(self.scaled_pixmap.width(), self.scaled_pixmap.height())
         
-        # Image boundaries for the crop rectangle
+        # Get image boundaries and minimum dimension on the scaled pixmap
         img_bounds = QRectF(0, 0, self.scaled_pixmap.width(), self.scaled_pixmap.height())
+        min_dim_on_scaled = max(1.0, MIN_CROP_DIM_ORIGINAL * self.scale_factor)
+        
+        new_rect = QRectF(self.drag_start_crop_rect) # Start with a copy
 
         if self.is_dragging_rect:
             new_rect.translate(delta)
@@ -237,102 +235,52 @@ class ImageCropper(QLabel):
             if new_rect.bottom() > img_bounds.bottom(): new_rect.moveBottom(img_bounds.bottom())
         
         elif self.active_handle_key:
-            # For 1:1 aspect ratio, corner drags determine the new size.
+            # --- Start of Fix ---
+            # This new logic proactively calculates constraints.
+            
+            # Use a copy of the original drag-start rectangle for reference
+            start_rect = self.drag_start_crop_rect
+            mouse_pos = current_mouse_pos_on_scaled
 
-            # --- Start of Bug Fix ---
-
-            # First, apply the mouse movement (delta) to the actual corner being dragged.
-            # This creates a temporary, non-square rectangle based on the drag.
-            # The original code incorrectly applied the delta to the anchor point.
-            if self.active_handle_key == 'br':
-                new_rect.setBottomRight(self.drag_start_crop_rect.bottomRight() + delta)
-            elif self.active_handle_key == 'tl':
-                new_rect.setTopLeft(self.drag_start_crop_rect.topLeft() + delta)
-            elif self.active_handle_key == 'tr':
-                new_rect.setTopRight(self.drag_start_crop_rect.topRight() + delta)
-            elif self.active_handle_key == 'bl':
-                new_rect.setBottomLeft(self.drag_start_crop_rect.bottomLeft() + delta)
-
-            # Normalize the rectangle in case the user drags a corner past its opposite anchor.
-            new_rect = new_rect.normalized()
-
-            # Determine the side length for the new square by taking the larger of the new width or height.
-            current_size = max(new_rect.width(), new_rect.height())
-
-            # Now, resize the rectangle to be a square, anchoring it to the corner
-            # opposite the handle being dragged. This ensures it resizes predictably.
             if self.active_handle_key == 'br': # Anchor: TopLeft
-                new_rect.setSize(QSizeF(current_size, current_size))
-            elif self.active_handle_key == 'tl': # BR anchor
-                new_rect.setTopLeft(new_rect.bottomRight() - QPointF(current_size, current_size))
-                new_rect.setSize(QSizeF(current_size, current_size))
-            elif self.active_handle_key == 'tr': # BL anchor
-                bottom_y = new_rect.bottom()
-                new_rect.setWidth(current_size)
-                new_rect.setTop(bottom_y - current_size)
-            elif self.active_handle_key == 'bl': # TR anchor
-                right_x = new_rect.right()
-                new_rect.setHeight(current_size)
-                new_rect.setLeft(right_x - current_size)
+                anchor = start_rect.topLeft()
+                desired_size = max(mouse_pos.x() - anchor.x(), mouse_pos.y() - anchor.y())
+                max_allowed_size = min(img_bounds.right() - anchor.x(), img_bounds.bottom() - anchor.y())
+                final_size = max(min_dim_on_scaled, min(desired_size, max_allowed_size))
+                new_rect = QRectF(anchor, QSizeF(final_size, final_size))
 
-            # --- End of Bug Fix ---
+            elif self.active_handle_key == 'tl': # Anchor: BottomRight
+                anchor = start_rect.bottomRight()
+                desired_size = max(anchor.x() - mouse_pos.x(), anchor.y() - mouse_pos.y())
+                max_allowed_size = min(anchor.x() - img_bounds.left(), anchor.y() - img_bounds.top())
+                final_size = max(min_dim_on_scaled, min(desired_size, max_allowed_size))
+                top_left = QPointF(anchor.x() - final_size, anchor.y() - final_size)
+                new_rect = QRectF(top_left, QSizeF(final_size, final_size))
 
-            # Normalize (ensure positive width/height)
-            new_rect = new_rect.normalized()
+            elif self.active_handle_key == 'tr': # Anchor: BottomLeft
+                anchor = start_rect.bottomLeft()
+                desired_size = max(mouse_pos.x() - anchor.x(), anchor.y() - mouse_pos.y())
+                max_allowed_size = min(img_bounds.right() - anchor.x(), anchor.y() - img_bounds.top())
+                final_size = max(min_dim_on_scaled, min(desired_size, max_allowed_size))
+                top_left = QPointF(anchor.x(), anchor.y() - final_size)
+                new_rect = QRectF(top_left, QSizeF(final_size, final_size))
 
-            # Clamp size (The rest of the original code from here down is fine)
-            current_dim = new_rect.width() # Should be square
-            clamped_dim = max(min_dim_on_scaled, min(current_dim, max_dim_on_scaled))
+            elif self.active_handle_key == 'bl': # Anchor: TopRight
+                anchor = start_rect.topRight()
+                desired_size = max(anchor.x() - mouse_pos.x(), mouse_pos.y() - anchor.y())
+                max_allowed_size = min(anchor.x() - img_bounds.left(), img_bounds.bottom() - anchor.y())
+                final_size = max(min_dim_on_scaled, min(desired_size, max_allowed_size))
+                top_left = QPointF(anchor.x() - final_size, anchor.y())
+                new_rect = QRectF(top_left, QSizeF(final_size, final_size))
+            # --- End of Fix ---
 
-            # Normalize (ensure positive width/height)
-            new_rect = new_rect.normalized()
-
-            # Clamp size
-            current_dim = new_rect.width() # Should be square
-            clamped_dim = max(min_dim_on_scaled, min(current_dim, max_dim_on_scaled))
-            
-            # Re-anchor if size was clamped
-            if abs(clamped_dim - current_dim) > 1e-3: # If clamping changed size significantly
-                if self.active_handle_key == 'br': new_rect.setSize(QSizeF(clamped_dim, clamped_dim)) # TL anchor
-                elif self.active_handle_key == 'tl': # BR anchor
-                    old_br = new_rect.bottomRight()
-                    new_rect.setTopLeft(old_br - QPointF(clamped_dim, clamped_dim))
-                    new_rect.setSize(QSizeF(clamped_dim, clamped_dim))
-                elif self.active_handle_key == 'tr': # BL anchor
-                    old_bl = new_rect.bottomLeft()
-                    new_rect.setTopRight(old_bl + QPointF(clamped_dim, -clamped_dim)) # Y is inverted for TR from BL
-                    new_rect.setSize(QSizeF(clamped_dim, clamped_dim))
-                    new_rect.moveTop(old_bl.y() - clamped_dim) # Correct top after setting size from BL
-                elif self.active_handle_key == 'bl': # TR anchor
-                    old_tr = new_rect.topRight()
-                    new_rect.setBottomLeft(old_tr + QPointF(-clamped_dim, clamped_dim))
-                    new_rect.setSize(QSizeF(clamped_dim, clamped_dim))
-                    new_rect.moveLeft(old_tr.x() - clamped_dim)
-
-            # Boundary checks after resize (can be complex if aspect ratio fixed)
-            # Simple push-in:
-            if new_rect.left() < img_bounds.left(): new_rect.moveLeft(img_bounds.left())
-            if new_rect.top() < img_bounds.top(): new_rect.moveTop(img_bounds.top())
-            if new_rect.right() > img_bounds.right(): new_rect.moveRight(img_bounds.right())
-            if new_rect.bottom() > img_bounds.bottom(): new_rect.moveBottom(img_bounds.bottom())
-
-            # After boundary push, re-ensure squareness and min/max constraints
-            final_dim = min(new_rect.width(), new_rect.height()) # In case boundary push deformed it
-            final_dim = max(min_dim_on_scaled, min(final_dim, max_dim_on_scaled))
-            
-            # Re-anchor based on handle to maintain its position relative to mouse if possible
-            if self.active_handle_key == 'br': new_rect.setSize(QSizeF(final_dim, final_dim))
-            elif self.active_handle_key == 'tl': new_rect.setTopLeft(QPointF(new_rect.right() - final_dim, new_rect.bottom() - final_dim))
-            elif self.active_handle_key == 'tr': new_rect.setTopRight(QPointF(new_rect.left() + final_dim, new_rect.bottom() - final_dim))
-            elif self.active_handle_key == 'bl': new_rect.setBottomLeft(QPointF(new_rect.right() - final_dim, new_rect.top() + final_dim))
-            new_rect.setWidth(final_dim) # Ensure width and height are set
-            new_rect.setHeight(final_dim)
-
+        # Update the cropper with the new, correctly-constrained rectangle
         self.crop_rect_on_scaled = new_rect.normalized()
         self._update_handles()
         self.update()
         self.crop_rect_updated.emit()
         event.accept()
+
 
     def mouseReleaseEvent(self, event: QMouseEvent):
         if event.button() == Qt.MouseButton.LeftButton:

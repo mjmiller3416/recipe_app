@@ -7,6 +7,11 @@ background-color: {BACKGROUND_WIDGET}; /* Sidebar Background Color */
 border-bottom-left-radius: {CORNER_WIDGET_RADIUS}; /* App Window Border Radius */
 }
 
+#Sidebar #AvatarImage {
+    qproperty-borderWidth: 6;
+    qproperty-borderColor: {ACCENT_PRIMARY};
+}
+
 #Sidebar #UsernameLabel {
     font-family: {FONT_FAMILY_UI};
     font-size: {FONT_SIZE_LARGE};
@@ -15,27 +20,46 @@ border-bottom-left-radius: {CORNER_WIDGET_RADIUS}; /* App Window Border Radius *
     padding-top: 5px;
 }
 
-#Sidebar QPushButton {
-    background-color: transparent;
-    padding: 10px 20px 10px 40px;
+#Sidebar NavButton {
+    background-color: transparent; /* Sidebar NavButton Background Color */
     border: none;
+}
 
-   /* Font */
+#Sidebar NavButton:hover {
+    background-color: {STATE_SECONDARY_HOVER}; /* Sidebar NavButton Hover Background Color */
+}
+
+#Sidebar NavButton:checked {
+    background-color: {STATE_SECONDARY_ACTIVE}; /* Sidebar NavButton Active Background Color */
+    border-left: 4px solid {ACCENT_PRIMARY}; /* Sidebar NavButton Hover Border Color */
+}
+
+#Sidebar NavButton QLabel { 
     font-family: {FONT_FAMILY_UI};
     font-size: {FONT_SIZE_LARGE};
-    text-align: left;
+    padding-left: 20px; 
 }
 
-#Sidebar QPushButton:hover {
-    background-color: {STATE_SECONDARY_HOVER}; /* Slightly lighter on hover */
+#Sidebar NavButton QLabel[state="hover"] {
+    font-weight: 600; /* Hover State Font Style */
 }
 
-#Sidebar QPushButton:checked {
-    background-color: {STATE_SECONDARY_ACTIVE};
+#Sidebar NavButton QLabel[state="checked"] {
+    font-weight: 600; /* Active State Font Style */
 }
 
-#Sidebar #AvatarImage {
-    qproperty-borderWidth: 6;
-    qproperty-borderColor: {ACCENT_PRIMARY};
+/* Color States for NavButton QLabel 
+
+[state="default"]
+[state="hover"]
+[state="checked"]
+
+EXAMPLE:
+#Sidebar NavButton QLabel[state="default"] {
+    color: red; 
 }
+
+*/
+
+
 

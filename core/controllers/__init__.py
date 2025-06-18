@@ -1,1 +1,1 @@
-from .animation_controller import AnimationManager
+from .animation_controller import AnimationController

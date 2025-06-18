@@ -27,7 +27,8 @@ def create_fixed_wrapper(
     widgets: Union[QWidget, Iterable[QWidget]],
     fixed_width: int,
     alignment: Qt.Alignment = Qt.AlignCenter,
-    direction: str = "horizontal"
+    direction: str = "horizontal",
+    margins: tuple[int, int, int, int] = (0, 0, 0, 0)
 ) -> QWidget:
     """
     Wraps one or more widgets inside a QWidget with fixed width and layout.
@@ -37,6 +38,7 @@ def create_fixed_wrapper(
         fixed_width (int): Fixed width for the wrapper.
         alignment (Qt.Alignment, optional): Alignment for each widget inside the layout.
         direction (str, optional): 'horizontal' or 'vertical'. Defaults to 'horizontal'.
+        margins (tuple[int, int, int, int], optional): Margins for the layout (left, top, right, bottom). Defaults to (0, 0, 0, 0).
 
     Returns:
         QWidget: Wrapper widget with layout and given contents.
@@ -46,7 +48,7 @@ def create_fixed_wrapper(
 
     LayoutClass = QVBoxLayout if direction == "vertical" else QHBoxLayout
     layout = LayoutClass(wrapper)
-    layout.setContentsMargins(0, 0, 0, 0)
+    layout.setContentsMargins(*margins)
 
     # Apply layout-wide alignment only if horizontal
     if direction == "horizontal":
