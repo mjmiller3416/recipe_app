@@ -4,11 +4,13 @@ Utility modules for theme management.
 """
 
 from .fontkit import register_all_fonts, swooshify
+from .qss_combiner import QssCombiner
 from .theme_utils import apply_prop, flatten_theme_dict
 
 __all__ = [
-    "apply_prop",
-    "flatten_theme_dict",
     "register_all_fonts",
     "swooshify",
+    "apply_prop",
+    "flatten_theme_dict",
+    "QssCombiner",
 ]

@@ -1,4 +1,4 @@
-"""recipe_card\recipe_card.py
+"""app/ui/components/recipe_card/recipe_card.py
 
 Defines the RecipeCard class that acts as a dynamic container for different recipe states (empty, recipe, error).
 """
@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QFrame, QPushButton, QStackedWidget, QVBoxLayout
 
 from app.core.data.models.recipe import Recipe
 from app.core.utils import DebugLogger
-from app.ui.dialogs import FullRecipe, RecipeSelection
+from app.ui.components import FullRecipe, RecipeSelection
 
 from .constants import LayoutSize
 from .frame_factory import FrameFactory

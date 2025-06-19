@@ -1,4 +1,4 @@
-"""ui\widgets\ct_tool_button.py
+"""app/ui/widgets/ct_tool_button.py
 
 Defines the Custom-Themed ToolButton class, a QToolButton subclass with theme-aware dynamic SVG icon states.
 """
@@ -12,7 +12,7 @@ from PySide6.QtWidgets import QToolButton
 from app.config import ICON_SIZE
 from app.style_manager import IconLoader
 
-from .utils import ButtonEffects, IconMixin
+from .helpers import ButtonEffects, IconMixin
 
 # ── Constants ───────────────────────────────────────────────────────────────────  
 PADDING = 4  # Padding around the icon

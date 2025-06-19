@@ -1,4 +1,4 @@
-"""core/helpers/ui_helpers.py
+"""app/ui/helpers/ui_helpers.py
 
 Helper functions for creating UI components in PySide6.
 """
@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QSizePolicy,
                                QVBoxLayout, QWidget)
 
 
+# ── Functions ───────────────────────────────────────────────────────────────────
 def create_fixed_wrapper(
     widgets: Union[QWidget, Iterable[QWidget]],
     fixed_width: int,
@@ -38,11 +39,11 @@ def create_fixed_wrapper(
     layout = LayoutClass(wrapper)
     layout.setContentsMargins(*margins)
 
-    # Apply layout-wide alignment only if horizontal
+    # apply layout-wide alignment only if horizontal
     if direction == "horizontal":
         layout.setAlignment(alignment)
 
-    # Add each widget with its own alignment
+    # add each widget with its own alignment
     if isinstance(widgets, QWidget):
         layout.addWidget(widgets, alignment=alignment)
     else:
@@ -97,10 +98,10 @@ def make_overlay(base_widget: QWidget,
     grid.setContentsMargins(0, 0, 0, 0)
     grid.setSpacing(0)
 
-    # 1) put the base in cell (0,0)
+    # put the base in cell (0,0)
     grid.addWidget(base_widget, 0, 0)
 
-    # 2) wrap the overlay in its own widget to get padding
+    # wrap the overlay in its own widget to get padding
     pad = QWidget()
     pad.setStyleSheet("background:transparent;")
     pad.setAttribute(Qt.WA_TranslucentBackground)
@@ -109,7 +110,7 @@ def make_overlay(base_widget: QWidget,
     vlyt.setSpacing(0)
     vlyt.addWidget(overlay_widget)
 
-    # 3) stack that padded overlay over the base
+    # stack that padded overlay over the base
     grid.addWidget(pad, 0, 0, alignment=align)
 
     return container
@@ -135,14 +136,14 @@ def create_framed_layout(
         Returns:
             tuple[QFrame, QVBoxLayout]: The created frame and its layout.
         """
-        # ── Create Frame & Layout ──
+        # create the frame
         frame = QFrame()
         frame.setFrameShape(frame_shape)
         frame.setFrameShadow(frame_shadow)
         frame.setLineWidth(line_width)
         frame.setSizePolicy(*size_policy)
 
-        # ── Set Frame Properties ──
+        # set up the layout
         layout = QVBoxLayout(frame)
         layout.setContentsMargins(*margins)
         layout.setSpacing(spacing)

@@ -1,4 +1,4 @@
-"""recipe_card/builders/error_state.py
+"""app/ui/components/recipe_card/builders/error_state.py
 
 Defines the ErrorState class for generating error recipe card frames.
 """

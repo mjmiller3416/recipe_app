@@ -1,15 +1,17 @@
-""" co"""
+""" app/core/utils/debug_logger.py
 
+Enhanced debugging logger with color support and context-aware logging."""
+
+# ── Imports ─────────────────────────────────────────────────────────────────────
 import inspect
 import logging
 import re
-#🔸System Imports
 import sys
 
-#🔸Third-party Imports
 import colorlog
 
 
+# ── Class Definition ────────────────────────────────────────────────────────────
 class DebugLogger:
     """
     A class for enhanced debugging with color support and context-aware logging.

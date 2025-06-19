@@ -1,4 +1,4 @@
-"""ecipe_widget/frame_factory.py
+"""app/ui/components/recipe_card/frame_factory.py
 
 Provides the FrameFactory class for generating fully-built QFrames based on widget states ('recipe', 'empty', or 'error').
 """

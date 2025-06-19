@@ -1,4 +1,4 @@
-"""recipe_card/builders/empty_state.py
+"""app/ui/components/recipe_card/builders/empty_state.py
 
 Defines the EmptyState class for generating empty recipe card frames.
 """

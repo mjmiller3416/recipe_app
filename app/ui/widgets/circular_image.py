@@ -1,4 +1,5 @@
-"""ui/widgets/circular_image.py
+"""app/ui/widgets/circular_image.py
+
 A QWidget that displays a QPixmap as a perfect circle, with customizable border via Q_PROPERTY.
 """
 

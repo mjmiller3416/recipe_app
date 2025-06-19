@@ -1,4 +1,4 @@
-"""ui/components/inputs/custom_combobox.py
+"""app/ui/components/custom_combobox.py
 
 This module defines a CustomComboBox widget that provides a read-only line edit
 with a button to display a list of items. It uses a completer for auto-completion

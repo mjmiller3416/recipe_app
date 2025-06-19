@@ -1,4 +1,4 @@
-"""recipe_card/constants.py
+"""app/ui/components/recipe_card/constants.py
 
 Defines constants and enums used across the RecipeCard layouts.
 """

@@ -1,4 +1,10 @@
-# ── required imports ─────────────────────────────────────────────────────────
+"""app/ui/tools/layout_debugger.py
+
+Overlay widget that visualizes layouts, spacers, and leaf widgets.
+Intended for debugging complex UIs during development.
+"""
+
+# ── Imports ─────────────────────────────────────────────────────────────────────
 import sys
 
 from PySide6.QtCore import QEvent, QPoint, QRect, Qt
@@ -7,14 +13,13 @@ from PySide6.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QLabel,
                                QLayout, QPushButton, QSizePolicy, QSpacerItem,
                                QVBoxLayout, QWidget)
 
-# ────────────────────────────────────────────────────────────────────────────
-
+# ── Class Definition ────────────────────────────────────────────────────────────
 PEN_LAYOUT_TOP  = QPen(QColor("#55a83c"), 2, Qt.SolidLine)     # neon green
 PEN_LAYOUT_NEST = QPen(QColor("#438b9a"), 2, Qt.DashLine)      # sky blue
 PEN_SPACER      = QPen(QColor("#954295"), 1, Qt.DotLine)       # magenta
 PEN_WIDGET      = QPen(QColor("#a27741"), 2, Qt.DashDotLine)   # orange
 
-
+# ── Class Definition ────────────────────────────────────────────────────────────
 class LayoutDebugger(QWidget):
     """
     Transparent overlay that draws layout rects, spacers, and leaf widgets.

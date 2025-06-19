@@ -5,7 +5,7 @@ from PySide6.QtCore import (QEasingCurve, QObject, QParallelAnimationGroup,
                             QPoint, QPropertyAnimation, QRect, QSize)
 from PySide6.QtGui import QGuiApplication
 
-from app.ui.helpers.platform_utils import get_taskbar_rect
+from app.core.utils.platform_utils import get_taskbar_rect
 
 
 class WindowAnimator(QObject):

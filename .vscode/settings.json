@@ -147,10 +147,11 @@
       "paths": "Constant",
       "iconkit": "Mojo",
       "controllers": "Console",
-      "inputs": "Src-tauri",
+      "inputs": "Client",
       "todo": "Tasks",
       "style_manager": "Plugin",
       "data_files": "Other",
+      "forms": "Stack",
 
       //** Subfolders **//
       "app_helpers": "App",

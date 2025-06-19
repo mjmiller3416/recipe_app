@@ -1,4 +1,4 @@
-""""config/config.py
+""""app/config/config.py
 
     This module contains configuration settings for the application.
 """

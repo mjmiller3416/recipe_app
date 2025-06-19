@@ -1,0 +1,1 @@
+from .ingredient_proxy_model import IngredientProxyModel

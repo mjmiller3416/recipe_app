@@ -10,14 +10,14 @@ from PySide6.QtCore import QObject, Signal
 from PySide6.QtWidgets import QApplication
 
 from app.config.paths.app_paths import AppPaths
-from app.core.utils import DebugLogger
-from app.ui.helpers import SingletonMixin
+from app.core.utils import DebugLogger, SingletonMixin
 
 from .loaders.theme_loader import ThemeLoader
 from .themes.dark_theme import THEME as DARK_THEME
 from .themes.light_theme import THEME as LIGHT_THEME
-from .tools import QssCombiner
-from .utils import flatten_theme_dict, register_all_fonts
+from .utils import QssCombiner
+from .utils.fontkit import register_all_fonts
+from .utils.theme_utils import flatten_theme_dict
 
 # ── Constants ─────────────────────────────────────────────────────────────
 CONFIG_PATH = AppPaths.THEME_CONFIG_PATH

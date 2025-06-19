@@ -1,4 +1,4 @@
-"""ui/components/dialogs/message_dialog.py
+"""app/ui/components/message_dialog.py
 
 Custom dialog for displaying messages with dynamic button visibility.
 """

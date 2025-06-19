@@ -1,9 +1,20 @@
-from .platform_utils import get_taskbar_rect
-from .singleton_mixin import SingletonMixin
-from .ui_helpers import make_overlay
+# app/ui/helpers/__init__.py
+
+from .types import ThemedIcon as ThemedIconProtocol  # Rename to avoid conflict
+from .ui_helpers import (create_fixed_wrapper, create_framed_layout,
+                         create_hbox_with_widgets, create_vbox_with_widgets,
+                         make_overlay)
+from .validation import (apply_error_style, clear_error_styles,
+                         dynamic_validation)
 
 __all__ = [
-    "get_taskbar_rect",
-    "SingletonMixin",
-    "make_overlay"
+    # From types.py
+    "ThemedIconProtocol",
+
+    # From ui_helpers.py
+    "create_fixed_wrapper", "create_framed_layout", "create_hbox_with_widgets",
+    "create_vbox_with_widgets", "make_overlay",
+
+    # From validation.py
+    "apply_error_style", "clear_error_styles", "dynamic_validation"
 ]

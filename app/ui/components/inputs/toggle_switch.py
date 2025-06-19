@@ -1,8 +1,15 @@
+"""app/ui/components/toggle_switch.py
+
+Defines a custom ToggleSwitch widget, a stylized checkbox that resembles a switch.
+"""
+
+# ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Property, Qt
 from PySide6.QtGui import QBrush, QColor, QPainter
 from PySide6.QtWidgets import QCheckBox
 
 
+# ── Class Definition ────────────────────────────────────────────────────────────
 class ToggleSwitch(QCheckBox):
     def __init__(self, label="", parent=None):
         super().__init__(label, parent)

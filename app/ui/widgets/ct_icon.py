@@ -1,4 +1,4 @@
-"""ui\widgets\ct_icon.py
+"""app/ui/widgets/ct_icon.py
 
 Defines the Custom-Themed Icon class, a QLabel-based widget for displaying SVG icons with theme-aware coloring.
 """
@@ -10,7 +10,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QLabel
 
 from app.style_manager import IconLoader
-from app.ui.tools import ThemedIcon
+from app.ui.utils import ThemedIcon
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

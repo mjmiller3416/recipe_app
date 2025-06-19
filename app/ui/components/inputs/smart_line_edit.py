@@ -1,4 +1,4 @@
-"""ui/components/inputs/smart_line_edit.py
+"""app/ui/components/smart_line_edit.py
 
 This module defines a SmartLineEdit widget that provides an enhanced
 input field with auto-completion using a proxy model for advanced filtering.
@@ -9,7 +9,7 @@ from PySide6.QtCore import QEvent, QStringListModel, Qt, QTimer, Signal
 from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget
 
 from app.core.utils import DebugLogger
-from app.ui.tools import IngredientProxyModel
+from app.ui.models import IngredientProxyModel
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

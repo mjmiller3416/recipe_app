@@ -1,4 +1,5 @@
-"""
+"""app/ui/components/dialog_window.py
+
 Custom Dialog Window with Title Bar
 A base QDialog with a frameless window and a custom title bar.
 Provides close button and dragging functionality.
@@ -12,7 +13,7 @@ from PySide6.QtWidgets import (QDialog, QHBoxLayout, QLabel, QSizeGrip,
 
 from app.config import APPLICATION_WINDOW
 from app.ui.widgets import CTToolButton
-from app.ui.widgets.utils import ButtonEffects
+from app.ui.widgets.helpers import ButtonEffects
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]

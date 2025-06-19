@@ -1,4 +1,4 @@
-"""recipe_card/builders/recipe_card.py
+"""app/ui/components/recipe_card/builders/recipe_card.py
 
 Defines the RecipeCard class for generating recipe card layouts (small, medium, large).
 """
@@ -14,9 +14,8 @@ from app.config import ICON_SIZE, RECIPE_CARD
 from app.core.data.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
 from app.ui.components import Separator
-from app.ui.components.images import RoundedImage
 from app.ui.helpers.ui_helpers import make_overlay
-from app.ui.widgets import CTIcon, CTToolButton
+from app.ui.widgets import CTIcon, CTToolButton, RoundedImage
 
 from ..constants import LAYOUT_SIZE, LayoutSize
 

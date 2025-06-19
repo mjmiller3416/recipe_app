@@ -16,11 +16,11 @@ from app.config import APPLICATION_WINDOW, SIDEBAR
 from app.core.utils import DebugLogger
 from app.style_manager import ThemeController
 from app.ui.animations import Animator, WindowAnimator
-from app.ui.components.avatar_loader import AvatarLoader
+from app.ui.components import CustomGrip, NavButton
+from app.ui.components.image import AvatarLoader
 from app.ui.helpers.ui_helpers import create_fixed_wrapper
-from app.ui.tools import CustomGrip
-from app.ui.widgets import CTIcon, CTToolButton, NavButton
-from app.ui.widgets.utils import ButtonEffects
+from app.ui.widgets import CTIcon, CTToolButton
+from app.ui.widgets.helpers import ButtonEffects
 
 if TYPE_CHECKING:
     from app.core.services import NavigationService
