@@ -1,12 +1,13 @@
 import sys
 from pathlib import Path
 
-from PySide6.QtCore import QSize, Signal, Qt
-from PySide6.QtWidgets import QPushButton, QHBoxLayout, QLabel, QApplication, QVBoxLayout, QButtonGroup, QWidget
+from PySide6.QtCore import QSize, Qt, Signal
+from PySide6.QtWidgets import (QApplication, QButtonGroup, QHBoxLayout, QLabel,
+                               QPushButton, QVBoxLayout, QWidget)
 
 # Assuming ct_tool_button is in a location Python can import
 # You may need to adjust this import path based on your project structure
-from ui.widgets.ct_tool_button import CTToolButton
+from app.ui.widgets.ct_tool_button import CTToolButton
 
 
 class NavButton(QPushButton):

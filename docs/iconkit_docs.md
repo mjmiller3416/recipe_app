@@ -111,7 +111,7 @@ Provides the `IconMixin` class, designed to be mixed into `QAbstractButton` subc
 #         self._init_themed_icon("settings.svg", QSize(24, 24), "primary_action")
 
 # Direct use of ThemedIcon
-from ui.iconkit import ThemedIcon
+from app.ui.iconkit import ThemedIcon
 from PySide6.QtCore import QSize
 from pathlib import Path
 
@@ -122,7 +122,7 @@ settings_icon = ThemedIcon(icon_path, icon_size, variant="navigation_icon").icon
 # my_button.setIconSize(icon_size)
 
 # Applying hover effects
-from ui.iconkit import ApplyHoverEffects
+from app.ui.iconkit import ApplyHoverEffects
 # ApplyHoverEffects.recolor(my_button, "settings.svg", icon_size, "navigation_icon")
 ```
 

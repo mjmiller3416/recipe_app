@@ -218,7 +218,7 @@ Ensure it inherits from `ModelBase` and defines all relevant fields.
 from typing import Optional, List
 from datetime import datetime
 from pydantic import Field
-from database.base_model import ModelBase
+from app.core.data.base_model import ModelBase
 # from .ingredient import Ingredient # If you add a method to get ingredients
 
 class Recipe(ModelBase):
@@ -246,7 +246,7 @@ Ensure it inherits from `ModelBase`. `quantity` and `unit` are **not** part of t
 ```python
 # filepath: g:\My Drive\Python\recipe_app\database\models\ingredient.py
 from typing import Optional
-from database.base_model import ModelBase
+from app.core.data.base_model import ModelBase
 
 class Ingredient(ModelBase):
     ingredient_name: str
@@ -259,7 +259,7 @@ This is the join model.
 ```python
 # filepath: g:\My Drive\Python\recipe_app\database\models\recipe_ingredient.py
 from typing import Optional
-from database.base_model import ModelBase
+from app.core.data.base_model import ModelBase
 
 class RecipeIngredient(ModelBase):
     recipe_id: int
@@ -282,10 +282,10 @@ Since `quantity` and `unit` are not part of the `Ingredient` model but are neede
 from typing import List, Optional # Ensure List is imported
 from pydantic import BaseModel # Ensure BaseModel is imported
 
-from database.db import get_connection
-from database.models.ingredient import Ingredient
-from database.models.recipe import Recipe
-from database.models.recipe_ingredient import RecipeIngredient
+from app.core.data.db import get_connection
+from app.core.data.models.ingredient import Ingredient
+from app.core.data.models.recipe import Recipe
+from app.core.data.models.recipe_ingredient import RecipeIngredient
 
 # Define a DTO for ingredient input with quantity and unit
 class RecipeIngredientInputDTO(BaseModel):
@@ -411,8 +411,8 @@ The view layer needs to:
 ```python
 # filepath: g:\My Drive\Python\recipe_app\views\add_recipes\add_recipes.py
 # ... (other imports)
-from database.models.recipe import Recipe
-from services.recipe_service import RecipeService, RecipeIngredientInputDTO # Import DTO
+from app.core.data.models.recipe import Recipe
+from app.core.services.recipe_service import RecipeService, RecipeIngredientInputDTO # Import DTO
 # ...
 
 class AddRecipes(QWidget):

@@ -117,7 +117,7 @@ Static service class providing transactional recipe operations with comprehensiv
 - **Transaction Behavior**: All operations wrapped in single database transaction
 - **Example**:
   ```python
-  from services.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
+  from app.core.services.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
   
   # Create recipe DTO with ingredients
   ingredients = [
@@ -334,7 +334,7 @@ Static service class managing `SavedMealState` data for meal planner session per
   ```
 
 **`clear_planner_state(connection: Optional[sqlite3.Connection] = None) -> None`**
-- **Purpose**: Clears all saved meal planner state from database
+- **Purpose**: Clears all saved meal planner state from app.core.data
 - **Parameters**:
   - `connection`: Optional database connection for transaction management
 - **Returns**: None
@@ -598,7 +598,7 @@ Defines data transfer objects for ingredient-related operations, providing struc
 - **Validation**: Ensures search term is not empty
 - **Usage Example**:
   ```python
-  from services.dtos.ingredient_dtos import IngredientSearchDTO
+  from app.core.services.dtos.ingredient_dtos import IngredientSearchDTO
   
   # Create search DTO with validation
   search_dto = IngredientSearchDTO(
@@ -631,7 +631,7 @@ Comprehensive DTOs for recipe operations including creation, ingredient input, a
   - `strip_strings`: Automatically removes leading/trailing whitespace from string fields
 - **Usage Example**:
   ```python
-  from services.dtos.recipe_dtos import RecipeIngredientInputDTO
+  from app.core.services.dtos.recipe_dtos import RecipeIngredientInputDTO
   
   # Create ingredient input with validation
   ingredient = RecipeIngredientInputDTO(
@@ -656,7 +656,7 @@ Comprehensive DTOs for recipe operations including creation, ingredient input, a
   - `ingredients: List[RecipeIngredientInputDTO]` - List of recipe ingredients
 - **Usage Example**:
   ```python
-  from services.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
+  from app.core.services.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
   
   # Create complete recipe DTO
   recipe_dto = RecipeCreateDTO(
@@ -697,7 +697,7 @@ Comprehensive DTOs for recipe operations including creation, ingredient input, a
   - `favorites_only: bool` - Show only favorited recipes (defaults to False)
 - **Usage Example**:
   ```python
-  from services.dtos.recipe_dtos import RecipeFilterDTO
+  from app.core.services.dtos.recipe_dtos import RecipeFilterDTO
   
   # Create filter DTO
   filter_dto = RecipeFilterDTO(
@@ -911,9 +911,9 @@ This section demonstrates common workflows and integration patterns using the se
 Complete workflow for creating a new recipe with ingredients, including validation and error handling.
 
 ```python
-from services.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
-from services.recipe_service import RecipeService
-from services.ingredient_service import IngredientService
+from app.core.services.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
+from app.core.services.recipe_service import RecipeService
+from app.core.services.ingredient_service import IngredientService
 
 def create_complete_recipe():
     """Example: Create a recipe with ingredient validation."""
@@ -982,10 +982,10 @@ Complete workflow for creating a meal plan, including recipe selection and meal 
 
 ```python
 from datetime import datetime, timedelta
-from services.recipe_service import RecipeService
-from services.meal_service import MealService
-from services.planner_service import PlannerService
-from services.dtos.recipe_dtos import RecipeFilterDTO
+from app.core.services.recipe_service import RecipeService
+from app.core.services.meal_service import MealService
+from app.core.services.planner_service import PlannerService
+from app.core.services.dtos.recipe_dtos import RecipeFilterDTO
 
 def create_weekly_meal_plan():
     """Example: Create a complete weekly meal plan."""
@@ -1080,8 +1080,8 @@ Complete workflow for generating a shopping list from meal plans with quantity a
 
 ```python
 from datetime import datetime, timedelta
-from services.planner_service import PlannerService
-from services.shopping_service import ShoppingService
+from app.core.services.planner_service import PlannerService
+from app.core.services.shopping_service import ShoppingService
 
 def generate_weekly_shopping_list():
     """Example: Generate shopping list for current week's meal plan."""
@@ -1178,10 +1178,10 @@ def manage_shopping_progress():
 Advanced recipe search, filtering, and management operations.
 
 ```python
-from services.recipe_service import RecipeService
-from services.ingredient_service import IngredientService
-from services.dtos.recipe_dtos import RecipeFilterDTO
-from services.dtos.ingredient_dtos import IngredientSearchDTO
+from app.core.services.recipe_service import RecipeService
+from app.core.services.ingredient_service import IngredientService
+from app.core.services.dtos.recipe_dtos import RecipeFilterDTO
+from app.core.services.dtos.ingredient_dtos import IngredientSearchDTO
 
 def advanced_recipe_search():
     """Example: Advanced recipe search with multiple criteria."""

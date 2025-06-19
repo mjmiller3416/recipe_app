@@ -46,7 +46,7 @@ project_root/
 
 1. **Import**:
    ```python
-   from ui.conversion_editor import ConversionEditor
+   from app.ui.conversion_editor import ConversionEditor
    from pathlib import Path
    ```
 2. **Add** a “Unit Conversions…” action under your Settings menu:

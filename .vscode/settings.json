@@ -7,7 +7,7 @@
     "editor.formatOnSave": false, // Disable format on save
     "editor.codeActionsOnSave": {}, // Disable code actions on save
     "editor.tabSize": 4, // Set tab size to 4 spaces
-    "editor.rulers": [110], // Set a ruler at 110 characters
+    "editor.rulers": [90], // Set a ruler at 80 (PEP8)
     "editor.minimap.enabled": false, // Disable minimap
     "editor.stickyScroll.enabled": false, // Disable sticky scroll
     //"editor.scrollbar.vertical": "hidden", // Hide vertical scrollbar
@@ -150,6 +150,7 @@
       "inputs": "Src-tauri",
       "todo": "Tasks",
       "style_manager": "Plugin",
+      "data_files": "Other",
 
       //** Subfolders **//
       "app_helpers": "App",

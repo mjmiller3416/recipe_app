@@ -37,7 +37,7 @@ recipe_card = RecipeCard(size=LayoutSize.MEDIUM)
 **Usage:**
 
 ```python
-from database.models.recipe import Recipe
+from app.core.data.models.recipe import Recipe
 
 # Assuming 'my_recipe' is an instance of the Recipe model
 recipe_card.set_recipe(my_recipe)
@@ -59,7 +59,7 @@ A factory class responsible for creating and returning the appropriate `QFrame` 
 ```python
 from recipe_card.frame_factory import FrameFactory
 from recipe_card.constants import LayoutSize
-from database.models.recipe import Recipe
+from app.core.data.models.recipe import Recipe
 
 # Get an empty state frame
 empty_frame = FrameFactory.make("empty", LayoutSize.SMALL)

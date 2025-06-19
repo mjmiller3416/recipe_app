@@ -4,15 +4,15 @@ import math
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QGridLayout, QLineEdit, QMainWindow,
                                QPushButton, QVBoxLayout, QWidget)
-
-from config import (INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,
-                    MEASUREMENT_UNITS, STYLES)
-from ui.components.dialogs.dialog_window import DialogWindow
-from ui.components.inputs import CustomComboBox, SmartLineEdit
-from ui.components.widget_frame import WidgetFrame
-from ui.iconkit import ToolButtonIcon
 from views.add_recipes.ingredient_widget import IngredientWidget
 from views.add_recipes.upload_recipe import UploadRecipeImage
+
+from app.config import (INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,
+                        MEASUREMENT_UNITS, STYLES)
+from app.ui.components.dialogs.dialog_window import DialogWindow
+from app.ui.components.inputs import CustomComboBox, SmartLineEdit
+from app.ui.components.widget_frame import WidgetFrame
+from app.ui.iconkit import ToolButtonIcon
 
 INGREDIENTS = [
             "Almond milk", "Bacon", "Baking powder", "Baking soda", "BBQ sauce", "Bell pepper",

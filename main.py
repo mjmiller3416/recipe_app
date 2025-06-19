@@ -3,50 +3,20 @@ This script initializes and runs the MealGenie application, setting up the main 
 database, and handling command-line arguments for special modes like testing and importing recipes.
 """
 
+import os
 # ── Imports ─────────────────────────────────────────────────────────────────────
-import sys, os
+import sys
 
 from PySide6.QtWidgets import QApplication
+
 os.environ["QT_FONT_DPI"] = "96"
 
-from core.application import Application
-from core.utils import DebugLogger
-from database.db_reset import reset_database
-from database.init_db import init_db
-
-# ── Class Definition ────────────────────────────────────────────────────────────
-class MealPlannerApp:
-    """
-    Main application class for MealGenie.
-
-    Attributes:
-        app (QApplication): The PySide6 application instance.
-        main_window (Application): The main application window.
-
-    Methods:
-        run(): Starts the application's main event loop.
-    """
-
-    def __init__(self):
-        """
-        Initialize the application:
-        - PySide6 UI setup.
-        - Database initialization.
-        - Theme loading.
-        """
-        # ── Initialize Application ──
-        self.app = QApplication(sys.argv)
-        self.app.setApplicationName("MealGenie")
-        init_db() # initialize the database
-
-        # ── Setup Window ──
-        self.main_window = Application()
-        self.main_window.show()
-
-    def run(self):
-        """ Run the application's main event loop. """
-        DebugLogger().log("Application initializing...\n", "info")
-        sys.exit(self.app.exec())
+from app.core.data.db_reset import reset_database
+from app.core.data.init_db import init_db
+from app.core.services import NavigationService
+from app.core.utils import DebugLogger
+from app.style_manager import ThemeController
+from app.ui import MainWindow
 
 if "--reset" in sys.argv:
         reset_database()
@@ -58,7 +28,7 @@ elif "--test" in sys.argv:
     app = QApplication(sys.argv)
     app.setApplicationName("Test App")
     
-    from style_manager.theme_controller import ThemeController
+    
     theme_controller = ThemeController()
     theme_controller.apply_full_theme()
 
@@ -76,7 +46,21 @@ elif "--import-recipes" in sys.argv:
 
     DebugLogger().log("Recipe import complete.\n", "success")
 
+# ── Application Entry Point ──
 else:
-    # ── Regular Launch ──
-    app = MealPlannerApp()
-    app.run()
+    app = QApplication(sys.argv)
+    app.setApplicationName("MealGenie")
+    DebugLogger.log("Starting MealGenie application...\n", "info")
+    init_db()
+
+    theme_controller = ThemeController() 
+    
+    navigation_service_factory = NavigationService.create
+
+    main_window = MainWindow(
+        theme_controller=theme_controller,
+        navigation_service_factory=navigation_service_factory
+    )
+
+    main_window.show()
+    sys.exit(app.exec())
