@@ -112,6 +112,7 @@
       "**/config/.env": true,
       "**/config/isort.cfg": true,
       "**/.pytest_cache": true,
+      "**/.gitignore": true,
     },
 
     "files.associations": {
