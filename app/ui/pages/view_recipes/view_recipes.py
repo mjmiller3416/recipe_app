@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (QCheckBox, QHBoxLayout, QLayout, QScrollArea,
 from app.config import RECIPE_CATEGORIES, SORT_OPTIONS
 from app.core.data.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
+from app.core.dtos.recipe_dtos import RecipeFilterDTO
 from app.ui.components.inputs import ComboBox
 from app.ui.components.recipe_card.constants import LayoutSize
 from app.ui.components.recipe_card.recipe_card import RecipeCard
@@ -104,11 +105,13 @@ class ViewRecipes(QWidget):
 
         self.clear_recipe_display()
 
-        recipes = RecipeService.list_filtered(
+        filter_dto = RecipeFilterDTO(
             recipe_category=recipe_category,
             sort_by=sort,
             favorites_only=favorites_only,
         )
+
+        recipes = RecipeService.list_filtered(filter_dto)
 
         for recipe in recipes:
             slot = RecipeCard(LayoutSize.MEDIUM, parent=self.scroll_container)
