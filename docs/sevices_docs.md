@@ -172,7 +172,7 @@ Static service class providing transactional recipe operations with comprehensiv
   ```
 
 **`list_filtered(recipe_category: str | None = None, meal_type: str | None = None, sort_by: str | None = None, favorites_only: bool = False) -> list[Recipe]`**
-- **Purpose**: Advanced recipe filtering with multiple criteria and sorting options. Results are served from an in-memory cache for fast retrieval.
+- **Purpose**: Advanced recipe filtering with multiple criteria and sorting options. Recipes are loaded from a persistent cache file at startup for fast retrieval.
 - **Parameters**:
   - `recipe_category`: Filter by recipe category ("All" or None for no filter)
   - `meal_type`: Filter by meal type ("All" or None for no filter)
@@ -197,6 +197,12 @@ Static service class providing transactional recipe operations with comprehensiv
   # Get all recipes sorted Z-A
   all_recipes_desc = RecipeService.list_filtered(sort_by="Z-A")
   ```
+
+**`initialize_cache()`**
+- **Purpose**: Loads recipes from disk or the database on startup and seeds the cache file.
+
+**`add_to_cache(recipe: Recipe)`**
+- **Purpose**: Appends a newly created recipe to the in-memory and on-disk cache.
 
 ---
 

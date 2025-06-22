@@ -4,13 +4,14 @@ AddRecipes widget for creating new recipes with ingredients and directions.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QSize, Qt
+from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtWidgets import (QGridLayout, QHBoxLayout, QLabel, QPushButton,
                                QTextEdit, QVBoxLayout, QWidget)
 
 from app.config.config import INT_VALIDATOR, NAME_VALIDATOR
 from app.core.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
 from app.core.services.recipe_service import RecipeService
+from app.core.data.models.recipe import Recipe
 from app.core.utils import DebugLogger
 from app.ui.components.dialogs import MessageDialog
 from app.ui.components.forms  import RecipeForm
@@ -24,6 +25,8 @@ from app.ui.components.images.upload_recipe_image import UploadRecipeImage
 # ── Class Definition ────────────────────────────────────────────────────────────
 class AddRecipes(QWidget):
     """AddRecipes widget for creating new recipes with ingredients and directions."""
+
+    recipe_saved = Signal(Recipe)
     
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -35,6 +38,7 @@ class AddRecipes(QWidget):
 
         self._build_ui()
         self._connect_signals()
+        self.recipe_saved.connect(RecipeService.add_to_cache)
 
     def _build_ui(self):
         # ── Main Layout ──
@@ -217,6 +221,7 @@ class AddRecipes(QWidget):
 
         # ── success! ──
         DebugLogger().log(f"[AddRecipes] Recipe '{new_recipe.recipe_name}' saved with ID={new_recipe.id}", "info")
+        self.recipe_saved.emit(new_recipe)
         MessageDialog(
             "info",
             "Success! 🎉",
