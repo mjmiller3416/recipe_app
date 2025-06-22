@@ -12,8 +12,13 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT_DIR))
 
 @pytest.fixture
-def sample_recipe():
+def sample_recipe(tmp_path):
     unique_name = f"UnitTest Stew {uuid.uuid4()}"
+    image_dir = Path("data_files/recipe_images")
+    image_dir.mkdir(parents=True, exist_ok=True)
+    image_path = image_dir / f"test_{uuid.uuid4().hex}.png"
+    image_path.write_bytes(b"fake")
+
     dto = RecipeCreateDTO(
         recipe_name=unique_name,
         recipe_category="Chicken",
@@ -21,6 +26,7 @@ def sample_recipe():
         total_time=45,
         servings=4,
         directions="Step1\nStep2",
+        image_path=str(image_path),
         ingredients=[
             RecipeIngredientInputDTO(
                 ingredient_name="Chicken Breast",
@@ -37,19 +43,23 @@ def sample_recipe():
         ],
     )
     recipe = RecipeService.create_recipe_with_ingredients(dto)
-    yield recipe
+    yield recipe, image_path
     with get_connection() as conn:
         conn.execute("DELETE FROM recipe_ingredients WHERE recipe_id=?", (recipe.id,))
         conn.execute("DELETE FROM recipes WHERE id=?", (recipe.id,))
+    image_path.unlink(missing_ok=True)
 
 def test_save_recipe_fields(sample_recipe):
-    fetched = Recipe.get(sample_recipe.id)
+    recipe, img_path = sample_recipe
+    fetched = Recipe.get(recipe.id)
     assert fetched.recipe_name.startswith("UnitTest Stew")
     assert fetched.recipe_category == "Chicken"
     assert fetched.meal_type == "Dinner"
     assert fetched.total_time == 45
     assert fetched.servings == 4
     assert fetched.directions == "Step1\nStep2"
+    assert fetched.image_path == str(img_path)
+    assert img_path.exists()
     links = fetched.get_recipe_ingredients()
     assert len(links) == 2
     names = [
@@ -60,7 +70,8 @@ def test_save_recipe_fields(sample_recipe):
     assert "Salt" in names
 
 def test_fetch_recipe_details(sample_recipe, capsys):
-    fetched = Recipe.get(sample_recipe.id)
+    recipe, img_path = sample_recipe
+    fetched = Recipe.get(recipe.id)
     print("ID:", fetched.id)
     print("Name:", fetched.recipe_name)
     print("Category:", fetched.recipe_category)
