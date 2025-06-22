@@ -1,4 +1,4 @@
-"""app/ui/pages/add_recipes/ingredient_widget.py
+"""app/ui/components/forms/ingredient_widget.py
 
 IngredientWidget for managing individual ingredients in recipes.
 """
@@ -55,6 +55,7 @@ class IngredientWidget(WidgetFrame):
     def _setup_ui(self):
         """Sets up the UI components and layout for the ingredient widget."""
         self.grid_layout = self.getLayout()
+        self.grid_layout.setAlignment(Qt.AlignTop)
 
         self.le_quantity = QLineEdit(self)
         self.le_quantity.setPlaceholderText("Qty.")
