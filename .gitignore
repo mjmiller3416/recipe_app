@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+app/ui/pages/add_recipes/__pycache__/add_recipes.cpython-313.pyc
+app/ui/components/images/__pycache__/upload_recipe_image.cpython-313.pyc
+app/ui/components/images/__pycache__/__init__.cpython-313.pyc
+app/ui/pages/add_recipes/__pycache__/add_recipes.cpython-313.pyc
+app/core/dtos/__pycache__/recipe_dtos.cpython-313.pyc
