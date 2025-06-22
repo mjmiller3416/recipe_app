@@ -129,16 +129,18 @@ MEAL_PLANNER = {
 
 # ── Search Widget ──
 SEARCH = {
-    "ICON_SEARCH": {
-        "FILE_PATH": AppPaths.ICONS_DIR / "search.svg",
-        "ICON_SIZE": QSize(16, 16),
-        "STATIC":    THEME["ICON"]["ACCENT"],
+    "ICONS": {
+        "SEARCH": {
+            "PATH":    AppPaths.ICONS_DIR / "search.svg",
+            "SIZE":    QSize(16, 16),
+            "STATIC":  THEME["ICON"]["ACCENT"],
+        },
+        "CLEAR":  {
+            "PATH":    AppPaths.ICONS_DIR / "clear.svg",
+            "SIZE":    QSize(20, 20),
+            "DYNAMIC": THEME["ICON_STYLES"]["TOOLBUTTON"]
+        }
     },
-    "ICON_CLEAR":  {
-        "FILE_PATH": AppPaths.ICONS_DIR / "clear.svg",
-        "ICON_SIZE": QSize(20, 20),
-        "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"]
-    }
 }
 
 # ── Upload Image ──
