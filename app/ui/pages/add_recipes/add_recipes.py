@@ -19,7 +19,7 @@ from app.ui.components.layout import WidgetFrame
 from app.ui.helpers import clear_error_styles, dynamic_validation
 
 from .ingredient_widget import IngredientWidget
-from .upload_recipe import UploadRecipeImage
+from .upload_recipe_image import UploadRecipeImage
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
