@@ -28,6 +28,7 @@ class RecipeCreateDTO(BaseModel):
     total_time: Optional[int] = None
     servings: Optional[int] = None
     directions: Optional[str] = None
+    image_path: Optional[str] = None
     ingredients: List[RecipeIngredientInputDTO] = []
 
 class RecipeFilterDTO(BaseModel):
