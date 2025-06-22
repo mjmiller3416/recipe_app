@@ -1,13 +1,6 @@
 /* ------------------------------------------------------------------
    ADD RECIPE STYLSHEET
    ------------------------------------------------------------------ */
-
-#AddRecipes QLabel {
-    color: #E1E1E3;
-    font: 16px {FONT_FAMILY_BODY};
-    font-weight: 500;
-}
-
 #AddRecipes QPushButton {
     background-color: #3B575B;
     color: {TEXT_DEFAULT};
@@ -23,8 +16,4 @@
     color: #353535;
 }
 
-#AddRecipes #WidgetFrame QTextEdit,
-#AddRecipes #WidgetFrame QScrollArea {
-    background-color: transparent;
-    border: none;
-}
+

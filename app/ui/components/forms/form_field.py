@@ -6,10 +6,10 @@ A set of form field components for creating structured input forms in a PySide6 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from typing import Any, Optional
 
-from PySide6.QtWidgets import (QGridLayout, QLabel, QLineEdit, QSizePolicy,
-                               QWidget)
+from PySide6.QtWidgets import (
+    QGridLayout, QLabel, QLineEdit, QSizePolicy, QWidget)
 
-from app.ui.components.inputs import CustomComboBox
+from app.ui.components.inputs import ComboBox
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -56,7 +56,6 @@ class FormField(QWidget):
         # forward unknown lookups to the inner widget
         return getattr(self.input_widget, name)
 
-
 # ── Class Definition ────────────────────────────────────────────────────────────
 class LineEditField(FormField):
     """
@@ -80,12 +79,13 @@ class LineEditField(FormField):
             parent (QWidget, optional): Parent widget for this field.
         """
         widget = QLineEdit()
+        widget.setProperty("isFormField", True)
+        widget.setObjectName("myTestLineEdit")
 
         if placeholder:
             widget.setPlaceholderText(placeholder)
         super().__init__(label_text, widget, parent)
 
-    
     @property
     def textChanged(self):
         """Exposes the QLineEdit's textChanged signal."""
@@ -105,7 +105,7 @@ class LineEditField(FormField):
         return self.input_widget.text()
     
     def clear(self):
-        """Clears the current selection in the CustomComboBox."""
+        """Clears the current selection in the ComboBox."""
         self.input_widget.clear()
 
     def strip(self):
@@ -117,49 +117,47 @@ class LineEditField(FormField):
         """
         return self.input_widget.text().strip()
     
-
-
 # ── Class Definition ────────────────────────────────────────────────────────────
 class ComboBoxField(FormField):
     """
-    Form field specifically for CustomComboBox input.
+    Form field specifically for ComboBox input.
     
-    Inherits from FormField and initializes with a CustomComboBox widget.
+    Inherits from FormField and initializes with a ComboBox widget.
     """
 
     def __init__(
             self, 
             label_text: str, 
-            item_list: list[str], 
+            item_list: list[str],
+            placeholder: Optional[str] = None, 
             parent: Optional[QWidget] = None
     ):
         """
-        Initializes the ComboBoxField with a label and a CustomComboBox.
+        Initializes the ComboBoxField with a label and a ComboBox.
         
         Args:
             label_text (str): The text for the label.
             item_list (list[str]): List of items to populate the combo box.
+            placeholder (str, optional): Placeholder text for the ComboBox.
             parent (QWidget, optional): Parent widget for this field.
         """
-        widget = CustomComboBox(list_items=item_list)
+        widget = ComboBox(list_items=item_list, placeholder=placeholder)
         super().__init__(label_text, widget, parent)
 
     @property
     def selection_validated(self):
-        """Exposes the CustomComboBox's selection_validated signal."""
+        """Exposes the ComboBox's selection_validated signal."""
         return self.input_widget.selection_validated
     
     def currentText(self):
-        """Returns the current text from the CustomComboBox input widget."""
+        """Returns the current text from the ComboBox input widget."""
         return self.input_widget.currentText()
     
     def setCurrentIndex(self, index: int):
         """
-        Sets the current index of the CustomComboBox.
+        Sets the current index of the ComboBox.
         
         Args:
             index (int): The index to set as current.
         """
         self.input_widget.setCurrentIndex(index)
-    
-    

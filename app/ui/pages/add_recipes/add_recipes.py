@@ -14,7 +14,7 @@ from app.core.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
 from app.core.services.recipe_service import RecipeService
 from app.core.utils import DebugLogger
 from app.ui.components.dialogs import MessageDialog
-from app.ui.components.forms.form_field import ComboBoxField, LineEditField
+from app.ui.components.forms  import ComboBoxField, LineEditField, RecipeForm
 from app.ui.components.layout import WidgetFrame
 from app.ui.helpers import clear_error_styles, dynamic_validation
 
@@ -68,54 +68,13 @@ class AddRecipes(QWidget):
         self.lyt_left_section.setSpacing(16)
 
         # ── Recipe Details ──
-        self.lyt_recipe_details = QHBoxLayout()  # layout for details & image/save buttons
-        self.recipe_details = WidgetFrame(  # includes layout for recipe details
-            header_text = "Recipe Details",
-            layout_cls  = QGridLayout,  
-            spacing     = 10,
-        )
+        self.recipe_form = RecipeForm()  # custom form for recipe details
+        self.lyt_left_section.addWidget(self.recipe_form, stretch=1)  # add recipe form to left section
         
-        # create form fields for recipe details
-        self.le_recipe_name = LineEditField(
-            label_text  = "Recipe Name:", 
-            placeholder = "Enter recipe name here...",
-        ) 
-        self.cb_recipe_category = ComboBoxField(
-            label_text = "Category:", 
-            item_list  = RECIPE_CATEGORIES,
-        )
-        self.le_time = LineEditField(
-            label_text = "Total Time:", 
-            placeholder = "e.g. 30 mins...",
-        ) 
-        self.cb_meal_type = ComboBoxField(
-            label_text = "Meal Type:", 
-            item_list  = MEAL_CATEGORIES,
-        )
-        self.le_servings = LineEditField(
-            label_text=  "Servings:", 
-            placeholder="e.g. 4 servings...",
-        ) 
-
-        # add widgets to the recipe details frame
-        self.recipe_details.addWidget(self.le_recipe_name, 0, 0, 1, 2)  # row 1
-        self.recipe_details.addWidget(self.cb_recipe_category, 1, 0, 1, 1)  # row 2
-        self.recipe_details.addWidget(self.le_time, 1, 1, 1, 1)
-        self.recipe_details.addWidget(self.cb_meal_type, 2, 0, 1, 1)  # row 3
-        self.recipe_details.addWidget(self.le_servings, 2, 1, 1, 1)
-
-        self.lyt_recipe_details.addWidget(self.recipe_details)  # add details frame to details layout
-
-        # ── Create Image & Save Buttons ──
-        self.btn_upload_image = UploadRecipeImage()  # widget for uploading recipe image
-        self.lyt_recipe_details.addWidget(self.btn_upload_image, alignment=Qt.AlignVCenter)
-       
-        self.lyt_left_section.addLayout(self.lyt_recipe_details)  # add recipe details to left section
-
         # ── Ingredients ──
         self.ingredients_frame = WidgetFrame(  # scrollable frame for ingredients
-            header_text = "Ingredients",
-            layout_cls = QVBoxLayout,
+            title = "Ingredients",
+            layout = QVBoxLayout,
             scrollable  = True,
             spacing     = 0
         )
@@ -126,8 +85,8 @@ class AddRecipes(QWidget):
         
         # ── Directions──
         self.directions_frame = WidgetFrame(  # frame for directions
-            header_text = "Directions", 
-            layout_cls  = QVBoxLayout,
+            title = "Directions", 
+            layout  = QVBoxLayout,
         )
         self.te_directions = QTextEdit()  # text edit for directions
         self.te_directions.setObjectName("DirectionsTextEdit")
@@ -141,13 +100,13 @@ class AddRecipes(QWidget):
 
     def _connect_signals(self):
         self.btn_save.clicked.connect(self.save_recipe)
-        self.btn_upload_image.image_uploaded.connect(self._update_image_path)
+        """ self.btn_upload_image.image_uploaded.connect(self._update_image_path)
         
         dynamic_validation(self.le_recipe_name, NAME_VALIDATOR)
         dynamic_validation(self.le_servings, INT_VALIDATOR)
         
         self.cb_recipe_category.selection_validated.connect(lambda: clear_error_styles(self.cb_recipe_category))
-        self.cb_meal_type.selection_validated.connect(lambda: clear_error_styles(self.cb_meal_type))
+        self.cb_meal_type.selection_validated.connect(lambda: clear_error_styles(self.cb_meal_type)) """
         self.te_directions.textChanged.connect(lambda: clear_error_styles(self.te_directions))
 
     def _add_ingredient(self, removable=True):

@@ -2,18 +2,19 @@
 import math
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QGridLayout, QLineEdit, QMainWindow,
-                               QPushButton, QVBoxLayout, QWidget)
-from views.add_recipes.ingredient_widget import IngredientWidget
-from views.add_recipes.upload_recipe import UploadRecipeImage
+from PySide6.QtWidgets import (
+    QGridLayout, QLineEdit, QMainWindow, QPushButton, 
+    QVBoxLayout, QWidget, QLabel)
+from app.ui.pages.add_recipes.ingredient_widget import IngredientWidget
+from app.ui.pages.add_recipes.upload_recipe import UploadRecipeImage
 
 from app.config import (INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,
                         MEASUREMENT_UNITS, STYLES)
 from app.ui.components.dialogs.dialog_window import DialogWindow
-from app.ui.components.inputs import CustomComboBox, SmartLineEdit
-from app.ui.components.widget_frame import WidgetFrame
-from app.ui.iconkit import ToolButtonIcon
-
+from app.ui.components.inputs import ComboBox, SmartLineEdit
+from app.ui.components.layout.widget_frame import WidgetFrame
+from app.ui.widgets import CTToolButton
+from app.ui.components.forms.recipe_form import RecipeForm
 INGREDIENTS = [
             "Almond milk", "Bacon", "Baking powder", "Baking soda", "BBQ sauce", "Bell pepper",
             "Black beans", "Bread", "Broccoli", "Brown sugar", "Butter", "Carrot", "Cauliflower",
@@ -50,7 +51,25 @@ class MyTestApp(QMainWindow):
         #self.build_upload_test()
         #self.build_dialog_test()
         #self.build_ingredient_test()
-        self.build_custom_combobox_test()
+        #self.build_custom_combobox_test()
+        #self.build_widget_frame_test()
+        self.build_recipe_form_test()
+
+    def build_recipe_form_test(self):
+        """Builds the recipe form test UI."""
+        self.recipe_form = RecipeForm()
+        self.central_layout.addWidget(self.recipe_form)
+
+    def build_widget_frame_test(self):
+        self.widget_frame = WidgetFrame(
+            title="Widget Frame",
+            layout=QVBoxLayout,
+            scrollable=False,
+        )
+        self.label = QLabel("This is a test label inside the widget frame.")
+        self.widget_frame.layout().addWidget(self.label)
+
+        self.central_layout.addWidget(self.widget_frame)
 
     def build_dialog_test(self):
         def show_custom_dialog(self):
@@ -86,8 +105,8 @@ class MyTestApp(QMainWindow):
         self.central_layout.addWidget(scb, alignment=Qt.AlignCenter)
  
     def build_custom_combobox_test(self):
-        """Creates and returns a CustomComboBox widget."""
-        custom_combobox = CustomComboBox(
+        """Creates and returns a ComboBox widget."""
+        custom_combobox = ComboBox(
             list_items=INGREDIENTS,
             placeholder="Select an item",
         )

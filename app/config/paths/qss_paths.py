@@ -1,4 +1,4 @@
-""""config/paths/qss_paths.py
+""""app/config/paths/qss_paths.py
 
 Centralized mapping of QSS stylesheet file paths organized by category.
 """
@@ -17,7 +17,7 @@ class QssPaths:
     # ── Core Styles ─────────────────────────────────────────────────────────────────
     class Core:
         APPLICATION       = AppPaths.qss_path("core", "application.qss")
-        APP_WINDOW        = AppPaths.qss_path("core", "app_window.qss")
+        BASE              = AppPaths.qss_path("core", "base.qss")
 
     # ── View Styles ─────────────────────────────────────────────────────────────────
     class Views:
@@ -35,7 +35,7 @@ class QssPaths:
         RECIPE_CARD       = AppPaths.qss_path("components", "recipe_card.qss")
         RECIPE_DIALOG     = AppPaths.qss_path("components", "recipe_dialog.qss")
         SEARCH_BAR        = AppPaths.qss_path("components", "search_bar.qss")
-        CUSTOM_COMBOBOX   = AppPaths.qss_path("components", "custom_combobox.qss")
+        COMBOBOX          = AppPaths.qss_path("components", "combobox.qss")
         WIDGET_FRAME      = AppPaths.qss_path("components", "widget_frame.qss")
         UPLOAD_IMAGE      = AppPaths.qss_path("components", "upload_image.qss")
         #SMART_LINE_EDIT   = AppPaths.qss_path("components", "smart_line_edit.qss")
@@ -47,11 +47,11 @@ class QssPaths:
         """
         return {
             "core": [
-                #QssPaths.Core.APPLICATION,
-                QssPaths.Core.APP_WINDOW,
+                QssPaths.Core.APPLICATION,
+                QssPaths.Core.BASE,
             ],
             "views": [
-                #QssPaths.Views.ADD_RECIPES,
+                QssPaths.Views.ADD_RECIPES,
                 #QssPaths.Views.DASHBOARD,
                 #QssPaths.Views.MEAL_PLANNER,
                 #QssPaths.Views.SHOPPING_LIST,
@@ -64,9 +64,9 @@ class QssPaths:
                 #QssPaths.Components.RECIPE_DIALOG,
                 #QssPaths.Components.SEARCH_BAR,
                 #QssPaths.Components.INGREDIENT_WIDGET,
-                #QssPaths.Components.CUSTOM_COMBOBOX,
-                #QssPaths.Components.WIDGET_FRAME,
                 #QssPaths.Components.UPLOAD_IMAGE,
+                QssPaths.Components.COMBOBOX,
+                QssPaths.Components.WIDGET_FRAME,
             ]
         }
 

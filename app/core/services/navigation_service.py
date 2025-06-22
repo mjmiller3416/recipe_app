@@ -6,14 +6,14 @@ Connects signals to their respective slots for handling sidebar and page navigat
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtWidgets import QStackedWidget
 
-from app.core.services.planner_service import PlannerService
-from app.core.services.shopping_service import ShoppingService
+from app.core.services import PlannerService
+from app.core.services import ShoppingService
 from app.ui.animations import Animator
-from app.views.add_recipes import AddRecipes
-from app.views.dashboard import Dashboard
-from app.views.meal_planner import MealPlanner
-from app.views.shopping_list import ShoppingList
-from app.views.view_recipes import ViewRecipes
+from app.ui.pages import AddRecipes
+from app.ui.pages import Dashboard
+from app.ui.pages import MealPlanner
+from app.ui.pages import ShoppingList
+from app.ui.pages import ViewRecipes
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

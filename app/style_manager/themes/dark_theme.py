@@ -1,4 +1,4 @@
-"""theme_loader/themes/dark_theme.py
+"""app/style_manager/themes/dark_theme.py
 
 Dark Theme definition used across the MealGenie application.
 Supports dynamic QSS injection, theme-aware icons, and centralized style access.
@@ -91,9 +91,9 @@ THEME = {
         },
 
         "SIZE": {
-            "XSMALL":   "12px",
-            "SMALL":    "14px",
-            "DEFAULT":  "22px",
+            "XSMALL":   "14px",
+            "SMALL":    "16px",
+            "DEFAULT":  "20px",
             "LARGE":    "24px",
             "XLARGE":   "26px",
         },

@@ -12,7 +12,7 @@ from app.config import (FLOAT_VALIDATOR, INGREDIENT_CATEGORIES,
                         INGREDIENT_WIDGET, MEASUREMENT_UNITS, NAME_PATTERN)
 from app.core.dtos.ingredient_dtos import IngredientSearchDTO
 from app.core.services.ingredient_service import IngredientService
-from app.ui.components.inputs import CustomComboBox, SmartLineEdit
+from app.ui.components.inputs import ComboBox, SmartLineEdit
 from app.ui.helpers import clear_error_styles, dynamic_validation
 from app.ui.widgets import CTToolButton
 
@@ -28,7 +28,7 @@ class IngredientWidget(QWidget):
     def __init__(self, removable=True, parent=None):
         """
         Initializes the IngredientWidget with a grid layout and sets up UI components.
-        The ingredient name input is an editable CustomComboBox populated with existing
+        The ingredient name input is an editable ComboBox populated with existing
         ingredient names. Selecting an existing ingredient auto-populates its category.
 
         Args:
@@ -51,7 +51,7 @@ class IngredientWidget(QWidget):
         self.le_quantity.setPlaceholderText("Qty.")
         self.grid_layout.addWidget(self.le_quantity, 0, 0, 1, 1)
 
-        self.scb_unit = CustomComboBox(
+        self.scb_unit = ComboBox(
             list_items  = MEASUREMENT_UNITS,
             placeholder = "Unit"
         )
@@ -64,7 +64,7 @@ class IngredientWidget(QWidget):
         )
         self.grid_layout.addWidget(self.scb_ingredient_name, 0, 2, 1, 1)
 
-        self.scb_ingredient_category = CustomComboBox(
+        self.scb_ingredient_category = ComboBox(
             list_items  = INGREDIENT_CATEGORIES,
             placeholder = "Category"
         )

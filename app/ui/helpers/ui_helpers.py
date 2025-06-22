@@ -12,6 +12,29 @@ from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QSizePolicy,
 
 
 # ── Functions ───────────────────────────────────────────────────────────────────
+from PySide6.QtWidgets import QLayout, QWidget, QLabel
+
+def set_fixed_height_for_layout_widgets(
+    layout: QLayout,
+    height: int,
+    skip: tuple[type[QWidget], ...] = (QLabel,)
+) -> None:
+    """Set a fixed height for all widgets in a layout, skipping specified widget types.
+
+    Args:
+        layout (QLayout): The layout containing widgets.
+        height (int): The fixed height to apply.
+        skip (tuple): Widget classes to skip (default: QLabel).
+    """
+    for i in range(layout.count()):
+        item = layout.itemAt(i)
+        widget = item.widget()
+
+        if widget is None or isinstance(widget, skip):
+            continue
+
+        widget.setFixedHeight(height)
+
 def create_fixed_wrapper(
     widgets: Union[QWidget, Iterable[QWidget]],
     fixed_width: int,

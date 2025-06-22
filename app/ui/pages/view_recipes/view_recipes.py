@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (QCheckBox, QHBoxLayout, QLayout, QScrollArea,
 from app.config import RECIPE_CATEGORIES, SORT_OPTIONS
 from app.core.data.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
-from app.ui.components.inputs import CustomComboBox
+from app.ui.components.inputs import ComboBox
 from app.ui.components.recipe_card.constants import LayoutSize
 from app.ui.components.recipe_card.recipe_card import RecipeCard
 
@@ -53,12 +53,12 @@ class ViewRecipes(QWidget):
         self.lyt_cb.setContentsMargins(0, 0, 0, 0)        
 
         # filter combobox
-        self.cb_filter = CustomComboBox(list_items = RECIPE_CATEGORIES, placeholder = "Filter")
+        self.cb_filter = ComboBox(list_items = RECIPE_CATEGORIES, placeholder = "Filter")
         self.lyt_cb.addWidget(self.cb_filter) # add filter dropdown
         self.cb_filter.currentTextChanged.connect(self.handle_filter_change) # connect filter change event
 
         # sort combobox
-        self.cb_sort = CustomComboBox(list_items = SORT_OPTIONS, placeholder = "Sort")
+        self.cb_sort = ComboBox(list_items = SORT_OPTIONS, placeholder = "Sort")
         self.lyt_cb.addWidget(self.cb_sort) # add sort dropdown
         self.cb_sort.currentTextChanged.connect(self.handle_sort_change) # connect sort change event
 
@@ -95,7 +95,6 @@ class ViewRecipes(QWidget):
     def handle_sort_change(self, selected_sort: str) -> None:
         """Handle sort option selection."""
         self.load_filtered_sorted_recipes()
-
 
     def load_filtered_sorted_recipes(self):
         """Loads recipes using current filter, sort, and favorites-only flag."""

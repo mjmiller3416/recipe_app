@@ -161,17 +161,13 @@ INGREDIENT_WIDGET = {
 
 # ── Smart ComboBox ──
 CUSTOM_COMBOBOX = {
-    "ICON_ARROW":  {
-        "FILE_PATH": AppPaths.ICONS_DIR / "down_arrow.svg",
-        "ICON_SIZE": QSize(24, 24),
-        "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"]
+    "ICONS": {
+        "ARROW":  {
+            "PATH":    AppPaths.ICONS_DIR / "down_arrow.svg",
+            "SIZE":    QSize(24, 24),
+            "DYNAMIC": THEME["ICON_STYLES"]["TOOLBUTTON"]
+        },
     },
-    "ICON_CLEAR":  {
-        "FILE_PATH": AppPaths.ICONS_DIR / "clear.svg",
-        "ICON_SIZE": QSize(20, 20),
-        "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"]
-    },
-    "STYLE": QssPaths.Components.CUSTOM_COMBOBOX,
 }
 
 # ── Recipe Widget ──
@@ -218,7 +214,6 @@ MESSAGE_DIALOG = {
 
 # ── Widget Styles ──
 STYLES = {
-    "CUSTOM_COMBOBOX": QssPaths.Components.CUSTOM_COMBOBOX,
     "WIDGET_FRAME": QssPaths.Components.WIDGET_FRAME,
     "INGREDIENT_WIDGET": QssPaths.Components.INGREDIENT_WIDGET,
     "UPLOAD_IMAGE": QssPaths.Components.UPLOAD_IMAGE,

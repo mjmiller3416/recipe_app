@@ -60,5 +60,14 @@
         "workspaceRoot": null,
         "workspacePath": null,
         "id": "82a9FHPCmRlMQVhd"
+    },
+    {
+        "type": "Directory",
+        "name": "g:\\My Drive\\Python\\recipe_app\\app\\style_manager\\stylesheets",
+        "parent_id": null,
+        "fsPath": "g:\\My Drive\\Python\\recipe_app\\app\\style_manager\\stylesheets",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "ZlgA3SkvFHtyNhXr"
     }
 ]

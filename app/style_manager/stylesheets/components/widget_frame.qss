@@ -1,32 +1,25 @@
 /* ------------------------------------------------------------------
    WIDGET FRAME STYLESHEET
    ------------------------------------------------------------------ */
-
-#WidgetFrame {
-    background-color: {BACKGROUND_PANEL}; /* Widget Background Color */
+[class="WidgetFrame"] {
     border: 2px solid {BORDER_DEFAULT}; /* Widget Border Color */
     border-radius: 8px; /* Rounded corners */
 }
 
-#WidgetFrameHeader {
+[obj="WidgetFrameHeader"] {
     background-color: {BACKGROUND_WIDGET}; /* Header Background Color */
     color: {TEXT_DEFAULT}; /* Header Text Color */
     font-family: {FONT_FAMILY_HEADER}; /* Font for the widget */
+    font-size: {FONT_SIZE_DEFAULT};
     font-weight: bold;
-    font-size: 14px;
     padding: 10px 15px;
     border-bottom: 1px solid {BORDER_DEFAULT};
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
 }
 
-#WidgetFrameContent {
+[obj="WidgetFrameContent"] {
     background-color: {BACKGROUND_PANEL}; /* Content Background Color */
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
-}
-
-#WidgetFrameContentScrollArea {
-    background-color: transparent; /* Transparent Scroll Area Background */
-    border: none; /* No border for the scroll area */
 }

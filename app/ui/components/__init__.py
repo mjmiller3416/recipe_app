@@ -12,7 +12,7 @@ from .forms.form_field import ComboBoxField, FormField, LineEditField
 from .image.avatar_loader import AvatarLoader
 from .image.image_cropper import ImageCropper
 # From inputs
-from .inputs.custom_combobox import CustomComboBox
+from .inputs.combobox import ComboBox
 from .inputs.search_bar import SearchBar
 from .inputs.smart_line_edit import SmartLineEdit
 from .inputs.toggle_switch import ToggleSwitch
@@ -31,7 +31,7 @@ __all__ = [
     # Image
     "AvatarLoader", "ImageCropper",
     # Inputs
-    "CustomComboBox", "SearchBar", "SmartLineEdit", "ToggleSwitch",
+    "ComboBox", "SearchBar", "SmartLineEdit", "ToggleSwitch",
     # Layout
     "CustomGrip", "Separator", "WidgetFrame",
     # Navigation

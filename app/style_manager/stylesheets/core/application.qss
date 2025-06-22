@@ -1,23 +1,109 @@
 /* ------------------------------------------------------------------
-   APPLICATION GLOBAl STYLSHEET
+   APPLICATION WINDOW STYLESHEET
+   ------------------------------------------------------------------ */
+#ApplicationWindow {
+    background-color: {BACKGROUND_DEFAULT};
+    border-right: 1px solid {BORDER_WINDOW};
+    border-bottom: 1px solid {BORDER_WINDOW};
+    border-left: 1px solid {BORDER_WINDOW};
+    border-bottom-left-radius: {WINDOW_RADIUS}; /* App Window Border Radius */
+    border-bottom-right-radius: {WINDOW_RADIUS}; /* App Window Border Radius */
+}
+
+/* ------------------------------------------------------------------
+   TITLE BAR STYLESHEET
+   ------------------------------------------------------------------ */
+#TitleBar {
+    background-color: {BACKGROUND_RAISED};
+    border: 1px solid {BORDER_WINDOW};
+    border-top-left-radius: {WINDOW_RADIUS}; /* App Window Border Radius */
+    border-top-right-radius: {WINDOW_RADIUS}; /* App Window Border Radius */
+}
+
+#TitleBar QLabel {
+    background-color: transparent;
+    font-weight: 600;
+    font-size: {FONT_SIZE_LARGE};
+}
+
+#TitleBar #AppLogo {
+    margin-left: 2px;
+}
+
+#TitleBar QToolButton {
+    background-color: transparent;
+}
+
+#TitleBar QToolButton:hover {
+    background-color: {STATE_PRIMARY_HOVER}; /* Button Hover Background Color */
+    border: none;
+}
+
+#TitleBar #BtnToggleSidebar {
+    border-top-left-radius: 8px; /* App Window Border Radius */
+    margin-left: 1px;
+}
+
+#TitleBar #BtnToggleSidebar:hover {
+    background-color: {STATE_PRIMARY_HOVER}; /* Toggle Sidebar Button Background Color */
+}
+
+#TitleBar #BtnClose {
+    border-top-right-radius: 8px; /* App Window Border Radius */
+    margin-right: 1px;
+}
+
+#TitleBar #BtnClose:hover{
+    background-color: {STATE_CLOSE}; /* Close Button Background Color */
+}
+
+/* ------------------------------------------------------------------
+   SIDEBAR STYLESHEET
    ------------------------------------------------------------------ */
 
-#Application {
-    background-color: {BACKGROUND_DEFAULT}; /* App Background Color */
-    border: 0px solid {BORDER_DEFAULT}; /* App Window Border */
-    border-radius: 0px; /* App Window Border Radius */
+#Sidebar {
+background-color: {BACKGROUND_WIDGET}; /* Sidebar Background Color */
+border-bottom-left-radius: {CORNER_WIDGET_RADIUS}; /* App Window Border Radius */
 }
 
-#lbl_greeting {
-    font-size: 24px;
+#Sidebar #AvatarImage {
+    qproperty-borderColor: {ACCENT_PRIMARY};
+    qproperty-borderWidth: 6;
 }
 
-#lbl_username {
-    padding-left: 10px;
-
-    /* Font */
-    color: {ACCENT_PRIMARY};
-    font-size: 26px;
-    font-weight: bold;
-
+#Sidebar #UsernameLabel {
+    color: {FONT_COLOR_HIGHLIGHT};
+    font-weight: 600;
+    font-size: {FONT_SIZE_LARGE};
+    font-family: {FONT_FAMILY_UI};
+    padding-top: 5px;
 }
+
+#Sidebar NavButton {
+    background-color: transparent; /* Sidebar NavButton Background Color */
+    border: none;
+}
+
+#Sidebar NavButton:hover {
+    background-color: {STATE_SECONDARY_HOVER}; /* Sidebar NavButton Hover Background Color */
+}
+
+#Sidebar NavButton:checked {
+    background-color: {STATE_SECONDARY_ACTIVE}; /* Sidebar NavButton Active Background Color */
+    border-left: 4px solid {ACCENT_PRIMARY}; /* Sidebar NavButton Hover Border Color */
+}
+
+#Sidebar #ExitButton:hover {
+    border-bottom-left-radius: {CORNER_WIDGET_RADIUS}; /* App Window Border Radius */
+}
+
+#Sidebar NavButton QLabel { 
+    font-size: {FONT_SIZE_LARGE};
+    font-family: {FONT_FAMILY_UI};
+    padding-left: 20px; 
+}
+
+#Sidebar NavButton QLabel[state="checked"] {
+    font-weight: 600; /* Active State Font Style */
+}
+
