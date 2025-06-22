@@ -4,7 +4,6 @@ UploadRecipeImage widget for uploading and cropping recipe images.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-import tempfile
 import uuid
 from pathlib import Path
 
@@ -21,7 +20,7 @@ from app.ui.helpers.ui_helpers import make_overlay
 from app.ui.widgets import CTToolButton, RoundedImage
 
 # ── Constants ───────────────────────────────────────────────────────────────────
-TEMP_IMAGE_DIR = Path(AppPaths.TEMP_CROP_DIR)
+IMAGE_SAVE_DIR = Path(AppPaths.RECIPE_IMAGES_DIR)
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class UploadRecipeImage(QWidget):
@@ -107,9 +106,12 @@ class UploadRecipeImage(QWidget):
             DebugLogger().log("Cropped pixmap is null, not saving.", "warning")
             return
 
-        # save the cropped QPixmap to a temporary file
-        unique_filename = f"cropped_{uuid.uuid4().hex}.png" # save as PNG for transparency
-        temp_image_path = TEMP_IMAGE_DIR / unique_filename
+        # ensure the destination directory exists
+        IMAGE_SAVE_DIR.mkdir(parents=True, exist_ok=True)
+
+        # save the cropped QPixmap to the recipe images directory
+        unique_filename = f"recipe_{uuid.uuid4().hex}.png"  # save as PNG for transparency
+        temp_image_path = IMAGE_SAVE_DIR / unique_filename
         
         try:
             if cropped_pixmap.save(str(temp_image_path), "PNG"):
@@ -147,14 +149,8 @@ class UploadRecipeImage(QWidget):
 
     def clear_image(self):
         """Resets the widget to show the upload button, clearing any displayed image."""
-        if self.selected_image_path:
-            # optionally, delete the temporary cropped image file
-            try:
-                if self.selected_image_path.exists():
-                    self.selected_image_path.unlink()
-                    DebugLogger().log(f"Deleted temp cropped image: {self.selected_image_path}", "info")
-            except Exception as e:
-                DebugLogger().log(f"Error deleting temp image {self.selected_image_path}: {e}", "error")
+
+        # Do not delete the image file here because it may be referenced by a saved recipe
         
         self.selected_image_path = None
         self.original_selected_file_path = None

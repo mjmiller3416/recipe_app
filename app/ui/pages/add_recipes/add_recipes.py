@@ -18,7 +18,7 @@ from app.ui.components.layout import WidgetFrame
 from app.ui.helpers import clear_error_styles, dynamic_validation
 
 from .ingredient_widget import IngredientWidget
-from .upload_recipe_image import UploadRecipeImage
+from app.ui.components.images.upload_recipe_image import UploadRecipeImage
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -122,13 +122,13 @@ class AddRecipes(QWidget):
 
     def _connect_signals(self):
         self.btn_save.clicked.connect(self.save_recipe)
-        """ self.btn_upload_image.image_uploaded.connect(self._update_image_path)
-        
+        self.btn_upload_image.image_uploaded.connect(self._update_image_path)
+
         dynamic_validation(self.le_recipe_name, NAME_VALIDATOR)
         dynamic_validation(self.le_servings, INT_VALIDATOR)
-        
+
         self.cb_recipe_category.selection_validated.connect(lambda: clear_error_styles(self.cb_recipe_category))
-        self.cb_meal_type.selection_validated.connect(lambda: clear_error_styles(self.cb_meal_type)) """
+        self.cb_meal_type.selection_validated.connect(lambda: clear_error_styles(self.cb_meal_type))
         self.te_directions.textChanged.connect(lambda: clear_error_styles(self.te_directions))
 
     def _add_ingredient(self, removable=True):
