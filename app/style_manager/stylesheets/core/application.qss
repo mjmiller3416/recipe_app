@@ -107,3 +107,13 @@ border-bottom-left-radius: {CORNER_WIDGET_RADIUS}; /* App Window Border Radius *
     font-weight: 600; /* Active State Font Style */
 }
 
+/* ------------------------------------------------------------------
+   HEADER LABEL STYLESHEET
+   ------------------------------------------------------------------ */
+[tag="Header"] {
+    color: {FONT_COLOR_DEFAULT};
+    font-family: {FONT_FAMILY_HEADER};
+    font-size: {FONT_SIZE_LARGE};
+    font-weight: 600;
+}
+

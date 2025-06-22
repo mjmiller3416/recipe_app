@@ -11,6 +11,7 @@ from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import (
     QDialog,
     QHBoxLayout,
+    QLabel,
     QStackedWidget,
     QVBoxLayout,
     QWidget,
@@ -22,6 +23,7 @@ from app.ui.animations import WindowAnimator
 from app.ui.components import CustomGrip
 from app.ui.components.navigation.sidebar import Sidebar
 from app.ui.components.navigation.titlebar import TitleBar
+from app.ui.components import SearchBar
 
 if TYPE_CHECKING:
     from app.core.services import NavigationService
@@ -109,9 +111,32 @@ class MainWindow(QDialog):
 
         self.content_area = QWidget()
         self.content_area.setObjectName("ContentArea")
-        self.content_layout = QVBoxLayout(self.content_area)
+        # layout containing header and page content
+        self.content_outer_layout = QVBoxLayout(self.content_area)
+        self.content_outer_layout.setContentsMargins(0, 0, 0, 0)
+        self.content_outer_layout.setSpacing(0)
+
+        # header layout
+        self.header_layout = QHBoxLayout()
+        self.header_layout.setContentsMargins(8, 8, 8, 0)
+        self.header_layout.setSpacing(0)
+        self.content_outer_layout.addLayout(self.header_layout)
+
+        # ── Header Widgets ──
+        self.lbl_header = QLabel()
+        self.lbl_header.setProperty("tag", "Header")
+        self.lbl_header.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.header_layout.addWidget(self.lbl_header, alignment=Qt.AlignLeft)
+
+        self.search_bar = SearchBar()
+        self.header_layout.addWidget(self.search_bar, alignment=Qt.AlignRight)
+
+        # layout for stacked pages
+        self.content_layout = QVBoxLayout()
         self.content_layout.setContentsMargins(0, 0, 0, 0)
         self.content_layout.setSpacing(8)
+        self.content_outer_layout.addLayout(self.content_layout)
+
         self.body_layout.addWidget(self.content_area)
         self.central_layout.addWidget(self.window_body)
 
@@ -123,6 +148,7 @@ class MainWindow(QDialog):
         self.navigation: 'NavigationService' = navigation_service_factory(self.sw_pages)
         self.navigation.build_and_register_pages()
         self._connect_navigation_signals()
+        self.sw_pages.currentChanged.connect(self._on_page_changed)
 
         # ── Create Grips ──
         self.grips = {}        
@@ -136,6 +162,7 @@ class MainWindow(QDialog):
         
         self.navigation.switch_to("dashboard") # set initial page
         self.sidebar.buttons["btn_dashboard"].setChecked(True)
+        self._update_header("dashboard")
         
     def _connect_navigation_signals(self):
         """Connects the navigation buttons in the sidebar to the NavigationService's switch_to method."""
@@ -151,8 +178,31 @@ class MainWindow(QDialog):
         for btn_name, page_name in button_map.items():
             button = self.sidebar.buttons.get(btn_name)
             if button:
-                # connect to the service, not a local method!
-                button.clicked.connect(lambda _, p=page_name: self.navigation.switch_to(p))
+                button.clicked.connect(lambda _, p=page_name: self._switch_page(p))
+
+    def _switch_page(self, page_name: str):
+        """Helper to switch pages and update the header text."""
+        self.navigation.switch_to(page_name)
+        self._update_header(page_name)
+
+    def _update_header(self, page_name: str):
+        """Update header label text based on page name."""
+        mapping = {
+            "dashboard": "Dashboard",
+            "meal_planner": "Meal Planner",
+            "view_recipes": "View Recipes",
+            "shopping_list": "Shopping List",
+            "add_recipe": "Add Recipe",
+        }
+        self.lbl_header.setText(mapping.get(page_name, page_name.replace("_", " ").title()))
+
+    def _on_page_changed(self, index: int):
+        """Update header when stacked widget page changes."""
+        widget = self.sw_pages.widget(index)
+        for name, w in self.navigation.page_instances.items():
+            if w is widget:
+                self._update_header(name)
+                break
 
     def center_on_screen(self):
         """Centers the window on the screen."""
