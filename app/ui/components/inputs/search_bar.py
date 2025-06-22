@@ -30,8 +30,9 @@ class SearchBar(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("SearchBar")
-        self.setMinimumHeight(40)
-        self.setMaximumHeight(60)
+        self.setMinimumHeight(60)
+        self.setMaximumHeight(80)
+        self.setFixedWidth(400)
 
         self._setup_ui()
         self._setup_events()
@@ -54,7 +55,6 @@ class SearchBar(QFrame):
         self.le_search = QLineEdit(self)
         self.le_search.setObjectName("le_search")
         self.le_search.setPlaceholderText("Search...")
-        self.le_search.setFixedHeight(24)
         self.le_search.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.le_search.setAlignment(Qt.AlignVCenter)
         self.layout.addWidget(self.le_search, 0, 1)

@@ -132,12 +132,12 @@ SEARCH = {
     "ICONS": {
         "SEARCH": {
             "PATH":    AppPaths.ICONS_DIR / "search.svg",
-            "SIZE":    QSize(16, 16),
+            "SIZE":    QSize(22, 22),
             "STATIC":  THEME["ICON"]["ACCENT"],
         },
         "CLEAR":  {
             "PATH":    AppPaths.ICONS_DIR / "clear.svg",
-            "SIZE":    QSize(20, 20),
+            "SIZE":    QSize(24, 24),
             "DYNAMIC": THEME["ICON_STYLES"]["TOOLBUTTON"]
         }
     },

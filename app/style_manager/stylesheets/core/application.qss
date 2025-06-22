@@ -113,7 +113,7 @@ border-bottom-left-radius: {CORNER_WIDGET_RADIUS}; /* App Window Border Radius *
 [tag="Header"] {
     color: {FONT_COLOR_DEFAULT};
     font-family: {FONT_FAMILY_HEADER};
-    font-size: {FONT_SIZE_LARGE};
+    font-size: 40px;
     font-weight: 600;
 }
 
