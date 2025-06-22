@@ -8,13 +8,12 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import (QGridLayout, QHBoxLayout, QLabel, QPushButton,
                                QTextEdit, QVBoxLayout, QWidget)
 
-from app.config.config import (INT_VALIDATOR, MEAL_CATEGORIES, NAME_VALIDATOR,
-                               RECIPE_CATEGORIES)
+from app.config.config import INT_VALIDATOR, NAME_VALIDATOR
 from app.core.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
 from app.core.services.recipe_service import RecipeService
 from app.core.utils import DebugLogger
 from app.ui.components.dialogs import MessageDialog
-from app.ui.components.forms  import ComboBoxField, LineEditField, RecipeForm
+from app.ui.components.forms  import RecipeForm
 from app.ui.components.layout import WidgetFrame
 from app.ui.helpers import clear_error_styles, dynamic_validation
 
@@ -61,6 +60,13 @@ class AddRecipes(QWidget):
         self.lyt_recipe_details.setContentsMargins(0, 0, 0, 0)
 
         self.recipe_form = RecipeForm()  # custom form for recipe details
+        # expose form fields for convenience
+        self.le_recipe_name = self.recipe_form.le_recipe_name
+        self.cb_recipe_category = self.recipe_form.cb_recipe_category
+        self.le_time = self.recipe_form.le_time
+        self.cb_meal_type = self.recipe_form.cb_meal_type
+        self.le_servings = self.recipe_form.le_servings
+
         self.lyt_recipe_details.addWidget(
             self.recipe_form)  # add recipe form to recipe details layout
 
