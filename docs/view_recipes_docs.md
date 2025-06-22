@@ -43,7 +43,8 @@ The `ViewRecipes` class dynamically displays recipes in a responsive and scrolla
     *   Initializes the `ViewRecipes` widget.
     *   Sets up the UI by calling `build_ui()`.
     *   Sets the `meal_selection` mode.
-    *   Loads the initial set of recipes by calling `load_recipes()`.
+    *   Initializes `recipes_loaded` to `False`. Recipes are loaded the first
+        time the page is shown.
     *   `parent`: The parent widget.
     *   `meal_selection`: Boolean indicating if the widget is in recipe selection mode.
 
@@ -88,12 +89,12 @@ The `ViewRecipes` class dynamically displays recipes in a responsive and scrolla
     *   `recipe_id`: The ID of the recipe that was selected.
 
 *   `refresh(self)`:
-    *   Forces a complete refresh of the recipe display by setting `recipes_loaded` to `False` and calling `load_recipes()`.
+    *   Forces a complete refresh of the recipe display by clearing the current widgets and calling `load_filtered_sorted_recipes()`.
     *   Useful for updating the view after changes have been made elsewhere (e.g., adding/editing a recipe).
 
 *   `showEvent(self, event: QShowEvent)`:
     *   Overrides the `QWidget.showEvent()`.
-    *   Ensures that recipes are loaded via `load_recipes()` when the widget is shown, if they haven't been loaded already (`not self.recipes_loaded`).
+    *   Always reloads recipes by calling `load_filtered_sorted_recipes()` when the widget becomes visible.
     *   `event`: The `QShowEvent` object.
 
 *   `create_flow_layout(self, parent: QWidget) -> FlowLayout`:
