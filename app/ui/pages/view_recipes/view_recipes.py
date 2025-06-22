@@ -3,11 +3,18 @@
 This module defines the ViewRecipes class, which displays a list of recipes in a scrollable layout.
 """
 
-
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QPoint, QRect, QSize, Qt, Signal
-from PySide6.QtWidgets import (QCheckBox, QHBoxLayout, QLayout, QScrollArea,
-                               QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QHBoxLayout,
+    QLayout,
+    QScrollArea,
+    QSizePolicy,
+    QSpacerItem,
+    QVBoxLayout,
+    QWidget,
+)
 
 from app.config import RECIPE_CATEGORIES, SORT_OPTIONS
 from app.core.data.models.recipe import Recipe
@@ -38,6 +45,8 @@ class ViewRecipes(QWidget):
         self.setObjectName("ViewRecipes")
         self.meal_selection = meal_selection
         self.build_ui()
+        # sort recipes alphabetically on first load
+        self.cb_sort.setCurrentText("A-Z")
         self.recipes_loaded = False
         self.load_recipes()
 
@@ -51,17 +60,21 @@ class ViewRecipes(QWidget):
         # ── Create Filter & Sort Options ──
         self.lyt_cb = QHBoxLayout()
         self.lyt_cb.setSpacing(10)
-        self.lyt_cb.setContentsMargins(0, 0, 0, 0)        
+        self.lyt_cb.setContentsMargins(0, 0, 0, 0)
 
         # filter combobox
-        self.cb_filter = ComboBox(list_items = RECIPE_CATEGORIES, placeholder = "Filter")
-        self.lyt_cb.addWidget(self.cb_filter) # add filter dropdown
-        self.cb_filter.currentTextChanged.connect(self.handle_filter_change) # connect filter change event
+        self.cb_filter = ComboBox(list_items=RECIPE_CATEGORIES, placeholder="Filter")
+        self.lyt_cb.addWidget(self.cb_filter)  # add filter dropdown
+        self.cb_filter.currentTextChanged.connect(
+            self.handle_filter_change
+        )  # connect filter change event
 
         # sort combobox
-        self.cb_sort = ComboBox(list_items = SORT_OPTIONS, placeholder = "Sort")
-        self.lyt_cb.addWidget(self.cb_sort) # add sort dropdown
-        self.cb_sort.currentTextChanged.connect(self.handle_sort_change) # connect sort change event
+        self.cb_sort = ComboBox(list_items=SORT_OPTIONS, placeholder="Sort")
+        self.lyt_cb.addWidget(self.cb_sort)  # add sort dropdown
+        self.cb_sort.currentTextChanged.connect(
+            self.handle_sort_change
+        )  # connect sort change event
 
         # favorites checkbox
         self.chk_favorites = QCheckBox("Show Favorites Only")
@@ -81,14 +94,14 @@ class ViewRecipes(QWidget):
         self.scroll_container.setLayout(self.flow_layout)
 
         spacer = QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
-        self.flow_layout.addItem(spacer) # add top padding
-    
-        self.scroll_area.setWidget(self.scroll_container) # add to scroll area
+        self.flow_layout.addItem(spacer)  # add top padding
+
+        self.scroll_area.setWidget(self.scroll_container)  # add to scroll area
 
         # add widgets to main layout
-        self.main_layout.addLayout(self.lyt_cb) # add filter & sort dropdowns
+        self.main_layout.addLayout(self.lyt_cb)  # add filter & sort dropdowns
         self.main_layout.addWidget(self.scroll_area)
-    
+
     def handle_filter_change(self, selected_category: str) -> None:
         """Handle category filter selection."""
         self.load_filtered_sorted_recipes()
@@ -118,9 +131,7 @@ class ViewRecipes(QWidget):
             slot.set_recipe(recipe)
 
             if self.meal_selection:
-                slot.card_clicked.connect(
-                    lambda r, self=self: self.select_recipe(r.id)
-                )
+                slot.card_clicked.connect(lambda r, self=self: self.select_recipe(r.id))
 
             self.flow_layout.addWidget(slot)
 
@@ -135,7 +146,8 @@ class ViewRecipes(QWidget):
         from app.ui.components.recipe_card import RecipeCard
         from app.ui.components.recipe_card.constants import LayoutSize
 
-        recipes = Recipe.all()  # fetch all recipes from the database
+        filter_dto = RecipeFilterDTO(sort_by="A-Z")
+        recipes = RecipeService.list_filtered(filter_dto)
         if not recipes:
             return
 
@@ -146,9 +158,7 @@ class ViewRecipes(QWidget):
             slot.set_recipe(recipe)
 
             if self.meal_selection:
-                slot.card_clicked.connect(
-                    lambda r, self=self: self.select_recipe(r.id)
-                )
+                slot.card_clicked.connect(lambda r, self=self: self.select_recipe(r.id))
 
             self.flow_layout.addWidget(slot)
 
@@ -179,6 +189,7 @@ class ViewRecipes(QWidget):
 
     def create_flow_layout(self, parent):
         """Returns a responsive flow layout for displaying cards, with centered alignment."""
+
         class FlowLayout(QLayout):
             def __init__(self, parent=None, margin=0, spacing=45):
                 super().__init__(parent)
@@ -230,7 +241,9 @@ class ViewRecipes(QWidget):
 
                 def layout_row(items, y):
                     nonlocal testOnly
-                    total_width = sum(i.sizeHint().width() for i in items) + self._spacing * (len(items) - 1)
+                    total_width = sum(i.sizeHint().width() for i in items) + self._spacing * (
+                        len(items) - 1
+                    )
                     offset = (rect.width() - total_width) // 2
                     x = rect.x() + offset
                     for item in items:
@@ -257,5 +270,3 @@ class ViewRecipes(QWidget):
                 return y - rect.y()
 
         return FlowLayout(parent)
-
-    
