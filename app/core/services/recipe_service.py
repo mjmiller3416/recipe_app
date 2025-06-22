@@ -29,6 +29,28 @@ class DuplicateRecipeError(Exception):
 # ── Recipe Service Definition ───────────────────────────────────────────────────
 class RecipeService:
     """Service class for transactional recipe operations."""
+
+    # cache of all Recipe objects loaded from the database
+    _recipe_cache: list[Recipe] | None = None
+
+    @classmethod
+    def _load_cache(cls) -> list[Recipe]:
+        """Load all recipes from the database and cache them."""
+        cls._recipe_cache = Recipe.list_all()
+        return cls._recipe_cache
+
+    @classmethod
+    def all_cached(cls, force_refresh: bool = False) -> list[Recipe]:
+        """Return cached recipes, loading from the database if necessary."""
+        if force_refresh or cls._recipe_cache is None:
+            return cls._load_cache()
+        return cls._recipe_cache
+
+    @classmethod
+    def _add_to_cache(cls, recipe: Recipe) -> None:
+        """Add a recipe to the in-memory cache if it exists."""
+        if cls._recipe_cache is not None:
+            cls._recipe_cache.append(recipe)
     
     @staticmethod
     def create_recipe_with_ingredients(
@@ -94,6 +116,7 @@ class RecipeService:
                     ).save(connection=conn)
 
                 # 6) Return the newly created Recipe model
+                RecipeService._add_to_cache(recipe)
                 return recipe
 
         except (ValidationError, sqlite3.Error) as err:
@@ -133,7 +156,7 @@ class RecipeService:
         Returns:
             list[Recipe]: List of filtered and sorted Recipe objects.
         """
-        recs = Recipe.list_all()
+        recs = RecipeService.all_cached()
 
         # apply recipe category filter
         if filter_dto.recipe_category and filter_dto.recipe_category != "All":

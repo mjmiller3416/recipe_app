@@ -70,7 +70,7 @@ The `ViewRecipes` class dynamically displays recipes in a responsive and scrolla
 *   `load_filtered_sorted_recipes(self)`:
     *   Retrieves the current filter category from `cb_filter`, sort option from `cb_sort`, and the state of `chk_favorites`.
     *   Calls `clear_recipe_display()` to remove existing recipe widgets.
-    *   Fetches filtered and sorted recipes using `RecipeService.list_filtered()`.
+    *   Fetches filtered and sorted recipes using `RecipeService.list_filtered()`, which now serves data from an in-memory cache for faster access.
     *   For each fetched recipe, creates a `RecipeCard`, sets its recipe data, connects its `card_clicked` signal if in `meal_selection` mode, and adds it to the `flow_layout`.
 
 *   `clear_recipe_display(self)`:
@@ -94,7 +94,7 @@ The `ViewRecipes` class dynamically displays recipes in a responsive and scrolla
 
 *   `showEvent(self, event: QShowEvent)`:
     *   Overrides the `QWidget.showEvent()`.
-    *   Always reloads recipes by calling `load_filtered_sorted_recipes()` when the widget becomes visible.
+    *   Always reloads recipes by calling `load_filtered_sorted_recipes()` when the widget becomes visible. Recipe data is served from cache to avoid unnecessary database reads.
     *   `event`: The `QShowEvent` object.
 
 *   `create_flow_layout(self, parent: QWidget) -> FlowLayout`:
