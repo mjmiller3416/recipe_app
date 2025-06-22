@@ -1,4 +1,4 @@
-"""ui/main_window.py
+"""app/ui/main_window.py
 
 Defines the main application window, including the custom title bar and sidebar.
 """

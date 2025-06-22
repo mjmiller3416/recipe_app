@@ -17,7 +17,7 @@ from app.ui.helpers import clear_error_styles, dynamic_validation
 from app.ui.widgets import CTToolButton
 
 # ── Constants ───────────────────────────────────────────────────────────────────
-FIXED_HEIGHT = 32  # fixed height for input fields in the ingredient widget
+FIXED_HEIGHT = 60  # fixed height for input fields in the ingredient widget
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class IngredientWidget(QWidget):
