@@ -1,19 +1,20 @@
 /* ------------------------------------------------------------------
    ADD RECIPE STYLSHEET
    ------------------------------------------------------------------ */
-#AddRecipes QPushButton {
-    background-color: #3B575B;
-    color: {TEXT_DEFAULT};
+#AddRecipes #SaveButton {
+    background-color: {BACKGROUND_WIDGET};
+    color: {FONT_COLOR_DEFAULT};
+    border: 2px solid {BORDER_DEFAULT};
     border-radius: 6px;
     padding: 8px 12px;
-    font: 14px {FONT_FAMILY_UI};
     font-weight: 600;
-    border: none;
+    font-size: {FONT_SIZE_SMALL};
+    font-family: {FONT_FAMILY_UI};
 }
 
-#AddRecipes QPushButton:hover {
-    background-color: #03B79E;
-    color: #353535;
+#AddRecipes #SaveButton:hover {
+    background-color: {STATE_PRIMARY_HOVER};
+    color: {FONT_COLOR_DEFAULT};
 }
 
 

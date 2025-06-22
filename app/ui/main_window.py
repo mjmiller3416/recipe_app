@@ -107,7 +107,8 @@ class MainWindow(QDialog):
         self.body_layout.setContentsMargins(1, 0, 1, 1)
         self.body_layout.setSpacing(0)
 
-        self.sidebar = Sidebar() 
+        self.sidebar = Sidebar()
+        self.sidebar_toggle_requested.connect(self.sidebar.toggle)
         self.body_layout.addWidget(self.sidebar) # add sidebar to body layout
 
         self.content_area = QWidget()

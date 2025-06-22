@@ -39,28 +39,17 @@ class AddRecipes(QWidget):
 
     def _build_ui(self):
         # ── Main Layout ──
-        # horizontal layout for main content. creates left and right sections
         self.lyt_main = QVBoxLayout(self) 
         self.lyt_main.setContentsMargins(20, 20, 20, 20)
         self.lyt_main.setSpacing(16)
-
-        # ── Header Row ──
-        self.header_layout = QHBoxLayout()
 
         # create header label
         self.lbl_header = QLabel("Recipe Details")
         self.lbl_header.setObjectName("HeaderLabel")
 
-        # create save button
-        self.btn_save = QPushButton("Save Recipe")
-        self.btn_save.setObjectName("SaveButton")
-        self.btn_save.setFixedSize(QSize(120, 40))
-
-        # add widgets to header layout
-        self.header_layout.addWidget(self.lbl_header, alignment=Qt.AlignLeft)
-        self.header_layout.addWidget(self.btn_save, alignment=Qt.AlignRight)
-        
-        self.lyt_main.addLayout(self.header_layout)  # add header layout to lyt_main
+        self.lyt_main.addWidget( # add header label to main layout
+            self.lbl_header, 
+            alignment=Qt.AlignLeft)  
 
         # ── Main Content ──
         self.lyt_main_content = QHBoxLayout()  # horizontal layout for left and right sections
@@ -68,8 +57,33 @@ class AddRecipes(QWidget):
         self.lyt_left_section.setSpacing(16)
 
         # ── Recipe Details ──
+        self.lyt_recipe_details = QHBoxLayout()
+        self.lyt_recipe_details.setContentsMargins(0, 0, 0, 0)
+
         self.recipe_form = RecipeForm()  # custom form for recipe details
-        self.lyt_left_section.addWidget(self.recipe_form, stretch=1)  # add recipe form to left section
+        self.lyt_recipe_details.addWidget(
+            self.recipe_form)  # add recipe form to recipe details layout
+
+        # ── Buttons ──
+        self.lyt_buttons =QVBoxLayout()  # vertical layout for buttons
+
+        # upload image button
+        self.btn_upload_image = UploadRecipeImage() 
+        self.btn_upload_image.setObjectName("UploadRecipeImage")
+        self.lyt_buttons.addWidget(
+            self.btn_upload_image)  # add upload image button to buttons layout
+
+        # save button
+        self.btn_save = QPushButton("Save Recipe")
+        self.btn_save.setObjectName("SaveButton")
+        self.btn_save.setFixedHeight(50)  # set fixed height for consistency
+        self.lyt_buttons.addWidget(
+            self.btn_save) # add save button to buttons layout
+
+        self.lyt_recipe_details.addLayout(
+            self.lyt_buttons)  # add buttons layout to recipe details layout
+        self.lyt_left_section.addLayout(
+            self.lyt_recipe_details)  # add recipe details layout to left section layout
         
         # ── Ingredients ──
         self.ingredients_frame = WidgetFrame(  # scrollable frame for ingredients
@@ -78,10 +92,11 @@ class AddRecipes(QWidget):
             scrollable  = True,
             spacing     = 0
         )
-        self._add_ingredient(removable=False)  # add initial ingredient widget (not removable)
-        self.lyt_left_section.addWidget(self.ingredients_frame, stretch=2)  # add ingredients frame to left section
-        
-        self.lyt_main_content.addLayout(self.lyt_left_section, 1)  # add left section to main content layout
+        self._add_ingredient(removable=False)  # add initial ingredient widget 
+        self.lyt_left_section.addWidget(
+            self.ingredients_frame, stretch=2)  # add ingredients frame to left section
+        self.lyt_main_content.addLayout(
+            self.lyt_left_section, 1)  # add left section to main content layout
         
         # ── Directions──
         self.directions_frame = WidgetFrame(  # frame for directions
@@ -92,11 +107,12 @@ class AddRecipes(QWidget):
         self.te_directions.setObjectName("DirectionsTextEdit")
         self.te_directions.setPlaceholderText("Enter cooking directions here...")
         
-        self.directions_frame.addWidget(self.te_directions, stretch=1)  # add text edit to directions frame
-
-        self.lyt_main_content.addWidget(self.directions_frame, 2)  # add left section to main content layout
-
-        self.lyt_main.addLayout(self.lyt_main_content)  # add main content layout to main layout
+        self.directions_frame.addWidget(
+            self.te_directions, stretch=1)  # add text edit to directions frame
+        self.lyt_main_content.addWidget(
+            self.directions_frame, 2)  # add left section to main content layout
+        self.lyt_main.addLayout(
+            self.lyt_main_content)  # add main content layout to main layout
 
     def _connect_signals(self):
         self.btn_save.clicked.connect(self.save_recipe)

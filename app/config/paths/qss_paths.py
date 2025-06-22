@@ -64,7 +64,7 @@ class QssPaths:
                 #QssPaths.Components.RECIPE_DIALOG,
                 #QssPaths.Components.SEARCH_BAR,
                 #QssPaths.Components.INGREDIENT_WIDGET,
-                #QssPaths.Components.UPLOAD_IMAGE,
+                QssPaths.Components.UPLOAD_IMAGE,
                 QssPaths.Components.COMBOBOX,
                 QssPaths.Components.WIDGET_FRAME,
             ]

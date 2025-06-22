@@ -21,7 +21,7 @@ APPLICATION_WINDOW = {
     "SETTINGS": {
         "APP_NAME": "MealGenie",
         "WINDOW_HEIGHT": 1080,
-        "WINDOW_WIDTH":  1720,
+        "WINDOW_WIDTH":  1800,
         "BTN_SIZE": QSize(58, 58),
         "BTN_STYLE": {
             "DYNAMIC": THEME["ICON_STYLES"]["TOOLBUTTON"],
