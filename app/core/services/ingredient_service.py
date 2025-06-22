@@ -25,13 +25,25 @@ class IngredientService:
     def list_all_ingredient_names(
         conn: Optional[sqlite3.Connection] = None
     ) -> list[str]:
+        """Return a list of all distinct ingredient names.
+
+        If a connection is provided it will be used, otherwise a new connection
+        is created for the query. Previously the optional ``conn`` parameter was
+        shadowed by a local variable, causing callers' connections to be
+        ignored.
         """
-        Returns a list of all distinct ingredient names (no model validation needed).
-        """
+
         sql = "SELECT DISTINCT ingredient_name FROM ingredients"
-        with get_connection() as conn:
-            cursor = conn.execute(sql)
+
+        def _run(connection: sqlite3.Connection) -> list[str]:
+            cursor = connection.execute(sql)
             return [row["ingredient_name"] for row in cursor.fetchall()]
+
+        if conn is not None:
+            return _run(conn)
+
+        with get_connection() as connection:
+            return _run(connection)
 
     @staticmethod
     def find_matching_ingredients(
