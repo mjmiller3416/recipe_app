@@ -134,7 +134,7 @@ class AddRecipes(QWidget):
         self.ingredients_frame.addWidget(widget)
 
     def _remove_ingredient(self, widget):
-        self.ingredients_frame.layout().removeWidget(widget)
+        self.ingredients_frame.removeWidget(widget)
         widget.deleteLater()
         self.ingredients_frame.update()
 
