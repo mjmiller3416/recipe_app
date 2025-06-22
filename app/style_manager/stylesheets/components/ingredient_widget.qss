@@ -1,29 +1,14 @@
 /* ------------------------------------------------------------------
    INGREDIENT WIDGET STYLING
    ------------------------------------------------------------------ */
-#IngredientWidget QLineEdit {
+[class="IngredientWidget"] {
+    border: none;
+}
+
+[class="IngredientWidget"] QToolButton {
     background-color: {BACKGROUND_WIDGET};
-    border: 1px solid {BORDER_DEFAULT};
-    border-radius: 6px;
-    padding: 5px;
-    color: {TEXT_DEFAULT};
-    font: 14px {FONT_FAMILY_BODY};
-    padding-left: 4px;
-}
-
-#IngredientWidget QLineEdit[text=""]{ 
-    font-style: italic; 
-}
-
-#IngredientWidget QLineEdit:focus {
-    border: 1px solid #03B79E;
-    outline: none;
-}
-
-#IngredientWidget QToolButton {
-    background-color: {BACKGROUND_WIDGET};
+    border: none;
     border-radius: 6px;
     padding: 4px;
-    border: none;
 }
 

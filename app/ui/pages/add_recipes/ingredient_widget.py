@@ -14,11 +14,12 @@ from app.core.dtos.ingredient_dtos import IngredientSearchDTO
 from app.core.services.ingredient_service import IngredientService
 from app.ui.components.inputs import ComboBox, SmartLineEdit
 from app.ui.helpers import clear_error_styles, dynamic_validation
+from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
 from app.ui.widgets import CTToolButton
 from app.ui.components.layout.widget_frame import WidgetFrame
 
 # ── Constants ───────────────────────────────────────────────────────────────────
-FIXED_HEIGHT = 60  # fixed height for input fields in the ingredient widget
+FIXED_HEIGHT = 45  # fixed height for input fields in the ingredient widget
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class IngredientWidget(WidgetFrame):
@@ -39,11 +40,13 @@ class IngredientWidget(WidgetFrame):
         super().__init__(
             title=None,
             layout=QGridLayout,
+            scrollable=True,
             margins=(0, 0, 0, 0),
-            spacing=0,
+            spacing=5,
             parent=parent,
         )
         self.setObjectName("IngredientWidget")
+        self.setProperty("class", "IngredientWidget")
         self.ingredient_service = IngredientService()  # instantiate IngredientService
         self.exact_match = None
         self._setup_ui()
@@ -68,6 +71,7 @@ class IngredientWidget(WidgetFrame):
             list_items  = all_ingredient_names,
             placeholder = "Ingredient Name",
         )
+        self.scb_ingredient_name.setFixedHeight(FIXED_HEIGHT)
         self.addWidget(self.scb_ingredient_name, 0, 2, 1, 1)
 
         self.scb_ingredient_category = ComboBox(
@@ -100,10 +104,10 @@ class IngredientWidget(WidgetFrame):
         self.grid_layout.setColumnStretch(4, 0)  # Subtract button
         self.grid_layout.setColumnStretch(5, 0)  # Add button
 
-        for i in range(self.grid_layout.count()):
-            widget = self.grid_layout.itemAt(i).widget()
-            if widget is not None:
-                widget.setFixedHeight(FIXED_HEIGHT)
+        set_fixed_height_for_layout_widgets(
+            layout = self.getLayout(), 
+            height = FIXED_HEIGHT, 
+        )
 
     def setup_event_logic(self):
         """Connects signals to their respective slots for handling ingredient data."""
