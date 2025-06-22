@@ -5,7 +5,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QGridLayout, QLineEdit, QMainWindow, QPushButton, 
     QVBoxLayout, QWidget, QLabel)
-from app.ui.pages.add_recipes.ingredient_widget import IngredientWidget
+from app.ui.components.forms import IngredientWidget
 from app.ui.components.images.upload_recipe_image import UploadRecipeImage
 
 from app.config import (INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,

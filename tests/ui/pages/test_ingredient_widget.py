@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).resolve().parents[3]
 spec = importlib.util.spec_from_file_location(
     "ingredient_widget",
-    ROOT_DIR / "app" / "ui" / "pages" / "add_recipes" / "ingredient_widget.py",
+    ROOT_DIR / "app" / "ui" / "components" / "forms" / "ingredient_widget.py",
 )
 ingredient_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(ingredient_module)

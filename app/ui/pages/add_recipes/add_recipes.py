@@ -17,7 +17,7 @@ from app.ui.components.forms  import RecipeForm
 from app.ui.components.layout import WidgetFrame
 from app.ui.helpers import clear_error_styles, dynamic_validation
 
-from .ingredient_widget import IngredientWidget
+from app.ui.components.forms import IngredientWidget
 from app.ui.components.images.upload_recipe_image import UploadRecipeImage
 
 
