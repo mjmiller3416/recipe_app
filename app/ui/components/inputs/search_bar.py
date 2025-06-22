@@ -10,6 +10,8 @@ from PySide6.QtWidgets import QFrame, QGridLayout, QLineEdit, QSizePolicy
 from app.config import SEARCH
 from app.ui.widgets import CTIcon, CTToolButton
 
+# ── Constants ───────────────────────────────────────────────────────────────────
+ICONS = SEARCH["ICONS"]
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class SearchBar(QFrame):
@@ -42,9 +44,9 @@ class SearchBar(QFrame):
 
         # ── Search Icon ──
         self.ico_search = CTIcon(
-            file_path=SEARCH["ICON_SEARCH"]["FILE_PATH"],
-            size=SEARCH["ICON_SEARCH"]["ICON_SIZE"],
-            variant=SEARCH["ICON_SEARCH"]["STATIC"],
+            file_path =ICONS["SEARCH"]["PATH"],
+            icon_size =ICONS["SEARCH"]["SIZE"],
+            variant   =ICONS["SEARCH"]["STATIC"],
         )
         self.layout.addWidget(self.ico_search, 0, 0)
 
@@ -59,9 +61,9 @@ class SearchBar(QFrame):
 
         # ── Clear Button ──
         self.btn_ico_clear = CTToolButton(
-            file_path = SEARCH["ICON_CLEAR"]["FILE_PATH"],
-            icon_size = SEARCH["ICON_CLEAR"]["ICON_SIZE"],
-            variant   = SEARCH["ICON_CLEAR"]["DYNAMIC"],
+            file_path = ICONS["CLEAR"]["PATH"],
+            icon_size = ICONS["CLEAR"]["SIZE"],
+            variant   = ICONS["CLEAR"]["DYNAMIC"],
         )
         self.btn_ico_clear.setVisible(False) # visibility based on text input
         self.layout.addWidget(self.btn_ico_clear, 0, 2)
