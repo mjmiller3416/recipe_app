@@ -22,6 +22,8 @@ from .layout.separator import Separator
 from .layout.widget_frame import WidgetFrame
 # From navigation
 from .navigation.nav_button import NavButton
+from .navigation.sidebar import Sidebar
+from .navigation.titlebar import TitleBar
 
 __all__ = [
     # Dialogs
@@ -35,5 +37,5 @@ __all__ = [
     # Layout
     "CustomGrip", "Separator", "WidgetFrame",
     # Navigation
-    "NavButton",
+    "NavButton", "Sidebar", "TitleBar",
 ]

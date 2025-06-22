@@ -15,12 +15,13 @@ from app.core.services.ingredient_service import IngredientService
 from app.ui.components.inputs import ComboBox, SmartLineEdit
 from app.ui.helpers import clear_error_styles, dynamic_validation
 from app.ui.widgets import CTToolButton
+from app.ui.components.layout.widget_frame import WidgetFrame
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 FIXED_HEIGHT = 60  # fixed height for input fields in the ingredient widget
 
 # ── Class Definition ────────────────────────────────────────────────────────────
-class IngredientWidget(QWidget):
+class IngredientWidget(WidgetFrame):
     add_ingredient_requested = Signal(QWidget)
     remove_ingredient_requested = Signal(QWidget)
     ingredient_validated = Signal(dict)
@@ -35,40 +36,45 @@ class IngredientWidget(QWidget):
             removable (bool): If True, the widget will have a remove button.
             parent (QWidget, optional): Parent widget for this ingredient widget.
         """
-        super().__init__(parent)
+        super().__init__(
+            title=None,
+            layout=QGridLayout,
+            margins=(0, 0, 0, 0),
+            spacing=0,
+            parent=parent,
+        )
         self.setObjectName("IngredientWidget")
-        self.ingredient_service = IngredientService() # instantiate IngredientService
+        self.ingredient_service = IngredientService()  # instantiate IngredientService
+        self.exact_match = None
         self._setup_ui()
         self.setup_event_logic()
-        self.exact_match = None
 
     def _setup_ui(self):
         """Sets up the UI components and layout for the ingredient widget."""
-        self.grid_layout = QGridLayout(self)
-        self.setLayout(self.grid_layout)
+        self.grid_layout = self.getLayout()
 
         self.le_quantity = QLineEdit(self)
         self.le_quantity.setPlaceholderText("Qty.")
-        self.grid_layout.addWidget(self.le_quantity, 0, 0, 1, 1)
+        self.addWidget(self.le_quantity, 0, 0, 1, 1)
 
         self.scb_unit = ComboBox(
             list_items  = MEASUREMENT_UNITS,
             placeholder = "Unit"
         )
-        self.grid_layout.addWidget(self.scb_unit, 0, 1, 1, 1)
+        self.addWidget(self.scb_unit, 0, 1, 1, 1)
 
         all_ingredient_names = self.ingredient_service.list_all_ingredient_names()
         self.scb_ingredient_name = SmartLineEdit(
             list_items  = all_ingredient_names,
             placeholder = "Ingredient Name",
         )
-        self.grid_layout.addWidget(self.scb_ingredient_name, 0, 2, 1, 1)
+        self.addWidget(self.scb_ingredient_name, 0, 2, 1, 1)
 
         self.scb_ingredient_category = ComboBox(
             list_items  = INGREDIENT_CATEGORIES,
             placeholder = "Category"
         )
-        self.grid_layout.addWidget(self.scb_ingredient_category, 0, 3, 1, 1)
+        self.addWidget(self.scb_ingredient_category, 0, 3, 1, 1)
 
         self.btn_ico_subtract = CTToolButton(
             file_path = INGREDIENT_WIDGET["ICON_SUBTRACT"],
@@ -76,7 +82,7 @@ class IngredientWidget(QWidget):
             variant   = INGREDIENT_WIDGET["DYNAMIC"]
         )
         self.btn_ico_subtract.setFixedWidth(FIXED_HEIGHT) # square button
-        self.grid_layout.addWidget(self.btn_ico_subtract, 0, 4, 1, 1)
+        self.addWidget(self.btn_ico_subtract, 0, 4, 1, 1)
 
         self.btn_ico_add = CTToolButton(
             file_path = INGREDIENT_WIDGET["ICON_ADD"],
@@ -84,7 +90,7 @@ class IngredientWidget(QWidget):
             variant   = INGREDIENT_WIDGET["DYNAMIC"]
         )
         self.btn_ico_add.setFixedWidth(FIXED_HEIGHT)  # square button
-        self.grid_layout.addWidget(self.btn_ico_add, 0, 5, 1, 1)
+        self.addWidget(self.btn_ico_add, 0, 5, 1, 1)
 
         # set column stretch factors: qty, unit, category = 1; name = 3; buttons = 0
         self.grid_layout.setColumnStretch(0, 1)  # Qty
