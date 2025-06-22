@@ -6,7 +6,7 @@ IngredientWidget for managing individual ingredients in recipes.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QGridLayout, QLineEdit, QWidget
+from PySide6.QtWidgets import QGridLayout, QLineEdit, QWidget, QSizePolicy
 
 from app.config import (FLOAT_VALIDATOR, INGREDIENT_CATEGORIES,
                         INGREDIENT_WIDGET, MEASUREMENT_UNITS, NAME_PATTERN)
@@ -40,7 +40,8 @@ class IngredientWidget(WidgetFrame):
         super().__init__(
             title=None,
             layout=QGridLayout,
-            scrollable=True,
+            scrollable=False,
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
             margins=(0, 0, 0, 0),
             spacing=5,
             parent=parent,
