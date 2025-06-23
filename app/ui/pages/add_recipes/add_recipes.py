@@ -8,7 +8,7 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import (QGridLayout, QHBoxLayout, QLabel, QPushButton,
                                QTextEdit, QVBoxLayout, QWidget)
 
-from app.config.config import INT_VALIDATOR, NAME_VALIDATOR
+from app.config.config import INT_VALIDATOR, NAME_VALIDATOR, THEME
 from app.core.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
 from app.core.services.recipe_service import RecipeService
 from app.core.utils import DebugLogger
@@ -42,8 +42,8 @@ class AddRecipes(QWidget):
         self.lyt_main.setContentsMargins(20, 20, 20, 20)
         self.lyt_main.setSpacing(16)
 
-        # create header label
-        self.lbl_header = QLabel("Recipe Details")
+        # create header label - used for feedback messages
+        self.lbl_header = QLabel("")
         self.lbl_header.setObjectName("HeaderLabel")
 
         self.lyt_main.addWidget( # add header label to main layout
@@ -151,6 +151,12 @@ class AddRecipes(QWidget):
         """Update the selected image path when an image is selected."""
         self.selected_image_path = image_path if image_path else None
 
+    def _display_save_message(self, message: str, success: bool = True):
+        """Display save result message in the header label."""
+        color = THEME["FONT"]["COLOR"]["SUCCESS"] if success else THEME["FONT"]["COLOR"]["ERROR"]
+        self.lbl_header.setText(message)
+        self.lbl_header.setStyleSheet(f"color: {color}; font-style: italic;")
+
     def save_recipe(self):
         """
         Gathers all form data (recipe fields + ingredient widgets),
@@ -207,22 +213,17 @@ class AddRecipes(QWidget):
             new_recipe = RecipeService.create_recipe_with_ingredients(recipe_dto)
         except Exception as svc_err:
             DebugLogger().log(f"[AddRecipes.save_recipe] Error saving recipe: {svc_err}", "error")
-            MessageDialog(
-                "warning",
-                "Failed to Save Recipe",
-                f"Oops! Couldn’t save your recipe. 😢\n\nDetails: {svc_err}",
-                self
-            ).exec()
+            self._display_save_message(
+                f"Failed to save recipe: {svc_err}", success=False
+            )
             return
 
         # ── success! ──
         DebugLogger().log(f"[AddRecipes] Recipe '{new_recipe.recipe_name}' saved with ID={new_recipe.id}", "info")
-        MessageDialog(
-            "info",
-            "Success! 🎉",
-            f"Your recipe '{new_recipe.recipe_name}' was saved successfully.",
-            self
-        ).exec()
+        self._display_save_message(
+            f"Recipe '{new_recipe.recipe_name}' saved successfully!",
+            success=True
+        )
 
         # ── clear form and reset state ──
         self._clear_form()            
