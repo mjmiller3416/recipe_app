@@ -19,7 +19,7 @@ from app.core.data.models.recipe_ingredient import (IngredientDetail,
                                                     RecipeIngredient)
 
 if TYPE_CHECKING:
-    from data.models.ingredient import Ingredient
+    from app.core.data.models.ingredient import Ingredient
 
 # ── Recipe Model Definition ─────────────────────────────────────────────────────
 class Recipe(ModelBase):
