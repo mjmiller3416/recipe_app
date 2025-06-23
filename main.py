@@ -13,7 +13,7 @@ os.environ["QT_FONT_DPI"] = "96"
 
 from app.core.data.db_reset import reset_database
 from app.core.data.init_db import init_db
-from app.core.services import NavigationService
+from app.core.services import NavigationService, RecipeService
 from app.core.utils import DebugLogger
 from app.style_manager import ThemeController
 from app.ui import MainWindow
@@ -52,6 +52,7 @@ else:
     app.setApplicationName("MealGenie")
     DebugLogger.log("Starting MealGenie application...\n", "info")
     init_db()
+    RecipeService.initialize_cache()
 
     theme_controller = ThemeController() 
     

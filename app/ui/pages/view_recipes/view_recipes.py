@@ -48,7 +48,6 @@ class ViewRecipes(QWidget):
         # sort recipes alphabetically on first load
         self.cb_sort.setCurrentText("A-Z")
         self.recipes_loaded = False
-        self.load_recipes()
 
     def build_ui(self):
         """Initializes layout with a scrollable, responsive recipe area."""
@@ -175,17 +174,16 @@ class ViewRecipes(QWidget):
     def refresh(self):
         """Force refresh all recipe cards (used when returning from Add/Edit views)."""
         self.recipes_loaded = False
-        self.load_recipes()
 
     def showEvent(self, event):
-        """Override showEvent to load recipes if not already loaded.
+        """Reload recipes whenever the page becomes visible.
 
         Args:
             event (QShowEvent): The show event triggered when the widget is displayed.
         """
         super().showEvent(event)
-        if not self.recipes_loaded:
-            self.load_recipes()
+        self.load_filtered_sorted_recipes()
+        self.recipes_loaded = True
 
     def create_flow_layout(self, parent):
         """Returns a responsive flow layout for displaying cards, with centered alignment."""

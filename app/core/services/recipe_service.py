@@ -4,7 +4,9 @@ This module provides the RecipeService class for transactional recipe operations
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
+import json
 import sqlite3
+from pathlib import Path
 
 from pydantic import ValidationError
 
@@ -29,6 +31,64 @@ class DuplicateRecipeError(Exception):
 # ── Recipe Service Definition ───────────────────────────────────────────────────
 class RecipeService:
     """Service class for transactional recipe operations."""
+
+    # cache of all Recipe objects loaded from the database
+    _recipe_cache: list[Recipe] | None = None
+    _cache_file = Path("data_files/recipe_cache.json")
+
+    @classmethod
+    def initialize_cache(cls) -> None:
+        """Load recipe cache from file or database on startup."""
+        if cls._cache_file.exists():
+            try:
+                data = json.loads(cls._cache_file.read_text(encoding="utf-8"))
+                cls._recipe_cache = [Recipe.model_validate(item) for item in data]
+                return
+            except Exception:
+                pass  # fall back to DB load
+        cls._load_cache()
+        cls._save_cache_file()
+
+    @classmethod
+    def _load_cache(cls) -> list[Recipe]:
+        """Load all recipes from the database and cache them."""
+        cls._recipe_cache = Recipe.list_all()
+        return cls._recipe_cache
+
+    @classmethod
+    def _save_cache_file(cls) -> None:
+        """Persist the current cache to disk."""
+        if cls._recipe_cache is None:
+            return
+        cls._cache_file.parent.mkdir(parents=True, exist_ok=True)
+        cls._cache_file.write_text(
+            json.dumps([r.model_dump() for r in cls._recipe_cache], ensure_ascii=False),
+            encoding="utf-8",
+        )
+
+    @classmethod
+    def all_cached(cls, force_refresh: bool = False) -> list[Recipe]:
+        """Return cached recipes, loading from the database if necessary."""
+        if cls._recipe_cache is None:
+            cls.initialize_cache()
+        if force_refresh:
+            cls._load_cache()
+            cls._save_cache_file()
+        return cls._recipe_cache or []
+
+    @classmethod
+    def _add_to_cache(cls, recipe: Recipe) -> None:
+        """Add a recipe to the in-memory cache and persist it."""
+        if cls._recipe_cache is not None:
+            cls._recipe_cache.append(recipe)
+        else:
+            cls._recipe_cache = [recipe]
+        cls._save_cache_file()
+
+    @classmethod
+    def add_to_cache(cls, recipe: Recipe) -> None:
+        """Public wrapper to add a recipe to the cache."""
+        cls._add_to_cache(recipe)
     
     @staticmethod
     def create_recipe_with_ingredients(
@@ -133,7 +193,7 @@ class RecipeService:
         Returns:
             list[Recipe]: List of filtered and sorted Recipe objects.
         """
-        recs = Recipe.list_all()
+        recs = RecipeService.all_cached()
 
         # apply recipe category filter
         if filter_dto.recipe_category and filter_dto.recipe_category != "All":
