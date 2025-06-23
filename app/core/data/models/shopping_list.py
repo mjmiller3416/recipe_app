@@ -13,7 +13,7 @@ from app.core.data.base_model import ModelBase
 from app.core.data.models.shopping_item import ShoppingItem
 
 if TYPE_CHECKING:
-    from data.models.shopping_item import ShoppingItem
+    from app.core.data.models.shopping_item import ShoppingItem
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -47,8 +47,9 @@ class ShoppingList(ModelBase):
         Returns:
             ShoppingItem: A UI-friendly model with manual source.
         """
-        from data.models.shopping_item import \
+        from app.core.data.models.shopping_item import (
             ShoppingItem  # avoid circular import
+        )
 
         return ShoppingItem(
             ingredient_name=self.ingredient_name,

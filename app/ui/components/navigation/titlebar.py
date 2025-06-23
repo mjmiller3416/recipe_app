@@ -119,7 +119,7 @@ class TitleBar(QWidget):
         )
 
     def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton and not self.window()._is_maximized:
+        if event.button() == Qt.LeftButton and not self.window().isMaximized():
             self.old_pos = event.globalPos()
         super().mousePressEvent(event)
 

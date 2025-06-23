@@ -9,11 +9,11 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
-from data.base_model import ModelBase
+from app.core.data.base_model import ModelBase
 from pydantic import Field
 
 if TYPE_CHECKING:
-    from data.models.meal_selection import MealSelection
+    from app.core.data.models.meal_selection import MealSelection
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class MealLog(ModelBase):
@@ -25,5 +25,5 @@ class MealLog(ModelBase):
     checked_at: datetime = Field(default_factory=datetime.now)
 
     def get_meal(self) -> MealSelection:
-        from data.models.meal_selection import MealSelection
+        from app.core.data.models.meal_selection import MealSelection
         return MealSelection.get(self.meal_selection_id)

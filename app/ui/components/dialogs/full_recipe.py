@@ -278,7 +278,7 @@ class FullRecipe(DialogWindow):
         # ── Create Icon & Label ──
         icon = CTIcon(
             file_path=icon_name, 
-            size=RECIPE_DIALOG["ICON_SIZE"], 
+            icon_size=RECIPE_DIALOG["ICON_SIZE"], 
             variant=RECIPE_DIALOG["STATIC"],
         )
         lbl = QLabel(text)
