@@ -38,8 +38,9 @@ class FullRecipe(DialogWindow):
         self.recipe = recipe
 
         # ── Window Properties ──
-        self.title_bar.btn_ico_maximize.setVisible(False)
-        self.title_bar.btn_ico_toggle_sidebar.setVisible(False)
+        # ``DialogWindow`` provides only a close button. Hiding other controls
+        # that are not present caused an AttributeError. These calls were
+        # removed.
         self.setObjectName("RecipeDialog")
 
         # ── Setup UI ──

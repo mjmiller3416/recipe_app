@@ -34,8 +34,10 @@ class RecipeSelection(DialogWindow):
         # ── Window Properties ──
         self.setWindowTitle("Select a Recipe")
         self.setMinimumSize(400, 500)
-        self.title_bar.btn_ico_maximize.setVisible(False)
-        self.title_bar.btn_ico_toggle_sidebar.setVisible(False)
+        # ``DialogWindow``'s title bar only exposes a close button. Previous
+        # versions attempted to hide maximize and sidebar toggle buttons that do
+        # not exist on this minimal title bar, causing an AttributeError when
+        # the dialog was shown. Those calls are removed.
 
         # ── Widgets ──
         self.list_widget = QListWidget()
