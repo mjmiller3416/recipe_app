@@ -8,7 +8,7 @@ and emits signals when a valid selection is made.
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from typing import Sequence
 
-from PySide6.QtCore import QStringListModel, Qt, Signal
+from PySide6.QtCore import QEvent, QStringListModel, Qt, Signal
 from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget
 
 from app.config import CUSTOM_COMBOBOX
@@ -58,6 +58,8 @@ class ComboBox(QWidget):
         self.line_edit.setPlaceholderText(placeholder)
         self.line_edit.setCompleter(self.completer)
         self.line_edit.setReadOnly(True)
+        self.line_edit.installEventFilter(self)
+        self.installEventFilter(self)
 
         # ── List Button ──
         self.cb_btn = CTToolButton(
@@ -147,3 +149,13 @@ class ComboBox(QWidget):
         if text not in items:
             items.append(text)
             self.model.setStringList(items)
+
+    # ------------------------------------------------------------------
+    def eventFilter(self, obj: QWidget, event: QEvent) -> bool:
+        """Expand the popup when the widget or line edit is clicked."""
+        if event.type() == QEvent.MouseButtonPress:
+            if obj in (self, self.line_edit):
+                self._show_popup()
+                # allow normal processing to keep focus behavior
+                return False
+        return super().eventFilter(obj, event)

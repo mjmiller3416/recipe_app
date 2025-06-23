@@ -44,6 +44,7 @@ class AddRecipes(QWidget):
 
         # create header label - used for feedback messages
         self.lbl_header = QLabel("")
+
         self.lbl_header.setObjectName("HeaderLabel")
 
         self.lyt_main.addWidget( # add header label to main layout
