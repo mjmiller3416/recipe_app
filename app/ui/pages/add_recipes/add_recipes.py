@@ -43,7 +43,7 @@ class AddRecipes(QWidget):
         self.lyt_main.setSpacing(16)
 
         # create header label
-        self.lbl_header = QLabel("Recipe Details")
+        self.lbl_header = QLabel("PLACEHOLDER")
         self.lbl_header.setObjectName("HeaderLabel")
 
         self.lyt_main.addWidget( # add header label to main layout

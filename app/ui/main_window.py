@@ -118,7 +118,7 @@ class MainWindow(QDialog):
 
         # header layout
         self.header_layout = QHBoxLayout()
-        self.header_layout.setContentsMargins(8, 8, 8, 0)
+        self.header_layout.setContentsMargins(20, 20, 20, 20)
         self.header_layout.setSpacing(0)
         self.content_outer_layout.addLayout(self.header_layout)
 
