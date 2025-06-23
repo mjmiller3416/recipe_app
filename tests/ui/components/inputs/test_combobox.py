@@ -70,3 +70,8 @@ class TestComboBox:
         """Test adding an existing item."""
         combobox.addItem("Apple")
         assert combobox.model.rowCount() == 3
+
+    def test_popup_expands_on_click(self, combobox: ComboBox, qtbot: QtBot):
+        """Popup should be visible when clicking anywhere on the widget."""
+        qtbot.mouseClick(combobox.line_edit, Qt.LeftButton)
+        assert combobox.completer.popup().isVisible()
