@@ -3,7 +3,7 @@
 Defines the FullRecipe class, a custom dialog for displaying full recipe details including metadata, 
 ingredients, and directions.
 """
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QSizePolicy,
                                QSpacerItem, QVBoxLayout, QWidget)
@@ -16,11 +16,10 @@ from app.ui.components.layout import Separator
 from app.ui.helpers.ui_helpers import create_framed_layout
 from app.ui.widgets import CTIcon, RoundedImage
 
-# ── Constants ───────────────────────────────────────────────────────────────────
-
+# ── Constants ───────────────────────────────────────────────────────────────────────────
 ICON_COLOR = "#3B575B"  # Example color, adjust as needed
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── Class Definition ────────────────────────────────────────────────────────────────────
 class FullRecipe(DialogWindow):
     """Dialog for displaying a complete recipe with custom layout.
 
@@ -45,9 +44,7 @@ class FullRecipe(DialogWindow):
         # ── Setup UI ──
         self.setup_ui()
 
-        LayoutDebugger(self) # for debugging layout issues
-
-    # ── Public Methods ──────────────────────────────────────────────────────────────
+    # ── Public Methods ──────────────────────────────────────────────────────────────────
     def setup_ui(self) -> None:
         """Set up the full dialog layout with header, left, and right columns."""
         # ── Create Main Layout ──
@@ -104,9 +101,24 @@ class FullRecipe(DialogWindow):
         self.meta_info_widget, lyt_meta = create_framed_layout(line_width=0)
 
         # add meta info to layout
-        lyt_meta.addWidget(self._build_meta_row(RECIPE_DIALOG["ICON_SERVINGS"], str(self.recipe.servings)))
-        lyt_meta.addWidget(self._build_meta_row(RECIPE_DIALOG["ICON_TOTAL_TIME"], str(self.recipe.total_time)))
-        lyt_meta.addWidget(self._build_meta_row(RECIPE_DIALOG["ICON_CATEGORY"], self.recipe.recipe_category))
+        lyt_meta.addWidget(
+            self._build_meta_row(
+                RECIPE_DIALOG["ICON_SERVINGS"], 
+                str(self.recipe.servings)
+                )
+            )
+        lyt_meta.addWidget(
+            self._build_meta_row(
+                RECIPE_DIALOG["ICON_TOTAL_TIME"], 
+                str(self.recipe.total_time)
+                )
+            )
+        lyt_meta.addWidget(
+            self._build_meta_row(
+                RECIPE_DIALOG["ICON_CATEGORY"], 
+                self.recipe.recipe_category
+                )
+            )
 
         return self.meta_info_widget
 
@@ -145,7 +157,7 @@ class FullRecipe(DialogWindow):
             lyt_ingredients.addWidget(QLabel("No ingredients available."))
 
         # spacer
-        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding) # pushes content to top
+        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding) 
         lyt_ingredients.addItem(spacer) # add to layout
 
         return self.ingredients_widget
@@ -246,7 +258,7 @@ class FullRecipe(DialogWindow):
 
         return frame
 
-    # ── Private Methods ─────────────────────────────────────────────────────────────
+    # ── Private Methods ─────────────────────────────────────────────────────────────────
     def _build_left_column(self) -> QVBoxLayout:
         """Constructs the left side of the dialog (Image + Ingredients)."""
         lyt = QVBoxLayout()
