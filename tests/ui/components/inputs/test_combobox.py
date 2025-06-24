@@ -75,3 +75,15 @@ class TestComboBox:
         """Popup should be visible when clicking anywhere on the widget."""
         qtbot.mouseClick(combobox.line_edit, Qt.LeftButton)
         assert combobox.completer.popup().isVisible()
+
+    def test_popup_expands_on_focus(self, combobox: ComboBox, qtbot: QtBot):
+        """Popup should open when the widget gains focus."""
+        combobox.setFocus()
+        assert combobox.completer.popup().isVisible()
+
+    def test_keyboard_navigation_selects_item(self, combobox: ComboBox, qtbot: QtBot):
+        """Down arrow then Enter should choose the first item."""
+        combobox.setFocus()
+        qtbot.keyPress(combobox, Qt.Key_Down)
+        qtbot.keyPress(combobox, Qt.Key_Return)
+        assert combobox.currentText() == INITIAL_ITEMS[0]

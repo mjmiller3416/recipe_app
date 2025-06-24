@@ -121,6 +121,16 @@ class AddRecipes(QWidget):
         self.lyt_main.addLayout(
             self.lyt_main_content)  # add main content layout to main layout
 
+        # ── Keyboard Navigation ──
+        QWidget.setTabOrder(self.le_recipe_name.input_widget,
+                            self.cb_recipe_category.input_widget)
+        QWidget.setTabOrder(self.cb_recipe_category.input_widget,
+                            self.le_time.input_widget)
+        QWidget.setTabOrder(self.le_time.input_widget,
+                            self.cb_meal_type.input_widget)
+        QWidget.setTabOrder(self.cb_meal_type.input_widget,
+                            self.le_servings.input_widget)
+
     def _connect_signals(self):
         self.btn_save.clicked.connect(self.save_recipe)
         self.btn_upload_image.image_uploaded.connect(self._update_image_path)
@@ -131,6 +141,11 @@ class AddRecipes(QWidget):
         self.cb_recipe_category.selection_validated.connect(lambda: clear_error_styles(self.cb_recipe_category))
         self.cb_meal_type.selection_validated.connect(lambda: clear_error_styles(self.cb_meal_type))
         self.te_directions.textChanged.connect(lambda: clear_error_styles(self.te_directions))
+
+    def showEvent(self, event):
+        """Set initial focus when the widget is shown."""
+        super().showEvent(event)
+        self.le_recipe_name.setFocus()
 
     def _add_ingredient(self, removable=True):
         widget = IngredientWidget(removable=removable)
