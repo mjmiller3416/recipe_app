@@ -5,8 +5,16 @@ AddRecipes widget for creating new recipes with ingredients and directions.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import (QGridLayout, QHBoxLayout, QLabel, QPushButton,
-                               QTextEdit, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
+    QSizePolicy,
+)
 
 from app.config.config import INT_VALIDATOR, NAME_VALIDATOR, THEME
 from app.core.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
@@ -134,16 +142,28 @@ class AddRecipes(QWidget):
 
     def _add_ingredient(self, removable=True):
         widget = IngredientWidget(removable=removable)
+        frame = WidgetFrame(
+            title=None,
+            layout=QVBoxLayout,
+            scrollable=False,
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
+            margins=(0, 0, 0, 0),
+            spacing=0,
+        )
+        frame.addWidget(widget)
         widget.remove_ingredient_requested.connect(self._remove_ingredient)
         widget.add_ingredient_requested.connect(self._add_ingredient)
         widget.ingredient_validated.connect(self._store_ingredient)
         self.ingredient_widgets.append(widget)
-        self.ingredients_frame.addWidget(widget)
+        self.ingredients_frame.addWidget(frame)
 
     def _remove_ingredient(self, widget):
-        self.ingredients_frame.removeWidget(widget)
-        widget.deleteLater()
+        container = widget.parent()
+        self.ingredients_frame.removeWidget(container)
+        container.deleteLater()
         self.ingredients_frame.update()
+        if widget in self.ingredient_widgets:
+            self.ingredient_widgets.remove(widget)
 
     def _store_ingredient(self, data):
         self.stored_ingredients.append(data)
@@ -230,8 +250,10 @@ class AddRecipes(QWidget):
         self._clear_form()            
         self.stored_ingredients.clear()
         for widget in self.ingredient_widgets:
-            widget.deleteLater() # remove each IngredientWidget from the layout/UI
-        self.ingredient_widgets = [] 
+            container = widget.parent()
+            if container:
+                container.deleteLater()
+        self.ingredient_widgets = []
 
     def to_payload(self):
         """Collect all recipe form data and return it as a dict for API calls."""
@@ -259,8 +281,9 @@ class AddRecipes(QWidget):
         # Clear stored ingredients and widgets
         self.stored_ingredients.clear()
         for widget in self.ingredient_widgets:
-            self.ingredients_frame.removeWidget(widget)
-            widget.deleteLater()
+            container = widget.parent()
+            self.ingredients_frame.removeWidget(container)
+            container.deleteLater()
         self.ingredient_widgets.clear()
         
         # Add back the initial ingredient widget
