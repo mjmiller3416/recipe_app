@@ -1,7 +1,7 @@
 # MealGenie Documentation
 
 ## 1. Description
-MealGenie is a PySide6 application for planning meals, managing recipes and creating shopping lists. This directory contains reference material for contributors and maintainers.
+MealGenie is a PySide6 application for planning meals, managing recipes and creating shopping lists. This directory contains reference material for contributors and maintainers. *Refer to `docs/` for additional info*
 
 ## 2. Usage
 Run `python main.py` to launch the application. Development utilities can be found under the `scripts/` directory.
