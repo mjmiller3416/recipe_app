@@ -1,8 +1,15 @@
-"""
-Initialization file for the app.dashboard package.
+"""Initialization for dashboard components."""
 
-Contains the Dashboard class and its associated UI components.
-"""
-
-# Import the dashboard logic
 from .dashboard import Dashboard
+from .components.dashboard_grid import DashboardGrid
+from .components.dashboard_widget import DashboardWidget, WidgetConfig
+from .components.widget_size import WidgetSize
+
+__all__ = [
+    "Dashboard",
+    "DashboardGrid",
+    "DashboardWidget",
+    "WidgetConfig",
+    "WidgetSize",
+]
+
