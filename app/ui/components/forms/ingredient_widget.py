@@ -16,13 +16,12 @@ from app.ui.components.inputs import ComboBox, SmartLineEdit
 from app.ui.helpers import clear_error_styles, dynamic_validation
 from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
 from app.ui.widgets import CTToolButton
-from app.ui.components.layout.widget_frame import WidgetFrame
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 FIXED_HEIGHT = 45  # fixed height for input fields in the ingredient widget
 
 # ── Class Definition ────────────────────────────────────────────────────────────
-class IngredientWidget(WidgetFrame):
+class IngredientWidget(QWidget):
     add_ingredient_requested = Signal(QWidget)
     remove_ingredient_requested = Signal(QWidget)
     ingredient_validated = Signal(dict)
@@ -37,15 +36,12 @@ class IngredientWidget(WidgetFrame):
             removable (bool): If True, the widget will have a remove button.
             parent (QWidget, optional): Parent widget for this ingredient widget.
         """
-        super().__init__(
-            title=None,
-            layout=QGridLayout,
-            scrollable=False,
-            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
-            margins=(0, 0, 0, 0),
-            spacing=5,
-            parent=parent,
-        )
+        super().__init__(parent)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.grid_layout = QGridLayout(self)
+        self.grid_layout.setContentsMargins(0, 0, 0, 0)
+        self.grid_layout.setHorizontalSpacing(5)
+        self.grid_layout.setVerticalSpacing(5)
         self.setObjectName("IngredientWidget")
         self.setProperty("class", "IngredientWidget")
         self.ingredient_service = IngredientService()  # instantiate IngredientService
@@ -55,18 +51,17 @@ class IngredientWidget(WidgetFrame):
 
     def _setup_ui(self):
         """Sets up the UI components and layout for the ingredient widget."""
-        self.grid_layout = self.getLayout()
         self.grid_layout.setAlignment(Qt.AlignTop)
 
         self.le_quantity = QLineEdit(self)
         self.le_quantity.setPlaceholderText("Qty.")
-        self.addWidget(self.le_quantity, 0, 0, 1, 1)
+        self.grid_layout.addWidget(self.le_quantity, 0, 0, 1, 1)
 
         self.scb_unit = ComboBox(
             list_items  = MEASUREMENT_UNITS,
             placeholder = "Unit"
         )
-        self.addWidget(self.scb_unit, 0, 1, 1, 1)
+        self.grid_layout.addWidget(self.scb_unit, 0, 1, 1, 1)
 
         all_ingredient_names = self.ingredient_service.list_all_ingredient_names()
         self.scb_ingredient_name = SmartLineEdit(
@@ -74,13 +69,13 @@ class IngredientWidget(WidgetFrame):
             placeholder = "Ingredient Name",
         )
         self.scb_ingredient_name.setFixedHeight(FIXED_HEIGHT)
-        self.addWidget(self.scb_ingredient_name, 0, 2, 1, 1)
+        self.grid_layout.addWidget(self.scb_ingredient_name, 0, 2, 1, 1)
 
         self.scb_ingredient_category = ComboBox(
             list_items  = INGREDIENT_CATEGORIES,
             placeholder = "Category"
         )
-        self.addWidget(self.scb_ingredient_category, 0, 3, 1, 1)
+        self.grid_layout.addWidget(self.scb_ingredient_category, 0, 3, 1, 1)
 
         self.btn_ico_subtract = CTToolButton(
             file_path = INGREDIENT_WIDGET["ICON_SUBTRACT"],
@@ -88,7 +83,7 @@ class IngredientWidget(WidgetFrame):
             variant   = INGREDIENT_WIDGET["DYNAMIC"]
         )
         self.btn_ico_subtract.setFixedWidth(FIXED_HEIGHT) # square button
-        self.addWidget(self.btn_ico_subtract, 0, 4, 1, 1)
+        self.grid_layout.addWidget(self.btn_ico_subtract, 0, 4, 1, 1)
 
         self.btn_ico_add = CTToolButton(
             file_path = INGREDIENT_WIDGET["ICON_ADD"],
@@ -96,7 +91,7 @@ class IngredientWidget(WidgetFrame):
             variant   = INGREDIENT_WIDGET["DYNAMIC"]
         )
         self.btn_ico_add.setFixedWidth(FIXED_HEIGHT)  # square button
-        self.addWidget(self.btn_ico_add, 0, 5, 1, 1)
+        self.grid_layout.addWidget(self.btn_ico_add, 0, 5, 1, 1)
 
         # set column stretch factors: qty, unit, category = 1; name = 3; buttons = 0
         self.grid_layout.setColumnStretch(0, 1)  # Qty
@@ -107,8 +102,8 @@ class IngredientWidget(WidgetFrame):
         self.grid_layout.setColumnStretch(5, 0)  # Add button
 
         set_fixed_height_for_layout_widgets(
-            layout = self.getLayout(), 
-            height = FIXED_HEIGHT, 
+            layout = self.grid_layout,
+            height = FIXED_HEIGHT,
         )
 
     def setup_event_logic(self):
