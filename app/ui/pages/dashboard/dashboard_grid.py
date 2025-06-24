@@ -6,7 +6,7 @@ Widget responsible for manual placement of dashboard widgets using a fixed grid.
 # ── Imports ────────────────────────────────────────────
 from PySide6.QtCore import QRect
 from PySide6.QtGui import QColor, QPainter, QPen
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QFrame, QWidget
 
 from .dashboard_widget import DashboardWidget
 from .widget_sizes import WidgetSize
@@ -54,14 +54,17 @@ class DashboardGrid(QWidget):
                 painter.drawRoundedRect(rect, self.GRID_RADIUS, self.GRID_RADIUS)
 
     # ── Internal Methods ──────────────────────────────────────
-    def _place_widget(self, widget: DashboardWidget, row: int, col: int) -> None:
-        width = widget.size.cols() * self.CELL_SIZE + (widget.size.cols() - 1) * self.SPACING
-        height = widget.size.rows() * self.CELL_SIZE + (widget.size.rows() - 1) * self.SPACING
+    def _place_widget(self, builder: DashboardWidget, row: int, col: int) -> QFrame:
+        """Build and position a widget within the grid."""
+        frame = builder.build()
+        width = builder.size.cols() * self.CELL_SIZE + (builder.size.cols() - 1) * self.SPACING
+        height = builder.size.rows() * self.CELL_SIZE + (builder.size.rows() - 1) * self.SPACING
         x = col * (self.CELL_SIZE + self.SPACING)
         y = row * (self.CELL_SIZE + self.SPACING)
-        widget.setParent(self)
-        widget.setGeometry(x, y, width, height)
-        widget.show()
+        frame.setParent(self)
+        frame.setGeometry(x, y, width, height)
+        frame.show()
+        return frame
 
     def _place_dummy_widgets(self) -> None:
         self._place_widget(
