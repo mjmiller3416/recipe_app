@@ -8,6 +8,11 @@
     border-radius: 6px;
 }
 
+#ComboBox:focus {
+    border: 1px solid {ACCENT_PRIMARY};
+    outline: none;
+}
+
 #ComboBox #LineEdit {
     background-color: {BACKGROUND_WIDGET};
     color: {FONT_COLOR_CONTRAST};
