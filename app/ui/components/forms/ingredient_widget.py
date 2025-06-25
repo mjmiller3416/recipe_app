@@ -61,6 +61,7 @@ class IngredientWidget(QWidget):
             list_items  = MEASUREMENT_UNITS,
             placeholder = "Unit"
         )
+        self.scb_unit.completer.popup().setObjectName("CompleterPopup")
         self.grid_layout.addWidget(self.scb_unit, 0, 1, 1, 1)
 
         all_ingredient_names = self.ingredient_service.list_all_ingredient_names()

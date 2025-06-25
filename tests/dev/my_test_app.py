@@ -50,10 +50,10 @@ class MyTestApp(QMainWindow):
 
         #self.build_upload_test()
         #self.build_dialog_test()
-        #self.build_ingredient_test()
+        self.build_ingredient_widget_test()
         #self.build_custom_combobox_test()
         #self.build_widget_frame_test()
-        self.build_recipe_form_test()
+        #self.build_recipe_form_test()
 
     def build_recipe_form_test(self):
         """Builds the recipe form test UI."""
@@ -116,11 +116,7 @@ class MyTestApp(QMainWindow):
 
     def build_ingredient_widget_test(self):
         """Creates and returns an IngredientWidget."""
-        ingredient_widget = IngredientWidget(
-            categories=INGREDIENT_CATEGORIES,
-            units=MEASUREMENT_UNITS,
-            style_path=INGREDIENT_WIDGET["STYLE_PATH"]
-        )
+        ingredient_widget = IngredientWidget()
         self.central_layout.addWidget(ingredient_widget)
     
   

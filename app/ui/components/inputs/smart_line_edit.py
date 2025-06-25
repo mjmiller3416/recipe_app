@@ -11,6 +11,8 @@ from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget
 from app.core.utils import DebugLogger
 from app.ui.models import IngredientProxyModel
 
+# ── Constants ───────────────────────────────────────────────────────────────────
+FIXED_HEIGHT = 45
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class SmartLineEdit(QWidget):
@@ -60,6 +62,7 @@ class SmartLineEdit(QWidget):
         self.line_edit = QLineEdit(self) 
         self.line_edit.setPlaceholderText(placeholder)
         self.line_edit.setCompleter(self.completer)
+        self.line_edit.setFixedHeight(FIXED_HEIGHT)
 
         # ── Event Filters ──
         self.line_edit.installEventFilter(self)
