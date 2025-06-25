@@ -105,7 +105,7 @@ class AddRecipes(QWidget):
             title = "Ingredients",
             layout = QVBoxLayout,
             scrollable  = True,
-            spacing     = 0
+            spacing     = 6
         )
         self._add_ingredient(removable=False)  # add initial ingredient widget 
         self.lyt_left_section.addWidget(
@@ -142,20 +142,12 @@ class AddRecipes(QWidget):
 
     def _add_ingredient(self, removable=True):
         widget = IngredientWidget(removable=removable)
-        frame = WidgetFrame(
-            title=None,
-            layout=QVBoxLayout,
-            scrollable=False,
-            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
-            margins=(0, 0, 0, 0),
-            spacing=0,
-        )
-        frame.addWidget(widget)
+    
         widget.remove_ingredient_requested.connect(self._remove_ingredient)
         widget.add_ingredient_requested.connect(self._add_ingredient)
         widget.ingredient_validated.connect(self._store_ingredient)
         self.ingredient_widgets.append(widget)
-        self.ingredients_frame.addWidget(frame)
+        self.ingredients_frame.addWidget(widget)
 
     def _remove_ingredient(self, widget):
         container = widget.parent()

@@ -50,6 +50,8 @@ class ComboBox(QWidget):
         # ── Completer ──
         self.completer = QCompleter(self.model, self)
         self.completer.setCaseSensitivity(Qt.CaseInsensitive)
+        self.completer.popup().setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.completer.popup().setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.completer.popup().setObjectName("CompleterPopup")
 
         # ── Input Field ──
