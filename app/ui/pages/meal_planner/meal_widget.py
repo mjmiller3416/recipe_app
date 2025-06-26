@@ -5,6 +5,7 @@ This is a pure UI widget responsible only for rendering and updating meal data s
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
+from functools import partial
 from typing import Optional
 
 from PySide6.QtCore import QEvent, Qt
@@ -68,7 +69,11 @@ class MealWidget(QWidget):
         Connect signal from RecipeViewer to the update_recipe_selection method.
         """
         for key, slot in self.meal_slots.items():
-            slot.recipe_selected.connect(lambda rid, k=key: self.update_recipe_selection(k, rid))
+            # ``recipe_selected`` should emit an integer ID, but some widgets
+            # have been observed emitting themselves instead.  Using
+            # ``partial`` avoids late-binding issues with lambdas and keeps the
+            # connection signature stable across PySide versions.
+            slot.recipe_selected.connect(partial(self.update_recipe_selection, key))
 
     def update_recipe_selection(self, key: str, recipe_id) -> None:
         """
@@ -86,14 +91,17 @@ class MealWidget(QWidget):
         """
         # ── Normalize Input ──
         if not isinstance(recipe_id, int):
-            rid = getattr(recipe_id, "id", None)
-            if rid is None:
-                recipe_attr = getattr(recipe_id, "recipe", None)
-                if callable(recipe_attr):
-                    recipe_attr = recipe_attr()
-                if recipe_attr is not None:
-                    rid = getattr(recipe_attr, "id", None)
-            recipe_id = rid if isinstance(rid, int) else 0
+            rid = getattr(recipe_id, "id", recipe_id)
+            try:
+                recipe_id = int(rid)
+            except (TypeError, ValueError):
+                recipe_obj = getattr(recipe_id, "recipe", None)
+                if callable(recipe_obj):
+                    recipe_obj = recipe_obj()
+                try:
+                    recipe_id = int(getattr(recipe_obj, "id", 0))
+                except (TypeError, ValueError):
+                    recipe_id = 0
         if not self._meal_model:
             self._meal_model = MealSelection(
                 meal_name="Custom Meal",  # or dynamic name later
