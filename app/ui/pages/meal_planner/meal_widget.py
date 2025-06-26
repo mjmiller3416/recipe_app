@@ -87,8 +87,12 @@ class MealWidget(QWidget):
         # ── Normalize Input ──
         if not isinstance(recipe_id, int):
             rid = getattr(recipe_id, "id", None)
-            if rid is None and hasattr(recipe_id, "recipe"):
-                rid = getattr(getattr(recipe_id, "recipe"), "id", None)
+            if rid is None:
+                recipe_attr = getattr(recipe_id, "recipe", None)
+                if callable(recipe_attr):
+                    recipe_attr = recipe_attr()
+                if recipe_attr is not None:
+                    rid = getattr(recipe_attr, "id", None)
             recipe_id = rid if isinstance(rid, int) else 0
         if not self._meal_model:
             self._meal_model = MealSelection(
