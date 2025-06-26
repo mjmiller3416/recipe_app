@@ -70,14 +70,26 @@ class MealWidget(QWidget):
         for key, slot in self.meal_slots.items():
             slot.recipe_selected.connect(lambda rid, k=key: self.update_recipe_selection(k, rid))
 
-    def update_recipe_selection(self, key: str, recipe_id: int) -> None:
+    def update_recipe_selection(self, key: str, recipe_id) -> None:
         """
         Update the meal model with the selected recipe ID.
 
+        This slot is triggered by :class:`RecipeCard` widgets. Some PySide
+        signal connections were inadvertently passing the widget instance
+        itself instead of the recipe ID, which resulted in ``int()`` casting
+        errors when constructing :class:`MealSelection` models.  To guard
+        against this we coerce ``recipe_id`` to an ``int`` when possible.
+
         Args:
             key (str): The key representing the recipe slot (main, side1, side2, side3).
-            recipe_id (int): The ID of the selected recipe.
+            recipe_id: The ID of the selected recipe or a widget containing it.
         """
+        # ── Normalize Input ──
+        if not isinstance(recipe_id, int):
+            rid = getattr(recipe_id, "id", None)
+            if rid is None and hasattr(recipe_id, "recipe"):
+                rid = getattr(getattr(recipe_id, "recipe"), "id", None)
+            recipe_id = rid if isinstance(rid, int) else 0
         if not self._meal_model:
             self._meal_model = MealSelection(
                 meal_name="Custom Meal",  # or dynamic name later
