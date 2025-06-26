@@ -91,13 +91,18 @@ class MealWidget(QWidget):
         """
         # ── Normalize Input ──
         if not isinstance(recipe_id, int):
-            rid = getattr(recipe_id, "id", recipe_id)
+            # ``RecipeCard`` widgets may emit themselves instead of a plain
+            # integer ID.  Normalize those cases by introspecting for a
+            # ``recipe()`` method and falling back to any ``id`` attribute.
+            recipe_obj = getattr(recipe_id, "recipe", None)
+            if callable(recipe_obj):
+                recipe_obj = recipe_obj()
+
+            rid = getattr(recipe_id, "id", recipe_obj)
+
             try:
                 recipe_id = int(rid)
             except (TypeError, ValueError):
-                recipe_obj = getattr(recipe_id, "recipe", None)
-                if callable(recipe_obj):
-                    recipe_obj = recipe_obj()
                 try:
                     recipe_id = int(getattr(recipe_obj, "id", 0))
                 except (TypeError, ValueError):
