@@ -20,6 +20,7 @@ from .inputs.toggle_switch import ToggleSwitch
 from .layout.custom_grip import CustomGrip
 from .layout.separator import Separator
 from .layout.widget_frame import WidgetFrame
+from .layout.flow_layout import FlowLayout
 # From navigation
 from .navigation.nav_button import NavButton
 from .navigation.sidebar import Sidebar
@@ -35,7 +36,7 @@ __all__ = [
     # Inputs
     "ComboBox", "SearchBar", "SmartLineEdit", "ToggleSwitch",
     # Layout
-    "CustomGrip", "Separator", "WidgetFrame",
+    "CustomGrip", "Separator", "WidgetFrame", "FlowLayout",
     # Navigation
     "NavButton", "Sidebar", "TitleBar",
 ]
