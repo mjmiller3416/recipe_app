@@ -46,7 +46,6 @@ class ComboBox(QWidget):
         self.setProperty("focused", True)
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setFocusPolicy(Qt.StrongFocus)
-        print(self.property("focused"))
 
         self.model = QStringListModel(list_items or [])  # stored items in a model
 
@@ -120,7 +119,6 @@ class ComboBox(QWidget):
             self.line_edit.setFocus()
             self.completer.complete()
             self.setProperty("focused", True)
-            print(self.property("focused"))
             self.update()  # refresh style
 
     def currentText(self) -> str:

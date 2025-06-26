@@ -3,11 +3,11 @@
 Defines the RecipeCard class that acts as a dynamic container for different recipe states (empty, recipe, error).
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────
 from typing import Optional
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QFrame, QPushButton, QStackedWidget, QVBoxLayout
+from PySide6.QtWidgets import QDialog, QFrame, QPushButton, QStackedWidget, QVBoxLayout
 
 from app.core.data.models.recipe import Recipe
 from app.core.utils import DebugLogger
@@ -17,7 +17,7 @@ from .constants import LayoutSize
 from .frame_factory import FrameFactory
 
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── Class Definition ────────────────────────────────────────────────────────────────────
 class RecipeCard(QFrame):
     """A fixed-size placeholder that can display one of three states: empty, recipe, or error.
 
@@ -27,7 +27,7 @@ class RecipeCard(QFrame):
     - delete_clicked(recipe_id: int): (Reserved) Delete action, not yet wired.
     """
 
-    # ── Signals ─────────────────────────────────────────────────────────────────
+    # ── Signals ─────────────────────────────────────────────────────────────────────────
     add_meal_clicked = Signal()
     card_clicked     = Signal(object) # recipe instance
     delete_clicked   = Signal(int)    # recipe_id
@@ -39,6 +39,7 @@ class RecipeCard(QFrame):
         self.setAttribute(Qt.WA_StyledBackground, True)
         self._size:   LayoutSize      = size
         self._recipe: Optional[Recipe] = None
+        self._recipe_selection_dialog: Optional[QDialog] = None
 
         # ── Create Stacked Widget ──
         self._stack = QStackedWidget(self)
@@ -62,7 +63,7 @@ class RecipeCard(QFrame):
         self._stack.setCurrentIndex(0)
         self._wire_empty_button()
 
-    # ── Public Methods ──────────────────────────────────────────────────────────────
+    # ── Public Methods ──────────────────────────────────────────────────────────────────
     def set_recipe(self, recipe: Recipe | None) -> None:
         """Load or clear a recipe in this `RecipeCard`.
         Args:
@@ -74,7 +75,7 @@ class RecipeCard(QFrame):
             self._recipe = None
             self._stack.setCurrentIndex(0) # show empty page
 
-            # Optionally inform listeners we cleared the slot
+            # optionally inform listeners we cleared the slot
             # self.recipe_selected.emit(-1)
 
             return
@@ -102,7 +103,7 @@ class RecipeCard(QFrame):
         """Return the currently displayed recipe (or None)."""
         return self._recipe
 
-    # ── Private Methods ─────────────────────────────────────────────────────────────
+    # ── Private Methods ─────────────────────────────────────────────────────────────────
     def _wire_empty_button(self) -> None:
         """
         Connect the '+ Add Meal' button inside the empty page
@@ -144,22 +145,33 @@ class RecipeCard(QFrame):
         Fetches recipes, displays a selection dialog, and loads the chosen recipe.
         """
         try:
-            all_recipes = Recipe.all()   # fetch all recipes from the database
+            all_recipes = Recipe.all()  # fetch all recipes from the database
             if not all_recipes:
-                print("No recipes found in the database.") # handle empty state
+                print("No recipes found in the database.")  # handle empty state
                 return
 
             # ── Show Selection Dialog ──
-            dialog = RecipeSelection(all_recipes, self)
-            if dialog.exec():  # Use exec() for modal dialog
-                selected_recipe = dialog.selected_recipe()
-                if selected_recipe:
-                    self.set_recipe(selected_recipe)
-                else:
-                    print("No recipe selected.") # handle no selection
-            else:
-                print("Recipe selection cancelled.") # handle cancellation
+            self._recipe_selection_dialog = RecipeSelection(all_recipes, self)
+            self._recipe_selection_dialog.finished.connect(self._on_recipe_selection_finished)
+            self._recipe_selection_dialog.open()
 
         except Exception as e:
-            print(f"Error handling add meal click: {e}") # handle exceptions
-            self._stack.setCurrentIndex(2) # switch to error state
+            print(f"Error handling add meal click: {e}")  # handle exceptions
+            self._stack.setCurrentIndex(2)  # switch to error state
+
+    def _on_recipe_selection_finished(self, result: int) -> None:
+        """Callback for when the recipe selection dialog is finished."""
+        if self._recipe_selection_dialog is None:
+            return
+
+        if result == QDialog.Accepted:
+            selected_recipe = self._recipe_selection_dialog.selected_recipe()
+            if selected_recipe:
+                self.set_recipe(selected_recipe)
+            else:
+                print("No recipe selected.")
+        else:
+            print("Recipe selection cancelled.")
+
+        self._recipe_selection_dialog.deleteLater()
+        self._recipe_selection_dialog = None

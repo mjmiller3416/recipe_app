@@ -3,7 +3,7 @@
 Dialog for selecting a recipe from a list.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────
 from typing import List, Optional
 
 from PySide6.QtCore import Qt
@@ -12,17 +12,21 @@ from PySide6.QtWidgets import (QAbstractItemView, QDialogButtonBox,
 
 from app.core.data.models.recipe import Recipe
 from app.ui.components.dialogs.dialog_window import DialogWindow
+from app.core.utils import DebugLogger
 
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── Class Definition ────────────────────────────────────────────────────────────────────
 class RecipeSelection(DialogWindow):
     """
     A dialog that displays a list of available recipes for selection.
     """
     def __init__(self, recipes: List[Recipe], parent=None):
-        super().__init__(parent)
+        super().__init__(width=400, height=500)
+        if parent is not None:
+            self.setParent(parent)
         self._recipes = recipes
         self._selected_recipe: Optional[Recipe] = None
+        DebugLogger.log(f"[RecipeSelection] Initialized with {len(recipes)} recipes", "debug")
 
         # ── Window Properties ──
         self.setWindowTitle("Select a Recipe")

@@ -84,9 +84,6 @@ class MainWindow(QDialog):
         self.central_layout.setSpacing(0)
         self.resize(int(SETTINGS["WINDOW_WIDTH"]), int(SETTINGS["WINDOW_HEIGHT"]))
         self.center_on_screen()
-        
-        # ── Debugging Tools ──
-        self._focus_tracker = FocusTracker(self)
 
         # ── Theme & Services ──
         self.theme_controller = theme_controller

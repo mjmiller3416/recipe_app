@@ -3,7 +3,7 @@
 Defines the EmptyState class for generating empty recipe card frames.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────
 from dataclasses import dataclass
 
 from PySide6.QtCore import QSize, Qt
@@ -15,7 +15,7 @@ from app.ui.widgets import CTButton
 from ..constants import LAYOUT_SIZE, LayoutSize
 
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── Class Definition ────────────────────────────────────────────────────────────────────
 @dataclass(frozen=True, slots=True)
 class EmptyState:
     """Builds the EmptyState frame (big '+ Add Meal' button).
@@ -26,7 +26,7 @@ class EmptyState:
 
     size: LayoutSize
 
-    # ── Public Methods ──────────────────────────────────────────────────────────────
+    # ── Public Methods ──────────────────────────────────────────────────────────────────
     def build(self) -> QFrame:
         """Build and return a QFrame representing an empty recipe card.
 
