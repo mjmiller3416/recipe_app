@@ -16,19 +16,28 @@ from app.ui.components.dialogs.dialog_window import DialogWindow
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class RecipeSelection(DialogWindow):
-    """
-    A dialog that displays a list of available recipes for selection.
-    """
-    def __init__(self, recipes: List[Recipe], parent=None):
-        super().__init__(parent)
+    """Dialog that allows the user to choose a recipe from a list."""
+
+    def __init__(self, recipes: List[Recipe], parent=None) -> None:
+        # ``DialogWindow``'s constructor expects width/height parameters and does
+        # not take ``parent`` positionally. Passing the parent as the first
+        # argument caused ``int(parent)`` to be evaluated when the base class
+        # called ``resize`` which raised the reported ``int()`` TypeError.
+        super().__init__(width=400, height=500, window_title="Select a Recipe")
+
+        if parent is not None:
+            self.setParent(parent)
+
         self._recipes = recipes
         self._selected_recipe: Optional[Recipe] = None
 
         # ── Window Properties ──
         self.setWindowTitle("Select a Recipe")
         self.setMinimumSize(400, 500)
-        self.title_bar.btn_ico_maximize.setVisible(False)
-        self.title_bar.btn_ico_toggle_sidebar.setVisible(False)
+        # ``DialogWindow``'s title bar only exposes a close button. Previous
+        # versions attempted to hide maximize and sidebar toggle buttons that do
+        # not exist on this minimal title bar, causing an AttributeError when
+        # the dialog was shown. Those calls are removed.
 
         # ── Widgets ──
         self.list_widget = QListWidget()
