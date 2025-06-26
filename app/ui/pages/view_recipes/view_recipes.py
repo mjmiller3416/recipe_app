@@ -4,11 +4,10 @@ This module defines the ViewRecipes class, which displays a list of recipes in a
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QPoint, QRect, QSize, Qt, Signal
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
     QCheckBox,
     QHBoxLayout,
-    QLayout,
     QScrollArea,
     QSizePolicy,
     QSpacerItem,
@@ -23,6 +22,7 @@ from app.core.dtos.recipe_dtos import RecipeFilterDTO
 from app.ui.components.inputs import ComboBox
 from app.ui.components.recipe_card.constants import LayoutSize
 from app.ui.components.recipe_card.recipe_card import RecipeCard
+from app.ui.components.layout.flow_layout import FlowLayout
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -90,7 +90,7 @@ class ViewRecipes(QWidget):
 
         # create scroll container
         self.scroll_container = QWidget()
-        self.flow_layout = self.create_flow_layout(self.scroll_container)
+        self.flow_layout = FlowLayout(self.scroll_container)
         self.scroll_container.setLayout(self.flow_layout)
 
         spacer = QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
@@ -187,86 +187,3 @@ class ViewRecipes(QWidget):
         if not self.recipes_loaded:
             self.load_recipes()
 
-    def create_flow_layout(self, parent):
-        """Returns a responsive flow layout for displaying cards, with centered alignment."""
-
-        class FlowLayout(QLayout):
-            def __init__(self, parent=None, margin=0, spacing=45):
-                super().__init__(parent)
-                self._items = []
-                self.setContentsMargins(margin, margin, margin, margin)
-                self._spacing = spacing
-
-            def addItem(self, item):
-                self._items.append(item)
-
-            def count(self):
-                return len(self._items)
-
-            def itemAt(self, index):
-                return self._items[index] if 0 <= index < len(self._items) else None
-
-            def takeAt(self, index):
-                return self._items.pop(index) if 0 <= index < len(self._items) else None
-
-            def expandingDirections(self):
-                return Qt.Orientation(0)
-
-            def hasHeightForWidth(self):
-                return True
-
-            def heightForWidth(self, width):
-                return self.doLayout(QRect(0, 0, width, 0), True)
-
-            def setGeometry(self, rect):
-                super().setGeometry(rect)
-                self.doLayout(rect, False)
-
-            def sizeHint(self):
-                return self.minimumSize()
-
-            def minimumSize(self):
-                size = QSize()
-                for item in self._items:
-                    size = size.expandedTo(item.minimumSize())
-                size += QSize(2 * self.contentsMargins().top(), 2 * self.contentsMargins().top())
-                return size
-
-            def doLayout(self, rect, testOnly):
-                TOP_PADDING = 20
-                y = rect.y() + TOP_PADDING
-                row = []
-                row_width = 0
-                row_height = 0
-
-                def layout_row(items, y):
-                    nonlocal testOnly
-                    total_width = sum(i.sizeHint().width() for i in items) + self._spacing * (
-                        len(items) - 1
-                    )
-                    offset = (rect.width() - total_width) // 2
-                    x = rect.x() + offset
-                    for item in items:
-                        size = item.sizeHint()
-                        if not testOnly:
-                            item.setGeometry(QRect(QPoint(x, y), size))
-                        x += size.width() + self._spacing
-                    return y + row_height + self._spacing
-
-                for item in self._items:
-                    size = item.sizeHint()
-                    if row and (row_width + size.width() + self._spacing > rect.width()):
-                        y = layout_row(row, y)
-                        row = []
-                        row_width = 0
-                        row_height = 0
-                    row.append(item)
-                    row_width += size.width() + (self._spacing if row else 0)
-                    row_height = max(row_height, size.height())
-
-                if row:
-                    y = layout_row(row, y)
-
-                return y - rect.y()
-
-        return FlowLayout(parent)
