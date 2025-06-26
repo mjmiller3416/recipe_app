@@ -21,9 +21,7 @@ class RecipeSelection(DialogWindow):
     A dialog that displays a list of available recipes for selection.
     """
     def __init__(self, recipes: List[Recipe], parent=None):
-        super().__init__(width=400, height=500)
-        if parent is not None:
-            self.setParent(parent)
+        super().__init__(width=400, height=500, parent=parent)
         self._recipes = recipes
         self._selected_recipe: Optional[Recipe] = None
         DebugLogger.log(f"[RecipeSelection] Initialized with {len(recipes)} recipes", "debug")
