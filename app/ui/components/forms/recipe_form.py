@@ -4,29 +4,26 @@ A form for adding new recipes, including fields for recipe details and an image
 upload button. 
 """
 
-# ── Constants ───────────────────────────────────────────────────────────────────
+# ── Constants ───────────────────────────────────────────────────────────────────────────
 FIXED_HEIGHT = 60  # fixed height for input fields in the recipe form
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QGridLayout, QWidget, QLabel
 
 from app.ui.components.forms.form_field import LineEditField, ComboBoxField
-from app.ui.components.layout.widget_frame import WidgetFrame
 from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
 
 from app.config import RECIPE_CATEGORIES, MEAL_CATEGORIES
 
-# ── Class Definition ────────────────────────────────────────────────────────────
-class RecipeForm(WidgetFrame):
+# ── Class Definition ────────────────────────────────────────────────────────────────────
+class RecipeForm(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
-        super().__init__(
-            title   = "Recipe Details", 
-            layout  = QGridLayout, 
-            spacing = 10,
-            parent  = parent, 
-        )
-        self.setObjectName("WidgetFrame") # for styling purposes
+        super().__init__(parent)
+        self.setObjectName("RecipeForm") # for styling purposes
+
+        layout = QGridLayout(self)
+        layout.setSpacing(10)
 
         # create form fields for recipe details
         self.le_recipe_name = LineEditField(
@@ -60,14 +57,14 @@ class RecipeForm(WidgetFrame):
         ) 
 
         # add widgets to the recipe details frame
-        self.addWidget(self.le_recipe_name, 0, 0, 1, 2)  # row 1
-        self.addWidget(self.cb_recipe_category, 1, 0, 1, 1)  # row 2
-        self.addWidget(self.le_time, 1, 1, 1, 1)
-        self.addWidget(self.cb_meal_type, 2, 0, 1, 1)  # row 3
-        self.addWidget(self.le_servings, 2, 1, 1, 1)
+        layout.addWidget(self.le_recipe_name, 0, 0, 1, 2)  # row 1
+        layout.addWidget(self.cb_recipe_category, 1, 0, 1, 1)  # row 2
+        layout.addWidget(self.le_time, 1, 1, 1, 1)
+        layout.addWidget(self.cb_meal_type, 2, 0, 1, 1)  # row 3
+        layout.addWidget(self.le_servings, 2, 1, 1, 1)
 
         set_fixed_height_for_layout_widgets(
-            layout = self.getLayout(), 
+            layout = layout, 
             height = FIXED_HEIGHT, 
             skip   = (QLabel)
         )
