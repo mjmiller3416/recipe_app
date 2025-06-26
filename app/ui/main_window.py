@@ -18,24 +18,24 @@ from PySide6.QtWidgets import (
 )
 
 from app.config import APPLICATION_WINDOW
-from app.core.utils import FocusTracker
 from app.style_manager import ThemeController
 from app.ui.animations import WindowAnimator
 from app.ui.components import CustomGrip
 from app.ui.components.navigation.sidebar import Sidebar
 from app.ui.components.navigation.titlebar import TitleBar
 from app.ui.components import SearchBar
+from app.ui.helpers.ui_helpers import center_on_screen
 
 if TYPE_CHECKING:
     from app.core.services import NavigationService
     from app.style_manager import ThemeController
 
-# ── Constants ───────────────────────────────────────────────────────────────────
+# ── Constants ───────────────────────────────────────────────────────────────────────────
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]
 
-# ── Application Window ──────────────────────────────────────────────────────────
+# ── Application Window ──────────────────────────────────────────────────────────────────
 class MainWindow(QDialog):
-    """The main application window, orchestrating the title bar, sidebar, and content pages.
+    """The main application window, orchestrating title bar, sidebar, and content pages.
 
     This class serves as the central hub of the user interface. It's a frameless QDialog
     that incorporates a custom `TitleBar` for window controls, a collapsible `Sidebar` for
@@ -48,15 +48,15 @@ class MainWindow(QDialog):
         animator (WindowAnimator): Handles window animations like minimize/maximize.
         title_bar (TitleBar): The custom title bar widget.
         sidebar (Sidebar): The navigation sidebar widget.
-        sw_pages (QStackedWidget): The widget that holds and switches between different pages.
-        navigation (NavigationService): The service responsible for page management and navigation.
+        sw_pages (QStackedWidget): Widget that holds and switches between different pages.
+        navigation (NavigationService): Service responsible for page management and nav.
         _is_maximized (bool): Tracks if the window is currently maximized.
         grips (dict[str, CustomGrip]): A dictionary of CustomGrip widgets for resizing.
     
     Signals:
-        sidebar_toggle_requested: Emitted when the sidebar toggle button is clicked in the title bar.
+        sidebar_toggle_requested: Emit when sidebar toggle button is clicked in title bar.
     """
-    # ── Signals ───────────────────────────────────────────────────────────────────────
+    # ── Signals ─────────────────────────────────────────────────────────────────────────
     sidebar_toggle_requested = Signal()
 
     def __init__(
@@ -67,10 +67,9 @@ class MainWindow(QDialog):
         """Initializes the MainWindow.
 
         Args:
-            theme_controller (ThemeController): The controller for managing application themes.
-            navigation_service_factory (callable): A factory function that creates an instance
-                                                 of NavigationService, pre-configured with the
-                                                 page container (QStackedWidget).
+            theme_controller (ThemeController): The controller for managing app themes.
+            navigation_service_factory (callable): A factory function creates an instance
+            of NavigationService, pre-configured with the page container (QStackedWidget).
         """
         super().__init__()
         # ── Window Properties ──
@@ -83,7 +82,7 @@ class MainWindow(QDialog):
         self.central_layout.setContentsMargins(0, 0, 0, 0)
         self.central_layout.setSpacing(0)
         self.resize(int(SETTINGS["WINDOW_WIDTH"]), int(SETTINGS["WINDOW_HEIGHT"]))
-        self.center_on_screen()
+        center_on_screen(self)
 
         # ── Theme & Services ──
         self.theme_controller = theme_controller
@@ -204,19 +203,6 @@ class MainWindow(QDialog):
             if w is widget:
                 self._update_header(name)
                 break
-
-    def center_on_screen(self):
-        """Centers the window on the screen."""
-        screen = QGuiApplication.primaryScreen()
-        screen_geometry = screen.availableGeometry()
-        window_geometry = self.frameGeometry()
-        
-        # calculate center position
-        center_x = (screen_geometry.width() - window_geometry.width()) // 2
-        center_y = (screen_geometry.height() - window_geometry.height()) // 2
-        
-        # move window to center
-        self.move(center_x, center_y)
 
     def resizeEvent(self, event):
         """Handles window resize events.

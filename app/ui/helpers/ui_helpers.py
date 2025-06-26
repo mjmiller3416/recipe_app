@@ -9,10 +9,25 @@ from typing import Iterable, Union
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QSizePolicy,
                                QVBoxLayout, QWidget)
+from PySide6.QtGui import QGuiApplication
 
 
 # ── Functions ───────────────────────────────────────────────────────────────────
 from PySide6.QtWidgets import QLayout, QWidget, QLabel
+
+def center_on_screen(self):
+        """Centers the window on the screen."""
+        screen = QGuiApplication.primaryScreen()
+        screen_geometry = screen.availableGeometry()
+        window_geometry = self.frameGeometry()
+        
+        # calculate center position
+        center_x = (screen_geometry.width() - window_geometry.width()) // 2
+        center_y = (screen_geometry.height() - window_geometry.height()) // 2
+        
+        # move window to center
+        self.move(center_x, center_y)
+
 
 def set_fixed_height_for_layout_widgets(
     layout: QLayout,

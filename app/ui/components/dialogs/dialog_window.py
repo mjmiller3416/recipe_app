@@ -15,6 +15,7 @@ from app.config import APPLICATION_WINDOW
 from app.ui.widgets import CTToolButton
 from app.ui.widgets.helpers import ButtonEffects
 from app.ui.components.navigation.titlebar import TitleBar
+from app.ui.helpers.ui_helpers import center_on_screen
 
 # ── Constants ───────────────────────────────────────────────────────────────────────────
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]
@@ -77,18 +78,6 @@ class DialogWindow(QDialog):
         self.central_layout.addWidget(self.window_body)
 
         self.resize(int(width), int(height))
-        self.center_on_screen()
+        center_on_screen(self)
 
-    def center_on_screen(self):
-        """Centers the window on the screen."""
-        screen = QGuiApplication.primaryScreen()
-        screen_geometry = screen.availableGeometry()
-        window_geometry = self.frameGeometry()
-        
-        # calculate center position
-        center_x = (screen_geometry.width() - window_geometry.width()) // 2
-        center_y = (screen_geometry.height() - window_geometry.height()) // 2
-        
-        # move window to center
-        self.move(center_x, center_y)
-
+    
