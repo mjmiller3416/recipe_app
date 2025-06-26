@@ -68,7 +68,14 @@ class AddRecipes(QWidget):
         self.lyt_recipe_details = QHBoxLayout()
         self.lyt_recipe_details.setContentsMargins(0, 0, 0, 0)
 
+        # recipe details form wrapped in a WidgetFrame
+        self.recipe_details_frame = WidgetFrame(
+            title="Recipe Details",
+            layout=QVBoxLayout,
+        )
         self.recipe_form = RecipeForm()  # custom form for recipe details
+        self.recipe_details_frame.addWidget(self.recipe_form)
+
         # expose form fields for convenience
         self.le_recipe_name = self.recipe_form.le_recipe_name
         self.cb_recipe_category = self.recipe_form.cb_recipe_category
@@ -77,7 +84,7 @@ class AddRecipes(QWidget):
         self.le_servings = self.recipe_form.le_servings
 
         self.lyt_recipe_details.addWidget(
-            self.recipe_form)  # add recipe form to recipe details layout
+            self.recipe_details_frame)  # add recipe form frame to layout
 
         # ── Buttons ──
         self.lyt_buttons =QVBoxLayout()  # vertical layout for buttons
