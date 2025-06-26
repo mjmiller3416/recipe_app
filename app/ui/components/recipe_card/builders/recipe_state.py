@@ -1,6 +1,7 @@
-"""app/ui/components/recipe_card/builders/recipe_card.py
+"""app/ui/components/recipe_card/builders/recipe_state.py
 
-Defines the RecipeCard class for generating recipe card layouts (small, medium, large).
+Defines the :class:`RecipeState` builder for generating recipe card layouts
+(small, medium, large).
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
@@ -22,7 +23,7 @@ from ..constants import LAYOUT_SIZE, LayoutSize
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 @dataclass(frozen=True, slots=True)
-class RecipeCard:
+class RecipeState:
     """Builds a fixed-size QFrame representing a recipe card.
 
     Attributes:
