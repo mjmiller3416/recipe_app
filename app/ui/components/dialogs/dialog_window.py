@@ -36,14 +36,15 @@ class DialogWindow(QDialog):
         start_geometry: Initial geometry of the dialog.
     """
 
-    def __init__(self, width: int = 1330, height: int = 800, window_title: str =""):
+    def __init__(self, width: int = 1330, height: int = 800, window_title: str = "", parent=None):
         """Initializes the DialogWindow.
 
         Args:
             width (int, optional): Initial width of the dialog. Defaults to 1330.
             height (int, optional): Initial height of the dialog. Defaults to 800.
+            parent (QWidget, optional): Parent widget that owns the dialog.
         """
-        super().__init__()
+        super().__init__(parent)
         # ── Properties ──
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Dialog)
         # self.setAttribute(Qt.WA_TranslucentBackground)
