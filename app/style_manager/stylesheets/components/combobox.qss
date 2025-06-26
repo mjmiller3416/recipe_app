@@ -2,13 +2,19 @@
    CUSTOM COMBOBOX STYLSHEET
    ------------------------------------------------------------------ */
 
-#ComboBox {
+#ComboBox[focused="false"] {
     background-color: {BACKGROUND_WIDGET}; /* Dynamic */
-    border: 1px solid {BORDER_DEFAULT}; /* Dynamic */
+    border: 1px solid red; /* Dynamic */
     border-radius: 6px;
 }
 
-#ComboBox #LineEdit {
+#ComboBox[focused="true"] {
+    background-color: {BACKGROUND_WIDGET}; /* Dynamic */
+    border: 1px solid {ACCENT_PRIMARY};
+    border-radius: 6px;
+}
+
+#ComboBox #CBLineEdit {
     background-color: {BACKGROUND_WIDGET};
     color: {FONT_COLOR_CONTRAST};
     border: none;
@@ -19,7 +25,7 @@
     padding-left: 4px;
 }
 
-#ComboBox #Button {
+#ComboBox #CBButton {
     background-color: transparent;
     border: none;
     border-radius: 0px;
@@ -48,3 +54,4 @@
     border-radius: 5px;
     outline: none;
 }
+

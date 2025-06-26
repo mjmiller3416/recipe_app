@@ -18,6 +18,7 @@ from PySide6.QtWidgets import (
 )
 
 from app.config import APPLICATION_WINDOW
+from app.core.utils import FocusTracker
 from app.style_manager import ThemeController
 from app.ui.animations import WindowAnimator
 from app.ui.components import CustomGrip
@@ -84,6 +85,9 @@ class MainWindow(QDialog):
         self.resize(int(SETTINGS["WINDOW_WIDTH"]), int(SETTINGS["WINDOW_HEIGHT"]))
         self.center_on_screen()
         
+        # ── Debugging Tools ──
+        self._focus_tracker = FocusTracker(self)
+
         # ── Theme & Services ──
         self.theme_controller = theme_controller
         self.theme_controller.apply_full_theme()

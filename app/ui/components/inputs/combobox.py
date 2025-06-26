@@ -5,25 +5,25 @@ with a button to display a list of items. It uses a completer for auto-completio
 and emits signals when a valid selection is made.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────
 from typing import Sequence
 
 from PySide6.QtCore import QEvent, QStringListModel, Qt, Signal
-from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget
+from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget, QApplication
 
 from app.config import CUSTOM_COMBOBOX
 from app.core.utils import DebugLogger
 from app.ui.widgets import CTToolButton
 
-# ── Constants ────────────────────────────────────────────────────────────────────
+# ── Constants ───────────────────────────────────────────────────────────────────────────
 ICONS = CUSTOM_COMBOBOX["ICONS"]
 
-# ── Class Definition: ComboBox ─────────────────────────────────────────────
+# ── Class Definition: ComboBox ──────────────────────────────────────────────────────────
 class ComboBox(QWidget):
     """Custom combo box widget with a read-only line edit and a button to show a 
     list of items."""
 
-    # ── Signals ──────────────────────────────────────────────────────────────────
+    # ── Signals ─────────────────────────────────────────────────────────────────────────
     selection_validated = Signal(bool)
     currentTextChanged = Signal(str)
 
@@ -43,7 +43,10 @@ class ComboBox(QWidget):
         """
         super().__init__(parent)
         self.setObjectName("ComboBox")
+        self.setProperty("focused", True)
         self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setFocusPolicy(Qt.StrongFocus)
+        print(self.property("focused"))
 
         self.model = QStringListModel(list_items or [])  # stored items in a model
 
@@ -56,7 +59,7 @@ class ComboBox(QWidget):
 
         # ── Input Field ──
         self.line_edit = QLineEdit(self) 
-        self.line_edit.setObjectName("LineEdit")
+        self.line_edit.setObjectName("CBLineEdit")
         self.line_edit.setPlaceholderText(placeholder)
         self.line_edit.setCompleter(self.completer)
         self.line_edit.setReadOnly(True)
@@ -69,12 +72,13 @@ class ComboBox(QWidget):
             icon_size = ICONS["ARROW"]["SIZE"],
             variant   = ICONS["ARROW"]["DYNAMIC"],
         )
-        self.cb_btn.setObjectName("Button")
+        self.cb_btn.setObjectName("CBButton")
         self.cb_btn.setCursor(Qt.PointingHandCursor)
 
         # ── Signals ──
         self.line_edit.textChanged.connect(self._on_text_changed)
         self.cb_btn.clicked.connect(self._show_popup)
+        self.completer.activated.connect(self._on_completer_activated)
 
         self._build_ui()
 
@@ -87,17 +91,52 @@ class ComboBox(QWidget):
         layout.addWidget(self.cb_btn)
 
     def _on_text_changed(self, text: str):
+        """Handles text changes in the line edit.
+
+        Args:
+            text (str): The new text in the line edit.
+        """
+        if self.completer.popup().isVisible():
+            return  # prevent triggering while navigating the popup
         self.currentTextChanged.emit(text)
 
+    def _on_completer_activated(self, text: str):
+        """Handles activation of a completer item.
+
+        Args:
+            text (str): The text of the activated item. 
+        """
+        self.line_edit.setText(text)
+        self.selection_validated.emit(True)
+
+        # only auto-tab if the event was triggered by keyboard
+        focus_widget = self.window().focusWidget()
+        if focus_widget == self.line_edit:
+            self.focusNextChild()  # move to next widget in tab order
+
     def _show_popup(self):
-        """Display the completer popup."""
-        self.line_edit.setFocus()
-        self.completer.complete()
+        """Show the completer popup."""
+        if not self.completer.popup().isVisible():
+            self.line_edit.setFocus()
+            self.completer.complete()
+            self.setProperty("focused", True)
+            print(self.property("focused"))
+            self.update()  # refresh style
 
     def currentText(self) -> str:
+        """Get the current text from the line edit.
+
+        Returns:
+            str: Current text in the line edit.
+        """
         return self.line_edit.text()
 
     def setCurrentText(self, text: str):
+        """Sets the current text in the line edit.
+
+        Args:
+            text (str): Text to set in the line edit.
+        """
         self.line_edit.setText(text)
         self.selection_validated.emit(bool(text))
 
@@ -152,12 +191,44 @@ class ComboBox(QWidget):
             items.append(text)
             self.model.setStringList(items)
 
-    # ------------------------------------------------------------------
-    def eventFilter(self, obj: QWidget, event: QEvent) -> bool:
-        """Expand the popup when the widget or line edit is clicked."""
+    # ── Events ──────────────────────────────────────────────────────────────────────────
+    def eventFilter(
+            self, 
+            obj: QWidget, 
+            event: QEvent
+        ) -> bool:
+        """Expand the popup when the widget or line edit is clicked.
+        
+        Args:
+            obj (QWidget): The object being filtered.
+            event (QEvent): The event being processed.
+        
+        Returns:
+            bool: True if the event was handled, False to allow normal processing.
+        """
         if event.type() == QEvent.MouseButtonPress:
             if obj in (self, self.line_edit):
                 self._show_popup()
-                # allow normal processing to keep focus behavior
                 return False
+
+        elif event.type() == QEvent.KeyPress:
+            if obj is self.line_edit and self.completer.popup().isVisible():
+                key = event.key()
+                if key in (Qt.Key_Up, Qt.Key_Down, Qt.Key_Enter, Qt.Key_Return):
+                    # forward the key event to the popup
+                    QApplication.sendEvent(self.completer.popup(), event)
+                    return True
+
         return super().eventFilter(obj, event)
+    
+    def focusInEvent(self, event):
+        super().focusInEvent(event)
+        self.setProperty("focused", True)
+        self.update()  # refresh style
+        if not self.completer.popup().isVisible():
+            self._show_popup()
+
+    def focusOutEvent(self, event):
+        super().focusOutEvent(event)
+        self.setProperty("focused", False)
+        self.update()

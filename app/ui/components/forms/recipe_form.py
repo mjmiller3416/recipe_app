@@ -33,20 +33,27 @@ class RecipeForm(WidgetFrame):
             label_text  = "Recipe Name:", 
             placeholder = "Enter recipe name here...",
         ) 
+        self.le_recipe_name.setObjectName("RecipeNameLineEdit")  # for debugging
+
         self.cb_recipe_category = ComboBoxField(
             label_text = "Category:", 
             placeholder = "Select a category...",
             item_list  = RECIPE_CATEGORIES,
         )
+        self.cb_recipe_category.setObjectName("RecipeCategoryComboBox")  # for debugging
+
         self.le_time = LineEditField(
             label_text = "Total Time:", 
             placeholder = "e.g. 30 mins...",
         ) 
+        self.le_time.setObjectName("TotalTimeLineEdit")  # for debugging
+
         self.cb_meal_type = ComboBoxField(
             label_text = "Meal Type:", 
             placeholder = "Select a meal type...",
             item_list  = MEAL_CATEGORIES,
         )
+        self.cb_meal_type.setObjectName("MealTypeComboBox") # for debugging
         self.le_servings = LineEditField(
             label_text=  "Servings:", 
             placeholder="e.g. 4 servings...",

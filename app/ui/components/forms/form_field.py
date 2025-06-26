@@ -79,8 +79,7 @@ class LineEditField(FormField):
             parent (QWidget, optional): Parent widget for this field.
         """
         widget = QLineEdit()
-        widget.setProperty("isFormField", True)
-        widget.setObjectName("myTestLineEdit")
+        widget.setObjectName("FormLineEdit")
 
         if placeholder:
             widget.setPlaceholderText(placeholder)
