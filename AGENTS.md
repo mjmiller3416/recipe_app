@@ -1,133 +1,182 @@
-# 🍽️ MealGenie Dashboard Design Documentation
+# AGENTS.md
 
-## 🧾 Summary: Dashboard Vision
+## Project Title
 
-The Dashboard is a customizable, grid-based command center designed to present all core application data in a modular, interactive layout. Users can add, reposition, and resize widgets using an intuitive edit mode that reveals a rounded, opaque grid for alignment and snapping.
+MealGenie
 
-### 🔑 Key Features
+## Project Overview
 
-* Invisible Grid: 9x6 structure (editable only)
+MealGenie is a cross-platform desktop application built with PySide6 for planning weekly meals, managing and viewing recipes, and creating dynamic shopping lists. It aims to simplify household meal management by combining structured planning with rich UI features. A central Dashboard will eventually serve as the user’s command center.
 
-* Widgets: Predefined sizes (e.g., 1x1, 3x1, 4x3, etc.)
+## Tech Stack
 
-* Snap-To-Grid: Widgets align to nearest available cell
+* **Frontend**: PySide6 (QWidgets), QSS (custom theming)
+* **Backend**: Python service layer (PlannerService, ShoppingService, RecipeService)
+* **Database**: SQLite, using Pydantic models for validation
+* **Deployment**: In development; future packaging planned via PyInstaller or MSI
+* **Other Tools**: pytest, colorlog, Qt Designer (formerly), Codex AI agent support
 
-* Drag-and-Drop Repositioning
+## Project Structure
 
-* Resizing via Tooltips or Context Menus
+```
+recipe_app/
+├── app/
+│   ├── core/
+│   │   ├── data/            # SQLite interface + CRUD utilities
+│   │   ├── services/        # Business logic layer
+│   ├── ui/
+│   │   ├── components/      # Custom widgets
+│   │   ├── pages/           # Feature views (AddRecipe, ShoppingList, etc.)
+│   │   ├── layout/          # Reusable layout containers
+│   ├── style_manager/       # ThemeController, QSS injection, styling tools
+├── data_files/              # Bundled assets (images, icons, fonts)
+├── docs/                    # Project documentation
+├── tests/                   # pytest-based unit tests
+├── scripts/                 # CLI setup, test, and reset tools
+├── main.py                  # App entry point
+└── setup.sh                 # Dev environment bootstrap
+```
 
-* Layout Persistence
+## Development Guidelines
 
-* Interactive vs Static Mode Toggle
+### Code Style
 
+* Follow PEP 8 and Google Python Style Guide
+* Use structured docstrings and emoji-based comment tags (⚠️, 🔹, ✅, etc.)
+* Group imports by standard, third-party, local
 
-### 📦 Widget Types (Examples)
+### Naming Conventions
 
-* Quick Add Recipe
+* Files: `snake_case.py`
+* Classes: `PascalCase`
+* Functions: `snake_case()`
+* Constants: `ALL_CAPS`
+* Widgets: Prefer `ComponentTypeWidgetName` (e.g., `RecipeCard`, `MealWidget`)
 
-* Weekly Meal Carousel
+### Git Workflow
 
-* Grocery Snapshot
+* Branches:
 
-* Favorite Recipes
+  * `feature/*` — new features
+  * `bugfix/*` — bug fixes
+  * `refactor/*` — restructuring or cleanup
+* Use descriptive commit messages
+* Rebase before PRs when possible
+* Prefer squash + merge for clean history
 
-* Recent Activity
+## Environment Setup
 
-### 🧱 Architecture Overview
+### Development Requirements
 
-#### Core Classes
+* Python 3.11+
+* Git
+* Bash-compatible terminal
+* Linux: `libegl1`, `libgl1` for UI support
 
-* DashboardGrid: Main canvas layout using fixed cell structure
+### Installation Steps
 
-* DashboardWidget: Base class for all widgets
+```bash
+# 1. Clone the project
+git clone [repo-url]
 
-* WidgetSize: Enum for widget sizing presets
+# 2. Enter the directory
+cd recipe_app
 
-* GridOverlay: Paints visual grid (edit mode only)
+# 3. Run setup script
+bash setup.sh
 
-* DashboardController: Manages state, collisions, widget logic
+# 4. Run app
+python main.py
+```
 
-* LayoutPersistenceService: Loads/saves widget state
+## Core Feature Implementation
 
-## Phase 1: Static Grid + Dummy Widgets
+### Recipe Management
 
-### ✅ Goal
+* Add, edit, and delete recipes with structured data
+* Uses Pydantic models and `RecipeService`
 
-Render a fixed 9x6 dashboard grid and display static, hardcoded widgets based on their size and grid coordinates.
+### Shopping List
 
-### 📄 Files
+* Aggregates ingredient quantities across planned meals
+* Handles unit conversions and merges manual ingredients
 
-* widget_sizes.py: Enum for available widget sizes
+### Meal Planner
 
-* dashboard_widget.py: Base widget with simple QLabel layout
+* Assign recipes to specific days
+* Tabs persist across sessions via `PlannerService`
 
-* dashboard_grid.py: Widget that places DashboardWidgets in fixed positions
+### Full Recipe Dialog
 
-### 📦 Required Classes and Responsibilities
+* Displays all recipe details (image, steps, metadata) in a scrollable dialog
+* Powered by `RecipeDialogBuilder`
 
-`WidgetSize (Enum)`
+### Custom Theming
 
-* Defines valid widget sizes using (columns, rows) as values
+* Supports brandable themes via QSS placeholders and a `ThemeController`
+* Auto-refreshes icons, borders, backgrounds on theme change
 
-Includes convenience methods:
+### Dashboard (Upcoming)
 
-* cols(): Returns width in columns
+* Central hub showing weekly overview, quick actions, and status widgets
+* Will support drag-drop, micro-widgets, and theme-aware visuals
 
-* rows(): Returns height in rows
+## Testing Strategy
 
-`DashboardWidget`
+### Unit Testing
 
-Base widget that:
+* Framework: `pytest`
+* Covers: core services, models, and key utilities
+* Structure: mirrors `app/` hierarchy in `tests/`
 
-* Stores an ID, title, and WidgetSize
+### Integration Testing (Planned)
 
-* Renders simple layout (e.g., QLabel placeholder)
+* Will validate end-to-end data flow across service layers
 
-* Will eventually support interaction/resizing (not in Phase 1)
+### GUI / E2E Testing (Future)
 
-`DashboardGrid`
+* Potential use of tools like `pytest-qt` or `squish` for automated GUI checks
 
-Handles:
+## Deployment Guide (Future)
 
-* Fixed constants for rows, cols, spacing, and cell size
+### Packaging Targets
 
-* Manual placement of dashboard widgets using grid math
+* Windows: `.exe` or `.msi` via PyInstaller
+* macOS: `.app` bundle
+* Linux: AppImage or Flatpak TBD
 
-* Optional dev-mode grid paint overlay (faint)
+### Build Process (planned)
 
-*Must implement:*
+* Strip dev-only files
+* Bundle assets from `data_files/`
+* Set environment vars as needed
 
-* _place_widget(widget, row, col) → calculates and sets widget size + position
+## Security Considerations
 
-* _place_dummy_widgets() → hardcoded sample widgets for testing layout
+* Pydantic validation used for all incoming recipe/ingredient data
+* SQLite is local only; no remote API access at this time
 
-### 📌 Static Layout Rules
+## Common Issues
 
-* Grid Size: 9 columns × 6 rows
+### Issue 1: PySide6 errors on test run (e.g. libEGL)
 
-* Cell Size: 100px × 100px (plus spacing)
+**Solution**: Run `sudo apt-get install libegl1 libgl1` on Debian/Ubuntu
 
-* Spacing: 10px between cells
+### Issue 2: Dark mode styles not applying
 
-* Widget Placement:
+**Solution**: Ensure `QT_STYLE_OVERRIDE=windowsvista` is set before launch
 
-* Based on top-left corner cell + size from WidgetSize
+## Reference Resources
 
-*Example: A 4x3 widget at (2,4) consumes 4 columns & 3 rows*
+* [PySide6 Docs](https://doc.qt.io/qtforpython/)
+* [Pydantic Docs](https://docs.pydantic.dev/)
+* [Python Style Guide](https://google.github.io/styleguide/pyguide.html)
+* [QSS Cheat Sheet](https://doc.qt.io/qt-6/stylesheet-reference.html)
 
-### 📌 Example Dummy Widgets
+## Changelog
 
-* 1x2 Recipe Card at (1,1)
+### v1.0.0 (2025-06-25)
 
-* 3x1 Header Banner at (0,3)
-
-* 4x3 Carousel at (2,4)
-
-### Phase Outcome
-
-* Basic rendering of a responsive dashboard canvas
-
-* Supports static widget display using grid structure
-
-* Sets the stage for edit mode, snapping, and drag logic#
-
+* Initial planning doc + refactored file structure
+* Setup script created
+* Theme system and RecipeService implemented
