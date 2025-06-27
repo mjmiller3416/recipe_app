@@ -273,4 +273,11 @@ class MainWindow(QDialog):
 
         self.setGeometry(new_rect)
 
+    def keyPressEvent(self, event):
+        """Ignore the Escape key to prevent accidental app closure."""
+        if event.key() == Qt.Key_Escape:
+            event.ignore()
+            return
+        super().keyPressEvent(event)
+
 
