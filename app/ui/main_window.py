@@ -18,6 +18,7 @@ from PySide6.QtWidgets import (
 )
 
 from app.config import APPLICATION_WINDOW
+from app.core.utils import StartupTimer
 from app.style_manager import ThemeController
 from app.ui.animations import WindowAnimator
 from app.ui.components import CustomGrip

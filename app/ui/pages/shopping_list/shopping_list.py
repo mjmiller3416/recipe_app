@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (QCheckBox, QComboBox, QFrame, QHBoxLayout,
 from app.config import MEASUREMENT_UNITS
 from app.core.data.models.meal_selection import MealSelection
 from app.core.services.shopping_service import ShoppingService
+from app.core.utils import DebugLogger, StartupTimer
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

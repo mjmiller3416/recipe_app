@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
 
 from app.config import MEAL_PLANNER
 from app.core.services.planner_service import PlannerService
-from app.core.utils import DebugLogger
+from app.core.utils import DebugLogger, StartupTimer
 from app.ui.widgets import CTIcon
 
 from .meal_widget import MealWidget
@@ -31,7 +31,6 @@ class MealPlanner(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-
         self.setObjectName("MealPlanner")
 
         # ── Create Layout ──

@@ -3,8 +3,10 @@ This script initializes and runs the MealGenie application, setting up the main 
 database, and handling command-line arguments for special modes like testing and importing recipes.
 """
 
-import os
 # ── Imports ─────────────────────────────────────────────────────────────────────
+import app.core.utils.startup_timer as startup_timer
+
+import os
 import sys
 
 from PySide6.QtWidgets import QApplication
@@ -61,6 +63,9 @@ else:
         theme_controller=theme_controller,
         navigation_service_factory=navigation_service_factory
     )
+    main_window.show() # show the main window
 
-    main_window.show()
+    QApplication.processEvents()  # make sure all pending events are flushed
+    startup_timer.StartupTimer.summary("MealGenie startup") # log total startup time
+
     sys.exit(app.exec())

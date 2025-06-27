@@ -10,6 +10,7 @@ from .builders.empty_state import EmptyState
 from .builders.error_state import ErrorState
 from .builders.recipe_state import RecipeCard
 from .constants import LayoutSize
+from app.core.utils import DebugLogger, StartupTimer
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

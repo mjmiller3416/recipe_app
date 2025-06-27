@@ -1,78 +1,68 @@
-"""app/ui/components/rounded_image.py
-
-Provides the RoundedImage class and a factory function for creating QLabel widgets with rounded images.
-"""
+# ── components/image/rounded_image.py ──
 
 from pathlib import Path
-# ── Imports ─────────────────────────────────────────────────────────────────────
-from typing import Tuple, Union
-
-from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QLabel
+from PySide6.QtGui import QPixmap, QPainter, QPainterPath
+from PySide6.QtCore import Qt, QSize, QRectF
 
+# ── In-Memory Image Cache ──────────────────────────────────────────────────────
+_image_cache: dict[tuple[str, int, tuple[int, int, int, int]], QPixmap] = {}
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── RoundedImage Widget ────────────────────────────────────────────────────────
 class RoundedImage(QLabel):
-    def __init__(
-        self,
-        image_path: str,
-        size: Union[int, QSize] = 300,
-        radii: Union[int, Tuple[int, int, int, int]] = 20
-    ) -> None:
-        super().__init__()
-        self._image_path = image_path # Store original path
-        self._size_arg = size        # Store original size arg
-        self._radii_arg = radii      # Store original radii arg
-        self._apply_style()
+    """A QLabel that displays a rounded image with optional per-corner radii."""
 
-    def _apply_style(self) -> None:
-        # Normalize Size
-        current_size: QSize
-        if isinstance(self._size_arg, int):
-            current_size = QSize(self._size_arg, self._size_arg)
-        elif isinstance(self._size_arg, QSize):
-            current_size = self._size_arg
-        else:
-            # Fallback or raise error, for now, using a default
-            print(f"Warning: Invalid size '{self._size_arg}' for RoundedImage. Using 300x300.")
-            current_size = QSize(300, 300)
-        
-        self.setFixedSize(current_size)
+    def __init__(self, image_path: str | Path, size: int = 100, radii: tuple[int, int, int, int] = (0, 0, 0, 0), parent=None):
+        super().__init__(parent)
+        self.image_path = str(image_path)
+        self.size = size
+        self.radii = radii
 
-        # Normalize Radii Values
-        tl: int; tr: int; br: int; bl: int
-        if isinstance(self._radii_arg, int):
-            tl = tr = br = bl = self._radii_arg
-        elif isinstance(self._radii_arg, (tuple, list)) and len(self._radii_arg) == 4:
-            tl, tr, br, bl = self._radii_arg
-        else:
-            # Fallback or raise error
-            print(f"Warning: Invalid radii '{self._radii_arg}' for RoundedImage. Using 20px.")
-            tl = tr = br = bl = 20
-            
-        # Construct Stylesheet
-        # Ensure the path is suitable for CSS url() (forward slashes)
-        css_path = Path(self._image_path).as_posix() if self._image_path else ""
-        
-        stylesheet = f"""
-        QLabel {{
-            border-image: url('{css_path}') 0 0 0 0 stretch stretch;
-            border-top-left-radius: {tl}px;
-            border-top-right-radius: {tr}px;
-            border-bottom-right-radius: {br}px;
-            border-bottom-left-radius: {bl}px;
-            background-color: transparent; /* Ensure no opaque background interferes */
-        }}
-        """
-        self.setStyleSheet(stylesheet)
-        self.update() # Ensure repaint
+        self.setFixedSize(size, size)
+        self.setScaledContents(True)
 
-    def set_image_path(self, image_path: str) -> None:
-        """Updates the image displayed by this widget."""
-        self._image_path = image_path
-        self._apply_style()
+        self.setPixmap(self._get_cached_rounded_pixmap())
 
-    def clear_image(self) -> None:
-        """Clears the displayed image."""
-        self._image_path = "" # Or path to a transparent placeholder
-        self._apply_style() # Re-apply with empty path, effectively clearing
+    def _get_cached_rounded_pixmap(self) -> QPixmap:
+        key = (self.image_path, self.size, self.radii)
+        if key in _image_cache:
+            return _image_cache[key]
+
+        pixmap = QPixmap(self.image_path).scaled(
+            self.size, self.size, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation
+        )
+
+        rounded = QPixmap(self.size, self.size)
+        rounded.fill(Qt.transparent)
+
+        painter = QPainter(rounded)
+        painter.setRenderHint(QPainter.Antialiasing)
+
+        path = self._build_round_rect_path(self.size, self.radii)
+        painter.setClipPath(path)
+        painter.drawPixmap(0, 0, pixmap)
+        painter.end()
+
+        _image_cache[key] = rounded
+        return rounded
+
+    def _build_round_rect_path(self, size: int, radii: tuple[int, int, int, int]) -> QPainterPath:
+        tl, tr, br, bl = radii
+        rect = QRectF(0, 0, size, size)
+        path = QPainterPath()
+        path.moveTo(rect.left() + tl, rect.top())
+
+        path.lineTo(rect.right() - tr, rect.top())
+        path.quadTo(rect.right(), rect.top(), rect.right(), rect.top() + tr)
+
+        path.lineTo(rect.right(), rect.bottom() - br)
+        path.quadTo(rect.right(), rect.bottom(), rect.right() - br, rect.bottom())
+
+        path.lineTo(rect.left() + bl, rect.bottom())
+        path.quadTo(rect.left(), rect.bottom(), rect.left(), rect.bottom() - bl)
+
+        path.lineTo(rect.left(), rect.top() + tl)
+        path.quadTo(rect.left(), rect.top(), rect.left() + tl, rect.top())
+
+        path.closeSubpath()
+        return path
