@@ -37,6 +37,24 @@ class Animator:
         animation.finished.connect(cleanup)
 
     @staticmethod
+    def animate_geometry(widget, start_rect, end_rect, duration: int):
+        """Animate a widget's geometry from start_rect to end_rect."""
+        animation = QPropertyAnimation(widget, b"geometry")
+        animation.setDuration(duration)
+        animation.setStartValue(start_rect)
+        animation.setEndValue(end_rect)
+        animation.setEasingCurve(QEasingCurve.OutCubic)
+        animation.start()
+
+        Animator.active_animations.append(animation)
+
+        def cleanup():
+            if animation in Animator.active_animations:
+                Animator.active_animations.remove(animation)
+
+        animation.finished.connect(cleanup)
+
+    @staticmethod
     def fade_widget(widget, duration=300, start=1.0, end=0.0):
         """
         Fade a widget from `start` opacity to `end` opacity.
