@@ -25,6 +25,7 @@ from .layout.flow_layout import FlowLayout
 from .navigation.nav_button import NavButton
 from .navigation.sidebar import Sidebar
 from .navigation.titlebar import TitleBar
+from .carousel import RecipeCarousel
 
 __all__ = [
     # Dialogs
@@ -39,4 +40,5 @@ __all__ = [
     "CustomGrip", "Separator", "WidgetFrame", "FlowLayout",
     # Navigation
     "NavButton", "Sidebar", "TitleBar",
+    "RecipeCarousel",
 ]

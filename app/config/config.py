@@ -172,6 +172,20 @@ CUSTOM_COMBOBOX = {
     },
 }
 
+# ── Carousel Widget ──
+CAROUSEL = {
+    "LEFT": {
+        "PATH":    AppPaths.ICONS_DIR / "left_arrow.svg",
+        "SIZE":    QSize(24, 24),
+        "DYNAMIC": THEME["ICON_STYLES"]["TOOLBUTTON"],
+    },
+    "RIGHT": {
+        "PATH":    AppPaths.ICONS_DIR / "right_arrow.svg",
+        "SIZE":    QSize(24, 24),
+        "DYNAMIC": THEME["ICON_STYLES"]["TOOLBUTTON"],
+    },
+}
+
 # ── Recipe Widget ──
 EMPTY_STATE = {
     "ICON_SIZE":     QSize(60, 60),
