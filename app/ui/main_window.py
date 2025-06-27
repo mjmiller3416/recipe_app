@@ -280,4 +280,11 @@ class MainWindow(QDialog):
             meal_planner.save_meal_plan()
         super().closeEvent(event)
 
+    def keyPressEvent(self, event):
+        """Ignore the Escape key to prevent accidental app closure."""
+        if event.key() == Qt.Key_Escape:
+            event.ignore()
+            return
+        super().keyPressEvent(event)
+
 

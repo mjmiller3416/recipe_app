@@ -157,9 +157,9 @@ class AddRecipes(QWidget):
         self.ingredients_frame.addWidget(widget)
 
     def _remove_ingredient(self, widget):
-        container = widget.parent()
-        self.ingredients_frame.removeWidget(container)
-        container.deleteLater()
+        """Remove the specified ingredient widget from the frame."""
+        self.ingredients_frame.removeWidget(widget)
+        widget.deleteLater()
         self.ingredients_frame.update()
         if widget in self.ingredient_widgets:
             self.ingredient_widgets.remove(widget)
