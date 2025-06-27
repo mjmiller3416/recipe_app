@@ -23,8 +23,6 @@ from app.core.dtos.recipe_dtos import RecipeFilterDTO
 from app.ui.components.inputs import ComboBox
 from app.ui.components.recipe_card.constants import LayoutSize
 from app.ui.components.recipe_card.recipe_card import RecipeCard
-from app.core.utils import DebugLogger, StartupTimer
-
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class ViewRecipes(QWidget):
