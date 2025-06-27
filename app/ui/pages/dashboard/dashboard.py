@@ -6,6 +6,7 @@ Placeholder class for the Dashboard screen.
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
+from app.core.utils import DebugLogger, StartupTimer
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -23,3 +24,4 @@ class Dashboard(QWidget):
 
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)  
+

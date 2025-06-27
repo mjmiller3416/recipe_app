@@ -10,7 +10,7 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QDialog, QFrame, QPushButton, QStackedWidget, QVBoxLayout
 
 from app.core.data.models.recipe import Recipe
-from app.core.utils import DebugLogger
+from app.core.utils import DebugLogger, StartupTimer
 from app.ui.components import FullRecipe, RecipeSelection
 
 from .constants import LayoutSize
@@ -36,6 +36,7 @@ class RecipeCard(QFrame):
     def __init__(self, size: LayoutSize, parent=None) -> None:
         """Initialize the RecipeCard with stacked empty, recipe, and error states."""
         super().__init__(parent, objectName="RecipeCard")
+
         self.setAttribute(Qt.WA_StyledBackground, True)
         self._size:   LayoutSize      = size
         self._recipe: Optional[Recipe] = None

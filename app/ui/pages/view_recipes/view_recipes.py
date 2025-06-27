@@ -1,4 +1,4 @@
-"""views/view_recipes/view_recipes.py
+"""app/ui/pages/view_recipes/view_recipes.py
 
 This module defines the ViewRecipes class, which displays a list of recipes in a scrollable layout.
 """
@@ -23,6 +23,7 @@ from app.core.dtos.recipe_dtos import RecipeFilterDTO
 from app.ui.components.inputs import ComboBox
 from app.ui.components.recipe_card.constants import LayoutSize
 from app.ui.components.recipe_card.recipe_card import RecipeCard
+from app.core.utils import DebugLogger, StartupTimer
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -42,12 +43,14 @@ class ViewRecipes(QWidget):
         super().__init__(parent)
 
         # ── Initialize & Setup UI ──
-        self.setObjectName("ViewRecipes")
+        self.setObjectName("ViewRecipes") 
         self.meal_selection = meal_selection
+
         self.build_ui()
         # sort recipes alphabetically on first load
         self.cb_sort.setCurrentText("A-Z")
         self.recipes_loaded = False
+
         self.load_recipes()
 
     def build_ui(self):
