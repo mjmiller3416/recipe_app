@@ -280,4 +280,11 @@ class MainWindow(QDialog):
             return
         super().keyPressEvent(event)
 
+    def closeEvent(self, event):
+        """Persist planner state before closing the application."""
+        meal_planner = self.navigation.page_instances.get("meal_planner")
+        if meal_planner:
+            meal_planner.save_meal_plan()
+        super().closeEvent(event)
+
 
