@@ -34,8 +34,8 @@ elif "--test" in sys.argv:
     theme_controller = ThemeController()
     theme_controller.apply_full_theme()
 
-    from tests.dev.my_test_app import run_test
-    test_window = run_test(app)
+    from tests.dev.my_test_app import MyTestApp
+    test_window = MyTestApp(app)
 
     sys.exit(app.exec())
 

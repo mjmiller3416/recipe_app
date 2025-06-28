@@ -1,126 +1,65 @@
-"""Test script for MyTestApp."""
-import math
-
+import sys
+from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout,
+                               QHBoxLayout, QStackedWidget, QPushButton, QLabel)
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
-    QGridLayout, QLineEdit, QMainWindow, QPushButton, 
-    QVBoxLayout, QWidget, QLabel)
-from app.ui.components.forms import IngredientWidget
-from app.ui.components.images.upload_recipe_image import UploadRecipeImage
 
-from app.config import (INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,
-                        MEASUREMENT_UNITS, STYLES)
-from app.ui.components.dialogs.dialog_window import DialogWindow
-from app.ui.components.inputs import ComboBox, SmartLineEdit
-from app.ui.components.layout.widget_frame import WidgetFrame
-from app.ui.widgets import CTToolButton
-from app.ui.components.forms.recipe_form import RecipeForm
-INGREDIENTS = [
-            "Almond milk", "Bacon", "Baking powder", "Baking soda", "BBQ sauce", "Bell pepper",
-            "Black beans", "Bread", "Broccoli", "Brown sugar", "Butter", "Carrot", "Cauliflower",
-            "Cheddar", "Chicken breast", "Chickpeas", "Chili flakes", "Cinnamon", "Corn",
-            "Couscous", "Crackers", "Cucumber", "Eggs", "Feta", "Flour", "Garlic", "Green beans",
-            "Ground beef", "Ground turkey", "Ham", "Heavy cream", "Honey", "Hot sauce", "Hummus",
-            "Jam", "Kale", "Ketchup", "Kidney beans", "Lettuce", "Maple syrup", "Mayonnaise",
-            "Milk", "Mozzarella", "Mushrooms", "Mustard", "Noodles", "Oat milk", "Oats",
-            "Olive Oil", "Onion", "Parmesan", "Pasta", "Peanut butter", "Pepper", "Pickles",
-            "Pita", "Pork chops", "Quinoa", "Relish", "Rice", "Salmon", "Salt", "Salsa",
-            "Sausage", "Shrimp", "Soy sauce", "Sour cream", "Spinach", "Sugar", "Sweet potato",
-            "Tempeh", "Tofu", "Tomato", "Tortilla", "Turkey", "Tuna", "Vinegar", "Vegetable oil",
-            "Yogurt", "Zucchini"
-        ]
-
-class MyTestApp(QMainWindow):
-    """A test class for development testing."""
-
-    def __init__(self, app):
+class CarouselWidget(QWidget):
+    def __init__(self):
         super().__init__()
-        self.app = app
-        self.setWindowTitle("MyTestApp")
-        self.setGeometry(100, 100, 800, 600)
-        self.show()
-   
+        self.setWindowTitle("PySide6 Carousel Example")
+        self.setGeometry(100, 100, 400, 300)
 
-        # Set up the central widget and layout
-        self.central_widget = QWidget()
-        self.central_layout = QVBoxLayout()
-        self.central_widget.setLayout(self.central_layout)
-        self.setCentralWidget(self.central_widget)
-        self.setObjectName("IngredientWidget")
+        main_layout = QVBoxLayout()
+        self.setLayout(main_layout)
 
-        #self.build_upload_test()
-        #self.build_dialog_test()
-        self.build_ingredient_widget_test()
-        #self.build_custom_combobox_test()
-        #self.build_widget_frame_test()
-        #self.build_recipe_form_test()
+        # QStackedWidget to hold the different "pages" of the carousel
+        self.stacked_widget = QStackedWidget()
+        main_layout.addWidget(self.stacked_widget)
 
-    def build_recipe_form_test(self):
-        """Builds the recipe form test UI."""
-        self.recipe_form = RecipeForm()
-        self.central_layout.addWidget(self.recipe_form)
+        # Create some example pages (QWidgets with labels)
+        for i in range(1, 4):
+            page = QWidget()
+            page_layout = QVBoxLayout(page)
+            label = QLabel(f"Page {i}")
+            label.setAlignment(Qt.AlignCenter)
+            label.setStyleSheet("font-size: 24px; background-color: lightblue;")
+            page_layout.addWidget(label)
+            self.stacked_widget.addWidget(page)
 
-    def build_widget_frame_test(self):
-        self.widget_frame = WidgetFrame(
-            title="Widget Frame",
-            layout=QVBoxLayout,
-            scrollable=False,
-        )
-        self.label = QLabel("This is a test label inside the widget frame.")
-        self.widget_frame.layout().addWidget(self.label)
+        # Navigation buttons
+        nav_layout = QHBoxLayout()
+        main_layout.addLayout(nav_layout)
 
-        self.central_layout.addWidget(self.widget_frame)
+        self.prev_button = QPushButton("Previous")
+        self.prev_button.clicked.connect(self.show_previous_page)
+        nav_layout.addWidget(self.prev_button)
 
-    def build_dialog_test(self):
-        def show_custom_dialog(self):
-            dialog = DialogWindow(
-                width=800, 
-                height=600,
-                title="Custom Dialog"
-            )
-            dialog.exec()
+        self.next_button = QPushButton("Next")
+        self.next_button.clicked.connect(self.show_next_page)
+        nav_layout.addWidget(self.next_button)
 
-        self.button = QPushButton("Open Dialog", self)
-        self.button.setGeometry(80, 80, 140, 40)
-        self.button.clicked.connect(show_custom_dialog)
+        self.update_button_states()
 
-        # add to the central layout
-        self.central_layout.addWidget(self.button)
-      
-    def build_upload_test(self):
-        """Builds the UI components."""
-        # Create widget frame, with embedded layout
-        self.btn = UploadRecipeImage(self)
-        self.central_layout.addWidget(self.btn)
+    def show_previous_page(self):
+        current_index = self.stacked_widget.currentIndex()
+        if current_index > 0:
+            self.stacked_widget.setCurrentIndex(current_index - 1)
+        self.update_button_states()
 
-    def build_smart_line_edit_test(self):
-        """Creates and returns an ingredient row widget."""
+    def show_next_page(self):
+        current_index = self.stacked_widget.currentIndex()
+        if current_index < self.stacked_widget.count() - 1:
+            self.stacked_widget.setCurrentIndex(current_index + 1)
+        self.update_button_states()
 
-        scb = SmartLineEdit(
-            list_items=INGREDIENTS,
-            placeholder="Search...",
-            editable=True
-        )
-        scb.setFixedHeight(32)
-        self.central_layout.addWidget(scb, alignment=Qt.AlignCenter)
- 
-    def build_custom_combobox_test(self):
-        """Creates and returns a ComboBox widget."""
-        custom_combobox = ComboBox(
-            list_items=INGREDIENTS,
-            placeholder="Select an item",
-        )
-        custom_combobox.setFixedHeight(32)
-        custom_combobox.setFixedWidth(200)
-        self.central_layout.addWidget(custom_combobox, alignment=Qt.AlignCenter)
+    def update_button_states(self):
+        current_index = self.stacked_widget.currentIndex()
+        self.prev_button.setEnabled(current_index > 0)
+        self.next_button.setEnabled(current_index < self.stacked_widget.count() - 1)
 
-    def build_ingredient_widget_test(self):
-        """Creates and returns an IngredientWidget."""
-        ingredient_widget = IngredientWidget()
-        self.central_layout.addWidget(ingredient_widget)
-    
-  
-def run_test(app):
-    """Runs the test window."""
-    window = MyTestApp(app)
-    return window
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    carousel = CarouselWidget()
+    carousel.show()
+    sys.exit(app.exec())

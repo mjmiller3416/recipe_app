@@ -103,6 +103,27 @@ class RecipeService:
             ) from err
 
     @staticmethod
+    def get_full_recipe(recipe_id: int) -> Recipe:
+        """
+        Fetch a full recipe with linked ingredients and details.
+        
+        Args:
+            recipe_id (int): The ID of the recipe to retrieve.
+        Returns:
+            Recipe: A Recipe object with linked ingredients loaded.
+        Raises:
+            ValueError: If the recipe is not found.
+        """
+        recipe = Recipe.get(recipe_id)
+        if not recipe:
+            raise ValueError(f"No recipe found with ID {recipe_id}")
+
+        # preload ingredient details
+        _ = recipe.get_ingredient_details()
+
+        return recipe
+
+    @staticmethod
     def toggle_favorite(recipe_id: int) -> Recipe:
         """
         Flip the is_favorite flag and persist.
