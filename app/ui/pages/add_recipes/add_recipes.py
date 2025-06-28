@@ -37,6 +37,8 @@ class AddRecipes(QWidget):
         super().__init__(parent)
         self.setObjectName("AddRecipes")
 
+        DebugLogger.log("Initializing Add Recipes page", "debug")
+
         self.ingredient_widgets = []
         self.stored_ingredients = []
         self.selected_image_path = None

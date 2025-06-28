@@ -25,10 +25,9 @@ class ShoppingList(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        
-        # ── Properties ──
         self.setObjectName("ShoppingList")
-        self.setMinimumSize(984, 818)
+
+        DebugLogger.log("Initializing ShoppingList page", "debug")
 
         self.active_recipe_ids: list[int] = []  # store latest recipe list
 

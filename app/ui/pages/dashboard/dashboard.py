@@ -15,7 +15,9 @@ class Dashboard(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        
+
+        DebugLogger.log("Initializing Dashboard page", "debug")
+
         # Initialize & Setup UI
         self.setObjectName("Dashboard")
 

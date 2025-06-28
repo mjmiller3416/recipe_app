@@ -23,6 +23,7 @@ from app.ui.components.inputs import ComboBox
 from app.ui.components.recipe_card.constants import LayoutSize
 from app.ui.components.recipe_card.recipe_card import RecipeCard
 from app.ui.components.layout.flow_layout import FlowLayout
+from app.core.utils import DebugLogger
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class ViewRecipes(QWidget):
@@ -39,9 +40,8 @@ class ViewRecipes(QWidget):
             meal_selection (bool): If True, enables recipe selection mode.
         """
         super().__init__(parent)
-
-        # ── Initialize & Setup UI ──
         self.setObjectName("ViewRecipes") 
+        DebugLogger.log("Initializing ViewRecipes page", "debug")   
         self.meal_selection = meal_selection
 
         self.build_ui()

@@ -33,6 +33,8 @@ class MealPlanner(QWidget):
         super().__init__(parent)
         self.setObjectName("MealPlanner")
 
+        DebugLogger.log("Initializing MealPlanner page", "debug")
+
         # ── Create Layout ──
         self.meal_tabs = QTabWidget()
         self.meal_tabs.setIconSize(QSize(16, 16))
