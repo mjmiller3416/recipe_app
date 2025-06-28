@@ -91,11 +91,13 @@ class ViewRecipes(QWidget):
 
         # create scroll container
         self.scroll_container = QWidget()
-        self.flow_layout = FlowLayout(self.scroll_container)
+        self.flow_layout = FlowLayout(
+            self.scroll_container,
+            needAni=False,     # you can turn on animations by setting True
+            isTight=True       # hide invisible widgets without gaps
+        )
         self.scroll_container.setLayout(self.flow_layout)
-
-        spacer = QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
-        self.flow_layout.addItem(spacer)  # add top padding
+        self.flow_layout.setContentsMargins(0, 20, 0, 0)
 
         self.scroll_area.setWidget(self.scroll_container)  # add to scroll area
 
@@ -139,9 +141,9 @@ class ViewRecipes(QWidget):
     def clear_recipe_display(self):
         """Removes all recipe widgets from the layout."""
         while self.flow_layout.count():
-            item = self.flow_layout.takeAt(0)
-            if item.widget():
-                item.widget().deleteLater()
+            w = self.flow_layout.takeAt(0)
+            if w:
+                w.deleteLater()
 
     def load_recipes(self) -> None:
         from app.ui.components.recipe_card import RecipeCard

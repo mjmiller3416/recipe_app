@@ -117,26 +117,3 @@ class TitleBar(QWidget):
             size=self.btn_ico_maximize.iconSize(),
             variant=SETTINGS["BTN_STYLE"]["DYNAMIC"],
         )
-
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton and not self.window().isMaximized():
-            self.old_pos = event.globalPos()
-        super().mousePressEvent(event)
-
-    def mouseMoveEvent(self, event):
-        if self.old_pos:
-            delta = event.globalPos() - self.old_pos
-            win = self.window()
-            win.move(win.x() + delta.x(), win.y() + delta.y())
-            self.old_pos = event.globalPos()
-        super().mouseMoveEvent(event)
-
-    def mouseReleaseEvent(self, event):
-        self.old_pos = None
-        self.setCursor(Qt.ArrowCursor)
-        super().mouseReleaseEvent(event)
-
-    def mouseDoubleClickEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            self.maximize_clicked.emit()
-        super().mouseDoubleClickEvent(event)
