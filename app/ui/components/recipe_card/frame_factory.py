@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QFrame
 
 from .builders.empty_state import EmptyState
 from .builders.error_state import ErrorState
-from .builders.recipe_state import RecipeCard
+from .builders.recipe_state import RecipeState
 from .constants import LayoutSize
 from app.core.utils import DebugLogger, StartupTimer
 
@@ -46,7 +46,7 @@ class FrameFactory:
             case "recipe":
                 if recipe is None:
                     raise ValueError("Recipe must be provided for 'recipe' state")
-                return RecipeCard(size, recipe).build()
+                return RecipeState(size, recipe).build()
 
             case "empty":
                 return EmptyState(size).build()

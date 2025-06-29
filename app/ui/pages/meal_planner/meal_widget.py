@@ -5,6 +5,7 @@ This is a pure UI widget responsible only for rendering and updating meal data s
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
+from functools import partial
 from typing import Optional
 
 from PySide6.QtCore import QEvent, Qt
@@ -68,16 +69,39 @@ class MealWidget(QWidget):
         Connect signal from RecipeViewer to the update_recipe_selection method.
         """
         for key, slot in self.meal_slots.items():
-            slot.recipe_selected.connect(lambda rid, k=key: self.update_recipe_selection(k, rid))
+            # ``recipe_selected`` should emit an integer ID, but some widgets
+            # have been observed emitting themselves instead.  Using
+            # ``partial`` avoids late-binding issues with lambdas and keeps the
+            # connection signature stable across PySide versions.
+            slot.recipe_selected.connect(partial(self.update_recipe_selection, key))
 
-    def update_recipe_selection(self, key: str, recipe_id: int) -> None:
+    def update_recipe_selection(self, key: str, recipe_id) -> None:
         """
         Update the meal model with the selected recipe ID.
 
+        This slot is triggered by :class:`RecipeCard` widgets. Some PySide
+        signal connections were inadvertently passing the widget instance
+        itself instead of the recipe ID, which resulted in ``int()`` casting
+        errors when constructing :class:`MealSelection` models.  To guard
+        against this we coerce ``recipe_id`` to an ``int`` when possible.
+
         Args:
             key (str): The key representing the recipe slot (main, side1, side2, side3).
-            recipe_id (int): The ID of the selected recipe.
+            recipe_id: The ID of the selected recipe or a widget containing it.
         """
+        # ── Normalize Input ──
+        if not isinstance(recipe_id, int):
+            rid = getattr(recipe_id, "id", recipe_id)
+            try:
+                recipe_id = int(rid)
+            except (TypeError, ValueError):
+                recipe_obj = getattr(recipe_id, "recipe", None)
+                if callable(recipe_obj):
+                    recipe_obj = recipe_obj()
+                try:
+                    recipe_id = int(getattr(recipe_obj, "id", 0))
+                except (TypeError, ValueError):
+                    recipe_id = 0
         if not self._meal_model:
             self._meal_model = MealSelection(
                 meal_name="Custom Meal",  # or dynamic name later
