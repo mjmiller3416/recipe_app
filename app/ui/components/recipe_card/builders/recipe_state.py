@@ -15,7 +15,7 @@ from app.core.data.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
 from app.ui.components.layout import Separator
 from app.ui.helpers.ui_helpers import make_overlay
-from app.ui.widgets import CTIcon, CTToolButton, RoundedImage
+from app.ui.components.widgets import CTIcon, CTToolButton, RoundedImage
 
 from ..constants import LAYOUT_SIZE, LayoutSize
 

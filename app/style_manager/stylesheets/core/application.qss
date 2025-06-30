@@ -9,7 +9,6 @@
     border-bottom-left-radius: {WINDOW_RADIUS}; /* App Window Border Radius */
     border-bottom-right-radius: {WINDOW_RADIUS}; /* App Window Border Radius */
 }
-
 /* ------------------------------------------------------------------
    TITLE BAR STYLESHEET
    ------------------------------------------------------------------ */

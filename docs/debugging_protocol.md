@@ -15,6 +15,6 @@ Logs may contain file paths; avoid committing sensitive data.
 
 ## 5. Examples
 ```python
-from app.core.utils import DebugLogger
+from app.core.dev_tools import DebugLogger
 DebugLogger.log("Something happened", "info")
 ```

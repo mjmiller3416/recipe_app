@@ -10,7 +10,7 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QFrame, QVBoxLayout
 
 from app.config import EMPTY_STATE
-from app.ui.widgets import CTButton
+from app.ui.components.widgets import CTButton
 
 from ..constants import LAYOUT_SIZE, LayoutSize
 

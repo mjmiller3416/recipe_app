@@ -11,8 +11,8 @@ from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
 
 from app.config import MEAL_PLANNER
 from app.core.services.planner_service import PlannerService
-from app.core.utils import DebugLogger, StartupTimer
-from app.ui.widgets import CTIcon
+from app.core.dev_tools import DebugLogger, StartupTimer
+from app.ui.components.widgets import CTIcon
 
 from .meal_widget import MealWidget
 

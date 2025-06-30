@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QDialogButtonBox,
 
 from app.core.data.models.recipe import Recipe
 from app.ui.components.dialogs.dialog_window import DialogWindow
-from app.core.utils import DebugLogger
+from app.core.dev_tools import DebugLogger
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────────────

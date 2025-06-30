@@ -25,6 +25,8 @@ from .layout.flow_layout import FlowLayout
 from .navigation.nav_button import NavButton
 from .navigation.sidebar import Sidebar
 from .navigation.titlebar import TitleBar
+# From widgets
+from .widgets import CTButton, CTToolButton, CTIcon, RoundedImage, CircularImage
 
 __all__ = [
     # Dialogs
@@ -39,4 +41,6 @@ __all__ = [
     "CustomGrip", "Separator", "WidgetFrame", "FlowLayout",
     # Navigation
     "NavButton", "Sidebar", "TitleBar",
+    # Widgets
+    "CTButton", "CTToolButton", "CTIcon", "RoundedImage", "CircularImage"
 ]

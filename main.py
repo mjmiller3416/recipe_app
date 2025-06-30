@@ -4,19 +4,17 @@ database, and handling command-line arguments for special modes like testing and
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-import app.core.utils.startup_timer as startup_timer
-
 import os
+os.environ["QT_FONT_DPI"] = "96"
 import sys
 
 from PySide6.QtWidgets import QApplication
 
-os.environ["QT_FONT_DPI"] = "96"
-
+from app.core.dev_tools import startup_timer
 from app.core.data.db_reset import reset_database
 from app.core.data.init_db import init_db
 from app.core.services import NavigationService
-from app.core.utils import DebugLogger
+from app.core.dev_tools import DebugLogger
 from app.style_manager import ThemeController
 from app.ui import MainWindow
 

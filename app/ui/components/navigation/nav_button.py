@@ -11,7 +11,7 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton
 
 from app.ui.utils import ThemedIcon
-from app.ui.widgets import CTToolButton
+from app.ui.components.widgets import CTToolButton
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

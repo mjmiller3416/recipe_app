@@ -1,126 +1,49 @@
-"""Test script for MyTestApp."""
-import math
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
-    QGridLayout, QLineEdit, QMainWindow, QPushButton, 
-    QVBoxLayout, QWidget, QLabel)
-from app.ui.components.forms import IngredientWidget
-from app.ui.components.images.upload_recipe_image import UploadRecipeImage
+from PySide6.QtWidgets import QApplication, QLabel
+from PySide6.QtGui import QIcon
+from qframelesswindow import FramelessWindow
 
-from app.config import (INGREDIENT_CATEGORIES, INGREDIENT_WIDGET,
-                        MEASUREMENT_UNITS, STYLES)
-from app.ui.components.dialogs.dialog_window import DialogWindow
-from app.ui.components.inputs import ComboBox, SmartLineEdit
-from app.ui.components.layout.widget_frame import WidgetFrame
-from app.ui.widgets import CTToolButton
-from app.ui.components.forms.recipe_form import RecipeForm
-INGREDIENTS = [
-            "Almond milk", "Bacon", "Baking powder", "Baking soda", "BBQ sauce", "Bell pepper",
-            "Black beans", "Bread", "Broccoli", "Brown sugar", "Butter", "Carrot", "Cauliflower",
-            "Cheddar", "Chicken breast", "Chickpeas", "Chili flakes", "Cinnamon", "Corn",
-            "Couscous", "Crackers", "Cucumber", "Eggs", "Feta", "Flour", "Garlic", "Green beans",
-            "Ground beef", "Ground turkey", "Ham", "Heavy cream", "Honey", "Hot sauce", "Hummus",
-            "Jam", "Kale", "Ketchup", "Kidney beans", "Lettuce", "Maple syrup", "Mayonnaise",
-            "Milk", "Mozzarella", "Mushrooms", "Mustard", "Noodles", "Oat milk", "Oats",
-            "Olive Oil", "Onion", "Parmesan", "Pasta", "Peanut butter", "Pepper", "Pickles",
-            "Pita", "Pork chops", "Quinoa", "Relish", "Rice", "Salmon", "Salt", "Salsa",
-            "Sausage", "Shrimp", "Soy sauce", "Sour cream", "Spinach", "Sugar", "Sweet potato",
-            "Tempeh", "Tofu", "Tomato", "Tortilla", "Turkey", "Tuna", "Vinegar", "Vegetable oil",
-            "Yogurt", "Zucchini"
-        ]
+class Window(FramelessWindow):
 
-class MyTestApp(QMainWindow):
-    """A test class for development testing."""
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.setObjectName("ApplicationWindow")
 
-    def __init__(self, app):
-        super().__init__()
-        self.app = app
-        self.setWindowTitle("MyTestApp")
-        self.setGeometry(100, 100, 800, 600)
-        self.show()
-   
+        self.label = QLabel("MealGenie")
+        self.label.setScaledContents(True)
 
-        # Set up the central widget and layout
-        self.central_widget = QWidget()
-        self.central_layout = QVBoxLayout()
-        self.central_widget.setLayout(self.central_layout)
-        self.setCentralWidget(self.central_widget)
-        self.setObjectName("IngredientWidget")
+        self.setWindowIcon(QIcon("app/assets/icons/logo.svg"))
+        self.setWindowTitle("Test Window")
 
-        #self.build_upload_test()
-        #self.build_dialog_test()
-        self.build_ingredient_widget_test()
-        #self.build_custom_combobox_test()
-        #self.build_widget_frame_test()
-        #self.build_recipe_form_test()
+        self.titleBar.raise_()
 
-    def build_recipe_form_test(self):
-        """Builds the recipe form test UI."""
-        self.recipe_form = RecipeForm()
-        self.central_layout.addWidget(self.recipe_form)
-
-    def build_widget_frame_test(self):
-        self.widget_frame = WidgetFrame(
-            title="Widget Frame",
-            layout=QVBoxLayout,
-            scrollable=False,
+    def resizeEvent(self, e):
+        # don't forget to call the resizeEvent() of super class
+        super().resizeEvent(e)
+        length = min(self.width(), self.height())
+        self.label.resize(length, length)
+        self.label.move(
+            self.width() // 2 - length // 2,
+            self.height() // 2 - length // 2
         )
-        self.label = QLabel("This is a test label inside the widget frame.")
-        self.widget_frame.layout().addWidget(self.label)
 
-        self.central_layout.addWidget(self.widget_frame)
 
-    def build_dialog_test(self):
-        def show_custom_dialog(self):
-            dialog = DialogWindow(
-                width=800, 
-                height=600,
-                title="Custom Dialog"
-            )
-            dialog.exec()
-
-        self.button = QPushButton("Open Dialog", self)
-        self.button.setGeometry(80, 80, 140, 40)
-        self.button.clicked.connect(show_custom_dialog)
-
-        # add to the central layout
-        self.central_layout.addWidget(self.button)
-      
-    def build_upload_test(self):
-        """Builds the UI components."""
-        # Create widget frame, with embedded layout
-        self.btn = UploadRecipeImage(self)
-        self.central_layout.addWidget(self.btn)
-
-    def build_smart_line_edit_test(self):
-        """Creates and returns an ingredient row widget."""
-
-        scb = SmartLineEdit(
-            list_items=INGREDIENTS,
-            placeholder="Search...",
-            editable=True
-        )
-        scb.setFixedHeight(32)
-        self.central_layout.addWidget(scb, alignment=Qt.AlignCenter)
- 
-    def build_custom_combobox_test(self):
-        """Creates and returns a ComboBox widget."""
-        custom_combobox = ComboBox(
-            list_items=INGREDIENTS,
-            placeholder="Select an item",
-        )
-        custom_combobox.setFixedHeight(32)
-        custom_combobox.setFixedWidth(200)
-        self.central_layout.addWidget(custom_combobox, alignment=Qt.AlignCenter)
-
-    def build_ingredient_widget_test(self):
-        """Creates and returns an IngredientWidget."""
-        ingredient_widget = IngredientWidget()
-        self.central_layout.addWidget(ingredient_widget)
+def run_test(app=None):
+    """
+    Entry point for test mode when called from main.py --test
     
-  
-def run_test(app):
-    """Runs the test window."""
-    window = MyTestApp(app)
-    return window
+    Args:
+        app: QApplication instance (optional, will create if not provided)
+    
+    Returns:
+        Window instance for the test application
+    """
+    if app is None:
+        app = QApplication([])
+        app.setApplicationName("Test App")
+    
+    # Create and show the test window
+    test_window = Window()
+    test_window.show()
+    
+    return test_window
