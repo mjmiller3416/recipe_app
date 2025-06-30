@@ -6,7 +6,7 @@ Placeholder class for the Dashboard screen.
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
-from app.core.utils import DebugLogger, StartupTimer
+from app.core.dev_tools import DebugLogger, StartupTimer
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

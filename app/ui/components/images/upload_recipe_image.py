@@ -14,10 +14,10 @@ from PySide6.QtWidgets import (QFileDialog, QLabel, QStackedLayout,
 
 from app.config import STYLES, UPLOAD_RECIPE_IMAGE
 from app.config.paths import AppPaths
-from app.core.utils import DebugLogger
+from app.core.dev_tools import DebugLogger
 from app.ui.components.dialogs.crop_dialog import CropDialog
 from app.ui.helpers.ui_helpers import make_overlay
-from app.ui.widgets import CTToolButton, RoundedImage
+from app.ui.components.widgets import CTToolButton, RoundedImage
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 IMAGE_SAVE_DIR = Path(AppPaths.RECIPE_IMAGES_DIR)

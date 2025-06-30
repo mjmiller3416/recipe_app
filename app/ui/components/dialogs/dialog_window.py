@@ -12,8 +12,8 @@ from PySide6.QtWidgets import (
     QDialog, QHBoxLayout, QLabel, QSizeGrip, QVBoxLayout, QWidget)
 
 from app.config import APPLICATION_WINDOW
-from app.ui.widgets import CTToolButton
-from app.ui.widgets.helpers import ButtonEffects
+from app.ui.components.widgets import CTToolButton
+from app.ui.components.widgets.helpers import ButtonEffects
 from app.ui.components.navigation.titlebar import TitleBar
 from app.ui.helpers.ui_helpers import center_on_screen
 

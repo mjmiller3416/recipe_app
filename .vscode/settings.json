@@ -153,6 +153,7 @@
       "style_manager": "Plugin",
       "data_files": "Other",
       "forms": "Stack",
+      "dev_tools": "Tools",
 
       //** Subfolders **//
       "app_helpers": "App",

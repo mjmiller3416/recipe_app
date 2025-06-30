@@ -10,7 +10,8 @@ from PySide6.QtCore import QObject, Signal
 from PySide6.QtWidgets import QApplication
 
 from app.config.paths.app_paths import AppPaths
-from app.core.utils import DebugLogger, SingletonMixin
+from app.core.dev_tools import DebugLogger
+from app.core.utils import SingletonMixin
 
 from .loaders.theme_loader import ThemeLoader
 from .themes.dark_theme import THEME as DARK_THEME

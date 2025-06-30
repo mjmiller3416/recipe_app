@@ -17,7 +17,7 @@ from app.core.data.models.shopping_item import ShoppingItem
 from app.core.data.models.shopping_list import ShoppingList
 from app.core.data.models.shopping_state import ShoppingState
 from app.core.services.meal_service import MealService
-from app.core.utils import DebugLogger
+from app.core.dev_tools import DebugLogger
 
 
 class ShoppingService:

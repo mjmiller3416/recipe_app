@@ -33,28 +33,31 @@ class WindowAnimator(QObject):
         self.duration = duration
         self.easing_curve = QEasingCurve.InOutQuad
         self.animation_group = None # to manage running animations
+        self._is_maximized = False
 
     def _stop_current_animation(self):
         """Stops any animation that is currently in progress."""
-        if self.animation_group and self.animation_group.state() == QPropertyAnimation.Running:
+        if not self.animation_group:
+            return
+        if hasattr(self.animation_group, "state") and self.animation_group.state() == QPropertyAnimation.Running:
             self.animation_group.stop()
+        self.animation_group = None  # force cleanup
 
     def animate_toggle_maximize(self):
         """Animates the window between maximized and normal (restored) states."""
-        self._stop_current_animation() # prevent animation conflicts
+        self._stop_current_animation()
 
         start_geometry = self.window.geometry()
-        
-        if not self.window._is_maximized:
+
+        if not self._is_maximized:
             self.window._normal_geometry = start_geometry
             end_geometry = QGuiApplication.primaryScreen().availableGeometry()
         else:
-            # use saved normal geometry or a default centered one
-            end_geometry = getattr(self.window, "_normal_geometry", 
-                                   QRect(QGuiApplication.primaryScreen().availableGeometry().center() - QPoint(400, 300), 
-                                         QSize(800, 600)))
+            end_geometry = getattr(
+                self.window, "_normal_geometry",
+                QRect(QGuiApplication.primaryScreen().availableGeometry().center() - QPoint(400, 300), QSize(800, 600))
+            )
 
-        # use a single animation group for consistency
         self.animation_group = QParallelAnimationGroup(self)
 
         geom_animation = QPropertyAnimation(self.window, b"geometry", self)
@@ -62,15 +65,15 @@ class WindowAnimator(QObject):
         geom_animation.setStartValue(start_geometry)
         geom_animation.setEndValue(end_geometry)
         geom_animation.setEasingCurve(self.easing_curve)
-        
+
         self.animation_group.addAnimation(geom_animation)
         self.animation_group.finished.connect(self._on_maximize_finished)
         self.animation_group.start(QPropertyAnimation.DeleteWhenStopped)
 
     def _on_maximize_finished(self):
         """Finalizes state after maximize/restore animation completes."""
-        self.window._is_maximized = not self.window._is_maximized
-        self.window.title_bar.update_maximize_icon(self.window._is_maximized)
+        self._is_maximized = not self._is_maximized
+        self.window.title_bar.update_maximize_icon(self._is_maximized)
         self.animation_group = None
 
     def animate_minimize(self):

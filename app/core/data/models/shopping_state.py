@@ -14,7 +14,7 @@ from pydantic import Field, model_validator
 
 from app.core.data.base_model import ModelBase
 from app.core.data.database import get_connection
-from app.core.utils import DebugLogger
+from app.core.dev_tools import DebugLogger
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

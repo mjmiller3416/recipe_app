@@ -10,7 +10,7 @@ from typing import List, Optional
 from app.core.data.database import get_connection
 from app.core.data.models.meal_selection import MealSelection
 from app.core.data.models.saved_meal_state import SavedMealState
-from app.core.utils import DebugLogger
+from app.core.dev_tools import DebugLogger
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

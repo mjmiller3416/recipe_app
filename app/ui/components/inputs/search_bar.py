@@ -8,7 +8,7 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QGridLayout, QLineEdit, QSizePolicy
 
 from app.config import SEARCH
-from app.ui.widgets import CTIcon, CTToolButton
+from app.ui.components.widgets import CTIcon, CTToolButton
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 ICONS = SEARCH["ICONS"]

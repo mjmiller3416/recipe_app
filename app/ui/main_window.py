@@ -75,28 +75,25 @@ class MainWindow(FramelessWindow):
         self.theme_controller.apply_full_theme()
 
         # ── Title Bar & Main Layout ──
-        # The library automatically manages the title bar's geometry and events.
-        # It is NOT added to a layout manually.
         self.title_bar = TitleBar(self)
         self.setTitleBar(self.title_bar)
+        self._isResizeEnabled = True
 
-        # Create a main layout and set a top margin to make space for the title bar.
+        # ── Main Layout ──
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(0, self.title_bar.height(), 0, 0)
         self.main_layout.setSpacing(0)
 
-        # ── Body Layout (Your App's Main Content) ──
-        # All of the application's UI will be placed within this widget.
+        # ── Body Layout ──
         self.window_body = QWidget(self)
         self.window_body.setObjectName("ApplicationWindow")
         self.body_layout = QHBoxLayout(self.window_body)
         self.body_layout.setContentsMargins(1, 0, 1, 1)
         self.body_layout.setSpacing(0)
 
-        # Add the main content widget to the window's layout.
-        self.main_layout.addWidget(self.window_body)
+        self.main_layout.addWidget(self.window_body) # add body widget to the main layout
 
-        # ── Sidebar and Content Area Structure ──
+        # ── Sidebar and Content Area ──
         self.sidebar = Sidebar()
         self.body_layout.addWidget(self.sidebar)
 
@@ -146,6 +143,10 @@ class MainWindow(FramelessWindow):
         self.resize(int(SETTINGS["WINDOW_WIDTH"]), int(SETTINGS["WINDOW_HEIGHT"]))
         center_on_screen(self)
 
+    @property
+    def _is_maximized(self) -> bool:
+        return self.isMaximized()
+
     def _connect_signals(self):
         """Connect all UI signals to their respective slots."""
         # Title Bar
@@ -153,8 +154,10 @@ class MainWindow(FramelessWindow):
         self.title_bar.minimize_clicked.connect(self.animator.animate_minimize)
         self.title_bar.maximize_clicked.connect(self.animator.animate_toggle_maximize)
         self.title_bar.sidebar_toggled.connect(self.sidebar_toggle_requested.emit)
+
         # Sidebar
         self.sidebar_toggle_requested.connect(self.sidebar.toggle)
+
         # Navigation
         button_map = {
             "btn_dashboard": "dashboard",
@@ -171,7 +174,6 @@ class MainWindow(FramelessWindow):
     def _switch_page(self, page_name: str):
         """Helper to switch pages and update the header text."""
         self.navigation.switch_to(page_name)
-        # The header is now updated by the _on_page_changed slot
 
     def _update_header(self, page_name: str):
         """Update header label text based on page name."""
@@ -189,7 +191,7 @@ class MainWindow(FramelessWindow):
         widget = self.sw_pages.widget(index)
         if not widget:
             return
-        # Find the page name associated with the widget instance
+        
         for name, w_instance in self.navigation.page_instances.items():
             if w_instance is widget:
                 self._update_header(name)

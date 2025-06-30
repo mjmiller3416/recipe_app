@@ -10,11 +10,10 @@ from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QSizePolicy,
 
 from app.config import RECIPE_DIALOG
 from app.core.data.models.recipe import Recipe
-from app.core.utils import LayoutDebugger
 from app.ui.components.dialogs import DialogWindow
 from app.ui.components.layout import Separator
 from app.ui.helpers.ui_helpers import create_framed_layout
-from app.ui.widgets import CTIcon, RoundedImage
+from app.ui.components.widgets import CTIcon, RoundedImage
 
 # ── Constants ───────────────────────────────────────────────────────────────────────────
 ICON_COLOR = "#3B575B"  # Example color, adjust as needed

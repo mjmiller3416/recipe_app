@@ -15,7 +15,7 @@ from app.core.services.ingredient_service import IngredientService
 from app.ui.components.inputs import ComboBox, SmartLineEdit
 from app.ui.helpers import clear_error_styles, dynamic_validation
 from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
-from app.ui.widgets import CTToolButton
+from app.ui.components.widgets import CTToolButton
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 FIXED_HEIGHT = 45  # fixed height for input fields in the ingredient widget

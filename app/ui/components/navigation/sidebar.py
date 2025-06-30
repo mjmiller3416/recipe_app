@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (
 )
 
 from app.config import SIDEBAR
-from app.core.utils import DebugLogger
+from app.core.dev_tools import DebugLogger
 from app.ui.animations import Animator
 from app.ui.components.navigation.nav_button import NavButton
 from app.ui.components.image import AvatarLoader

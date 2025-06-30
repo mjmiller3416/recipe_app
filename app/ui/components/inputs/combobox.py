@@ -12,8 +12,8 @@ from PySide6.QtCore import QEvent, QStringListModel, Qt, Signal
 from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget, QApplication
 
 from app.config import CUSTOM_COMBOBOX
-from app.core.utils import DebugLogger
-from app.ui.widgets import CTToolButton
+from app.core.dev_tools import DebugLogger
+from app.ui.components.widgets import CTToolButton
 
 # ── Constants ───────────────────────────────────────────────────────────────────────────
 ICONS = CUSTOM_COMBOBOX["ICONS"]

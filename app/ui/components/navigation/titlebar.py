@@ -4,12 +4,16 @@ Title bar component for the main application window.
 """
 
 # ── Imports ───────────────────────────────────────────────────────────────
-from PySide6.QtCore import Qt, Signal
+from qframelesswindow.utils.win32_utils import WindowsMoveResize as MoveResize
+from PySide6.QtCore import Qt, Signal, QPoint
+from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
 
 from app.config import APPLICATION_WINDOW
-from app.ui.widgets import CTIcon, CTToolButton
-from app.ui.widgets.helpers import ButtonEffects
+from app.ui.components.widgets import CTIcon, CTToolButton
+from app.ui.components.widgets.helpers import ButtonEffects
+from qframelesswindow import FramelessWindow
+
 
 # ── Constants ─────────────────────────────────────────────────────────────
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]
@@ -117,3 +121,9 @@ class TitleBar(QWidget):
             size=self.btn_ico_maximize.iconSize(),
             variant=SETTINGS["BTN_STYLE"]["DYNAMIC"],
         )
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        if event.button() == Qt.LeftButton:
+            global_pos: QPoint = event.globalPosition().toPoint()
+            MoveResize.startSystemMove(self.window(), global_pos)
+        super().mousePressEvent(event)

@@ -13,7 +13,7 @@ from PySide6.QtWidgets import QHBoxLayout, QToolTip, QVBoxLayout, QWidget
 from app.core.data.models.meal_selection import MealSelection
 from app.core.data.models.recipe import Recipe
 from app.core.services.meal_service import MealService
-from app.core.utils import DebugLogger
+from app.core.dev_tools import DebugLogger
 from app.ui.components.recipe_card import RecipeCard
 from app.ui.components.recipe_card.constants import LayoutSize
 

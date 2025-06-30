@@ -12,8 +12,8 @@ from PySide6.QtWidgets import (QDialog, QDialogButtonBox,
                                QSizePolicy, QSpacerItem, QVBoxLayout)
 
 from app.config import MESSAGE_DIALOG
-from app.core.utils import DebugLogger
-from app.ui.widgets import CTIcon
+from app.core.dev_tools import DebugLogger
+from app.ui.components.widgets import CTIcon
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

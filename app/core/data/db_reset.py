@@ -7,7 +7,7 @@ import os
 import sys
 from pathlib import Path
 
-from app.core.utils import DebugLogger
+from app.core.dev_tools import DebugLogger
 
 from .database import DB_PATH
 from .init_db import init_db
