@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 import pytest
-from app.core.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
+from app.core.dtos import RecipeCreateDTO, RecipeIngredientInputDTO
 from app.core.services.recipe_service import RecipeService
 from app.core.data.models.recipe import Recipe
 from app.core.data.models.ingredient import Ingredient

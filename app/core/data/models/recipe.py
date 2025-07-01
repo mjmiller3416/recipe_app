@@ -11,6 +11,7 @@ from datetime import datetime, timedelta, timezone
 from typing import TYPE_CHECKING, List, Optional
 
 from pydantic import Field, model_validator
+from app.core.utils.validators import strip_string_values
 
 from app.core.data.base_model import ModelBase
 from app.core.data.database import get_connection
@@ -36,10 +37,10 @@ class Recipe(ModelBase):
 
     @model_validator(mode="before")
     def strip_strings(cls, values):
-        for fld in ("recipe_name", "recipe_category", "meal_type", "image_path"):
-            v = values.get(fld)
-            if isinstance(v, str):
-                values[fld] = v.strip()
+        values = strip_string_values(
+            values,
+            ("recipe_name", "recipe_category", "meal_type", "image_path"),
+        )
         if isinstance(values.get("directions"), str):
             values["directions"] = values["directions"].strip("\n ")
         return values

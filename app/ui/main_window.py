@@ -27,7 +27,7 @@ from app.ui.components import SearchBar
 from app.ui.helpers.ui_helpers import center_on_screen
 
 if TYPE_CHECKING:
-    from app.core.services import NavigationService
+    from app.core.services.navigation_service import NavigationService
 
 # ── Constants ───────────────────────────────────────────────────────────────────────────
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]
