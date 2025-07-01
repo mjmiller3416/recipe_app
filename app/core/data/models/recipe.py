@@ -23,7 +23,7 @@ class Recipe(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column("recipe_name", String, nullable=False)
     instructions: Mapped[Optional[str]] = mapped_column(Text)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default_factory=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     ingredients: Mapped[List["RecipeIngredient"]] = relationship(
         back_populates="recipe", cascade="all, delete-orphan"
