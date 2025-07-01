@@ -22,18 +22,16 @@ if "--reset" in sys.argv:
         reset_database()
 
 elif "--test" in sys.argv:
-    print("Launching in TEST MODE...\n")
+    DebugLogger.log("Launching in TEST MODE...\n", "info")
 
-    # ── Test Setup ──
     app = QApplication(sys.argv)
     app.setApplicationName("Test App")
-    
-    
+
     theme_controller = ThemeController()
     theme_controller.apply_full_theme()
 
-    from tests.dev.my_test_app import run_test
-    test_window = run_test(app)
+    from app.core.dev_tools.test_harness import TestHarness
+    TestHarness.launch_from_test_file(app)
 
     sys.exit(app.exec())
 

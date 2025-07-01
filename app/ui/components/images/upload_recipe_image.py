@@ -1,4 +1,4 @@
-"""app/ui/pages/add_recipes/upload_recipe.py
+"""app/ui/components/images/upload_recipe.py
 
 UploadRecipeImage widget for uploading and cropping recipe images.
 """
@@ -9,13 +9,14 @@ from pathlib import Path
 
 from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import (QFileDialog, QLabel, QStackedLayout,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QFileDialog, QLabel, QStackedLayout,
+    QVBoxLayout, QWidget)
 
-from app.config import STYLES, UPLOAD_RECIPE_IMAGE
+from app.config import UPLOAD_RECIPE_IMAGE
 from app.config.paths import AppPaths
 from app.core.dev_tools import DebugLogger
-from app.ui.components.dialogs.crop_dialog import CropDialog
+from app.ui.components.dialogs import CropDialog
 from app.ui.helpers.ui_helpers import make_overlay
 from app.ui.components.widgets import CTToolButton, RoundedImage
 

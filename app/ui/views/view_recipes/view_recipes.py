@@ -19,11 +19,11 @@ from app.config import RECIPE_CATEGORIES, SORT_OPTIONS
 from app.core.data.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
 from app.core.dtos.recipe_dtos import RecipeFilterDTO
-from app.ui.components.inputs import ComboBox
+from app.ui.components.widgets import ComboBox
 from app.ui.components.recipe_card.constants import LayoutSize
 from app.ui.components.recipe_card.recipe_card import RecipeCard
 from app.ui.components.layout.flow_layout import FlowLayout
-from app.core.utils import DebugLogger
+from app.core.dev_tools import DebugLogger
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class ViewRecipes(QWidget):

@@ -9,7 +9,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
 
-from app.ui.components.inputs.combobox import ComboBox
+from app.ui.components.widgets.combobox import ComboBox
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 INITIAL_ITEMS = ["Apple", "Banana", "Cherry"]

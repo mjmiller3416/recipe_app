@@ -9,11 +9,11 @@ from PySide6.QtWidgets import QStackedWidget
 from app.core.services import PlannerService
 from app.core.services import ShoppingService
 from app.ui.animations import Animator
-from app.ui.pages import AddRecipes
-from app.ui.pages import Dashboard
-from app.ui.pages import MealPlanner
-from app.ui.pages import ShoppingList
-from app.ui.pages import ViewRecipes
+from app.ui.views import AddRecipes
+from app.ui.views import Dashboard
+from app.ui.views import MealPlanner
+from app.ui.views import ShoppingList
+from app.ui.views import ViewRecipes
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

@@ -12,7 +12,8 @@ from app.config import (FLOAT_VALIDATOR, INGREDIENT_CATEGORIES,
                         INGREDIENT_WIDGET, MEASUREMENT_UNITS, NAME_PATTERN)
 from app.core.dtos.ingredient_dtos import IngredientSearchDTO
 from app.core.services.ingredient_service import IngredientService
-from app.ui.components.inputs import ComboBox, SmartLineEdit
+from app.ui.components.widgets import ComboBox
+from app.ui.components.inputs import SmartLineEdit
 from app.ui.helpers import clear_error_styles, dynamic_validation
 from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
 from app.ui.components.widgets import CTToolButton

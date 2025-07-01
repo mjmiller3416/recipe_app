@@ -18,8 +18,8 @@ from pytestqt.qtbot import QtBot
 from app.ui.main_window import MainWindow
 from app.style_manager import ThemeController
 from app.core.services import NavigationService
-from app.ui.pages.meal_planner import MealPlanner
-from app.ui.pages.dashboard import Dashboard
+from app.ui.views.meal_planner import MealPlanner
+from app.ui.views.dashboard import Dashboard
 
 
 @pytest.fixture

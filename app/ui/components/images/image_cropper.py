@@ -3,17 +3,9 @@
 Image cropping tool with interactive rectangle for selecting crop area.
 """
 # ── Imports ─────────────────────────────────────────────────────────────────────
-import tempfile
-import uuid
-from pathlib import Path
-
-from PySide6.QtCore import (QPoint, QPointF, QRect, QRectF, QSize, QSizeF, Qt,
-                            Signal, Slot)
-from PySide6.QtGui import (QBrush, QColor, QCursor, QMouseEvent, QPainter,
-                           QPainterPath, QPen, QPixmap)
-from PySide6.QtWidgets import (QDialog, QFrame, QHBoxLayout, QLabel,
-                               QPushButton, QSizePolicy, QSpacerItem,
-                               QVBoxLayout)
+from PySide6.QtCore import QPointF, QRectF, QSizeF, Qt, Signal, QRect
+from PySide6.QtGui import QMouseEvent, QPainter, QPainterPath, QPen, QPixmap, QColor
+from PySide6.QtWidgets import QLabel,QSizePolicy
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 MIN_CROP_DIM_ORIGINAL = 280  # Minimum crop dimension on the original image

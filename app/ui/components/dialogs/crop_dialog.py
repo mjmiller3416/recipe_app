@@ -6,12 +6,13 @@ A dialog for cropping images with a square selection area.
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import (QDialog, QFrame, QHBoxLayout, QLabel,
-                               QPushButton, QSizePolicy, QSpacerItem,
-                               QVBoxLayout)
+from PySide6.QtWidgets import (
+    QDialog, QFrame, QHBoxLayout, QLabel,
+    QPushButton, QSizePolicy, QSpacerItem,
+    QVBoxLayout)
 
-from app.ui.components.dialogs import DialogWindow
-from app.ui.components.image import MIN_CROP_DIM_ORIGINAL, ImageCropper
+from app.ui.components.dialogs.dialog_window import DialogWindow
+from app.ui.components.images.image_cropper import MIN_CROP_DIM_ORIGINAL, ImageCropper
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

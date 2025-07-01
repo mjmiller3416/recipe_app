@@ -9,7 +9,7 @@ from typing import Any, Optional
 from PySide6.QtWidgets import (
     QGridLayout, QLabel, QLineEdit, QSizePolicy, QWidget)
 
-from app.ui.components.inputs import ComboBox
+from app.ui.components.widgets import ComboBox
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
