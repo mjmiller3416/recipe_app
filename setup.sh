@@ -5,7 +5,9 @@ echo "🔧 Setting up Python packages..."
 # Python packages
 pip show PySide6 > /dev/null 2>&1 || pip install PySide6==6.6.1
 pip show pydantic > /dev/null 2>&1 || pip install pydantic==2.6.4
+pip show SQLAlchemy > /dev/null 2>&1 || pip install SQLAlchemy==2.0.20
 pip show pytest > /dev/null 2>&1 || pip install pytest==8.2.1
+pip show pytest-qt > /dev/null 2>&1 || pip install pytest-qt==4.1.2
 pip show colorlog > /dev/null 2>&1 || pip install colorlog
 pip show PySide6-Fluent-Widgets > /dev/null 2>&1 || pip install PySide6-Fluent-Widgets
 
