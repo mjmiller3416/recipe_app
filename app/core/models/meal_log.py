@@ -13,7 +13,7 @@ from app.core.data.base_model import ModelBase
 from pydantic import Field
 
 if TYPE_CHECKING:
-    from app.core.data.models.meal_selection import MealSelection
+    from app.core.models.meal_selection import MealSelection
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class MealLog(ModelBase):
@@ -25,5 +25,5 @@ class MealLog(ModelBase):
     checked_at: datetime = Field(default_factory=datetime.now)
 
     def get_meal(self) -> MealSelection:
-        from app.core.data.models.meal_selection import MealSelection
+        from app.core.models.meal_selection import MealSelection
         return MealSelection.get(self.meal_selection_id)

@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Literal, Optional
 from pydantic import BaseModel, Field, model_validator
 
 if TYPE_CHECKING:
-    from app.core.data.models.shopping_list import ShoppingList  # avoid circular import
+    from app.core.models.shopping_list import ShoppingList  # avoid circular import
 
 
 
@@ -75,7 +75,7 @@ class ShoppingItem(BaseModel):
         """
         Convert this ShoppingItem back into a ShoppingList DB model (manual items only).
         """
-        from app.core.data.models.shopping_list import (
+        from app.core.models.shopping_list import (
             ShoppingList  # avoid circular import
         )
 

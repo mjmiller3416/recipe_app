@@ -9,9 +9,9 @@ import sqlite3
 from pydantic import ValidationError
 
 from .base_service import BaseService
-from app.core.data.models.ingredient import Ingredient
-from app.core.data.models.recipe import Recipe
-from app.core.data.models.recipe_ingredient import RecipeIngredient
+from app.core.models.ingredient import Ingredient
+from app.core.models.recipe import Recipe
+from app.core.models.recipe_ingredient import RecipeIngredient
 from app.core.dtos import (
     IngredientCreateDTO,
     RecipeCreateDTO,

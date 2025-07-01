@@ -3,8 +3,8 @@ from pathlib import Path
 import pytest
 from app.core.dtos import RecipeCreateDTO, RecipeIngredientInputDTO
 from app.core.services.recipe_service import RecipeService
-from app.core.data.models.recipe import Recipe
-from app.core.data.models.ingredient import Ingredient
+from app.core.models.recipe import Recipe
+from app.core.models.ingredient import Ingredient
 from app.core.data.database import get_connection
 import uuid
 

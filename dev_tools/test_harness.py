@@ -9,7 +9,7 @@ Prompts the user for a test module name, imports it, and runs its `run_test()` f
 import sys
 import importlib
 
-from app.core.dev_tools import DebugLogger
+from . import DebugLogger
 
 # ── Class Definition ────────────────────────────────────────────────────────────────────
 class TestHarness:

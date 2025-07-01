@@ -13,7 +13,7 @@ from app.core.utils.validators import strip_string_values
 from app.core.data.base_model import ModelBase
 
 if TYPE_CHECKING:
-    from app.core.data.models.recipe import Recipe
+    from app.core.models.recipe import Recipe
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class MealSelection(ModelBase):

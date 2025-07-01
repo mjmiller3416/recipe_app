@@ -6,7 +6,7 @@ Centralized QSS loading utility that injects theme variables into QSS files.
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from pathlib import Path
 
-from app.core.dev_tools import DebugLogger
+from dev_tools import DebugLogger
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 NON_QSS_KEYS = {"ICON_STYLES"}  # skip injecting these into QSS

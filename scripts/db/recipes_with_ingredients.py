@@ -8,8 +8,8 @@ from typing import List
 
 # 🔹 Local Imports
 from app.core.data.database import get_connection
-from app.core.data.models.recipe import Recipe as RecipeModel
-from app.core.data.models.recipe_ingredient import IngredientDetail
+from app.core.models.recipe import Recipe as RecipeModel
+from app.core.models.recipe_ingredient import IngredientDetail
 
 # Add root directory to sys.path (adjust as needed!)
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))

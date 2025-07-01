@@ -8,8 +8,8 @@ import sqlite3
 from typing import Optional
 
 from .base_service import BaseService
-from app.core.data.models.meal_selection import MealSelection
-from app.core.dev_tools import DebugLogger
+from app.core.models.meal_selection import MealSelection
+from dev_tools import DebugLogger
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

@@ -10,7 +10,7 @@ from typing import Optional
 
 from .base_service import BaseService
 
-from app.core.data.models.ingredient import Ingredient
+from app.core.models.ingredient import Ingredient
 from app.core.dtos import IngredientCreateDTO, IngredientSearchDTO
 
 

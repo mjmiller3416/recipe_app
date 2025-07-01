@@ -40,7 +40,7 @@ class RecipeIngredient(ModelBase):
         Returns:
             IngredientDetail: NamedTuple containing ingredient details.
         """
-        from app.core.data.models.ingredient import Ingredient
+        from app.core.models.ingredient import Ingredient
         
         ingredient = Ingredient.get(self.ingredient_id) 
         

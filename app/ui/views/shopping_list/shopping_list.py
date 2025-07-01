@@ -14,9 +14,9 @@ from PySide6.QtWidgets import (QCheckBox, QComboBox, QFrame, QHBoxLayout,
                                QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
 
 from app.config import MEASUREMENT_UNITS
-from app.core.data.models.meal_selection import MealSelection
+from app.core.models.meal_selection import MealSelection
 from app.core.services.shopping_service import ShoppingService
-from app.core.dev_tools import DebugLogger, StartupTimer
+from dev_tools import DebugLogger
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -182,7 +182,7 @@ class ShoppingList(QWidget):
         Returns:
             QVBoxLayout: Complete layout ready to be added to a column
         """
-        from app.core.data.models.shopping_state import \
+        from app.core.models.shopping_state import \
             ShoppingState  # avoid early import
 
         layout = QVBoxLayout()

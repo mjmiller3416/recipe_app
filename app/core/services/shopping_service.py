@@ -1,16 +1,19 @@
-"""High level coordination for shopping list features."""
+"""app/core/services/shopping_service.py
 
+High level coordination for shopping list features."""
+
+# ── Imports ─────────────────────────────────────────────────────────────────────────────
 from typing import List, Optional
 import sqlite3
 
-from app.core.data.models.shopping_item import ShoppingItem
-from app.core.data.models.shopping_state import ShoppingState
+from app.core.models.shopping_item import ShoppingItem
+from app.core.models.shopping_state import ShoppingState
 from app.core.services.meal_service import MealService
 from .shopping_repository import ShoppingRepository
 from .base_service import BaseService
-from app.core.dev_tools import DebugLogger
+from dev_tools import DebugLogger
 
-
+# ── Class Definition ────────────────────────────────────────────────────────────────────
 class ShoppingService(BaseService):
     """Provides aggregated shopping list operations."""
 
@@ -19,7 +22,15 @@ class ShoppingService(BaseService):
         recipe_ids: List[int],
         conn: Optional[sqlite3.Connection] = None,
     ) -> List[ShoppingItem]:
-        """Generate a shopping list including manual items."""
+        """Generate a shopping list including manual items.
+        
+        Args:
+            recipe_ids (List[int]): List of recipe IDs to generate shopping list from.
+            conn (Optional[sqlite3.Connection]): Optional database connection.
+            
+        Returns:
+            List[ShoppingItem]: List of ShoppingItem objects representing shopping list.
+        """
         with ShoppingService.connection_ctx(conn) as db:
             result: List[ShoppingItem] = []
             for item in ShoppingRepository.aggregate_ingredients(recipe_ids, db):
@@ -34,7 +45,14 @@ class ShoppingService(BaseService):
 
     @staticmethod
     def get_recipe_ids_from_meals(meal_ids: List[int]) -> List[int]:
-        """Return recipe IDs for given meal selections."""
+        """Return recipe IDs for given meal selections.
+        
+        Args:
+            meal_ids (List[int]): List of meal IDs to extract recipe IDs from.
+        
+        Returns:
+            List[int]: List of recipe IDs associated with the meals.
+        """
         recipe_ids: List[int] = []
         for meal_id in meal_ids:
             meal = MealService.load_meal(meal_id)
@@ -49,9 +67,9 @@ class ShoppingService(BaseService):
                 recipe_ids.append(meal.side_recipe_3)
         return recipe_ids
 
-    # Expose repository helpers -------------------------------------------------
+    # static methods to interact with the repository
     add_manual_item = ShoppingRepository.add_manual_item
     clear_manual_items = ShoppingRepository.clear_manual_items
     toggle_have_status = ShoppingRepository.toggle_have_status
-    ingredient_breakdown = ShoppingRepository.ingredient_breakdown
+    get_ingredient_breakdown = ShoppingRepository.ingredient_breakdown
 

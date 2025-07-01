@@ -11,10 +11,10 @@ from pydantic import Field, model_validator
 from app.core.utils.validators import strip_string_values
 
 from app.core.data.base_model import ModelBase
-from app.core.data.models.shopping_item import ShoppingItem
+from app.core.models.shopping_item import ShoppingItem
 
 if TYPE_CHECKING:
-    from app.core.data.models.shopping_item import ShoppingItem
+    from app.core.models.shopping_item import ShoppingItem
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -42,7 +42,7 @@ class ShoppingList(ModelBase):
         Returns:
             ShoppingItem: A UI-friendly model with manual source.
         """
-        from app.core.data.models.shopping_item import (
+        from app.core.models.shopping_item import (
             ShoppingItem  # avoid circular import
         )
 

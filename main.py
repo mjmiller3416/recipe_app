@@ -10,11 +10,11 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
-from app.core.dev_tools import startup_timer
+from dev_tools import startup_timer
 from app.core.data.reset_db import reset_database
 from app.core.data.init_db import init_db
 from app.core.services.navigation_service import NavigationService
-from app.core.dev_tools import DebugLogger
+from dev_tools import DebugLogger
 from app.style_manager import ThemeController
 from app.ui import MainWindow
 
@@ -30,7 +30,7 @@ elif "--test" in sys.argv:
     theme_controller = ThemeController()
     theme_controller.apply_full_theme()
 
-    from app.core.dev_tools.test_harness import TestHarness
+    from dev_tools.test_harness import TestHarness
     TestHarness.launch_from_test_file(app)
 
     sys.exit(app.exec())

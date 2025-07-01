@@ -15,6 +15,6 @@ Running `main.py --reset` will drop existing tables and recreate them.
 
 ## 5. Examples
 ```python
-from app.core.data.models.recipe import Recipe
+from app.core.models.recipe import Recipe
 recipes = Recipe.all()
 ```
