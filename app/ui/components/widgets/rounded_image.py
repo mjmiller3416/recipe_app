@@ -18,7 +18,21 @@ class RoundedImage(QLabel):
         self.size = size
         self.radii = radii
 
-        self.setFixedSize(size, size)
+        # ── Size Handling ──
+        if isinstance(size, QSize):
+            self.size = size.width()  # Assume square
+            qsize = size
+        else:
+            self.size = size
+            qsize = QSize(size, size)
+
+        # ── Radii Handling ──
+        if isinstance(radii, int):
+            self.radii = (radii, radii, radii, radii)
+        else:
+            self.radii = radii
+
+        self.setFixedSize(qsize)
         self.setScaledContents(True)
 
         self.setPixmap(self._get_cached_rounded_pixmap())
