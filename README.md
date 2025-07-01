@@ -8,6 +8,16 @@ MealGenie is a PySide6 application for planning meals, managing recipes, and cre
 
 Run `python main.py` to launch the application. Development utilities can be found under the `scripts/` directory.
 
+### Database Setup
+
+After installing dependencies, initialize the SQLite database by running:
+
+```bash
+alembic upgrade head
+```
+
+This will create `app/core/data/app_data.db` using the latest SQLAlchemy schema.
+
 ## 3. Dependencies
 
 * Python 3.11+

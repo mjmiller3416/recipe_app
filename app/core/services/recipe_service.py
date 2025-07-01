@@ -6,7 +6,6 @@ This module provides the RecipeService class for transactional recipe operations
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from sqlalchemy.orm import Session
 
-from .base_service import BaseService
 from app.core.models.recipe import Recipe as LegacyRecipe
 
 from app.core.data.models.recipe import Recipe as SARecipe
@@ -30,7 +29,7 @@ class DuplicateRecipeError(Exception):
     pass
 
 # ── Recipe Service Definition ───────────────────────────────────────────────────
-class RecipeService(BaseService):
+class RecipeService:
     """Service class for transactional recipe operations."""
     
     @staticmethod

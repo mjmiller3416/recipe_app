@@ -11,15 +11,25 @@ import sys
 from PySide6.QtWidgets import QApplication
 
 from dev_tools import startup_timer
-from app.core.data.reset_db import reset_database
-from app.core.data.init_db import init_db
+from alembic.config import Config
+from alembic import command
+from pathlib import Path
 from app.core.services.navigation_service import NavigationService
 from dev_tools import DebugLogger
 from app.style_manager import ThemeController
 from app.ui import MainWindow
 
+ALEMBIC_CFG = Config(str(Path(__file__).parent / "alembic.ini"))
+
+def upgrade_db() -> None:
+    """Apply any pending Alembic migrations."""
+    command.upgrade(ALEMBIC_CFG, "head")
+
 if "--reset" in sys.argv:
-        reset_database()
+    db_path = Path(ALEMBIC_CFG.get_main_option("sqlalchemy.url").replace("sqlite:///", ""))
+    if db_path.exists():
+        db_path.unlink()
+    upgrade_db()
 
 elif "--test" in sys.argv:
     DebugLogger.log("Launching in TEST MODE...\n", "info")
@@ -36,12 +46,9 @@ elif "--test" in sys.argv:
     sys.exit(app.exec())
 
 elif "--import-recipes" in sys.argv:
-    DebugLogger.log("Importing recipes from CSV...\n", "info")
-
-    # ── Import Recipes ──
-    from scripts.db.recipes_with_ingredients import insert_recipes_from_csv
-    insert_recipes_from_csv("database/recipes_with_ingredients.csv")
-
+    DebugLogger.log("Importing legacy recipes...\n", "info")
+    from scripts.migrate_legacy_data import main as migrate_legacy
+    migrate_legacy()
     DebugLogger().log("Recipe import complete.\n", "success")
 
 # ── Application Entry Point ──
@@ -49,7 +56,7 @@ else:
     app = QApplication(sys.argv)
     app.setApplicationName("MealGenie")
     DebugLogger.log("Starting MealGenie application...\n", "info")
-    init_db()
+    upgrade_db()
 
     theme_controller = ThemeController() 
     
