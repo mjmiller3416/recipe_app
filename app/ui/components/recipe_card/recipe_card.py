@@ -9,8 +9,8 @@ from typing import Optional
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QDialog, QFrame, QPushButton, QStackedWidget, QVBoxLayout
 
-from app.core.data.models.recipe import Recipe
-from app.core.dev_tools import DebugLogger, StartupTimer
+from app.core.models.recipe import Recipe
+from dev_tools import DebugLogger, StartupTimer
 from app.ui.components import FullRecipe, RecipeSelection
 
 from .constants import LayoutSize

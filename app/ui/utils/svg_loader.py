@@ -15,7 +15,7 @@ from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtWidgets import QApplication
 
 from app.config import AppPaths
-from app.core.dev_tools import DebugLogger
+from dev_tools import DebugLogger
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

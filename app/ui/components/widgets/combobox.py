@@ -12,7 +12,7 @@ from PySide6.QtCore import QEvent, QStringListModel, Qt, Signal
 from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget, QApplication
 
 from app.config import CUSTOM_COMBOBOX
-from app.core.dev_tools import DebugLogger
+from dev_tools import DebugLogger
 from app.ui.components.widgets import CTToolButton
 
 # ── Constants ───────────────────────────────────────────────────────────────────────────

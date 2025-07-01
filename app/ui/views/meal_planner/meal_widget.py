@@ -10,10 +10,10 @@ from typing import Optional
 from PySide6.QtCore import QEvent, Qt
 from PySide6.QtWidgets import QHBoxLayout, QToolTip, QVBoxLayout, QWidget
 
-from app.core.data.models.meal_selection import MealSelection
-from app.core.data.models.recipe import Recipe
+from app.core.models.meal_selection import MealSelection
+from app.core.models.recipe import Recipe
 from app.core.services.meal_service import MealService
-from app.core.dev_tools import DebugLogger
+from dev_tools import DebugLogger
 from app.ui.components.recipe_card import RecipeCard
 from app.ui.components.recipe_card.constants import LayoutSize
 

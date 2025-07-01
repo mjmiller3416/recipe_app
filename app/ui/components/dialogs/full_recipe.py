@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QSizePolicy,
                                QSpacerItem, QVBoxLayout, QWidget)
 
 from app.config import RECIPE_DIALOG
-from app.core.data.models.recipe import Recipe
+from app.core.models.recipe import Recipe
 from app.ui.components.dialogs import DialogWindow
 from app.ui.components.layout import Separator
 from app.ui.helpers.ui_helpers import create_framed_layout

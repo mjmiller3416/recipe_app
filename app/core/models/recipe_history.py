@@ -13,7 +13,7 @@ from app.core.data.base_model import ModelBase
 from pydantic import Field
 
 if TYPE_CHECKING:
-    from app.core.data.models.recipe import Recipe
+    from app.core.models.recipe import Recipe
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class RecipeHistory(ModelBase):
@@ -22,5 +22,5 @@ class RecipeHistory(ModelBase):
     cooked_at: datetime  = Field(default_factory=datetime.now)
 
     def get_recipe(self) -> Recipe:
-        from app.core.data.models.recipe import Recipe
+        from app.core.models.recipe import Recipe
         return Recipe.get(self.recipe_id)

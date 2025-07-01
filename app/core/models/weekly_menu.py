@@ -8,7 +8,7 @@ from app.core.data.base_model import ModelBase
 from pydantic import Field
 
 if TYPE_CHECKING:
-    from app.core.data.models.recipe import Recipe
+    from app.core.models.recipe import Recipe
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class WeeklyMenu(ModelBase):

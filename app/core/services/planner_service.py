@@ -8,9 +8,9 @@ import sqlite3
 from typing import List, Optional
 
 from .base_service import BaseService
-from app.core.data.models.meal_selection import MealSelection
-from app.core.data.models.saved_meal_state import SavedMealState
-from app.core.dev_tools import DebugLogger
+from app.core.models.meal_selection import MealSelection
+from app.core.models.saved_meal_state import SavedMealState
+from dev_tools import DebugLogger
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

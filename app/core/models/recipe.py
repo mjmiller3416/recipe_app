@@ -15,12 +15,12 @@ from app.core.utils.validators import strip_string_values
 
 from app.core.data.base_model import ModelBase
 from app.core.data.database import get_connection
-from app.core.data.models.ingredient import Ingredient
-from app.core.data.models.recipe_ingredient import (IngredientDetail,
+from app.core.models.ingredient import Ingredient
+from app.core.models.recipe_ingredient import (IngredientDetail,
                                                     RecipeIngredient)
 
 if TYPE_CHECKING:
-    from app.core.data.models.ingredient import Ingredient
+    from app.core.models.ingredient import Ingredient
 
 # ── Recipe Model Definition ─────────────────────────────────────────────────────
 class Recipe(ModelBase):

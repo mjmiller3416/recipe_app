@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
 from app.config.config import INT_VALIDATOR, NAME_VALIDATOR, THEME
 from app.core.dtos import RecipeCreateDTO, RecipeIngredientInputDTO
 from app.core.services.recipe_service import RecipeService
-from app.core.dev_tools import DebugLogger
+from dev_tools import DebugLogger
 from app.ui.components.dialogs import MessageDialog
 from app.ui.components.forms  import RecipeForm
 from app.ui.components.layout import WidgetFrame

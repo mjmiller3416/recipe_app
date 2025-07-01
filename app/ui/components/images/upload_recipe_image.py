@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (
 
 from app.config import UPLOAD_RECIPE_IMAGE
 from app.config.paths import AppPaths
-from app.core.dev_tools import DebugLogger
+from dev_tools import DebugLogger
 from app.ui.helpers.ui_helpers import make_overlay
 from app.ui.components.widgets import CTToolButton, RoundedImage
 
