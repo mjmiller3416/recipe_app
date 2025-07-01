@@ -1,4 +1,6 @@
-from .shopping_service import ShoppingService
 from .planner_service import PlannerService
 from .recipe_service import RecipeService
-from .navigation_service import NavigationService
+from .shopping_service import ShoppingService
+
+__all__ = ["PlannerService", "RecipeService", "ShoppingService"]
+

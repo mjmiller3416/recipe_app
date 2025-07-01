@@ -9,6 +9,7 @@ import sqlite3
 from typing import TYPE_CHECKING, List, Optional
 
 from pydantic import Field, model_validator
+from app.core.utils.validators import strip_string_fields
 
 from app.core.data.base_model import ModelBase
 
@@ -23,12 +24,8 @@ class Ingredient(ModelBase):
 
     @model_validator(mode="before")
     def strip_strings(cls, values):
-        # trim whitespace on string fields
-        for fld in ("ingredient_name", "ingredient_category"):
-            v = values.get(fld)
-            if isinstance(v, str):
-                values[fld] = v.strip()
-        return values
+        """Strip whitespace from name and category fields."""
+        return strip_string_fields(values, ("ingredient_name", "ingredient_category"))
 
     def display_label(self) -> str:
         """Return a human-friendly label for this ingredient."""
@@ -48,4 +45,5 @@ class Ingredient(ModelBase):
             "WHERE recipe_ingredients.ingredient_id = ?"
         )
         return Recipe.raw_query(sql, (self.id,), connection=connection)
+
 

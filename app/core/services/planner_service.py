@@ -18,7 +18,7 @@ class PlannerService:
 
     @staticmethod
     def load_saved_meal_ids(
-        connection: Optional[sqlite3.Connection] = None
+        conn: Optional[sqlite3.Connection] = None
     ) -> List[int]:
         """
         Load saved meal IDs from the database.
@@ -26,11 +26,11 @@ class PlannerService:
         Returns:
             list[int]: List of saved meal IDs.
         """
-        if connection:
+        if conn:
             entries = SavedMealState.raw_query(
                 f"SELECT * FROM {SavedMealState.table_name()}",
                 (),
-                connection=connection
+                connection=conn
             )
         else:
             entries = SavedMealState.all()
@@ -42,7 +42,7 @@ class PlannerService:
     @staticmethod
     def save_active_meal_ids(
         meal_ids: List[int],
-        connection: Optional[sqlite3.Connection] = None
+        conn: Optional[sqlite3.Connection] = None
     ) -> None:
         """
         Save the active meal IDs to the database atomically.
@@ -50,31 +50,30 @@ class PlannerService:
         Args:
             meal_ids (list[int]): List of meal IDs to save.
         """
-        if connection is None:
-            with get_connection() as conn:
-                PlannerService.save_active_meal_ids(meal_ids, connection=conn)
+        if conn is None:
+            with get_connection() as db_conn:
+                PlannerService.save_active_meal_ids(meal_ids, conn=db_conn)
             return
 
         # Clear existing states
-        connection.execute(f"DELETE FROM {SavedMealState.table_name()}")
+        conn.execute(f"DELETE FROM {SavedMealState.table_name()}")
         # Insert new states
         for mid in meal_ids:
-            SavedMealState(meal_id=mid).save(connection=connection)
+            SavedMealState(meal_id=mid).save(connection=conn)
         DebugLogger.log(f"[PlannerService] Saved active meal IDs: {meal_ids}", "info")
 
     @staticmethod
     def clear_planner_state(
-        connection: Optional[sqlite3.Connection] = None
+        conn: Optional[sqlite3.Connection] = None
     ) -> None:
         """
         Clear all saved meal states from the database.
         """
-        if connection is None:
-            with get_connection() as conn:
-                PlannerService.clear_planner_state(connection=conn)
+        if conn is None:
+            with get_connection() as db_conn:
+                PlannerService.clear_planner_state(conn=db_conn)
             return
-
-        connection.execute(f"DELETE FROM {SavedMealState.table_name()}")
+        conn.execute(f"DELETE FROM {SavedMealState.table_name()}")
         DebugLogger.log("[PlannerService] Cleared planner state.", "info")
 
     @staticmethod
@@ -92,3 +91,4 @@ class PlannerService:
             if MealSelection.get(mid):
                 valid_ids.append(mid)
         return valid_ids
+

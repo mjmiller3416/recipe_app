@@ -88,4 +88,5 @@ class ShoppingItem(BaseModel):
             unit=self.unit or "",
             have=self.have
         )
-    
+
+

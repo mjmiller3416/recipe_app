@@ -29,3 +29,4 @@ def reset_database():
 
     DebugLogger().log("Database reset complete. 💾\n", "success")
     sys.exit(0)
+

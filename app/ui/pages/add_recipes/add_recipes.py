@@ -17,7 +17,7 @@ from PySide6.QtWidgets import (
 )
 
 from app.config.config import INT_VALIDATOR, NAME_VALIDATOR, THEME
-from app.core.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientInputDTO
+from app.core.dtos import RecipeCreateDTO, RecipeIngredientInputDTO
 from app.core.services.recipe_service import RecipeService
 from app.core.dev_tools import DebugLogger, StartupTimer
 from app.ui.components.dialogs import MessageDialog

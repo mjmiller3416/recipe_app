@@ -12,8 +12,8 @@ from app.core.data.database import get_connection
 from app.core.data.models.ingredient import Ingredient
 from app.core.data.models.recipe import Recipe
 from app.core.data.models.recipe_ingredient import RecipeIngredient
-from app.core.dtos.ingredient_dtos import IngredientCreateDTO
-from app.core.dtos.recipe_dtos import RecipeCreateDTO, RecipeFilterDTO
+from app.core.dtos import IngredientCreateDTO
+from app.core.dtos import RecipeCreateDTO, RecipeFilterDTO
 from app.core.services.ingredient_service import IngredientService
 
 

@@ -9,8 +9,9 @@ import sqlite3
 from typing import Optional
 
 from app.core.data.database import get_connection
+from .base_service import BaseService
 from app.core.data.models.ingredient import Ingredient
-from app.core.dtos.ingredient_dtos import (IngredientCreateDTO,
+from app.core.dtos import (IngredientCreateDTO,
                                            IngredientSearchDTO)
 
 
@@ -35,15 +36,12 @@ class IngredientService:
 
         sql = "SELECT DISTINCT ingredient_name FROM ingredients"
 
-        def _run(connection: sqlite3.Connection) -> list[str]:
-            cursor = connection.execute(sql)
+        def _run(db_conn: sqlite3.Connection) -> list[str]:
+            cursor = db_conn.execute(sql)
             return [row["ingredient_name"] for row in cursor.fetchall()]
 
-        if conn is not None:
-            return _run(conn)
-
-        with get_connection() as connection:
-            return _run(connection)
+        with BaseService.connection_ctx(conn) as db_conn:
+            return _run(db_conn)
 
     @staticmethod
     def find_matching_ingredients(
@@ -66,7 +64,9 @@ class IngredientService:
         if search_dto.category:
             sql += " AND ingredient_category = ?"
             params.append(search_dto.category.strip())
-        return Ingredient.raw_query(sql, tuple(params), connection=conn)
+
+        with BaseService.connection_ctx(conn) as db_conn:
+            return Ingredient.raw_query(sql, tuple(params), connection=db_conn)
 
     @staticmethod
     def get_or_create_ingredient(
@@ -86,17 +86,20 @@ class IngredientService:
         category = create_dto.ingredient_category
 
         # try to find an existing ingredient (by name+category).
-        existing = Ingredient.get_by_field(
-            connection=conn, 
-            ingredient_name=name, 
-            ingredient_category=category 
-        )
+        with BaseService.connection_ctx(conn) as db_conn:
+            existing = Ingredient.get_by_field(
+                connection=db_conn,
+                ingredient_name=name,
+                ingredient_category=category,
+            )
         if existing:
             return existing
 
         new_ing = Ingredient(
             ingredient_name=name,
-            ingredient_category=category
+            ingredient_category=category,
         )
-        new_ing.save(connection=conn) # 'connection' is correctly passed to save
+        with BaseService.connection_ctx(conn) as db_conn:
+            new_ing.save(connection=db_conn)
         return new_ing
+
