@@ -16,7 +16,6 @@ from PySide6.QtWidgets import (
 from app.config import UPLOAD_RECIPE_IMAGE
 from app.config.paths import AppPaths
 from app.core.dev_tools import DebugLogger
-from app.ui.components.dialogs import CropDialog
 from app.ui.helpers.ui_helpers import make_overlay
 from app.ui.components.widgets import CTToolButton, RoundedImage
 
@@ -94,6 +93,7 @@ class UploadRecipeImage(QWidget):
 
     def _launch_crop_dialog(self, image_path: str):
         """Lauches the RecipeImageCropDialog with the selected image."""
+        from app.ui.components.dialogs.crop_dialog import CropDialog
         crop_dialog = CropDialog(image_path, self)
         crop_dialog.crop_finalized.connect(self._handle_crop_saved)
         crop_dialog.select_new_image_requested.connect(self._handle_select_new_from_crop_dialog)
