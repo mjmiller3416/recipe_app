@@ -8,6 +8,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, List, Optional
 
 from pydantic import Field, model_validator
+from app.core.utils.validators import strip_string_values
 
 from app.core.data.base_model import ModelBase
 
@@ -25,10 +26,7 @@ class MealSelection(ModelBase):
 
     @model_validator(mode="before")
     def strip_strings(cls, values):
-        name = values.get("meal_name")
-        if isinstance(name, str):
-            values["meal_name"] = name.strip()
-        return values
+        return strip_string_values(values, ("meal_name",))
 
     def get_main_recipe(self) -> Recipe:
         """Return the primary Recipe for this meal."""

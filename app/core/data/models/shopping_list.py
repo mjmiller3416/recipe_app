@@ -8,6 +8,7 @@ Combines ingredients from recipes and manual entries for unified display and pro
 from typing import TYPE_CHECKING, Optional
 
 from pydantic import Field, model_validator
+from app.core.utils.validators import strip_string_values
 
 from app.core.data.base_model import ModelBase
 from app.core.data.models.shopping_item import ShoppingItem
@@ -26,14 +27,8 @@ class ShoppingList(ModelBase):
 
     @model_validator(mode="before")
     def strip_strings(cls, values):
-        """
-        Strip whitespace from string fields before validation.
-        """
-        for fld in ("ingredient_name", "unit"):
-            v = values.get(fld)
-            if isinstance(v, str):
-                values[fld] = v.strip()
-        return values
+        """Strip whitespace from string fields before validation."""
+        return strip_string_values(values, ("ingredient_name", "unit"))
 
     def label(self) -> str:
         """Return a checklist-style label for UI display."""

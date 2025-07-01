@@ -1,4 +1,4 @@
-"""database/db_reset.py
+"""data/reset_db.py
 
 Handles database reset operations for MealGenie.
 """

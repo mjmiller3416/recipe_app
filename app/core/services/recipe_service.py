@@ -8,12 +8,16 @@ import sqlite3
 
 from pydantic import ValidationError
 
-from app.core.data.database import get_connection
+from .base_service import BaseService
 from app.core.data.models.ingredient import Ingredient
 from app.core.data.models.recipe import Recipe
 from app.core.data.models.recipe_ingredient import RecipeIngredient
-from app.core.dtos.ingredient_dtos import IngredientCreateDTO
-from app.core.dtos.recipe_dtos import RecipeCreateDTO, RecipeFilterDTO
+from app.core.dtos import (
+    IngredientCreateDTO,
+    RecipeCreateDTO,
+    RecipeFilterDTO,
+    RecipeIngredientInputDTO,
+)
 from app.core.services.ingredient_service import IngredientService
 
 
@@ -27,7 +31,7 @@ class DuplicateRecipeError(Exception):
     pass
 
 # ── Recipe Service Definition ───────────────────────────────────────────────────
-class RecipeService:
+class RecipeService(BaseService):
     """Service class for transactional recipe operations."""
     
     @staticmethod
@@ -56,7 +60,7 @@ class RecipeService:
 
         try:
             # 2) Open a single connection/transaction
-            with get_connection() as conn:
+            with RecipeService.connection_ctx() as conn:
                 # 3) Convert DTO → model, validate & save the recipe itself
                 #    model_dump(exclude={"ingredients"}) returns a dict that matches Recipe fields
                 recipe_data = recipe_dto.model_dump(exclude={"ingredients"})

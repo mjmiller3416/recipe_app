@@ -17,7 +17,7 @@ from pytestqt.qtbot import QtBot
 
 from app.ui.main_window import MainWindow
 from app.style_manager import ThemeController
-from app.core.services import NavigationService
+from app.core.services.navigation_service import NavigationService
 from app.ui.views.meal_planner import MealPlanner
 from app.ui.views.dashboard import Dashboard
 

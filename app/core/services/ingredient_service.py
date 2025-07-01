@@ -8,14 +8,14 @@ Provides methods to retrieve, create, and validate ingredients.
 import sqlite3
 from typing import Optional
 
-from app.core.data.database import get_connection
+from .base_service import BaseService
+
 from app.core.data.models.ingredient import Ingredient
-from app.core.dtos.ingredient_dtos import (IngredientCreateDTO,
-                                           IngredientSearchDTO)
+from app.core.dtos import IngredientCreateDTO, IngredientSearchDTO
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
-class IngredientService:
+class IngredientService(BaseService):
     """
     Service class for managing ingredients.
     Provides methods to retrieve, create, and validate ingredients with transactional support.
@@ -39,11 +39,8 @@ class IngredientService:
             cursor = connection.execute(sql)
             return [row["ingredient_name"] for row in cursor.fetchall()]
 
-        if conn is not None:
-            return _run(conn)
-
-        with get_connection() as connection:
-            return _run(connection)
+        with IngredientService.connection_ctx(conn) as db:
+            return _run(db)
 
     @staticmethod
     def find_matching_ingredients(
@@ -55,7 +52,7 @@ class IngredientService:
 
         Args:
             search_dto (IngredientSearchDTO): DTO containing the search term.
-            connection (Optional[sqlite3.Connection]): Database connection to use.
+            conn (Optional[sqlite3.Connection]): Database connection to use.
         Returns:
             list[Ingredient]: List of matching Ingredient objects.
         """
@@ -78,7 +75,7 @@ class IngredientService:
 
         Args:
             create_dto (IngredientCreateDTO): DTO containing the ingredient details.
-            connection (Optional[sqlite3.Connection]): Database connection to use.
+            conn (Optional[sqlite3.Connection]): Database connection to use.
         Returns:
             Ingredient: The existing or newly created Ingredient object.
         """

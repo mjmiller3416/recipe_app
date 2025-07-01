@@ -10,7 +10,7 @@ from PySide6.QtWidgets import QGridLayout, QLineEdit, QWidget, QSizePolicy
 
 from app.config import (FLOAT_VALIDATOR, INGREDIENT_CATEGORIES,
                         INGREDIENT_WIDGET, MEASUREMENT_UNITS, NAME_PATTERN)
-from app.core.dtos.ingredient_dtos import IngredientSearchDTO
+from app.core.dtos import IngredientSearchDTO
 from app.core.services.ingredient_service import IngredientService
 from app.ui.components.widgets import ComboBox
 from app.ui.components.inputs import SmartLineEdit
