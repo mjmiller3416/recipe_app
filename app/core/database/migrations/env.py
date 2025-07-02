@@ -46,7 +46,11 @@ if database_url:
 from app.core.database.base import Base
 
 # import all models to register them with metadata
-from app.core.features.recipes import recipe_model
+from app.core.models.recipe import Recipe
+from app.core.models.ingredient import Ingredient
+from app.core.models.recipe_ingredient import RecipeIngredient
+from app.core.models.recipe_history import RecipeHistory
+
 
 target_metadata = Base.metadata
 

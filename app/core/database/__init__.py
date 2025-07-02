@@ -1,3 +1,3 @@
 # app/core/database/__init__.py
 
-from .base import BaseModel
+from .base import Base
