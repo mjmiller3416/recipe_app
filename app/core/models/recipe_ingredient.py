@@ -1,67 +1,53 @@
-"""database/models/recipe_ingredient.py
+"""app/core/features/recipes/recipe_ingredient.py
 
-This module defines the RecipeIngredient model, which represents the join table
+SQLAlchemy model for the recipe_ingredients join table.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
-from typing import NamedTuple, Optional
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+from __future__ import annotations
 
-from pydantic import Field
+from typing import Optional
 
-from app.core.data.base_model import ModelBase
+from sqlalchemy import Column, Float, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import relationship
 
+from ..database.base import Base
+from ..dtos.ingredient_dtos import IngredientDetailDTO
 
-# ── Ingredient Detail Tuple ─────────────────────────────────────────────────────
-class IngredientDetail(NamedTuple):
-    ingredient_name: str
-    ingredient_category: str
-    quantity: Optional[float]
-    unit: Optional[str]
+# ── RecipeIngredient Model ───────────────────────────────────────────────────────────────────
+class RecipeIngredient(Base):
+    """Join table linking recipes and ingredients with quantities and units."""
+    __tablename__ = "recipe_ingredients"
 
-# ── Recipe Ingredient Model ─────────────────────────────────────────────────────
-class RecipeIngredient(ModelBase):
-    """
-    Pydantic model for the `recipe_ingredients` join table.
-    """
-    recipe_id: int = Field(..., description="Foreign key to recipes.id")
-    ingredient_id: int = Field(..., description="Foreign key to ingredients.id")
-    quantity: Optional[float] = Field(None, description="Quantity for this recipe")
-    unit: Optional[str] = Field(None, description="Unit of measure for this ingredient")
+    recipe_id: Mapped[int] = mapped_column(ForeignKey("recipe.id"), primary_key=True)
+    #ingredient_id: Mapped[int] = mapped_column(ForeignKey("ingredient.id"), primary_key=True)
+    ingredient_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    quantity: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    unit: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
-    @classmethod
-    def table_name(cls) -> str:
-        # override default pluralization to match the actual table name
-        return "recipe_ingredients"
-
-    def get_ingredient_detail(self) -> IngredientDetail: 
+    # ── Relationships ────────────────────────────────────────────────────────────────────────
+    #ingredient = relationship("Ingredient", lazy="joined")
+    recipe = relationship("Recipe", back_populates="ingredients")
+    
+    # ── Helper Methods ───────────────────────────────────────────────────────────────────────
+    def get_ingredient_detail(self) -> IngredientDetailDTO:
         """
-        Get the full ingredient details for this recipe ingredient.
-        
-        Returns:
-            IngredientDetail: NamedTuple containing ingredient details.
+        Return enriched ingredient details (name, category, qty, unit).
         """
-        from app.core.models.ingredient import Ingredient
-        
-        ingredient = Ingredient.get(self.ingredient_id) 
-        
-        if not ingredient:
-            raise ValueError(f"Ingredient with id {self.ingredient_id} not found")
-        
-        return IngredientDetail(
-            ingredient_name=ingredient.ingredient_name,
-            ingredient_category=ingredient.ingredient_category,
+        if not self.ingredient:
+            raise ValueError(f"Ingredient {self.ingredient_id} not found")
+
+        return IngredientDetailDTO(
+            ingredient_name=self.ingredient.ingredient_name,
+            ingredient_category=self.ingredient.ingredient_category,
             quantity=self.quantity,
-            unit=self.unit
+            unit=self.unit,
         )
 
     def __repr__(self) -> str:
-        """
-        Custom string representation for debugging.
-        
-        Returns:
-            str: String representation of the RecipeIngredient instance.
-        """
         return (
             f"RecipeIngredient(recipe_id={self.recipe_id}, "
-            f"ingredient_id={self.ingredient_id}, quantity={self.quantity}, unit={self.unit})"
+            f"ingredient_id={self.ingredient_id}, "
+            f"quantity={self.quantity}, unit={self.unit})"
         )

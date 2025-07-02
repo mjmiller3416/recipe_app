@@ -11,8 +11,8 @@ import sys
 from PySide6.QtWidgets import QApplication
 
 from dev_tools import startup_timer
-from app.core.data.reset_db import reset_database
-from app.core.data.init_db import init_db
+from app.core.database.reset_db import reset_database
+from app.core.database.init_db import init_db
 from app.core.services.navigation_service import NavigationService
 from dev_tools import DebugLogger
 from app.style_manager import ThemeController

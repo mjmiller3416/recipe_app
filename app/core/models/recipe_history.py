@@ -1,26 +1,33 @@
-""" database/models/recipe_history.py
+"""app/core/features/recipes/recipe_history.py
 
-Recipe History model for tracking when recipes were cooked.
+SQLAlchemy model for tracking when recipes were cooked.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional
 
-from app.core.data.base_model import ModelBase
-from pydantic import Field
+from sqlalchemy import Column, DateTime, ForeignKey, Integer
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import relationship
 
-if TYPE_CHECKING:
-    from app.core.models.recipe import Recipe
+from app.core.utils import utcnow
+from ..database.base import Base
 
-# ── Class Definition ────────────────────────────────────────────────────────────
-class RecipeHistory(ModelBase):
-    id: Optional[int]    = None
-    recipe_id: int       = Field(..., ge=1)
-    cooked_at: datetime  = Field(default_factory=datetime.now)
+# ── RecipeHistory Model ──────────────────────────────────────────────────────────────────────
+class RecipeHistory(Base):
+    __tablename__ = "recipe_history"
 
-    def get_recipe(self) -> Recipe:
-        from app.core.models.recipe import Recipe
-        return Recipe.get(self.recipe_id)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    recipe_id: Mapped[int] = mapped_column(ForeignKey("recipe.id"), nullable=False)
+    cooked_at: Mapped[datetime] = mapped_column(default=utcnow)
+
+    # ── Relationships ────────────────────────────────────────────────────────────────────────
+    recipe = relationship("Recipe", back_populates="history")
+
+    def __repr__(self) -> str:
+        return (
+            f"RecipeHistory(id={self.id}, recipe_id={self.recipe_id}, "
+            f"cooked_at={self.cooked_at})"
+        )

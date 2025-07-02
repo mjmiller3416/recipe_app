@@ -1,180 +1,79 @@
-""" database/models/recipe.py
+"""app/core/features/recipes/recipe.py
 
-This module defines the Recipe class, which represents a recipe in the database.
+SQLAlchemy model for recipes.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-import sqlite3
-from datetime import datetime, timedelta, timezone
-from typing import TYPE_CHECKING, List, Optional
+from datetime import datetime
+from typing import Optional, List
 
-from pydantic import Field, model_validator
-from app.core.utils.validators import strip_string_values
+from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 
-from app.core.data.base_model import ModelBase
-from app.core.data.database import get_connection
-from app.core.models.ingredient import Ingredient
-from app.core.models.recipe_ingredient import (IngredientDetail,
-                                                    RecipeIngredient)
+from app.core.utils import utcnow
+from ..database.base import Base
+from .recipe_ingredient import RecipeIngredient
+from .recipe_history import RecipeHistory
 
-if TYPE_CHECKING:
-    from app.core.models.ingredient import Ingredient
+# ── Recipe Model ─────────────────────────────────────────────────────────────────────────────
+class Recipe(Base):
+    __tablename__ = "recipe"
 
-# ── Recipe Model Definition ─────────────────────────────────────────────────────
-class Recipe(ModelBase):
-    id: Optional[int]         = None
-    recipe_name: str          = Field(..., min_length=1)
-    recipe_category: str      = Field(..., min_length=1)
-    meal_type: str        = Field(default="Dinner", min_length=1)
-    total_time: Optional[int] = None
-    servings: Optional[int]   = None
-    directions: Optional[str] = None
-    image_path: Optional[str] = None
-    created_at: datetime      = Field(default_factory=lambda: datetime.now(timezone.utc))
-    is_favorite: bool         = Field(default=False)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    recipe_name: Mapped[str] = mapped_column(String, nullable=False)
+    recipe_category: Mapped[str] = mapped_column(String, nullable=False)
+    meal_type: Mapped[str] = mapped_column(String, default="Dinner", nullable=False)
+    diet_pref: Mapped[Optional[str]] = mapped_column(String, default="None", nullable=True)
+    total_time: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    servings: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    directions: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    image_path: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    is_favorite: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    @model_validator(mode="before")
-    def strip_strings(cls, values):
-        values = strip_string_values(
-            values,
-            ("recipe_name", "recipe_category", "meal_type", "image_path"),
-        )
-        if isinstance(values.get("directions"), str):
-            values["directions"] = values["directions"].strip("\n ")
-        return values
+    # ── Relationships  ───────────────────────────────────────────────────────────────────────
+    ingredients: Mapped[List[RecipeIngredient]] = relationship(
+        "RecipeIngredient",
+        back_populates="recipe",
+        cascade="all, delete-orphan"
+    )
 
-    @classmethod
-    def recent(cls, days: int = 30) -> List[Recipe]:
-        """
-        Recipes created in the last *n* days.
-        
-        Args:
-            days (int): Number of days to look back for recent recipes.
-        Returns:
-            List[Recipe]: List of recipes created in the last `days` days.
-        """
-        sql = (
-            "SELECT * FROM recipes "
-            "WHERE DATE(created_at) >= DATE('now', ? || ' days') "
-            "ORDER BY created_at DESC"
-        )
-        return Recipe.raw_query(sql, params=(-days,))
+    history: Mapped[List[RecipeHistory]] = relationship(
+        "RecipeHistory",
+        back_populates="recipe",
+        cascade="all, delete-orphan"
+    )
 
-    @classmethod  
-    def list_all(cls) -> List[Recipe]:
-        """
-        Return every recipe in creation-date order.
-        
-        Returns:
-            List[Recipe]: List of all recipes ordered by creation date.
-        """
-        sql = "SELECT * FROM recipes ORDER BY created_at DESC"
-        return Recipe.raw_query(sql)
-
-    @classmethod
-    def suggest(cls, days: int) -> List[Recipe]:
-        """
-        Return all recipes whose last_cooked is None or older than `days` ago.
-
-        Args:
-            days (int): Number of days to consider for suggesting recipes.
-        Returns:
-            List[Recipe]: List of recipes that have not been cooked in the last `days` days.
-        """
-        cutoff = datetime.now() - timedelta(days=days)
-        return [r for r in cls.all() if (last := r.last_cooked()) is None or last <= cutoff]
-
+    # ── Helper Methods ───────────────────────────────────────────────────────────────────────
     def formatted_time(self) -> str:
         """Return total_time formatted as "Xh Ym" or "Ym" if less than 1 hour."""
         if not self.total_time:
             return ""
         hrs, mins = divmod(self.total_time, 60)
         return f"{hrs}h {mins}m" if hrs else f"{mins}m"
-    
+
     def formatted_servings(self) -> str:
         """Return servings with label."""
         return f"{self.servings}" if self.servings else ""
-
-    def get_recipe_ingredients(
-        self,
-        connection: Optional[sqlite3.Connection] = None
-    ) -> List[RecipeIngredient]:
-        """
-        Return all RecipeIngredient link objects for this recipe.
-        
-        Args:
-            connection (Optional[sqlite3.Connection]): Optional database connection.
-        Returns:
-            List[RecipeIngredient]: List of RecipeIngredient models for this recipe.
-        """
-        if not self.id:
-            raise ValueError("Recipe must be saved before fetching ingredients.")
-        sql = (
-            "SELECT * FROM recipe_ingredients WHERE recipe_id = ?"
-        )
-        return RecipeIngredient.raw_query(sql, (self.id,), connection=connection)
-
-    def get_ingredients(
-        self,
-        connection: Optional[sqlite3.Connection] = None
-    ) -> List[Ingredient]:
-        """
-        Return all Ingredient models linked to this recipe.
-        
-        Args:
-            connection (Optional[sqlite3.Connection]): Optional database connection.
-        Returns:
-            List[Ingredient]: List of Ingredient models for this recipe.
-        """
-        links = self.get_recipe_ingredients(connection=connection)
-        return [Ingredient.get(link.ingredient_id) for link in links]
-
-    def last_cooked(
-        self,
-        connection: Optional[sqlite3.Connection] = None
-    ) -> Optional[datetime]:
-        """
-        Return the last time this recipe was cooked, or None if never cooked.
-
-        Args:
-            connection (Optional[sqlite3.Connection]): Optional database connection.
-        Returns:
-            Optional[datetime]: The last cooked datetime, or None if never cooked.
-        """
-        sql = (
-            "SELECT MAX(cooked_at) AS last FROM recipe_histories"
-            " WHERE recipe_id = ?"
-        )
-
-        def _run(conn: sqlite3.Connection) -> Optional[datetime]:
-            row = conn.execute(sql, (self.id,)).fetchone()
-            last = row["last"] if row else None
-            return datetime.fromisoformat(last) if last else None
-
-        if connection:
-            return _run(connection)
-        with get_connection() as conn:
-            return _run(conn)
 
     def get_directions_list(self) -> list[str]:
         """Return each non-empty line as a step."""
         if not self.directions:
             return []
         return [line.strip() for line in self.directions.splitlines() if line.strip()]
+    
+    def __repr__(self) -> str:
+        return (
+            f"Recipe(id={self.id}, recipe_name={self.recipe_name}, "
+            f"recipe_category={self.recipe_category}, meal_type={self.meal_type}, "
+            f"total_time={self.total_time}, servings={self.servings}, "
+            f"is_favorite={self.is_favorite})"
+        )
 
-    def get_ingredient_details(
-            self, 
-            connection: Optional[sqlite3.Connection] = None
-    ) -> List[IngredientDetail]:
-        """
-        Get ingredient details using the consolidated approach.
-        
-        Args:
-            connection (Optional[sqlite3.Connection]): Optional database connection.
-        Returns:
-            List[IngredientDetail]: List of ingredient details for this recipe.
-        """
-        recipe_ingredients = self.get_recipe_ingredients(connection)
-        return [ri.get_ingredient_detail() for ri in recipe_ingredients]
+# ── TODOs ───────────────────────────────────────────────────────────────────────────────
+# • Create RecipeIngredient and RecipeHistory SQLAlchemy models ✅
+# • Add foreign keys and back_populates ✅
+# • Migrate last_cooked() to repository once RecipeHistory is live
+# • Autogenerate Alembic migration after this file is in place ✅

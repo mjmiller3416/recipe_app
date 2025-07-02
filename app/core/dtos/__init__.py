@@ -1,16 +1,23 @@
-from .dtos import (
-    IngredientSearchDTO,
-    IngredientCreateDTO,
-    RecipeIngredientInputDTO,
+# app/core/dtos/__init__.py
+
+from .recipe_dtos import (
+    RecipeIngredientDTO,
     RecipeCreateDTO,
-    RecipeFilterDTO,
+    RecipeUpdateDTO,
+    RecipeFilterDTO
 )
 
+from .ingredient_dtos import (
+    IngredientCreateDTO,
+    IngredientDetailDTO,
+    IngredientSearchDTO,
+)
 __all__ = [
-    "IngredientSearchDTO",
-    "IngredientCreateDTO",
-    "RecipeIngredientInputDTO",
+    "RecipeIngredientDTO",
     "RecipeCreateDTO",
+    "RecipeUpdateDTO",
     "RecipeFilterDTO",
+    "IngredientCreateDTO",
+    "IngredientDetailDTO",
+    "IngredientSearchDTO",
 ]
-

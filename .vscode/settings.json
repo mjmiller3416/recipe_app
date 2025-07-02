@@ -7,7 +7,7 @@
     "editor.formatOnSave": false, // Disable format on save
     "editor.codeActionsOnSave": {}, // Disable code actions on save
     "editor.tabSize": 4, // Set tab size to 4 spaces
-    "editor.rulers": [90], // Set a ruler at 80 (PEP8)
+    "editor.rulers": [95], // Set a ruler at 80 (PEP8)
     "editor.minimap.enabled": false, // Disable minimap
     "editor.stickyScroll.enabled": false, // Disable sticky scroll
     //"editor.scrollbar.vertical": "hidden", // Hide vertical scrollbar
@@ -135,7 +135,7 @@
     "material-icon-theme.folders.associations": {
 
       //** Main folders **//
-      "features": "Class",
+      "features": "Base",
       "application": "Python",
       "dashboard": "Python",
       "meal_planner": "Python",
@@ -154,6 +154,8 @@
       "data_files": "Other",
       "forms": "Stack",
       "dev_tools": "Tools",
+      "recipes": "Packages",
+      "ingredients": "Packages",
 
       //** Subfolders **//
       "app_helpers": "App",

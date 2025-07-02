@@ -16,7 +16,7 @@ from PySide6.QtWidgets import (
 )
 
 from app.config import RECIPE_CATEGORIES, SORT_OPTIONS
-from app.core.models.recipe import Recipe
+from app.core.features.recipes.recipe_model import Recipe
 from app.core.services.recipe_service import RecipeService
 from app.core.dtos import RecipeFilterDTO
 from app.ui.components.widgets import ComboBox

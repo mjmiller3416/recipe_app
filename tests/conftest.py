@@ -1,25 +1,39 @@
-"""tests/conftest
+"""conftest.py
 
-Pytest fixtures for database setup."""
+Provides reusable fixtures for test database setup.
+"""
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────
 import pytest
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker
 
-from app.core.data.sqlalchemy_base import Base
+from app.core.database.base import Base
+from app.core.database.db import get_test_database_url
+from app.core.repos.ingredient_repository import IngredientRepository
 
 
-# ── Fixtures ────────────────────────────────────────────────────────────────────
-@pytest.fixture
-def db_session() -> Session:
-    """Provide a Session bound to an in-memory SQLite database."""
-    engine = create_engine("sqlite+pysqlite:///:memory:", echo=False)
-    Base.metadata.create_all(engine)
-    SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
-    session = SessionLocal()
+# ── Test Database URL ───────────────────────────────────────────────
+TEST_DB_URL = "sqlite+pysqlite:///:memory:"  # fast and isolated
+
+
+# ── Pytest Fixture: Engine + Session ────────────────────────────────
+@pytest.fixture(scope="session")
+def engine():
+    """Create test engine + schema once per test session."""
+    engine = create_engine(TEST_DB_URL, echo=False, future=True)
+    Base.metadata.create_all(bind=engine)
+    yield engine
+    engine.dispose()
+
+
+@pytest.fixture(scope="function")
+def session(engine):
+    """Provide a new Session for each test function."""
+    TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+    db = TestingSessionLocal()
     try:
-        yield session
+        yield db
     finally:
-        session.close()
-        Base.metadata.drop_all(engine)
+        db.rollback()
+        db.close()

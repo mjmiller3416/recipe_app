@@ -11,7 +11,7 @@ from PySide6.QtCore import QEvent, Qt
 from PySide6.QtWidgets import QHBoxLayout, QToolTip, QVBoxLayout, QWidget
 
 from app.core.models.meal_selection import MealSelection
-from app.core.models.recipe import Recipe
+from app.core.features.recipes.recipe_model import Recipe
 from app.core.services.meal_service import MealService
 from dev_tools import DebugLogger
 from app.ui.components.recipe_card import RecipeCard
