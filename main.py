@@ -11,15 +11,13 @@ import sys
 from PySide6.QtWidgets import QApplication
 
 from dev_tools import startup_timer
-from app.core.database.reset_db import reset_database
-from app.core.database.init_db import init_db
 from app.core.services.navigation_service import NavigationService
 from dev_tools import DebugLogger
 from app.style_manager import ThemeController
 from app.ui import MainWindow
 
 if "--reset" in sys.argv:
-        reset_database()
+        pass
 
 elif "--test" in sys.argv:
     DebugLogger.log("Launching in TEST MODE...\n", "info")
@@ -49,7 +47,7 @@ else:
     app = QApplication(sys.argv)
     app.setApplicationName("MealGenie")
     DebugLogger.log("Starting MealGenie application...\n", "info")
-    init_db()
+    #init_db()
 
     theme_controller = ThemeController() 
     

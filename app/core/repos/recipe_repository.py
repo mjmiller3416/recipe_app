@@ -26,7 +26,7 @@ class RecipeRepository:
     def get_all_recipes(self) -> List[Recipe]:
         """Returns all recipes with their ingredients (eager loaded)."""
         stmt = select(Recipe).options(joinedload(Recipe.ingredients))
-        return self.session.scalars(stmt).all()
+        return self.session.scalars(stmt).unique().all()
 
     def get_recipe_by_id(self, recipe_id: int) -> Optional[Recipe]:
         """Returns a single recipe by ID, with ingredients and history."""
@@ -38,7 +38,11 @@ class RecipeRepository:
             )
             .where(Recipe.id == recipe_id)
         )
-        return self.session.scalars(stmt).first()
+        return self.session.scalars(stmt).unique().first()
+
+    def get_by_id(self, recipe_id: int) -> Optional[Recipe]:
+        """Get a recipe by ID (alias for get_recipe_by_id)."""
+        return self.get_recipe_by_id(recipe_id)
 
     def get_last_cooked_date(self, recipe_id: int) -> Optional[datetime]:
         """Returns the most recent cooked_at datetime for a recipe."""
@@ -74,3 +78,8 @@ class RecipeRepository:
             .first()
             is not None
     )
+
+    def filter_recipes(self, filter_dto) -> List[Recipe]:
+        """Filter recipes based on criteria (placeholder implementation)."""
+        # For now, just return all recipes - implement filtering logic as needed
+        return self.get_all_recipes()

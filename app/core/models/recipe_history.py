@@ -5,6 +5,7 @@ SQLAlchemy model for tracking when recipes were cooked.
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
+from typing import Optional
 
 from datetime import datetime
 

@@ -21,13 +21,12 @@ class RecipeIngredient(Base):
     __tablename__ = "recipe_ingredients"
 
     recipe_id: Mapped[int] = mapped_column(ForeignKey("recipe.id"), primary_key=True)
-    #ingredient_id: Mapped[int] = mapped_column(ForeignKey("ingredient.id"), primary_key=True)
-    ingredient_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    ingredient_id: Mapped[int] = mapped_column(ForeignKey("ingredients.id"), primary_key=True)
     quantity: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     unit: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
     # ── Relationships ────────────────────────────────────────────────────────────────────────
-    #ingredient = relationship("Ingredient", lazy="joined")
+    ingredient = relationship("Ingredient", back_populates="recipe_links", lazy="joined")
     recipe = relationship("Recipe", back_populates="ingredients")
     
     # ── Helper Methods ───────────────────────────────────────────────────────────────────────

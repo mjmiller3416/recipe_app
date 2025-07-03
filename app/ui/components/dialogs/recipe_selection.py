@@ -10,7 +10,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QAbstractItemView, QDialogButtonBox,
                                QListWidget, QListWidgetItem)
 
-from app.core.features.recipes.recipe_model import Recipe
+from app.core.models import Recipe
 from app.ui.components.dialogs.dialog_window import DialogWindow
 from dev_tools import DebugLogger
 

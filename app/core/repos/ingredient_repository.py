@@ -21,7 +21,7 @@ class IngredientRepository:
     # ── Basic CRUD ──────────────────────────────────────────────────────────────
     def get_all(self) -> list[Ingredient]:
         """Return all ingredients."""
-        return self.session.execute(select(Ingredient)).scalars().all()
+        return self.session.execute(select(Ingredient)).scalars().unique().all()
 
     def get_by_id(self, ingredient_id: int) -> Ingredient | None:
         """Fetch a single ingredient by ID."""
@@ -43,17 +43,31 @@ class IngredientRepository:
             .where(Ingredient.ingredient_name.ilike(name.strip()))
             .where(Ingredient.ingredient_category.ilike(category.strip()))
         )
-        return self.session.execute(stmt).scalars().first()
+        return self.session.execute(stmt).scalars().unique().first()
 
     def search_by_name(self, term: str, category: str | None = None) -> list[Ingredient]:
         """Search for ingredients with name containing a term (optionally filtered by category)."""
         stmt = select(Ingredient).where(Ingredient.ingredient_name.ilike(f"%{term.strip()}%"))
         if category:
             stmt = stmt.where(Ingredient.ingredient_category.ilike(category.strip()))
-        return self.session.execute(stmt).scalars().all()
+        return self.session.execute(stmt).scalars().unique().all()
 
     def get_distinct_names(self) -> list[str]:
         """Return a list of all unique ingredient names."""
         stmt = select(Ingredient.ingredient_name).distinct()
         results = self.session.execute(stmt).scalars().all()
         return results
+
+    def get_or_create(self, dto) -> Ingredient:
+        """Get existing ingredient or create new one based on name and category."""
+        existing = self.find_by_name_category(dto.ingredient_name, dto.ingredient_category)
+        if existing:
+            return existing
+        
+        new_ingredient = Ingredient(
+            ingredient_name=dto.ingredient_name,
+            ingredient_category=dto.ingredient_category
+        )
+        self.add(new_ingredient)
+        self.session.flush()  # Flush to get the ID
+        return new_ingredient
