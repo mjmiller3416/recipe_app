@@ -33,6 +33,50 @@ class ShoppingService:
         self.shopping_repo = ShoppingRepo(session)
         self.planner_repo = PlannerRepo(session)
 
+    # ------------------------------------------------------------------
+    # Compatibility wrapper methods expected by older tests
+    # ------------------------------------------------------------------
+
+    def generate_shopping_list(self, dto: ShoppingListGenerationDTO) -> ShoppingListGenerationResultDTO:
+        """Public wrapper used in tests to generate a shopping list."""
+        return self.generate_shopping_list_from_recipes(dto.recipe_ids)
+
+    def update_item(self, item_id: int, update_dto: ShoppingItemUpdateDTO) -> Optional[ShoppingItemResponseDTO]:
+        """Backward compatible alias for ``update_shopping_item``."""
+        return self.update_shopping_item(item_id, update_dto)
+
+    def delete_item(self, item_id: int) -> bool:
+        """Backward compatible alias for ``delete_shopping_item``."""
+        return self.delete_shopping_item(item_id)
+
+    def clear_completed_items(self) -> int:
+        """Remove all items marked as completed."""
+        completed = self.shopping_repo.search_shopping_items(have=True)
+        count = 0
+        for item in completed:
+            self.shopping_repo.delete_shopping_item(item.id)
+            count += 1
+        return count
+
+    def bulk_update_status(self, update_dto: BulkStateUpdateDTO) -> BulkOperationResultDTO:
+        """Wrapper accepting ``BulkStateUpdateDTO`` used in tests."""
+        return self._bulk_update_status_internal(update_dto)
+
+    def search_items(self, term: str) -> List[ShoppingItemResponseDTO]:
+        """Simple search wrapper returning DTOs."""
+        items = self.shopping_repo.search_shopping_items(search_term=term)
+        return [self._item_to_response_dto(it) for it in items]
+
+    def get_shopping_summary(self) -> Any:
+        """Return shopping list summary as a simple namespace object."""
+        summary = self.shopping_repo.get_shopping_list_summary()
+        return type("Summary", (), {
+            "total_items": summary["total_items"],
+            "completed_items": summary["checked_items"],
+            "manual_items": summary["manual_items"],
+            "recipe_items": summary["recipe_items"],
+        })()
+
     # ── Shopping List Generation ─────────────────────────────────────────────────────────────
     def generate_shopping_list_from_meals(
             self, 
@@ -97,10 +141,12 @@ class ShoppingService:
                     if saved_state:
                         item.have = saved_state.checked
 
-            # save new items
+            # save new items and collect response DTOs
+            created_items: List[ShoppingItemResponseDTO] = []
             items_created = 0
             for item in recipe_items:
-                self.shopping_repo.create_shopping_item(item)
+                created = self.shopping_repo.create_shopping_item(item)
+                created_items.append(self._item_to_response_dto(created))
                 items_created += 1
 
             # get total count including manual items
@@ -111,7 +157,8 @@ class ShoppingService:
                 items_created=items_created,
                 items_updated=0,
                 total_items=total_items,
-                message=f"Successfully generated shopping list with {items_created} recipe items"
+                message=f"Successfully generated shopping list with {items_created} recipe items",
+                items=created_items
             )
 
         except SQLAlchemyError as e:
@@ -310,7 +357,7 @@ class ShoppingService:
             )
 
     # ── Item Status Management ───────────────────────────────────────────────────────────────
-    def toggle_item_status(self, item_id: int) -> Optional[bool]:
+    def toggle_item_status(self, item_id: int) -> bool:
         """
         Toggle the 'have' status of a shopping item.
 
@@ -323,7 +370,7 @@ class ShoppingService:
         try:
             item = self.shopping_repo.get_shopping_item_by_id(item_id)
             if not item:
-                return None
+                return False
 
             item.have = not item.have
             
@@ -334,23 +381,24 @@ class ShoppingService:
                 )
 
             self.shopping_repo.update_shopping_item(item)
-            return item.have
+            return True
 
         except SQLAlchemyError:
-            return None
+            return False
 
-    def bulk_update_status(self, updates: List[tuple[int, bool]]) -> BulkOperationResultDTO:
+    def _bulk_update_status_internal(self, updates: Any) -> BulkOperationResultDTO:
+        """Bulk update have status for multiple items.
+
+        ``updates`` may be either a ``BulkStateUpdateDTO`` or a list of
+        ``(item_id, have_status)`` tuples for backward compatibility.
         """
-        Bulk update have status for multiple items.
+        if isinstance(updates, BulkStateUpdateDTO):
+            update_list = [(int(iid), status) for iid, status in updates.item_updates.items()]
+        else:
+            update_list = list(updates)
 
-        Args:
-            updates (List[tuple[int, bool]]): List of (item_id, have_status) tuples.
-
-        Returns:
-            BulkOperationResultDTO: Operation result.
-        """
         try:
-            updated_count = self.shopping_repo.bulk_update_have_status(updates)
+            updated_count = self.shopping_repo.bulk_update_have_status(update_list)
             
             return BulkOperationResultDTO(
                 success=True,
@@ -367,7 +415,7 @@ class ShoppingService:
             )
 
     # ── Analysis and Breakdown ───────────────────────────────────────────────────────────────
-    def get_ingredient_breakdown(self, recipe_ids: List[int]) -> List[IngredientBreakdownDTO]:
+    def get_ingredient_breakdown(self, recipe_ids: List[int]):
         """
         Get detailed breakdown of ingredients by recipe.
 
@@ -384,7 +432,7 @@ class ShoppingService:
             for key, contributions in breakdown.items():
                 # parse the key to get ingredient name and unit
                 parts = key.split("::")
-                ingredient_name = parts[0] if parts else "Unknown"
+                ingredient_name = parts[0].title() if parts else "Unknown"
                 unit = parts[1] if len(parts) > 1 else ""
                 
                 # calculate total quantity
@@ -407,10 +455,10 @@ class ShoppingService:
                     recipe_contributions=contribution_dtos
                 ))
             
-            return result
+            return type("IngredientBreakdown", (), {"items": result})()
 
         except SQLAlchemyError:
-            return []
+            return type("IngredientBreakdown", (), {"items": []})()
 
     # ── Helper Methods ───────────────────────────────────────────────────────────────────────
     def _item_to_response_dto(self, item: ShoppingItem) -> ShoppingItemResponseDTO:

@@ -5,6 +5,7 @@ import uuid
 from pathlib import Path
 
 import pytest
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientDTO
@@ -54,7 +55,7 @@ def test_create_recipe_with_ingredients(session: Session, sample_recipe_data):
     recipe = service.create_recipe_with_ingredients(dto)
 
     # Confirm saved
-    fetched = session.query(Recipe).get(recipe.id)
+    fetched = session.get(Recipe, recipe.id)
     assert fetched.recipe_name == dto.recipe_name
     assert fetched.recipe_category == dto.recipe_category
     assert fetched.directions == dto.directions
@@ -62,7 +63,9 @@ def test_create_recipe_with_ingredients(session: Session, sample_recipe_data):
     assert Path(fetched.image_path).exists()
 
     # Confirm ingredients linked
-    links = session.query(RecipeIngredient).filter_by(recipe_id=recipe.id).all()
+    links = session.execute(
+        select(RecipeIngredient).filter_by(recipe_id=recipe.id)
+    ).unique().scalars().all()
     assert len(links) == 2
 
     ingredient_names = {

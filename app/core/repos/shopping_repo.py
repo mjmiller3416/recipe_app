@@ -63,6 +63,44 @@ class ShoppingRepo:
             return qty_base / group.get(unit, 1.0), unit
         return qty, unit
 
+    # ------------------------------------------------------------------
+    # Convenience methods expected by tests
+    # ------------------------------------------------------------------
+
+    def aggregate_ingredients(self, recipe_ids: List[int]) -> List[ShoppingItem]:
+        return self.aggregate_recipe_ingredients(recipe_ids)
+
+    def create_shopping_items_from_recipes(self, recipe_ids: List[int]) -> List[ShoppingItem]:
+        items = self.aggregate_recipe_ingredients(recipe_ids)
+        created: List[ShoppingItem] = []
+        for item in items:
+            created.append(self.create_shopping_item(item))
+        return created
+
+    def add_manual_item(self, item: ShoppingItem) -> ShoppingItem:
+        return self.create_shopping_item(item)
+
+    def update_item_status(self, item_id: int, have: bool) -> bool:
+        item = self.get_shopping_item_by_id(item_id)
+        if not item:
+            return False
+        item.have = have
+        self.session.commit()
+        return True
+
+    def delete_item(self, item_id: int) -> bool:
+        return self.delete_shopping_item(item_id)
+
+    def clear_recipe_items(self) -> int:
+        return self.clear_shopping_items(source="recipe")
+
+    def bulk_update_states(self, updates: Dict[str, bool]) -> int:
+        count = 0
+        for key, status in updates.items():
+            self.save_shopping_state(key, 0, "", status)
+            count += 1
+        return count
+
     # ── Recipe Ingredient Aggregation ────────────────────────────────────────────────────────
     def get_recipe_ingredients(self, recipe_ids: List[int]) -> List[RecipeIngredient]:
         """
@@ -84,7 +122,7 @@ class ShoppingRepo:
             joinedload(RecipeIngredient.recipe)
         )
         result = self.session.execute(stmt)
-        return result.scalars().all()
+        return result.unique().scalars().all()
 
     def aggregate_recipe_ingredients(self, recipe_ids: List[int]) -> List[ShoppingItem]:
         """
