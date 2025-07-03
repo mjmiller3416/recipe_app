@@ -20,10 +20,7 @@ if TYPE_CHECKING:
 class MealSelection(Base):
     __tablename__ = "meal_selections"
 
-    # primary key
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    
-    # meal identification
     meal_name: Mapped[str] = mapped_column(String(255), nullable=False)
     
     # recipe foreign keys
@@ -70,8 +67,8 @@ class MealSelection(Base):
 
     # ── String Representation ────────────────────────────────────────────────────────────────
     def __repr__(self) -> str:
-        return f"<MealSelection(id={self.id}, meal_name='{self.meal_name}', main_recipe_id={self.main_recipe_id})>"
-
+        return f"<MealSelection(id={self.id}, meal_name='{self.meal_name}'," \
+               f" main_recipe_id={self.main_recipe_id})>"
 
     # ── Helper Methods ───────────────────────────────────────────────────────────────────────
     def get_side_recipes(self) -> List["Recipe"]:

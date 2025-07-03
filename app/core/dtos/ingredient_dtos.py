@@ -27,12 +27,10 @@ class IngredientBaseDTO(BaseModel):
             return v.strip()
         return v
 
-
 # ── Create DTO ───────────────────────────────────────────────────────────────────────────────
 class IngredientCreateDTO(IngredientBaseDTO):
     """DTO for creating a new ingredient."""
     pass
-
 
 # ── Update DTO ───────────────────────────────────────────────────────────────────────────────
 class IngredientUpdateDTO(BaseModel):
@@ -50,13 +48,11 @@ class IngredientUpdateDTO(BaseModel):
             return v.strip()
         return v
 
-
 # ── Response DTO ─────────────────────────────────────────────────────────────────────────────
 class IngredientResponseDTO(IngredientBaseDTO):
     """DTO for ingredient responses."""
     
     id: int
-
 
 # ── Search DTO ───────────────────────────────────────────────────────────────────────────────
 class IngredientSearchDTO(BaseModel):
@@ -68,7 +64,6 @@ class IngredientSearchDTO(BaseModel):
     category: Optional[str] = None
     limit: Optional[int] = Field(None, ge=1, le=100)
     offset: Optional[int] = Field(None, ge=0)
-
 
 # ── Detail DTO ───────────────────────────────────────────────────────────────────────────────
 class IngredientDetailDTO(BaseModel):

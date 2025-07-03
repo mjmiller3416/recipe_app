@@ -20,11 +20,11 @@ from app.core.models.ingredient import Ingredient
 from app.core.models.recipe import Recipe
 
 
-# ── Repository Class ─────────────────────────────────────────────────────────────────────────
+# ── Shopping Repository ──────────────────────────────────────────────────────────────────────
 class ShoppingRepo:
     """Repository for shopping list operations."""
 
-    # Unit conversion mappings
+    # unit conversion mappings
     _CONVERSIONS: Dict[str, Dict[str, float]] = {
         "butter": {"stick": 8.0, "tbsp": 1.0},
         "flour": {"cup": 16.0, "tbsp": 1.0},
@@ -32,6 +32,7 @@ class ShoppingRepo:
     }
 
     def __init__(self, session: Session):
+        """Initialize the Shopping Repository with a database session."""
         self.session = session
 
     # ── Unit Conversion ──────────────────────────────────────────────────────────────────────
@@ -97,7 +98,7 @@ class ShoppingRepo:
         """
         recipe_ingredients = self.get_recipe_ingredients(recipe_ids)
         
-        # Aggregate by ingredient ID
+        # aggregate by ingredient ID
         aggregation: Dict[int, Dict[str, Any]] = defaultdict(lambda: {
             "quantity": 0.0,
             "unit": None,
@@ -113,15 +114,15 @@ class ShoppingRepo:
             data["unit"] = ri.unit or data["unit"]
             data["quantity"] += ri.quantity or 0.0
 
-        # Convert to ShoppingItem objects
+        # convert to ShoppingItem objects
         items: List[ShoppingItem] = []
         for data in aggregation.values():
-            # Apply unit conversions
+            # apply unit conversions
             converted_qty, converted_unit = self._convert_quantity(
                 data["name"], data["quantity"], data["unit"] or ""
             )
             
-            # Create state key for persistence
+            # create state key for persistence
             state_key = ShoppingState.create_key(data["name"], converted_unit)
             
             item = ShoppingItem(
@@ -137,7 +138,10 @@ class ShoppingRepo:
 
         return items
 
-    def get_ingredient_breakdown(self, recipe_ids: List[int]) -> Dict[str, List[Tuple[str, float, str]]]:
+    def get_ingredient_breakdown(
+            self, 
+            recipe_ids: List[int]
+    ) -> Dict[str, List[Tuple[str, float, str]]]:
         """
         Get detailed breakdown of ingredients used in recipes.
 
@@ -154,12 +158,12 @@ class ShoppingRepo:
             ingredient = ri.ingredient
             recipe = ri.recipe
             
-            # Apply unit conversions
+            # apply unit conversions
             converted_qty, converted_unit = self._convert_quantity(
                 ingredient.ingredient_name, ri.quantity or 0.0, ri.unit or ""
             )
             
-            # Create breakdown key
+            # create breakdown key
             key = f"{ingredient.ingredient_name.lower()}::{converted_unit}"
             breakdown[key].append((recipe.recipe_name, converted_qty, converted_unit))
 
@@ -290,7 +294,7 @@ class ShoppingRepo:
         """
         stmt = select(ShoppingItem)
         
-        # Apply filters
+        # apply filters
         filters = []
         if search_term:
             filters.append(ShoppingItem.ingredient_name.ilike(f"%{search_term}%"))
@@ -328,7 +332,13 @@ class ShoppingRepo:
         result = self.session.execute(stmt)
         return result.scalar_one_or_none()
 
-    def save_shopping_state(self, key: str, quantity: float, unit: str, checked: bool) -> ShoppingState:
+    def save_shopping_state(
+            self, 
+            key: str, 
+            quantity: float, 
+            unit: str, 
+            checked: bool
+    ) -> ShoppingState:
         """
         Save or update shopping state.
 
@@ -343,7 +353,7 @@ class ShoppingRepo:
         """
         normalized_key = ShoppingState.normalize_key(key)
         
-        # Try to get existing state
+        # try to get existing state
         existing_state = self.get_shopping_state(normalized_key)
         
         if existing_state:
@@ -417,7 +427,8 @@ class ShoppingRepo:
             "recipe_items": recipe_items,
             "manual_items": manual_items,
             "categories": categories,
-            "completion_percentage": (checked_items / total_items * 100) if total_items > 0 else 0
+            "completion_percentage": (
+                checked_items / total_items * 100) if total_items > 0 else 0
         }
 
     def bulk_update_have_status(self, updates: List[Tuple[int, bool]]) -> int:

@@ -3,7 +3,7 @@
 SQLAlchemy ORM model for storing the state of saved meals in the database.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
@@ -17,14 +17,11 @@ if TYPE_CHECKING:
     from app.core.models.meal_selection import MealSelection
 
 
-# ── SavedMealState Model ─────────────────────────────────────────────────────────────────────
+# ── Saved Meal State Model ───────────────────────────────────────────────────────────────────
 class SavedMealState(Base):
     __tablename__ = "saved_meal_states"
 
-    # Primary key
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    
-    # Foreign key to meal selection
     meal_id: Mapped[int] = mapped_column(
         Integer, 
         ForeignKey("meal_selections.id", ondelete="CASCADE"), 

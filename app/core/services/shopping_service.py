@@ -23,11 +23,12 @@ from app.core.dtos.shopping_dto import (
     IngredientBreakdownItemDTO, BulkOperationResultDTO, ShoppingStateDTO, BulkStateUpdateDTO)
 
 
-# ── Service Class ────────────────────────────────────────────────────────────────────────────
+# ── Shopping Service ─────────────────────────────────────────────────────────────────────────
 class ShoppingService:
     """Service for shopping list operations with business logic."""
 
     def __init__(self, session: Session):
+        """Initialize the ShoppingService with database session and repositories."""
         self.session = session
         self.shopping_repo = ShoppingRepo(session)
         self.planner_repo = PlannerRepo(session)
@@ -83,10 +84,10 @@ class ShoppingService:
             ShoppingListGenerationResultDTO: Generation result with statistics.
         """
         try:
-            # Clear existing recipe-generated items
+            # clear existing recipe-generated items
             deleted_count = self.shopping_repo.clear_shopping_items(source="recipe")
             
-            # Aggregate ingredients from recipes
+            # aggregate ingredients from recipes
             recipe_items = self.shopping_repo.aggregate_recipe_ingredients(recipe_ids)
             
             # Apply saved states to items
@@ -96,13 +97,13 @@ class ShoppingService:
                     if saved_state:
                         item.have = saved_state.checked
 
-            # Save new items
+            # save new items
             items_created = 0
             for item in recipe_items:
                 self.shopping_repo.create_shopping_item(item)
                 items_created += 1
 
-            # Get total count including manual items
+            # get total count including manual items
             total_items = len(self.shopping_repo.get_all_shopping_items())
 
             return ShoppingListGenerationResultDTO(
@@ -124,7 +125,15 @@ class ShoppingService:
             )
 
     def _extract_recipe_ids_from_meals(self, meal_ids: List[int]) -> List[int]:
-        """Extract all recipe IDs from meal selections."""
+        """
+        Extract all recipe IDs from meal selections.
+        
+        Args:
+            meal_ids (List[int]): List of meal selection IDs.
+            
+        Returns:
+            List[int]: List of recipe IDs used in the meals.
+        """
         recipe_ids = []
         for meal_id in meal_ids:
             meal = self.planner_repo.get_meal_selection_by_id(meal_id)
@@ -139,7 +148,10 @@ class ShoppingService:
         return recipe_ids
 
     # ── Shopping List Retrieval ──────────────────────────────────────────────────────────────
-    def get_shopping_list(self, filters: Optional[ShoppingListFilterDTO] = None) -> ShoppingListResponseDTO:
+    def get_shopping_list(
+            self, 
+            filters: Optional[ShoppingListFilterDTO] = None
+    ) -> ShoppingListResponseDTO:
         """
         Get the current shopping list with optional filters.
 
@@ -150,7 +162,7 @@ class ShoppingService:
             ShoppingListResponseDTO: Complete shopping list with metadata.
         """
         try:
-            # Apply filters if provided
+            # apply filters if provided
             if filters:
                 items = self.shopping_repo.search_shopping_items(
                     search_term=filters.search_term,
@@ -163,10 +175,10 @@ class ShoppingService:
             else:
                 items = self.shopping_repo.get_all_shopping_items()
 
-            # Convert to response DTOs
+            # convert to response DTOs
             item_dtos = [self._item_to_response_dto(item) for item in items]
 
-            # Get summary statistics
+            # get summary statistics
             summary = self.shopping_repo.get_shopping_list_summary()
 
             return ShoppingListResponseDTO(
@@ -189,7 +201,10 @@ class ShoppingService:
             )
 
     # ── Manual Item Management ───────────────────────────────────────────────────────────────
-    def add_manual_item(self, create_dto: ManualItemCreateDTO) -> Optional[ShoppingItemResponseDTO]:
+    def add_manual_item(
+            self, 
+            create_dto: ManualItemCreateDTO
+    ) -> Optional[ShoppingItemResponseDTO]:
         """
         Add a manual item to the shopping list.
 
@@ -212,7 +227,11 @@ class ShoppingService:
         except SQLAlchemyError:
             return None
 
-    def update_shopping_item(self, item_id: int, update_dto: ShoppingItemUpdateDTO) -> Optional[ShoppingItemResponseDTO]:
+    def update_shopping_item(
+            self, 
+            item_id: int, 
+            update_dto: ShoppingItemUpdateDTO
+    ) -> Optional[ShoppingItemResponseDTO]:
         """
         Update a shopping item.
 
@@ -228,7 +247,7 @@ class ShoppingService:
             if not item:
                 return None
 
-            # Update fields from DTO
+            # update fields from DTO
             if update_dto.ingredient_name is not None:
                 item.ingredient_name = update_dto.ingredient_name
             if update_dto.quantity is not None:
@@ -239,7 +258,7 @@ class ShoppingService:
                 item.category = update_dto.category
             if update_dto.have is not None:
                 item.have = update_dto.have
-                # Update state if this is a recipe item
+                # update state if this is a recipe item
                 if item.state_key and item.source == "recipe":
                     self.shopping_repo.save_shopping_state(
                         item.state_key, item.quantity, item.unit or "", item.have
@@ -308,7 +327,7 @@ class ShoppingService:
 
             item.have = not item.have
             
-            # Update state for recipe items
+            # update state for recipe items
             if item.state_key and item.source == "recipe":
                 self.shopping_repo.save_shopping_state(
                     item.state_key, item.quantity, item.unit or "", item.have
@@ -363,15 +382,15 @@ class ShoppingService:
             
             result = []
             for key, contributions in breakdown.items():
-                # Parse the key to get ingredient name and unit
+                # parse the key to get ingredient name and unit
                 parts = key.split("::")
                 ingredient_name = parts[0] if parts else "Unknown"
                 unit = parts[1] if len(parts) > 1 else ""
                 
-                # Calculate total quantity
+                # calculate total quantity
                 total_quantity = sum(qty for _, qty, _ in contributions)
                 
-                # Create contribution DTOs
+                # create contribution DTOs
                 contribution_dtos = [
                     IngredientBreakdownItemDTO(
                         recipe_name=recipe_name,

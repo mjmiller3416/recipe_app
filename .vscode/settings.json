@@ -87,7 +87,7 @@
           }
         ]
       },
-    
+
 
     //** Window settings **//
     "window.zoomLevel": 0.6, // 0 = 100% zoom level, 1 = 110% zoom level, -1 = 90% zoom level
@@ -113,6 +113,7 @@
       "**/config/isort.cfg": true,
       "**/.pytest_cache": true,
       "**/.gitignore": true,
+
     },
 
     "files.associations": {
@@ -156,6 +157,9 @@
       "dev_tools": "Tools",
       "recipes": "Packages",
       "ingredients": "Packages",
+      "composite": "Custom",
+      "recipe_card": "Class",
+      "meal_widget": "Class",
 
       //** Subfolders **//
       "app_helpers": "App",
@@ -222,5 +226,5 @@
     "python.testing.pytestArgs": [
       "tests"
     ]
-    
+
   }

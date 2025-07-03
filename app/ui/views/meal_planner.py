@@ -14,7 +14,7 @@ from app.core.services.planner_service import PlannerService
 from dev_tools import DebugLogger, StartupTimer
 from app.ui.components.widgets import CTIcon
 
-from .meal_widget import MealWidget
+from app.ui.components.composite import MealWidget
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -119,4 +119,3 @@ class MealPlanner(QWidget):
         PlannerService.save_active_meal_ids(saved_ids)
         DebugLogger.log(f"[MealPlanner] Saved planner state with meal IDs: {saved_ids}", "info")
 
-    

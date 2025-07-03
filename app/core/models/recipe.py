@@ -37,7 +37,6 @@ class Recipe(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     is_favorite: Mapped[bool] = mapped_column(Boolean, default=False)
 
-
     # ── Relationships  ───────────────────────────────────────────────────────────────────────
     ingredients: Mapped[List[RecipeIngredient]] = relationship(
         "RecipeIngredient",
@@ -57,7 +56,6 @@ class Recipe(Base):
         back_populates="main_recipe"
     )
 
-
     # ── String Representation ────────────────────────────────────────────────────────────────
     def __repr__(self) -> str:
         return (
@@ -67,7 +65,6 @@ class Recipe(Base):
             f"is_favorite={self.is_favorite})"
         )
     
-
     # ── Helper Methods ───────────────────────────────────────────────────────────────────────
     def formatted_time(self) -> str:
         """Return total_time formatted as "Xh Ym" or "Ym" if less than 1 hour."""

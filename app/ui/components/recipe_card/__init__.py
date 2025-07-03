@@ -1,1 +1,0 @@
-from .recipe_card import RecipeCard

@@ -29,12 +29,10 @@ class ShoppingItemBaseDTO(BaseModel):
             return v.strip()
         return v
 
-
 # ── Create DTOs ──────────────────────────────────────────────────────────────────────────────
 class ShoppingItemCreateDTO(ShoppingItemBaseDTO):
     """DTO for creating a new shopping item."""
     source: Literal["recipe", "manual"] = "manual"
-
 
 class ManualItemCreateDTO(BaseModel):
     """DTO for creating a manual shopping item."""
@@ -51,7 +49,6 @@ class ManualItemCreateDTO(BaseModel):
         if isinstance(v, str):
             return v.strip()
         return v
-
 
 # ── Update DTOs ──────────────────────────────────────────────────────────────────────────────
 class ShoppingItemUpdateDTO(BaseModel):
@@ -72,7 +69,6 @@ class ShoppingItemUpdateDTO(BaseModel):
             return v.strip()
         return v
 
-
 # ── Response DTOs ────────────────────────────────────────────────────────────────────────────
 class ShoppingItemResponseDTO(ShoppingItemBaseDTO):
     """DTO for shopping item responses."""
@@ -81,7 +77,6 @@ class ShoppingItemResponseDTO(ShoppingItemBaseDTO):
     source: Literal["recipe", "manual"]
     have: bool = False
     state_key: Optional[str] = None
-
 
 class ShoppingListResponseDTO(BaseModel):
     """DTO for complete shopping list response."""
@@ -94,7 +89,6 @@ class ShoppingListResponseDTO(BaseModel):
     recipe_items: int
     manual_items: int
     categories: List[str]
-
 
 # ── Filter and Search DTOs ───────────────────────────────────────────────────────────────────
 class ShoppingListFilterDTO(BaseModel):
@@ -109,7 +103,6 @@ class ShoppingListFilterDTO(BaseModel):
     limit: Optional[int] = Field(None, ge=1, le=100)
     offset: Optional[int] = Field(None, ge=0)
 
-
 # ── Aggregation DTOs ─────────────────────────────────────────────────────────────────────────
 class IngredientAggregationDTO(BaseModel):
     """DTO for ingredient aggregation data."""
@@ -120,8 +113,7 @@ class IngredientAggregationDTO(BaseModel):
     total_quantity: float
     unit: Optional[str]
     category: Optional[str]
-    recipe_sources: List[str]  # Recipe names that contribute to this ingredient
-
+    recipe_sources: List[str]  # recipe names that contribute to this ingredient
 
 class ShoppingListGenerationDTO(BaseModel):
     """DTO for shopping list generation parameters."""
@@ -132,7 +124,6 @@ class ShoppingListGenerationDTO(BaseModel):
     include_manual_items: bool = True
     clear_existing: bool = False
 
-
 # ── State Management DTOs ────────────────────────────────────────────────────────────────────
 class ShoppingStateDTO(BaseModel):
     """DTO for shopping item state."""
@@ -142,14 +133,12 @@ class ShoppingStateDTO(BaseModel):
     key: str
     checked: bool
 
-
 class BulkStateUpdateDTO(BaseModel):
     """DTO for bulk state updates."""
     
     model_config = ConfigDict(from_attributes=True)
     
     updates: List[ShoppingStateDTO]
-
 
 # ── Breakdown DTOs ───────────────────────────────────────────────────────────────────────────
 class IngredientBreakdownItemDTO(BaseModel):
@@ -161,7 +150,6 @@ class IngredientBreakdownItemDTO(BaseModel):
     quantity: float
     unit: Optional[str]
 
-
 class IngredientBreakdownDTO(BaseModel):
     """DTO for ingredient breakdown by recipe."""
     
@@ -171,7 +159,6 @@ class IngredientBreakdownDTO(BaseModel):
     unit: str
     total_quantity: float
     recipe_contributions: List[IngredientBreakdownItemDTO]
-
 
 # ── Operation Result DTOs ────────────────────────────────────────────────────────────────────
 class ShoppingListGenerationResultDTO(BaseModel):
@@ -185,7 +172,6 @@ class ShoppingListGenerationResultDTO(BaseModel):
     total_items: int
     message: str
     errors: List[str] = []
-
 
 class BulkOperationResultDTO(BaseModel):
     """DTO for bulk operation results."""

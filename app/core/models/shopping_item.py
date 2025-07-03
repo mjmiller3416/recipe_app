@@ -19,16 +19,13 @@ from app.core.database.base import Base
 class ShoppingItem(Base):
     __tablename__ = "shopping_items"
 
-    # Primary key
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    
-    # Item details
     ingredient_name: Mapped[str] = mapped_column(String(255), nullable=False)
     quantity: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     unit: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     category: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     
-    # Source and status
+    # source and status
     source: Mapped[str] = mapped_column(
         Enum("recipe", "manual", name="shopping_source"), 
         nullable=False, 
@@ -36,12 +33,14 @@ class ShoppingItem(Base):
     )
     have: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     
-    # For recipe-generated items, store a key for state persistence
+    # for recipe-generated items, store a key for state persistence
     state_key: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
+    # ── String Representation ────────────────────────────────────────────────────────────────
     def __repr__(self) -> str:
         return f"<ShoppingItem(id={self.id}, name='{self.ingredient_name}', qty={self.quantity}, have={self.have})>"
 
+    # ── Helper Methods ───────────────────────────────────────────────────────────────────────
     def key(self) -> str:
         """Generate a unique key for this shopping item."""
         if self.state_key:
@@ -69,7 +68,18 @@ class ShoppingItem(Base):
         unit: Optional[str] = None,
         category: Optional[str] = None
     ) -> "ShoppingItem":
-        """Create a shopping item from recipe data."""
+        """
+        Create a shopping item from recipe data.
+        
+        Args:
+            ingredient_name (str): The name of the ingredient.
+            quantity (float): The quantity of the ingredient.
+            unit (Optional[str]): The unit of measurement, if any.
+            category (Optional[str]): The category of the ingredient.
+        
+        Returns:
+            ShoppingItem: A new shopping item instance.
+        """
         return cls(
             ingredient_name=ingredient_name,
             quantity=quantity,
@@ -86,7 +96,17 @@ class ShoppingItem(Base):
         quantity: float,
         unit: Optional[str] = None
     ) -> "ShoppingItem":
-        """Create a manual shopping item."""
+        """
+        Create a manual shopping item.
+        
+        Args:
+            ingredient_name (str): The name of the ingredient.
+            quantity (float): The quantity of the ingredient.
+            unit (Optional[str]): The unit of measurement, if any.
+        
+        Returns:
+            ShoppingItem: A new manual shopping item instance.
+        """
         return cls(
             ingredient_name=ingredient_name,
             quantity=quantity,

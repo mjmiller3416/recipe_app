@@ -27,7 +27,7 @@ from app.ui.components import SearchBar
 from app.ui.helpers.ui_helpers import center_on_screen
 
 if TYPE_CHECKING:
-    from app.core.services.navigation_service import NavigationService
+    from app.ui.services.navigation_service import NavigationService
 
 # ── Constants ───────────────────────────────────────────────────────────────────────────
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]
@@ -191,7 +191,7 @@ class MainWindow(FramelessWindow):
         widget = self.sw_pages.widget(index)
         if not widget:
             return
-        
+
         for name, w_instance in self.navigation.page_instances.items():
             if w_instance is widget:
                 self._update_header(name)

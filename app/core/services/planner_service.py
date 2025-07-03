@@ -25,11 +25,12 @@ from app.core.dtos.planner_dtos import (
 )
 
 
-# ── Service Class ────────────────────────────────────────────────────────────────────────────
+# ── Planner Class ────────────────────────────────────────────────────────────────────────────
 class PlannerService:
     """Service for meal planner operations with business logic."""
 
     def __init__(self, session: Session):
+        """Initialize the PlannerService with database session and repositories."""
         self.session = session
         self.repo = PlannerRepo(session)
 

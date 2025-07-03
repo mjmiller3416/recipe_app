@@ -16,11 +16,12 @@ from app.core.models.saved_meal_state import SavedMealState
 from app.core.models.recipe import Recipe
 
 
-# ── Repository Class ─────────────────────────────────────────────────────────────────────────
+# ── Planner Repository ───────────────────────────────────────────────────────────────────────
 class PlannerRepo:
     """Repository for meal planner operations."""
 
     def __init__(self, session: Session):
+        """Initialize the Planner Repository with a database session."""
         self.session = session
 
     # ── Saved Meal State Operations ──────────────────────────────────────────────────────────
@@ -43,10 +44,10 @@ class PlannerRepo:
         Args:
             meal_ids (List[int]): List of meal IDs to save.
         """
-        # Clear existing saved states
+        # clear existing saved states
         self.clear_saved_meal_states()
         
-        # Save new meal IDs
+        # save new meal IDs
         for meal_id in meal_ids:
             saved_state = SavedMealState(meal_id=meal_id)
             self.session.add(saved_state)
@@ -104,7 +105,7 @@ class PlannerRepo:
         if meal_selection.id is None:
             raise ValueError("Cannot update a meal selection without an ID.")
 
-        # Merge the instance with the session
+        # merge the instance with the session
         merged_meal = self.session.merge(meal_selection)
         self.session.commit()
         return merged_meal

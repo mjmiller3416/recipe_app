@@ -1,6 +1,6 @@
 """app/core/services/recipe_service.py
 
-Refactored RecipeService using SQLAlchemy repository pattern.
+RecipeService using SQLAlchemy repository pattern.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
@@ -18,18 +18,20 @@ from ..repos.recipe_repo import RecipeRepo
 from ..repos.ingredient_repo import IngredientRepo
 
 
-# ── Exceptions ──────────────────────────────────────────────────────────────────
+# ── Exceptions ───────────────────────────────────────────────────────────────────────────────
 class RecipeSaveError(Exception):
     pass
 
 class DuplicateRecipeError(Exception):
     pass
 
-# ── Recipe Service Definition ───────────────────────────────────────────────────
+
+# ── Recipe Service ───────────────────────────────────────────────────────────────────────────
 class RecipeService:
     """Service layer for managing recipes and their ingredients."""
 
     def __init__(self, session: Session):
+        """Initialize the RecipeService with database session and repositories."""
         self.session = session
         self.recipe_repo = RecipeRepo(session)
         self.ingredient_repo = IngredientRepo(session)
@@ -53,7 +55,8 @@ class RecipeService:
             category=recipe_dto.recipe_category
         ):
             raise DuplicateRecipeError(
-                f"Recipe '{recipe_dto.recipe_name}' in category '{recipe_dto.recipe_category}' already exists."
+                f"Recipe '{recipe_dto.recipe_name}' " \
+                f"in category '{recipe_dto.recipe_category}' already exists."
             )
 
         try:
@@ -112,9 +115,27 @@ class RecipeService:
         return self.ingredient_repo.get_or_create(dto)
 
     def list_filtered(self, filter_dto: RecipeFilterDTO) -> list[Recipe]:
+        """
+        List recipes based on filter criteria.
+
+        Args:
+            filter_dto (RecipeFilterDTO): Filter criteria for recipes.
+        
+        Returns:
+            list[Recipe]: List of recipes matching the filter.
+        """
         return self.recipe_repo.filter_recipes(filter_dto)
 
     def toggle_favorite(self, recipe_id: int) -> Recipe:
+        """
+        Toggle the favorite status of a recipe.
+        
+        Args:
+            recipe_id (int): ID of the recipe to toggle.
+            
+        Returns:
+            Recipe: The updated recipe with new favorite status.
+        """
         recipe = self.recipe_repo.get_by_id(recipe_id)
         recipe.is_favorite = not recipe.is_favorite
         self.session.commit()

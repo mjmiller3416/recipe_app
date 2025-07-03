@@ -11,7 +11,7 @@ import sys
 from PySide6.QtWidgets import QApplication
 
 from dev_tools import startup_timer
-from app.core.services.navigation_service import NavigationService
+from app.ui.services.navigation_service import NavigationService
 from dev_tools import DebugLogger
 from app.style_manager import ThemeController
 from app.ui import MainWindow
@@ -49,8 +49,8 @@ else:
     DebugLogger.log("Starting MealGenie application...\n", "info")
     #init_db()
 
-    theme_controller = ThemeController() 
-    
+    theme_controller = ThemeController()
+
     navigation_service_factory = NavigationService.create
 
     main_window = MainWindow(

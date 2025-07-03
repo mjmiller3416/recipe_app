@@ -34,8 +34,7 @@ class RecipeIngredientDTO(BaseModel):
             return v.strip()
         return 
 
-
-# ── Base Recipe DTOs ─────────────────────────────────────────────────────────────────────────
+# ── Base DTOs ─────────────────────────────────────────────────────────────────────────
 class RecipeBaseDTO(BaseModel):
     """Base DTO for recipe operations."""
     
@@ -44,7 +43,7 @@ class RecipeBaseDTO(BaseModel):
     recipe_name: str = Field(..., min_length=1)
     recipe_category: str = Field(..., min_length=1)
     meal_type: str = Field(default="Dinner", min_length=1)
-    diet_pref: Optional[str] = None  # Match the model field name
+    diet_pref: Optional[str] = None  # match the model field name
     total_time: Optional[int] = Field(None, ge=0)
     servings: Optional[int] = Field(None, ge=1)
     directions: Optional[str] = None
@@ -57,12 +56,10 @@ class RecipeBaseDTO(BaseModel):
             return v.strip()
         return v
 
-
 # ── Create DTO ───────────────────────────────────────────────────────────────────────────────
 class RecipeCreateDTO(RecipeBaseDTO):
     """DTO used to create a new recipe with ingredients."""
     ingredients: List[RecipeIngredientDTO] = []
-
 
 # ── Update DTO ───────────────────────────────────────────────────────────────────────────────
 class RecipeUpdateDTO(BaseModel):
@@ -88,7 +85,6 @@ class RecipeUpdateDTO(BaseModel):
             return v.strip()
         return v
 
-
 # ── Response DTO ─────────────────────────────────────────────────────────────────────────────
 class RecipeResponseDTO(RecipeBaseDTO):
     """DTO for recipe responses with full ingredient information."""
@@ -97,7 +93,6 @@ class RecipeResponseDTO(RecipeBaseDTO):
     is_favorite: bool = False
     created_at: Optional[str] = None  # ISO format datetime string
     ingredients: List["Ingredient"] = []
-
 
 # ── Filter DTO ───────────────────────────────────────────────────────────────────────────────
 class RecipeFilterDTO(BaseModel):

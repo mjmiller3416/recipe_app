@@ -26,12 +26,10 @@ class MealSelectionBaseDTO(BaseModel):
     side_recipe_2_id: Optional[int] = Field(None, ge=1)
     side_recipe_3_id: Optional[int] = Field(None, ge=1)
 
-
 # ── Create DTO ───────────────────────────────────────────────────────────────────────────────
 class MealSelectionCreateDTO(MealSelectionBaseDTO):
     """DTO for creating a new meal selection."""
     pass
-
 
 # ── Update DTO ───────────────────────────────────────────────────────────────────────────────
 class MealSelectionUpdateDTO(BaseModel):
@@ -45,7 +43,6 @@ class MealSelectionUpdateDTO(BaseModel):
     side_recipe_2_id: Optional[int] = Field(None, ge=1)
     side_recipe_3_id: Optional[int] = Field(None, ge=1)
 
-
 # ── Response DTO ─────────────────────────────────────────────────────────────────────────────
 class MealSelectionResponseDTO(MealSelectionBaseDTO):
     """DTO for meal selection responses with full recipe information."""
@@ -55,7 +52,6 @@ class MealSelectionResponseDTO(MealSelectionBaseDTO):
     side_recipe_1: Optional["Recipe"] = None
     side_recipe_2: Optional["Recipe"] = None
     side_recipe_3: Optional["Recipe"] = None
-
 
 # ── Filter DTO ───────────────────────────────────────────────────────────────────────────────
 class MealSelectionFilterDTO(BaseModel):
@@ -69,7 +65,6 @@ class MealSelectionFilterDTO(BaseModel):
     limit: Optional[int] = Field(None, ge=1, le=100)
     offset: Optional[int] = Field(None, ge=0)
 
-
 # ── Summary DTO ──────────────────────────────────────────────────────────────────────────────
 class MealPlanSummaryDTO(BaseModel):
     """DTO for meal plan summary information."""
@@ -81,7 +76,6 @@ class MealPlanSummaryDTO(BaseModel):
     meal_names: list[str]
     has_saved_plan: bool
     error: Optional[str] = None
-
 
 # ── Validation Result DTO ────────────────────────────────────────────────────────────────────
 class MealPlanValidationDTO(BaseModel):
@@ -95,7 +89,6 @@ class MealPlanValidationDTO(BaseModel):
     total_requested: int
     total_valid: int
     error: Optional[str] = None
-
 
 # ── Save Result DTO ──────────────────────────────────────────────────────────────────────────
 class MealPlanSaveResultDTO(BaseModel):
