@@ -49,10 +49,10 @@ class IngredientService:
     def search(self, dto: IngredientSearchDTO) -> list[Ingredient]:
         """
         Search for ingredients using DTO input.
-        
+
         Args:
             dto (IngredientSearchDTO): Search criteria including term and category.
-            
+
         Returns:
             list[Ingredient]: List of matching ingredients.
         """
@@ -64,7 +64,7 @@ class IngredientService:
     def list_distinct_names(self) -> list[str]:
         """
         Return all unique ingredient names (for search/autocomplete).
-        
+
         Returns:
             list[str]: List of distinct ingredient names.
         """
@@ -73,7 +73,7 @@ class IngredientService:
     def get_all(self) -> list[Ingredient]:
         """
         Return all ingredients in the database.
-        
+
         Returns:
             list[Ingredient]: List of all ingredients.
         """

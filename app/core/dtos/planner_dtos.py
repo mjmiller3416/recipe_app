@@ -17,9 +17,9 @@ if TYPE_CHECKING:
 # ── Base DTOs ────────────────────────────────────────────────────────────────────────────────
 class MealSelectionBaseDTO(BaseModel):
     """Base DTO for meal selection operations."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     meal_name: str = Field(..., min_length=1, max_length=255)
     main_recipe_id: int = Field(..., ge=1)
     side_recipe_1_id: Optional[int] = Field(None, ge=1)
@@ -34,9 +34,9 @@ class MealSelectionCreateDTO(MealSelectionBaseDTO):
 # ── Update DTO ───────────────────────────────────────────────────────────────────────────────
 class MealSelectionUpdateDTO(BaseModel):
     """DTO for updating an existing meal selection."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     meal_name: Optional[str] = Field(None, min_length=1, max_length=255)
     main_recipe_id: Optional[int] = Field(None, ge=1)
     side_recipe_1_id: Optional[int] = Field(None, ge=1)
@@ -46,7 +46,7 @@ class MealSelectionUpdateDTO(BaseModel):
 # ── Response DTO ─────────────────────────────────────────────────────────────────────────────
 class MealSelectionResponseDTO(MealSelectionBaseDTO):
     """DTO for meal selection responses with full recipe information."""
-    
+
     id: int
     main_recipe: Optional["Recipe"] = None
     side_recipe_1: Optional["Recipe"] = None
@@ -56,9 +56,9 @@ class MealSelectionResponseDTO(MealSelectionBaseDTO):
 # ── Filter DTO ───────────────────────────────────────────────────────────────────────────────
 class MealSelectionFilterDTO(BaseModel):
     """DTO for filtering meal selections."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     meal_name_pattern: Optional[str] = None
     main_recipe_id: Optional[int] = None
     contains_recipe_id: Optional[int] = None
@@ -68,9 +68,9 @@ class MealSelectionFilterDTO(BaseModel):
 # ── Summary DTO ──────────────────────────────────────────────────────────────────────────────
 class MealPlanSummaryDTO(BaseModel):
     """DTO for meal plan summary information."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     total_meals: int
     total_recipes: int
     meal_names: list[str]
@@ -80,9 +80,9 @@ class MealPlanSummaryDTO(BaseModel):
 # ── Validation Result DTO ────────────────────────────────────────────────────────────────────
 class MealPlanValidationDTO(BaseModel):
     """DTO for meal plan validation results."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     is_valid: bool
     valid_ids: list[int]
     invalid_ids: list[int]
@@ -93,9 +93,9 @@ class MealPlanValidationDTO(BaseModel):
 # ── Save Result DTO ──────────────────────────────────────────────────────────────────────────
 class MealPlanSaveResultDTO(BaseModel):
     """DTO for meal plan save operation results."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     success: bool
     saved_count: int
     invalid_ids: list[int]

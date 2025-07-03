@@ -20,8 +20,8 @@ IngredientWidget = ingredient_module.IngredientWidget
 
 
 @pytest.fixture
-def ingredient_widget(qtbot: QtBot) -> IngredientWidget:
-    widget = IngredientWidget()
+def ingredient_widget(qtbot: QtBot, session) -> IngredientWidget:
+    widget = IngredientWidget(session=session)
     qtbot.addWidget(widget)
     return widget
 
@@ -47,11 +47,11 @@ def test_add_ingredient_signal(ingredient_widget: IngredientWidget, qtbot: QtBot
         qtbot.mouseClick(ingredient_widget.btn_ico_add, Qt.LeftButton)
 
 
-def test_remove_ingredient_signal(qtbot: QtBot):
+def test_remove_ingredient_signal(qtbot: QtBot, session):
     container = QWidget()
     layout = QVBoxLayout(container)
-    w1 = IngredientWidget()
-    w2 = IngredientWidget()
+    w1 = IngredientWidget(session=session)
+    w2 = IngredientWidget(session=session)
     layout.addWidget(w1)
     layout.addWidget(w2)
     qtbot.addWidget(container)

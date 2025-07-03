@@ -61,7 +61,7 @@ class NavigationService:
             meal_ids = PlannerService.load_saved_meal_ids()
             recipe_ids = ShoppingService.get_recipe_ids_from_meals(meal_ids)
             next_widget.load_shopping_list(recipe_ids)
-        
+
         if current_widget != next_widget:
             Animator.transition_stack(current_widget, next_widget, self.sw_pages)
         else:
