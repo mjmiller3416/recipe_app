@@ -16,6 +16,7 @@ from sqlalchemy.orm import relationship
 from app.core.utils import utcnow
 from ..database.base import Base
 
+
 # ── RecipeHistory Model ──────────────────────────────────────────────────────────────────────
 class RecipeHistory(Base):
     __tablename__ = "recipe_history"
@@ -23,6 +24,7 @@ class RecipeHistory(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     recipe_id: Mapped[int] = mapped_column(ForeignKey("recipe.id"), nullable=False)
     cooked_at: Mapped[datetime] = mapped_column(default=utcnow)
+
 
     # ── Relationships ────────────────────────────────────────────────────────────────────────
     recipe = relationship("Recipe", back_populates="history")

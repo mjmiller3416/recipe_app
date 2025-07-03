@@ -1,6 +1,6 @@
-# tests/features/recipes/test_recipe_repository.py
+# tests/features/recipes/test_recipe_repo.py
 
-from app.core.repos.recipe_repository import RecipeRepository
+from app.core.repos.recipe_repo import RecipeRepo
 from app.core.models import Recipe
 
 def test_get_all_recipes(session):
@@ -11,7 +11,7 @@ def test_get_all_recipes(session):
     ])
     session.commit()
 
-    repo = RecipeRepository(session)
+    repo = RecipeRepo(session)
 
     # Act
     recipes = repo.get_all_recipes()

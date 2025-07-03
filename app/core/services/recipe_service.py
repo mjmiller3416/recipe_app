@@ -14,18 +14,16 @@ from ..dtos.ingredient_dtos import IngredientCreateDTO
 from ..models.recipe import Recipe
 from ..models.recipe_ingredient import RecipeIngredient
 from ..models.ingredient import Ingredient
-from ..repos.recipe_repository import RecipeRepository
-from ..repos.ingredient_repository import IngredientRepository
+from ..repos.recipe_repo import RecipeRepo
+from ..repos.ingredient_repo import IngredientRepo
 
 
 # ── Exceptions ──────────────────────────────────────────────────────────────────
 class RecipeSaveError(Exception):
     pass
 
-
 class DuplicateRecipeError(Exception):
     pass
-
 
 # ── Recipe Service Definition ───────────────────────────────────────────────────
 class RecipeService:
@@ -33,8 +31,8 @@ class RecipeService:
 
     def __init__(self, session: Session):
         self.session = session
-        self.recipe_repo = RecipeRepository(session)
-        self.ingredient_repo = IngredientRepository(session)
+        self.recipe_repo = RecipeRepo(session)
+        self.ingredient_repo = IngredientRepo(session)
 
     def create_recipe_with_ingredients(self, recipe_dto: RecipeCreateDTO) -> Recipe:
         """

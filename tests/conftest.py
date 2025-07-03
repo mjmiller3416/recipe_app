@@ -10,7 +10,7 @@ from sqlalchemy.orm import sessionmaker
 
 from app.core.database.base import Base
 from app.core.database.db import get_test_database_url
-from app.core.repos.ingredient_repository import IngredientRepository
+from app.core.repos.ingredient_repo import IngredientRepo
 
 
 # ── Test Database URL ───────────────────────────────────────────────

@@ -15,6 +15,7 @@ from sqlalchemy.orm import relationship
 from ..database.base import Base
 from ..dtos.ingredient_dtos import IngredientDetailDTO
 
+
 # ── RecipeIngredient Model ───────────────────────────────────────────────────────────────────
 class RecipeIngredient(Base):
     """Join table linking recipes and ingredients with quantities and units."""
@@ -25,10 +26,21 @@ class RecipeIngredient(Base):
     quantity: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     unit: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
+
     # ── Relationships ────────────────────────────────────────────────────────────────────────
     ingredient = relationship("Ingredient", back_populates="recipe_links", lazy="joined")
     recipe = relationship("Recipe", back_populates="ingredients")
     
+
+    # ── String Representation ────────────────────────────────────────────────────────────────
+    def __repr__(self) -> str:
+        return (
+            f"RecipeIngredient(recipe_id={self.recipe_id}, "
+            f"ingredient_id={self.ingredient_id}, "
+            f"quantity={self.quantity}, unit={self.unit})"
+        )
+
+
     # ── Helper Methods ───────────────────────────────────────────────────────────────────────
     def get_ingredient_detail(self) -> IngredientDetailDTO:
         """
@@ -42,11 +54,4 @@ class RecipeIngredient(Base):
             ingredient_category=self.ingredient.ingredient_category,
             quantity=self.quantity,
             unit=self.unit,
-        )
-
-    def __repr__(self) -> str:
-        return (
-            f"RecipeIngredient(recipe_id={self.recipe_id}, "
-            f"ingredient_id={self.ingredient_id}, "
-            f"quantity={self.quantity}, unit={self.unit})"
         )

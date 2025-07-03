@@ -8,7 +8,6 @@ import tempfile
 import uuid
 from pathlib import Path
 
-
 # ── Functions ───────────────────────────────────────────────────────────────────
 def ensure_directory_exists(dir_path: Path) -> None:
     """Make sure a directory exists (creates parents)."""

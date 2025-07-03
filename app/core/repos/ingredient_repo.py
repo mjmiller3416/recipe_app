@@ -1,4 +1,4 @@
-"""app/core/repos/ingredient_repository.py
+"""app/core/repos/ingredient_repo.py
 
 Provides database operations for Ingredient entities.
 """
@@ -11,7 +11,7 @@ from ..models.ingredient import Ingredient
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
-class IngredientRepository:
+class IngredientRepo:
     """Handles ingredient-specific database operations."""
 
     def __init__(self, session: Session):

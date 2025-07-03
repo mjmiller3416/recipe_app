@@ -7,7 +7,6 @@ operating system in a platform-specific way.
 # ── Imports ─────────────────────────────────────────────────────────────────────
 import sys
 
-
 # ── Functions ───────────────────────────────────────────────────────────────────
 def get_taskbar_rect():
     """

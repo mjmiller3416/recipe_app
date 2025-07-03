@@ -3,21 +3,21 @@
 Provides high-level business logic for working with ingredients.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from sqlalchemy.orm import Session
 
 from ..dtos.ingredient_dtos import IngredientCreateDTO,IngredientSearchDTO
 from ..models.ingredient import Ingredient
-from ..repos.ingredient_repository import IngredientRepository
+from ..repos.ingredient_repo import IngredientRepo
 
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── Class Definition ─────────────────────────────────────────────────────────────────────────
 class IngredientService:
     """Provides higher-level ingredient operations and DTO handling."""
 
     def __init__(self, session: Session):
         self.session = session
-        self.repo = IngredientRepository(session)
+        self.repo = IngredientRepo(session)
 
     def get_or_create(self, dto: IngredientCreateDTO) -> Ingredient:
         """
@@ -40,7 +40,7 @@ class IngredientService:
             ingredient_category=dto.ingredient_category.strip(),
         )
         self.repo.add(new_ingredient)
-        self.session.flush()  # Ensure ID is assigned if needed immediately
+        self.session.flush()  # ensure ID is assigned if needed immediately
         return new_ingredient
 
     def search(self, dto: IngredientSearchDTO) -> list[Ingredient]:

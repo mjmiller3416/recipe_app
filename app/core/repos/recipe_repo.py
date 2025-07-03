@@ -1,4 +1,4 @@
-"""app/core/features/recipes/repository.py
+"""app/core/features/recipes/repo.py
 
 Repository layer for Recipe model. Handles all direct database interactions
 related to recipes, including related ingredients and history.
@@ -17,7 +17,7 @@ from ..models.recipe_history import RecipeHistory
 
 
 # ── RecipeRepository ────────────────────────────────────────────────────────────
-class RecipeRepository:
+class RecipeRepo:
     """Handles direct DB queries for the Recipe model."""
 
     def __init__(self, session: Session):

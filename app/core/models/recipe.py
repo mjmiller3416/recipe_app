@@ -7,7 +7,7 @@ SQLAlchemy model for recipes.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, TYPE_CHECKING
 
 from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime
 from sqlalchemy.orm import relationship, Mapped, mapped_column
@@ -16,6 +16,10 @@ from app.core.utils import utcnow
 from ..database.base import Base
 from .recipe_ingredient import RecipeIngredient
 from .recipe_history import RecipeHistory
+
+if TYPE_CHECKING:
+    from .meal_selection import MealSelection
+
 
 # ── Recipe Model ─────────────────────────────────────────────────────────────────────────────
 class Recipe(Base):
@@ -33,6 +37,7 @@ class Recipe(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     is_favorite: Mapped[bool] = mapped_column(Boolean, default=False)
 
+
     # ── Relationships  ───────────────────────────────────────────────────────────────────────
     ingredients: Mapped[List[RecipeIngredient]] = relationship(
         "RecipeIngredient",
@@ -45,6 +50,23 @@ class Recipe(Base):
         back_populates="recipe",
         cascade="all, delete-orphan"
     )
+
+    main_meal_selections: Mapped[List["MealSelection"]] = relationship(
+        "MealSelection",
+        foreign_keys="MealSelection.main_recipe_id",
+        back_populates="main_recipe"
+    )
+
+
+    # ── String Representation ────────────────────────────────────────────────────────────────
+    def __repr__(self) -> str:
+        return (
+            f"Recipe(id={self.id}, recipe_name={self.recipe_name}, "
+            f"recipe_category={self.recipe_category}, meal_type={self.meal_type}, "
+            f"total_time={self.total_time}, servings={self.servings}, "
+            f"is_favorite={self.is_favorite})"
+        )
+    
 
     # ── Helper Methods ───────────────────────────────────────────────────────────────────────
     def formatted_time(self) -> str:
@@ -63,17 +85,3 @@ class Recipe(Base):
         if not self.directions:
             return []
         return [line.strip() for line in self.directions.splitlines() if line.strip()]
-    
-    def __repr__(self) -> str:
-        return (
-            f"Recipe(id={self.id}, recipe_name={self.recipe_name}, "
-            f"recipe_category={self.recipe_category}, meal_type={self.meal_type}, "
-            f"total_time={self.total_time}, servings={self.servings}, "
-            f"is_favorite={self.is_favorite})"
-        )
-
-# ── TODOs ───────────────────────────────────────────────────────────────────────────────
-# • Create RecipeIngredient and RecipeHistory SQLAlchemy models ✅
-# • Add foreign keys and back_populates ✅
-# • Migrate last_cooked() to repository once RecipeHistory is live
-# • Autogenerate Alembic migration after this file is in place ✅

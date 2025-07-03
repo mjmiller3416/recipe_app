@@ -1,0 +1,96 @@
+"""app/core/models/shopping_item.py
+
+SQLAlchemy ORM model for shopping list items.
+Handles both recipe-generated and manually added shopping items.
+"""
+
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+from __future__ import annotations
+
+from typing import Optional, Literal
+
+from sqlalchemy import String, Float, Boolean, Enum
+from sqlalchemy.orm import Mapped, mapped_column
+
+from app.core.database.base import Base
+
+
+# ── Shopping Item Model ──────────────────────────────────────────────────────────────────────
+class ShoppingItem(Base):
+    __tablename__ = "shopping_items"
+
+    # Primary key
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    
+    # Item details
+    ingredient_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    quantity: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    unit: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    category: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    
+    # Source and status
+    source: Mapped[str] = mapped_column(
+        Enum("recipe", "manual", name="shopping_source"), 
+        nullable=False, 
+        default="manual"
+    )
+    have: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    
+    # For recipe-generated items, store a key for state persistence
+    state_key: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+
+    def __repr__(self) -> str:
+        return f"<ShoppingItem(id={self.id}, name='{self.ingredient_name}', qty={self.quantity}, have={self.have})>"
+
+    def key(self) -> str:
+        """Generate a unique key for this shopping item."""
+        if self.state_key:
+            return self.state_key
+        unit_str = self.unit or ""
+        return f"{self.ingredient_name.lower().strip()}::{unit_str.lower().strip()}"
+
+    def display_label(self) -> str:
+        """Return a human-friendly label for UI display."""
+        icon = "✓" if self.have else "○"
+        unit_display = f" {self.unit}" if self.unit else ""
+        return f"{icon} {self.ingredient_name}: {self.quantity}{unit_display}"
+
+    def formatted_quantity(self) -> str:
+        """Return formatted quantity string."""
+        if self.quantity == int(self.quantity):
+            return str(int(self.quantity))
+        return f"{self.quantity:.2f}".rstrip('0').rstrip('.')
+
+    @classmethod
+    def create_from_recipe(
+        cls,
+        ingredient_name: str,
+        quantity: float,
+        unit: Optional[str] = None,
+        category: Optional[str] = None
+    ) -> "ShoppingItem":
+        """Create a shopping item from recipe data."""
+        return cls(
+            ingredient_name=ingredient_name,
+            quantity=quantity,
+            unit=unit,
+            category=category,
+            source="recipe",
+            have=False
+        )
+
+    @classmethod 
+    def create_manual(
+        cls,
+        ingredient_name: str,
+        quantity: float,
+        unit: Optional[str] = None
+    ) -> "ShoppingItem":
+        """Create a manual shopping item."""
+        return cls(
+            ingredient_name=ingredient_name,
+            quantity=quantity,
+            unit=unit,
+            source="manual",
+            have=False
+        )

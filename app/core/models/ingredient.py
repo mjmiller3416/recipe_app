@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from .recipe_ingredient import RecipeIngredient
 
 
-# ── Class Definition ─────────────────────────────────────────────────────────────────────────
+# ── Ingredient Model ─────────────────────────────────────────────────────────────────────────
 class Ingredient(Base):
     """SQLAlchemy model for Ingredient."""
 
@@ -26,6 +26,7 @@ class Ingredient(Base):
     ingredient_name: Mapped[str] = mapped_column(String, nullable=False)
     ingredient_category: Mapped[str] = mapped_column(String, nullable=False)
 
+
     # ── Relationships ────────────────────────────────────────────────────────────────────────
     recipe_links: Mapped[list[RecipeIngredient]] = relationship(
         "RecipeIngredient",
@@ -34,7 +35,8 @@ class Ingredient(Base):
         lazy="joined",
     )
 
-    # ── Display Methods ──────────────────────────────────────────────────────────────────────
+
+    # ── Helper Methods ───────────────────────────────────────────────────────────────────────
     def display_label(self) -> str:
         """Return a human-friendly label for this ingredient."""
         return f"{self.ingredient_name} ({self.ingredient_category})"

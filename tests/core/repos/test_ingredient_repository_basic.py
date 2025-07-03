@@ -1,6 +1,6 @@
 # tests/core/repos/test_ingredient_repository_basic.py
 
-from app.core.repos.ingredient_repository import IngredientRepository
+from app.core.repos.ingredient_repo import IngredientRepo
 from app.core.models import Ingredient
 from app.core.dtos.ingredient_dtos import IngredientCreateDTO
 
@@ -12,7 +12,7 @@ def test_get_all_ingredients(session):
     ])
     session.commit()
 
-    repo = IngredientRepository(session)
+    repo = IngredientRepo(session)
 
     # Act
     ingredients = repo.get_all()
@@ -24,7 +24,7 @@ def test_get_all_ingredients(session):
 
 def test_get_or_create_ingredient(session):
     # Arrange
-    repo = IngredientRepository(session)
+    repo = IngredientRepo(session)
     dto = IngredientCreateDTO(
         ingredient_name="Chicken Breast",
         ingredient_category="Meat"
