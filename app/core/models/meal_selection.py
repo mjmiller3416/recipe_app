@@ -22,26 +22,26 @@ class MealSelection(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     meal_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    
+
     # recipe foreign keys
     main_recipe_id: Mapped[int] = mapped_column(
-        Integer, 
-        ForeignKey("recipes.id", ondelete="CASCADE"), 
+        Integer,
+        ForeignKey("recipe.id", ondelete="CASCADE"),
         nullable=False
     )
     side_recipe_1_id: Mapped[Optional[int]] = mapped_column(
-        Integer, 
-        ForeignKey("recipes.id", ondelete="SET NULL"), 
+        Integer,
+        ForeignKey("recipe.id", ondelete="SET NULL"),
         nullable=True
     )
     side_recipe_2_id: Mapped[Optional[int]] = mapped_column(
-        Integer, 
-        ForeignKey("recipes.id", ondelete="SET NULL"), 
+        Integer,
+        ForeignKey("recipe.id", ondelete="SET NULL"),
         nullable=True
     )
     side_recipe_3_id: Mapped[Optional[int]] = mapped_column(
-        Integer, 
-        ForeignKey("recipes.id", ondelete="SET NULL"), 
+        Integer,
+        ForeignKey("recipe.id", ondelete="SET NULL"),
         nullable=True
     )
 
@@ -82,12 +82,12 @@ class MealSelection(Base):
     def get_all_recipes(self) -> List["Recipe"]:
         """Return all recipes (main and sides) for this meal."""
         return [self.main_recipe] + self.get_side_recipes()
-    
+
     @property
     def side_recipe_ids(self) -> List[int]:
         """Return list of side recipe IDs that are not None."""
         return [
-            recipe_id for recipe_id in 
+            recipe_id for recipe_id in
             [self.side_recipe_1_id, self.side_recipe_2_id, self.side_recipe_3_id]
             if recipe_id is not None
         ]

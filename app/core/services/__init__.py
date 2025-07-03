@@ -8,7 +8,6 @@ from .recipe_service import (
 from .ingredient_service import IngredientService
 from .planner_service import PlannerService
 from .shopping_service import ShoppingService
-from ...ui.services.navigation_service import NavigationService
 
 __all__ = [
     "RecipeService",
@@ -17,5 +16,4 @@ __all__ = [
     "IngredientService",
     "PlannerService",
     "ShoppingService",
-    "NavigationService",
 ]

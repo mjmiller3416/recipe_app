@@ -16,12 +16,12 @@ from PySide6.QtWidgets import (
 )
 
 from app.config import RECIPE_CATEGORIES, SORT_OPTIONS
-from app.core.features.recipes.recipe_model import Recipe
+from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
 from app.core.dtos import RecipeFilterDTO
 from app.ui.components.widgets import ComboBox
-from app.ui.components.recipe_card.constants import LayoutSize
-from app.ui.components.recipe_card.recipe_card import RecipeCard
+from app.ui.components.composite.recipe_card.constants import LayoutSize
+from app.ui.components.composite import RecipeCard
 from app.ui.components.layout.flow_layout import FlowLayout
 from dev_tools import DebugLogger
 
@@ -40,8 +40,8 @@ class ViewRecipes(QWidget):
             meal_selection (bool): If True, enables recipe selection mode.
         """
         super().__init__(parent)
-        self.setObjectName("ViewRecipes") 
-        DebugLogger.log("Initializing ViewRecipes page", "debug")   
+        self.setObjectName("ViewRecipes")
+        DebugLogger.log("Initializing ViewRecipes page", "debug")
         self.meal_selection = meal_selection
 
         self.build_ui()
@@ -146,8 +146,8 @@ class ViewRecipes(QWidget):
                 w.deleteLater()
 
     def load_recipes(self) -> None:
-        from app.ui.components.recipe_card import RecipeCard
-        from app.ui.components.recipe_card.constants import LayoutSize
+        from app.ui.components.composite import RecipeCard
+        from app.ui.components.composite.recipe_card import LayoutSize
 
         filter_dto = RecipeFilterDTO(sort_by="A-Z")
         recipes = RecipeService.list_filtered(filter_dto)

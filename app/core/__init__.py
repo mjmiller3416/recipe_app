@@ -6,7 +6,7 @@ from .database import Base, SessionLocal, engine, get_session
 # Models
 from .models import (
     Recipe,
-    RecipeIngredient, 
+    RecipeIngredient,
     RecipeHistory,
     Ingredient,
     MealSelection,
@@ -17,10 +17,10 @@ from .models import (
 
 # Repositories
 from .repos import (
-    RecipeRepository,
-    IngredientRepository,
-    PlannerRepository, 
-    ShoppingRepository,
+    RecipeRepo,
+    IngredientRepo,
+    PlannerRepo,
+    ShoppingRepo,
 )
 
 # Services
@@ -31,7 +31,6 @@ from .services import (
     IngredientService,
     PlannerService,
     ShoppingService,
-    NavigationService,
 )
 
 # DTOs
@@ -43,7 +42,7 @@ from .dtos import (
     RecipeUpdateDTO,
     RecipeResponseDTO,
     RecipeFilterDTO,
-    
+
     # Ingredient DTOs
     IngredientBaseDTO,
     IngredientCreateDTO,
@@ -51,7 +50,7 @@ from .dtos import (
     IngredientResponseDTO,
     IngredientSearchDTO,
     IngredientDetailDTO,
-    
+
     # Planner DTOs
     MealSelectionBaseDTO,
     MealSelectionCreateDTO,
@@ -61,7 +60,7 @@ from .dtos import (
     MealPlanSummaryDTO,
     MealPlanValidationDTO,
     MealPlanSaveResultDTO,
-    
+
     # Shopping DTOs
     ShoppingItemBaseDTO,
     ShoppingItemCreateDTO,
@@ -86,32 +85,32 @@ from .utils import (
     utcnow,
     strip_string_values,
     ensure_directory_exists,
-    get_platform_info,
+    get_taskbar_rect,
 )
 
 __all__ = [
     # Database
     "Base",
-    "SessionLocal", 
+    "SessionLocal",
     "engine",
     "get_session",
-    
+
     # Models
     "Recipe",
     "RecipeIngredient",
-    "RecipeHistory", 
+    "RecipeHistory",
     "Ingredient",
     "MealSelection",
     "SavedMealState",
     "ShoppingItem",
     "ShoppingState",
-    
+
     # Repositories
-    "RecipeRepository",
-    "IngredientRepository",
-    "PlannerRepository",
-    "ShoppingRepository",
-    
+    "RecipeRepo",
+    "IngredientRepo",
+    "PlannerRepo",
+    "ShoppingRepo",
+
     # Services
     "RecipeService",
     "RecipeSaveError",
@@ -119,8 +118,7 @@ __all__ = [
     "IngredientService",
     "PlannerService",
     "ShoppingService",
-    "NavigationService",
-    
+
     # Recipe DTOs
     "RecipeIngredientDTO",
     "RecipeBaseDTO",
@@ -128,7 +126,7 @@ __all__ = [
     "RecipeUpdateDTO",
     "RecipeResponseDTO",
     "RecipeFilterDTO",
-    
+
     # Ingredient DTOs
     "IngredientBaseDTO",
     "IngredientCreateDTO",
@@ -136,7 +134,7 @@ __all__ = [
     "IngredientResponseDTO",
     "IngredientSearchDTO",
     "IngredientDetailDTO",
-    
+
     # Planner DTOs
     "MealSelectionBaseDTO",
     "MealSelectionCreateDTO",
@@ -146,7 +144,7 @@ __all__ = [
     "MealPlanSummaryDTO",
     "MealPlanValidationDTO",
     "MealPlanSaveResultDTO",
-    
+
     # Shopping DTOs
     "ShoppingItemBaseDTO",
     "ShoppingItemCreateDTO",
@@ -163,11 +161,11 @@ __all__ = [
     "ShoppingStateDTO",
     "BulkStateUpdateDTO",
     "BulkOperationResultDTO",
-    
+
     # Utilities
     "SingletonMixin",
     "utcnow",
     "strip_string_values",
     "ensure_directory_exists",
-    "get_platform_info",
+    "get_taskbar_rect",
 ]

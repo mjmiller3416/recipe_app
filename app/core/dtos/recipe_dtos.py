@@ -18,9 +18,9 @@ if TYPE_CHECKING:
 # ── Recipe Ingredient DTOs ───────────────────────────────────────────────────────────────────
 class RecipeIngredientDTO(BaseModel):
     """DTO describing an ingredient entry within a recipe."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     existing_ingredient_id: Optional[int] = None
     ingredient_name: str = Field(..., min_length=1)
     ingredient_category: str = Field(..., min_length=1)
@@ -32,14 +32,14 @@ class RecipeIngredientDTO(BaseModel):
     def strip_strings(cls, v):
         if isinstance(v, str):
             return v.strip()
-        return 
+        return v
 
 # ── Base DTOs ─────────────────────────────────────────────────────────────────────────
 class RecipeBaseDTO(BaseModel):
     """Base DTO for recipe operations."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     recipe_name: str = Field(..., min_length=1)
     recipe_category: str = Field(..., min_length=1)
     meal_type: str = Field(default="Dinner", min_length=1)
@@ -64,9 +64,9 @@ class RecipeCreateDTO(RecipeBaseDTO):
 # ── Update DTO ───────────────────────────────────────────────────────────────────────────────
 class RecipeUpdateDTO(BaseModel):
     """DTO used to update a recipe's core attributes and ingredient list."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     recipe_name: Optional[str] = Field(None, min_length=1)
     recipe_category: Optional[str] = Field(None, min_length=1)
     meal_type: Optional[str] = Field(None, min_length=1)
@@ -88,7 +88,7 @@ class RecipeUpdateDTO(BaseModel):
 # ── Response DTO ─────────────────────────────────────────────────────────────────────────────
 class RecipeResponseDTO(RecipeBaseDTO):
     """DTO for recipe responses with full ingredient information."""
-    
+
     id: int
     is_favorite: bool = False
     created_at: Optional[str] = None  # ISO format datetime string
@@ -97,14 +97,14 @@ class RecipeResponseDTO(RecipeBaseDTO):
 # ── Filter DTO ───────────────────────────────────────────────────────────────────────────────
 class RecipeFilterDTO(BaseModel):
     """DTO for filtering recipe queries."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     recipe_category: Optional[str] = None
     meal_type: Optional[str] = None
     diet_pref: Optional[str] = None
-    sort_by: Optional[str] = Field(None, regex="^(recipe_name|created_at|total_time|servings)$")
-    sort_order: Optional[str] = Field("asc", regex="^(asc|desc)$")
+    sort_by: Optional[str] = Field(None, pattern="^(recipe_name|created_at|total_time|servings)$")
+    sort_order: Optional[str] = Field("asc", pattern="^(asc|desc)$")
     favorites_only: bool = False
     search_term: Optional[str] = None
     limit: Optional[int] = Field(None, ge=1, le=100)

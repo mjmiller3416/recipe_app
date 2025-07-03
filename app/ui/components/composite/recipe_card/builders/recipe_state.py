@@ -11,7 +11,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
 from app.config import ICON_SIZE, RECIPE_CARD
-from app.core.features.recipes.recipe_model import Recipe
+from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
 from app.ui.components.layout import Separator
 from app.ui.helpers.ui_helpers import make_overlay
@@ -56,7 +56,7 @@ class RecipeCard:
         frame.setFixedSize(LAYOUT_SIZE[self.size.value]) # apply fixed geometry
 
         # ⚠️ temporary fix for transparency
-        frame.setStyleSheet("background-color: #1B1D23; border-radius: 10px;") 
+        frame.setStyleSheet("background-color: #1B1D23; border-radius: 10px;")
 
         return frame
 
