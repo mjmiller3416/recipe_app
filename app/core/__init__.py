@@ -79,6 +79,9 @@ from .dtos import (
     BulkOperationResultDTO,
 )
 
+# Rebuild Pydantic models that rely on forward references
+MealSelectionResponseDTO.model_rebuild()
+
 # Utilities
 from .utils import (
     SingletonMixin,

@@ -30,6 +30,9 @@ def engine():
 @pytest.fixture(scope="function")
 def session(engine):
     """Provide a new Session for each test function."""
+    # Ensure a clean database state for every test
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
     TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
     db = TestingSessionLocal()
     try:
