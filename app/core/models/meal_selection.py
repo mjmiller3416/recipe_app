@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, List, Optional
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
-from app.core.database.base import Base
+from ..database.base import Base
 
 if TYPE_CHECKING:
     from app.core.models.recipe import Recipe

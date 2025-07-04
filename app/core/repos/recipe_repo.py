@@ -14,15 +14,48 @@ from sqlalchemy import select
 
 from ..models.recipe import Recipe
 from ..models.recipe_history import RecipeHistory
+from ..dtos.recipe_dtos import RecipeCreateDTO
+from ..models.recipe_ingredient import RecipeIngredient
+from ..repos.ingredient_repo import IngredientRepo
 
 
 # ── Recipe Repository ────────────────────────────────────────────────────────────────────────
 class RecipeRepo:
     """Handles direct DB queries for the Recipe model."""
 
-    def __init__(self, session: Session):
-        """Initialize Recipe Repository with a database session."""
+    def __init__(self, session: Session, ingredient_repo: IngredientRepo):
+        """Initialize Recipe Repository with a database session and ingredient repository."""
         self.session = session
+        self.ingredient_repo = ingredient_repo
+
+    def persist_recipe_and_links(self, recipe_dto: RecipeCreateDTO) -> Recipe:
+        recipe = Recipe(
+            recipe_name=recipe_dto.recipe_name,
+            recipe_category=recipe_dto.recipe_category,
+            meal_type=recipe_dto.meal_type,
+            total_time=recipe_dto.total_time,
+            servings=recipe_dto.servings,
+            directions=recipe_dto.directions,
+            image_path=recipe_dto.image_path
+        )
+        self.session.add(recipe)
+        self.session.flush()
+
+        for ing in recipe_dto.ingredients:
+            ingredient = self.ingredient_repo.get_or_create(ing)
+            link = RecipeIngredient(
+                recipe_id=recipe.id,
+                ingredient_id=ingredient.id,
+                quantity=ing.quantity,
+                unit=ing.unit
+            )
+            self.session.add(link)
+
+        self.session.commit()
+        return recipe
+
+    def rollback(self) -> None:
+        self.session.rollback()
 
     def get_all_recipes(self) -> List[Recipe]:
         """
@@ -59,7 +92,7 @@ class RecipeRepo:
         Get a recipe by ID (alias for get_recipe_by_id).
         Args:
             recipe_id (int): The ID of the recipe to retrieve.
-            
+
         Returns:
             Optional[Recipe]: The recipe with the given ID, or None if not found.
         """
@@ -68,10 +101,10 @@ class RecipeRepo:
     def get_last_cooked_date(self, recipe_id: int) -> Optional[datetime]:
         """
         Returns the most recent cooked_at datetime for a recipe.
-        
+
         Args:
             recipe_id (int): The ID of the recipe to check.
-            
+
         Returns:
             Optional[datetime]: The last cooked date, or None if no history exists.
         """
@@ -87,10 +120,10 @@ class RecipeRepo:
     def create_recipe(self, recipe: Recipe) -> Recipe:
         """
         Adds and returns a new recipe.
-        
+
         Args:
             recipe (Recipe): The recipe instance to add.
-            
+
         Returns:
             Recipe: The newly created recipe with ID and other defaults set.
         """
@@ -102,10 +135,10 @@ class RecipeRepo:
     def delete_recipe(self, recipe: Recipe) -> None:
         """
         Deletes the given recipe.
-        
+
         Args:
             recipe (Recipe): The recipe instance to delete.
-            
+
         """
         self.session.delete(recipe)
         self.session.commit()
@@ -142,3 +175,18 @@ class RecipeRepo:
         """
         # for now, just return all recipes - implement filtering logic as needed
         return self.get_all_recipes()
+
+    def toggle_favorite(self, recipe_id: int) -> Recipe:
+        """
+        Toggle the favorite status of a recipe.
+
+        Args:
+            recipe_id (int): ID of the recipe to toggle.
+
+        Returns:
+            Recipe: The updated recipe with new favorite status.
+        """
+        recipe = self.get_by_id(recipe_id)
+        recipe.is_favorite = not recipe.is_favorite
+        self.session.commit()
+        return recipe

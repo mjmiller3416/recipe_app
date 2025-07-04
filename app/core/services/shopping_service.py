@@ -12,15 +12,15 @@ from typing import List, Optional, Dict, Any
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.core.repos.shopping_repo import ShoppingRepo
-from app.core.repos.planner_repo import PlannerRepo
-from app.core.models.shopping_item import ShoppingItem
-from app.core.models.shopping_state import ShoppingState
-from app.core.dtos.shopping_dto import (
-    ShoppingItemCreateDTO, ManualItemCreateDTO, ShoppingItemUpdateDTO,
-    ShoppingItemResponseDTO, ShoppingListResponseDTO, ShoppingListFilterDTO,
-    ShoppingListGenerationDTO, ShoppingListGenerationResultDTO, IngredientBreakdownDTO,
-    IngredientBreakdownItemDTO, BulkOperationResultDTO, ShoppingStateDTO, BulkStateUpdateDTO)
+from ..repos.shopping_repo import ShoppingRepo
+from ..repos.planner_repo import PlannerRepo
+from ..models.shopping_item import ShoppingItem
+from ..models.shopping_state import ShoppingState
+from ..dtos.shopping_dto import (
+    ManualItemCreateDTO, ShoppingItemUpdateDTO, ShoppingItemResponseDTO,
+    ShoppingListResponseDTO, ShoppingListFilterDTO, ShoppingListGenerationResultDTO,
+    IngredientBreakdownDTO, IngredientBreakdownItemDTO, BulkOperationResultDTO
+)
 
 
 # ── Shopping Service ─────────────────────────────────────────────────────────────────────────
@@ -34,8 +34,8 @@ class ShoppingService:
         self.planner_repo = PlannerRepo(session)
 
     # ── Shopping List Generation ─────────────────────────────────────────────────────────────
-    def generate_shopping_list_from_meals(
-            self, 
+    def generate_shopping_list(
+            self,
             meal_ids: List[int]
     ) -> ShoppingListGenerationResultDTO:
         """
@@ -50,7 +50,7 @@ class ShoppingService:
         try:
             # Get recipe IDs from meal selections
             recipe_ids = self._extract_recipe_ids_from_meals(meal_ids)
-            
+
             if not recipe_ids:
                 return ShoppingListGenerationResultDTO(
                     success=False,
@@ -86,10 +86,10 @@ class ShoppingService:
         try:
             # clear existing recipe-generated items
             deleted_count = self.shopping_repo.clear_shopping_items(source="recipe")
-            
+
             # aggregate ingredients from recipes
             recipe_items = self.shopping_repo.aggregate_recipe_ingredients(recipe_ids)
-            
+
             # Apply saved states to items
             for item in recipe_items:
                 if item.state_key:
@@ -127,10 +127,10 @@ class ShoppingService:
     def _extract_recipe_ids_from_meals(self, meal_ids: List[int]) -> List[int]:
         """
         Extract all recipe IDs from meal selections.
-        
+
         Args:
             meal_ids (List[int]): List of meal selection IDs.
-            
+
         Returns:
             List[int]: List of recipe IDs used in the meals.
         """
@@ -149,7 +149,7 @@ class ShoppingService:
 
     # ── Shopping List Retrieval ──────────────────────────────────────────────────────────────
     def get_shopping_list(
-            self, 
+            self,
             filters: Optional[ShoppingListFilterDTO] = None
     ) -> ShoppingListResponseDTO:
         """
@@ -202,7 +202,7 @@ class ShoppingService:
 
     # ── Manual Item Management ───────────────────────────────────────────────────────────────
     def add_manual_item(
-            self, 
+            self,
             create_dto: ManualItemCreateDTO
     ) -> Optional[ShoppingItemResponseDTO]:
         """
@@ -220,7 +220,7 @@ class ShoppingService:
                 quantity=create_dto.quantity,
                 unit=create_dto.unit
             )
-            
+
             created_item = self.shopping_repo.create_shopping_item(manual_item)
             return self._item_to_response_dto(created_item)
 
@@ -228,8 +228,8 @@ class ShoppingService:
             return None
 
     def update_shopping_item(
-            self, 
-            item_id: int, 
+            self,
+            item_id: int,
             update_dto: ShoppingItemUpdateDTO
     ) -> Optional[ShoppingItemResponseDTO]:
         """
@@ -294,7 +294,7 @@ class ShoppingService:
         """
         try:
             deleted_count = self.shopping_repo.clear_shopping_items(source="manual")
-            
+
             return BulkOperationResultDTO(
                 success=True,
                 items_affected=deleted_count,
@@ -326,7 +326,7 @@ class ShoppingService:
                 return None
 
             item.have = not item.have
-            
+
             # update state for recipe items
             if item.state_key and item.source == "recipe":
                 self.shopping_repo.save_shopping_state(
@@ -351,7 +351,7 @@ class ShoppingService:
         """
         try:
             updated_count = self.shopping_repo.bulk_update_have_status(updates)
-            
+
             return BulkOperationResultDTO(
                 success=True,
                 items_affected=updated_count,
@@ -379,17 +379,17 @@ class ShoppingService:
         """
         try:
             breakdown = self.shopping_repo.get_ingredient_breakdown(recipe_ids)
-            
+
             result = []
             for key, contributions in breakdown.items():
                 # parse the key to get ingredient name and unit
                 parts = key.split("::")
                 ingredient_name = parts[0] if parts else "Unknown"
                 unit = parts[1] if len(parts) > 1 else ""
-                
+
                 # calculate total quantity
                 total_quantity = sum(qty for _, qty, _ in contributions)
-                
+
                 # create contribution DTOs
                 contribution_dtos = [
                     IngredientBreakdownItemDTO(
@@ -399,14 +399,14 @@ class ShoppingService:
                     )
                     for recipe_name, qty, unit in contributions
                 ]
-                
+
                 result.append(IngredientBreakdownDTO(
                     ingredient_name=ingredient_name,
                     unit=unit,
                     total_quantity=total_quantity,
                     recipe_contributions=contribution_dtos
                 ))
-            
+
             return result
 
         except SQLAlchemyError:
@@ -436,7 +436,7 @@ class ShoppingService:
         """
         try:
             deleted_count = self.shopping_repo.clear_shopping_items()
-            
+
             return BulkOperationResultDTO(
                 success=True,
                 items_affected=deleted_count,

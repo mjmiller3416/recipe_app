@@ -12,7 +12,6 @@ from sqlalchemy.orm import Session
 from ..dtos.recipe_dtos import RecipeCreateDTO, RecipeFilterDTO, RecipeIngredientDTO
 from ..dtos.ingredient_dtos import IngredientCreateDTO
 from ..models.recipe import Recipe
-from ..models.recipe_ingredient import RecipeIngredient
 from ..models.ingredient import Ingredient
 from ..repos.recipe_repo import RecipeRepo
 from ..repos.ingredient_repo import IngredientRepo
@@ -37,68 +36,32 @@ class RecipeService:
         self.ingredient_repo = IngredientRepo(session)
 
     def create_recipe_with_ingredients(self, recipe_dto: RecipeCreateDTO) -> Recipe:
-        """
-        Create a new recipe and its associated ingredients atomically.
-
-        Args:
-            recipe_dto (RecipeCreateDTO): Recipe input with ingredient data.
-
-        Raises:
-            DuplicateRecipeError: If recipe already exists.
-            RecipeSaveError: If validation or database errors occur.
-
-        Returns:
-            Recipe: The newly created recipe.
-        """
         if self.recipe_repo.recipe_exists(
             name=recipe_dto.recipe_name,
             category=recipe_dto.recipe_category
         ):
             raise DuplicateRecipeError(
-                f"Recipe '{recipe_dto.recipe_name}' " \
+                f"Recipe '{recipe_dto.recipe_name}' "
                 f"in category '{recipe_dto.recipe_category}' already exists."
             )
 
         try:
-            recipe = Recipe(
-                recipe_name=recipe_dto.recipe_name,
-                recipe_category=recipe_dto.recipe_category,
-                meal_type=recipe_dto.meal_type,
-                total_time=recipe_dto.total_time,
-                servings=recipe_dto.servings,
-                directions=recipe_dto.directions,
-                image_path=recipe_dto.image_path
-            )
-            self.session.add(recipe)
-            self.session.flush()  # to assign recipe.id before linking ingredients
-
-            for ing in recipe_dto.ingredients:
-                ingredient = self._get_or_create_ingredient(ing)
-                link = RecipeIngredient(
-                    recipe_id=recipe.id,
-                    ingredient_id=ingredient.id,
-                    quantity=ing.quantity,
-                    unit=ing.unit
-                )
-                self.session.add(link)
-
-            self.session.commit()
-            return recipe
+            return self.recipe_repo.persist_recipe_and_links(recipe_dto)
 
         except SQLAlchemyError as err:
-            self.session.rollback()
+            self.recipe_repo.rollback()
             raise RecipeSaveError(
                 f"Unable to save recipe '{recipe_dto.recipe_name}': {err}"
             ) from err
 
-    def _get_or_create_ingredient(
+    def resolve_ingredient(
         self, ing_dto: RecipeIngredientDTO
     ) -> Ingredient:
         """
         Resolve or create an Ingredient from an ingredient DTO.
 
         Args:
-            ing_dto (RecipeIngredientInputDTO)
+            ing_dto (RecipeIngredientDTO)
 
         Returns:
             Ingredient
@@ -120,7 +83,7 @@ class RecipeService:
 
         Args:
             filter_dto (RecipeFilterDTO): Filter criteria for recipes.
-        
+
         Returns:
             list[Recipe]: List of recipes matching the filter.
         """
@@ -129,14 +92,12 @@ class RecipeService:
     def toggle_favorite(self, recipe_id: int) -> Recipe:
         """
         Toggle the favorite status of a recipe.
-        
+
         Args:
             recipe_id (int): ID of the recipe to toggle.
-            
+
         Returns:
             Recipe: The updated recipe with new favorite status.
         """
-        recipe = self.recipe_repo.get_by_id(recipe_id)
-        recipe.is_favorite = not recipe.is_favorite
-        self.session.commit()
+        recipe = self.recipe_repo.toggle_favorite(recipe_id)
         return recipe

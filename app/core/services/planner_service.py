@@ -12,10 +12,10 @@ from typing import List, Optional, Dict, Any
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.core.repos.planner_repo import PlannerRepo
-from app.core.models.meal_selection import MealSelection
-from app.core.models.saved_meal_state import SavedMealState
-from app.core.dtos.planner_dtos import (
+from ..repos.planner_repo import PlannerRepo
+from ..models.meal_selection import MealSelection
+from ..models.saved_meal_state import SavedMealState
+from ..dtos.planner_dtos import (
     MealSelectionCreateDTO,
     MealSelectionUpdateDTO,
     MealSelectionResponseDTO,
@@ -25,7 +25,7 @@ from app.core.dtos.planner_dtos import (
 )
 
 
-# ── Planner Class ────────────────────────────────────────────────────────────────────────────
+# ── Planner Service ──────────────────────────────────────────────────────────────────────────
 class PlannerService:
     """Service for meal planner operations with business logic."""
 
@@ -35,6 +35,19 @@ class PlannerService:
         self.repo = PlannerRepo(session)
 
     # ── Meal Planner State Management ────────────────────────────────────────────────────────
+    def load_saved_meal_ids(self) -> List[int]:
+        """
+        Load saved meal IDs from the database.
+
+        Returns:
+            List[int]: List of saved meal IDs from saved meal states.
+        """
+        try:
+            return self.repo.get_saved_meal_ids()
+        except SQLAlchemyError as e:
+            print(f"Error loading saved meal IDs: {e}")
+            return []
+
     def get_saved_meal_plan(self) -> List[MealSelectionResponseDTO]:
         """
         Get the current saved meal plan with full recipe details.
@@ -89,6 +102,19 @@ class PlannerService:
                 invalid_ids=meal_ids,
                 message=f"Database error: {e}"
             )
+
+    def save_active_meal_ids(self, meal_ids: List[int]) -> None:
+        """
+        Save the active meal IDs to the database.
+
+        Args:
+            meal_ids (List[int]): List of meal IDs to save as active.
+        """
+        try:
+            self.repo.save_active_meal_ids(meal_ids)
+        except SQLAlchemyError as e:
+            print(f"Error saving active meal IDs: {e}")
+            raise
 
     def clear_meal_plan(self) -> bool:
         """
@@ -158,7 +184,7 @@ class PlannerService:
             recipe_ids.extend([sid for sid in side_ids if sid is not None])
 
             valid_recipe_ids = self.repo.validate_recipe_ids(recipe_ids)
-            
+
             if create_dto.main_recipe_id not in valid_recipe_ids:
                 raise ValueError(f"Main recipe ID {create_dto.main_recipe_id} does not exist")
 
@@ -204,7 +230,7 @@ class PlannerService:
             # update fields from DTO
             if update_dto.meal_name is not None:
                 existing_meal.meal_name = update_dto.meal_name
-            
+
             if update_dto.main_recipe_id is not None:
                 # validate main recipe exists
                 valid_ids = self.repo.validate_recipe_ids([update_dto.main_recipe_id])

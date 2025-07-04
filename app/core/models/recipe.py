@@ -64,7 +64,7 @@ class Recipe(Base):
             f"total_time={self.total_time}, servings={self.servings}, "
             f"is_favorite={self.is_favorite})"
         )
-    
+
     # ── Helper Methods ───────────────────────────────────────────────────────────────────────
     def formatted_time(self) -> str:
         """Return total_time formatted as "Xh Ym" or "Ym" if less than 1 hour."""

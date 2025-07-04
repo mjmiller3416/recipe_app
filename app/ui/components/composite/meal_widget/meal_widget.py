@@ -27,11 +27,11 @@ class MealWidget(QWidget):
     Handles layout creation, user interaction, and internal meal state tracking.
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, planner_service: PlannerService, parent=None):
         super().__init__(parent)
-
+        self.planner_service = planner_service
+        self._meal_model: MealSelection | None = None
         self.meal_slots = {}
-        self._meal_model: Optional[MealSelection] = None
 
         self._setup_ui()
         self._connect_signals()
@@ -100,12 +100,8 @@ class MealWidget(QWidget):
         if not self._meal_model:
             return
 
-        session = create_session()
         try:
-            planner_service = PlannerService(session)
-
             if self._meal_model.id is None:
-                # Create new meal selection
                 create_dto = MealSelectionCreateDTO(
                     meal_name=self._meal_model.meal_name,
                     main_recipe_id=self._meal_model.main_recipe_id,
@@ -113,11 +109,10 @@ class MealWidget(QWidget):
                     side_recipe_2_id=self._meal_model.side_recipe_2_id,
                     side_recipe_3_id=self._meal_model.side_recipe_3_id
                 )
-                response_dto = planner_service.create_meal_selection(create_dto)
+                response_dto = self.planner_service.create_meal_selection(create_dto)
                 if response_dto:
                     self._meal_model.id = response_dto.id
             else:
-                # Update existing meal selection
                 update_dto = MealSelectionUpdateDTO(
                     meal_name=self._meal_model.meal_name,
                     main_recipe_id=self._meal_model.main_recipe_id,
@@ -125,32 +120,21 @@ class MealWidget(QWidget):
                     side_recipe_2_id=self._meal_model.side_recipe_2_id,
                     side_recipe_3_id=self._meal_model.side_recipe_3_id
                 )
-                planner_service.update_meal_selection(self._meal_model.id, update_dto)
+                self.planner_service.update_meal_selection(self._meal_model.id, update_dto)
 
-            session.commit()
         except Exception as e:
-            session.rollback()
             DebugLogger.log(f"[MealWidget] Failed to save meal: {e}", "error")
-        finally:
-            session.close()
 
     def load_meal(self, meal_id: int):
         """
         Load a meal by its ID and populate the RecipeViewers.
-
-        Args:
-            meal_id (int): The ID of the meal to load.
         """
-        session = create_session()
         try:
-            planner_service = PlannerService(session)
-            response_dto = planner_service.get_meal_selection(meal_id)
-
+            response_dto = self.planner_service.get_meal_selection(meal_id)
             if not response_dto:
                 DebugLogger.log(f"[MealWidget] Failed to load meal with ID {meal_id}", "error")
                 return
 
-            # Convert response DTO back to model for internal use
             self._meal_model = MealSelection(
                 id=response_dto.id,
                 meal_name=response_dto.meal_name,
@@ -164,10 +148,10 @@ class MealWidget(QWidget):
             self.meal_slots["side1"].set_recipe(Recipe.get(self._meal_model.side_recipe_1_id))
             self.meal_slots["side2"].set_recipe(Recipe.get(self._meal_model.side_recipe_2_id))
             self.meal_slots["side3"].set_recipe(Recipe.get(self._meal_model.side_recipe_3_id))
+
         except Exception as e:
             DebugLogger.log(f"[MealWidget] Error loading meal {meal_id}: {e}", "error")
-        finally:
-            session.close()
+
 
     def eventFilter(self, obj, event):
         """

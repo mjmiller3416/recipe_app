@@ -13,11 +13,9 @@ from collections import defaultdict
 from sqlalchemy import select, delete, and_, or_
 from sqlalchemy.orm import Session, joinedload
 
-from app.core.models.shopping_item import ShoppingItem
-from app.core.models.shopping_state import ShoppingState
-from app.core.models.recipe_ingredient import RecipeIngredient
-from app.core.models.ingredient import Ingredient
-from app.core.models.recipe import Recipe
+from ..models.shopping_item import ShoppingItem
+from ..models.shopping_state import ShoppingState
+from ..models.recipe_ingredient import RecipeIngredient
 
 
 # ── Shopping Repository ──────────────────────────────────────────────────────────────────────
@@ -54,7 +52,7 @@ class ShoppingRepo:
             factor = group.get(unit)
             if factor is None:
                 return qty, unit
-            
+
             qty_base = qty * factor
             # Find the best unit representation
             for u, f in sorted(group.items(), key=lambda it: -it[1]):
@@ -97,7 +95,7 @@ class ShoppingRepo:
             List[ShoppingItem]: List of aggregated ShoppingItem objects.
         """
         recipe_ingredients = self.get_recipe_ingredients(recipe_ids)
-        
+
         # aggregate by ingredient ID
         aggregation: Dict[int, Dict[str, Any]] = defaultdict(lambda: {
             "quantity": 0.0,
@@ -121,10 +119,10 @@ class ShoppingRepo:
             converted_qty, converted_unit = self._convert_quantity(
                 data["name"], data["quantity"], data["unit"] or ""
             )
-            
+
             # create state key for persistence
             state_key = ShoppingState.create_key(data["name"], converted_unit)
-            
+
             item = ShoppingItem(
                 ingredient_name=data["name"],
                 quantity=converted_qty,
@@ -139,7 +137,7 @@ class ShoppingRepo:
         return items
 
     def get_ingredient_breakdown(
-            self, 
+            self,
             recipe_ids: List[int]
     ) -> Dict[str, List[Tuple[str, float, str]]]:
         """
@@ -157,12 +155,12 @@ class ShoppingRepo:
         for ri in recipe_ingredients:
             ingredient = ri.ingredient
             recipe = ri.recipe
-            
+
             # apply unit conversions
             converted_qty, converted_unit = self._convert_quantity(
                 ingredient.ingredient_name, ri.quantity or 0.0, ri.unit or ""
             )
-            
+
             # create breakdown key
             key = f"{ingredient.ingredient_name.lower()}::{converted_unit}"
             breakdown[key].append((recipe.recipe_name, converted_qty, converted_unit))
@@ -212,7 +210,7 @@ class ShoppingRepo:
         stmt = select(ShoppingItem)
         if source:
             stmt = stmt.where(ShoppingItem.source == source)
-        
+
         result = self.session.execute(stmt)
         return result.scalars().all()
 
@@ -243,7 +241,7 @@ class ShoppingRepo:
         stmt = select(ShoppingItem).where(ShoppingItem.id == item_id)
         result = self.session.execute(stmt)
         item = result.scalar_one_or_none()
-        
+
         if item:
             self.session.delete(item)
             self.session.commit()
@@ -263,7 +261,7 @@ class ShoppingRepo:
         stmt = delete(ShoppingItem)
         if source:
             stmt = stmt.where(ShoppingItem.source == source)
-        
+
         result = self.session.execute(stmt)
         self.session.commit()
         return result.rowcount
@@ -293,7 +291,7 @@ class ShoppingRepo:
             List[ShoppingItem]: Filtered shopping items.
         """
         stmt = select(ShoppingItem)
-        
+
         # apply filters
         filters = []
         if search_term:
@@ -304,15 +302,15 @@ class ShoppingRepo:
             filters.append(ShoppingItem.category == category)
         if have is not None:
             filters.append(ShoppingItem.have == have)
-        
+
         if filters:
             stmt = stmt.where(and_(*filters))
-        
+
         if offset:
             stmt = stmt.offset(offset)
         if limit:
             stmt = stmt.limit(limit)
-        
+
         result = self.session.execute(stmt)
         return result.scalars().all()
 
@@ -333,10 +331,10 @@ class ShoppingRepo:
         return result.scalar_one_or_none()
 
     def save_shopping_state(
-            self, 
-            key: str, 
-            quantity: float, 
-            unit: str, 
+            self,
+            key: str,
+            quantity: float,
+            unit: str,
             checked: bool
     ) -> ShoppingState:
         """
@@ -352,10 +350,10 @@ class ShoppingRepo:
             ShoppingState: Saved shopping state.
         """
         normalized_key = ShoppingState.normalize_key(key)
-        
+
         # try to get existing state
         existing_state = self.get_shopping_state(normalized_key)
-        
+
         if existing_state:
             existing_state.quantity = quantity
             existing_state.unit = unit
@@ -369,7 +367,7 @@ class ShoppingRepo:
                 checked=checked
             )
             self.session.add(state)
-        
+
         self.session.commit()
         self.session.refresh(state)
         return state
@@ -412,12 +410,12 @@ class ShoppingRepo:
             Dict[str, Any]: Summary with counts and categories.
         """
         all_items = self.get_all_shopping_items()
-        
+
         total_items = len(all_items)
         checked_items = sum(1 for item in all_items if item.have)
         recipe_items = sum(1 for item in all_items if item.source == "recipe")
         manual_items = sum(1 for item in all_items if item.source == "manual")
-        
+
         categories = list(set(item.category for item in all_items if item.category))
         categories.sort()
 
@@ -447,8 +445,8 @@ class ShoppingRepo:
             if item:
                 item.have = have_status
                 updated_count += 1
-        
+
         if updated_count > 0:
             self.session.commit()
-        
+
         return updated_count

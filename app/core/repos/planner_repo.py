@@ -11,9 +11,9 @@ from typing import List, Optional
 from sqlalchemy import select, delete
 from sqlalchemy.orm import Session, joinedload
 
-from app.core.models.meal_selection import MealSelection
-from app.core.models.saved_meal_state import SavedMealState
-from app.core.models.recipe import Recipe
+from ..models.meal_selection import MealSelection
+from ..models.saved_meal_state import SavedMealState
+from ..models.recipe import Recipe
 
 
 # ── Planner Repository ───────────────────────────────────────────────────────────────────────
@@ -46,12 +46,12 @@ class PlannerRepo:
         """
         # clear existing saved states
         self.clear_saved_meal_states()
-        
+
         # save new meal IDs
         for meal_id in meal_ids:
             saved_state = SavedMealState(meal_id=meal_id)
             self.session.add(saved_state)
-        
+
         self.session.commit()
 
     def clear_saved_meal_states(self) -> None:
@@ -158,7 +158,7 @@ class PlannerRepo:
         stmt = select(MealSelection).where(MealSelection.id == meal_id)
         result = self.session.execute(stmt)
         meal_selection = result.scalar_one_or_none()
-        
+
         if meal_selection:
             self.session.delete(meal_selection)
             self.session.commit()

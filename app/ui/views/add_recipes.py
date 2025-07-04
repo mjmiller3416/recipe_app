@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout, QWidget)
 
 from app.config.config import INT_VALIDATOR, NAME_VALIDATOR, THEME
-from app.core.dtos import RecipeCreateDTO, RecipeIngredientInputDTO
+from app.core.dtos import RecipeCreateDTO, RecipeIngredientDTO
 from app.core.services.recipe_service import RecipeService
 from dev_tools import DebugLogger
 from app.ui.components.dialogs import MessageDialog
@@ -25,7 +25,7 @@ from app.ui.components.images.upload_recipe_image import UploadRecipeImage
 # ── Class Definition ────────────────────────────────────────────────────────────
 class AddRecipes(QWidget):
     """AddRecipes widget for creating new recipes with ingredients and directions."""
-    
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("AddRecipes")
@@ -41,7 +41,7 @@ class AddRecipes(QWidget):
 
     def _build_ui(self):
         # ── Main Layout ──
-        self.lyt_main = QVBoxLayout(self) 
+        self.lyt_main = QVBoxLayout(self)
         self.lyt_main.setContentsMargins(20, 20, 20, 20)
         self.lyt_main.setSpacing(16)
 
@@ -51,8 +51,8 @@ class AddRecipes(QWidget):
         self.lbl_header.setObjectName("HeaderLabel")
 
         self.lyt_main.addWidget( # add header label to main layout
-            self.lbl_header, 
-            alignment=Qt.AlignLeft)  
+            self.lbl_header,
+            alignment=Qt.AlignLeft)
 
         # ── Main Content ──
         self.lyt_main_content = QHBoxLayout()  # horizontal layout for left and right sections
@@ -85,7 +85,7 @@ class AddRecipes(QWidget):
         self.lyt_buttons =QVBoxLayout()  # vertical layout for buttons
 
         # upload image button
-        self.btn_upload_image = UploadRecipeImage() 
+        self.btn_upload_image = UploadRecipeImage()
         self.btn_upload_image.setObjectName("UploadRecipeImage")
         self.lyt_buttons.addWidget(
             self.btn_upload_image)  # add upload image button to buttons layout
@@ -101,7 +101,7 @@ class AddRecipes(QWidget):
             self.lyt_buttons)  # add buttons layout to recipe details layout
         self.lyt_left_section.addLayout(
             self.lyt_recipe_details)  # add recipe details layout to left section layout
-        
+
         # ── Ingredients ──
         self.ingredients_frame = WidgetFrame(  # scrollable frame for ingredients
             title = "Ingredients",
@@ -109,21 +109,21 @@ class AddRecipes(QWidget):
             scrollable  = True,
             spacing     = 6
         )
-        self._add_ingredient(removable=False)  # add initial ingredient widget 
+        self._add_ingredient(removable=False)  # add initial ingredient widget
         self.lyt_left_section.addWidget(
             self.ingredients_frame, stretch=2)  # add ingredients frame to left section
         self.lyt_main_content.addLayout(
             self.lyt_left_section, 1)  # add left section to main content layout
-        
+
         # ── Directions──
         self.directions_frame = WidgetFrame(  # frame for directions
-            title = "Directions", 
+            title = "Directions",
             layout  = QVBoxLayout,
         )
         self.te_directions = QTextEdit()  # text edit for directions
         self.te_directions.setObjectName("DirectionsTextEdit")
         self.te_directions.setPlaceholderText("Enter cooking directions here...")
-        
+
         self.directions_frame.addWidget(
             self.te_directions, stretch=1)  # add text edit to directions frame
         self.lyt_main_content.addWidget(
@@ -144,7 +144,7 @@ class AddRecipes(QWidget):
 
     def _add_ingredient(self, removable=True):
         widget = IngredientWidget(removable=removable)
-    
+
         widget.remove_ingredient_requested.connect(self._remove_ingredient)
         widget.add_ingredient_requested.connect(self._add_ingredient)
         widget.ingredient_validated.connect(self._store_ingredient)
@@ -189,7 +189,7 @@ class AddRecipes(QWidget):
         # ── convert raw_ingredients ──
         try:
             ingredient_dtos = [
-                RecipeIngredientInputDTO(
+                RecipeIngredientDTO(
                     ingredient_name=data["ingredient_name"],
                     ingredient_category=data["ingredient_category"],
                     quantity=data["quantity"],
@@ -241,7 +241,7 @@ class AddRecipes(QWidget):
         )
 
         # ── clear form and reset state ──
-        self._clear_form()            
+        self._clear_form()
         self.stored_ingredients.clear()
         for widget in self.ingredient_widgets:
             container = widget.parent()
@@ -271,7 +271,7 @@ class AddRecipes(QWidget):
         self.te_directions.clear()
         self.btn_upload_image.clear_image()
         self.selected_image_path = None
-        
+
         # Clear stored ingredients and widgets
         self.stored_ingredients.clear()
         for widget in self.ingredient_widgets:
@@ -279,6 +279,6 @@ class AddRecipes(QWidget):
             self.ingredients_frame.removeWidget(container)
             container.deleteLater()
         self.ingredient_widgets.clear()
-        
+
         # Add back the initial ingredient widget
         self._add_ingredient(removable=False)

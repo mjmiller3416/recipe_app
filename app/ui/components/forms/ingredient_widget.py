@@ -189,9 +189,9 @@ class IngredientWidget(QWidget):
         """Emits a signal to request removal of this ingredient widget."""
         if self.parent() and len(self.parent().findChildren(IngredientWidget)) > 1:
             self.remove_ingredient_requested.emit(self)
-    
+
     def to_payload(self) -> dict:
-        """Returns a plain dict that matches RecipeIngredientInputDTO fields"""
+        """Returns a plain dict that matches RecipeIngredientDTO fields"""
         return {
         "ingredient_name": self.scb_ingredient_name.currentText().strip(),
         "ingredient_category": self.scb_ingredient_category.currentText().strip(),

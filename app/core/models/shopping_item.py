@@ -12,7 +12,7 @@ from typing import Optional, Literal
 from sqlalchemy import String, Float, Boolean, Enum
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.core.database.base import Base
+from ..database.base import Base
 
 
 # ── Shopping Item Model ──────────────────────────────────────────────────────────────────────
@@ -24,15 +24,15 @@ class ShoppingItem(Base):
     quantity: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     unit: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     category: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-    
+
     # source and status
     source: Mapped[str] = mapped_column(
-        Enum("recipe", "manual", name="shopping_source"), 
-        nullable=False, 
+        Enum("recipe", "manual", name="shopping_source"),
+        nullable=False,
         default="manual"
     )
     have: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    
+
     # for recipe-generated items, store a key for state persistence
     state_key: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
@@ -70,13 +70,13 @@ class ShoppingItem(Base):
     ) -> "ShoppingItem":
         """
         Create a shopping item from recipe data.
-        
+
         Args:
             ingredient_name (str): The name of the ingredient.
             quantity (float): The quantity of the ingredient.
             unit (Optional[str]): The unit of measurement, if any.
             category (Optional[str]): The category of the ingredient.
-        
+
         Returns:
             ShoppingItem: A new shopping item instance.
         """
@@ -89,7 +89,7 @@ class ShoppingItem(Base):
             have=False
         )
 
-    @classmethod 
+    @classmethod
     def create_manual(
         cls,
         ingredient_name: str,
@@ -98,12 +98,12 @@ class ShoppingItem(Base):
     ) -> "ShoppingItem":
         """
         Create a manual shopping item.
-        
+
         Args:
             ingredient_name (str): The name of the ingredient.
             quantity (float): The quantity of the ingredient.
             unit (Optional[str]): The unit of measurement, if any.
-        
+
         Returns:
             ShoppingItem: A new manual shopping item instance.
         """

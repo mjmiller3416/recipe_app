@@ -11,6 +11,7 @@ from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
 
 from app.config import MEAL_PLANNER
 from app.core.services.planner_service import PlannerService
+from app.core.database import create_session
 from dev_tools import DebugLogger, StartupTimer
 from app.ui.components.widgets import CTIcon
 
@@ -31,8 +32,10 @@ class MealPlanner(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setObjectName("MealPlanner")
+        self.session = create_session()
+        self.planner_service = PlannerService(self.session)
 
+        self.setObjectName("MealPlanner")
         DebugLogger.log("Initializing MealPlanner page", "debug")
 
         # ── Create Layout ──
@@ -54,14 +57,18 @@ class MealPlanner(QWidget):
         """Initialize UI by adding the '+' tab and loading saved meals."""
         self.new_meal_tab()  # add the "+" tab (used to add new meals)
 
-        meal_ids = PlannerService.load_saved_meal_ids()
-        DebugLogger.log(f"[MealPlanner] Restoring saved meal IDs: {meal_ids}", "info")
+        try:
+            meal_ids = self.planner_service.load_saved_meal_ids()
+            DebugLogger.log(f"[MealPlanner] Restoring saved meal IDs: {meal_ids}", "info")
 
-        for meal_id in meal_ids:
-            self.add_meal_tab(meal_id=meal_id)
+            for meal_id in meal_ids:
+                self.add_meal_tab(meal_id=meal_id)
 
-        if not meal_ids:
-            self.add_meal_tab()
+            if not meal_ids:
+                self.add_meal_tab()
+        except Exception as e:
+            DebugLogger.log(f"[MealPlanner] Error loading saved meals: {e}", "error")
+            self.add_meal_tab()  # Fallback to empty tab
 
     def new_meal_tab(self):
         """Add the last "+" tab to create new custom meals."""
@@ -77,13 +84,7 @@ class MealPlanner(QWidget):
         self.meal_tabs.setTabToolTip(index, "Add Meal")
 
     def add_meal_tab(self, meal_id: int = None):
-        """
-        Add a new MealWidget tab just before the '+' tab.
-
-        Args:
-            meal_id (int, optional): If provided, loads the meal with this ID.
-        """
-        widget = MealWidget()
+        widget = MealWidget(self.planner_service)  # pass the service here
         if meal_id:
             widget.load_meal(meal_id)
 
@@ -116,6 +117,15 @@ class MealPlanner(QWidget):
             widget.save_meal()
 
         saved_ids = self.get_active_meal_ids()
-        PlannerService.save_active_meal_ids(saved_ids)
-        DebugLogger.log(f"[MealPlanner] Saved planner state with meal IDs: {saved_ids}", "info")
+        result = self.planner_service.save_meal_plan(saved_ids)
+
+        if result.success:
+            DebugLogger.log(f"[MealPlanner] {result.message}", "info")
+        else:
+            DebugLogger.log(f"[MealPlanner] Failed to save: {result.message}", "error")
+
+    def closeEvent(self, event):
+        if self.session:
+            self.session.close()
+        super().closeEvent(event)
 

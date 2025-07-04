@@ -1,7 +1,7 @@
 """app/ui/pages/shopping_list/shopping_list.py
 
-This module defines the ShoppingList screen, which allows users to view and manage their 
-shopping list. It includes functionality to add manual items, categorize ingredients, and 
+This module defines the ShoppingList screen, which allows users to view and manage their
+shopping list. It includes functionality to add manual items, categorize ingredients, and
 display them in a scrollable list
 """
 
@@ -218,7 +218,7 @@ class ShoppingList(QWidget):
                         f"{name}\n- {qty} {unit}" for name, qty, unit in parts
                     )
                     checkbox.setToolTip(text)
-            
+
             checkbox.stateChanged.connect(create_toggle_handler(item, checkbox))
             layout.addWidget(checkbox)
 

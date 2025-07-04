@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Optional
 from sqlalchemy import Integer, ForeignKey
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
-from app.core.database.base import Base
+from ..database.base import Base
 
 if TYPE_CHECKING:
     from app.core.models.meal_selection import MealSelection
@@ -23,8 +23,8 @@ class SavedMealState(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     meal_id: Mapped[int] = mapped_column(
-        Integer, 
-        ForeignKey("meal_selections.id", ondelete="CASCADE"), 
+        Integer,
+        ForeignKey("meal_selections.id", ondelete="CASCADE"),
         nullable=False
     )
 
