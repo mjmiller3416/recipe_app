@@ -191,3 +191,8 @@ class BulkOperationResultDTO(BaseModel):
     items_affected: int
     message: str
     errors: List[str] = []
+
+    @property
+    def updated_count(self) -> int:  # compat for tests
+        return self.items_affected
+
