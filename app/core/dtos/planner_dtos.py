@@ -47,6 +47,8 @@ class MealSelectionUpdateDTO(BaseModel):
 class MealSelectionResponseDTO(MealSelectionBaseDTO):
     """DTO for meal selection responses with full recipe information."""
 
+    model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True)
+
     id: int
     main_recipe: Optional["Recipe"] = None
     side_recipe_1: Optional["Recipe"] = None
@@ -89,6 +91,14 @@ class MealPlanValidationDTO(BaseModel):
     total_requested: int
     total_valid: int
     error: Optional[str] = None
+
+    @property
+    def total_meals(self) -> int:  # compatibility for tests
+        return self.total_requested
+
+    @property
+    def invalid_meal_ids(self) -> list[int]:
+        return self.invalid_ids
 
 # ── Save Result DTO ──────────────────────────────────────────────────────────────────────────
 class MealPlanSaveResultDTO(BaseModel):

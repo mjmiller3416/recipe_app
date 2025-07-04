@@ -120,7 +120,10 @@ class ShoppingListGenerationDTO(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-    recipe_ids: List[int] = Field(..., min_items=1)
+    # Allow an empty recipe list so callers can explicitly generate an empty
+    # shopping list without raising a validation error. Tests rely on this
+    # behaviour for edge-case scenarios.
+    recipe_ids: List[int] = Field(default_factory=list)
     include_manual_items: bool = True
     clear_existing: bool = False
 
@@ -138,7 +141,7 @@ class BulkStateUpdateDTO(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-    updates: List[ShoppingStateDTO]
+    item_updates: Dict[int, bool]
 
 # ── Breakdown DTOs ───────────────────────────────────────────────────────────────────────────
 class IngredientBreakdownItemDTO(BaseModel):
@@ -160,6 +163,11 @@ class IngredientBreakdownDTO(BaseModel):
     total_quantity: float
     recipe_contributions: List[IngredientBreakdownItemDTO]
 
+    @property
+    def recipe_breakdown(self) -> List[IngredientBreakdownItemDTO]:
+        """Alias used in tests for backwards compatibility."""
+        return self.recipe_contributions
+
 # ── Operation Result DTOs ────────────────────────────────────────────────────────────────────
 class ShoppingListGenerationResultDTO(BaseModel):
     """DTO for shopping list generation results."""
@@ -171,6 +179,7 @@ class ShoppingListGenerationResultDTO(BaseModel):
     items_updated: int
     total_items: int
     message: str
+    items: List[ShoppingItemResponseDTO] = []
     errors: List[str] = []
 
 class BulkOperationResultDTO(BaseModel):
