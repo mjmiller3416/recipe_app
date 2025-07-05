@@ -113,7 +113,13 @@
       "**/config/isort.cfg": true,
       "**/.pytest_cache": true,
       "**/.gitignore": true,
-
+      "**/setup.sh": true,
+      "**/isort.cfg": true,
+      "**packages.txt": true,
+      "**/alembic.ini": true,
+      "**/pytest.ini": true,
+      "**/AGENTS.md": true,
+      "**/.editorconfig": true,
     },
 
     "files.associations": {
@@ -197,8 +203,8 @@
 
     //** EXTENSION: Custom CSS and JS **//
     "vscode_custom_css.imports": [
-      "file:///G:/My%20Drive/Python/recipe_app/.vscode/sidebar.css"
-    ],
+	  "file://${workspaceFolder}/.vscode/sidebar.css"
+	]
 
     "commentBox.styles": {
     // make this the default style so ⇧⌥C “Add Comment Box” just uses it
