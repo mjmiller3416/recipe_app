@@ -51,6 +51,18 @@ class ViewRecipes(QWidget):
 
         self.load_recipes()
 
+    # Mapping from user-friendly sort options to backend field names
+    SORT_OPTION_MAP = {
+        "A-Z": "recipe_name",
+        "Z-A": "recipe_name",  # You may want to handle order elsewhere
+        "Newest": "created_at",
+        "Oldest": "created_at",
+        "Shortest Time": "total_time",
+        "Longest Time": "total_time",
+        "Most Servings": "servings",
+        "Fewest Servings": "servings",
+    }
+
     def build_ui(self):
         """Initializes layout with a scrollable, responsive recipe area."""
 
@@ -116,14 +128,17 @@ class ViewRecipes(QWidget):
     def load_filtered_sorted_recipes(self):
         """Loads recipes using current filter, sort, and favorites-only flag."""
         recipe_category = self.cb_filter.currentText()
-        sort = self.cb_sort.currentText()
+        sort_label = self.cb_sort.currentText()
         favorites_only = self.chk_favorites.isChecked()
+
+        # Map sort label to backend field
+        sort_by = self.SORT_OPTION_MAP.get(sort_label, "recipe_name")
 
         self.clear_recipe_display()
 
         filter_dto = RecipeFilterDTO(
             recipe_category=recipe_category,
-            sort_by=sort,
+            sort_by=sort_by,
             favorites_only=favorites_only,
         )
 
@@ -149,7 +164,8 @@ class ViewRecipes(QWidget):
         from app.ui.components.composite import RecipeCard
         from app.ui.components.composite.recipe_card import LayoutSize
 
-        filter_dto = RecipeFilterDTO(sort_by="A-Z")
+        # Use default sort (A-Z maps to recipe_name)
+        filter_dto = RecipeFilterDTO(sort_by=self.SORT_OPTION_MAP.get("A-Z", "recipe_name"))
         recipes = RecipeService.list_filtered(filter_dto)
         if not recipes:
             return

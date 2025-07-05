@@ -14,7 +14,7 @@ from sqlalchemy import select
 
 from ..models.recipe import Recipe
 from ..models.recipe_history import RecipeHistory
-from ..dtos.recipe_dtos import RecipeCreateDTO
+from ..dtos.recipe_dtos import RecipeCreateDTO, RecipeFilterDTO
 from ..models.recipe_ingredient import RecipeIngredient
 from ..repos.ingredient_repo import IngredientRepo
 
@@ -163,18 +163,50 @@ class RecipeRepo:
             is not None
     )
 
-    def filter_recipes(self, filter_dto) -> List[Recipe]:
+    def filter_recipes(self, filter_dto: RecipeFilterDTO) -> list[Recipe]:
         """
-        Filter recipes based on criteria (placeholder implementation).
+        Filter and sort recipes based on various criteria.
 
         Args:
-            filter_dto: DTO containing filter criteria.
+            filter_dto (RecipeFilterDTO): DTO containing filter, sort, and pagination criteria.
 
         Returns:
-            List[Recipe]: List of recipes matching the filter criteria.
+            List[Recipe]: A list of recipes that match the specified criteria.
         """
-        # for now, just return all recipes - implement filtering logic as needed
-        return self.get_all_recipes()
+        # Start with a base query to select recipes and eager-load ingredients
+        stmt = select(Recipe).options(joinedload(Recipe.ingredients))
+
+        # Apply filters based on the DTO
+        if filter_dto.recipe_category and filter_dto.recipe_category not in ["All", "Filter"]:
+            stmt = stmt.where(Recipe.recipe_category == filter_dto.recipe_category)
+
+        if filter_dto.favorites_only:
+            stmt = stmt.where(Recipe.is_favorite == True)
+
+        if filter_dto.search_term:
+            # Use ilike for case-insensitive search
+            search_pattern = f"%{filter_dto.search_term}%"
+            stmt = stmt.where(Recipe.recipe_name.ilike(search_pattern))
+
+        # Apply sorting
+        if filter_dto.sort_by:
+            sort_column = getattr(Recipe, filter_dto.sort_by, None)
+            if sort_column:
+                if filter_dto.sort_order == 'desc':
+                    stmt = stmt.order_by(sort_column.desc())
+                else:
+                    stmt = stmt.order_by(sort_column.asc())
+
+        # Apply pagination
+        if filter_dto.offset:
+            stmt = stmt.offset(filter_dto.offset)
+
+        if filter_dto.limit:
+            stmt = stmt.limit(filter_dto.limit)
+
+        # Execute the query and return the results
+        result = self.session.scalars(stmt).unique().all()
+        return result
 
     def toggle_favorite(self, recipe_id: int) -> Recipe:
         """
