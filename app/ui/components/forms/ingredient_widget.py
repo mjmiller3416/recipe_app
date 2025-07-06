@@ -68,7 +68,7 @@ class IngredientWidget(QWidget):
         self.scb_unit.completer.popup().setObjectName("CompleterPopup")
         self.grid_layout.addWidget(self.scb_unit, 0, 1, 1, 1)
 
-        all_ingredient_names = self.ingredient_service.list_all_ingredient_names()
+        all_ingredient_names = self.ingredient_service.list_distinct_names()
         self.scb_ingredient_name = SmartLineEdit(
             list_items  = all_ingredient_names,
             placeholder = "Ingredient Name",

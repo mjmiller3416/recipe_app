@@ -136,6 +136,24 @@ class IngredientService:
             created.append(self.create_ingredient(dto))
         return created
 
+    def list_all_ingredient_names(self) -> List[str]:
+        """
+        Return all unique ingredient names for autocomplete or selection.
+        """
+        return self.repo.get_distinct_names()
+
+    def find_matching_ingredients(self, dto: IngredientSearchDTO) -> List[Ingredient]:
+        """
+        Find ingredients matching the search DTO criteria.
+
+        Args:
+            dto (IngredientSearchDTO): DTO containing search_term and optional category.
+
+        Returns:
+            List[Ingredient]: List of matching Ingredient models.
+        """
+        return self.search(dto)
+
     def get_or_create_ingredient(self, name: str, category: str) -> Ingredient:
         """Get or create an ingredient by name and category."""
         dto = IngredientCreateDTO(
