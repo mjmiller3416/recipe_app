@@ -52,13 +52,11 @@ class PlannerRepo:
             saved_state = SavedMealState(meal_id=meal_id)
             self.session.add(saved_state)
 
-        self.session.commit()
 
     def clear_saved_meal_states(self) -> None:
         """Clear all saved meal states from the database."""
         stmt = delete(SavedMealState)
         self.session.execute(stmt)
-        self.session.commit()
 
     def get_saved_meal_states(self) -> List[SavedMealState]:
         """
@@ -88,7 +86,6 @@ class PlannerRepo:
             raise ValueError("Cannot create a meal selection that already has an ID.")
 
         self.session.add(meal_selection)
-        self.session.commit()
         self.session.refresh(meal_selection)
         return meal_selection
 
@@ -107,7 +104,6 @@ class PlannerRepo:
 
         # merge the instance with the session
         merged_meal = self.session.merge(meal_selection)
-        self.session.commit()
         return merged_meal
 
     def get_meal_selection_by_id(self, meal_id: int) -> Optional[MealSelection]:
@@ -161,7 +157,6 @@ class PlannerRepo:
 
         if meal_selection:
             self.session.delete(meal_selection)
-            self.session.commit()
             return True
         return False
 

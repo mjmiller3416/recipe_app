@@ -40,7 +40,6 @@ class RecipeRepo:
             image_path=recipe_dto.image_path
         )
         self.session.add(recipe)
-        self.session.flush()
 
         for ing in recipe_dto.ingredients:
             ingredient = self.ingredient_repo.get_or_create(ing)
@@ -52,11 +51,11 @@ class RecipeRepo:
             )
             self.session.add(link)
 
-        self.session.commit()
         return recipe
 
     def rollback(self) -> None:
-        self.session.rollback()
+        # transaction management moved to service layer
+        pass
 
     def get_all_recipes(self) -> List[Recipe]:
         """
@@ -129,7 +128,6 @@ class RecipeRepo:
             Recipe: The newly created recipe with ID and other defaults set.
         """
         self.session.add(recipe)
-        self.session.commit()
         self.session.refresh(recipe)
         return recipe
 
@@ -142,7 +140,6 @@ class RecipeRepo:
 
         """
         self.session.delete(recipe)
-        self.session.commit()
 
     def recipe_exists(self, name: str, category: str) -> bool:
         """
@@ -221,5 +218,4 @@ class RecipeRepo:
         """
         recipe = self.get_by_id(recipe_id)
         recipe.is_favorite = not recipe.is_favorite
-        self.session.commit()
         return recipe

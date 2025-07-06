@@ -185,7 +185,6 @@ class ShoppingRepo:
             ShoppingItem: Created shopping item with assigned ID.
         """
         self.session.add(shopping_item)
-        self.session.commit()
         self.session.refresh(shopping_item)
         return shopping_item
     
@@ -228,7 +227,6 @@ class ShoppingRepo:
         if not item:
             return False
         item.have = have
-        self.session.commit()
         return True
 
     def get_all_shopping_items(self, source: Optional[str] = None) -> List[ShoppingItem]:
@@ -265,7 +263,6 @@ class ShoppingRepo:
             ShoppingItem: Updated shopping item.
         """
         merged_item = self.session.merge(shopping_item)
-        self.session.commit()
         return merged_item
 
     def delete_shopping_item(self, item_id: int) -> bool:
@@ -284,7 +281,6 @@ class ShoppingRepo:
 
         if item:
             self.session.delete(item)
-            self.session.commit()
             return True
         return False
 
@@ -303,7 +299,6 @@ class ShoppingRepo:
             stmt = stmt.where(ShoppingItem.source == source)
 
         result = self.session.execute(stmt)
-        self.session.commit()
         return result.rowcount
     
     def clear_recipe_items(self) -> int:
@@ -414,7 +409,6 @@ class ShoppingRepo:
             )
             self.session.add(state)
 
-        self.session.commit()
         self.session.refresh(state)
         return state
 
@@ -431,7 +425,6 @@ class ShoppingRepo:
         state = self.get_shopping_state(key)
         if state:
             state.checked = not state.checked
-            self.session.commit()
             return state.checked
         return None
 
@@ -444,7 +437,6 @@ class ShoppingRepo:
         """
         stmt = delete(ShoppingState)
         result = self.session.execute(stmt)
-        self.session.commit()
         return result.rowcount
 
     # ── Utility Methods ──────────────────────────────────────────────────────────────────────
@@ -492,8 +484,6 @@ class ShoppingRepo:
                 item.have = have_status
                 updated_count += 1
 
-        if updated_count > 0:
-            self.session.commit()
 
         return updated_count
     
@@ -511,6 +501,4 @@ class ShoppingRepo:
             if state:
                 state.checked = checked
                 updated_count += 1
-        if updated_count > 0:
-            self.session.commit()
         return updated_count

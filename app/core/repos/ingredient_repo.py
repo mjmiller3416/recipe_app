@@ -113,5 +113,4 @@ class IngredientRepo:
             ingredient_category=dto.ingredient_category
         )
         self.add(new_ingredient)
-        self.session.flush()  # flush to get the ID
         return new_ingredient
