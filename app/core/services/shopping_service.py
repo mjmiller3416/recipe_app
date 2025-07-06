@@ -13,6 +13,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from ..dtos.shopping_dto import (BulkOperationResultDTO,
+                                 BulkStateUpdateDTO,
                                  IngredientBreakdownDTO,
                                  IngredientBreakdownItemDTO,
                                  ManualItemCreateDTO, ShoppingItemResponseDTO,
