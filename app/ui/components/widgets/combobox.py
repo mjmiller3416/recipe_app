@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (QApplication, QCompleter, QHBoxLayout,
                                QLineEdit, QWidget)
 
 from app.config import CUSTOM_COMBOBOX
-from app.ui.components.widgets import CTToolButton
+from app.ui.components.widgets.ct_tool_button import CTToolButton
 from dev_tools import DebugLogger
 
 # ── Constants ───────────────────────────────────────────────────────────────────────────
@@ -21,7 +21,7 @@ ICONS = CUSTOM_COMBOBOX["ICONS"]
 
 # ── Class Definition: ComboBox ──────────────────────────────────────────────────────────
 class ComboBox(QWidget):
-    """Custom combo box widget with a read-only line edit and a button to show a 
+    """Custom combo box widget with a read-only line edit and a button to show a
     list of items."""
 
     # ── Signals ─────────────────────────────────────────────────────────────────────────
@@ -30,9 +30,9 @@ class ComboBox(QWidget):
 
     def __init__(
         self,
-        parent: QWidget | None = None, 
-        list_items: Sequence[str] | None = None, 
-        placeholder: str | None = None,     
+        parent: QWidget | None = None,
+        list_items: Sequence[str] | None = None,
+        placeholder: str | None = None,
     ):
         """
         Initialize ComboBox.
@@ -58,7 +58,7 @@ class ComboBox(QWidget):
         self.completer.popup().setObjectName("CompleterPopup")
 
         # ── Input Field ──
-        self.line_edit = QLineEdit(self) 
+        self.line_edit = QLineEdit(self)
         self.line_edit.setObjectName("CBLineEdit")
         self.line_edit.setPlaceholderText(placeholder)
         self.line_edit.setCompleter(self.completer)
@@ -104,7 +104,7 @@ class ComboBox(QWidget):
         """Handles activation of a completer item.
 
         Args:
-            text (str): The text of the activated item. 
+            text (str): The text of the activated item.
         """
         self.line_edit.setText(text)
         self.selection_validated.emit(True)
@@ -192,16 +192,16 @@ class ComboBox(QWidget):
 
     # ── Events ──────────────────────────────────────────────────────────────────────────
     def eventFilter(
-            self, 
-            obj: QWidget, 
+            self,
+            obj: QWidget,
             event: QEvent
         ) -> bool:
         """Expand the popup when the widget or line edit is clicked.
-        
+
         Args:
             obj (QWidget): The object being filtered.
             event (QEvent): The event being processed.
-        
+
         Returns:
             bool: True if the event was handled, False to allow normal processing.
         """
@@ -219,7 +219,7 @@ class ComboBox(QWidget):
                     return True
 
         return super().eventFilter(obj, event)
-    
+
     def focusInEvent(self, event):
         super().focusInEvent(event)
         self.setProperty("focused", True)
