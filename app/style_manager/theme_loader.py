@@ -1,25 +1,28 @@
-"""style_manager/loaders/theme_loader.py
+"""style_manager/theme_loader.py
 
 Centralized QSS loading utility that injects theme variables into QSS files.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from pathlib import Path
 
 from dev_tools import DebugLogger
 
-# ── Constants ───────────────────────────────────────────────────────────────────
+# ── Constants ────────────────────────────────────────────────────────────────────────────────
 NON_QSS_KEYS = {"ICON_STYLES"}  # skip injecting these into QSS
 
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── Theme Loader ─────────────────────────────────────────────────────────────────────────────
 class ThemeLoader:
-    """
-    Loads a QSS file and injects theme variables before returning the final string.
-    Theme values are passed as a dictionary and replace {PLACEHOLDER} tags.
-    """
+    """Loads a QSS file and injects theme variables before returning the final string."""
 
     def __init__(self, theme: dict):
+        """
+        Initializes the ThemeLoader with a theme dictionary.
+
+        Args:
+            theme (dict): Dictionary containing theme variables to inject into QSS.
+        """
         self.theme = theme
         self._cache: dict[str, str] = {}  # cache for loaded QSS files
 
@@ -44,18 +47,25 @@ class ThemeLoader:
                 if key in NON_QSS_KEYS:
                     continue
                 if not isinstance(value, str):
-                    DebugLogger.log(f"[ThemeLoader] ⚠️ Skipped non-str key: {key} → {type(value).__name__}", "warning")
+                    DebugLogger.log(
+                        f"[ThemeLoader] Skipped non-str key: {key} → {type(value).__name__}",
+                        "warning"
+                    )
                     continue
 
                 placeholder = f"{{{key}}}"
                 if placeholder in raw_qss:
-                    DebugLogger.log("[ThemeLoader] Injecting: {placeholder} → {value}", "debug")
+                    DebugLogger.log(
+                        "[ThemeLoader] Injecting: {placeholder} → {value}",
+                        "debug"
+                    )
                     raw_qss = raw_qss.replace(placeholder, value)
                     injected_count += 1
 
             if injected_count > 0:
                 DebugLogger.log(
-                    f"[ThemeLoader] Completed injection for {qss_file_path} ({injected_count} keys replaced)\n",
+                    f"[ThemeLoader] Completed injection for {qss_file_path}\n"
+                    f"({injected_count} keys replaced)\n",
                     "info"
                 )
             self._cache[qss_file_path] = raw_qss

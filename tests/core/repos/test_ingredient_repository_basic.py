@@ -2,7 +2,7 @@
 
 from app.core.dtos.ingredient_dtos import IngredientCreateDTO
 from app.core.models import Ingredient
-from app.core.repos.ingredient_repo import IngredientRepo
+from app.core.repositories.ingredient_repo import IngredientRepo
 
 
 def test_get_all_ingredients(session):
@@ -39,7 +39,7 @@ def test_get_or_create_ingredient(session):
     assert ingredient1.ingredient_name == "Chicken Breast"
     assert ingredient1.ingredient_category == "Meat"
     assert ingredient1.id == ingredient2.id  # Same instance returned
-    
+
     # Verify only one instance in database
     all_ingredients = repo.get_all()
     chicken_ingredients = [ing for ing in all_ingredients if ing.ingredient_name == "Chicken Breast"]

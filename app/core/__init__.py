@@ -21,7 +21,7 @@ from .models import (Ingredient, MealSelection, Recipe, RecipeHistory,
                      RecipeIngredient, SavedMealState, ShoppingItem,
                      ShoppingState)
 # Repositories
-from .repos import IngredientRepo, PlannerRepo, RecipeRepo, ShoppingRepo
+from .repositories import IngredientRepo, PlannerRepo, RecipeRepo, ShoppingRepo
 # Services
 from .services import (DuplicateRecipeError, IngredientService, PlannerService,
                        RecipeSaveError, RecipeService, ShoppingService)

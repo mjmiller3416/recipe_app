@@ -4,7 +4,6 @@ RecipeService using SQLAlchemy repository pattern.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from typing import Optional
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -14,8 +13,8 @@ from ..dtos.recipe_dtos import (RecipeCreateDTO, RecipeFilterDTO,
                                 RecipeIngredientDTO)
 from ..models.ingredient import Ingredient
 from ..models.recipe import Recipe
-from ..repos.ingredient_repo import IngredientRepo
-from ..repos.recipe_repo import RecipeRepo
+from ..repositories.ingredient_repo import IngredientRepo
+from ..repositories.recipe_repo import RecipeRepo
 
 
 # ── Exceptions ───────────────────────────────────────────────────────────────────────────────

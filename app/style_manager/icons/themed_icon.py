@@ -20,26 +20,33 @@ from .svg_loader import SVGLoader
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class ThemedIcon:
-    """
-    Creates a themed QIcon or QPixmap from an SVG file, using a color variant from the active theme.
-
-    Args:
-        file_path (Path): SVG file path relative to the icon directory.
-        size (QSize): Desired logical size of the icon.
-        variant (str | dict): Color styling source:
-            - dict: contains keys like 'DEFAULT', 'HOVER', etc.
-            - str (hex): direct hex color like '#6AD7CA'
-            - str (named style): maps to a variant in ICON_STYLES
-    """
+    """Creates a themed QIcon or QPixmap from an SVG file."""
 
     def __init__(self, file_path: Path, size: QSize, variant: str | dict = "DEFAULT"):
+        """
+        Initializes a ThemedIcon instance.
+
+        Args:
+            file_path (Path): Path to the SVG file.
+            size (QSize): Desired size for the icon.
+            variant (str | dict): Color variant for the icon.
+        """
         self.file_path = file_path
         self.size = size
         self.variant = variant
         self.palette = IconLoader().palette
 
     def icon_for_state(self, state: str = "DEFAULT") -> QIcon:
-        """Returns a themed QIcon for a specific state (e.g., 'HOVER', 'CHECKED')."""
+        """
+        Returns a themed QIcon for a specific state (e.g., 'HOVER', 'CHECKED').
+
+        Args:
+            state (str): The state for which to resolve the icon color.
+                         Defaults to 'DEFAULT'.
+
+        Returns:
+            QIcon: Themed QIcon for the specified state.
+        """
         return SVGLoader.load(
             file_path=self.file_path,
             color=self.resolve_color(state),
@@ -97,4 +104,5 @@ class ThemedIcon:
         return self.palette.get(theme_key_or_color, "#FFFFFF")
 
     def __repr__(self) -> str:
+        """Returns a string representation of the ThemedIcon instance."""
         return f"<ThemedIcon path='{self.file_path.name}' variant='{self.variant}'>"

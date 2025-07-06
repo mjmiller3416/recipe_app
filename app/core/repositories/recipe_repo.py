@@ -15,7 +15,7 @@ from ..dtos.recipe_dtos import RecipeCreateDTO, RecipeFilterDTO
 from ..models.recipe import Recipe
 from ..models.recipe_history import RecipeHistory
 from ..models.recipe_ingredient import RecipeIngredient
-from ..repos.ingredient_repo import IngredientRepo
+from ..repositories.ingredient_repo import IngredientRepo
 
 
 # ── Recipe Repository ────────────────────────────────────────────────────────────────────────

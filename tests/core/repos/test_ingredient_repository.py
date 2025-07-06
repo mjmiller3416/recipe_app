@@ -3,8 +3,6 @@ Refactored RecipeService using SQLAlchemy repository pattern.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from typing import Optional
-
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
@@ -14,8 +12,8 @@ from app.core.dtos.recipe_dtos import (RecipeCreateDTO, RecipeFilterDTO,
 from app.core.models.ingredient import Ingredient
 from app.core.models.recipe import Recipe
 from app.core.models.recipe_ingredient import RecipeIngredient
-from app.core.repos.ingredient_repo import IngredientRepo
-from app.core.repos.recipe_repo import RecipeRepo
+from app.core.repositories.ingredient_repo import IngredientRepo
+from app.core.repositories.recipe_repo import RecipeRepo
 
 
 # ── Exceptions ──────────────────────────────────────────────────────────────────

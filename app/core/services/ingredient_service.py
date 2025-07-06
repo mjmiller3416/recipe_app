@@ -13,7 +13,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from ..dtos.ingredient_dtos import (IngredientCreateDTO, IngredientSearchDTO,
                                     IngredientUpdateDTO)
 from ..models.ingredient import Ingredient
-from ..repos.ingredient_repo import IngredientRepo
+from ..repositories.ingredient_repo import IngredientRepo
 
 
 # ── Ingredient Service ───────────────────────────────────────────────────────────────────────
@@ -53,10 +53,10 @@ class IngredientService:
     def search(self, dto: IngredientSearchDTO) -> list[Ingredient]:
         """
         Search for ingredients using DTO input.
-        
+
         Args:
             dto (IngredientSearchDTO): Search criteria including term and category.
-            
+
         Returns:
             list[Ingredient]: List of matching ingredients.
         """
@@ -68,7 +68,7 @@ class IngredientService:
     def list_distinct_names(self) -> list[str]:
         """
         Return all unique ingredient names (for search/autocomplete).
-        
+
         Returns:
             list[str]: List of distinct ingredient names.
         """
@@ -77,12 +77,12 @@ class IngredientService:
     def get_all(self) -> list[Ingredient]:
         """
         Return all ingredients in the database.
-        
+
         Returns:
             list[Ingredient]: List of all ingredients.
         """
         return self.repo.get_all()
-    
+
     # ── Convenience Methods for Tests ─────────────────────────────────────────────────────
     def get_all_ingredients(self) -> List[Ingredient]:
         """Alias for get_all()."""

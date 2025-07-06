@@ -15,7 +15,7 @@ from app.ui.helpers.types import ThemedIcon
 from dev_tools import DebugLogger
 
 
-# ── Class Definition ────────────────────────────────────────────────────────
+# ── Icon Loader ──────────────────────────────────────────────────────────────────────────────
 class IconLoader(QObject, SingletonMixin):
     """Singleton that stores the active palette and refreshes all registered
     icons when ThemeController broadcasts a change."""
@@ -29,7 +29,13 @@ class IconLoader(QObject, SingletonMixin):
         self._palette: Dict = tc.get_current_palette()
         tc.theme_changed.connect(self._on_theme_changed)
 
-    # ── Public Methods ──────────────────────────────────────────────────────────────
+    # ── Properties ───────────────────────────────────────────────────────────────────────────
+    @property
+    def palette(self) -> Dict:
+        """Get the current active color palette."""
+        return self._palette
+
+    # ── Public Methods ───────────────────────────────────────────────────────────────────────
     def register(self, icon: ThemedIcon) -> None:
         """Track a theme-aware icon and paint it immediately."""
         if icon not in self._icons:
@@ -41,16 +47,11 @@ class IconLoader(QObject, SingletonMixin):
             self._icons.remove(icon)
             DebugLogger.log(f"🟡 Icon unregistered: {icon.objectName()}", "debug")
 
-    # ── Private Methods ─────────────────────────────────────────────────────────────
+    # ── Private Methods ──────────────────────────────────────────────────────────────────────
     def _on_theme_changed(self, new_palette: Dict) -> None:
         """Slot → emits from ThemeController."""
         self._palette = new_palette
         DebugLogger.log(f"🔁 Refreshing {len(self._icons)} icons", "info")
 
-        for icon in tuple(self._icons):  
+        for icon in tuple(self._icons):
             icon.refresh_theme(new_palette)
-
-    @property
-    def palette(self) -> Dict:
-        """Get the current active color palette."""
-        return self._palette

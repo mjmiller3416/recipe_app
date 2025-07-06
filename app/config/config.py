@@ -125,8 +125,6 @@ MEAL_PLANNER = {
     "STATIC":   THEME["ICON"]["ACCENT"],
 }
 
-
-
 # ── Search Widget ──
 SEARCH = {
     "ICONS": {
@@ -178,6 +176,7 @@ EMPTY_STATE = {
     "ICON_ADD_MEAL": AppPaths.ICONS_DIR / "add_meal.svg",
     "STATIC":       THEME["ICON"]["ACCENT"],
 }
+
 RECIPE_CARD = {
     "ICON_SIZE":       QSize(30, 30),
     "ICON_TOTAL_TIME": AppPaths.ICONS_DIR / "total_time.svg",
@@ -186,6 +185,7 @@ RECIPE_CARD = {
     "STATIC":         THEME["ICON"]["ACCENT"],
     "DYNAMIC":        THEME["ICON_STYLES"]["NAV"],
 }
+
 RECIPE_DIALOG = {
     "ICON_SIZE":       QSize(30, 30),
     "ICON_SERVINGS":   AppPaths.ICONS_DIR / "servings.svg",

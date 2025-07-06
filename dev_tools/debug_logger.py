@@ -1,4 +1,4 @@
-""" app/core/utils/debug_logger.py
+""" app/dev_tools/debug_logger.py
 
 Enhanced debugging logger with color support and context-aware logging."""
 
@@ -7,22 +7,42 @@ import inspect
 import logging
 import re
 import sys
+from pathlib import Path
+from datetime import datetime
 
 import colorlog
 
+# timestamp for current run (used to stamp log file names)
+_RUN_TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# formatter to strip ANSI escape sequences for file logging
+_ANSI_ESCAPE = re.compile(r'\x1b\[[0-9;]*m')
+class _StripAnsiFormatter(logging.Formatter):
+    """Logging formatter that removes ANSI color codes from messages."""
+    def format(self, record):
+        formatted = super().format(record)
+        return _ANSI_ESCAPE.sub('', formatted)
+
+
+# ── Debug Logger ─────────────────────────────────────────────────────────────────────────────
 class DebugLogger:
     """
     A class for enhanced debugging with color support and context-aware logging.
     """
 
     _logger = logging.getLogger("debug_logger")
+    # Global logging control
+    _enabled: bool = True
+    # Workspace root directory for default log file paths
+    _workspace_root: Path = Path(__file__).resolve().parents[1]
+    _log_file_path: str | None = None
+    _file_handler: logging.Handler | None = None
+    _level: int = logging.DEBUG
 
-    VARIABLE_COLOR = '\033[35m'  # Purple for variables
-    RESET_COLOR = '\033[0m'      # Reset to default color
-    CONTEXT_COLOR = '\033[35m'   # Purple for context (class.method)
-    BRACKET_COLOR = '\033[38;2;255;165;0m'   # Green for brackets
+    VARIABLE_COLOR = '\033[35m'  # purple for variables
+    RESET_COLOR = '\033[0m'      # reset to default color
+    CONTEXT_COLOR = '\033[35m'   # purple for context (class.method)
+    BRACKET_COLOR = '\033[38;2;255;165;0m'   # green for brackets
 
     LOG_COLORS = {
         'DEBUG': 'green',
@@ -34,12 +54,12 @@ class DebugLogger:
     }
 
     ANSI_COLORS = {
-        'DEBUG': '\033[32m',  # Green
-        'INFO': '\033[34m',   # Blue
-        'WARNING': '\033[33m',  # Yellow
-        'ERROR': '\033[31m',  # Red
-        'CRITICAL': '\033[1;31m',  # Bold Red
-        'CONTEXT': '\033[35m'  # Purple
+        'DEBUG': '\033[32m',  # green
+        'INFO': '\033[34m',   # blue
+        'WARNING': '\033[33m',  # yellow
+        'ERROR': '\033[31m',  # red
+        'CRITICAL': '\033[1;31m',  # bold red
+        'CONTEXT': '\033[35m'  # purple
     }
 
     @classmethod
@@ -48,15 +68,25 @@ class DebugLogger:
         if not cls._logger.hasHandlers():
             handler = colorlog.StreamHandler()
             handler.setFormatter(colorlog.ColoredFormatter(
-                '%(log_color)s[%(levelname)s]%(reset)s '  # Log level color
-                + f'{cls.CONTEXT_COLOR}[%(context)s]{cls.RESET_COLOR} '  # Explicit context color
-                + '%(message_log)s',  # Message log
+                '%(log_color)s[%(levelname)s]%(reset)s '  # log level color
+                + f'{cls.CONTEXT_COLOR}[%(context)s]{cls.RESET_COLOR} '  # explicit context color
+                + '%(message_log)s',  # message log
                 datefmt='%H:%M:%S',
                 log_colors=cls.LOG_COLORS,
-                reset=True,  # 🔥 Ensure colors reset correctly
+                reset=True,  # ensure colors reset correctly
             ))
             cls._logger.addHandler(handler)
-            cls._logger.setLevel(logging.DEBUG)
+            cls._logger.setLevel(cls._level)
+        # ensure file handler is added if a log file is set
+        if cls._log_file_path and not cls._file_handler:
+            fh = logging.FileHandler(cls._log_file_path)
+            fh.setLevel(cls._level)
+            fh.setFormatter(_StripAnsiFormatter(
+                '%(asctime)s [%(levelname)s] [%(context)s] %(message)s',
+                datefmt='%Y-%m-%d %H:%M:%S'
+            ))
+            cls._logger.addHandler(fh)
+            cls._file_handler = fh
 
     @classmethod
     def _resolve_variable(cls, expr, local_vars, self_instance):
@@ -112,14 +142,16 @@ class DebugLogger:
             message (str): The message to log, with variables enclosed in curly braces {}.
             log_type (str): The logging level ('debug', 'info', 'warning', 'error', 'critical').
         """
+        # skip logging if disabled
+        if not cls._enabled:
+            return
         cls._initialize_logger()
-
-        # Get calling context (class.method or function)
+        # get calling context (class.method or function)
         caller_frame = inspect.stack()[1]
         local_vars = caller_frame[0].f_locals
         self_instance = local_vars.get('self', None)
 
-        # Regex pattern to match placeholders in the message
+        # regex pattern to match placeholders in the message
         pattern = r"{([^{}]+)}"
 
         def replace_variables(match):
@@ -129,42 +161,41 @@ class DebugLogger:
                 if value is None:
                     value = "None"
             except Exception:
-                return match.group(0)  # Return the original placeholder if resolution fails
+                return match.group(0)  # return the original placeholder if resolution fails
 
-            # Ensure variable is colored, and AFTER the variable, it reverts to the log color
+            # ensure variable is colored, and AFTER the variable, it reverts to the log color
             log_color = cls.ANSI_COLORS.get(log_type.upper(), "")
-            return f"{cls.VARIABLE_COLOR}{value}{log_color}"  # Maintain log color after variable
+            return f"{cls.VARIABLE_COLOR}{value}{log_color}"  # maintain log color after variable
 
-        # Process the message to replace variables
+        # process the message to replace variables
         message = re.sub(pattern, replace_variables, message)
 
-        # Dynamically resolve the log method
+        # dynamically resolve the log method
         log_method = getattr(cls._logger, log_type.lower(), cls._logger.info)
 
-        # Apply log level color to the message
+        # apply log level color to the message
         log_color = cls.ANSI_COLORS.get(log_type.upper(), "")
         formatted_message = f"{log_color}{message}{cls.RESET_COLOR}"
 
-        # Add context to the log record
+        # add context to the log record
         class_name = self_instance.__class__.__name__ if self_instance else None
         method_name = caller_frame.function
         context = f"{class_name}.{method_name}" if class_name else method_name
 
-         # ── NEW: Highlight any [...] except the log‐level tag ───────────────────────
+         # highlight any [...] except the log‐level tag
         def highlight_brackets(match):
             inner = match.group(1)
-            if inner == log_type.upper():           # skip your [INFO]/[DEBUG]/etc.
+            if inner == log_type.upper(): # skip your [INFO]/[DEBUG]/etc.
                 return match.group(0)
-            return f"{cls.BRACKET_COLOR}[{inner}]{cls.RESET_COLOR}{log_color}"  
-                                                    # restore level-color  
+            return f"{cls.BRACKET_COLOR}[{inner}]{cls.RESET_COLOR}{log_color}" # restore color
 
         message = re.sub(r"\[([^\]]+)\]", highlight_brackets, message)
 
-        # 2. Now wrap the whole thing in the level’s ANSI color:
+        # now wrap the whole thing in the level’s ANSI color:
         formatted_message = f"{log_color}{message}{cls.RESET_COLOR}"
         # ──────────────────────────────────────────────────────────────────────────────
 
-        # now actually log it
+        # now actually log it (console and optional file)
         log_method = getattr(cls._logger, log_type.lower(), cls._logger.info)
         log_method(formatted_message, extra={"context": context, "message_log": formatted_message})
         sys.stdout.flush()
@@ -175,31 +206,43 @@ class DebugLogger:
         cls.log(message, "error")
         raise exception_type(message)
 
-# Example usage
-if __name__ == "__main__":
-    logger = DebugLogger()
+    @classmethod
+    def enable(cls, value: bool) -> None:
+        """Enable or disable all logging output."""
+        cls._enabled = bool(value)
 
-    # Example variable and method to test logging
-    class Dummy:
-        def __init__(self):
-            self.value = 42
+    @classmethod
+    def set_log_level(cls, level_name: str) -> None:
+        """Set the minimum log level (e.g., 'DEBUG', 'INFO')."""
+        lvl = logging.getLevelName(level_name.upper())
+        if not isinstance(lvl, int):
+            raise ValueError(f"Invalid log level: {level_name}")
+        cls._level = lvl
+        cls._logger.setLevel(lvl)
+        if cls._file_handler:
+            cls._file_handler.setLevel(lvl)
 
-        def get_value(self):
-            return self.value
-
-    dummy = Dummy()
-
-    logger.log("This is an info message", "info")
-    logger.log("This is a warning message", "warning")
-    logger.log("This is an error message", "error")
-    logger.log("This is a debug message", "debug")
-
-    test_var1 = 42
-    test_var2 = 54
-    test_var3 = 25
-    test_var4 = 88
-
-    logger.log("The value of test_var is {test_var1}. Verify text color is swapping after var.", "info")
-    logger.log("The value of test_var is {test_var2}. Verify text color is swapping after var.", "warning")
-    logger.log("The value of test_var is {test_var3}. Verify text color is swapping after var.", "error")
-    logger.log("The value of test_var is {test_var4}. Verify text color is swapping after var.", "debug")
+    @classmethod
+    def set_log_file(cls, path: str) -> None:
+        """Enable logging to the specified file (ANSI colors stripped).
+        Relative paths are resolved under workspace_root/logs and stamped with a timestamp."""
+        # remove existing file handler if present
+        if cls._file_handler:
+            cls._logger.removeHandler(cls._file_handler)
+            try:
+                cls._file_handler.close()
+            except Exception:
+                pass
+            cls._file_handler = None
+        # resolve path: if relative, place under workspace_root/logs; else use absolute
+        p = Path(path)
+        if not p.is_absolute():
+            logs_dir = cls._workspace_root / "logs"
+            logs_dir.mkdir(parents=True, exist_ok=True)
+            p = logs_dir / p.name
+        else:
+            p.parent.mkdir(parents=True, exist_ok=True)
+        # apply run timestamp to filename (one file per run)
+        p = p.with_name(f"{p.stem}_{_RUN_TIMESTAMP}{p.suffix}")
+        cls._log_file_path = str(p)
+        cls._initialize_logger()

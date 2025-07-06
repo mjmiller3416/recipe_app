@@ -14,16 +14,13 @@ from sqlalchemy.orm import Session
 
 from ..dtos.shopping_dtos import (BulkOperationResultDTO,
                                  BulkStateUpdateDTO,
-                                 IngredientBreakdownDTO,
-                                 IngredientBreakdownItemDTO,
                                  ManualItemCreateDTO, ShoppingItemResponseDTO,
                                  ShoppingItemUpdateDTO, ShoppingListFilterDTO,
                                  ShoppingListGenerationResultDTO,
                                  ShoppingListResponseDTO)
 from ..models.shopping_item import ShoppingItem
-from ..models.shopping_state import ShoppingState
-from ..repos.planner_repo import PlannerRepo
-from ..repos.shopping_repo import ShoppingRepo
+from ..repositories.planner_repo import PlannerRepo
+from ..repositories.shopping_repo import ShoppingRepo
 
 
 # ── Shopping Service ─────────────────────────────────────────────────────────────────────────

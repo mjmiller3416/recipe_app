@@ -1,13 +1,20 @@
-"""
+""" app/ui/animations/window_animator.py
+
 This module provides the WindowAnimator class for animating window state changes.
 """
-from PySide6.QtCore import (QEasingCurve, QObject, QParallelAnimationGroup,
-                            QPoint, QPropertyAnimation, QRect, QSize)
+
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+import sys
+
+from PySide6.QtCore import (
+    QEasingCurve, QObject, QParallelAnimationGroup,
+    QPoint, QPropertyAnimation, QRect, QSize)
 from PySide6.QtGui import QGuiApplication
 
 from app.core.utils.platform_utils import get_taskbar_rect
 
 
+# ── WindowAnimator ───────────────────────────────────────────────────────────────────────────
 class WindowAnimator(QObject):
     """Handles animations for a QDialog, like maximize, restore, and minimize.
 
@@ -82,21 +89,21 @@ class WindowAnimator(QObject):
         The window fades out and shrinks towards the center of the taskbar
         or the bottom center of the screen if taskbar information is unavailable.
         """
-        self._stop_current_animation() # Prevent animation conflicts
+        self._stop_current_animation() # prevent animation conflicts
 
         # capture the starting geometry
         start_geometry = self.window.geometry()
-        
+
         # calculate the target position (taskbar center or screen bottom center)
         screen_rect = QGuiApplication.primaryScreen().availableGeometry()
         target_x = screen_rect.center().x()
-        target_y = screen_rect.bottom() # Default target Y
-        
+        target_y = screen_rect.bottom() # default target Y
+
         taskbar_coords = get_taskbar_rect()
         if taskbar_coords:
             taskbar_rect = QRect(QPoint(taskbar_coords[0], taskbar_coords[1]), QPoint(taskbar_coords[2], taskbar_coords[3]))
             target_y = taskbar_rect.center().y()
-            
+
         # the animation ends with a zero-sized rectangle at the target
         end_geometry = QRect(target_x, target_y, 0, 0)
 
@@ -109,7 +116,7 @@ class WindowAnimator(QObject):
         geom_anim.setEndValue(end_geometry)
         geom_anim.setEasingCurve(self.easing_curve)
         geom_anim.setDuration(self.duration)
-        
+
         # opacity Animation
         opacity_anim = QPropertyAnimation(self.window, b"windowOpacity")
         opacity_anim.setStartValue(1.0)
@@ -119,7 +126,7 @@ class WindowAnimator(QObject):
 
         self.animation_group.addAnimation(geom_anim)
         self.animation_group.addAnimation(opacity_anim)
-        
+
         self.animation_group.finished.connect(
             lambda: self._on_minimize_finished(start_geometry)
         )
@@ -140,3 +147,26 @@ class WindowAnimator(QObject):
         self.window.setWindowOpacity(1.0)
         self.window.setGeometry(original_geometry)
         self.animation_group = None
+
+    def get_taskbar_rect():
+        """
+        Gets the bounding rectangle of the Windows taskbar.
+
+        Returns:
+            tuple (left, top, right, bottom) of the taskbar, or None if not on Windows
+            or if the taskbar can't be found.
+        """
+        if sys.platform != "win32":
+            return None
+
+        try:
+            import win32gui
+
+            # the taskbar window class name is "Shell_TrayWnd"
+            taskbar_hwnd = win32gui.FindWindow("Shell_TrayWnd", None)
+            if taskbar_hwnd:
+                return win32gui.GetWindowRect(taskbar_hwnd)
+        except (ImportError, Exception):
+            # pywin32 not installed or an API error occurred
+            return None
+        return None
