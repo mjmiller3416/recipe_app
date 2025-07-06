@@ -6,12 +6,12 @@ Pydantic DTOs for meal planning and selection operations.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-from typing import Optional, TYPE_CHECKING
+from typing import Optional
 
 from pydantic import BaseModel, Field, ConfigDict
 
-if TYPE_CHECKING:
-    from app.core.models.recipe import Recipe
+# Ensure Recipe is available at runtime for forward references
+"""DTO for meal selection responses with full recipe information is simplified to include only ID."""
 
 
 # ── Base DTOs ────────────────────────────────────────────────────────────────────────────────
@@ -48,10 +48,6 @@ class MealSelectionResponseDTO(MealSelectionBaseDTO):
     """DTO for meal selection responses with full recipe information."""
     
     id: int
-    main_recipe: Optional["Recipe"] = None
-    side_recipe_1: Optional["Recipe"] = None
-    side_recipe_2: Optional["Recipe"] = None
-    side_recipe_3: Optional["Recipe"] = None
 
 # ── Filter DTO ───────────────────────────────────────────────────────────────────────────────
 class MealSelectionFilterDTO(BaseModel):
@@ -85,8 +81,8 @@ class MealPlanValidationDTO(BaseModel):
     
     is_valid: bool
     valid_ids: list[int]
-    invalid_ids: list[int]
-    total_requested: int
+    invalid_meal_ids: list[int]
+    total_meals: int
     total_valid: int
     error: Optional[str] = None
 
@@ -100,3 +96,4 @@ class MealPlanSaveResultDTO(BaseModel):
     saved_count: int
     invalid_ids: list[int]
     message: str
+

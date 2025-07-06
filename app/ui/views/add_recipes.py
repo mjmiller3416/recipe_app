@@ -224,14 +224,23 @@ class AddRecipes(QWidget):
             return
 
         # ── create recipe with RecipeService ──
+        # create recipe via service with session management
+        from app.core.database.db import create_session
         try:
-            new_recipe = RecipeService.create_recipe_with_ingredients(recipe_dto)
+            session = create_session()
+            service = RecipeService(session)
+            new_recipe = service.create_recipe_with_ingredients(recipe_dto)
         except Exception as svc_err:
             DebugLogger().log(f"[AddRecipes.save_recipe] Error saving recipe: {svc_err}", "error")
             self._display_save_message(
                 f"Failed to save recipe: {svc_err}", success=False
             )
             return
+        finally:
+            try:
+                session.close()
+            except Exception:
+                pass
 
         # ── success! ──
         DebugLogger().log(f"[AddRecipes] Recipe '{new_recipe.recipe_name}' saved with ID={new_recipe.id}", "info")

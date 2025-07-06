@@ -13,6 +13,16 @@ from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 from app.config import ICON_SIZE, RECIPE_CARD
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
+from app.core.database.db import create_session
+
+def _toggle_favorite(recipe_id: int) -> None:
+    """Helper to toggle favorite status via service with its own session."""
+    session = create_session()
+    try:
+        service = RecipeService(session)
+        service.toggle_favorite(recipe_id)
+    finally:
+        session.close()
 from app.ui.components.layout import Separator
 from app.ui.helpers.ui_helpers import make_overlay
 from app.ui.components.widgets import CTIcon, CTToolButton, RoundedImage
@@ -114,7 +124,7 @@ class RecipeCard:
         btn_fav.setCursor(Qt.PointingHandCursor)
         btn_fav.setChecked(bool(self.recipe.is_favorite)) # set initial state
         btn_fav.toggled.connect(
-            lambda checked, rid=self.recipe.id: RecipeService.toggle_favorite(rid)
+            lambda checked, rid=self.recipe.id: _toggle_favorite(rid)
         )
 
         # create overlay

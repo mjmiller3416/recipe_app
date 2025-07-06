@@ -1,0 +1,17 @@
+ImportError while loading conftest 'C:\Users\mjmil\Documents\recipe_app\tests\conftest.py'.
+tests\conftest.py:11: in <module>
+    from app.core.database.base import Base
+app\core\__init__.py:7: in <module>
+    from .models import (
+app\core\models\__init__.py:3: in <module>
+    from .recipe import Recipe
+app\core\models\recipe.py:17: in <module>
+    from .recipe_ingredient import RecipeIngredient
+app\core\models\recipe_ingredient.py:16: in <module>
+    from ..dtos.ingredient_dtos import IngredientDetailDTO
+app\core\dtos\__init__.py:21: in <module>
+    from .planner_dtos import (
+app\core\dtos\planner_dtos.py:14: in <module>
+    from app.core.models.recipe import Recipe
+E   ImportError: cannot import name 'Recipe' from partially initialized module 'app.core.models.recipe' (most likely due to a circular import) (C:\Users\mjmil\Documents\recipe_app\app\core\models\recipe.py)
+Initializing Meal Planner v1.0.0

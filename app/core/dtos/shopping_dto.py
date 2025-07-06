@@ -120,7 +120,7 @@ class ShoppingListGenerationDTO(BaseModel):
     
     model_config = ConfigDict(from_attributes=True)
     
-    recipe_ids: List[int] = Field(..., min_items=1)
+    recipe_ids: List[int] = Field(...)
     include_manual_items: bool = True
     clear_existing: bool = False
 
@@ -134,11 +134,11 @@ class ShoppingStateDTO(BaseModel):
     checked: bool
 
 class BulkStateUpdateDTO(BaseModel):
-    """DTO for bulk state updates."""
+    """DTO for bulk state updates with mapping of item IDs to their have status."""
     
     model_config = ConfigDict(from_attributes=True)
     
-    updates: List[ShoppingStateDTO]
+    item_updates: Dict[int, bool]
 
 # ── Breakdown DTOs ───────────────────────────────────────────────────────────────────────────
 class IngredientBreakdownItemDTO(BaseModel):
@@ -179,6 +179,6 @@ class BulkOperationResultDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     
     success: bool
-    items_affected: int
+    updated_count: int
     message: str
     errors: List[str] = []

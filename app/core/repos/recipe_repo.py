@@ -23,10 +23,12 @@ from ..repos.ingredient_repo import IngredientRepo
 class RecipeRepo:
     """Handles direct DB queries for the Recipe model."""
 
-    def __init__(self, session: Session, ingredient_repo: IngredientRepo):
-        """Initialize Recipe Repository with a database session and ingredient repository."""
+    def __init__(self, session: Session, ingredient_repo: Optional[IngredientRepo] = None):
+        """Initialize Recipe Repository with a database session and ingredient repository.
+        If no ingredient_repo is provided, a default IngredientRepo is created."""
         self.session = session
-        self.ingredient_repo = ingredient_repo
+        # allow defaulting to a new IngredientRepo for backward compatibility
+        self.ingredient_repo = ingredient_repo or IngredientRepo(session)
 
     def persist_recipe_and_links(self, recipe_dto: RecipeCreateDTO) -> Recipe:
         recipe = Recipe(

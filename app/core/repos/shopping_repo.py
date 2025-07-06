@@ -81,8 +81,8 @@ class ShoppingRepo:
             joinedload(RecipeIngredient.ingredient),
             joinedload(RecipeIngredient.recipe)
         )
-        result = self.session.execute(stmt)
-        return result.scalars().all()
+        # use scalars().unique() to collapse duplicates when eager-loading collections
+        return self.session.scalars(stmt).unique().all()
 
     def aggregate_recipe_ingredients(self, recipe_ids: List[int]) -> List[ShoppingItem]:
         """
@@ -135,6 +135,12 @@ class ShoppingRepo:
             items.append(item)
 
         return items
+    
+    def aggregate_ingredients(self, recipe_ids: List[int]) -> List[ShoppingItem]:
+        """
+        Alias for aggregate_recipe_ingredients for backward compatibility.
+        """
+        return self.aggregate_recipe_ingredients(recipe_ids)
 
     def get_ingredient_breakdown(
             self,
@@ -182,6 +188,23 @@ class ShoppingRepo:
         self.session.commit()
         self.session.refresh(shopping_item)
         return shopping_item
+    
+    def add_manual_item(self, shopping_item: ShoppingItem) -> ShoppingItem:
+        """
+        Alias to create a manual shopping item.
+        """
+        return self.create_shopping_item(shopping_item)
+    
+    def create_shopping_items_from_recipes(self, recipe_ids: List[int]) -> List[ShoppingItem]:
+        """
+        Create and persist shopping items aggregated from given recipes.
+        """
+        created_items: List[ShoppingItem] = []
+        recipe_items = self.aggregate_recipe_ingredients(recipe_ids)
+        for item in recipe_items:
+            created = self.create_shopping_item(item)
+            created_items.append(created)
+        return created_items
 
     def get_shopping_item_by_id(self, item_id: int) -> Optional[ShoppingItem]:
         """
@@ -196,6 +219,17 @@ class ShoppingRepo:
         stmt = select(ShoppingItem).where(ShoppingItem.id == item_id)
         result = self.session.execute(stmt)
         return result.scalar_one_or_none()
+    
+    def update_item_status(self, item_id: int, have: bool) -> bool:
+        """
+        Update the 'have' status of a shopping item by ID.
+        """
+        item = self.get_shopping_item_by_id(item_id)
+        if not item:
+            return False
+        item.have = have
+        self.session.commit()
+        return True
 
     def get_all_shopping_items(self, source: Optional[str] = None) -> List[ShoppingItem]:
         """
@@ -213,6 +247,12 @@ class ShoppingRepo:
 
         result = self.session.execute(stmt)
         return result.scalars().all()
+    
+    def delete_item(self, item_id: int) -> bool:
+        """
+        Delete a shopping item by ID. Alias for delete_shopping_item.
+        """
+        return self.delete_shopping_item(item_id)
 
     def update_shopping_item(self, shopping_item: ShoppingItem) -> ShoppingItem:
         """
@@ -265,6 +305,12 @@ class ShoppingRepo:
         result = self.session.execute(stmt)
         self.session.commit()
         return result.rowcount
+    
+    def clear_recipe_items(self) -> int:
+        """
+        Clear all recipe-generated shopping items.
+        """
+        return self.clear_shopping_items(source="recipe")
 
     # ── Shopping Item Search and Filter ──────────────────────────────────────────────────────
     def search_shopping_items(
@@ -449,4 +495,22 @@ class ShoppingRepo:
         if updated_count > 0:
             self.session.commit()
 
+        return updated_count
+    
+    def bulk_update_states(self, updates: Dict[str, bool]) -> int:
+        """
+        Bulk update 'checked' status for multiple shopping states by key.
+        Args:
+            updates: mapping of state key to new checked value.
+        Returns:
+            Number of states updated.
+        """
+        updated_count = 0
+        for key, checked in updates.items():
+            state = self.get_shopping_state(key)
+            if state:
+                state.checked = checked
+                updated_count += 1
+        if updated_count > 0:
+            self.session.commit()
         return updated_count

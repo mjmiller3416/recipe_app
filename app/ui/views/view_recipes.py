@@ -19,6 +19,7 @@ from app.config import RECIPE_CATEGORIES, SORT_OPTIONS
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
 from app.core.dtos import RecipeFilterDTO
+from app.core.database.db import create_session
 from app.ui.components.widgets import ComboBox
 from app.ui.components.composite.recipe_card.constants import LayoutSize
 from app.ui.components.composite import RecipeCard
@@ -142,7 +143,13 @@ class ViewRecipes(QWidget):
             favorites_only=favorites_only,
         )
 
-        recipes = RecipeService.list_filtered(filter_dto)
+        # create a database session and use RecipeService instance to fetch
+        session = create_session()
+        try:
+            service = RecipeService(session)
+            recipes = service.list_filtered(filter_dto)
+        finally:
+            session.close()
 
         for recipe in recipes:
             slot = RecipeCard(LayoutSize.MEDIUM, parent=self.scroll_container)
@@ -166,7 +173,13 @@ class ViewRecipes(QWidget):
 
         # Use default sort (A-Z maps to recipe_name)
         filter_dto = RecipeFilterDTO(sort_by=self.SORT_OPTION_MAP.get("A-Z", "recipe_name"))
-        recipes = RecipeService.list_filtered(filter_dto)
+        # fetch recipes via service instance
+        session = create_session()
+        try:
+            service = RecipeService(session)
+            recipes = service.list_filtered(filter_dto)
+        finally:
+            session.close()
         if not recipes:
             return
 

@@ -377,10 +377,10 @@ class PlannerService:
             invalid_ids = [mid for mid in meal_ids if mid not in valid_ids]
 
             return MealPlanValidationDTO(
-                is_valid=len(invalid_ids) == 0,
+                is_valid=(len(invalid_ids) == 0),
                 valid_ids=valid_ids,
-                invalid_ids=invalid_ids,
-                total_requested=len(meal_ids),
+                invalid_meal_ids=invalid_ids,
+                total_meals=len(meal_ids),
                 total_valid=len(valid_ids)
             )
 
@@ -388,8 +388,8 @@ class PlannerService:
             return MealPlanValidationDTO(
                 is_valid=False,
                 valid_ids=[],
-                invalid_ids=meal_ids,
-                total_requested=len(meal_ids),
+                invalid_meal_ids=meal_ids,
+                total_meals=len(meal_ids),
                 total_valid=0,
                 error=str(e)
             )

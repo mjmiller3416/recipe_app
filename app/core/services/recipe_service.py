@@ -32,8 +32,9 @@ class RecipeService:
     def __init__(self, session: Session):
         """Initialize the RecipeService with database session and repositories."""
         self.session = session
-        self.recipe_repo = RecipeRepo(session)
+        # ensure ingredient repository is created before passing into recipe repository
         self.ingredient_repo = IngredientRepo(session)
+        self.recipe_repo = RecipeRepo(session, self.ingredient_repo)
 
     def create_recipe_with_ingredients(self, recipe_dto: RecipeCreateDTO) -> Recipe:
         if self.recipe_repo.recipe_exists(

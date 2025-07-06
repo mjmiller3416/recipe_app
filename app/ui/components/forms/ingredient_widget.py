@@ -12,6 +12,7 @@ from app.config import (FLOAT_VALIDATOR, INGREDIENT_CATEGORIES,
                         INGREDIENT_WIDGET, MEASUREMENT_UNITS, NAME_PATTERN)
 from app.core.dtos import IngredientSearchDTO
 from app.core.services.ingredient_service import IngredientService
+from app.core.database.db import create_session
 from app.ui.components.widgets import ComboBox
 from app.ui.components.inputs import SmartLineEdit
 from app.ui.helpers import clear_error_styles, dynamic_validation
@@ -45,7 +46,9 @@ class IngredientWidget(QWidget):
         self.grid_layout.setVerticalSpacing(5)
         self.setObjectName("IngredientWidget")
         self.setProperty("class", "IngredientWidget")
-        self.ingredient_service = IngredientService()  # instantiate IngredientService
+        # Initialize IngredientService with a new DB session
+        self._session = create_session()
+        self.ingredient_service = IngredientService(self._session)
         self.exact_match = None
         self._setup_ui()
         self.setup_event_logic()
