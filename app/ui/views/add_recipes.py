@@ -38,6 +38,9 @@ class AddRecipes(QWidget):
 
         self._build_ui()
         self._connect_signals()
+        # set initial focus and tab order for better keyboard navigation
+        self._setup_tab_order()
+        self.le_recipe_name.setFocus()
 
     def _build_ui(self):
         # ── Main Layout ──
@@ -141,6 +144,26 @@ class AddRecipes(QWidget):
         self.cb_recipe_category.selection_validated.connect(lambda: clear_error_styles(self.cb_recipe_category))
         self.cb_meal_type.selection_validated.connect(lambda: clear_error_styles(self.cb_meal_type))
         self.te_directions.textChanged.connect(lambda: clear_error_styles(self.te_directions))
+    
+    def _setup_tab_order(self):
+        """Define a fixed tab order for keyboard navigation."""
+        from PySide6.QtWidgets import QWidget
+        # Basic form fields
+        QWidget.setTabOrder(self.le_recipe_name, self.cb_recipe_category)
+        QWidget.setTabOrder(self.cb_recipe_category, self.le_time)
+        QWidget.setTabOrder(self.le_time, self.cb_meal_type)
+        QWidget.setTabOrder(self.cb_meal_type, self.le_servings)
+        # Ingredients (first widget)
+        if self.ingredient_widgets:
+            w = self.ingredient_widgets[0]
+            QWidget.setTabOrder(self.le_servings, w.le_quantity)
+            QWidget.setTabOrder(w.le_quantity, w.cb_unit)
+            QWidget.setTabOrder(w.cb_unit, w.sle_ingredient_name)
+            QWidget.setTabOrder(w.sle_ingredient_name, w.cb_ingredient_category)
+            QWidget.setTabOrder(w.cb_ingredient_category, w.btn_ico_subtract)
+            QWidget.setTabOrder(w.btn_ico_subtract, w.btn_ico_add)
+            # Then to directions
+            QWidget.setTabOrder(w.btn_ico_add, self.te_directions)
 
     def _add_ingredient(self, removable=True):
         widget = IngredientWidget(removable=removable)

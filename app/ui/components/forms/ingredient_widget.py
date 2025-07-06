@@ -61,26 +61,26 @@ class IngredientWidget(QWidget):
         self.le_quantity.setPlaceholderText("Qty.")
         self.grid_layout.addWidget(self.le_quantity, 0, 0, 1, 1)
 
-        self.scb_unit = ComboBox(
+        self.cb_unit = ComboBox(
             list_items  = MEASUREMENT_UNITS,
             placeholder = "Unit"
         )
-        self.scb_unit.completer.popup().setObjectName("CompleterPopup")
-        self.grid_layout.addWidget(self.scb_unit, 0, 1, 1, 1)
+        self.cb_unit.completer.popup().setObjectName("CompleterPopup")
+        self.grid_layout.addWidget(self.cb_unit, 0, 1, 1, 1)
 
         all_ingredient_names = self.ingredient_service.list_distinct_names()
-        self.scb_ingredient_name = SmartLineEdit(
+        self.sle_ingredient_name = SmartLineEdit(
             list_items  = all_ingredient_names,
             placeholder = "Ingredient Name",
         )
-        self.scb_ingredient_name.setFixedHeight(FIXED_HEIGHT)
-        self.grid_layout.addWidget(self.scb_ingredient_name, 0, 2, 1, 1)
+        self.sle_ingredient_name.setFixedHeight(FIXED_HEIGHT)
+        self.grid_layout.addWidget(self.sle_ingredient_name, 0, 2, 1, 1)
 
-        self.scb_ingredient_category = ComboBox(
+        self.cb_ingredient_category = ComboBox(
             list_items  = INGREDIENT_CATEGORIES,
             placeholder = "Category"
         )
-        self.grid_layout.addWidget(self.scb_ingredient_category, 0, 3, 1, 1)
+        self.grid_layout.addWidget(self.cb_ingredient_category, 0, 3, 1, 1)
 
         self.btn_ico_subtract = CTToolButton(
             file_path = INGREDIENT_WIDGET["ICON_SUBTRACT"],
@@ -119,10 +119,10 @@ class IngredientWidget(QWidget):
 
         dynamic_validation(self.le_quantity, FLOAT_VALIDATOR)
 
-        self.scb_ingredient_name.currentTextChanged.connect(self._ingredient_name_changed) # connect new signal
+        self.sle_ingredient_name.currentTextChanged.connect(self._ingredient_name_changed) # connect new signal
 
-        self.scb_unit.selection_validated.connect(lambda: clear_error_styles(self.scb_unit))
-        self.scb_ingredient_category.selection_validated.connect(lambda: clear_error_styles(self.scb_ingredient_category))
+        self.cb_unit.selection_validated.connect(lambda: clear_error_styles(self.cb_unit))
+        self.cb_ingredient_category.selection_validated.connect(lambda: clear_error_styles(self.cb_ingredient_category))
 
     def _ingredient_name_changed(self, text: str):
         """
@@ -132,19 +132,19 @@ class IngredientWidget(QWidget):
         Otherwise, the category ComboBox is enabled for manual input.
         """
         current_text = text.strip()
-        self.scb_ingredient_category.setEnabled(True)
+        self.cb_ingredient_category.setEnabled(True)
 
         if not current_text:
-            self.scb_ingredient_category.setCurrentIndex(-1)
-            clear_error_styles(self.scb_ingredient_name.line_edit)  # Access QLineEdit directly
+            self.cb_ingredient_category.setCurrentIndex(-1)
+            clear_error_styles(self.sle_ingredient_name.line_edit)  # Access QLineEdit directly
             return
 
         # validate the ingredient name against the NAME_PATTERN
         if not NAME_PATTERN.match(current_text):
-            self.scb_ingredient_name.line_edit.setStyleSheet("border: 1px solid red;")
+            self.sle_ingredient_name.line_edit.setStyleSheet("border: 1px solid red;")
             return
         else:
-            clear_error_styles(self.scb_ingredient_name.line_edit)
+            clear_error_styles(self.sle_ingredient_name.line_edit)
 
         search_dto = IngredientSearchDTO(search_term=current_text)
         matching_ingredients = self.ingredient_service.find_matching_ingredients(search_dto)
@@ -157,27 +157,27 @@ class IngredientWidget(QWidget):
                 break
 
         if exact_match:
-            category_index = self.scb_ingredient_category.findText(
+            category_index = self.cb_ingredient_category.findText(
                 exact_match.ingredient_category,
                 Qt.MatchFlag.MatchFixedString | Qt.MatchFlag.MatchCaseSensitive,
             )
 
             if category_index < 0:
-                category_index = self.scb_ingredient_category.findText(
+                category_index = self.cb_ingredient_category.findText(
                     exact_match.ingredient_category,
                     Qt.MatchFlag.MatchFixedString | Qt.MatchFlag.MatchContains,
                 )
 
             if category_index >= 0:
-                self.scb_ingredient_category.setCurrentIndex(category_index)
+                self.cb_ingredient_category.setCurrentIndex(category_index)
             else:
-                self.scb_ingredient_category.addItem(exact_match.ingredient_category)
-                self.scb_ingredient_category.setCurrentText(exact_match.ingredient_category)
+                self.cb_ingredient_category.addItem(exact_match.ingredient_category)
+                self.cb_ingredient_category.setCurrentText(exact_match.ingredient_category)
 
-            clear_error_styles(self.scb_ingredient_category)
+            clear_error_styles(self.cb_ingredient_category)
         else:
-            self.scb_ingredient_category.setCurrentIndex(-1)
-            self.scb_ingredient_category.setEnabled(True)
+            self.cb_ingredient_category.setCurrentIndex(-1)
+            self.cb_ingredient_category.setEnabled(True)
 
     def emit_ingredient_data(self):
         """Emits the ingredient data as a dictionary when the add button is clicked."""
@@ -196,9 +196,9 @@ class IngredientWidget(QWidget):
     def to_payload(self) -> dict:
         """Returns a plain dict that matches RecipeIngredientDTO fields"""
         return {
-        "ingredient_name": self.scb_ingredient_name.currentText().strip(),
-        "ingredient_category": self.scb_ingredient_category.currentText().strip(),
-        "unit": self.scb_unit.currentText().strip(),
+        "ingredient_name": self.sle_ingredient_name.line_edit.text().strip(),
+        "ingredient_category": self.cb_ingredient_category.currentText().strip(),
+        "unit": self.cb_unit.currentText().strip(),
         "quantity": float(self.le_quantity.text().strip() or 0),
         "existing_ingredient_id": self.exact_match.id if self.exact_match else None,
         }

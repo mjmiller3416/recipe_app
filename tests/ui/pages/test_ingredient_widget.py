@@ -28,9 +28,9 @@ def ingredient_widget(qtbot: QtBot) -> IngredientWidget:
 
 def test_emit_ingredient_data(ingredient_widget: IngredientWidget, qtbot: QtBot):
     ingredient_widget.le_quantity.setText("1.5")
-    ingredient_widget.scb_unit.setCurrentText("cup")
-    ingredient_widget.scb_ingredient_name.line_edit.setText("Sugar")
-    ingredient_widget.scb_ingredient_category.setCurrentText("baking")
+    ingredient_widget.cb_unit.setCurrentText("cup")
+    ingredient_widget.sle_ingredient_name.line_edit.setText("Sugar")
+    ingredient_widget.cb_ingredient_category.setCurrentText("baking")
 
     with qtbot.waitSignal(ingredient_widget.ingredient_validated) as blocker:
         ingredient_widget.emit_ingredient_data()
