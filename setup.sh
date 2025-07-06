@@ -11,6 +11,7 @@ pip show pytest-qt > /dev/null 2>&1 || pip install pytest-qt==4.1.2
 pip show colorlog > /dev/null 2>&1 || pip install colorlog
 pip show PySide6-Fluent-Widgets > /dev/null 2>&1 || pip install PySide6-Fluent-Widgets
 pip show Alembic > /dev/null 2>&1 || pip install Alembic==1.16.2
+pip show typer > /dev/null 2>&1 || pip install typer
 
 echo "✅ Python packages installed."
 
