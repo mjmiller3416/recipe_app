@@ -80,3 +80,16 @@ class RoundedImage(QLabel):
 
         path.closeSubpath()
         return path
+    
+    def set_image_path(self, image_path: str | Path) -> None:
+        """
+        Update the image path and refresh the displayed pixmap.
+        """
+        self.image_path = str(image_path)
+        self.setPixmap(self._get_cached_rounded_pixmap())
+
+    def clear_image(self) -> None:
+        """
+        Clear the displayed image pixmap.
+        """
+        self.clear()
