@@ -67,7 +67,7 @@ class RecipeRepo:
         stmt = select(Recipe).options(joinedload(Recipe.ingredients))
         return self.session.scalars(stmt).unique().all()
 
-    def get_recipe_by_id(self, recipe_id: int) -> Optional[Recipe]:
+    def get_by_id(self, recipe_id: int) -> Optional[Recipe]:
         """
         Returns a single recipe by ID, with ingredients and history.
 
@@ -86,17 +86,6 @@ class RecipeRepo:
             .where(Recipe.id == recipe_id)
         )
         return self.session.scalars(stmt).unique().first()
-
-    def get_by_id(self, recipe_id: int) -> Optional[Recipe]:
-        """
-        Get a recipe by ID (alias for get_recipe_by_id).
-        Args:
-            recipe_id (int): The ID of the recipe to retrieve.
-
-        Returns:
-            Optional[Recipe]: The recipe with the given ID, or None if not found.
-        """
-        return self.get_recipe_by_id(recipe_id)
 
     def get_last_cooked_date(self, recipe_id: int) -> Optional[datetime]:
         """

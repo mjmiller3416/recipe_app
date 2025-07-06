@@ -10,7 +10,7 @@ from .planner_dtos import (MealPlanSaveResultDTO, MealPlanSummaryDTO,
 from .recipe_dtos import (RecipeBaseDTO, RecipeCreateDTO, RecipeFilterDTO,
                           RecipeIngredientDTO, RecipeResponseDTO,
                           RecipeUpdateDTO)
-from .shopping_dto import (BulkOperationResultDTO, BulkStateUpdateDTO,
+from .shopping_dtos import (BulkOperationResultDTO, BulkStateUpdateDTO,
                            IngredientAggregationDTO, IngredientBreakdownDTO,
                            IngredientBreakdownItemDTO, ManualItemCreateDTO,
                            ShoppingItemBaseDTO, ShoppingItemCreateDTO,
@@ -22,12 +22,12 @@ from .shopping_dto import (BulkOperationResultDTO, BulkStateUpdateDTO,
 __all__ = [
     # Recipe DTOs
     "RecipeIngredientDTO",
-    "RecipeBaseDTO", 
+    "RecipeBaseDTO",
     "RecipeCreateDTO",
     "RecipeUpdateDTO",
     "RecipeResponseDTO",
     "RecipeFilterDTO",
-    
+
     # Ingredient DTOs
     "IngredientBaseDTO",
     "IngredientCreateDTO",
@@ -35,7 +35,7 @@ __all__ = [
     "IngredientResponseDTO",
     "IngredientSearchDTO",
     "IngredientDetailDTO",
-    
+
     # Planner DTOs
     "MealSelectionBaseDTO",
     "MealSelectionCreateDTO",
@@ -45,7 +45,7 @@ __all__ = [
     "MealPlanSummaryDTO",
     "MealPlanValidationDTO",
     "MealPlanSaveResultDTO",
-    
+
     # Shopping DTOs
     "ShoppingItemBaseDTO",
     "ShoppingItemCreateDTO",

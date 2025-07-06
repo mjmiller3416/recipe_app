@@ -2,7 +2,7 @@
 
 import pytest
 
-from app.core.dtos.shopping_dto import (BulkStateUpdateDTO,
+from app.core.dtos.shopping_dtos import (BulkStateUpdateDTO,
                                         ManualItemCreateDTO,
                                         ShoppingItemUpdateDTO,
                                         ShoppingListGenerationDTO)

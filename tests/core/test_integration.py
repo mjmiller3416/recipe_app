@@ -4,7 +4,7 @@ import pytest
 
 from app.core.dtos.planner_dtos import MealSelectionCreateDTO
 from app.core.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientDTO
-from app.core.dtos.shopping_dto import ShoppingListGenerationDTO
+from app.core.dtos.shopping_dtos import ShoppingListGenerationDTO
 from app.core.services.ingredient_service import IngredientService
 from app.core.services.planner_service import PlannerService
 from app.core.services.recipe_service import RecipeService

@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from ..dtos.shopping_dto import (BulkOperationResultDTO,
+from ..dtos.shopping_dtos import (BulkOperationResultDTO,
                                  BulkStateUpdateDTO,
                                  IngredientBreakdownDTO,
                                  IngredientBreakdownItemDTO,
@@ -51,7 +51,7 @@ class ShoppingService:
             An object with attributes 'success', 'items_created', and 'items' (list of ShoppingItemResponseDTO).
         """
         # Support passing in the DTO directly
-        from app.core.dtos.shopping_dto import ShoppingListGenerationDTO
+        from app.core.dtos.shopping_dtos import ShoppingListGenerationDTO
         if isinstance(meal_ids_or_dto, ShoppingListGenerationDTO):
             recipe_ids = meal_ids_or_dto.recipe_ids
         else:
@@ -518,7 +518,7 @@ class ShoppingService:
                 message="Failed to clear shopping list",
                 errors=[str(e)]
             )
-    
+
     def get_shopping_summary(self) -> Any:
         """
         Get shopping list summary with attribute access and renamed fields.
@@ -538,7 +538,7 @@ class ShoppingService:
         summary.manual_items = summary_data.get('manual_items', 0)
         summary.recipe_items = summary_data.get('recipe_items', 0)
         return summary
-    
+
     def search_items(self, search_term: str) -> list:
         """
         Search shopping items by ingredient name.
