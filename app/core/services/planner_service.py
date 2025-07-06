@@ -83,7 +83,7 @@ class PlannerService:
 
             # save the meal plan
             self.repo.save_active_meal_ids(valid_ids)
-
+            self.session.commit()
             return MealPlanSaveResultDTO(
                 success=True,
                 saved_count=len(valid_ids),
@@ -92,6 +92,7 @@ class PlannerService:
             )
 
         except SQLAlchemyError as e:
+            self.session.rollback()
             return MealPlanSaveResultDTO(
                 success=False,
                 saved_count=0,
@@ -108,7 +109,9 @@ class PlannerService:
         """
         try:
             self.repo.save_active_meal_ids(meal_ids)
+            self.session.commit()
         except SQLAlchemyError as e:
+            self.session.rollback()
             print(f"Error saving active meal IDs: {e}")
             raise
 
@@ -121,8 +124,10 @@ class PlannerService:
         """
         try:
             self.repo.clear_saved_meal_states()
+            self.session.commit()
             return True
         except SQLAlchemyError:
+            self.session.rollback()
             return False
 
     def get_meal_plan_summary(self) -> MealPlanSummaryDTO:
@@ -199,9 +204,11 @@ class PlannerService:
             )
 
             created_meal = self.repo.create_meal_selection(meal_selection)
+            self.session.commit()
             return self._meal_to_response_dto(created_meal)
 
         except (SQLAlchemyError, ValueError) as e:
+            self.session.rollback()
             # log error in production
             print(f"Error creating meal selection: {e}")
             return None
@@ -250,9 +257,11 @@ class PlannerService:
                     setattr(existing_meal, attr_name, side_id if side_id > 0 else None)
 
             updated_meal = self.repo.update_meal_selection(existing_meal)
+            self.session.commit()
             return self._meal_to_response_dto(updated_meal)
 
         except (SQLAlchemyError, ValueError) as e:
+            self.session.rollback()
             print(f"Error updating meal selection: {e}")
             return None
 
@@ -296,8 +305,11 @@ class PlannerService:
             bool: True if deleted successfully, False otherwise.
         """
         try:
-            return self.repo.delete_meal_selection(meal_id)
+            result = self.repo.delete_meal_selection(meal_id)
+            self.session.commit()
+            return result
         except SQLAlchemyError:
+            self.session.rollback()
             return False
 
     # ── Search and Query Operations ──────────────────────────────────────────────────────────

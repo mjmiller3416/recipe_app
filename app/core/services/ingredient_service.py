@@ -8,6 +8,7 @@ from typing import List, Optional
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
 
 from ..dtos.ingredient_dtos import (IngredientCreateDTO, IngredientSearchDTO,
                                     IngredientUpdateDTO)
@@ -93,30 +94,42 @@ class IngredientService:
 
     def create_ingredient(self, create_dto: IngredientCreateDTO) -> Ingredient:
         """Create a new ingredient or return existing one, then commit."""
-        ing = self.get_or_create(create_dto)
-        self.session.commit()
-        return ing
+        try:
+            ing = self.get_or_create(create_dto)
+            self.session.commit()
+            return ing
+        except SQLAlchemyError as e:
+            self.session.rollback()
+            raise e
 
     def update_ingredient(self, ingredient_id: int, update_dto: IngredientUpdateDTO) -> Optional[Ingredient]:
         """Update an existing ingredient by ID."""
-        ing = self.get_ingredient_by_id(ingredient_id)
-        if not ing:
-            return None
-        if update_dto.ingredient_name is not None:
-            ing.ingredient_name = update_dto.ingredient_name
-        if update_dto.ingredient_category is not None:
-            ing.ingredient_category = update_dto.ingredient_category
-        self.session.commit()
-        return ing
+        try:
+            ing = self.get_ingredient_by_id(ingredient_id)
+            if not ing:
+                return None
+            if update_dto.ingredient_name is not None:
+                ing.ingredient_name = update_dto.ingredient_name
+            if update_dto.ingredient_category is not None:
+                ing.ingredient_category = update_dto.ingredient_category
+            self.session.commit()
+            return ing
+        except SQLAlchemyError as e:
+            self.session.rollback()
+            raise e
 
     def delete_ingredient(self, ingredient_id: int) -> bool:
         """Delete an ingredient by ID."""
-        ing = self.get_ingredient_by_id(ingredient_id)
-        if not ing:
-            return False
-        self.repo.delete(ing)
-        self.session.commit()
-        return True
+        try:
+            ing = self.get_ingredient_by_id(ingredient_id)
+            if not ing:
+                return False
+            self.repo.delete(ing)
+            self.session.commit()
+            return True
+        except SQLAlchemyError as e:
+            self.session.rollback()
+            raise e
 
     def search_ingredients(self, term: str, category: Optional[str] = None) -> List[Ingredient]:
         """Search ingredients by name and optional category."""

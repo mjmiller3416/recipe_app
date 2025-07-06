@@ -118,6 +118,8 @@ class ShoppingService:
             for item in recipe_items:
                 self.shopping_repo.create_shopping_item(item)
                 items_created += 1
+            # commit transaction after creating all items
+            self.session.commit()
 
             # get total count including manual items
             total_items = len(self.shopping_repo.get_all_shopping_items())
@@ -131,6 +133,7 @@ class ShoppingService:
             )
 
         except SQLAlchemyError as e:
+            self.session.rollback()
             return ShoppingListGenerationResultDTO(
                 success=False,
                 items_created=0,
@@ -238,9 +241,11 @@ class ShoppingService:
             )
 
             created_item = self.shopping_repo.create_shopping_item(manual_item)
+            self.session.commit()
             return self._item_to_response_dto(created_item)
 
         except SQLAlchemyError:
+            self.session.rollback()
             return None
 
     def update_shopping_item(
@@ -281,9 +286,11 @@ class ShoppingService:
                     )
 
             updated_item = self.shopping_repo.update_shopping_item(item)
+            self.session.commit()
             return self._item_to_response_dto(updated_item)
 
         except SQLAlchemyError:
+            self.session.rollback()
             return None
 
     def delete_shopping_item(self, item_id: int) -> bool:
@@ -297,8 +304,11 @@ class ShoppingService:
             bool: True if deleted successfully.
         """
         try:
-            return self.shopping_repo.delete_shopping_item(item_id)
+            result = self.shopping_repo.delete_shopping_item(item_id)
+            self.session.commit()
+            return result
         except SQLAlchemyError:
+            self.session.rollback()
             return False
 
     def clear_manual_items(self) -> BulkOperationResultDTO:
@@ -310,7 +320,7 @@ class ShoppingService:
         """
         try:
             deleted_count = self.shopping_repo.clear_shopping_items(source="manual")
-
+            self.session.commit()
             return BulkOperationResultDTO(
                 success=True,
                 updated_count=deleted_count,
@@ -318,6 +328,7 @@ class ShoppingService:
             )
 
         except SQLAlchemyError as e:
+            self.session.rollback()
             return BulkOperationResultDTO(
                 success=False,
                 updated_count=0,
@@ -350,9 +361,11 @@ class ShoppingService:
                 )
 
             self.shopping_repo.update_shopping_item(item)
+            self.session.commit()
             return True
 
         except SQLAlchemyError:
+            self.session.rollback()
             return False
 
     def update_item(self, item_id: int, update_dto: ShoppingItemUpdateDTO) -> Optional[ShoppingItemResponseDTO]:
@@ -406,12 +419,15 @@ class ShoppingService:
                     )
                 self.shopping_repo.update_shopping_item(item)
                 updated_count += 1
+            # commit transaction after bulk updates
+            self.session.commit()
             return BulkOperationResultDTO(
                 success=True,
                 updated_count=updated_count,
                 message=f"Updated {updated_count} items"
             )
         except SQLAlchemyError as e:
+            self.session.rollback()
             return BulkOperationResultDTO(
                 success=False,
                 updated_count=0,
@@ -486,7 +502,7 @@ class ShoppingService:
         """
         try:
             deleted_count = self.shopping_repo.clear_shopping_items()
-
+            self.session.commit()
             return BulkOperationResultDTO(
                 success=True,
                 updated_count=deleted_count,
@@ -494,6 +510,7 @@ class ShoppingService:
             )
 
         except SQLAlchemyError as e:
+            self.session.rollback()
             return BulkOperationResultDTO(
                 success=False,
                 updated_count=0,

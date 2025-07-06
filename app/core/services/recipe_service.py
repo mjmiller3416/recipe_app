@@ -48,10 +48,11 @@ class RecipeService:
             )
 
         try:
-            return self.recipe_repo.persist_recipe_and_links(recipe_dto)
-
+            recipe = self.recipe_repo.persist_recipe_and_links(recipe_dto)
+            self.session.commit()
+            return recipe
         except SQLAlchemyError as err:
-            self.recipe_repo.rollback()
+            self.session.rollback()
             raise RecipeSaveError(
                 f"Unable to save recipe '{recipe_dto.recipe_name}': {err}"
             ) from err
@@ -101,5 +102,10 @@ class RecipeService:
         Returns:
             Recipe: The updated recipe with new favorite status.
         """
-        recipe = self.recipe_repo.toggle_favorite(recipe_id)
-        return recipe
+        try:
+            recipe = self.recipe_repo.toggle_favorite(recipe_id)
+            self.session.commit()
+            return recipe
+        except SQLAlchemyError as err:
+            self.session.rollback()
+            raise err
