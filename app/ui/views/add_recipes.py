@@ -38,9 +38,14 @@ class AddRecipes(QWidget):
 
         self._build_ui()
         self._connect_signals()
-        # set initial focus and tab order for better keyboard navigation
         self._setup_tab_order()
-        self.le_recipe_name.setFocus()
+
+    def showEvent(self, event):
+        """When the AddRecipes view is shown, focus the recipe name field."""
+        super().showEvent(event)
+        # defer to ensure widget is active
+        from PySide6.QtCore import QTimer
+        QTimer.singleShot(0, self.le_recipe_name.setFocus)
 
     def _build_ui(self):
         # ── Main Layout ──

@@ -195,6 +195,10 @@ class MainWindow(FramelessWindow):
         for name, w_instance in self.navigation.page_instances.items():
             if w_instance is widget:
                 self._update_header(name)
+                # auto-focus the recipe name field when AddRecipes page is shown
+                if name == "add_recipe" and hasattr(w_instance, 'le_recipe_name'):
+                    from PySide6.QtCore import QTimer
+                    QTimer.singleShot(0, w_instance.le_recipe_name.setFocus)
                 break
 
     def keyPressEvent(self, event):
