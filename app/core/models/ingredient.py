@@ -1,9 +1,9 @@
-"""app/core/features/ingredients/ingredient_model.py
+"""app/core/models/ingredien.py
 
 SQLAlchemy model for the Ingredient table.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -35,7 +35,6 @@ class Ingredient(Base):
         cascade="all, delete-orphan",
         lazy="joined",
     )
-
 
     # ── Helper Methods ───────────────────────────────────────────────────────────────────────
     def display_label(self) -> str:
