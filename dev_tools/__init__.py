@@ -1,5 +1,5 @@
 from .debug_logger import DebugLogger
-from .layout_debugger import LayoutDebugger
 from .focus_tracker import FocusTracker
+from .layout_debugger import LayoutDebugger
 from .startup_timer import StartupTimer
 from .test_harness import TestHarness

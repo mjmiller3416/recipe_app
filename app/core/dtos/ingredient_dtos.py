@@ -7,8 +7,9 @@ Handles ingredient creation, updates, searching, and responses.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-from typing import Optional, List
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 # ── Base DTOs ────────────────────────────────────────────────────────────────────────────────

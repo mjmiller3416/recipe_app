@@ -5,16 +5,16 @@ database, and handling command-line arguments for special modes like testing and
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 import os
+
 os.environ["QT_FONT_DPI"] = "96"
 import sys
 
 from PySide6.QtWidgets import QApplication
 
-from dev_tools import startup_timer
-from app.ui.services.navigation_service import NavigationService
-from dev_tools import DebugLogger
 from app.style_manager import ThemeController
 from app.ui import MainWindow
+from app.ui.services.navigation_service import NavigationService
+from dev_tools import DebugLogger, startup_timer
 
 if "--reset" in sys.argv:
         pass

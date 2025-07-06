@@ -9,15 +9,14 @@ from pathlib import Path
 
 from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import (
-    QFileDialog, QLabel, QStackedLayout,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QFileDialog, QLabel, QStackedLayout,
+                               QVBoxLayout, QWidget)
 
 from app.config import UPLOAD_RECIPE_IMAGE
 from app.config.paths import AppPaths
-from dev_tools import DebugLogger
-from app.ui.helpers.ui_helpers import make_overlay
 from app.ui.components.widgets import CTToolButton, RoundedImage
+from app.ui.helpers.ui_helpers import make_overlay
+from dev_tools import DebugLogger
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 IMAGE_SAVE_DIR = Path(AppPaths.RECIPE_IMAGES_DIR)

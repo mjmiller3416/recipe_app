@@ -6,8 +6,8 @@ A set of form field components for creating structured input forms in a PySide6 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from typing import Any, Optional
 
-from PySide6.QtWidgets import (
-    QGridLayout, QLabel, QLineEdit, QSizePolicy, QWidget)
+from PySide6.QtWidgets import (QGridLayout, QLabel, QLineEdit, QSizePolicy,
+                               QWidget)
 
 from app.ui.components.widgets import ComboBox
 

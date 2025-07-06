@@ -1,9 +1,10 @@
 # ── components/image/rounded_image.py ──
 
 from pathlib import Path
+
+from PySide6.QtCore import QRectF, QSize, Qt
+from PySide6.QtGui import QPainter, QPainterPath, QPixmap
 from PySide6.QtWidgets import QLabel
-from PySide6.QtGui import QPixmap, QPainter, QPainterPath
-from PySide6.QtCore import Qt, QSize, QRectF
 
 # ── In-Memory Image Cache ──────────────────────────────────────────────────────
 _image_cache: dict[tuple[str, int, tuple[int, int, int, int]], QPixmap] = {}

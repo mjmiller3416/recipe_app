@@ -1,17 +1,16 @@
 # tests/core/services/test_shopping_service.py
 
 import pytest
-from app.core.services.shopping_service import ShoppingService
-from app.core.models.recipe import Recipe
+
+from app.core.dtos.shopping_dto import (BulkStateUpdateDTO,
+                                        ManualItemCreateDTO,
+                                        ShoppingItemUpdateDTO,
+                                        ShoppingListGenerationDTO)
 from app.core.models.ingredient import Ingredient
+from app.core.models.recipe import Recipe
 from app.core.models.recipe_ingredient import RecipeIngredient
 from app.core.models.shopping_item import ShoppingItem
-from app.core.dtos.shopping_dto import (
-    ManualItemCreateDTO,
-    ShoppingItemUpdateDTO,
-    ShoppingListGenerationDTO,
-    BulkStateUpdateDTO
-)
+from app.core.services.shopping_service import ShoppingService
 
 
 def test_generate_shopping_list_empty(session):

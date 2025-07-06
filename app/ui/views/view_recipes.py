@@ -5,26 +5,20 @@ This module defines the ViewRecipes class, which displays a list of recipes in a
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import (
-    QCheckBox,
-    QHBoxLayout,
-    QScrollArea,
-    QSizePolicy,
-    QSpacerItem,
-    QVBoxLayout,
-    QWidget,
-)
+from PySide6.QtWidgets import (QCheckBox, QHBoxLayout, QScrollArea,
+                               QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
 
 from app.config import RECIPE_CATEGORIES, SORT_OPTIONS
+from app.core.database.db import create_session
+from app.core.dtos import RecipeFilterDTO
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
-from app.core.dtos import RecipeFilterDTO
-from app.core.database.db import create_session
-from app.ui.components.widgets import ComboBox
-from app.ui.components.composite.recipe_card.constants import LayoutSize
 from app.ui.components.composite import RecipeCard
+from app.ui.components.composite.recipe_card.constants import LayoutSize
 from app.ui.components.layout.flow_layout import FlowLayout
+from app.ui.components.widgets import ComboBox
 from dev_tools import DebugLogger
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class ViewRecipes(QWidget):

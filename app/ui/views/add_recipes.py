@@ -5,21 +5,18 @@ AddRecipes widget for creating new recipes with ingredients and directions.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
-    QHBoxLayout, QLabel, QPushButton, QTextEdit,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QHBoxLayout, QLabel, QPushButton, QTextEdit,
+                               QVBoxLayout, QWidget)
 
 from app.config.config import INT_VALIDATOR, NAME_VALIDATOR, THEME
 from app.core.dtos import RecipeCreateDTO, RecipeIngredientDTO
 from app.core.services.recipe_service import RecipeService
-from dev_tools import DebugLogger
 from app.ui.components.dialogs import MessageDialog
-from app.ui.components.forms  import RecipeForm
+from app.ui.components.forms import IngredientWidget, RecipeForm
+from app.ui.components.images.upload_recipe_image import UploadRecipeImage
 from app.ui.components.layout import WidgetFrame
 from app.ui.helpers import clear_error_styles, dynamic_validation
-
-from app.ui.components.forms import IngredientWidget
-from app.ui.components.images.upload_recipe_image import UploadRecipeImage
+from dev_tools import DebugLogger
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -153,6 +150,7 @@ class AddRecipes(QWidget):
     def _setup_tab_order(self):
         """Define a fixed tab order for keyboard navigation."""
         from PySide6.QtWidgets import QWidget
+
         # Basic form fields
         QWidget.setTabOrder(self.le_recipe_name, self.cb_recipe_category)
         QWidget.setTabOrder(self.cb_recipe_category, self.le_time)

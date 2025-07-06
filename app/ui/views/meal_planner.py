@@ -10,12 +10,11 @@ from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
 
 from app.config import MEAL_PLANNER
-from app.core.services.planner_service import PlannerService
 from app.core.database import create_session
-from dev_tools import DebugLogger, StartupTimer
-from app.ui.components.widgets import CTIcon
-
+from app.core.services.planner_service import PlannerService
 from app.ui.components.composite import MealWidget
+from app.ui.components.widgets import CTIcon
+from dev_tools import DebugLogger, StartupTimer
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

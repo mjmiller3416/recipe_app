@@ -7,20 +7,22 @@ Orchestrates repository operations and coordinates with meal planning.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-from typing import List, Optional, Dict, Any
+from typing import Any, Dict, List, Optional
 
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
 
-from ..repos.shopping_repo import ShoppingRepo
-from ..repos.planner_repo import PlannerRepo
+from ..dtos.shopping_dto import (BulkOperationResultDTO,
+                                 IngredientBreakdownDTO,
+                                 IngredientBreakdownItemDTO,
+                                 ManualItemCreateDTO, ShoppingItemResponseDTO,
+                                 ShoppingItemUpdateDTO, ShoppingListFilterDTO,
+                                 ShoppingListGenerationResultDTO,
+                                 ShoppingListResponseDTO)
 from ..models.shopping_item import ShoppingItem
 from ..models.shopping_state import ShoppingState
-from ..dtos.shopping_dto import (
-    ManualItemCreateDTO, ShoppingItemUpdateDTO, ShoppingItemResponseDTO,
-    ShoppingListResponseDTO, ShoppingListFilterDTO, ShoppingListGenerationResultDTO,
-    IngredientBreakdownDTO, IngredientBreakdownItemDTO, BulkOperationResultDTO
-)
+from ..repos.planner_repo import PlannerRepo
+from ..repos.shopping_repo import ShoppingRepo
 
 
 # ── Shopping Service ─────────────────────────────────────────────────────────────────────────
@@ -370,6 +372,7 @@ class ShoppingService:
         Clear all completed (have=True) shopping items and return count deleted.
         """
         from sqlalchemy import delete
+
         from app.core.models.shopping_item import ShoppingItem
         try:
             stmt = delete(ShoppingItem).where(ShoppingItem.have.is_(True))

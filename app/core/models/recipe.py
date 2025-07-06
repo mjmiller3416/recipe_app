@@ -7,15 +7,16 @@ SQLAlchemy model for recipes.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional, List, TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Optional
 
-from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime
-from sqlalchemy.orm import relationship, Mapped, mapped_column
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.utils import utcnow
+
 from ..database.base import Base
-from .recipe_ingredient import RecipeIngredient
 from .recipe_history import RecipeHistory
+from .recipe_ingredient import RecipeIngredient
 
 if TYPE_CHECKING:
     from .meal_selection import MealSelection

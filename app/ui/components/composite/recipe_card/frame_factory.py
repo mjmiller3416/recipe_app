@@ -6,11 +6,12 @@ Provides the FrameFactory class for generating fully-built QFrames based on widg
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtWidgets import QFrame
 
+from dev_tools import DebugLogger, StartupTimer
+
 from .builders.empty_state import EmptyState
 from .builders.error_state import ErrorState
 from .builders.recipe_state import RecipeCard
 from .constants import LayoutSize
-from dev_tools import DebugLogger, StartupTimer
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

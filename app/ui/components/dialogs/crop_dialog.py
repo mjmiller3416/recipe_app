@@ -10,12 +10,10 @@ from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout
 
 from app.ui.components.dialogs.dialog_window import DialogWindow
 from app.ui.components.images.image_cropper import ImageCropper
-from app.ui.helpers.dialog_helpers import (
-    MIN_CROP_DIM_ORIGINAL,
-    SELECT_NEW_IMAGE_CODE,
-    load_pixmap_or_warn,
-    build_crop_buttons,
-)
+from app.ui.helpers.dialog_helpers import (MIN_CROP_DIM_ORIGINAL,
+                                           SELECT_NEW_IMAGE_CODE,
+                                           build_crop_buttons,
+                                           load_pixmap_or_warn)
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

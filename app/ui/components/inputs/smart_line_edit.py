@@ -8,8 +8,8 @@ input field with auto-completion using a proxy model for advanced filtering.
 from PySide6.QtCore import QEvent, QStringListModel, Qt, QTimer, Signal
 from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget
 
-from dev_tools import DebugLogger
 from app.ui.models import IngredientProxyModel
+from dev_tools import DebugLogger
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 FIXED_HEIGHT = 45

@@ -1,6 +1,7 @@
 # tests/core/models/test_meal_selection_model.py
 
 import pytest
+
 from app.core.models.meal_selection import MealSelection
 from app.core.models.recipe import Recipe
 

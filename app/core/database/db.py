@@ -3,11 +3,12 @@
 Database connection and session management.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────────────
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
 from pathlib import Path
 from typing import Generator
+
+# ── Imports ─────────────────────────────────────────────────────────────────────────────
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
 
 DB_PATH = Path(__file__).parent / "app_data.db"
 SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_PATH}"

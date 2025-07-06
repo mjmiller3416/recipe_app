@@ -7,22 +7,18 @@ Orchestrates repository operations and business logic.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-from typing import List, Optional, Dict, Any
+from typing import Any, Dict, List, Optional
 
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
 
-from ..repos.planner_repo import PlannerRepo
+from ..dtos.planner_dtos import (MealPlanSaveResultDTO, MealPlanSummaryDTO,
+                                 MealPlanValidationDTO, MealSelectionCreateDTO,
+                                 MealSelectionResponseDTO,
+                                 MealSelectionUpdateDTO)
 from ..models.meal_selection import MealSelection
 from ..models.saved_meal_state import SavedMealState
-from ..dtos.planner_dtos import (
-    MealSelectionCreateDTO,
-    MealSelectionUpdateDTO,
-    MealSelectionResponseDTO,
-    MealPlanSummaryDTO,
-    MealPlanValidationDTO,
-    MealPlanSaveResultDTO
-)
+from ..repos.planner_repo import PlannerRepo
 
 
 # ── Planner Service ──────────────────────────────────────────────────────────────────────────

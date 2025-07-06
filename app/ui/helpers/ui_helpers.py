@@ -7,13 +7,11 @@ from typing import Iterable, Union
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QSizePolicy,
-                               QVBoxLayout, QWidget)
 from PySide6.QtGui import QGuiApplication
-
-
 # ── Functions ───────────────────────────────────────────────────────────────────
-from PySide6.QtWidgets import QLayout, QWidget, QLabel
+from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
+                               QLayout, QSizePolicy, QVBoxLayout, QWidget)
+
 
 def center_on_screen(self):
         """Centers the window on the screen."""

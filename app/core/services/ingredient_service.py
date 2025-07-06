@@ -4,11 +4,13 @@ Provides services for ingredient management, including creation, searching, and 
 Uses SQLAlchemy repository pattern for database interactions.
 """
 
+from typing import List, Optional
+
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from sqlalchemy.orm import Session
-from typing import Optional, List
 
-from ..dtos.ingredient_dtos import IngredientCreateDTO, IngredientSearchDTO, IngredientUpdateDTO
+from ..dtos.ingredient_dtos import (IngredientCreateDTO, IngredientSearchDTO,
+                                    IngredientUpdateDTO)
 from ..models.ingredient import Ingredient
 from ..repos.ingredient_repo import IngredientRepo
 

@@ -1,6 +1,7 @@
 # tests/core/models/test_shopping_models.py
 
 import pytest
+
 from app.core.models.shopping_item import ShoppingItem
 from app.core.models.shopping_state import ShoppingState
 

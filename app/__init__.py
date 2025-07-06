@@ -7,4 +7,5 @@ __app_name__ = "Meal Planner"
 
 
 from dev_tools import startup_timer
+
 print(f"Initializing {__app_name__} v{__version__}")

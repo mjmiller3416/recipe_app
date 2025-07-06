@@ -1,10 +1,11 @@
 # tests/core/repos/test_planner_repo.py
 
 import pytest
-from app.core.repos.planner_repo import PlannerRepo
-from app.core.models.recipe import Recipe
+
 from app.core.models.meal_selection import MealSelection
+from app.core.models.recipe import Recipe
 from app.core.models.saved_meal_state import SavedMealState
+from app.core.repos.planner_repo import PlannerRepo
 
 
 def test_get_saved_meal_ids_empty(session):

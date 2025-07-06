@@ -5,21 +5,15 @@ Sidebar navigation component for the main window.
 
 # ── Imports ───────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import (
-    QButtonGroup,
-    QLabel,
-    QSizePolicy,
-    QSpacerItem,
-    QVBoxLayout,
-    QWidget,
-)
+from PySide6.QtWidgets import (QButtonGroup, QLabel, QSizePolicy, QSpacerItem,
+                               QVBoxLayout, QWidget)
 
 from app.config import SIDEBAR
-from dev_tools import DebugLogger
 from app.ui.animations import Animator
-from app.ui.components.navigation.nav_button import NavButton
 from app.ui.components.images import AvatarLoader
+from app.ui.components.navigation.nav_button import NavButton
 from app.ui.helpers.ui_helpers import create_fixed_wrapper
+from dev_tools import DebugLogger
 
 # ── Constants ─────────────────────────────────────────────────────────────
 SIDEBAR_ICONS = SIDEBAR["ICONS"]

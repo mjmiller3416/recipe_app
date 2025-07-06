@@ -7,6 +7,7 @@ SQLAlchemy model for the Ingredient table.
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 

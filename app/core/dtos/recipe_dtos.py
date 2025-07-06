@@ -7,12 +7,13 @@ Handles recipe creation, updates, filtering, and responses with ingredient relat
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-from typing import List, Optional, TYPE_CHECKING
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from typing import TYPE_CHECKING, List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 if TYPE_CHECKING:
-    from app.core.models.recipe import Recipe
     from app.core.models.ingredient import Ingredient
+    from app.core.models.recipe import Recipe
 
 
 # ── Recipe Ingredient DTOs ───────────────────────────────────────────────────────────────────

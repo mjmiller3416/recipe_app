@@ -4,10 +4,8 @@ Shared helpers for dialog components such as crop dialogs.
 """
 
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import (
-    QDialog, QHBoxLayout, QMessageBox, QPushButton,
-    QSizePolicy, QSpacerItem
-)
+from PySide6.QtWidgets import (QDialog, QHBoxLayout, QMessageBox, QPushButton,
+                               QSizePolicy, QSpacerItem)
 
 # Minimum crop dimension required on the original image
 MIN_CROP_DIM_ORIGINAL = 280

@@ -7,8 +7,9 @@ Handles shopping item creation, updates, filtering, and aggregation.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-from typing import Optional, List, Literal, Dict, Any
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from typing import Any, Dict, List, Literal, Optional
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 # ── Base DTOs ────────────────────────────────────────────────────────────────────────────────

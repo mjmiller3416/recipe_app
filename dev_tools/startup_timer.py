@@ -3,11 +3,12 @@
 Utility class for measuring and logging elapsed time during application startup.
 """
 
+import logging
 # ── Imports ─────────────────────────────────────────────────────────────────────────────
 import time
-import logging
 
 from dev_tools import DebugLogger
+
 # ── Logger Setup ─────────────────────────────────────────────────────────────────────────
 log = logging.getLogger(__name__)
 _startup_start_time = time.perf_counter()

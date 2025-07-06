@@ -7,23 +7,17 @@ Defines the main application window, including the custom title bar and sidebar.
 from typing import TYPE_CHECKING, Callable
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import (
-    QHBoxLayout,
-    QLabel,
-    QStackedWidget,
-    QVBoxLayout,
-    QWidget,
-)
-
+from PySide6.QtWidgets import (QHBoxLayout, QLabel, QStackedWidget,
+                               QVBoxLayout, QWidget)
 # --- Import the frameless window class ---
 from qframelesswindow import FramelessWindow
 
 from app.config import APPLICATION_WINDOW
 from app.style_manager import ThemeController
 from app.ui.animations import WindowAnimator
+from app.ui.components import SearchBar
 from app.ui.components.navigation.sidebar import Sidebar
 from app.ui.components.navigation.titlebar import TitleBar
-from app.ui.components import SearchBar
 from app.ui.helpers.ui_helpers import center_on_screen
 
 if TYPE_CHECKING:

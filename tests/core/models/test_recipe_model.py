@@ -1,11 +1,13 @@
 # tests/core/models/test_recipe_model.py
 
-import pytest
 from datetime import datetime
-from app.core.models.recipe import Recipe
+
+import pytest
+
 from app.core.models.ingredient import Ingredient
-from app.core.models.recipe_ingredient import RecipeIngredient
+from app.core.models.recipe import Recipe
 from app.core.models.recipe_history import RecipeHistory
+from app.core.models.recipe_ingredient import RecipeIngredient
 
 
 def test_recipe_creation(session):

@@ -1,4 +1,4 @@
-from typing import Iterable, Any, Dict
+from typing import Any, Dict, Iterable
 
 
 def strip_string_values(values: Dict[str, Any], fields: Iterable[str]) -> Dict[str, Any]:

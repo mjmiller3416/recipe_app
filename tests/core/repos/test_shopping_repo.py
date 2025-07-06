@@ -1,12 +1,13 @@
 # tests/core/repos/test_shopping_repo.py
 
 import pytest
-from app.core.repos.shopping_repo import ShoppingRepo
-from app.core.models.recipe import Recipe
+
 from app.core.models.ingredient import Ingredient
+from app.core.models.recipe import Recipe
 from app.core.models.recipe_ingredient import RecipeIngredient
 from app.core.models.shopping_item import ShoppingItem
 from app.core.models.shopping_state import ShoppingState
+from app.core.repos.shopping_repo import ShoppingRepo
 
 
 def test_get_recipe_ingredients_empty(session):

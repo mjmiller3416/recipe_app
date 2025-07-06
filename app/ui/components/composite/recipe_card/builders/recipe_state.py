@@ -11,9 +11,10 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
 from app.config import ICON_SIZE, RECIPE_CARD
+from app.core.database.db import create_session
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
-from app.core.database.db import create_session
+
 
 def _toggle_favorite(recipe_id: int) -> None:
     """Helper to toggle favorite status via service with its own session."""
@@ -24,8 +25,8 @@ def _toggle_favorite(recipe_id: int) -> None:
     finally:
         session.close()
 from app.ui.components.layout import Separator
-from app.ui.helpers.ui_helpers import make_overlay
 from app.ui.components.widgets import CTIcon, CTToolButton, RoundedImage
+from app.ui.helpers.ui_helpers import make_overlay
 
 from ..constants import LAYOUT_SIZE, LayoutSize
 

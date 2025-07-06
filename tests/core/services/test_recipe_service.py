@@ -8,10 +8,10 @@ import pytest
 from sqlalchemy.orm import Session
 
 from app.core.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientDTO
-from app.core.services.recipe_service import RecipeService
+from app.core.models.ingredient import Ingredient
 from app.core.models.recipe import Recipe
 from app.core.models.recipe_ingredient import RecipeIngredient
-from app.core.models.ingredient import Ingredient
+from app.core.services.recipe_service import RecipeService
 
 
 # ── Fixtures ────────────────────────────────────────────────────────────

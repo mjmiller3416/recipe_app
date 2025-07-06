@@ -1,10 +1,12 @@
 # tests/core/services/test_planner_service.py
 
 import pytest
-from app.core.services.planner_service import PlannerService
-from app.core.models.recipe import Recipe
+
+from app.core.dtos.planner_dtos import (MealSelectionCreateDTO,
+                                        MealSelectionUpdateDTO)
 from app.core.models.meal_selection import MealSelection
-from app.core.dtos.planner_dtos import MealSelectionCreateDTO, MealSelectionUpdateDTO
+from app.core.models.recipe import Recipe
+from app.core.services.planner_service import PlannerService
 
 
 def test_get_saved_meal_plan_empty(session):

@@ -7,9 +7,9 @@ Handles both recipe-generated and manually added shopping items.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-from typing import Optional, Literal
+from typing import Literal, Optional
 
-from sqlalchemy import String, Float, Boolean, Enum
+from sqlalchemy import Boolean, Enum, Float, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from ..database.base import Base

@@ -1,13 +1,14 @@
 # tests/core/test_integration.py
 
 import pytest
-from app.core.services.recipe_service import RecipeService
+
+from app.core.dtos.planner_dtos import MealSelectionCreateDTO
+from app.core.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientDTO
+from app.core.dtos.shopping_dto import ShoppingListGenerationDTO
 from app.core.services.ingredient_service import IngredientService
 from app.core.services.planner_service import PlannerService
+from app.core.services.recipe_service import RecipeService
 from app.core.services.shopping_service import ShoppingService
-from app.core.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientDTO
-from app.core.dtos.planner_dtos import MealSelectionCreateDTO
-from app.core.dtos.shopping_dto import ShoppingListGenerationDTO
 
 
 def test_full_workflow_integration(session):

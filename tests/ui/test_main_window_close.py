@@ -7,6 +7,7 @@ the meal planner's state is saved when the window is closed.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 import os
+
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from unittest.mock import MagicMock
@@ -15,11 +16,11 @@ import pytest
 from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
 
-from app.ui.main_window import MainWindow
 from app.style_manager import ThemeController
+from app.ui.main_window import MainWindow
 from app.ui.services.navigation_service import NavigationService
-from app.ui.views.meal_planner import MealPlanner
 from app.ui.views.dashboard import Dashboard
+from app.ui.views.meal_planner import MealPlanner
 
 
 @pytest.fixture

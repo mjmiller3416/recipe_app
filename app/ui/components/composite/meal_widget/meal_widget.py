@@ -10,14 +10,15 @@ from typing import Optional
 from PySide6.QtCore import QEvent, Qt
 from PySide6.QtWidgets import QHBoxLayout, QToolTip, QVBoxLayout, QWidget
 
+from app.core.database import create_session
+from app.core.dtos.planner_dtos import (MealSelectionCreateDTO,
+                                        MealSelectionUpdateDTO)
 from app.core.models.meal_selection import MealSelection
 from app.core.models.recipe import Recipe
 from app.core.services.planner_service import PlannerService
-from app.core.database import create_session
-from app.core.dtos.planner_dtos import MealSelectionCreateDTO, MealSelectionUpdateDTO
-from dev_tools import DebugLogger
 from app.ui.components.composite import RecipeCard
 from app.ui.components.composite.recipe_card import LayoutSize
+from dev_tools import DebugLogger
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

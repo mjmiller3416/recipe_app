@@ -2,10 +2,11 @@
 import sys
 
 from PySide6.QtCore import Qt, QUrl
-from PySide6.QtGui import QIcon, QDesktopServices
+from PySide6.QtGui import QDesktopServices, QIcon
 from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QVBoxLayout
-from qfluentwidgets import setTheme, Theme, SubtitleLabel, setFont, SplitFluentWindow
 from qfluentwidgets import FluentIcon as FIF
+from qfluentwidgets import (SplitFluentWindow, SubtitleLabel, Theme, setFont,
+                            setTheme)
 from qframelesswindow.webengine import FramelessWebEngineView
 
 

@@ -1,9 +1,10 @@
 # tests/core/test_full_integration.py
 
 import pytest
-from app.core.services.recipe_service import RecipeService
+
 from app.core.dtos.recipe_dtos import RecipeCreateDTO, RecipeIngredientDTO
-from app.core.models import Recipe, Ingredient
+from app.core.models import Ingredient, Recipe
+from app.core.services.recipe_service import RecipeService
 
 
 def test_full_recipe_creation_flow(session):

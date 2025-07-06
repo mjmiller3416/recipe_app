@@ -1,13 +1,14 @@
 import os
-os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-import pytest
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout
-from pytestqt.qtbot import QtBot
+os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 import importlib.util
 from pathlib import Path
+
+import pytest
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QVBoxLayout, QWidget
+from pytestqt.qtbot import QtBot
 
 ROOT_DIR = Path(__file__).resolve().parents[3]
 spec = importlib.util.spec_from_file_location(

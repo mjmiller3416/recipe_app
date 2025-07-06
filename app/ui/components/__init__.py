@@ -15,21 +15,21 @@ from .images.image_cropper import ImageCropper
 from .inputs.search_bar import SearchBar
 from .inputs.smart_line_edit import SmartLineEdit
 from .inputs.toggle_switch import ToggleSwitch
+from .layout.flow_layout import FlowLayout
 # From layout
 from .layout.separator import Separator
 from .layout.widget_frame import WidgetFrame
-from .layout.flow_layout import FlowLayout
 # From navigation
 from .navigation.nav_button import NavButton
 from .navigation.sidebar import Sidebar
 from .navigation.titlebar import TitleBar
-# From widgets
-from .widgets.ct_button import CTButton
-from .widgets.ct_tool_button import CTToolButton
-from .widgets.ct_icon import CTIcon
-from .widgets.rounded_image import RoundedImage
 from .widgets.circular_image import CircularImage
 from .widgets.combobox import ComboBox
+# From widgets
+from .widgets.ct_button import CTButton
+from .widgets.ct_icon import CTIcon
+from .widgets.ct_tool_button import CTToolButton
+from .widgets.rounded_image import RoundedImage
 
 __all__ = [
     # Dialogs

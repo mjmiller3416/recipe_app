@@ -6,8 +6,9 @@ Run from terminal and paste output directly into Codex/ChatGPT.
 """
 
 import argparse
-import pyperclip
 from datetime import datetime
+
+import pyperclip
 
 # ─── Project Info (Edit This If Needed) ────────────────────────────────────────
 

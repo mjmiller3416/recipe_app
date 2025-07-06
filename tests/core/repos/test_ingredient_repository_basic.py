@@ -1,8 +1,9 @@
 # tests/core/repos/test_ingredient_repository_basic.py
 
-from app.core.repos.ingredient_repo import IngredientRepo
-from app.core.models import Ingredient
 from app.core.dtos.ingredient_dtos import IngredientCreateDTO
+from app.core.models import Ingredient
+from app.core.repos.ingredient_repo import IngredientRepo
+
 
 def test_get_all_ingredients(session):
     # Arrange

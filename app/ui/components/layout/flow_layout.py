@@ -7,12 +7,11 @@ Flow layout component for arranging widgets in a flow-like manner.
 # ── Imports ─────────────────────────────────────────────────────────────────────────────
 from typing import List
 
-from PySide6.QtCore import (
-    QSize, QPoint, Qt, QRect,
-    QPropertyAnimation, QParallelAnimationGroup,
-    QEasingCurve, QEvent, QTimer, QObject,
-)
-from PySide6.QtWidgets import QLayout, QWidgetItem, QLayoutItem
+from PySide6.QtCore import (QEasingCurve, QEvent, QObject,
+                            QParallelAnimationGroup, QPoint,
+                            QPropertyAnimation, QRect, QSize, Qt, QTimer)
+from PySide6.QtWidgets import QLayout, QLayoutItem, QWidgetItem
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────────────
 class FlowLayout(QLayout):

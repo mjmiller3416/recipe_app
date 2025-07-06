@@ -1,9 +1,11 @@
 # tests/core/services/test_ingredient_service.py
 
 import pytest
-from app.core.services.ingredient_service import IngredientService
+
+from app.core.dtos.ingredient_dtos import (IngredientCreateDTO,
+                                           IngredientUpdateDTO)
 from app.core.models.ingredient import Ingredient
-from app.core.dtos.ingredient_dtos import IngredientCreateDTO, IngredientUpdateDTO
+from app.core.services.ingredient_service import IngredientService
 
 
 def test_get_all_ingredients_empty(session):

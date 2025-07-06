@@ -7,15 +7,15 @@ Handles ingredient aggregation, manual items, and state persistence.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-from typing import List, Optional, Dict, Tuple, Any
 from collections import defaultdict
+from typing import Any, Dict, List, Optional, Tuple
 
-from sqlalchemy import select, delete, and_, or_
+from sqlalchemy import and_, delete, or_, select
 from sqlalchemy.orm import Session, joinedload
 
+from ..models.recipe_ingredient import RecipeIngredient
 from ..models.shopping_item import ShoppingItem
 from ..models.shopping_state import ShoppingState
-from ..models.recipe_ingredient import RecipeIngredient
 
 
 # ── Shopping Repository ──────────────────────────────────────────────────────────────────────

@@ -8,13 +8,14 @@ from typing import Optional
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from app.core.dtos.recipe_dtos import RecipeCreateDTO, RecipeFilterDTO, RecipeIngredientDTO
 from app.core.dtos.ingredient_dtos import IngredientCreateDTO
+from app.core.dtos.recipe_dtos import (RecipeCreateDTO, RecipeFilterDTO,
+                                       RecipeIngredientDTO)
+from app.core.models.ingredient import Ingredient
 from app.core.models.recipe import Recipe
 from app.core.models.recipe_ingredient import RecipeIngredient
-from app.core.models.ingredient import Ingredient
-from app.core.repos.recipe_repo import RecipeRepo
 from app.core.repos.ingredient_repo import IngredientRepo
+from app.core.repos.recipe_repo import RecipeRepo
 
 
 # ── Exceptions ──────────────────────────────────────────────────────────────────

@@ -6,18 +6,17 @@ IngredientWidget for managing individual ingredients in recipes.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QGridLayout, QLineEdit, QWidget, QSizePolicy
+from PySide6.QtWidgets import QGridLayout, QLineEdit, QSizePolicy, QWidget
 
 from app.config import (FLOAT_VALIDATOR, INGREDIENT_CATEGORIES,
                         INGREDIENT_WIDGET, MEASUREMENT_UNITS, NAME_PATTERN)
+from app.core.database.db import create_session
 from app.core.dtos import IngredientSearchDTO
 from app.core.services.ingredient_service import IngredientService
-from app.core.database.db import create_session
-from app.ui.components.widgets import ComboBox
 from app.ui.components.inputs import SmartLineEdit
+from app.ui.components.widgets import ComboBox, CTToolButton
 from app.ui.helpers import clear_error_styles, dynamic_validation
 from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
-from app.ui.components.widgets import CTToolButton
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 FIXED_HEIGHT = 45  # fixed height for input fields in the ingredient widget

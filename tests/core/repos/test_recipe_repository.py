@@ -1,7 +1,8 @@
 # tests/features/recipes/test_recipe_repo.py
 
-from app.core.repos.recipe_repo import RecipeRepo
 from app.core.models import Recipe
+from app.core.repos.recipe_repo import RecipeRepo
+
 
 def test_get_all_recipes(session):
     # Arrange

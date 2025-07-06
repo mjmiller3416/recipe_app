@@ -12,8 +12,8 @@ from app.config import RECIPE_DIALOG
 from app.core.models import Recipe
 from app.ui.components.dialogs import DialogWindow
 from app.ui.components.layout import Separator
-from app.ui.helpers.ui_helpers import create_framed_layout
 from app.ui.components.widgets import CTIcon, RoundedImage
+from app.ui.helpers.ui_helpers import create_framed_layout
 
 # ── Constants ───────────────────────────────────────────────────────────────────────────
 ICON_COLOR = "#3B575B"  # Example color, adjust as needed

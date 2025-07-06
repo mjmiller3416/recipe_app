@@ -9,12 +9,12 @@ FIXED_HEIGHT = 60  # fixed height for input fields in the recipe form
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QGridLayout, QWidget, QLabel
+from PySide6.QtWidgets import QGridLayout, QLabel, QWidget
 
-from app.ui.components.forms.form_field import LineEditField, ComboBoxField
+from app.config import MEAL_CATEGORIES, RECIPE_CATEGORIES
+from app.ui.components.forms.form_field import ComboBoxField, LineEditField
 from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
 
-from app.config import RECIPE_CATEGORIES, MEAL_CATEGORIES
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class RecipeForm(QWidget):
