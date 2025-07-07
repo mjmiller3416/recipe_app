@@ -17,6 +17,7 @@ from app.core.utils import utcnow
 from ..database.base import Base
 from .recipe_history import RecipeHistory
 from .recipe_ingredient import RecipeIngredient
+from ..dtos.ingredient_dtos import IngredientDetailDTO
 
 if TYPE_CHECKING:
     from .meal_selection import MealSelection
@@ -83,3 +84,7 @@ class Recipe(Base):
         if not self.directions:
             return []
         return [line.strip() for line in self.directions.splitlines() if line.strip()]
+    
+    def get_ingredient_details(self) -> list[IngredientDetailDTO]:
+        """Return list of IngredientDetailDTO for each ingredient."""
+        return [ri.get_ingredient_detail() for ri in self.ingredients]
