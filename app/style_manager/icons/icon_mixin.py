@@ -1,4 +1,6 @@
-"""Module providing IconMixin for theme-aware button icons.
+"""app/style_manager/icons/icon_mixin.py
+
+Module providing IconMixin for theme-aware button icons.
 
 IconMixin adds support for themed SVG icons on QAbstractButton widgets
 such as QPushButton and QToolButton. It applies and updates icons based

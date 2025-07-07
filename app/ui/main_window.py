@@ -3,13 +3,11 @@
 Defines the main application window, including the custom title bar and sidebar.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from typing import TYPE_CHECKING, Callable
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import (QHBoxLayout, QLabel, QStackedWidget,
-                               QVBoxLayout, QWidget)
-# --- Import the frameless window class ---
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QStackedWidget, QVBoxLayout, QWidget
 from qframelesswindow import FramelessWindow
 
 from app.config import APPLICATION_WINDOW
@@ -24,11 +22,11 @@ from app.ui.helpers.ui_helpers import center_on_screen
 if TYPE_CHECKING:
     from app.ui.services.navigation_service import NavigationService
 
-# ── Constants ───────────────────────────────────────────────────────────────────────────
+# ── Constants ────────────────────────────────────────────────────────────────────────────────
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]
 
 
-# ── Application Window ──────────────────────────────────────────────────────────────────
+# ── Application Window ───────────────────────────────────────────────────────────────────────
 class MainWindow(FramelessWindow):
     """The main application window, orchestrating title bar, sidebar, and content pages.
 
@@ -44,7 +42,7 @@ class MainWindow(FramelessWindow):
         sw_pages (QStackedWidget): Widget that holds and switches between different pages.
         navigation (NavigationService): Service responsible for page management and nav.
     """
-    # ── Signals ─────────────────────────────────────────────────────────────────────────
+    # ── Signals ──────────────────────────────────────────────────────────────────────────────
     sidebar_toggle_requested = Signal()
 
     def __init__(

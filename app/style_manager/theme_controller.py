@@ -20,10 +20,10 @@ from .utils import QssCombiner
 from .utils.fontkit import register_all_fonts
 from .utils.theme_utils import flatten_theme_dict
 
-# ── Constants ─────────────────────────────────────────────────────────────
+# ── Constants ────────────────────────────────────────────────────────────────────────────────
 CONFIG_PATH = AppPaths.THEME_CONFIG_PATH
 
-# ── Class ────────────────────────────────────────
+# ── Theme Controller ─────────────────────────────────────────────────────────────────────────
 class ThemeController(QObject, SingletonMixin):
     """
     Global palette manager. Emits `theme_changed(dict)` when the colours flip.
@@ -49,7 +49,7 @@ class ThemeController(QObject, SingletonMixin):
         self._palette: Dict = self._themes["dark"]
         self._loader = ThemeLoader(self._palette)
 
-    # ── Public Methods ────────────────────────────────────
+    # ── Public Methods ───────────────────────────────────────────────────────────────────────
     def get_current_palette(self) -> Dict:
         return self._palette
 

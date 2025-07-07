@@ -16,7 +16,7 @@ _startup_start_time = time.perf_counter()
 # ── Class Definition ─────────────────────────────────────────────────────────────────────
 class StartupTimer:
     """Utility for measuring time taken to initialize parts of the application."""
-    
+
     def __init__(self, label: str):
         self.label = label
         self.start_time = time.perf_counter()
@@ -32,4 +32,4 @@ class StartupTimer:
             DebugLogger.log("[StartupTimer.summary] Called before import!")
             return
         total = time.perf_counter() - _startup_start_time
-        DebugLogger.log(f"[StartupTimer.summary] [⏱️] {label} took {total:.3f}s")
+        DebugLogger.log(f"{label} took [{total:.3f}s]")

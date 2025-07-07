@@ -48,35 +48,35 @@ class TitleBar(QWidget):
 
         # ── Sidebar Toggle Button ──
         self.btn_ico_toggle_sidebar = CTToolButton(
-            file_path=APP_ICONS["TOGGLE_SIDEBAR"]["PATH"],
-            icon_size=APP_ICONS["TOGGLE_SIDEBAR"]["SIZE"],
-            variant=APP_ICONS["TOGGLE_SIDEBAR"]["DYNAMIC"],
-            checkable=True,
+            file_path = APP_ICONS["TOGGLE_SIDEBAR"]["PATH"],
+            icon_size = APP_ICONS["TOGGLE_SIDEBAR"]["SIZE"],
+            variant   = APP_ICONS["TOGGLE_SIDEBAR"]["DYNAMIC"],
+            checkable = True,
         )
         self.btn_ico_toggle_sidebar.setFixedSize(SETTINGS["BTN_SIZE"])
         self.btn_ico_toggle_sidebar.setObjectName("BtnToggleSidebar")
 
         # ── Minimize Button ──
         self.btn_ico_minimize = CTToolButton(
-            file_path=APP_ICONS["MINIMIZE"]["PATH"],
-            icon_size=APP_ICONS["MINIMIZE"]["SIZE"],
-            variant=APP_ICONS["MINIMIZE"]["DYNAMIC"],
+            file_path = APP_ICONS["MINIMIZE"]["PATH"],
+            icon_size = APP_ICONS["MINIMIZE"]["SIZE"],
+            variant   = APP_ICONS["MINIMIZE"]["DYNAMIC"],
         )
         self.btn_ico_minimize.setFixedSize(SETTINGS["BTN_SIZE"])
 
         # ── Maximize/Restore Button ──
         self.btn_ico_maximize = CTToolButton(
-            file_path=APP_ICONS["MAXIMIZE"]["PATH"],
-            icon_size=APP_ICONS["MAXIMIZE"]["SIZE"],
-            variant=APP_ICONS["MAXIMIZE"]["DYNAMIC"],
+            file_path = APP_ICONS["MAXIMIZE"]["PATH"],
+            icon_size = APP_ICONS["MAXIMIZE"]["SIZE"],
+            variant   = APP_ICONS["MAXIMIZE"]["DYNAMIC"],
         )
         self.btn_ico_maximize.setFixedSize(SETTINGS["BTN_SIZE"])
 
         # ── Close Button ──
         self.btn_ico_close = CTToolButton(
-            file_path=APP_ICONS["CLOSE"]["PATH"],
-            icon_size=APP_ICONS["CLOSE"]["SIZE"],
-            variant=APP_ICONS["CLOSE"]["DYNAMIC"],
+            file_path = APP_ICONS["CLOSE"]["PATH"],
+            icon_size = APP_ICONS["CLOSE"]["SIZE"],
+            variant   = APP_ICONS["CLOSE"]["DYNAMIC"],
         )
         self.btn_ico_close.setFixedSize(SETTINGS["BTN_SIZE"])
         self.btn_ico_close.setObjectName("BtnClose")
