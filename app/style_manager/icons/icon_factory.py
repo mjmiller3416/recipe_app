@@ -38,6 +38,15 @@ class IconFactory:
             self.variant = variant
         self.palette = IconLoader().palette
 
+    def _load_icon_or_pixmap(self, state: str = "DEFAULT", as_icon: bool = True) -> QPixmap | QIcon:
+        """Internal helper to load a QIcon or QPixmap for a given state."""
+        return SVGLoader.load(
+            file_path=self.file_path,
+            color=self.resolve_color(state),
+            size=self.size,
+            as_icon=as_icon
+        )
+
     def icon_for_state(self, state: str = "DEFAULT") -> QIcon:
         """
         Returns a themed QIcon for a specific state (e.g., 'HOVER', 'CHECKED').
@@ -49,31 +58,15 @@ class IconFactory:
         Returns:
             QIcon: Themed QIcon for the specified state.
         """
-        state = state.upper()
-        return SVGLoader.load(
-            file_path=self.file_path,
-            color=self.resolve_color(state),
-            size=self.size,
-            as_icon=True
-        )
+        return self._load_icon_or_pixmap(state, as_icon=True)
 
     def icon(self) -> QIcon:
         """Returns the default themed QIcon."""
-        return SVGLoader.load(
-            file_path=self.file_path,
-            color=self.resolve_color("DEFAULT"),
-            size=self.size,
-            as_icon=True
-        )
+        return self._load_icon_or_pixmap("DEFAULT", as_icon=True)
 
     def pixmap(self) -> QPixmap:
         """Returns the default themed QPixmap."""
-        return SVGLoader.load(
-            file_path=self.file_path,
-            color=self.resolve_color("DEFAULT"),
-            size=self.size,
-            as_icon=False
-        )
+        return self._load_icon_or_pixmap("DEFAULT", as_icon=False)
 
     def resolve_color(self, state: str = "DEFAULT") -> str:
         """

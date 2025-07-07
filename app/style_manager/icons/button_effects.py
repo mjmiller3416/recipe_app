@@ -24,10 +24,11 @@ class ButtonEffects:
     ) -> None:
         """Apply dynamic icon recoloring for button states."""
         # Load all icon states
-        icon_default = IconFactory(icon_path, size, variant).icon()
-        icon_hover = IconFactory(icon_path, size, variant).icon_for_state("HOVER")
-        icon_checked = IconFactory(icon_path, size, variant).icon_for_state("CHECKED")
-        icon_disabled = IconFactory(icon_path, size, variant).icon_for_state("DISABLED")
+        factory = IconFactory(icon_path, size, variant)
+        icon_default = factory.icon()
+        icon_hover = factory.icon_for_state("HOVER")
+        icon_checked = factory.icon_for_state("CHECKED")
+        icon_disabled = factory.icon_for_state("DISABLED")
 
         # Apply default icon and size
         button.setIcon(icon_default)

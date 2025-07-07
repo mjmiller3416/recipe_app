@@ -17,6 +17,20 @@ from PySide6.QtWidgets import QApplication
 
 from dev_tools import DebugLogger
 
+def _replace_svg_colors(svg_data: str, source: str, new_color: str) -> str:
+    """
+    Replace fill and stroke occurrences of source color with new_color in SVG data.
+    Handles both quoted and unquoted attributes.
+    """
+    # Replace attributes with optional quotes
+    pattern = r'(fill|stroke)=([\'\"]?)' + re.escape(source) + r'\2'
+    replacement = r'\1="' + new_color + r'"'
+    svg_data = re.sub(pattern, replacement, svg_data, flags=re.IGNORECASE)
+    # Replace unquoted attributes
+    pattern_no_quotes = r'(fill|stroke)=' + re.escape(source) + r'(?!\w)'
+    svg_data = re.sub(pattern_no_quotes, replacement, svg_data, flags=re.IGNORECASE)
+    return svg_data
+
 
 # ── Class Definition ─────────────────────────────────────────────────────────────────────────
 class SVGLoader:
@@ -77,20 +91,14 @@ class SVGLoader:
             # Ensure source color is treated as a distinct value
             # Example (Standard Fill): fill="#000" or fill='black' or stroke="..."
             # ─────────────────────────────────────────────────────────────────────────────── #
-            pattern = rf'(fill|stroke)=(["\']){re.escape(source)}\2'
-            replacement = fr'\1="{color}"'
-            svg_data = re.sub(pattern, replacement, svg_data, flags=re.IGNORECASE)
+            svg_data = _replace_svg_colors(svg_data, source, color)
 
             # ── Note ─────────────────────────────────────────────────────────────────────── #
             # Also handle cases where fill might be specified without quotes
             # or as style attributes (more complex, maybe handle later if needed)
             # Example (No Quotes Fill): fill=#000 or fill=black or stroke=...
             # ─────────────────────────────────────────────────────────────────────────────── #
-            pattern_no_quotes = rf'(fill|stroke)={re.escape(source)}(?!\w)'
-            replacement_no_quotes = fr'\1="{color}"'
-            svg_data = re.sub(
-                pattern_no_quotes, replacement_no_quotes, svg_data, flags=re.IGNORECASE
-            )
+            # unquoted replacements are handled within helper
 
         except re.error as e: # catch regex errors
             DebugLogger.log(f"svg_loader: Regex error processing {file_path}: {e}", "error")
