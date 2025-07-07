@@ -21,7 +21,7 @@ class CTButton(QPushButton, IconMixin):
         self,
         file_path: Path,
         icon_size: QSize = ICON_SIZE,
-        variant: str = "default",
+        variant: str = "DEFAULT",
         height: int = 55,
         label: str = "",
         checkable: bool = True,
@@ -34,7 +34,7 @@ class CTButton(QPushButton, IconMixin):
         Args:
             file_path (str): The path to the SVG icon file.
             size (QSize, optional): The size of the icon. Defaults to ICON_SIZE.
-            variant (str, optional): The variant of the icon. Defaults to "default".
+            variant (str, optional): The variant of the icon. Defaults to "DEFAULT".
             label (str, optional): The text label for the button. Defaults to "".
             object_name (str, optional): The object name for the widget. Defaults to "".
             checked (bool, optional): Whether the button is checked. Defaults to False.

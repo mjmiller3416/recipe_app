@@ -1,6 +1,7 @@
-"""app/style_manager/themed_icon.py
+"""Module providing IconFactory for generating themed icons.
 
-Provides ThemedIcon, a utility class for generating themed icons from SVG files.
+IconFactory creates theme-aware QIcons and QPixmaps from SVG files by
+applying color variants based on the current theme.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
@@ -10,11 +11,11 @@ from pathlib import Path
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon, QPixmap
 
-from .icon_loader import IconLoader
-from .svg_loader import SVGLoader
+from app.style_manager.icons.icon_loader import IconLoader
+from app.style_manager.icons.svg_loader import SVGLoader
 
 
-from .base import ThemedIcon
+from app.style_manager.icons.base import ThemedIcon
 
 # ── Themed Icon ──────────────────────────────────────────────────────────────────────────────
 class IconFactory:
@@ -31,7 +32,10 @@ class IconFactory:
         """
         self.file_path = file_path
         self.size = size
-        self.variant = variant
+        if isinstance(variant, str):
+            self.variant = variant.upper()
+        else:
+            self.variant = variant
         self.palette = IconLoader().palette
 
     def icon_for_state(self, state: str = "DEFAULT") -> QIcon:
@@ -45,6 +49,7 @@ class IconFactory:
         Returns:
             QIcon: Themed QIcon for the specified state.
         """
+        state = state.upper()
         return SVGLoader.load(
             file_path=self.file_path,
             color=self.resolve_color(state),
@@ -80,6 +85,7 @@ class IconFactory:
             - Named theme variant mapped from ICON_STYLES
         """
 
+        state = state.upper()
         # Case 1: Variant is a color dict
         if isinstance(self.variant, dict):
             return self.variant.get(state, self.variant.get("DEFAULT", "#FFFFFF"))

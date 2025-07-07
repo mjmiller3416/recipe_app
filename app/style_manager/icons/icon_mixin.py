@@ -1,28 +1,30 @@
-"""app/style_manager/icon_mixin.py
+"""Module providing IconMixin for theme-aware button icons.
 
-Mixin to apply a themed icon to QAbstractButton widgets (QPushButton, QToolButton).
+IconMixin adds support for themed SVG icons on QAbstractButton widgets
+such as QPushButton and QToolButton. It applies and updates icons based
+on theme changes.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
+from pathlib import Path
 from PySide6.QtCore import QSize
-
-from .icon_factory import IconFactory
+from app.style_manager.icons.icon_factory import IconFactory
 
 
 # ── Class Definition ─────────────────────────────────────────────────────────────────────────
 class IconMixin:
     def _init_themed_icon(
         self,
-        file_name: str,
+        icon_path: Path,
         size: QSize,
-        variant: str = "default"
-    ):
-        """Apply themed icon to this button using ThemedIcon loader."""
-        self._icon_file = file_name
+        variant: str = "DEFAULT"
+    ) -> None:
+        """Apply themed SVG icon to this button."""
+        self._icon_path = icon_path
         self._icon_size = size
         self._icon_variant = variant
 
-        themed_icon = IconFactory(file_name, size, variant)
+        themed_icon = IconFactory(icon_path, size, variant)
         self.setIcon(themed_icon.icon())
         self.setIconSize(size)
 

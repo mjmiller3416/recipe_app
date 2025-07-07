@@ -1,7 +1,8 @@
-"""app/style_manager/svg_loader.py
+"""Module for loading and recoloring SVG icons.
 
-Provides functions and classes for loading and recoloring SVG icons into QPixmaps or
-QIcons with support for high-DPI screens.
+Provides functions to load and recolor SVG files into QPixmaps or QIcons
+with support for high-DPI screens. It replaces specified colors in the SVG
+data before rendering.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
@@ -32,7 +33,7 @@ class SVGLoader:
         """Load an SVG file, optionally recolor it, and render as QPixmap or QIcon.
 
         Args:
-            file_path (str): Filesystem path to the SVG file.
+            file_path (Path): Path to the SVG file.
             color (str): New fill/stroke color to apply.
             size (QSize or tuple[int, int], optional): Logical size for rendering.
                 Defaults to QSize(24, 24).
@@ -42,8 +43,8 @@ class SVGLoader:
                 Defaults to False.
 
         Returns:
-            Pixmap or QIcon: The rendered and recolored SVG image, or an empty
-            object on failure.
+            QPixmap or QIcon: The rendered and recolored SVG image, or an
+            empty object on failure.
         """
         # ── Determine Logical Size ──
         if isinstance(size, tuple) and len(size) == 2:

@@ -115,10 +115,10 @@ class TitleBar(QWidget):
             APP_ICONS["RESTORE"]["PATH"] if maximized else APP_ICONS["MAXIMIZE"]["PATH"]
         )
         ButtonEffects.recolor(
-            self.btn_ico_maximize,
-            file_name=target_path,
-            size=self.btn_ico_maximize.iconSize(),
-            variant=SETTINGS["BTN_STYLE"]["DYNAMIC"],
+            button    = self.btn_ico_maximize,
+            icon_path = target_path,
+            size      = self.btn_ico_maximize.iconSize(),
+            variant   = SETTINGS["BTN_STYLE"]["DYNAMIC"],
         )
 
     def mousePressEvent(self, event: QMouseEvent) -> None:

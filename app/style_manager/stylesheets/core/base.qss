@@ -3,8 +3,8 @@
    ------------------------------------------------------------------ */
 * {
     color: {FONT_COLOR_DEFAULT};
-    font-size: {FONT_SIZE_NORMAL}; 
-    font-family: {FONT_FAMILY_DEFAULT}; 
+    font-size: {FONT_SIZE_NORMAL};
+    font-family: {FONT_FAMILY_DEFAULT};
 }
 
 /* ------------------------------------------------------------------
@@ -40,7 +40,7 @@ QLineEdit:focus {
 
 /* ------------------------------------------------------------------
    STYLE NOTES:
-   ------------------------------------------------------------------ 
+   ------------------------------------------------------------------
 Oder for assigning properties in QSS (personal preference):
 1. Background Color
 2. Color
@@ -55,7 +55,7 @@ Oder for assigning properties in QSS (personal preference):
 Font values can be combined as follows:
     * font: <style> <weight> <size> <family>;
 
-Color States for NavButton QLabel 
+Color States for NavButton QLabel
 
 [state="default"]
 [state="hover"]
@@ -63,7 +63,7 @@ Color States for NavButton QLabel
 
 EXAMPLE:
 #Sidebar NavButton QLabel[state="default"] {
-    color: red; 
+    color: red;
 }
 
 */

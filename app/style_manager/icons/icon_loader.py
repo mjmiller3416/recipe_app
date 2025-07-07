@@ -1,6 +1,7 @@
-"""app/style_manager/icon_loader.py
+"""Module providing IconLoader for managing themed icons.
 
-Central registry that recolors every theme-aware icon when the palette flips.
+IconLoader is a singleton registry that stores the active theme palette
+and refreshes all registered icons when the application theme changes.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
@@ -12,13 +13,16 @@ from PySide6.QtCore import QObject
 from app.core.utils import SingletonMixin
 from app.style_manager.theme_controller import ThemeController
 from dev_tools import DebugLogger
-from .base import ThemedIcon
+from app.style_manager.icons.base import ThemedIcon
 
 
 # ── Icon Loader ──────────────────────────────────────────────────────────────────────────────
 class IconLoader(QObject, SingletonMixin):
-    """Singleton that stores the active palette and refreshes all registered
-    icons when ThemeController broadcasts a change."""
+    """Singleton to manage and refresh theme-aware icons.
+
+    It stores the active palette and refreshes all registered icons when
+    the theme changes.
+    """
 
     def __init__(self) -> None:
         # only initialize once (SingletonMixin still calls __init__ on each instantiation)

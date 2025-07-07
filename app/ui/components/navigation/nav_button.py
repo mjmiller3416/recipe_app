@@ -76,13 +76,13 @@ class NavButton(QPushButton):
         """Helper to set the correct icon and label style property."""
         if self.isChecked():
             self._icon.setIcon(self._icon_checked)
-            self._label.setProperty("state", "checked")
+            self._label.setProperty("state", "CHECKED")
         elif self.underMouse():
             self._icon.setIcon(self._icon_hover)
-            self._label.setProperty("state", "hover")
+            self._label.setProperty("state", "HOVER")
         else:
             self._icon.setIcon(self._icon_default)
-            self._label.setProperty("state", "default")
+            self._label.setProperty("state", "DEFAULT")
 
         self.style().unpolish(self._label)
         self.style().polish(self._label)

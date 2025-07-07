@@ -1,6 +1,7 @@
-"""app/style_manager/icons/ct_icon.py
+"""Module providing CTIcon widget for theme-aware SVG icons.
 
-Defines the Custom-Themed Icon class, a QLabel-based widget for displaying SVG icons with theme-aware coloring.
+CTIcon is a QLabel-based widget that renders an SVG icon and adapts
+to theme changes automatically.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
@@ -9,8 +10,8 @@ from pathlib import Path
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QLabel
 
-from .icon_loader import IconLoader
-from .icon_factory import IconFactory
+from app.style_manager.icons.icon_loader import IconLoader
+from app.style_manager.icons.icon_factory import IconFactory
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -24,14 +25,14 @@ class CTIcon(QLabel):
         self,
         file_path: Path,
         icon_size: QSize,
-        variant: str = "default",
+        variant: str = "DEFAULT",
         parent=None
     ):
         super().__init__(parent)
 
         self.file_path = file_path
         self.size = icon_size
-        self.variant = variant
+        self.variant = variant.upper()
 
         self.setFixedSize(self.size)
         self.setStyleSheet("background-color: transparent;")

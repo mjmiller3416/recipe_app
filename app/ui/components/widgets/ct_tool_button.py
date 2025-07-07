@@ -26,7 +26,7 @@ class CTToolButton(QToolButton, IconMixin):
         icon_size: QSize = ICON_SIZE,
         button_size: QSize = None,
         padding: int = PADDING,
-        variant: str = "default",
+        variant: str = "DEFAULT",
         object_name: str = "",
         checkable: bool = False,
         hover_effects: bool = True,
@@ -39,7 +39,7 @@ class CTToolButton(QToolButton, IconMixin):
             file_path (str): The path to the SVG icon file.
             icon_size (QSize): The size of the icon. Defaults to ICON_SIZE.
             button_size (QSize, optional): The fixed size for the button. If None, uses icon size + padding.
-            variant (str, optional): The variant of the icon. Defaults to "default".
+            variant (str, optional): The variant of the icon. Defaults to "DEFAULT".
             object_name (str, optional): The object name for the widget. Defaults to "".
             checked (bool, optional): Whether the button is checked. Defaults to False.
             hover_effects (bool, optional): Whether to apply hover effects. Defaults to True.
