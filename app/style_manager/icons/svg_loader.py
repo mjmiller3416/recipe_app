@@ -17,6 +17,9 @@ from PySide6.QtWidgets import QApplication
 
 from dev_tools import DebugLogger
 
+# Fallback path for default error icon
+_ERROR_ICON_PATH = Path(__file__).parent.parent.parent / "assets" / "icons" / "error.svg"
+
 def _replace_svg_colors(svg_data: str, source: str, new_color: str) -> str:
     """
     Replace fill and stroke occurrences of source color with new_color in SVG data.
@@ -75,10 +78,11 @@ class SVGLoader:
         # ── Read SVG ──
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
-                svg_data = f.read()
+                raw_svg = f.read()
         except Exception as e:
-            DebugLogger.log(f"svg_loader: Failed to open SVG file {file_path}: {e}", "error")
-            return QIcon() if as_icon else QPixmap() # return empty instance on error
+            DebugLogger.log(f"svg_loader: Failed to open SVG file {file_path}: {e}", "warning")
+            return QIcon(str(_ERROR_ICON_PATH)) if as_icon else QPixmap(str(_ERROR_ICON_PATH))
+        svg_data = raw_svg
 
         # ── Note ───────────────────────────────────────────────────────────── #
         # Replace the source color (both fill and stroke) with the new color
@@ -86,23 +90,10 @@ class SVGLoader:
         # ───────────────────────────────────────────────────────────────────── #
 
         try:
-            # ── Note ─────────────────────────────────────────────────────────────────────── #
-            # Handle potential variations like fill="#000", fill='black', stroke="..." etc.
-            # Ensure source color is treated as a distinct value
-            # Example (Standard Fill): fill="#000" or fill='black' or stroke="..."
-            # ─────────────────────────────────────────────────────────────────────────────── #
-            svg_data = _replace_svg_colors(svg_data, source, color)
-
-            # ── Note ─────────────────────────────────────────────────────────────────────── #
-            # Also handle cases where fill might be specified without quotes
-            # or as style attributes (more complex, maybe handle later if needed)
-            # Example (No Quotes Fill): fill=#000 or fill=black or stroke=...
-            # ─────────────────────────────────────────────────────────────────────────────── #
-            # unquoted replacements are handled within helper
-
-        except re.error as e: # catch regex errors
-            DebugLogger.log(f"svg_loader: Regex error processing {file_path}: {e}", "error")
-            return QIcon() if as_icon else QPixmap() # return empty instance on error
+            svg_data = _replace_svg_colors(raw_svg, source, color)
+        except re.error as e:  # catch regex errors
+            DebugLogger.log(f"svg_loader: Regex error processing {file_path}: {e}", "warning")
+            svg_data = raw_svg
 
 
         # ── Render SVG ──
@@ -114,12 +105,12 @@ class SVGLoader:
                     "warning"
                 )
                 # Continue attempt to render, might still work partially or return empty
-        except Exception as e: # Catch potential errors during QSvgRenderer creation
+        except Exception as e:  # Catch potential errors during QSvgRenderer creation
             DebugLogger.log(
                 f"svg_loader: Failed to create QSvgRenderer for {file_path}: {e}",
-                "error"
+                "warning"
             )
-            return QIcon() if as_icon else QPixmap()
+            return QIcon(str(_ERROR_ICON_PATH)) if as_icon else QPixmap(str(_ERROR_ICON_PATH))
 
 
         # ── Handle Rendering ──

@@ -41,13 +41,19 @@ class ButtonEffects:
         button._icon_disabled = icon_disabled
 
         # Event overrides
+        original_enter = getattr(button, 'enterEvent', None)
+        original_leave = getattr(button, 'leaveEvent', None)
         def enterEvent(event):
             if not button.isChecked():
                 button.setIcon(button._icon_hover)
+            if callable(original_enter):
+                original_enter(event)
 
         def leaveEvent(event):
             if not button.isChecked():
                 button.setIcon(button._icon_default)
+            if callable(original_leave):
+                original_leave(event)
 
         def updateCheckedState():
             icon = button._icon_checked if button.isChecked() else button._icon_default

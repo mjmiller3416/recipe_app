@@ -26,9 +26,9 @@ class IconMixin:
         self._icon_size = size
         self._icon_variant = variant
 
-        themed_icon = IconFactory(icon_path, size, variant)
-        self.setIcon(themed_icon.icon())
-        self.setIconSize(size)
+        self._themed_icon = IconFactory(icon_path, size, variant)
+        self.setIcon(self._themed_icon.icon())
+        self.setIconSize(self._icon_size)
 
     # ── Public Methods ───────────────────────────────────────────────────────────────────────
     def refresh_theme_icon(self, palette: dict) -> None:
@@ -37,7 +37,9 @@ class IconMixin:
         Should be implemented by subclasses if needed.
         """
         if hasattr(self, "_themed_icon") and self._themed_icon:
-            self._themed_icon.refresh(palette)
+            self._themed_icon.palette = palette
+            self.setIcon(self._themed_icon.icon())
+            self.setIconSize(self._icon_size)
 
     def refresh_theme(self, palette: dict) -> None:
         """
