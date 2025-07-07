@@ -12,7 +12,7 @@ from qframelesswindow.utils.win32_utils import WindowsMoveResize as MoveResize
 
 from app.config import APPLICATION_WINDOW
 from app.ui.components.widgets import CTIcon, CTToolButton
-from app.ui.components.widgets.helpers import ButtonEffects
+from app.style_manager.icons.button_effects import ButtonEffects
 
 # ── Constants ─────────────────────────────────────────────────────────────
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]

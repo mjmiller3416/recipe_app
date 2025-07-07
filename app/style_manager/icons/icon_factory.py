@@ -1,25 +1,23 @@
-"""app/ui/tools/themed_icon.py
+"""app/style_manager/themed_icon.py
 
-Provides ThemedIcon, a utility class for generating themed icons (QIcon/QPixmap) from SVG files.
-Supports flexible color variants via:
-  - direct color dictionaries
-  - hex strings
-  - named theme keys referencing ICON_STYLES.
+Provides ThemedIcon, a utility class for generating themed icons from SVG files.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+from typing import Dict
 from pathlib import Path
 
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon, QPixmap
 
-from app.style_manager import IconLoader
-
+from .icon_loader import IconLoader
 from .svg_loader import SVGLoader
 
 
-# ── Class Definition ────────────────────────────────────────────────────────────
-class ThemedIcon:
+from .base import ThemedIcon
+
+# ── Themed Icon ──────────────────────────────────────────────────────────────────────────────
+class IconFactory:
     """Creates a themed QIcon or QPixmap from an SVG file."""
 
     def __init__(self, file_path: Path, size: QSize, variant: str | dict = "DEFAULT"):

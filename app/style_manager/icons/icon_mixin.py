@@ -1,15 +1,15 @@
-"""app/ui/widgets/utils/icon_mixin.py
+"""app/style_manager/icon_mixin.py
 
 Mixin to apply a themed icon to QAbstractButton widgets (QPushButton, QToolButton).
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize
 
-from app.ui.utils import ThemedIcon
+from .icon_factory import IconFactory
 
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── Class Definition ─────────────────────────────────────────────────────────────────────────
 class IconMixin:
     def _init_themed_icon(
         self,
@@ -22,11 +22,11 @@ class IconMixin:
         self._icon_size = size
         self._icon_variant = variant
 
-        themed_icon = ThemedIcon(file_name, size, variant)
+        themed_icon = IconFactory(file_name, size, variant)
         self.setIcon(themed_icon.icon())
         self.setIconSize(size)
 
-    # ── Public Methods ──────────────────────────────────────────────────────────────
+    # ── Public Methods ───────────────────────────────────────────────────────────────────────
     def refresh_theme_icon(self, palette: dict) -> None:
         """
         Applies the current theme palette to the icon.

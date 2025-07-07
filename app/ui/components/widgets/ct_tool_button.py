@@ -12,9 +12,10 @@ from PySide6.QtWidgets import QToolButton
 from app.config import ICON_SIZE
 from app.style_manager import IconLoader
 
-from .helpers import ButtonEffects, IconMixin
+from app.style_manager.icons.icon_mixin import IconMixin
+from app.style_manager.icons.button_effects import ButtonEffects
 
-# ── Constants ───────────────────────────────────────────────────────────────────  
+# ── Constants ───────────────────────────────────────────────────────────────────
 PADDING = 4  # Padding around the icon
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -23,7 +24,7 @@ class CTToolButton(QToolButton, IconMixin):
         self,
         file_path: Path,
         icon_size: QSize = ICON_SIZE,
-        button_size: QSize = None,  
+        button_size: QSize = None,
         padding: int = PADDING,
         variant: str = "default",
         object_name: str = "",
@@ -37,7 +38,7 @@ class CTToolButton(QToolButton, IconMixin):
         Args:
             file_path (str): The path to the SVG icon file.
             icon_size (QSize): The size of the icon. Defaults to ICON_SIZE.
-            button_size (QSize, optional): The fixed size for the button. If None, uses icon size + padding. 
+            button_size (QSize, optional): The fixed size for the button. If None, uses icon size + padding.
             variant (str, optional): The variant of the icon. Defaults to "default".
             object_name (str, optional): The object name for the widget. Defaults to "".
             checked (bool, optional): Whether the button is checked. Defaults to False.
@@ -54,7 +55,7 @@ class CTToolButton(QToolButton, IconMixin):
 
         self.setCheckable(checkable)
         self.button_size = button_size
-  
+
         if hover_effects:
             ButtonEffects.recolor(self, file_path, icon_size, variant)
 
@@ -67,7 +68,7 @@ class CTToolButton(QToolButton, IconMixin):
 
         # ── Register with IconLoader ──
         IconLoader().register(self)
-    
+
     def set_icon_size(self, icon_size: QSize):
         """
         Dynamically update the icon icon_size and refresh the icon rendering.
@@ -75,6 +76,6 @@ class CTToolButton(QToolButton, IconMixin):
         Args:
             size (QSize): New size for the icon.
         """
-        self.setIconSize(icon_size)      
-        self._icon_size = icon_size        
+        self.setIconSize(icon_size)
+        self._icon_size = icon_size
         self.update()

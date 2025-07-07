@@ -11,8 +11,6 @@ from PySide6.QtCore import (
     QPoint, QPropertyAnimation, QRect, QSize)
 from PySide6.QtGui import QGuiApplication
 
-from app.core.utils.platform_utils import get_taskbar_rect
-
 
 # ── WindowAnimator ───────────────────────────────────────────────────────────────────────────
 class WindowAnimator(QObject):
@@ -99,7 +97,7 @@ class WindowAnimator(QObject):
         target_x = screen_rect.center().x()
         target_y = screen_rect.bottom() # default target Y
 
-        taskbar_coords = get_taskbar_rect()
+        taskbar_coords = self._get_taskbar_rect()
         if taskbar_coords:
             taskbar_rect = QRect(QPoint(taskbar_coords[0], taskbar_coords[1]), QPoint(taskbar_coords[2], taskbar_coords[3]))
             target_y = taskbar_rect.center().y()
@@ -148,7 +146,7 @@ class WindowAnimator(QObject):
         self.window.setGeometry(original_geometry)
         self.animation_group = None
 
-    def get_taskbar_rect():
+    def _get_taskbar_rect():
         """
         Gets the bounding rectangle of the Windows taskbar.
 

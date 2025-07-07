@@ -26,8 +26,7 @@ from .repositories import IngredientRepo, PlannerRepo, RecipeRepo, ShoppingRepo
 from .services import (DuplicateRecipeError, IngredientService, PlannerService,
                        RecipeSaveError, RecipeService, ShoppingService)
 # Utilities
-from .utils import (SingletonMixin, ensure_directory_exists, get_taskbar_rect,
-                    strip_string_values, utcnow)
+from .utils import SingletonMixin, ensure_directory_exists, utcnow
 
 __all__ = [
     # Database
@@ -106,7 +105,5 @@ __all__ = [
     # Utilities
     "SingletonMixin",
     "utcnow",
-    "strip_string_values",
     "ensure_directory_exists",
-    "get_taskbar_rect",
 ]

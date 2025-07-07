@@ -12,7 +12,7 @@ from PySide6.QtWidgets import QPushButton
 from app.config import ICON_SIZE
 from app.style_manager import IconLoader
 
-from .helpers import ButtonEffects, IconMixin
+from app.style_manager.icons import ButtonEffects, IconMixin
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -48,7 +48,7 @@ class CTButton(QPushButton, IconMixin):
 
         if hover_effects:
             ButtonEffects.recolor(self, file_path, icon_size, variant)
-        
+
         self._init_themed_icon(file_path, icon_size, variant)
 
         # ── Register with IconLoader ──

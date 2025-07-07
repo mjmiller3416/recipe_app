@@ -13,7 +13,7 @@ from app.config.paths.app_paths import AppPaths
 from app.core.utils import SingletonMixin
 from dev_tools import DebugLogger
 
-from theme_loader import ThemeLoader
+from .theme_loader import ThemeLoader
 from .themes.dark_theme import THEME as DARK_THEME
 from .themes.light_theme import THEME as LIGHT_THEME
 from .utils import QssCombiner

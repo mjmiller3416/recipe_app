@@ -1,17 +1,17 @@
-"""app/ui/widgets/utils/button_effects.py
+"""app/style_manager/button_effects.py
 
-Provides the ApplyHoverEffects class for dynamically changing button icons on hover 
+Provides the ApplyHoverEffects class for dynamically changing button icons on hover
 and toggle events.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QAbstractButton
 
-from app.ui.utils import ThemedIcon
+from .icon_factory import IconFactory
 
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── Class Definition ─────────────────────────────────────────────────────────────────────────
 class ButtonEffects:
     @staticmethod
     def recolor(
@@ -22,10 +22,10 @@ class ButtonEffects:
     ):
         """Apply dynamic icon recoloring for HOVER/checked states."""
         # Load all icon states
-        icon_default = ThemedIcon(file_name, size, variant).icon()
-        icon_hover = ThemedIcon(file_name, size, variant).icon_for_state("HOVER")
-        icon_checked = ThemedIcon(file_name, size, variant).icon_for_state("CHECKED")
-        icon_disabled = ThemedIcon(file_name, size, variant).icon_for_state("DISABLED")
+        icon_default = IconFactory(file_name, size, variant).icon()
+        icon_hover = IconFactory(file_name, size, variant).icon_for_state("HOVER")
+        icon_checked = IconFactory(file_name, size, variant).icon_for_state("CHECKED")
+        icon_disabled = IconFactory(file_name, size, variant).icon_for_state("DISABLED")
 
         # Apply default icon and size
         button.setIcon(icon_default)

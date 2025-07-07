@@ -11,7 +11,7 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton
 
 from app.ui.components.widgets import CTToolButton
-from app.ui.utils import ThemedIcon
+from app.style_manager.icons.icon_factory import IconFactory
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -37,10 +37,10 @@ class NavButton(QPushButton):
         self.setCheckable(checkable)
 
         # ── Preload Themed Icons ──
-        themed_icon_loader = ThemedIcon(file_path, icon_size, variant)
-        self._icon_default = themed_icon_loader.icon()
-        self._icon_hover = themed_icon_loader.icon_for_state("HOVER")
-        self._icon_checked = themed_icon_loader.icon_for_state("CHECKED")
+        themed_icon = IconFactory(file_path, icon_size, variant)
+        self._icon_default = themed_icon.icon()
+        self._icon_hover = themed_icon.icon_for_state("HOVER")
+        self._icon_checked = themed_icon.icon_for_state("CHECKED")
 
         # ── Internal Widgets ──
         self._icon = CTToolButton(

@@ -16,7 +16,7 @@ from app.core.dtos.planner_dtos import (MealSelectionCreateDTO,
 from app.core.models.meal_selection import MealSelection
 from app.core.models.recipe import Recipe
 from app.core.services.planner_service import PlannerService
-from app.ui.components.composite import RecipeCard
+from app.ui.components.composite.recipe_card import RecipeCard
 from app.ui.components.composite.recipe_card import LayoutSize
 from dev_tools import DebugLogger
 

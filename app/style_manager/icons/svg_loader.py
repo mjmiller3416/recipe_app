@@ -1,10 +1,10 @@
-"""app/ui/utils/svg_loader.py
+"""app/style_manager/svg_loader.py
 
 Provides functions and classes for loading and recoloring SVG icons into QPixmaps or
 QIcons with support for high-DPI screens.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 import re
 from pathlib import Path
 from typing import Union

@@ -3,7 +3,8 @@
 from .circular_image import CircularImage
 from .combobox import ComboBox
 from .ct_button import CTButton
-from .ct_icon import CTIcon
+from .ct_tool_button import CTToolButton
+from app.style_manager.icons.ct_icon import CTIcon
 from .rounded_image import RoundedImage
 
 __all__ = [

@@ -27,7 +27,7 @@ from .widgets.circular_image import CircularImage
 from .widgets.combobox import ComboBox
 # From widgets
 from .widgets.ct_button import CTButton
-from .widgets.ct_icon import CTIcon
+from app.style_manager.icons.ct_icon import CTIcon
 from .widgets.ct_tool_button import CTToolButton
 from .widgets.rounded_image import RoundedImage
 
