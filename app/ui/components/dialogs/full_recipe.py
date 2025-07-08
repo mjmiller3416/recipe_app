@@ -1,6 +1,6 @@
 """app/ui/components/full_recipe.py
 
-Defines the FullRecipe class, a custom dialog for displaying full recipe details including metadata, 
+Defines the FullRecipe class, a custom dialog for displaying full recipe details including metadata,
 ingredients, and directions.
 """
 # ── Imports ─────────────────────────────────────────────────────────────────────────────
@@ -88,7 +88,7 @@ class FullRecipe(DialogWindow):
         # add image to layout
         self.recipe_image = RoundedImage(
             image_path = (self.recipe.image_path),
-            size = 280, 
+            size = 280,
             radii= (0, 0, 0, 0)  # no rounded corners for full image
         )
         lyt_image.addWidget(self.recipe_image, 0, Qt.AlignCenter)
@@ -102,20 +102,32 @@ class FullRecipe(DialogWindow):
         # add meta info to layout
         lyt_meta.addWidget(
             self._build_meta_row(
-                RECIPE_DIALOG["ICON_SERVINGS"], 
+                RECIPE_DIALOG["ICON_SERVINGS"],
                 str(self.recipe.servings)
                 )
             )
         lyt_meta.addWidget(
             self._build_meta_row(
-                RECIPE_DIALOG["ICON_TOTAL_TIME"], 
+                RECIPE_DIALOG["ICON_TOTAL_TIME"],
                 str(self.recipe.total_time)
                 )
             )
         lyt_meta.addWidget(
             self._build_meta_row(
-                RECIPE_DIALOG["ICON_CATEGORY"], 
+                RECIPE_DIALOG["ICON_CATEGORY"],
                 self.recipe.recipe_category
+                )
+            )
+        lyt_meta.addWidget(
+            self._build_meta_row(
+                RECIPE_DIALOG["ICON_MEAL_TYPE"],
+                self.recipe.meal_type
+                )
+            )
+        lyt_meta.addWidget(
+            self._build_meta_row(
+                RECIPE_DIALOG["DIET_PREF"],
+                self.recipe.diet_pref or "None"
                 )
             )
 
@@ -156,7 +168,7 @@ class FullRecipe(DialogWindow):
             lyt_ingredients.addWidget(QLabel("No ingredients available."))
 
         # spacer
-        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding) 
+        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         lyt_ingredients.addItem(spacer) # add to layout
 
         return self.ingredients_widget
@@ -288,9 +300,9 @@ class FullRecipe(DialogWindow):
 
         # ── Create Icon & Label ──
         icon = CTIcon(
-            file_path=icon_name, 
-            icon_size=RECIPE_DIALOG["ICON_SIZE"], 
-            variant=RECIPE_DIALOG["STATIC"],
+            file_path = icon_name,
+            icon_size = RECIPE_DIALOG["ICON_SIZE"],
+            variant   = RECIPE_DIALOG["STATIC"],
         )
         lbl = QLabel(text)
         lbl.setProperty("metaTitle", True)

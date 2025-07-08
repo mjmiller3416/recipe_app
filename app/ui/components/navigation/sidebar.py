@@ -89,12 +89,12 @@ class Sidebar(QWidget):
         object_name = f"{label.replace(' ', '_')}Button"
 
         button = NavButton(
-            file_path=icon_info["PATH"],
-            icon_size=icon_info["SIZE"],
-            variant=icon_info["DYNAMIC"],
-            text=label,
-            checkable=is_checkable,
-            height=82,
+            file_path = icon_info["PATH"],
+            icon_size = icon_info["SIZE"],
+            variant   = icon_info["DYNAMIC"],
+            text      = label,
+            checkable = is_checkable,
+            height    = 82,
         )
         button.setObjectName(object_name)
         self.mainLayout.addWidget(button)

@@ -40,9 +40,11 @@ class RecipeRepo:
             image_path=recipe_dto.image_path
         )
         self.session.add(recipe)
+        self.session.flush()
 
         for ing in recipe_dto.ingredients:
             ingredient = self.ingredient_repo.get_or_create(ing)
+            self.session.flush()
             link = RecipeIngredient(
                 recipe_id=recipe.id,
                 ingredient_id=ingredient.id,

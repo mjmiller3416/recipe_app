@@ -16,7 +16,6 @@ from app.style_manager.themes.dark_theme import THEME
 ICON_SIZE  = QSize(20, 20)
 ICON_COLOR = THEME["ICON"]["DEFAULT"]
 
-# ── Application Window ──
 APPLICATION_WINDOW = {
     "SETTINGS": {
         "APP_NAME": "MealGenie",
@@ -27,7 +26,6 @@ APPLICATION_WINDOW = {
             "DYNAMIC": THEME["ICON_STYLES"]["TOOLBUTTON"],
         }
     },
-
     "ICONS": {
         "LOGO": {
             "PATH":    AppPaths.ICONS_DIR / "logo.svg",
@@ -61,15 +59,12 @@ APPLICATION_WINDOW = {
             },
     }
 }
-
-# ── Sidebar Widget ──
 SIDEBAR = {
     "SETTINGS": {
         "EXPANDED_WIDTH": 360,
         "COLLAPSED_WIDTH": 0,
         "DURATION": 800,  # animation duration in milliseconds
     },
-
     "ICONS": {
         "DASHBOARD": {
             "PATH": AppPaths.ICONS_DIR / "dashboard.svg",
@@ -108,8 +103,6 @@ SIDEBAR = {
         },
     },
 }
-
-# ── Add Recipes ──
 ADD_RECIPES = {
     "ADD_IMAGE": {
         "FILE_PATH": AppPaths.ICONS_DIR / "add.svg",
@@ -117,15 +110,11 @@ ADD_RECIPES = {
         "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"],
     },
 }
-
-# ── Meal Planner ──
 MEAL_PLANNER = {
     "ICON_SIZE": QSize(16, 16),
     "ICON_ADD":  AppPaths.ICONS_DIR / "add.svg",
     "STATIC":   THEME["ICON"]["ACCENT"],
 }
-
-# ── Search Widget ──
 SEARCH = {
     "ICONS": {
         "SEARCH": {
@@ -140,8 +129,6 @@ SEARCH = {
         }
     },
 }
-
-# ── Upload Image ──
 UPLOAD_RECIPE_IMAGE = {
     "ICON_UPLOAD": {
         "FILE_PATH": AppPaths.ICONS_DIR / "plus.svg",
@@ -150,16 +137,12 @@ UPLOAD_RECIPE_IMAGE = {
         "DYNAMIC":   THEME["ICON_STYLES"]["TOOLBUTTON"],
     },
 }
-
-# ── Ingredient Widget ──
 INGREDIENT_WIDGET = {
     "ICON_SIZE":     QSize(20, 20),
     "ICON_ADD":      AppPaths.ICONS_DIR / "add.svg",
     "ICON_SUBTRACT": AppPaths.ICONS_DIR / "subtract.svg",
     "DYNAMIC":       THEME["ICON_STYLES"]["TOOLBUTTON"],
 }
-
-# ── Smart ComboBox ──
 CUSTOM_COMBOBOX = {
     "ICONS": {
         "ARROW":  {
@@ -169,14 +152,11 @@ CUSTOM_COMBOBOX = {
         },
     },
 }
-
-# ── Recipe Widget ──
 EMPTY_STATE = {
     "ICON_SIZE":     QSize(60, 60),
     "ICON_ADD_MEAL": AppPaths.ICONS_DIR / "add_meal.svg",
     "STATIC":       THEME["ICON"]["ACCENT"],
 }
-
 RECIPE_CARD = {
     "ICON_SIZE":       QSize(30, 30),
     "ICON_TOTAL_TIME": AppPaths.ICONS_DIR / "total_time.svg",
@@ -185,7 +165,6 @@ RECIPE_CARD = {
     "STATIC":         THEME["ICON"]["ACCENT"],
     "DYNAMIC":        THEME["ICON_STYLES"]["NAV"],
 }
-
 RECIPE_DIALOG = {
     "ICON_SIZE":       QSize(30, 30),
     "ICON_SERVINGS":   AppPaths.ICONS_DIR / "servings.svg",
@@ -193,7 +172,6 @@ RECIPE_DIALOG = {
     "ICON_CATEGORY":   AppPaths.ICONS_DIR / "category.svg",
     "STATIC":         THEME["ICON"]["ACCENT"],
 }
-
 MESSAGE_DIALOG = {
     "ICON_SIZE": QSize(50, 50),
     "ICON_INFO": {
@@ -214,34 +192,22 @@ MESSAGE_DIALOG = {
     },
 }
 
-# ── Widget Styles ──
-STYLES = {
-    "WIDGET_FRAME": QssPaths.Components.WIDGET_FRAME,
-    "INGREDIENT_WIDGET": QssPaths.Components.INGREDIENT_WIDGET,
-    "UPLOAD_IMAGE": QssPaths.Components.UPLOAD_IMAGE,
-    "DIALOG_WINDOW": QssPaths.Components.DIALOG_WINDOW,
-}
-
-# ── General ──
+# ── Recipe Configs ──
 MEASUREMENT_UNITS = [
     "bag", "box", "can", "cap-full", "cup", "gallon", "half", "jar",
     "oz.", "pack", "pinch", "pint", "lb.", "liter", "quarter", "slice",
     "square", "strip", "Tbs", "tsp", "whole",
 ]
-
 INGREDIENT_CATEGORIES = [
     "produce", "meat", "seafood", "pantry", "dairy", "deli", "frozen",
     "bakery", "baking", "condiments", "spices", "other",
 ]
-
 MEAL_CATEGORIES = [
     "All", "Breakfast", "Lunch", "Dinner", "Snack", "Dessert",
 ]
-
 RECIPE_CATEGORIES = [
     "All", "Ground Beef", "Chicken", "Seafood", "Veggie",
 ]
-
 SORT_OPTIONS = [
     "A-Z", "Z-A"
 ]
