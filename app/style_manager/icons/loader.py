@@ -13,7 +13,7 @@ from PySide6.QtCore import QObject
 from app.core.utils import SingletonMixin
 from app.style_manager.theme_controller import ThemeController
 from dev_tools import DebugLogger
-from app.style_manager.icons.base import ThemedIcon
+from .base import ThemedIcon
 
 
 # ── Icon Loader ──────────────────────────────────────────────────────────────────────────────

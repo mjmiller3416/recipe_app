@@ -11,12 +11,12 @@ from qframelesswindow import FramelessWindow
 from qframelesswindow.utils.win32_utils import WindowsMoveResize as MoveResize
 
 from app.config import APPLICATION_WINDOW
+from app.config.app_icon import AppIcon, ICON_SPECS
 from app.ui.components.widgets import CTIcon, CTToolButton
-from app.style_manager.icons.button_effects import ButtonEffects
+from app.style_manager.icons.state import IconState
 
 # ── Constants ─────────────────────────────────────────────────────────────
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]
-APP_ICONS = APPLICATION_WINDOW["ICONS"]
 
 
 class TitleBar(QWidget):
@@ -37,46 +37,51 @@ class TitleBar(QWidget):
         self.old_pos = None
 
         # ── Title Label ──
+        spec = ICON_SPECS[AppIcon.LOGO]
         self.logo = CTIcon(
-            file_path=APP_ICONS["LOGO"]["PATH"],
-            icon_size=APP_ICONS["LOGO"]["SIZE"],
-            variant=APP_ICONS["LOGO"]["STATIC"],
+            file_path=spec.path,
+            icon_size=spec.size,
+            variant=spec.variant,
         )
         self.logo.setFixedSize(32, 32)
         self.logo.setObjectName("AppLogo")
         self.title = QLabel(SETTINGS["APP_NAME"])
 
         # ── Sidebar Toggle Button ──
+        spec = ICON_SPECS[AppIcon.TOGGLE_SIDEBAR]
         self.btn_ico_toggle_sidebar = CTToolButton(
-            file_path = APP_ICONS["TOGGLE_SIDEBAR"]["PATH"],
-            icon_size = APP_ICONS["TOGGLE_SIDEBAR"]["SIZE"],
-            variant   = APP_ICONS["TOGGLE_SIDEBAR"]["DYNAMIC"],
-            checkable = True,
+            file_path=spec.path,
+            icon_size=spec.size,
+            variant=spec.variant,
+            checkable=True,
         )
         self.btn_ico_toggle_sidebar.setFixedSize(SETTINGS["BTN_SIZE"])
         self.btn_ico_toggle_sidebar.setObjectName("BtnToggleSidebar")
 
         # ── Minimize Button ──
+        spec = ICON_SPECS[AppIcon.MINIMIZE]
         self.btn_ico_minimize = CTToolButton(
-            file_path = APP_ICONS["MINIMIZE"]["PATH"],
-            icon_size = APP_ICONS["MINIMIZE"]["SIZE"],
-            variant   = APP_ICONS["MINIMIZE"]["DYNAMIC"],
+            file_path=spec.path,
+            icon_size=spec.size,
+            variant=spec.variant,
         )
         self.btn_ico_minimize.setFixedSize(SETTINGS["BTN_SIZE"])
 
         # ── Maximize/Restore Button ──
+        spec = ICON_SPECS[AppIcon.MAXIMIZE]
         self.btn_ico_maximize = CTToolButton(
-            file_path = APP_ICONS["MAXIMIZE"]["PATH"],
-            icon_size = APP_ICONS["MAXIMIZE"]["SIZE"],
-            variant   = APP_ICONS["MAXIMIZE"]["DYNAMIC"],
+            file_path=spec.path,
+            icon_size=spec.size,
+            variant=spec.variant,
         )
         self.btn_ico_maximize.setFixedSize(SETTINGS["BTN_SIZE"])
 
         # ── Close Button ──
+        spec = ICON_SPECS[AppIcon.CLOSE]
         self.btn_ico_close = CTToolButton(
-            file_path = APP_ICONS["CLOSE"]["PATH"],
-            icon_size = APP_ICONS["CLOSE"]["SIZE"],
-            variant   = APP_ICONS["CLOSE"]["DYNAMIC"],
+            file_path=spec.path,
+            icon_size=spec.size,
+            variant=spec.variant,
         )
         self.btn_ico_close.setFixedSize(SETTINGS["BTN_SIZE"])
         self.btn_ico_close.setObjectName("BtnClose")
@@ -111,14 +116,13 @@ class TitleBar(QWidget):
         }
 
     def update_maximize_icon(self, maximized: bool):
-        target_path = (
-            APP_ICONS["RESTORE"]["PATH"] if maximized else APP_ICONS["MAXIMIZE"]["PATH"]
-        )
-        ButtonEffects.recolor(
-            button    = self.btn_ico_maximize,
-            icon_path = target_path,
-            size      = self.btn_ico_maximize.iconSize(),
-            variant   = SETTINGS["BTN_STYLE"]["DYNAMIC"],
+        icon_key = AppIcon.RESTORE if maximized else AppIcon.MAXIMIZE
+        spec = ICON_SPECS[icon_key]
+        IconState.recolor(
+            button= self.btn_ico_maximize,
+            icon_path= spec.path,
+            size= spec.size,
+            variant= spec.variant,
         )
 
     def mousePressEvent(self, event: QMouseEvent) -> None:

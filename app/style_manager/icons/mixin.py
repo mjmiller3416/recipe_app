@@ -10,7 +10,7 @@ on theme changes.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from pathlib import Path
 from PySide6.QtCore import QSize
-from app.style_manager.icons.icon_factory import IconFactory
+from .factory import IconFactory
 
 
 # ── Class Definition ─────────────────────────────────────────────────────────────────────────

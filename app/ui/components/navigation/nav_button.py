@@ -11,7 +11,7 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton
 
 from app.ui.components.widgets import CTToolButton
-from app.style_manager.icons.icon_factory import IconFactory
+from app.style_manager.icons.factory import IconFactory
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

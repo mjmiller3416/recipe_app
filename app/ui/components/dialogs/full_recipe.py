@@ -8,15 +8,13 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QSizePolicy,
                                QSpacerItem, QVBoxLayout, QWidget)
 
-from app.config import RECIPE_DIALOG
+from app.config.app_icon import AppIcon, ICON_SPECS
 from app.core.models import Recipe
 from app.ui.components.dialogs import DialogWindow
 from app.ui.components.layout import Separator
 from app.ui.components.widgets import CTIcon, RoundedImage
 from app.ui.helpers.ui_helpers import create_framed_layout
 
-# ── Constants ───────────────────────────────────────────────────────────────────────────
-ICON_COLOR = "#3B575B"  # Example color, adjust as needed
 
 # ── Class Definition ────────────────────────────────────────────────────────────────────
 class FullRecipe(DialogWindow):
@@ -99,36 +97,16 @@ class FullRecipe(DialogWindow):
         """Creates the meta information widget."""
         self.meta_info_widget, lyt_meta = create_framed_layout(line_width=0)
 
-        # add meta info to layout
-        lyt_meta.addWidget(
-            self._build_meta_row(
-                RECIPE_DIALOG["ICON_SERVINGS"],
-                str(self.recipe.servings)
-                )
-            )
-        lyt_meta.addWidget(
-            self._build_meta_row(
-                RECIPE_DIALOG["ICON_TOTAL_TIME"],
-                str(self.recipe.total_time)
-                )
-            )
-        lyt_meta.addWidget(
-            self._build_meta_row(
-                RECIPE_DIALOG["ICON_CATEGORY"],
-                self.recipe.recipe_category
-                )
-            )
-        lyt_meta.addWidget(
-            self._build_meta_row(
-                RECIPE_DIALOG["ICON_MEAL_TYPE"],
-                self.recipe.meal_type
-                )
-            )
-        lyt_meta.addWidget(
-            self._build_meta_row(
-                RECIPE_DIALOG["DIET_PREF"],
-                self.recipe.diet_pref or "None"
-                )
+        # add meta info to layout using AppIcon specs
+        for icon_key, text in (
+            (AppIcon.DIALOG_SERVINGS, str(self.recipe.servings)),
+            (AppIcon.DIALOG_TOTAL_TIME, str(self.recipe.total_time)),
+            (AppIcon.DIALOG_CATEGORY, self.recipe.recipe_category),
+            (AppIcon.MEAL_TYPE, self.recipe.meal_type),
+            (AppIcon.DIET_PREF, self.recipe.diet_pref or "None"),
+        ):
+            lyt_meta.addWidget(
+                self._build_meta_row(icon_key, text)
             )
 
         return self.meta_info_widget
@@ -290,7 +268,7 @@ class FullRecipe(DialogWindow):
 
         return lyt
 
-    def _build_meta_row(self, icon_name: str, text: str) -> QWidget:
+    def _build_meta_row(self, icon_key: AppIcon, text: str) -> QWidget:
         """Helper to create a row with an icon and label, nicely spaced."""
         # ── Create Row ──
         container = QWidget()
@@ -299,10 +277,11 @@ class FullRecipe(DialogWindow):
         lyt.setSpacing(20)
 
         # ── Create Icon & Label ──
+        spec = ICON_SPECS[icon_key]
         icon = CTIcon(
-            file_path = icon_name,
-            icon_size = RECIPE_DIALOG["ICON_SIZE"],
-            variant   = RECIPE_DIALOG["STATIC"],
+            file_path=spec.path,
+            icon_size=spec.size,
+            variant=spec.variant,
         )
         lbl = QLabel(text)
         lbl.setProperty("metaTitle", True)

@@ -10,8 +10,8 @@ from pathlib import Path
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QLabel
 
-from app.style_manager.icons.icon_loader import IconLoader
-from app.style_manager.icons.icon_factory import IconFactory
+from app.style_manager.icons.loader import IconLoader
+from app.style_manager.icons.factory import IconFactory
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

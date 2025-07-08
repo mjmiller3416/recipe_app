@@ -10,16 +10,13 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
                                QScrollArea, QSizePolicy, QVBoxLayout, QWidget)
 
-from app.config import STYLES
-
-
 class WidgetFrame(QFrame):
     """A QFrame container with integrated layout management and optional header.
-    
+
     This class provides a convenient way to create framed containers with
     pre-configured layouts and an optional header section for organizing UI components.
     """
-    
+
     def __init__(self,
                 title: Optional[str] = None,
                 layout: type = QVBoxLayout,
@@ -31,7 +28,7 @@ class WidgetFrame(QFrame):
                 parent: Optional[QFrame] = None
     ):
         """Initialize the WidgetFrame.
-        
+
         Args:
             header_text (Optional[str]): Text for the header label, if any
             layout_cls (type): Type of layout to use for the content area (QVBoxLayout, QHBoxLayout, QGridLayout)
@@ -53,13 +50,13 @@ class WidgetFrame(QFrame):
         self.setSizePolicy(*size_policy)
         self.setProperty("class", "WidgetFrame") # set a custom property for styling
         self.setAttribute(Qt.WA_StyledBackground)
-        
-        
+
+
         # ── Create Main Layout ──
         self._main_layout = QVBoxLayout(self)
         self._main_layout.setContentsMargins(0, 0, 0, 0)
         self._main_layout.setSpacing(0)
-        
+
         # ── Create Title ──
         self._title_label = None
         if title:
@@ -68,13 +65,13 @@ class WidgetFrame(QFrame):
             QSizePolicy.Expanding,
             QSizePolicy.Fixed
         )
-        
+
         # ── Set Scrollable Properties ──
-        self._scrollable = scrollable 
+        self._scrollable = scrollable
 
         # ── Create Content Area ──
         self._content_widget = QWidget()
-        self._content_widget.setObjectName("WidgetFrameContent") 
+        self._content_widget.setObjectName("WidgetFrameContent")
         self._content_widget.setProperty("obj", "WidgetFrameContent")
         self._content_layout = layout()  # create the content layout based on the specified type
 
@@ -106,7 +103,7 @@ class WidgetFrame(QFrame):
             self._scroll_area.setWidgetResizable(True)
             self._scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             self._scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-            
+
             self._main_layout.addWidget(self._scroll_area)
         else:
             self._scroll_area = None
@@ -114,7 +111,7 @@ class WidgetFrame(QFrame):
 
     def _create_title(self, title: str):
         """Create the header section with label.
-        
+
         Args:
             header_text (str): Text for the header label
         """
@@ -126,7 +123,7 @@ class WidgetFrame(QFrame):
 
     def addWidget(self, widget, *args, **kwargs):
         """Add a widget to the frame's content layout.
-        
+
         Args:
             widget: The widget to add
             *args, **kwargs: Additional arguments passed to the layout's addWidget method
@@ -135,33 +132,33 @@ class WidgetFrame(QFrame):
 
     def removeWidget(self, widget, *args, **kwargs):
         """Remove a widget from the frame's content layout.
-        
+
         Args:
             widget: The widget to remove
             *args, **kwargs: Additional arguments passed to the layout's removeWidget method
         """
         self._content_layout.removeWidget(widget, *args, **kwargs)
-    
+
     def addLayout(self, layout, *args, **kwargs):
         """Add a layout to the frame's content layout.
-        
+
         Args:
             layout: The layout to add
             *args, **kwargs: Additional arguments passed to the layout's addLayout method
         """
         self._content_layout.addLayout(layout, *args, **kwargs)
-    
+
     def getLayout(self) -> Union[QVBoxLayout, QHBoxLayout, QGridLayout]:
         """Get the internal content layout object.
-        
+
         Returns:
             The internal content layout object
         """
         return self._content_layout
-    
+
     def addStretch(self, stretch: int = 0):
         """Add stretch to the content layout (only works with box layouts).
-        
+
         Args:
             stretch (int): Stretch factor
         """
@@ -170,7 +167,7 @@ class WidgetFrame(QFrame):
 
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int):
         """Set the content layout margins.
-        
+
         Args:
             left (int): Left margin
             top (int): Top margin
@@ -181,23 +178,23 @@ class WidgetFrame(QFrame):
 
     def setSpacing(self, spacing: int):
         """Set the content layout spacing.
-        
+
         Args:
             spacing (int): Spacing between layout elements
         """
         self._content_layout.setSpacing(spacing)
-    
+
     def get_header_label(self) -> Optional[QLabel]:
         """Get the header label widget.
-        
+
         Returns:
             The header label widget or None if no header was created
         """
         return self._header_label
-    
+
     def set_header_text(self, text: str):
         """Set the header text.
-        
+
         Args:
             text (str): New header text
         """

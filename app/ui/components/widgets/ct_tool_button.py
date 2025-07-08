@@ -12,8 +12,8 @@ from PySide6.QtWidgets import QToolButton
 from app.config import ICON_SIZE
 from app.style_manager import IconLoader
 
-from app.style_manager.icons.icon_mixin import IconMixin
-from app.style_manager.icons.button_effects import ButtonEffects
+from app.style_manager.icons.mixin import IconMixin
+from app.style_manager.icons.state import IconState
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 PADDING = 4  # Padding around the icon
@@ -57,7 +57,7 @@ class CTToolButton(QToolButton, IconMixin):
         self.button_size = button_size
 
         if hover_effects:
-            ButtonEffects.recolor(self, file_path, icon_size, variant)
+            IconState.recolor(self, file_path, icon_size, variant)
 
         self._init_themed_icon(file_path, icon_size, variant)
         # Set fixed icon_size for the button, using button_size if provided

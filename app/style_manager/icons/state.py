@@ -1,20 +1,20 @@
-"""Module providing ButtonEffects for dynamic button icon effects.
+"""Module providing IconState for dynamic button icon effects.
 
-ButtonEffects applies theme-aware icon variants (DEFAULT, HOVER, CHECKED,
+IconState applies theme-aware icon variants (DEFAULT, HOVER, CHECKED,
 and DISABLED) to QAbstractButton widgets and updates icons on hover and
 toggle events.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from pathlib import Path
-from app.style_manager.icons.icon_factory import IconFactory
+from app.style_manager.icons.factory import IconFactory
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QAbstractButton
 
 
 
 # ── Class Definition ─────────────────────────────────────────────────────────────────────────
-class ButtonEffects:
+class IconState:
     @staticmethod
     def recolor(
         button: QAbstractButton,

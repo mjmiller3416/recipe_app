@@ -1,6 +1,6 @@
 # File: app/style_manager/__init__.py
 
-from .icons.icon_loader import IconLoader
+from .icons.loader import IconLoader
 from .theme_loader import ThemeLoader
 from .theme_controller import ThemeController
 

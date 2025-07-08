@@ -11,11 +11,8 @@ from pathlib import Path
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon, QPixmap
 
-from app.style_manager.icons.icon_loader import IconLoader
-from app.style_manager.icons.svg_loader import SVGLoader
-
-
-from app.style_manager.icons.base import ThemedIcon
+from .loader import IconLoader
+from .svg_loader import SVGLoader
 
 # ── Themed Icon ──────────────────────────────────────────────────────────────────────────────
 class IconFactory:
