@@ -10,12 +10,12 @@ from typing import Optional
 from PySide6.QtCore import QEvent, Qt
 from PySide6.QtWidgets import QHBoxLayout, QToolTip, QVBoxLayout, QWidget
 
-from app.core.database import create_session
 from app.core.dtos.planner_dtos import (MealSelectionCreateDTO,
                                         MealSelectionUpdateDTO)
 from app.core.models.meal_selection import MealSelection
-from app.core.models.recipe import Recipe
 from app.core.services.planner_service import PlannerService
+# use RecipeService instead of direct Recipe.get()
+from app.core.services.recipe_service import RecipeService
 from app.ui.components.composite.recipe_card import RecipeCard
 from app.ui.components.composite.recipe_card import LayoutSize
 from dev_tools import DebugLogger
@@ -31,6 +31,8 @@ class MealWidget(QWidget):
     def __init__(self, planner_service: PlannerService, parent=None):
         super().__init__(parent)
         self.planner_service = planner_service
+        # for loading recipe details
+        self.recipe_service = RecipeService()
         self._meal_model: MealSelection | None = None
         self.meal_slots = {}
 
@@ -145,10 +147,14 @@ class MealWidget(QWidget):
                 side_recipe_3_id=response_dto.side_recipe_3_id
             )
 
-            self.main_slot.set_recipe(Recipe.get(self._meal_model.main_recipe_id))
-            self.meal_slots["side1"].set_recipe(Recipe.get(self._meal_model.side_recipe_1_id))
-            self.meal_slots["side2"].set_recipe(Recipe.get(self._meal_model.side_recipe_2_id))
-            self.meal_slots["side3"].set_recipe(Recipe.get(self._meal_model.side_recipe_3_id))
+            # load recipe models via RecipeService
+            main = self.recipe_service.get_recipe(self._meal_model.main_recipe_id)
+            self.main_slot.set_recipe(main)
+            for idx in (1, 2, 3):
+                rid = getattr(self._meal_model, f"side_recipe_{idx}_id")
+                slot = self.meal_slots.get(f"side{idx}")
+                recipe = self.recipe_service.get_recipe(rid) if rid else None
+                slot.set_recipe(recipe)
 
         except Exception as e:
             DebugLogger.log(f"[MealWidget] Error loading meal {meal_id}: {e}", "error")

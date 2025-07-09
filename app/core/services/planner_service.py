@@ -24,10 +24,16 @@ from ..repositories.planner_repo import PlannerRepo
 class PlannerService:
     """Service for meal planner operations with business logic."""
 
-    def __init__(self, session: Session):
-        """Initialize the PlannerService with database session and repositories."""
+    def __init__(self, session: Session | None = None):
+        """
+        Initialize the PlannerService with a database session and repository.
+        If no session is provided, a new session is created.
+        """
+        if session is None:
+            from app.core.database.db import create_session
+            session = create_session()
         self.session = session
-        self.repo = PlannerRepo(session)
+        self.repo = PlannerRepo(self.session)
 
     # ── Meal Planner State Management ────────────────────────────────────────────────────────
     def load_saved_meal_ids(self) -> List[int]:

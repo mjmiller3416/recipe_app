@@ -104,8 +104,12 @@ class RecipeFilterDTO(BaseModel):
     recipe_category: Optional[str] = None
     meal_type: Optional[str] = None
     diet_pref: Optional[str] = None
-    sort_by: Optional[str] = Field(None, pattern="^(recipe_name|created_at|total_time|servings)$")
-    sort_order: Optional[str] = Field("asc", pattern="^(asc|desc)$")
+    cook_time: Optional[int] = Field(None, ge=0)
+    servings: Optional[int] = Field(None, ge=1)
+    sort_by: Optional[str] = Field(
+        None, pattern="^(recipe_name|created_at|total_time|servings)$")
+    sort_order: Optional[str] = Field(
+        "asc", pattern="^(asc|desc)$")
     favorites_only: bool = False
     search_term: Optional[str] = None
     limit: Optional[int] = Field(None, ge=1, le=100)

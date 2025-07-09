@@ -37,52 +37,29 @@ class TitleBar(QWidget):
         self.old_pos = None
 
         # ── Title Label ──
-        spec = ICON_SPECS[AppIcon.LOGO]
-        self.logo = CTIcon(
-            file_path=spec.path,
-            icon_size=spec.size,
-            variant=spec.variant,
-        )
+        self.logo = CTIcon(AppIcon.LOGO)
         self.logo.setFixedSize(32, 32)
         self.logo.setObjectName("AppLogo")
         self.title = QLabel(SETTINGS["APP_NAME"])
 
         # ── Sidebar Toggle Button ──
-        spec = ICON_SPECS[AppIcon.TOGGLE_SIDEBAR]
         self.btn_ico_toggle_sidebar = CTToolButton(
-            file_path=spec.path,
-            icon_size=spec.size,
-            variant=spec.variant,
-            checkable=True,
+            AppIcon.TOGGLE_SIDEBAR,
+            checkable=True
         )
         self.btn_ico_toggle_sidebar.setFixedSize(SETTINGS["BTN_SIZE"])
         self.btn_ico_toggle_sidebar.setObjectName("BtnToggleSidebar")
 
         # ── Minimize Button ──
-        spec = ICON_SPECS[AppIcon.MINIMIZE]
-        self.btn_ico_minimize = CTToolButton(
-            file_path=spec.path,
-            icon_size=spec.size,
-            variant=spec.variant,
-        )
+        self.btn_ico_minimize = CTToolButton(AppIcon.MINIMIZE)
         self.btn_ico_minimize.setFixedSize(SETTINGS["BTN_SIZE"])
 
         # ── Maximize/Restore Button ──
-        spec = ICON_SPECS[AppIcon.MAXIMIZE]
-        self.btn_ico_maximize = CTToolButton(
-            file_path=spec.path,
-            icon_size=spec.size,
-            variant=spec.variant,
-        )
+        self.btn_ico_maximize = CTToolButton(AppIcon.MAXIMIZE)
         self.btn_ico_maximize.setFixedSize(SETTINGS["BTN_SIZE"])
 
         # ── Close Button ──
-        spec = ICON_SPECS[AppIcon.CLOSE]
-        self.btn_ico_close = CTToolButton(
-            file_path=spec.path,
-            icon_size=spec.size,
-            variant=spec.variant,
-        )
+        self.btn_ico_close = CTToolButton(AppIcon.CLOSE)
         self.btn_ico_close.setFixedSize(SETTINGS["BTN_SIZE"])
         self.btn_ico_close.setObjectName("BtnClose")
 

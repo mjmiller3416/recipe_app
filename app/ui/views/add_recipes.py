@@ -5,8 +5,9 @@ AddRecipes widget for creating new recipes with ingredients and directions.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QHBoxLayout, QLabel, QPushButton, QTextEdit,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QHBoxLayout, QLabel, QPushButton, QTextEdit,
+    QVBoxLayout, QWidget)
 
 from app.config.config import INT_VALIDATOR, NAME_VALIDATOR, THEME
 from app.core.dtos import RecipeCreateDTO, RecipeIngredientDTO
@@ -146,7 +147,7 @@ class AddRecipes(QWidget):
         self.cb_recipe_category.selection_validated.connect(lambda: clear_error_styles(self.cb_recipe_category))
         self.cb_meal_type.selection_validated.connect(lambda: clear_error_styles(self.cb_meal_type))
         self.te_directions.textChanged.connect(lambda: clear_error_styles(self.te_directions))
-    
+
     def _setup_tab_order(self):
         """Define a fixed tab order for keyboard navigation."""
         from PySide6.QtWidgets import QWidget
@@ -249,12 +250,9 @@ class AddRecipes(QWidget):
             ).exec()
             return
 
-        # ── create recipe with RecipeService ──
-        # create recipe via service with session management
-        from app.core.database.db import create_session
+        # ── create recipe via service (internal session management) ──
+        service = RecipeService()
         try:
-            session = create_session()
-            service = RecipeService(session)
             new_recipe = service.create_recipe_with_ingredients(recipe_dto)
         except Exception as svc_err:
             DebugLogger().log(f"[AddRecipes.save_recipe] Error saving recipe: {svc_err}", "error")
@@ -262,11 +260,6 @@ class AddRecipes(QWidget):
                 f"Failed to save recipe: {svc_err}", success=False
             )
             return
-        finally:
-            try:
-                session.close()
-            except Exception:
-                pass
 
         # ── success! ──
         DebugLogger().log(f"[AddRecipes] Recipe '{new_recipe.recipe_name}' saved with ID={new_recipe.id}", "info")

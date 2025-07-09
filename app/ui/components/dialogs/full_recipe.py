@@ -279,7 +279,7 @@ class FullRecipe(DialogWindow):
         # ── Create Icon & Label ──
         spec = ICON_SPECS[icon_key]
         icon = CTIcon(
-            file_path=spec.path,
+            icon_or_path=spec.path,
             icon_size=spec.size,
             variant=spec.variant,
         )

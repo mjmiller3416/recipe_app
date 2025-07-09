@@ -3,25 +3,24 @@
 UploadRecipeImage widget for uploading and cropping recipe images.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 import uuid
 from pathlib import Path
 
 from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import (QFileDialog, QLabel, QStackedLayout,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import QFileDialog, QLabel, QStackedLayout, QVBoxLayout, QWidget
 
-from app.config import UPLOAD_RECIPE_IMAGE
 from app.config.paths import AppPaths
+from app.config import AppIcon
 from app.ui.components.widgets import CTToolButton, RoundedImage
 from app.ui.helpers.ui_helpers import make_overlay
 from dev_tools import DebugLogger
 
-# ── Constants ───────────────────────────────────────────────────────────────────
+# ── Constants ────────────────────────────────────────────────────────────────────────────────
 IMAGE_SAVE_DIR = Path(AppPaths.RECIPE_IMAGES_DIR)
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── Upload Recipe Image ──────────────────────────────────────────────────────────────────────
 class UploadRecipeImage(QWidget):
     image_uploaded = Signal(str)  # emits the path to the CROPPED image
 
@@ -46,12 +45,8 @@ class UploadRecipeImage(QWidget):
         self.upload_button_layout.setContentsMargins(0,0,0,0)
         self.upload_button_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.upload_button = CTToolButton(
-            file_path   = UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["FILE_PATH"],
-            icon_size   = UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["ICON_SIZE"],
-            button_size = UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["BUTTON_SIZE"],
-            variant     = UPLOAD_RECIPE_IMAGE["ICON_UPLOAD"]["DYNAMIC"],
-        )
+        self.upload_button = CTToolButton(AppIcon.UPLOAD_IMAGE)
+
         btn_lbl = QLabel("Upload Image")
 
         self.overlay_widget = make_overlay(
@@ -65,8 +60,8 @@ class UploadRecipeImage(QWidget):
 
         # ── Image Display ──
         # roundedImage will be created/updated when an image is processed
-        self.image_display: RoundedImage | None = None 
-        
+        self.image_display: RoundedImage | None = None
+
         # ensure the widget has a fixed size based on the button, important for layout stability
         button_qsize = self.upload_button.button_size # this is QSize
         self.setFixedSize(button_qsize)
@@ -112,7 +107,7 @@ class UploadRecipeImage(QWidget):
         # save the cropped QPixmap to the recipe images directory
         unique_filename = f"recipe_{uuid.uuid4().hex}.png"  # save as PNG for transparency
         temp_image_path = IMAGE_SAVE_DIR / unique_filename
-        
+
         try:
             if cropped_pixmap.save(str(temp_image_path), "PNG"):
                 self.selected_image_path = temp_image_path
@@ -138,26 +133,26 @@ class UploadRecipeImage(QWidget):
             # create RoundedImage with the same size as the upload button
             button_qsize = self.upload_button.button_size # This is QSize from app.config
             # determine radii (e.g., fixed, or from style)
-            radii = 15 
-            
+            radii = 15
+
             self.image_display = RoundedImage(image_path=image_path, size=button_qsize, radii=radii)
             self.stacked_layout.addWidget(self.image_display) # add to page 1 (index 1)
         else:
             self.image_display.set_image_path(image_path)
-        
+
         self.stacked_layout.setCurrentWidget(self.image_display)
 
     def clear_image(self):
         """Resets the widget to show the upload button, clearing any displayed image."""
 
         # Do not delete the image file here because it may be referenced by a saved recipe
-        
+
         self.selected_image_path = None
         self.original_selected_file_path = None
-        
+
         # switch back to the upload button widget
         self.stacked_layout.setCurrentWidget(self.upload_button_widget)
-        
+
         # clear the image display if it exists
         if self.image_display:
             self.image_display.clear_image()

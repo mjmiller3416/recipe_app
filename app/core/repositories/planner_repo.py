@@ -86,6 +86,8 @@ class PlannerRepo:
             raise ValueError("Cannot create a meal selection that already has an ID.")
 
         self.session.add(meal_selection)
+        # ensure the INSERT is flushed so the instance becomes persistent and gets its ID
+        self.session.flush()
         self.session.refresh(meal_selection)
         return meal_selection
 

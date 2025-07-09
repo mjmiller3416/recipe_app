@@ -15,7 +15,6 @@ from app.ui.helpers.ui_helpers import center_on_screen
 
 # ── Constants ───────────────────────────────────────────────────────────────────────────
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]
-ICONS = APPLICATION_WINDOW["ICONS"]
 
 # ── Application Window ──────────────────────────────────────────────────────────────────
 class DialogWindow(QDialog):
@@ -77,4 +76,4 @@ class DialogWindow(QDialog):
         self.resize(int(width), int(height))
         center_on_screen(self)
 
-    
+

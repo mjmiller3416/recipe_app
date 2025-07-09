@@ -54,8 +54,11 @@ class NavigationService:
 
         # refresh ShoppingList if navigating to it
         if page_name == "shopping_list" and isinstance(next_widget, ShoppingList):
-            meal_ids = PlannerService.load_saved_meal_ids()
-            recipe_ids = ShoppingService.get_recipe_ids_from_meals(meal_ids)
+            # load saved meals and derive recipe IDs via services
+            planner_svc = PlannerService()
+            meal_ids = planner_svc.load_saved_meal_ids()
+            shopping_svc = ShoppingService()
+            recipe_ids = shopping_svc.get_recipe_ids_from_meals(meal_ids)
             next_widget.load_shopping_list(recipe_ids)
         
         if current_widget != next_widget:

@@ -164,6 +164,10 @@ class MainWindow(FramelessWindow):
             button = self.sidebar.buttons.get(btn_name)
             if button:
                 button.clicked.connect(lambda _, p=page_name: self._switch_page(p))
+        # Exit button should close the application and trigger save via closeEvent
+        exit_btn = self.sidebar.buttons.get("btn_exit")
+        if exit_btn:
+            exit_btn.clicked.connect(self.close)
 
     def _switch_page(self, page_name: str):
         """Helper to switch pages and update the header text."""

@@ -9,7 +9,7 @@ from pathlib import Path
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QToolButton
 
-from app.config import ICON_SIZE
+from app.config import AppIcon, ICON_SIZE
 from app.style_manager import IconLoader
 
 from app.style_manager.icons.mixin import IconMixin
@@ -22,7 +22,7 @@ PADDING = 4  # Padding around the icon
 class CTToolButton(QToolButton, IconMixin):
     def __init__(
         self,
-        file_path: Path,
+        icon_or_path: AppIcon | str | Path,
         icon_size: QSize = ICON_SIZE,
         button_size: QSize = None,
         padding: int = PADDING,
@@ -36,16 +36,27 @@ class CTToolButton(QToolButton, IconMixin):
         Initializes a CTToolButton instance.
 
         Args:
-            file_path (str): The path to the SVG icon file.
+            icon_or_path (AppIcon | str | Path): AppIcon enum or path to the SVG icon file.
             icon_size (QSize): The size of the icon. Defaults to ICON_SIZE.
             button_size (QSize, optional): The fixed size for the button. If None, uses icon size + padding.
             variant (str, optional): The variant of the icon. Defaults to "DEFAULT".
             object_name (str, optional): The object name for the widget. Defaults to "".
-            checked (bool, optional): Whether the button is checked. Defaults to False.
+            checkable (bool, optional): Whether the button is checked. Defaults to False.
             hover_effects (bool, optional): Whether to apply hover effects. Defaults to True.
-            text (str, optional): The button label text. Defaults to empty string.
             parent: The parent widget. Defaults to None.
         """
+        from app.config.app_icon import AppIcon, ICON_SPECS
+        if isinstance(icon_or_path, AppIcon):
+            spec = ICON_SPECS[icon_or_path]
+            file_path = spec.path
+            icon_size = spec.size
+            variant = spec.variant
+            # Prefer explicit button_size argument, else use from spec if present
+            if button_size is None and hasattr(spec, "button_size"):
+                button_size = getattr(spec, "button_size", None)
+        else:
+            file_path = icon_or_path
+
         super().__init__(parent)
 
         if object_name:

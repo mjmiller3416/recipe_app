@@ -9,8 +9,7 @@ multiple meal planning tabs and integrates with the database to load and save me
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
 
-from app.config import MEAL_PLANNER
-from app.core.database import create_session
+from app.config import AppIcon
 from app.core.services.planner_service import PlannerService
 from app.ui.components.composite import MealWidget
 from app.ui.components.widgets import CTIcon
@@ -31,8 +30,8 @@ class MealPlanner(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.session = create_session()
-        self.planner_service = PlannerService(self.session)
+        # initialize PlannerService; session managed internally
+        self.planner_service = PlannerService()
 
         self.setObjectName("MealPlanner")
         DebugLogger.log("Initializing MealPlanner page", "debug")
@@ -72,11 +71,7 @@ class MealPlanner(QWidget):
     def new_meal_tab(self):
         """Add the last "+" tab to create new custom meals."""
         new_meal_tab = QWidget()
-        icon_asset = CTIcon(
-            file_path = MEAL_PLANNER["ICON_ADD"],
-            icon_size      = MEAL_PLANNER["ICON_SIZE"],
-            variant   = MEAL_PLANNER["STATIC"]
-        )
+        icon_asset = CTIcon(AppIcon.MEAL_PLANNER_ADD)
         icon = icon_asset.pixmap()
 
         index = self.meal_tabs.addTab(new_meal_tab, icon, "")
@@ -124,7 +119,6 @@ class MealPlanner(QWidget):
             DebugLogger.log(f"[MealPlanner] Failed to save: {result.message}", "error")
 
     def closeEvent(self, event):
-        if self.session:
-            self.session.close()
+        # persist planner state before closing
         super().closeEvent(event)
 

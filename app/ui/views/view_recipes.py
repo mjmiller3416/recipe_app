@@ -9,7 +9,6 @@ from PySide6.QtWidgets import (QCheckBox, QHBoxLayout, QScrollArea,
                                QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
 
 from app.config import RECIPE_CATEGORIES, SORT_OPTIONS
-from app.core.database.db import create_session
 from app.core.dtos import RecipeFilterDTO
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
@@ -24,7 +23,7 @@ from dev_tools import DebugLogger
 class ViewRecipes(QWidget):
     """Dynamically displays all recipes in a responsive scrollable layout using RecipeViewer wrappers."""
 
-    recipe_selected = Signal(int)  # Signal that emits selected recipe ID
+    recipe_selected = Signal(int)  # signal that emits selected recipe ID
 
     def __init__(self, parent=None, meal_selection=False):
         """
@@ -46,10 +45,10 @@ class ViewRecipes(QWidget):
 
         self.load_recipes()
 
-    # Mapping from user-friendly sort options to backend field names
+    # mapping from user-friendly sort options to backend field names
     SORT_OPTION_MAP = {
         "A-Z": "recipe_name",
-        "Z-A": "recipe_name",  # You may want to handle order elsewhere
+        "Z-A": "recipe_name",  # you may want to handle order elsewhere
         "Newest": "created_at",
         "Oldest": "created_at",
         "Shortest Time": "total_time",
@@ -72,17 +71,20 @@ class ViewRecipes(QWidget):
 
         # filter combobox
         self.cb_filter = ComboBox(list_items=RECIPE_CATEGORIES, placeholder="Filter")
-        self.lyt_cb.addWidget(self.cb_filter)  # add filter dropdown
-        self.cb_filter.currentTextChanged.connect(
-            self.handle_filter_change
-        )  # connect filter change event
+        self.lyt_cb.addWidget(self.cb_filter)
+        # connect when user picks an item (selection_validated covers clicks) or text changes
+        self.cb_filter.currentTextChanged.connect(self.handle_filter_change)
+        self.cb_filter.selection_validated.connect(
+            lambda valid: self.handle_filter_change(self.cb_filter.currentText())
+        )
 
         # sort combobox
         self.cb_sort = ComboBox(list_items=SORT_OPTIONS, placeholder="Sort")
-        self.lyt_cb.addWidget(self.cb_sort)  # add sort dropdown
-        self.cb_sort.currentTextChanged.connect(
-            self.handle_sort_change
-        )  # connect sort change event
+        self.lyt_cb.addWidget(self.cb_sort)
+        self.cb_sort.currentTextChanged.connect(self.handle_sort_change)
+        self.cb_sort.selection_validated.connect(
+            lambda valid: self.handle_sort_change(self.cb_sort.currentText())
+        )
 
         # favorites checkbox
         self.chk_favorites = QCheckBox("Show Favorites Only")
@@ -120,65 +122,22 @@ class ViewRecipes(QWidget):
         """Handle sort option selection."""
         self.load_filtered_sorted_recipes()
 
-    def load_filtered_sorted_recipes(self):
-        """Loads recipes using current filter, sort, and favorites-only flag."""
-        recipe_category = self.cb_filter.currentText()
-        sort_label = self.cb_sort.currentText()
-        favorites_only = self.chk_favorites.isChecked()
-
-        # Map sort label to backend field
-        sort_by = self.SORT_OPTION_MAP.get(sort_label, "recipe_name")
-
-        self.clear_recipe_display()
-
-        filter_dto = RecipeFilterDTO(
-            recipe_category=recipe_category,
-            sort_by=sort_by,
-            favorites_only=favorites_only,
-        )
-
-        # create a database session and use RecipeService instance to fetch
-        session = create_session()
-        try:
-            service = RecipeService(session)
-            recipes = service.list_filtered(filter_dto)
-        finally:
-            session.close()
-
-        for recipe in recipes:
-            slot = RecipeCard(LayoutSize.MEDIUM, parent=self.scroll_container)
-            slot.set_recipe(recipe)
-
-            if self.meal_selection:
-                slot.card_clicked.connect(lambda r, self=self: self.select_recipe(r.id))
-
-            self.flow_layout.addWidget(slot)
-
-    def clear_recipe_display(self):
-        """Removes all recipe widgets from the layout."""
-        while self.flow_layout.count():
-            w = self.flow_layout.takeAt(0)
-            if w:
-                w.deleteLater()
-
-    def load_recipes(self) -> None:
+    def _fetch_and_display_recipes(self, filter_dto: RecipeFilterDTO) -> None:
+        """Helper method to fetch recipes using a DTO and update the UI."""
         from app.ui.components.composite import RecipeCard
         from app.ui.components.composite.recipe_card import LayoutSize
 
-        # Use default sort (A-Z maps to recipe_name)
-        filter_dto = RecipeFilterDTO(sort_by=self.SORT_OPTION_MAP.get("A-Z", "recipe_name"))
-        # fetch recipes via service instance
-        session = create_session()
-        try:
-            service = RecipeService(session)
-            recipes = service.list_filtered(filter_dto)
-        finally:
-            session.close()
-        if not recipes:
-            return
-
         self.clear_recipe_display()
 
+        # fetch recipes via RecipeService
+        service = RecipeService()
+        recipes = service.list_filtered(filter_dto)
+
+        if not recipes:
+            # optionally, display a "No recipes found" message
+            return
+
+        # populate the layout with recipe cards
         for recipe in recipes:
             slot = RecipeCard(LayoutSize.MEDIUM, parent=self.scroll_container)
             slot.set_recipe(recipe)
@@ -189,6 +148,39 @@ class ViewRecipes(QWidget):
             self.flow_layout.addWidget(slot)
 
         self.recipes_loaded = True
+
+    def load_recipes(self) -> None:
+        """Loads initial, default-sorted list of recipes."""
+        default_filter_dto = RecipeFilterDTO(
+            recipe_category=None,
+            sort_by=self.SORT_OPTION_MAP.get("A-Z", "recipe_name"),
+            sort_order="asc",
+            favorites_only=False
+        )
+        self._fetch_and_display_recipes(default_filter_dto)
+
+    def load_filtered_sorted_recipes(self) -> None:
+        """Loads recipes using current UI filter and sort selections."""
+        recipe_category = self.cb_filter.currentText()
+        if not recipe_category or recipe_category in ("All", "Filter"):
+            recipe_category = None
+
+        sort_label = self.cb_sort.currentText()
+
+        filter_dto = RecipeFilterDTO(
+            recipe_category=recipe_category,
+            sort_by=self.SORT_OPTION_MAP.get(sort_label, "recipe_name"),
+            sort_order="desc" if sort_label in ("Z-A",) else "asc",
+            favorites_only=self.chk_favorites.isChecked(),
+        )
+        self._fetch_and_display_recipes(filter_dto)
+
+    def clear_recipe_display(self):
+        """Removes all recipe widgets from the layout."""
+        while self.flow_layout.count():
+            w = self.flow_layout.takeAt(0)
+            if w:
+                w.deleteLater()
 
     def select_recipe(self, recipe_id):
         """Emit the selected recipe's ID and close the selection dialog.

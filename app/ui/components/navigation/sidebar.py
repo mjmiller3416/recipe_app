@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (QButtonGroup, QLabel, QSizePolicy, QSpacerItem,
                                QVBoxLayout, QWidget)
 
 from app.config import SIDEBAR
+from app.config.app_icon import AppIcon, ICON_SPECS
 from app.ui.animations import Animator
 from app.ui.components.images import AvatarLoader
 from app.ui.components.navigation.nav_button import NavButton
@@ -16,7 +17,6 @@ from app.ui.helpers.ui_helpers import create_fixed_wrapper
 from dev_tools import DebugLogger
 
 # ── Constants ─────────────────────────────────────────────────────────────
-SIDEBAR_ICONS = SIDEBAR["ICONS"]
 START = SIDEBAR["SETTINGS"]["EXPANDED_WIDTH"]
 END = SIDEBAR["SETTINGS"]["COLLAPSED_WIDTH"]
 DURATION = SIDEBAR["SETTINGS"]["DURATION"]
@@ -85,16 +85,22 @@ class Sidebar(QWidget):
 
     # ── Private Methods ──
     def _create_nav_button(self, label: str, is_checkable: bool = True) -> NavButton:
-        icon_info = SIDEBAR_ICONS[label.replace(" ", "_").upper()]
+        """
+        Create a navigation button using the AppIcon enum for icon specification.
+        """
+        # derive enum key from label (e.g. "View Recipes" -> "VIEW_RECIPES")
+        enum_key = label.replace(' ', '_').upper()
+        icon_enum = AppIcon[enum_key]
+        spec = ICON_SPECS[icon_enum]
         object_name = f"{label.replace(' ', '_')}Button"
 
         button = NavButton(
-            file_path = icon_info["PATH"],
-            icon_size = icon_info["SIZE"],
-            variant   = icon_info["DYNAMIC"],
-            text      = label,
-            checkable = is_checkable,
-            height    = 82,
+            file_path=spec.path,
+            icon_size=spec.size,
+            variant=spec.variant,
+            text=label,
+            checkable=is_checkable,
+            height=82,
         )
         button.setObjectName(object_name)
         self.mainLayout.addWidget(button)

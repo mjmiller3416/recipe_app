@@ -9,15 +9,11 @@ and emits signals when a valid selection is made.
 from typing import Sequence
 
 from PySide6.QtCore import QEvent, QStringListModel, Qt, Signal
-from PySide6.QtWidgets import (QApplication, QCompleter, QHBoxLayout,
-                               QLineEdit, QWidget)
+from PySide6.QtWidgets import QApplication, QCompleter, QHBoxLayout, QLineEdit, QWidget
 
-from app.config import CUSTOM_COMBOBOX
 from app.ui.components.widgets.ct_tool_button import CTToolButton
+from app.config import AppIcon
 from dev_tools import DebugLogger
-
-# ── Constants ───────────────────────────────────────────────────────────────────────────
-ICONS = CUSTOM_COMBOBOX["ICONS"]
 
 # ── Class Definition: ComboBox ──────────────────────────────────────────────────────────
 class ComboBox(QWidget):
@@ -67,11 +63,7 @@ class ComboBox(QWidget):
         self.installEventFilter(self)
 
         # ── List Button ──
-        self.cb_btn = CTToolButton(
-            file_path = ICONS["ARROW"]["PATH"],
-            icon_size = ICONS["ARROW"]["SIZE"],
-            variant   = ICONS["ARROW"]["DYNAMIC"],
-        )
+        self.cb_btn = CTToolButton(AppIcon.COMBOBOX_ARROW)
         self.cb_btn.setObjectName("CBButton")
         self.cb_btn.setCursor(Qt.PointingHandCursor)
 

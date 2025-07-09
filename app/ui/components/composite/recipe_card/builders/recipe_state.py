@@ -10,20 +10,19 @@ from pathlib import Path
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
-from app.config import ICON_SIZE, RECIPE_CARD
-from app.core.database.db import create_session
+from app.config.app_icon import AppIcon, ICON_SPECS
+# session management moved into services
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
 
 
 def _toggle_favorite(recipe_id: int) -> None:
-    """Helper to toggle favorite status via service with its own session."""
-    session = create_session()
+    """Helper to toggle favorite status via RecipeService."""
     try:
-        service = RecipeService(session)
+        service = RecipeService()
         service.toggle_favorite(recipe_id)
-    finally:
-        session.close()
+    except Exception:
+        pass
 from app.ui.components.layout import Separator
 from app.ui.components.widgets import CTIcon, CTToolButton, RoundedImage
 from app.ui.helpers.ui_helpers import make_overlay
@@ -117,9 +116,7 @@ class RecipeCard:
 
         # favorite button
         btn_fav = CTToolButton(
-            file_path = RECIPE_CARD["ICON_FAVORITE"],
-            icon_size = ICON_SIZE,
-            variant   = RECIPE_CARD["DYNAMIC"],
+            AppIcon.FAVORITE,
             checkable = True,
         )
         btn_fav.setCursor(Qt.PointingHandCursor)
@@ -146,7 +143,7 @@ class RecipeCard:
         # add servings
         lyt_meta.addLayout(
             self._create_meta_section(
-                file_path=RECIPE_CARD["ICON_SERVINGS"],
+                AppIcon.SERVINGS,
                 heading="Servings",
                 value=self.recipe.formatted_servings(),
             )
@@ -158,7 +155,7 @@ class RecipeCard:
         # add total time
         lyt_meta.addLayout(
             self._create_meta_section(
-                file_path=RECIPE_CARD["ICON_TOTAL_TIME"],
+                AppIcon.TOTAL_TIME,
                 heading="Time",
                 value=self.recipe.formatted_time(),
             )
@@ -178,7 +175,7 @@ class RecipeCard:
         """
         raise NotImplementedError("Large frame layout is not yet implemented.")
 
-    def _create_meta_section(self, *, file_path: Path, heading: str, value: str) -> QVBoxLayout:
+    def _create_meta_section(self, icon_enum: AppIcon, heading: str, value: str) -> QVBoxLayout:
         """Create a vertical layout section for displaying metadata with an icon, heading, and value.
 
         Args:
@@ -195,10 +192,12 @@ class RecipeCard:
         lyt.setSpacing(2)
 
         # icon
+        # use centralized icon specs from AppIcon enum
+        spec = ICON_SPECS[icon_enum]
         ico_meta = CTIcon(
-            file_path=file_path,
-            icon_size=RECIPE_CARD["ICON_SIZE"],
-            variant=RECIPE_CARD["STATIC"],
+            icon_or_path=spec.path,
+            icon_size=spec.size,
+            variant=spec.variant,
         )
         ico_meta.setAlignment(Qt.AlignCenter)
         lyt.addWidget(ico_meta, 0, Qt.AlignCenter) # add to layout

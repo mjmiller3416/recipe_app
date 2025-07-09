@@ -7,11 +7,10 @@ This module defines a custom search widget that includes a search icon, a text i
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QGridLayout, QLineEdit, QSizePolicy
 
-from app.config import SEARCH
+from app.config import AppIcon
 from app.ui.components.widgets import CTIcon, CTToolButton
 
 # ── Constants ───────────────────────────────────────────────────────────────────
-ICONS = SEARCH["ICONS"]
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class SearchBar(QFrame):
@@ -22,7 +21,7 @@ class SearchBar(QFrame):
         - search_triggered(str): when text is entered or Enter is pressed.
         - recipe_selected(str): placeholder for future recipe selection support.
     """
-    
+
     # ── Signals ─────────────────────────────────────────────────────────────────────
     recipe_selected = Signal(str)
     search_triggered = Signal(str)
@@ -44,11 +43,7 @@ class SearchBar(QFrame):
         self.layout.setSpacing(5)
 
         # ── Search Icon ──
-        self.ico_search = CTIcon(
-            file_path =ICONS["SEARCH"]["PATH"],
-            icon_size =ICONS["SEARCH"]["SIZE"],
-            variant   =ICONS["SEARCH"]["STATIC"],
-        )
+        self.ico_search = CTIcon(AppIcon.SEARCH)
         self.layout.addWidget(self.ico_search, 0, 0)
 
         # ── Input Field ──
@@ -60,11 +55,7 @@ class SearchBar(QFrame):
         self.layout.addWidget(self.le_search, 0, 1)
 
         # ── Clear Button ──
-        self.btn_ico_clear = CTToolButton(
-            file_path = ICONS["CLEAR"]["PATH"],
-            icon_size = ICONS["CLEAR"]["SIZE"],
-            variant   = ICONS["CLEAR"]["DYNAMIC"],
-        )
+        self.btn_ico_clear = CTToolButton(AppIcon.CLEAR)
         self.btn_ico_clear.setVisible(False) # visibility based on text input
         self.layout.addWidget(self.btn_ico_clear, 0, 2)
 

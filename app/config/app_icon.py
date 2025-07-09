@@ -3,6 +3,7 @@
 Defines AppIcon enum and ICON_SPECS mapping for all application icons.
 """
 
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from enum import Enum, auto
 from pathlib import Path
 from typing import Dict
@@ -13,6 +14,8 @@ from app.style_manager.icons.spec import IconSpec
 from app.config.paths import AppPaths
 from app.style_manager.themes.dark_theme import THEME
 
+
+# ── AppIcon Enum Definition ──────────────────────────────────────────────────────────────────
 class AppIcon(Enum):
     # Title Bar Icons
     LOGO = auto()
@@ -128,7 +131,7 @@ ICON_SPECS: Dict[AppIcon, IconSpec] = {
         variant=THEME["ICON_STYLES"]["NAV"],
     ),
     AppIcon.ADD_RECIPES: IconSpec(
-        path=AppPaths.ICONS_DIR / "add_recipes.svg",
+        path=AppPaths.ICONS_DIR / "add.svg",
         size=QSize(36, 36),
         variant=THEME["ICON_STYLES"]["NAV"],
     ),
@@ -198,7 +201,7 @@ ICON_SPECS: Dict[AppIcon, IconSpec] = {
 
     # Empty State
     AppIcon.ADD_MEAL: IconSpec(
-        path=AppPaths.ICONS_DIR / "add_meal.svg",
+        path=AppPaths.ICONS_DIR / "add.svg",
         size=QSize(60, 60),
         variant=THEME["ICON"]["ACCENT"],
     ),

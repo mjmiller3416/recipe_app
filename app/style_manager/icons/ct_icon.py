@@ -10,6 +10,7 @@ from pathlib import Path
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QLabel
 
+from app.config import AppIcon
 from app.style_manager.icons.loader import IconLoader
 from app.style_manager.icons.factory import IconFactory
 
@@ -23,16 +24,41 @@ class CTIcon(QLabel):
 
     def __init__(
         self,
-        file_path: Path,
-        icon_size: QSize,
-        variant: str = "DEFAULT",
+        icon_or_path: AppIcon | str | Path,
+        icon_size: QSize | None = None,
+        variant: str | None = None,
         parent=None
     ):
+        """
+        Args:
+            icon_or_path (AppIcon | str | Path): AppIcon enum or path to the SVG icon file.
+            icon_size (QSize): The size of the icon.
+            variant (str, optional): The variant of the icon. Defaults to "DEFAULT".
+            parent: The parent widget. Defaults to None.
+        """
+        from app.config.app_icon import AppIcon, ICON_SPECS
+        # support passing AppIcon enum directly
+        if isinstance(icon_or_path, AppIcon):
+            spec = ICON_SPECS[icon_or_path]
+            file_path = spec.path
+            icon_size = spec.size
+            variant = spec.variant
+        else:
+            file_path = icon_or_path
+            # icon_size and variant must be provided when using a raw path
+            if icon_size is None:
+                raise ValueError("icon_size must be provided when using a file path")
+            variant = variant or "DEFAULT"
+
         super().__init__(parent)
 
         self.file_path = file_path
         self.size = icon_size
-        self.variant = variant.upper()
+        # Normalize variant: uppercase if string, leave dict as-is
+        if isinstance(variant, str):
+            self.variant = variant.upper()
+        else:
+            self.variant = variant
 
         self.setFixedSize(self.size)
         self.setStyleSheet("background-color: transparent;")

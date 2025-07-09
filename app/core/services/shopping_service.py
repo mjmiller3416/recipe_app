@@ -163,6 +163,18 @@ class ShoppingService:
                 if meal.side_recipe_3_id:
                     recipe_ids.append(meal.side_recipe_3_id)
         return recipe_ids
+    
+    def get_recipe_ids_from_meals(self, meal_ids: List[int]) -> List[int]:
+        """
+        Public alias for extracting all recipe IDs from saved meal selections.
+
+        Args:
+            meal_ids (List[int]): List of meal selection IDs.
+
+        Returns:
+            List[int]: Flattened list of recipe IDs used in those meals.
+        """
+        return self._extract_recipe_ids_from_meals(meal_ids)
 
     # ── Shopping List Retrieval ──────────────────────────────────────────────────────────────
     def get_shopping_list(

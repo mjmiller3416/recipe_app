@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (QDialog, QDialogButtonBox,
                                QGraphicsDropShadowEffect, QGridLayout, QLabel,
                                QSizePolicy, QSpacerItem, QVBoxLayout)
 
-from app.config import MESSAGE_DIALOG
+from app.config import AppIcon
 from app.ui.components.widgets import CTIcon
 from dev_tools import DebugLogger
 
@@ -44,12 +44,12 @@ class MessageDialog(QDialog):
         self.lyt_message.setContentsMargins(9, 9, 10, 9)
         self.lyt_message.setSpacing(0)
 
-        icon_config = MESSAGE_DIALOG.get(f"ICON_{self.message_type.upper()}", MESSAGE_DIALOG["ICON_INFO"])
+        """ icon_config = MESSAGE_DIALOG.get(f"ICON_{self.message_type.upper()}", MESSAGE_DIALOG["ICON_INFO"])
         self.status_icon = CTIcon(
             file_path=icon_config["ICON_PATH"],
             size=MESSAGE_DIALOG["ICON_SIZE"],
             variant=icon_config["ICON_COLOR"]
-        )
+        ) """
         self.lyt_message.addWidget(self.status_icon, 0, Qt.AlignmentFlag.AlignHCenter)
         self.lyt_message.addItem(QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Fixed))
 

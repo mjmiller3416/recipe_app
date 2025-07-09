@@ -15,6 +15,7 @@ from ..models.ingredient import Ingredient
 from ..models.recipe import Recipe
 from ..repositories.ingredient_repo import IngredientRepo
 from ..repositories.recipe_repo import RecipeRepo
+from .session_manager import session_scope
 
 
 # ── Exceptions ───────────────────────────────────────────────────────────────────────────────
@@ -29,12 +30,18 @@ class DuplicateRecipeError(Exception):
 class RecipeService:
     """Service layer for managing recipes and their ingredients."""
 
-    def __init__(self, session: Session):
-        """Initialize the RecipeService with database session and repositories."""
+    def __init__(self, session: Session | None = None):
+        """
+        Initialize the RecipeService with a database session and repositories.
+        If no session is provided, a new session is created.
+        """
+        if session is None:
+            from app.core.database.db import create_session
+            session = create_session()
         self.session = session
         # ensure ingredient repository is created before passing into recipe repository
-        self.ingredient_repo = IngredientRepo(session)
-        self.recipe_repo = RecipeRepo(session, self.ingredient_repo)
+        self.ingredient_repo = IngredientRepo(self.session)
+        self.recipe_repo = RecipeRepo(self.session, self.ingredient_repo)
 
     def create_recipe_with_ingredients(self, recipe_dto: RecipeCreateDTO) -> Recipe:
         if self.recipe_repo.recipe_exists(
@@ -101,10 +108,22 @@ class RecipeService:
         Returns:
             Recipe: The updated recipe with new favorite status.
         """
-        try:
-            recipe = self.recipe_repo.toggle_favorite(recipe_id)
-            self.session.commit()
-            return recipe
-        except SQLAlchemyError as err:
-            self.session.rollback()
-            raise err
+        with session_scope() as session:
+            ingredient_repo = IngredientRepo(session)
+            recipe_repo = RecipeRepo(session, ingredient_repo)
+            return recipe_repo.toggle_favorite(recipe_id)
+
+    def get_recipe(self, recipe_id: int) -> Recipe | None:
+        """
+        Retrieve a single recipe by ID.
+
+        Args:
+            recipe_id (int): ID of the recipe to retrieve.
+
+        Returns:
+            Optional[Recipe]: The Recipe if found, else None.
+        """
+        with session_scope() as session:
+            ingredient_repo = IngredientRepo(session)
+            recipe_repo = RecipeRepo(session, ingredient_repo)
+            return recipe_repo.get_by_id(recipe_id)

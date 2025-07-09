@@ -17,6 +17,9 @@ from dev_tools import DebugLogger, StartupTimer
 from .constants import LayoutSize
 from .frame_factory import FrameFactory
 
+from app.core.database.db import create_session
+from app.core.services.recipe_service import RecipeService
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────────────
 class RecipeCard(QFrame):
@@ -147,9 +150,15 @@ class RecipeCard(QFrame):
         Fetches recipes, displays a selection dialog, and loads the chosen recipe.
         """
         try:
-            all_recipes = Recipe.all()  # fetch all recipes from the database
+            # fetch all recipes via service layer
+            session = create_session()
+            try:
+                service = RecipeService(session)
+                all_recipes = service.recipe_repo.get_all_recipes()
+            finally:
+                session.close()
             if not all_recipes:
-                print("No recipes found in the database.")  # handle empty state
+                print("No recipes found in the database.")
                 return
 
             # ── Show Selection Dialog ──

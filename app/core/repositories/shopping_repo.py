@@ -135,7 +135,7 @@ class ShoppingRepo:
             items.append(item)
 
         return items
-    
+
     def aggregate_ingredients(self, recipe_ids: List[int]) -> List[ShoppingItem]:
         """
         Alias for aggregate_recipe_ingredients for backward compatibility.
@@ -187,13 +187,13 @@ class ShoppingRepo:
         self.session.add(shopping_item)
         self.session.refresh(shopping_item)
         return shopping_item
-    
+
     def add_manual_item(self, shopping_item: ShoppingItem) -> ShoppingItem:
         """
         Alias to create a manual shopping item.
         """
         return self.create_shopping_item(shopping_item)
-    
+
     def create_shopping_items_from_recipes(self, recipe_ids: List[int]) -> List[ShoppingItem]:
         """
         Create and persist shopping items aggregated from given recipes.
@@ -218,7 +218,7 @@ class ShoppingRepo:
         stmt = select(ShoppingItem).where(ShoppingItem.id == item_id)
         result = self.session.execute(stmt)
         return result.scalar_one_or_none()
-    
+
     def update_item_status(self, item_id: int, have: bool) -> bool:
         """
         Update the 'have' status of a shopping item by ID.
@@ -245,7 +245,7 @@ class ShoppingRepo:
 
         result = self.session.execute(stmt)
         return result.scalars().all()
-    
+
     def delete_item(self, item_id: int) -> bool:
         """
         Delete a shopping item by ID. Alias for delete_shopping_item.
@@ -300,7 +300,7 @@ class ShoppingRepo:
 
         result = self.session.execute(stmt)
         return result.rowcount
-    
+
     def clear_recipe_items(self) -> int:
         """
         Clear all recipe-generated shopping items.
@@ -486,7 +486,7 @@ class ShoppingRepo:
 
 
         return updated_count
-    
+
     def bulk_update_states(self, updates: Dict[str, bool]) -> int:
         """
         Bulk update 'checked' status for multiple shopping states by key.

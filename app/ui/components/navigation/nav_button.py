@@ -44,7 +44,7 @@ class NavButton(QPushButton):
 
         # ── Internal Widgets ──
         self._icon = CTToolButton(
-            file_path=file_path,
+            icon_or_path=file_path,
             icon_size=icon_size,
             variant=variant,
             checkable=checkable,
