@@ -27,11 +27,15 @@ from ..repositories.shopping_repo import ShoppingRepo
 class ShoppingService:
     """Service for shopping list operations with business logic."""
 
-    def __init__(self, session: Session):
-        """Initialize the ShoppingService with database session and repositories."""
+    def __init__(self, session: Session | None = None):
+        """Initialize the ShoppingService with a database session and repositories.
+        If no session is provided, a new session is created."""
+        if session is None:
+            from app.core.database.db import create_session
+            session = create_session()
         self.session = session
-        self.shopping_repo = ShoppingRepo(session)
-        self.planner_repo = PlannerRepo(session)
+        self.shopping_repo = ShoppingRepo(self.session)
+        self.planner_repo = PlannerRepo(self.session)
 
     # ── Shopping List Generation ─────────────────────────────────────────────────────────────
     def generate_shopping_list(

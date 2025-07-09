@@ -146,7 +146,7 @@ class WindowAnimator(QObject):
         self.window.setGeometry(original_geometry)
         self.animation_group = None
 
-    def _get_taskbar_rect():
+    def _get_taskbar_rect(self):
         """
         Gets the bounding rectangle of the Windows taskbar.
 

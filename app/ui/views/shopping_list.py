@@ -94,8 +94,12 @@ class ShoppingList(QWidget):
             if widget:
                 widget.deleteLater()
 
-        ingredients = ShoppingService.generate_shopping_list(recipe_ids) # fetch ingredients from the service
-        self._breakdown_map = ShoppingService.get_ingredient_breakdown(recipe_ids) # get breakdown for tooltips
+        # fetch ingredients via service (internal session handling)
+        shopping_svc = ShoppingService()
+        # generate shopping list (Result has .items)
+        result = shopping_svc.generate_shopping_list(recipe_ids)
+        ingredients = getattr(result, 'items', [])
+        self._breakdown_map = shopping_svc.get_ingredient_breakdown(recipe_ids)  # get breakdown for tooltips
 
         # ── Group By Category ──
         grouped = defaultdict(list)
@@ -122,7 +126,15 @@ class ShoppingList(QWidget):
             if not name:
                 return  # optionally show error
 
-            ShoppingService.add_manual_item(name, qty, unit)
+            # add manual item via service with DTO
+            from app.core.dtos.shopping_dtos import ManualItemCreateDTO
+            svc = ShoppingService()
+            dto = ManualItemCreateDTO(
+                ingredient_name=name,
+                quantity=qty,
+                unit=unit,
+            )
+            svc.add_manual_item(dto)
             self.input_name.clear()
             self.input_qty.clear()
             self.load_shopping_list(self.active_recipe_ids)  # refresh list
