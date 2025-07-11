@@ -51,6 +51,8 @@ class PlannerRepo:
         for meal_id in meal_ids:
             saved_state = SavedMealState(meal_id=meal_id)
             self.session.add(saved_state)
+        # flush to persist new saved meal states for immediate retrieval
+        self.session.flush()
 
 
     def clear_saved_meal_states(self) -> None:
@@ -159,6 +161,8 @@ class PlannerRepo:
 
         if meal_selection:
             self.session.delete(meal_selection)
+            # flush to persist deletion immediately
+            self.session.flush()
             return True
         return False
 

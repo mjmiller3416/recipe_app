@@ -1,12 +1,11 @@
 # app/style_manager/icons/__init__.py
 
-from app.style_manager.icons.ct_icon import CTIcon
+"""Icons subpackage: Provides core icon utilities. CTIcon is available via its module."""
 from app.style_manager.icons.state import IconState
 from app.style_manager.icons.mixin import IconMixin
 from app.style_manager.icons.base import ThemedIcon
 
 __all__ = [
-    "CTIcon",
     "IconState",
     "IconMixin",
     "ThemedIcon",

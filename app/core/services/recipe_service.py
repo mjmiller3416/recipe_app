@@ -100,7 +100,7 @@ class RecipeService:
 
     def toggle_favorite(self, recipe_id: int) -> Recipe:
         """
-        Toggle the favorite status of a recipe.
+        Toggle the favorite status of a recipe using the current session.
 
         Args:
             recipe_id (int): ID of the recipe to toggle.
@@ -108,10 +108,15 @@ class RecipeService:
         Returns:
             Recipe: The updated recipe with new favorite status.
         """
-        with session_scope() as session:
-            ingredient_repo = IngredientRepo(session)
-            recipe_repo = RecipeRepo(session, ingredient_repo)
-            return recipe_repo.toggle_favorite(recipe_id)
+        # Use the repository bound to this service's session
+        updated_recipe = self.recipe_repo.toggle_favorite(recipe_id)
+        # persist the change
+        try:
+            self.session.commit()
+        except Exception:
+            self.session.rollback()
+            raise
+        return updated_recipe
 
     def get_recipe(self, recipe_id: int) -> Recipe | None:
         """

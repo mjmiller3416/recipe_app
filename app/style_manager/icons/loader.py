@@ -11,7 +11,9 @@ from weakref import WeakSet
 from PySide6.QtCore import QObject
 
 from app.core.utils import SingletonMixin
-from app.style_manager.theme_controller import ThemeController
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from app.style_manager.theme_controller import ThemeController
 from dev_tools import DebugLogger
 from .base import ThemedIcon
 
@@ -41,8 +43,9 @@ class IconLoader(QObject, SingletonMixin):
         return self._palette
 
     # ── Public Methods ───────────────────────────────────────────────────────────────────────
-    def connect_theme_controller(self, theme_controller: ThemeController) -> None:
-        """Connects the loader to a specific ThemeController instance."""
+    def connect_theme_controller(self, theme_controller: 'ThemeController') -> None:
+        """Connects the loader to a ThemeController instance (lazy to avoid circular imports)."""
+        # Capture the initial palette and subscribe to future changes
         self._palette = theme_controller.get_current_palette()
         theme_controller.theme_changed.connect(self._on_theme_changed)
 

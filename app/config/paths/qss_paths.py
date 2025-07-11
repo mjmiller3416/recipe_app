@@ -53,9 +53,9 @@ class QssPaths:
             "views": [
                 QssPaths.Views.ADD_RECIPES,
                 #QssPaths.Views.DASHBOARD,
-                #QssPaths.Views.MEAL_PLANNER,
-                #QssPaths.Views.SHOPPING_LIST,
-                #QssPaths.Views.VIEW_RECIPES,
+                QssPaths.Views.MEAL_PLANNER,
+                QssPaths.Views.SHOPPING_LIST,
+                QssPaths.Views.VIEW_RECIPES,
             ],
             "components": [
                 #QssPaths.Components.EMPTY_STATE_FRAME,

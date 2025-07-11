@@ -49,12 +49,13 @@ class NavigationService:
         next_widget = self.page_instances[page_name]
         current_widget = self.sw_pages.currentWidget()
 
-        if isinstance(current_widget, MealPlanner):
-            current_widget.save_meal_plan()
+        # Ensure any changes in the MealPlanner are saved before loading shopping list
+        planner_widget = self.page_instances.get("meal_planner")
+        if isinstance(planner_widget, MealPlanner):
+            planner_widget.save_meal_plan()
 
         # refresh ShoppingList if navigating to it
         if page_name == "shopping_list" and isinstance(next_widget, ShoppingList):
-            # load saved meals and derive recipe IDs via services
             planner_svc = PlannerService()
             meal_ids = planner_svc.load_saved_meal_ids()
             shopping_svc = ShoppingService()

@@ -167,8 +167,8 @@ class ShoppingRepo:
                 ingredient.ingredient_name, ri.quantity or 0.0, ri.unit or ""
             )
 
-            # create breakdown key
-            key = f"{ingredient.ingredient_name.lower()}::{converted_unit}"
+            # create breakdown key using normalized format for state persistence
+            key = ShoppingState.create_key(ingredient.ingredient_name, converted_unit)
             breakdown[key].append((recipe.recipe_name, converted_qty, converted_unit))
 
         return breakdown
@@ -185,6 +185,8 @@ class ShoppingRepo:
             ShoppingItem: Created shopping item with assigned ID.
         """
         self.session.add(shopping_item)
+        # flush to assign primary key and persist the new item
+        self.session.flush()
         self.session.refresh(shopping_item)
         return shopping_item
 
@@ -281,6 +283,8 @@ class ShoppingRepo:
 
         if item:
             self.session.delete(item)
+            # flush to persist deletion immediately
+            self.session.flush()
             return True
         return False
 
@@ -396,9 +400,12 @@ class ShoppingRepo:
         existing_state = self.get_shopping_state(normalized_key)
 
         if existing_state:
+            # update existing state
             existing_state.quantity = quantity
             existing_state.unit = unit
             existing_state.checked = checked
+            # flush to persist updates before refresh
+            self.session.flush()
             state = existing_state
         else:
             state = ShoppingState(
@@ -408,6 +415,8 @@ class ShoppingRepo:
                 checked=checked
             )
             self.session.add(state)
+            # flush to assign primary key and persist state
+            self.session.flush()
 
         self.session.refresh(state)
         return state

@@ -10,7 +10,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QToolButton
 
 from app.config import AppIcon, ICON_SIZE
-from app.style_manager import IconLoader
+from app.style_manager.icons.loader import IconLoader
 
 from app.style_manager.icons.mixin import IconMixin
 from app.style_manager.icons.state import IconState

@@ -9,12 +9,13 @@ display them in a scrollable list
 from collections import defaultdict
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QCheckBox, QComboBox, QFrame, QHBoxLayout,
-                               QLabel, QLineEdit, QPushButton, QScrollArea,
-                               QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QCheckBox, QComboBox, QFrame, QHBoxLayout,
+    QLabel, QLineEdit, QPushButton, QScrollArea,
+    QSizePolicy, QSpacerItem, QVBoxLayout, QWidget
+    )
 
 from app.config import MEASUREMENT_UNITS
-from app.core.models.meal_selection import MealSelection
 from app.core.services.shopping_service import ShoppingService
 from dev_tools import DebugLogger
 
@@ -85,7 +86,8 @@ class ShoppingList(QWidget):
         Args:
             recipe_ids (list[int]): List of recipe IDs to generate the shopping list from.
         """
-        self.active_recipe_ids = recipe_ids # store active recipe IDs
+        self.active_recipe_ids = recipe_ids  # store active recipe IDs
+        DebugLogger.log(f"ShoppingList.load_shopping_list: recipe_ids={recipe_ids}", "debug")
 
         # ── Clear Current List ──
         while self.scroll_layout.count():
@@ -94,12 +96,15 @@ class ShoppingList(QWidget):
             if widget:
                 widget.deleteLater()
 
-        # fetch ingredients via service (internal session handling)
+        # generate/update shopping list in database
         shopping_svc = ShoppingService()
-        # generate shopping list (Result has .items)
-        result = shopping_svc.generate_shopping_list(recipe_ids)
-        ingredients = getattr(result, 'items', [])
-        self._breakdown_map = shopping_svc.get_ingredient_breakdown(recipe_ids)  # get breakdown for tooltips
+        self.shopping_svc = shopping_svc
+        shopping_svc.generate_shopping_list(recipe_ids)
+        # fetch all shopping items (models) for display
+        ingredients = shopping_svc.shopping_repo.get_all_shopping_items()
+        DebugLogger.log(f"ShoppingList.load_shopping_list: fetched {len(ingredients)} items", "debug")
+        # get raw breakdown mapping for tooltips
+        self._breakdown_map = shopping_svc.shopping_repo.get_ingredient_breakdown(recipe_ids)
 
         # ── Group By Category ──
         grouped = defaultdict(list)
@@ -194,31 +199,26 @@ class ShoppingList(QWidget):
         Returns:
             QVBoxLayout: Complete layout ready to be added to a column
         """
-        from app.core.models.shopping_state import \
-            ShoppingState  # avoid early import
+        # import service for updating item status
+        # uses display models from ShoppingService
 
         layout = QVBoxLayout()
 
         header = QLabel(title.title())
-        header.setStyleSheet("font-weight: bold; font-size: 16px; margin-top: 20px;")
         layout.addWidget(header)
 
         def create_toggle_handler(item, checkbox):
             def handle_toggle(state):
-                item.toggle_have()
-                if is_manual:
-                    item.to_model().save()
-                else:
-                    ShoppingState.update_state(
-                        key=item.key(),
-                        quantity=item.quantity,
-                        unit=item.unit or "",
-                        checked=item.have  # use the model's updated state
-                    )
+                # toggle and persist via service
+                if hasattr(self, 'shopping_svc'):
+                    self.shopping_svc.toggle_item_status(item.id)
+                # update checkbox label to reflect new state
+                checkbox.setText(item.display_label())
             return handle_toggle
 
         for item in items:
-            checkbox = QCheckBox(item.label())
+            # use model display_label for checkbox text
+            checkbox = QCheckBox(item.display_label())
             checkbox.setChecked(item.have)
 
             # add tooltip for recipe parts if applicable
