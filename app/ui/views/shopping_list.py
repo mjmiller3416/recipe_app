@@ -17,6 +17,7 @@ from PySide6.QtWidgets import (
 
 from app.config import MEASUREMENT_UNITS
 from app.core.services.shopping_service import ShoppingService
+from app.ui.components.composite.shopping_item import ShoppingItemWidget
 from dev_tools import DebugLogger
 
 
@@ -31,6 +32,8 @@ class ShoppingList(QWidget):
         DebugLogger.log("Initializing ShoppingList page", "debug")
 
         self.active_recipe_ids: list[int] = []  # store latest recipe list
+        self.shopping_svc = None  # initialize shopping service
+        self._breakdown_map = {}  # initialize breakdown map
 
         self.setup_ui()
 
@@ -106,6 +109,10 @@ class ShoppingList(QWidget):
         # get raw breakdown mapping for tooltips
         self._breakdown_map = shopping_svc.shopping_repo.get_ingredient_breakdown(recipe_ids)
 
+        # Initialize empty breakdown map if None
+        if self._breakdown_map is None:
+            self._breakdown_map = {}
+
         # ── Group By Category ──
         grouped = defaultdict(list)
         manual_items = []
@@ -175,7 +182,7 @@ class ShoppingList(QWidget):
 
         for target_column, section_group in ((left_column, left_sections), (right_column, right_sections)):
             for category, items in section_group:
-                target_column.addLayout(self._build_category_section(category, items, is_manual=(category == "Manual Entries")))
+                target_column.addLayout(self._build_category_section(category, items))
 
         # make columns expand evenly
         left_container.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -187,63 +194,18 @@ class ShoppingList(QWidget):
         self.scroll_layout.addLayout(column_layout)
 
 
-    def _build_category_section(self, title: str, items: list, is_manual: bool = False) -> QVBoxLayout:
-        """
-        Creates a category header and its associated checkboxes as a vertical layout.
-
-        Args:
-            title (str): The section header title
-            items (list): List of ShoppingItem objects
-            is_manual (bool): If True, connects toggle/save logic
-
-        Returns:
-            QVBoxLayout: Complete layout ready to be added to a column
-        """
-        # import service for updating item status
-        # uses display models from ShoppingService
-
+    def _build_category_section(self, title: str, items: list) -> QVBoxLayout:
+        """Creates a category header and its associated items as a vertical layout."""
         layout = QVBoxLayout()
+        layout.addWidget(QLabel(title.title()))
 
-        header = QLabel(title.title())
-        layout.addWidget(header)
-
-        def create_toggle_handler(item, label, plain_text):
-            """Return a handler that toggles strike-through via HTML and persists state."""
-            def handle_toggle(state):
-                if hasattr(self, 'shopping_svc'):
-                    self.shopping_svc.toggle_item_status(item.id)
-                if state == Qt.Checked:
-                    label.setText(f"<s>{plain_text}</s>")
-                else:
-                    label.setText(plain_text)
-            return handle_toggle
+        # Ensure we have a shopping service
+        shopping_svc = getattr(self, 'shopping_svc', None)
+        # Ensure we have a breakdown map
+        breakdown_map = getattr(self, '_breakdown_map', {})
 
         for item in items:
-            unit_display = f" {item.unit}" if item.unit else ""
-            label_text = f"{item.ingredient_name}: {item.formatted_quantity()}{unit_display}"
-            checkbox = QCheckBox()
-            checkbox.setChecked(item.have)
-            label = QLabel()
-            if item.have:
-                label.setText(f"<s>{label_text}</s>")
-            else:
-                label.setText(label_text)
-            label.setTextFormat(Qt.RichText)
-
-            if item.source == "recipe":
-                parts = self._breakdown_map.get(item.key(), [])
-                if parts:
-                    text = "\n".join(f"{name}\n- {qty} {unit}" for name, qty, unit in parts)
-                    label.setToolTip(text)
-
-            row_layout = QHBoxLayout()
-            row_layout.setContentsMargins(0, 0, 0, 0)
-            row_layout.addWidget(checkbox)
-            row_layout.addWidget(label)
-            row_layout.addStretch()
-
-            checkbox.stateChanged.connect(create_toggle_handler(item, label, label_text))
-            layout.addLayout(row_layout)
+            item_widget = ShoppingItemWidget(item, shopping_svc, breakdown_map)
+            layout.addWidget(item_widget)
 
         return layout
-
