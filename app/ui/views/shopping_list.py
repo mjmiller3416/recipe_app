@@ -207,32 +207,43 @@ class ShoppingList(QWidget):
         header = QLabel(title.title())
         layout.addWidget(header)
 
-        def create_toggle_handler(item, checkbox):
+        def create_toggle_handler(item, label, plain_text):
+            """Return a handler that toggles strike-through via HTML and persists state."""
             def handle_toggle(state):
-                # toggle and persist via service
                 if hasattr(self, 'shopping_svc'):
                     self.shopping_svc.toggle_item_status(item.id)
-                # update checkbox label to reflect new state
-                checkbox.setText(item.display_label())
+                if state == Qt.Checked:
+                    label.setText(f"<s>{plain_text}</s>")
+                else:
+                    label.setText(plain_text)
             return handle_toggle
 
         for item in items:
-            # use model display_label for checkbox text
-            checkbox = QCheckBox(item.display_label())
+            unit_display = f" {item.unit}" if item.unit else ""
+            label_text = f"{item.ingredient_name}: {item.formatted_quantity()}{unit_display}"
+            checkbox = QCheckBox()
             checkbox.setChecked(item.have)
+            label = QLabel()
+            if item.have:
+                label.setText(f"<s>{label_text}</s>")
+            else:
+                label.setText(label_text)
+            label.setTextFormat(Qt.RichText)
 
-            # add tooltip for recipe parts if applicable
             if item.source == "recipe":
                 parts = self._breakdown_map.get(item.key(), [])
                 if parts:
-                    # build a multiline tooltip
-                    text = "\n".join(
-                        f"{name}\n- {qty} {unit}" for name, qty, unit in parts
-                    )
-                    checkbox.setToolTip(text)
+                    text = "\n".join(f"{name}\n- {qty} {unit}" for name, qty, unit in parts)
+                    label.setToolTip(text)
 
-            checkbox.stateChanged.connect(create_toggle_handler(item, checkbox))
-            layout.addWidget(checkbox)
+            row_layout = QHBoxLayout()
+            row_layout.setContentsMargins(0, 0, 0, 0)
+            row_layout.addWidget(checkbox)
+            row_layout.addWidget(label)
+            row_layout.addStretch()
+
+            checkbox.stateChanged.connect(create_toggle_handler(item, label, label_text))
+            layout.addLayout(row_layout)
 
         return layout
 
