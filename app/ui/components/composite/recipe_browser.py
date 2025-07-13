@@ -94,6 +94,7 @@ class RecipeBrowser(QWidget):
         self.flow_layout = FlowLayout(self.scroll_container, needAni=False, isTight=True)
         self.scroll_container.setLayout(self.flow_layout)
 
+
         self.scroll_area.setWidget(self.scroll_container)
 
         self.main_layout.addLayout(self.lyt_cb)
@@ -155,16 +156,13 @@ class RecipeBrowser(QWidget):
 
             if self.selection_mode:
                 # override the card click behavior for selection
-                card.card_clicked.disconnect()  # Disconnect default behavior
+                card.card_clicked.disconnect()
                 card.card_clicked.connect(lambda r: self.recipe_selected.emit(r.id))
 
                 # add visual feedback for selection mode
-                card.setStyleSheet("""
-                    RecipeCard:hover {
-                        border: 2px solid #007ACC;
-                        cursor: pointer;
-                    }
-                """)
+                # TODO: create hover effect in stylesheet
+                # show pointer cursor on hover
+                card.setCursor(Qt.PointingHandCursor)
             else:
                 # normal card behavior (opens full recipe)
                 card.card_clicked.connect(self.recipe_card_clicked.emit)

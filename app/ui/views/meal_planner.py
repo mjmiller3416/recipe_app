@@ -7,13 +7,14 @@ multiple meal planning tabs and integrates with the database to load and save me
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize
-from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget, QStackedWidget
 
 from app.config import AppIcon
 from app.core.services.planner_service import PlannerService
 from app.ui.components.composite import MealWidget
 from app.ui.components.widgets import CTIcon
 from dev_tools import DebugLogger, StartupTimer
+from app.ui.views.recipe_selection import RecipeSelection
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -36,18 +37,32 @@ class MealPlanner(QWidget):
         self.setObjectName("MealPlanner")
         DebugLogger.log("Initializing MealPlanner page", "debug")
 
-        # ── Create Layout ──
+        # ── Create planner and selection widgets ──
         self.meal_tabs = QTabWidget()
         self.meal_tabs.setIconSize(QSize(16, 16))
         self.meal_tabs.setTabsClosable(False)
         self.meal_tabs.setMovable(True)
         self.meal_tabs.tabBarClicked.connect(self.handle_tab_click)
+        # create the in-page recipe selection view
+        self.selection_page = RecipeSelection(self)
+        # handle when a recipe is selected from the selection page
+        self.selection_page.recipe_selected.connect(self._finish_recipe_selection)
 
+        # stacked widget to switch between planner tabs and selection page
+        self.stack = QStackedWidget()
+        self.stack.addWidget(self.meal_tabs)
+        self.stack.addWidget(self.selection_page)
+
+        # ── Layout ──
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(20, 20, 20, 20)
-        self.layout.addWidget(self.meal_tabs)
+        self.layout.addWidget(self.stack)
+        # show the planner view by default
+        self.stack.setCurrentIndex(0)
 
-        self.tab_map = {} # {tab_index: MealWidget}
+        self.tab_map = {}  # {tab_index: MealWidget}
+        # context for in-page recipe selection (widget, slot_key)
+        self._selection_context = None
 
         self.init_ui()
 
@@ -81,6 +96,10 @@ class MealPlanner(QWidget):
         widget = MealWidget(self.planner_service)  # pass the service here
         if meal_id:
             widget.load_meal(meal_id)
+        # hook into slot add events to open selection page
+        widget.recipe_selection_requested.connect(
+            lambda key, w=widget: self._start_recipe_selection(w, key)
+        )
 
         insert_index = self.meal_tabs.count() - 1
         index = self.meal_tabs.insertTab(insert_index, widget, "Custom Meal")
@@ -91,6 +110,28 @@ class MealPlanner(QWidget):
         """Handle when the '+' tab is clicked to add a new tab."""
         if index == self.meal_tabs.count() - 1:
             self.add_meal_tab()
+
+    def _start_recipe_selection(self, widget, slot_key: str):
+        """Begin in-page recipe selection for the given meal slot."""
+        # Store context for callback
+        self._selection_context = (widget, slot_key)
+        # Reset selection browser
+        try:
+            self.selection_page.browser.load_recipes()
+        except Exception:
+            pass
+        # Show selection page
+        self.stack.setCurrentIndex(1)
+
+    def _finish_recipe_selection(self, recipe_id: int):
+        """Handle recipe selected from the selection page."""
+        if not self._selection_context:
+            return
+        widget, slot_key = self._selection_context
+        widget.update_recipe_selection(slot_key, recipe_id)
+        # Return to planner view
+        self.stack.setCurrentIndex(0)
+        self._selection_context = None
 
     def get_active_meal_ids(self) -> list[int]:
         """

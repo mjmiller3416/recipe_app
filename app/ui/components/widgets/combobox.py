@@ -54,8 +54,16 @@ class ComboBox(DropDownWidget):
         self.currentTextChanged.emit(text)
 
     def _on_completer_activated(self, text: str):
+        # update text and emit selection; ensure currentTextChanged fires for filters
         self.line_edit.setText(text)
         self.selection_validated.emit(True)
+        # explicitly emit currentTextChanged so connected filters update
+        self.currentTextChanged.emit(text)
+        # hide completer popup to allow textChanged signal processing
+        try:
+            self.completer.popup().hide()
+        except Exception:
+            pass
         if self.window().focusWidget() is self.line_edit:
             self.focusNextChild()
 

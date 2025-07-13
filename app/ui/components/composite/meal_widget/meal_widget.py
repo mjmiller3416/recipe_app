@@ -7,7 +7,7 @@ This is a pure UI widget responsible only for rendering and updating meal data s
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from typing import Optional
 
-from PySide6.QtCore import QEvent, Qt
+from PySide6.QtCore import QEvent, Qt, Signal
 from PySide6.QtWidgets import QHBoxLayout, QToolTip, QVBoxLayout, QWidget
 
 from app.core.dtos.planner_dtos import (MealSelectionCreateDTO,
@@ -28,6 +28,8 @@ class MealWidget(QWidget):
     Handles layout creation, user interaction, and internal meal state tracking.
     """
 
+    # Signal emitted when a recipe slot requests selection; passes the slot key (e.g., 'main', 'side1')
+    recipe_selection_requested = Signal(str)
     def __init__(self, planner_service: PlannerService, parent=None):
         super().__init__(parent)
         self.planner_service = planner_service
@@ -74,6 +76,8 @@ class MealWidget(QWidget):
         """
         for key, slot in self.meal_slots.items():
             slot.recipe_selected.connect(lambda rid, k=key: self.update_recipe_selection(k, rid))
+            # when an empty slot's add button is clicked, request recipe selection
+            slot.add_meal_clicked.connect(lambda k=key: self.recipe_selection_requested.emit(k))
 
     def update_recipe_selection(self, key: str, recipe_id: int) -> None:
         """
@@ -89,15 +93,23 @@ class MealWidget(QWidget):
                 main_recipe_id=recipe_id if key == "main" else 0
             )
 
+        # Update internal model
         if key == "main":
-            self._meal_model.main_recipe_id = recipe_id # update main recipe
+            self._meal_model.main_recipe_id = recipe_id
             # ── Enable Side Slots ──
-            for side in ["side1", "side2", "side3"]:
+            for side in ("side1", "side2", "side3"):
                 self.meal_slots[side].setEnabled(True)
                 self.meal_slots[side].setToolTip("")
-
-        elif key in ("side1", "side2", "side3"): # update side recipe
+        else:
+            # side slot update
             setattr(self._meal_model, f"side_recipe_{key[-1]}", recipe_id)
+        # Fetch recipe and update the slot UI, but block signals to avoid recursion
+        slot = self.meal_slots.get(key)
+        if slot is not None:
+            recipe = self.recipe_service.get_recipe(recipe_id)
+            slot.blockSignals(True)
+            slot.set_recipe(recipe)
+            slot.blockSignals(False)
 
     def save_meal(self):
         if not self._meal_model:

@@ -47,6 +47,7 @@ class RecipeCard(QFrame):
         self._size:   LayoutSize      = size
         self._recipe: Optional[Recipe] = None
         self._recipe_selection_dialog: Optional[QDialog] = None
+        self._selection_mode: bool = False  # When True, prevents FullRecipe dialog from opening
 
         # ── Create Stacked Widget ──
         self._stack = QStackedWidget(self)
@@ -143,36 +144,15 @@ class RecipeCard(QFrame):
             self.card_clicked.emit(self._recipe)
 
             # open the recipe dialog
-            dlg = FullRecipe(self._recipe)
-            dlg.exec()
+            if not self._selection_mode:  # Prevent opening in selection mode
+                dlg = FullRecipe(self._recipe)
+                dlg.exec()
 
     def _handle_add_meal_click(self):
         """
-        Handles the click event for the 'Add Meal' button in the empty state.
-        Fetches recipes, displays a selection dialog, and loads the chosen recipe.
+        Handle the click event for the 'Add Meal' button in the empty state by emitting a signal.
         """
-        # local import to avoid circular dependency at module load
-        from app.ui.components.dialogs.recipe_selection import RecipeSelection
-        try:
-            # fetch all recipes via service layer
-            session = create_session()
-            try:
-                service = RecipeService(session)
-                all_recipes = service.recipe_repo.get_all_recipes()
-            finally:
-                session.close()
-            if not all_recipes:
-                print("No recipes found in the database.")
-                return
-
-            # ── Show Selection Dialog ──
-            self._recipe_selection_dialog = RecipeSelection(all_recipes, self)
-            self._recipe_selection_dialog.finished.connect(self._on_recipe_selection_finished)
-            self._recipe_selection_dialog.open()
-
-        except Exception as e:
-            print(f"Error handling add meal click: {e}")  # handle exceptions
-            self._stack.setCurrentIndex(2)  # switch to error state
+        self.add_meal_clicked.emit()
 
     def _on_recipe_selection_finished(self, result: int) -> None:
         """Callback for when the recipe selection dialog is finished."""

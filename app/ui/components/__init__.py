@@ -5,7 +5,6 @@ from .dialogs.crop_dialog import CropDialog
 from .dialogs.dialog_window import DialogWindow
 from .dialogs.full_recipe import FullRecipe
 from .dialogs.message_dialog import MessageDialog
-from .dialogs.recipe_selection import RecipeSelection
 # From forms
 from .forms.form_field import ComboBoxField, FormField, LineEditField
 # From image
