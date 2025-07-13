@@ -1,12 +1,14 @@
-"""app/ui/components/full_recipe.py
+"""app/ui/components/dialogs/full_recipe.py
 
-Defines the FullRecipe class, a custom dialog for displaying full recipe details including metadata,
-ingredients, and directions.
+Defines the FullRecipe class, a custom dialog for displaying full recipe details including
+metadata, ingredients, and directions.
 """
-# ── Imports ─────────────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QSizePolicy,
-                               QSpacerItem, QVBoxLayout, QWidget)
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
+    QFrame, QHBoxLayout, QLabel, QSizePolicy,
+    QSpacerItem, QVBoxLayout, QWidget
+)
 
 from app.config.app_icon import AppIcon, ICON_SPECS
 from app.core.models import Recipe
@@ -16,7 +18,7 @@ from app.ui.components.widgets import CTIcon, RoundedImage
 from app.ui.helpers.ui_helpers import create_framed_layout
 
 
-# ── Class Definition ────────────────────────────────────────────────────────────────────
+# ── Full Recipe ──────────────────────────────────────────────────────────────────────────────
 class FullRecipe(DialogWindow):
     """Dialog for displaying a complete recipe with custom layout.
 
@@ -41,7 +43,7 @@ class FullRecipe(DialogWindow):
         # ── Setup UI ──
         self.setup_ui()
 
-    # ── Public Methods ──────────────────────────────────────────────────────────────────
+    # ── Public Methods ───────────────────────────────────────────────────────────────────────
     def setup_ui(self) -> None:
         """Set up the full dialog layout with header, left, and right columns."""
         # ── Create Main Layout ──

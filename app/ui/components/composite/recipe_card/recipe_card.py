@@ -3,15 +3,17 @@
 Defines the RecipeCard class that acts as a dynamic container for different recipe states (empty, recipe, error).
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from typing import Optional
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import (QDialog, QFrame, QPushButton, QStackedWidget,
-                               QVBoxLayout)
+from PySide6.QtWidgets import (
+    QDialog, QFrame, QPushButton, QStackedWidget,
+    QVBoxLayout
+)
 
 from app.core.models.recipe import Recipe
-from app.ui.components import FullRecipe, RecipeSelection
+from app.ui.components.dialogs.full_recipe import FullRecipe
 from dev_tools import DebugLogger, StartupTimer
 
 from .constants import LayoutSize
@@ -21,7 +23,7 @@ from app.core.database.db import create_session
 from app.core.services.recipe_service import RecipeService
 
 
-# ── Class Definition ────────────────────────────────────────────────────────────────────
+# ── Recipe Card ──────────────────────────────────────────────────────────────────────────────
 class RecipeCard(QFrame):
     """A fixed-size placeholder that can display one of three states: empty, recipe, or error.
 
@@ -31,7 +33,7 @@ class RecipeCard(QFrame):
     - delete_clicked(recipe_id: int): (Reserved) Delete action, not yet wired.
     """
 
-    # ── Signals ─────────────────────────────────────────────────────────────────────────
+    # ── Signals ──────────────────────────────────────────────────────────────────────────────
     add_meal_clicked = Signal()
     card_clicked     = Signal(object) # recipe instance
     delete_clicked   = Signal(int)    # recipe_id
@@ -68,7 +70,7 @@ class RecipeCard(QFrame):
         self._stack.setCurrentIndex(0)
         self._wire_empty_button()
 
-    # ── Public Methods ──────────────────────────────────────────────────────────────────
+    # ── Public Methods ───────────────────────────────────────────────────────────────────────
     def set_recipe(self, recipe: Recipe | None) -> None:
         """Load or clear a recipe in this `RecipeCard`.
         Args:
@@ -108,7 +110,7 @@ class RecipeCard(QFrame):
         """Return the currently displayed recipe (or None)."""
         return self._recipe
 
-    # ── Private Methods ─────────────────────────────────────────────────────────────────
+    # ── Private Methods ──────────────────────────────────────────────────────────────────────
     def _wire_empty_button(self) -> None:
         """
         Connect the '+ Add Meal' button inside the empty page
@@ -149,6 +151,8 @@ class RecipeCard(QFrame):
         Handles the click event for the 'Add Meal' button in the empty state.
         Fetches recipes, displays a selection dialog, and loads the chosen recipe.
         """
+        # local import to avoid circular dependency at module load
+        from app.ui.components.dialogs.recipe_selection import RecipeSelection
         try:
             # fetch all recipes via service layer
             session = create_session()
