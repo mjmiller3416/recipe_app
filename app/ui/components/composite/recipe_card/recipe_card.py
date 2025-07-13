@@ -107,6 +107,14 @@ class RecipeCard(QFrame):
             print(f"[RecipeCard] Failed to build card: {exc}")
             self._stack.setCurrentIndex(2)            # show error page
 
+    def set_selection_mode(self, selection_mode: bool) -> None:
+        """Set whether this card is in selection mode.
+
+        Args:
+            selection_mode (bool): If True, clicking the card won't open FullRecipe dialog.
+        """
+        self._selection_mode = selection_mode
+
     def recipe(self) -> Recipe | None:
         """Return the currently displayed recipe (or None)."""
         return self._recipe

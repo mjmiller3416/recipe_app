@@ -102,7 +102,7 @@ class MealWidget(QWidget):
                 self.meal_slots[side].setToolTip("")
         else:
             # side slot update
-            setattr(self._meal_model, f"side_recipe_{key[-1]}", recipe_id)
+            setattr(self._meal_model, f"side_recipe_{key[-1]}_id", recipe_id)
         # Fetch recipe and update the slot UI, but block signals to avoid recursion
         slot = self.meal_slots.get(key)
         if slot is not None:

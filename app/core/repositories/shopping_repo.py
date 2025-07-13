@@ -65,6 +65,7 @@ class ShoppingRepo:
     def get_recipe_ingredients(self, recipe_ids: List[int]) -> List[RecipeIngredient]:
         """
         Fetch all recipe ingredients for given recipe IDs.
+        Handles duplicate recipe IDs by counting occurrences and scaling quantities.
 
         Args:
             recipe_ids (List[int]): List of recipe IDs to fetch ingredients for.
@@ -75,14 +76,27 @@ class ShoppingRepo:
         if not recipe_ids:
             return []
 
+        # Count occurrences of each recipe ID
+        from collections import Counter
+        recipe_counts = Counter(recipe_ids)
+        unique_recipe_ids = list(recipe_counts.keys())
+
         stmt = select(RecipeIngredient).where(
-            RecipeIngredient.recipe_id.in_(recipe_ids)
+            RecipeIngredient.recipe_id.in_(unique_recipe_ids)
         ).options(
             joinedload(RecipeIngredient.ingredient),
             joinedload(RecipeIngredient.recipe)
         )
-        # use scalars().unique() to collapse duplicates when eager-loading collections
-        return self.session.scalars(stmt).unique().all()
+        recipe_ingredients = self.session.scalars(stmt).unique().all()
+
+        # Duplicate recipe ingredients based on count
+        result = []
+        for ri in recipe_ingredients:
+            count = recipe_counts[ri.recipe_id]
+            for _ in range(count):
+                result.append(ri)
+
+        return result
 
     def aggregate_recipe_ingredients(self, recipe_ids: List[int]) -> List[ShoppingItem]:
         """
@@ -158,6 +172,12 @@ class ShoppingRepo:
         recipe_ingredients = self.get_recipe_ingredients(recipe_ids)
         breakdown: Dict[str, List[Tuple[str, float, str]]] = defaultdict(list)
 
+        # First, aggregate by ingredient and recipe to combine duplicate recipes
+        recipe_aggregation: Dict[str, Dict[str, Dict[str, Any]]] = defaultdict(lambda: defaultdict(lambda: {
+            "quantity": 0.0,
+            "unit": None
+        }))
+
         for ri in recipe_ingredients:
             ingredient = ri.ingredient
             recipe = ri.recipe
@@ -169,7 +189,16 @@ class ShoppingRepo:
 
             # create breakdown key using normalized format for state persistence
             key = ShoppingState.create_key(ingredient.ingredient_name, converted_unit)
-            breakdown[key].append((recipe.recipe_name, converted_qty, converted_unit))
+
+            # Aggregate by recipe name within each ingredient
+            recipe_data = recipe_aggregation[key][recipe.recipe_name]
+            recipe_data["quantity"] += converted_qty
+            recipe_data["unit"] = converted_unit
+
+        # Convert aggregated data to the expected format
+        for ingredient_key, recipes in recipe_aggregation.items():
+            for recipe_name, recipe_data in recipes.items():
+                breakdown[ingredient_key].append((recipe_name, recipe_data["quantity"], recipe_data["unit"]))
 
         return breakdown
 

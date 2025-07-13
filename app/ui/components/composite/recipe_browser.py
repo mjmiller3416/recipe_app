@@ -153,10 +153,12 @@ class RecipeBrowser(QWidget):
         for recipe in recipes:
             card = RecipeCard(self.card_size, parent=self.scroll_container)
             card.set_recipe(recipe)
+            
+            # Set selection mode on the card
+            card.set_selection_mode(self.selection_mode)
 
             if self.selection_mode:
-                # override the card click behavior for selection
-                card.card_clicked.disconnect()
+                # connect card click behavior for selection
                 card.card_clicked.connect(lambda r: self.recipe_selected.emit(r.id))
 
                 # add visual feedback for selection mode
