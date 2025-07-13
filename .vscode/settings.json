@@ -120,6 +120,9 @@
       "**/pytest.ini": true,
       "**/AGENTS.md": true,
       "**/.editorconfig": true,
+      "**/.env": true,
+      "**/qt.conf": true,
+      "**/requirements.txt": true,
     },
 
     "files.associations": {
@@ -204,7 +207,7 @@
     //** EXTENSION: Custom CSS and JS **//
     "vscode_custom_css.imports": [
 	  "file://${workspaceFolder}/.vscode/sidebar.css"
-	]
+	],
 
     "commentBox.styles": {
     // make this the default style so ⇧⌥C “Add Comment Box” just uses it
