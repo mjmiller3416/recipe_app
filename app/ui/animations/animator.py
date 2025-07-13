@@ -1,13 +1,12 @@
-# core.controllers.animation_controller.py
-"""AnimationManager provides methods for animating widgets using QPropertyAnimation.
+"""app/ui/animations/animator.py
 
-Supports width animations, fade effects, and cross-fading between stacked widgets.
+AnimationManager provides methods for animating widgets using QPropertyAnimation.
+Supports width animations, fade effects, cross-fading between stacked widgets, and page flip animations.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QTimer
+from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QTimer, QPoint
 from PySide6.QtWidgets import QGraphicsOpacityEffect
-
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class Animator:
@@ -16,9 +15,9 @@ class Animator:
 
     @staticmethod
     def animate_width(
-        widget, 
-        start: int, 
-        end: int, 
+        widget,
+        start: int,
+        end: int,
         duration: int):
         """Animate a widget's maximumWidth from start to end."""
         animation = QPropertyAnimation(widget, b"maximumWidth")
@@ -35,6 +34,31 @@ class Animator:
                 Animator.active_animations.remove(animation)
 
         animation.finished.connect(cleanup)
+        return animation
+
+    @staticmethod
+    def animate_pos(
+        widget,
+        start_pos: QPoint,
+        end_pos: QPoint,
+        duration: int):
+        """Animate a widget's position from start_pos to end_pos."""
+        animation = QPropertyAnimation(widget, b"pos")
+        animation.setDuration(duration)
+        animation.setStartValue(start_pos)
+        animation.setEndValue(end_pos)
+        animation.setEasingCurve(QEasingCurve.OutExpo)
+        animation.start()
+
+        Animator.active_animations.append(animation)
+
+        def cleanup():
+            if animation in Animator.active_animations:
+                Animator.active_animations.remove(animation)
+
+        animation.finished.connect(cleanup)
+        return animation
+        return animation
 
     @staticmethod
     def fade_widget(widget, duration=300, start=1.0, end=0.0):
@@ -73,7 +97,7 @@ class Animator:
     def transition_stack(current_widget, next_widget, stacked_widget, duration=300):
         """
         Cross-fade between two widgets in a stacked widget.
-        
+
         Args:
             current_widget (QWidget): The widget currently displayed.
             next_widget (QWidget): The widget to be displayed next.
@@ -105,3 +129,157 @@ class Animator:
 
         fade_in.finished.connect(cleanup)
         fade_out.start()
+
+    @staticmethod
+    def animate_page_flip(current_widget, next_widget, animation_helper, callback=None):
+        """
+        Animate a page flip between two widgets using the provided animation helper.
+
+        Args:
+            current_widget (QWidget): The widget currently displayed
+            next_widget (QWidget): The widget to flip to
+            animation_helper (FlipAnimationHelper): Helper object for animations
+            callback (callable): Optional callback when animation completes
+        """
+        # Set up animation helper
+        animation_helper.target_widget = current_widget
+        duration = animation_helper.duration
+        easing = animation_helper.easing_curve
+
+        # Create the flip animation
+        flip_animation = QPropertyAnimation(animation_helper, b"rotation_y")
+        flip_animation.setDuration(duration)
+        flip_animation.setStartValue(0)
+        flip_animation.setEndValue(180)
+        flip_animation.setEasingCurve(easing)
+
+        # Fade animation if enabled
+        fade_animation = None
+        if animation_helper.fade_during_flip:
+            fade_animation = QPropertyAnimation(animation_helper, b"opacity")
+            fade_animation.setDuration(duration // 2)
+            fade_animation.setStartValue(1.0)
+            fade_animation.setEndValue(0.5)
+            fade_animation.setEasingCurve(easing)
+
+        # Handle the flip midpoint (when to show next widget)
+        def on_flip_midpoint():
+            current_widget.hide()
+            next_widget.show()
+            animation_helper.target_widget = next_widget
+
+            # Start the second half of the animation
+            second_half = QPropertyAnimation(animation_helper, b"rotation_y")
+            second_half.setDuration(duration // 2)
+            second_half.setStartValue(180)
+            second_half.setEndValue(0)
+            second_half.setEasingCurve(easing)
+
+            # Fade back in if enabled
+            if fade_animation:
+                fade_in = QPropertyAnimation(animation_helper, b"opacity")
+                fade_in.setDuration(duration // 2)
+                fade_in.setStartValue(0.5)
+                fade_in.setEndValue(1.0)
+                fade_in.setEasingCurve(easing)
+                fade_in.start()
+                Animator.active_animations.append(fade_in)
+
+            # Handle completion
+            def on_complete():
+                if callback:
+                    callback()
+                # Clean up animations
+                animations_to_remove = [flip_animation, second_half]
+                if fade_animation:
+                    animations_to_remove.extend([fade_animation])
+                    if 'fade_in' in locals():
+                        animations_to_remove.append(fade_in)
+                for anim in animations_to_remove:
+                    if anim in Animator.active_animations:
+                        Animator.active_animations.remove(anim)
+
+            second_half.finished.connect(on_complete)
+            second_half.start()
+            Animator.active_animations.append(second_half)
+
+        # Start the flip midpoint at halfway through
+        QTimer.singleShot(duration // 2, on_flip_midpoint)
+
+        # Start animations
+        flip_animation.start()
+        if fade_animation:
+            fade_animation.start()
+            Animator.active_animations.append(fade_animation)
+
+        Animator.active_animations.append(flip_animation)
+
+    @staticmethod
+    def create_flip_container(parent=None):
+        """
+        Create a new PageFlipContainer with default settings.
+
+        Args:
+            parent (QWidget): Parent widget
+
+        Returns:
+            PageFlipContainer: A new container ready for page flip animations
+        """
+        from app.ui.animations.flip_animations import PageFlipContainer
+        return PageFlipContainer(parent)
+
+    @staticmethod
+    def configure_flip_animation(container, **kwargs):
+        """
+        Configure flip animation settings on a PageFlipContainer.
+
+        Args:
+            container (PageFlipContainer): The container to configure
+            **kwargs: Animation settings:
+                - duration (int): Animation duration in milliseconds
+                - easing (QEasingCurve): Easing curve
+                - flip_axis (str): 'x' or 'y' for flip direction
+                - fade_during_flip (bool): Whether to fade during flip
+                - scale_during_flip (bool): Whether to scale during flip
+        """
+        if hasattr(container, 'configure_animation'):
+            container.configure_animation(**kwargs)
+
+    @staticmethod
+    def animate_widget_flip(widget, duration=800, flip_axis='y', fade=True, scale=True, callback=None):
+        """
+        Animate a single widget flip (useful for refresh/reload animations).
+
+        Args:
+            widget (QWidget): Widget to animate
+            duration (int): Animation duration in milliseconds
+            flip_axis (str): 'x' or 'y' for flip direction
+            fade (bool): Whether to fade during flip
+            scale (bool): Whether to scale during flip
+            callback (callable): Optional callback when animation completes
+        """
+        from app.ui.animations.flip_animations import FlipAnimationHelper
+
+        helper = FlipAnimationHelper(widget)
+        helper.duration = duration
+        helper.flip_axis = flip_axis
+        helper.fade_during_flip = fade
+        helper.scale_during_flip = scale
+
+        # Create animation
+        animation = QPropertyAnimation(helper, b"rotation_y")
+        animation.setDuration(duration)
+        animation.setStartValue(0)
+        animation.setEndValue(360)  # Full rotation
+        animation.setEasingCurve(QEasingCurve.InOutQuad)
+
+        # Handle completion
+        def on_complete():
+            if callback:
+                callback()
+            if animation in Animator.active_animations:
+                Animator.active_animations.remove(animation)
+
+        animation.finished.connect(on_complete)
+        animation.start()
+        Animator.active_animations.append(animation)

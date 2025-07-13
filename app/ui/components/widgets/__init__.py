@@ -12,5 +12,5 @@ __all__ = [
     "CTIcon",
     "RoundedImage",
     "CircularImage",
-    "ComboBox"
+    "ComboBox",
 ]

@@ -61,6 +61,7 @@ class AppIcon(Enum):
     TOTAL_TIME = auto()
     SERVINGS = auto()
     FAVORITE = auto()
+    UNFAVORITE = auto()
     MEAL_TYPE = auto()
     DIET_PREF = auto()
 
@@ -219,6 +220,11 @@ ICON_SPECS: Dict[AppIcon, IconSpec] = {
     ),
     AppIcon.FAVORITE: IconSpec(
         path=AppPaths.ICONS_DIR / "favorite.svg",
+        size=QSize(30, 30),
+        variant=THEME["ICON"]["ACCENT"],
+    ),
+    AppIcon.UNFAVORITE: IconSpec(
+        path=AppPaths.ICONS_DIR / "unfavorite.svg",
         size=QSize(30, 30),
         variant=THEME["ICON"]["ACCENT"],
     ),

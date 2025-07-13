@@ -11,24 +11,12 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
 from app.config.app_icon import AppIcon, ICON_SPECS
-# session management moved into services
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
-
-
-def _toggle_favorite(recipe_id: int) -> None:
-    """Helper to toggle favorite status via RecipeService."""
-    try:
-        service = RecipeService()
-        service.toggle_favorite(recipe_id)
-    except Exception:
-        pass
 from app.ui.components.layout import Separator
 from app.ui.components.widgets import CTIcon, CTToolButton, RoundedImage
 from app.ui.helpers.ui_helpers import make_overlay
-
 from ..constants import LAYOUT_SIZE, LayoutSize
-
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 @dataclass(frozen=True, slots=True)
@@ -42,6 +30,26 @@ class RecipeCard:
 
     size:   LayoutSize
     recipe: Recipe
+
+    def _toggle_favorite_with_icon_update(self, button, recipe_id: int) -> None:
+        """Helper to toggle favorite status and update the button icon."""
+        try:
+            service = RecipeService()
+            updated_recipe = service.toggle_favorite(recipe_id)
+
+            # update the button icon based on the new favorite state
+            from app.config.app_icon import ICON_SPECS
+            from app.style_manager.icons.factory import IconFactory
+
+            new_icon = AppIcon.FAVORITE if updated_recipe.is_favorite else AppIcon.UNFAVORITE
+            spec = ICON_SPECS[new_icon]
+
+            # create new themed icon and apply it
+            icon_factory = IconFactory(spec.path, spec.size, spec.variant)
+            button.setIcon(icon_factory.icon())
+
+        except Exception:
+            pass
 
     # ── Public Methods ──────────────────────────────────────────────────────────────
     def build(self) -> QFrame:
@@ -114,15 +122,16 @@ class RecipeCard:
             radii=(10, 10, 0, 0)
         )
 
-        # favorite button
+        # favorite button - choose initial icon based on favorite state
+        initial_icon = AppIcon.FAVORITE if self.recipe.is_favorite else AppIcon.UNFAVORITE
         btn_fav = CTToolButton(
-            AppIcon.FAVORITE,
+            initial_icon,
             checkable = True,
         )
         btn_fav.setCursor(Qt.PointingHandCursor)
         btn_fav.setChecked(bool(self.recipe.is_favorite)) # set initial state
         btn_fav.toggled.connect(
-            lambda checked, rid=self.recipe.id: _toggle_favorite(rid)
+            lambda checked, rid=self.recipe.id: self._toggle_favorite_with_icon_update(btn_fav, rid)
         )
 
         # create overlay
