@@ -16,7 +16,7 @@ import pytest
 from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
 
-from app.style_manager import ThemeController
+from app.theme_manager import ThemeController
 from app.ui.main_window import MainWindow
 from app.ui.services.navigation_service import NavigationService
 from app.ui.views.dashboard import Dashboard

@@ -11,7 +11,7 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
-from app.style_manager import ThemeController
+from app.theme_manager import ThemeController
 from app.ui import MainWindow
 from app.ui.services.navigation_service import NavigationService
 from dev_tools import DebugLogger, startup_timer

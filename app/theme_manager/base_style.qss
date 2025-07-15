@@ -1,0 +1,161 @@
+/* Universal Settings */
+QWidget {
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 10pt;
+    background-color: {background};
+    color: {on_surface};
+}
+
+/* Window and Dialogs */
+QMainWindow, QDialog {
+    background-color: {background};
+}
+
+/* GroupBox for visual separation */
+QGroupBox {
+    background-color: {surface};
+    border: 1px solid {outline};
+    border-radius: 8px;
+    margin-top: 10px;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 5px;
+    left: 10px;
+    color: {on_surface_variant};
+}
+
+/* Make Labels transparent to inherit parent background */
+QLabel {
+    background-color: transparent;
+}
+
+/* Frames used as Cards */
+QFrame#Card {
+    background-color: {surface_variant};
+    border: 1px solid {outline};
+    border-radius: 8px;
+}
+
+/* Buttons */
+QPushButton {
+    background-color: {surface};
+    color: {on_surface};
+    border: 1px solid {outline};
+    padding: 8px 16px;
+    border-radius: 4px;
+}
+QPushButton:hover {
+    background-color: {primary_container};
+}
+QPushButton:pressed, QPushButton:checked {
+    background-color: {primary};
+    color: {on_primary};
+    border: 1px solid {primary};
+}
+QPushButton:disabled {
+    background-color: {surface};
+    color: {on_surface_variant};
+    border: 1px solid {outline};
+}
+
+/* Input Fields */
+QLineEdit, QTextEdit, QComboBox {
+    background-color: {surface};
+    color: {on_surface};
+    border: 1px solid {outline};
+    border-radius: 4px;
+    padding: 5px;
+}
+QLineEdit:focus, QTextEdit:focus, QComboBox:focus {
+    border: 2px solid {primary};
+}
+QLineEdit:disabled, QTextEdit:disabled, QComboBox:disabled {
+    background-color: {surface};
+    color: {on_surface_variant};
+}
+
+/* ComboBox Dropdown */
+QComboBox::drop-down {
+    border: none;
+}
+QComboBox::down-arrow {
+    image: url(./down_arrow_{theme_name}.png);
+    width: 14px;
+    height: 14px;
+}
+QComboBox QAbstractItemView {
+    background-color: {surface};
+    border: 1px solid {outline};
+    selection-background-color: {primary};
+    selection-color: {on_primary};
+    outline: none;
+}
+
+/* Checkboxes and Radio Buttons */
+QCheckBox, QRadioButton {
+    background-color: transparent;
+    padding-left: 2px;
+}
+QCheckBox::indicator, QRadioButton::indicator {
+    width: 14px;
+    height: 14px;
+    border: 1px solid {outline};
+    border-radius: 4px;
+}
+QRadioButton::indicator {
+    border-radius: 7px; /* circular */
+}
+QCheckBox::indicator:checked, QRadioButton::indicator:checked {
+    background-color: {primary};
+    border-color: {primary};
+}
+QCheckBox:disabled, QRadioButton:disabled {
+    color: {on_surface_variant};
+}
+
+/* Tabs */
+QTabWidget::pane {
+    border: 1px solid {outline};
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+}
+QTabBar::tab {
+    background: transparent;
+    padding: 10px;
+    color: {on_surface_variant};
+    border: none;
+    border-bottom: 2px solid transparent;
+}
+QTabBar::tab:hover {
+    background-color: {primary_container};
+}
+QTabBar::tab:selected {
+    color: {primary};
+    border-bottom: 2px solid {primary};
+    font-weight: bold;
+}
+
+/* ScrollBars */
+QScrollBar:vertical, QScrollBar:horizontal {
+    border: none;
+    background-color: {surface};
+    width: 10px;
+    height: 10px;
+    margin: 0px;
+}
+QScrollBar::handle {
+    background-color: {outline};
+    border-radius: 5px;
+    min-height: 20px;
+    min-width: 20px;
+}
+QScrollBar::handle:hover {
+    background-color: {on_surface_variant};
+}
+QScrollBar::add-line, QScrollBar::sub-line {
+    height: 0px;
+    width: 0px;
+}
+

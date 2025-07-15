@@ -169,6 +169,7 @@
       "composite": "Custom",
       "recipe_card": "Class",
       "meal_widget": "Class",
+      "theme_manager": "Theme",
 
       //** Subfolders **//
       "app_helpers": "App",
