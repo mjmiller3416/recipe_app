@@ -27,17 +27,23 @@ ACCENT_COLORS = {
 }
 
 
-def generate_theme_dict(source_hex: str, mode: str = "light") -> Dict[str, str]:
+def generate_theme_dict(accent_name_or_hex: str, mode: str = "light") -> Dict[str, str]:
     """
     Generate a complete Material Design 3 theme dictionary from a source color.
 
     Args:
-        source_hex: Source color in hex format (e.g., "#2196F3")
+        accent_name_or_hex: Accent color name (e.g., "Blue") or hex color (e.g., "#2196F3")
         mode: Theme mode - "light" or "dark"
 
     Returns:
         Dictionary with all 27 Material Design 3 semantic roles mapped to hex colors
     """
+    # If it's an accent name, get the hex color
+    if accent_name_or_hex in ACCENT_COLORS:
+        source_hex = ACCENT_COLORS[accent_name_or_hex]
+    else:
+        source_hex = accent_name_or_hex
+
     theme = theme_from_color(source_hex)
     scheme = theme.schemes.light if mode == "light" else theme.schemes.dark
 
