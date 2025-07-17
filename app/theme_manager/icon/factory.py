@@ -1,11 +1,12 @@
-"""Module providing IconFactory for generating themed icons.
+"""app/theme_manager/icon/factory.py
+
+Module providing IconFactory for generating themed icons.
 
 IconFactory creates theme-aware QIcons and QPixmaps from SVG files by
 applying color variants based on the current theme.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from typing import Dict
 from pathlib import Path
 
 from PySide6.QtCore import QSize

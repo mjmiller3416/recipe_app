@@ -9,8 +9,7 @@ from pathlib import Path
 from PySide6.QtCore import QRegularExpression, QSize
 from PySide6.QtGui import QRegularExpressionValidator
 
-from app.config.paths import AppPaths, QssPaths
-from app.style_manager.themes.dark_theme import THEME
+from app.theme_manager.icon.icon_theme import THEME
 
 # ── Icon Defaults ──
 ICON_SIZE  = QSize(20, 20)

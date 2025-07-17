@@ -11,12 +11,10 @@ from PySide6.QtWidgets import QHBoxLayout, QLabel, QStackedWidget, QVBoxLayout, 
 from qframelesswindow import FramelessWindow
 
 from app.config import APPLICATION_WINDOW
-from app.style_manager.theme_controller import ThemeController
 from app.ui.animations import WindowAnimator
 from app.ui.components import SearchBar
 from app.ui.components.navigation.sidebar import Sidebar
 from app.ui.components.navigation.titlebar import TitleBar
-from app.style_manager.icons.loader import IconLoader
 from app.ui.helpers.ui_helpers import center_on_screen
 
 if TYPE_CHECKING:
@@ -47,7 +45,7 @@ class MainWindow(FramelessWindow):
 
     def __init__(
             self,
-            theme_controller: 'ThemeController',
+            #theme_controller: 'ThemeController',
             navigation_service_factory: Callable[[QStackedWidget], 'NavigationService']
     ):
         """Initializes the MainWindow.
@@ -64,9 +62,7 @@ class MainWindow(FramelessWindow):
         self.setMinimumSize(800, 360)
 
         # ── Theme & Services ──
-        self.theme_controller = theme_controller
-        IconLoader().connect_theme_controller(self.theme_controller)
-        self.theme_controller.apply_full_theme()
+        # TODO: Refactor Icon system to support new theme system
 
         # ── Title Bar & Main Layout ──
         self.title_bar = TitleBar(self)

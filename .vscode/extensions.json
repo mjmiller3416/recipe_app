@@ -21,10 +21,10 @@
 		"qwtel.sqlite-viewer",
 		"shd101wyy.markdown-preview-enhanced",
 		"slysherz.comment-box",
-		"undefined_publisher.themed-qss",
+		"pysh3416.themed-qss",
 	],
 	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
 	"unwantedRecommendations": [
-		
+
 	]
 }

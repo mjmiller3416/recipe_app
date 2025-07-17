@@ -1,6 +1,6 @@
 /* Universal Settings */
 QWidget {
-    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Roboto';
     font-size: 10pt;
     background-color: {background};
     color: {on_surface};
@@ -159,3 +159,23 @@ QScrollBar::add-line, QScrollBar::sub-line {
     width: 0px;
 }
 
+/* Base Frame */
+QFrame[type="card"] {
+    background-color: {surface_container};
+    border: 1px solid {outline};
+    border-radius: 12px;
+    padding: 12px;
+}
+
+/* Title Label */
+QLabel[type="title"] {
+    color: {on_surface};
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Subtitle Label */
+QLabel[type="subtitle"] {
+    color: {on_surface_variant};
+    font-size: 13px;
+}

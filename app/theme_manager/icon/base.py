@@ -1,4 +1,4 @@
-"""app/style_manager/icons/base
+"""app/theme_manager/icon/base
 
 Shared types and protocols for icon package.
 """

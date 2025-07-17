@@ -10,9 +10,9 @@ from typing import Dict
 
 from PySide6.QtCore import QSize
 
-from app.style_manager.icons.spec import IconSpec
+from app.theme_manager.icon.spec import IconSpec
 from app.config.paths import AppPaths
-from app.style_manager.themes.dark_theme import THEME
+from app.theme_manager.icon.icon_theme import THEME
 
 
 # ── AppIcon Enum Definition ──────────────────────────────────────────────────────────────────

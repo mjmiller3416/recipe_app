@@ -39,6 +39,13 @@
             }
           },
           {
+            "scope": "variable.language",
+            "settings": {
+              "foreground": "#FF00FF", // hot pink
+              "fontStyle": "bold italic"
+            }
+          },
+          {
             "scope": "string.quoted.attribute-value.themed-qss",
             "settings": {
               "foreground": "#4EC9B0", // Yellow
@@ -170,6 +177,7 @@
       "recipe_card": "Class",
       "meal_widget": "Class",
       "theme_manager": "Theme",
+      "qss": "Theme",
 
       //** Subfolders **//
       "app_helpers": "App",

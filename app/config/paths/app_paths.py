@@ -19,7 +19,7 @@ class AppPaths:
     ASSETS_DIR = APP_DIR / "assets"
     DATA_DIR = ROOT_DIR / "data_files"
     USER_PROFILE_DIR = DATA_DIR / "user_profile"
-    TL_DIR = APP_DIR / "style_manager"
+    TM_DIR = APP_DIR / "theme_manager"
 
     # ── Asset Directories ───────────────────────────────────────────────────────
     ICONS_DIR = ASSETS_DIR / "icons"
@@ -31,8 +31,9 @@ class AppPaths:
     # ── Theme Directories ───────────────────────────────────────────────────────
     USER_SETTINGS_PATH = DATA_DIR / "user_settings.json"
     THEME_CONFIG_PATH = CONFIG_DIR / "theme_config.json"
-    QSS_DIR = TL_DIR / "stylesheets"
-    THEMES_DIR = TL_DIR / "themes"
+    BASE_STYLE = TM_DIR / "base_style.qss"
+    STYLE = TM_DIR / "style"
+    QSS_DIR = TM_DIR / "qss"
 
     # ── Path Utilities ──────────────────────────────────────────────────────────
     @staticmethod

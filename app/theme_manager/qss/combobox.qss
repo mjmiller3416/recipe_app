@@ -1,0 +1,49 @@
+/* ------------------------------------------------------------------
+   MATERIAL-3 COMBOBOX STYLESHEET
+   ------------------------------------------------------------------ */
+#ComboBox {
+    background-color: {surface};
+    border-radius: 6px;
+}
+
+#ComboBox #CBLineEdit {
+    background-color: {surface};
+    color: {on_surface};
+    border: none;
+    border-radius: 4px;
+    font-size: 20px;
+    font-family: "Roboto";
+    padding: 5px;
+    padding-left: 4px;
+}
+
+#ComboBox #CBButton {
+    background-color: transparent;
+    border: none;
+    border-radius: 0px;
+    padding: 3px;
+}
+
+#CompleterPopup {
+    background-color: {surface};
+    color: {on_surface};
+    border: 1px solid {outline};
+    outline: none;
+    font-size: 20px;
+    font-family: "Roboto";
+    padding: 2px;
+}
+
+#CompleterPopup:item {
+    border: none;
+    outline: none;
+    padding: 6px 8px;
+}
+
+#CompleterPopup:item:selected {
+    background-color: {primary_container};
+    color: {on_primary_container};
+    border: none;
+    border-radius: 5px;
+    outline: none;
+}

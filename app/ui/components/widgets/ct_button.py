@@ -10,9 +10,9 @@ from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QPushButton
 
 from app.config import AppIcon, ICON_SIZE
-from app.style_manager.icons.loader import IconLoader
+from app.theme_manager.icon.loader import IconLoader
 
-from app.style_manager.icons import IconState, IconMixin
+from app.theme_manager.icon import IconState, IconMixin
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class CTButton(QPushButton, IconMixin):

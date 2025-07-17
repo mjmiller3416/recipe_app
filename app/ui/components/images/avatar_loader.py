@@ -18,7 +18,7 @@ from PySide6.QtWidgets import (QFileDialog, QGraphicsOpacityEffect,
 from app.config import AppPaths
 from app.config.config import THEME
 from app.ui.components.widgets import CircularImage
-from app.style_manager.icons.ct_icon import CTIcon
+from app.theme_manager.icon.ct_icon import CTIcon
 from data_files.user_settings import UserSettings
 
 # ── Constants ───────────────────────────────────────────────────────────────────
@@ -98,7 +98,7 @@ class AvatarLoader(QWidget):
     @Slot()
     def _on_edit_clicked(self):
         """Handle avatar edit button click."""
-        from app.ui.components.dialogs import CropDialog 
+        from app.ui.components.dialogs import CropDialog
         file_path, _ = QFileDialog.getOpenFileName(
             self, "Select Avatar Image", "", "Image Files (*.png *.jpg *.jpeg)"
         )
@@ -115,13 +115,13 @@ class AvatarLoader(QWidget):
 
     def set_avatar_from_path(self, temp_file_path: str):
         """Persist new avatar, update display.
-        
+
         Args:
             temp_file_path (str): Path to the cropped avatar image.
         """
         profile_dir = AppPaths.USER_PROFILE_DIR
         profile_dir.mkdir(parents=True, exist_ok=True)
-        
+
         perm_filename = f"avatar_{uuid.uuid4().hex}.png"
         perm_path = profile_dir / perm_filename
         shutil.copy(temp_file_path, perm_path)
@@ -132,7 +132,7 @@ class AvatarLoader(QWidget):
     # ── Event Handlers ─────────────────────────────────────────────────────────────
     def resizeEvent(self, event):
         """Ensure overlay widgets are centered.
-        
+
         Args:
             event (QResizeEvent): The resize event.
         """
@@ -145,7 +145,7 @@ class AvatarLoader(QWidget):
 
     def enterEvent(self, event: QEvent):
         """Handle mouse hover to show edit indication.
-        
+
         Args:
             event (QEvent): The enter event.
         """
@@ -160,7 +160,7 @@ class AvatarLoader(QWidget):
 
     def leaveEvent(self, event: QEvent):
         """Handle mouse leaving to restore normal appearance.
-        
+
         Args:
             event (QEvent): The leave event.
         """
