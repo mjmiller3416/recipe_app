@@ -1,18 +1,51 @@
 # File: app/ui/demo2.py
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
+import sys
+from enum import Enum, auto
+from collections import namedtuple
+
 from PySide6.QtWidgets import (
-    QApplication, QWidget, QLabel, QVBoxLayout, QMainWindow,
-    QGraphicsDropShadowEffect, QGraphicsBlurEffect,
-    QGraphicsColorizeEffect, QGraphicsOpacityEffect
+    QApplication, QWidget, QLabel, QGridLayout, QVBoxLayout, QMainWindow,
+    QGraphicsDropShadowEffect, QGraphicsBlurEffect, QGraphicsOpacityEffect
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor
-from enum import Enum, auto
-import sys
+
+
+# ── Shadow Effect Enum ───────────────────────────────────────────────────────────────────────
+ShadowStyle = namedtuple("ShadowStyle", "color blur_radius offset_x offset_y")
+
+class Shadow(Enum):
+    """
+    Predefined shadow styles for elevation effects.
+
+    - ELEVATION_0: No shadow, flat appearance.
+    - ELEVATION_1: Subtle shadow for resting cards.
+    - ELEVATION_3: More pronounced shadow for hover/active states.
+    - ELEVATION_6: Stronger shadow for floating cards.
+    - ELEVATION_12: Heaviest shadow for dialogs/modals.
+    """
+    ELEVATION_0 = ShadowStyle(QColor(0, 0, 0, 0), 0.0, 0.0, 0.0)
+    ELEVATION_1 = ShadowStyle(QColor(0, 0, 0, 40), 8.0, 0.0, 2.0)
+    ELEVATION_3 = ShadowStyle(QColor(0, 0, 0, 60), 12.0, 0.0, 4.0)
+    ELEVATION_6 = ShadowStyle(QColor(0, 0, 0, 80), 16.0, 0.0, 6.0)
+    ELEVATION_12 = ShadowStyle(QColor(0, 0, 0, 100), 24.0, 0.0, 8.0)
+
+
+# ── Glow Effect Enum ─────────────────────────────────────────────────────────────────────────
+GlowStyle = namedtuple("GlowStyle", "color blur_radius")
+
+class Glow(Enum):
+    CYAN = GlowStyle(QColor(0, 255, 255, 200), 60.0)
+    PINK = GlowStyle(QColor(255, 0, 255, 220), 50.0)
+    GOLD = GlowStyle(QColor(255, 215, 0, 180), 40.0)
+    ERROR = GlowStyle(QColor(255, 0, 0, 150), 30.0)
+    PRIMARY = GlowStyle(QColor(100, 149, 237, 180), 45.0)  # Cornflower Blue-ish
+
 
 # ── Widget Effects ───────────────────────────────────────────────────────────────────────────
-class WidgetEffects:
+class Effects:
     """
     A collection of QGraphicsEffect class methods to apply visual effects to QWidgets.
     """
@@ -21,10 +54,7 @@ class WidgetEffects:
     def apply_shadow(
         cls,
         widget: QWidget,
-        color: QColor = QColor(0, 0, 0, 150),
-        blur_radius: float = 15.0,
-        offset_x: float = 3.0,
-        offset_y: float = 3.0
+        shadow: Shadow = Shadow.ELEVATION_1,
     ) -> None:
         """
         Applies a QGraphicsDropShadowEffect to the given widget.
@@ -36,12 +66,16 @@ class WidgetEffects:
             offset_x (float): The horizontal offset of the shadow.
             offset_y (float): The vertical offset of the shadow.
         """
+        _color = shadow.value.color
+        _blur_radius = shadow.value.blur_radius
+        _offset_x = shadow.value.offset_x
+        _offset_y = shadow.value.offset_y
+
         shadow_effect = QGraphicsDropShadowEffect(widget)
-        shadow_effect.setColor(color)
-        shadow_effect.setBlurRadius(blur_radius)
-        shadow_effect.setOffset(offset_x, offset_y)
+        shadow_effect.setColor(_color)
+        shadow_effect.setBlurRadius(_blur_radius)
+        shadow_effect.setOffset(_offset_x, _offset_y)
         widget.setGraphicsEffect(shadow_effect)
-        widget.update()
         print(f"Applied Drop Shadow to "
               f"{widget.objectName() if widget.objectName() else widget.__class__.__name__}"
         )
@@ -64,27 +98,32 @@ class WidgetEffects:
         )
 
     @classmethod
-    def apply_colorize(
-        cls, widget: QWidget,
-        color: QColor = QColor(255, 0, 0, 100),
-        strength: float = 0.5
+    def apply_glow(
+        cls,
+        widget: QWidget,
+        glow: Glow = Glow.PRIMARY,
     ) -> None:
         """
-        Applies a QGraphicsColorizeEffect to the given widget.
+        Applies a "glow" effect to the given widget using QGraphicsDropShadowEffect.
+
+        A glow is a shadow with zero offset, making it radiate from the center.
 
         Args:
             widget (QWidget): The widget to apply the effect to.
-            color (QColor): The color to tint the widget with. Default is semi-transparent red.
-            strength (float): The strength of the colorization (0.0 to 1.0).
+            color (QColor): The color of the glow.
+            blur_radius (float): The blur radius of the glow.
         """
-        colorize_effect = QGraphicsColorizeEffect(widget)
-        colorize_effect.setColor(color)
-        colorize_effect.setStrength(strength)
-        widget.setGraphicsEffect(colorize_effect)
-        widget.update()
-        print(f"Applied Colorize to "
-              f"{widget.objectName() if widget.objectName() else widget.__class__.__name__}"
-        )
+        _color = glow.value.color
+        _blur_radius = glow.value.blur_radius
+
+        glow_effect = QGraphicsDropShadowEffect(widget)
+        glow_effect.setColor(_color)
+        glow_effect.setBlurRadius(_blur_radius)
+
+        # set offset to zero to create a centered glow
+        glow_effect.setOffset(0, 0)
+
+        widget.setGraphicsEffect(glow_effect)
 
     @classmethod
     def apply_opacity(cls, widget: QWidget, opacity: float = 0.5):
@@ -128,15 +167,6 @@ class FontType(Enum):
     BODY = auto()
     FOOTER = auto()
 
-class Theme(Enum):
-    LIGHT = auto()
-    DARK = auto()
-
-class State(Enum):
-    NORMAL = auto()
-    DISABLED = auto()
-    ACTIVE = auto()
-
 
 # ── StyledWidget Base Class ──────────────────────────────────────────────────────────────────
 class StyledWidget(QWidget):
@@ -151,28 +181,36 @@ class StyledLabel(QLabel):
 
 # ── Custom CardWidget ────────────────────────────────────────────────────────────────────────
 class CardWidget(StyledWidget):
-    def __init__(self, title: str = "", body: str = "", footer: str = "Footer", parent=None):
+    def __init__(self, title: str = "", body: str = "", footer: str = "", parent=None):
         super().__init__(parent)
         self.setType(WidgetType.CARD)
         self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setMinimumHeight(100)
+        self.setMinimumWidth(150)
 
-        layout = QVBoxLayout(self)
-        layout.setSpacing(0)
-        layout.setContentsMargins(12, 12, 12, 12)
+        self._layout = QVBoxLayout(self)
+        self._layout.setSpacing(0)
+        self._layout.setContentsMargins(12, 12, 12, 12)
 
         self.header = StyledLabel(title)
         self.header.setFontType(FontType.HEADER)
 
         self.body = StyledLabel(body)
         self.body.setFontType(FontType.BODY)
-        self.body.setWordWrap(True)
+        self.body.setWordWrap(False)
 
         self.footer = StyledLabel(footer)
         self.footer.setFontType(FontType.FOOTER)
 
-        layout.addWidget(self.header)
-        layout.addWidget(self.body)
-        layout.addWidget(self.footer)
+        self._layout.addWidget(self.header)
+        self._layout.addWidget(self.body)
+        self._layout.addWidget(self.footer)
+
+    def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
+        """
+        Override setContentsMargins to control the internal layout margins.
+        """
+        self._layout.setContentsMargins(left, top, right, bottom)
 
 
 # ── Main Window ──────────────────────────────────────────────────────────────────────────────
@@ -181,39 +219,20 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Styled Card Example")
 
-        card = CardWidget(
-            title="Regular Card",
-            body="This is a regular card without any effects applied.",
-            footer="~ Powered by PySide6 ~"
-        )
-
-        card2 = CardWidget(
-            title="Shadow Example",
-            body="This card has a drop shadow effect applied.",
-            footer="~ Powered by PySide6 ~"
-        )
-        WidgetEffects.apply_shadow(card2, blur_radius=20.0, offset_x=5.0, offset_y=5.0)
-
-        card3 = CardWidget(
-            title="Blur Example",
-            body="This card has a blur effect applied.",
-            footer="~ Powered by PySide6 ~"
-        )
-        WidgetEffects.apply_blur(card3, blur_radius=5.0)
-
-        card4 = CardWidget(
-            title="Opacity Example",
-            body="This card has an opacity effect applied.",
-            footer="~ Powered by PySide6 ~"
-        )
-        WidgetEffects.apply_opacity(card4, opacity=0.7)
+        card = CardWidget(title="Primary")
+        card.setType(WidgetType.CARD)
+        card2 = CardWidget(title="Secondary")
+        card2.setType(WidgetType.CARD)
+        card3 = CardWidget(title="Tertiary")
+        card3.setType(WidgetType.CARD)
 
         container = QWidget()
-        layout = QVBoxLayout(container)
-        layout.addWidget(card)
-        layout.addWidget(card2)
-        layout.addWidget(card3)
-        layout.addWidget(card4)
+        layout = QGridLayout(container)
+        layout.setSpacing(30)  # Add space between cards for glow effects
+        layout.setContentsMargins(40, 40, 40, 40)  # Add margins for glow effects
+        layout.addWidget(card, 0, 0)
+        layout.addWidget(card2, 0, 1)
+        layout.addWidget(card3, 0, 2)
         layout.setAlignment(Qt.AlignCenter)
 
         self.setCentralWidget(container)
@@ -224,7 +243,7 @@ class MainWindow(QMainWindow):
 
 # ── QSS Styling ──
 qss = """
-QMainWindow { background-color: #ff0000; }
+QMainWindow { background-color: #585858; }
 
 /* Base Card Styling */
 CardWidget[widgetType="CARD"] {
@@ -250,7 +269,6 @@ CardWidget[widgetType="CARD"] {
 
 /* Footer */
 [fontType="FOOTER"] {
-    background-color: #1fdbb9;
     font-size: 12px;
     color: gray;
     padding-top: 8px;

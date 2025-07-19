@@ -89,7 +89,7 @@ class Theme(QSingleton):
 
     # ── Setters ──
     @classmethod
-    def set_theme(cls, theme_color: Color, mode: Mode):
+    def setTheme(cls, theme_color: Color, mode: Mode):
         """Sets both the theme color and mode, regenerating the theme."""
         instance = cls._get_instance()
         instance._theme_color = theme_color
@@ -101,7 +101,7 @@ class Theme(QSingleton):
         )
 
     @classmethod
-    def set_theme_mode(cls, mode: Mode):
+    def setThemeMode(cls, mode: Mode):
         """Sets the application theme mode."""
         instance = cls._get_instance()
         instance._theme_mode = mode
@@ -109,7 +109,7 @@ class Theme(QSingleton):
         DebugLogger.log(f"Theme mode changed to: {mode.value}", "Info")
 
     @classmethod
-    def set_theme_color(cls, theme_color: Color):
+    def setThemeColor(cls, theme_color: Color):
         """Changes the theme color and updates the application theme."""
         if isinstance(theme_color, Color):
             instance = cls._get_instance()
@@ -118,11 +118,11 @@ class Theme(QSingleton):
             DebugLogger.log(f"Theme color changed to: {instance._theme_color}", "Info")
 
     @classmethod
-    def toggle_theme_mode(cls):
+    def toggleThemeMode(cls):
         """Toggles between light and dark mode."""
         instance = cls._get_instance()
         current_mode = Mode.DARK if instance._theme_mode == Mode.LIGHT else Mode.LIGHT
-        cls.set_theme_mode(current_mode)
+        cls.setThemeMode(current_mode)
 
     # ── Getters ──
     @classmethod
