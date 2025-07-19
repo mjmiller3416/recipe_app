@@ -10,7 +10,7 @@ from typing import Sequence
 from PySide6.QtCore import QEvent, QStringListModel, Qt, Signal
 from PySide6.QtWidgets import QApplication, QCompleter, QHBoxLayout, QLineEdit, QWidget
 
-from app.ui.components.widgets import CTToolButton
+from .ct_tool_button import CTToolButton
 from dev_tools import DebugLogger
 
 

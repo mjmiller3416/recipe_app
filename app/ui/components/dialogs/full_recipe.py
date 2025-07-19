@@ -14,7 +14,7 @@ from app.config.app_icon import AppIcon, ICON_SPECS
 from app.core.models import Recipe
 from app.ui.components.dialogs import DialogWindow
 from app.ui.components.layout import Separator
-from app.theme_manager.icon import RoundedImage
+from app.ui.components.widgets import RoundedImage
 from app.theme_manager.icon.ct_icon import CTIcon
 from app.ui.helpers.ui_helpers import create_framed_layout
 

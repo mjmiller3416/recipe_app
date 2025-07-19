@@ -28,6 +28,7 @@ from .widgets.combobox import ComboBox
 from .widgets.ct_button import CTButton
 from .widgets.ct_tool_button import CTToolButton
 from .widgets.rounded_image import RoundedImage
+from .widgets.dropdown_widget import DropDown
 
 __all__ = [
     # Dialogs
@@ -43,5 +44,5 @@ __all__ = [
     # Navigation
     "NavButton", "Sidebar", "TitleBar",
     # Widgets
-    "CTButton", "CTToolButton", "RoundedImage", "CircularImage"
+    "CTButton", "CTToolButton", "RoundedImage", "CircularImage", "DropDown"
 ]

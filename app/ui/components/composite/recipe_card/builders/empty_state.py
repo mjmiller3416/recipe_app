@@ -10,7 +10,7 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QFrame, QVBoxLayout
 
 from app.config import AppIcon
-from app.theme_manager.icon import CTButton
+from app.ui.components.widgets import CTButton
 
 from ..constants import LAYOUT_SIZE, LayoutSize
 

@@ -13,7 +13,7 @@ from app.core.services.recipe_service import RecipeService
 from app.ui.components.composite import RecipeCard
 from app.ui.components.composite.recipe_card.constants import LayoutSize
 from app.ui.components.layout.flow_layout import FlowLayout
-from app.theme_manager.icon import ComboBox
+from app.ui.components.widgets import ComboBox
 
 # ── Recipe Browser ───────────────────────────────────────────────────────────────────────────
 class RecipeBrowser(QWidget):

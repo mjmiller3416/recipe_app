@@ -10,7 +10,7 @@ from PySide6.QtCore import Qt, QStringListModel, Signal
 from PySide6.QtWidgets import QWidget
 
 from app.config import AppIcon
-from app.ui.components.widgets import DropDown
+from .dropdown_widget import DropDown
 
 
 # ── ComboBox ─────────────────────────────────────────────────────────────────────────────────

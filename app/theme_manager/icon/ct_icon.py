@@ -11,8 +11,6 @@ from pathlib import Path
 
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QLabel
-
-from app.config.app_icon import AppIcon
 from app.theme_manager.icon.loader import IconLoader
 from app.theme_manager.icon.factory import IconFactory
 
@@ -26,7 +24,7 @@ class CTIcon(QLabel):
 
     def __init__(
         self,
-        icon_or_path: AppIcon | str | Path,
+        icon_or_path: object,
         icon_size: QSize | None = None,
         variant: str | None = None,
         parent=None
