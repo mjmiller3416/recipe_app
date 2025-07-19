@@ -14,7 +14,8 @@ from app.config.app_icon import AppIcon, ICON_SPECS
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
 from app.ui.components.layout import Separator
-from app.ui.components.widgets import CTIcon, CTToolButton, RoundedImage
+from app.theme_manager.icon import CTIcon
+from app.ui.components.widgets import CTToolButton, RoundedImage
 from app.ui.helpers.ui_helpers import make_overlay
 from ..constants import LAYOUT_SIZE, LayoutSize
 
@@ -39,7 +40,7 @@ class RecipeCard:
 
             # update the button icon based on the new favorite state
             from app.config.app_icon import ICON_SPECS
-            from app.style_manager.icons.factory import IconFactory
+            from app.theme_manager.icon.factory import IconFactory
 
             new_icon = AppIcon.FAVORITE if updated_recipe.is_favorite else AppIcon.UNFAVORITE
             spec = ICON_SPECS[new_icon]

@@ -11,7 +11,6 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
-from app.theme_manager.theme import Theme
 from app.ui import MainWindow
 from app.ui.services.navigation_service import NavigationService
 from dev_tools import DebugLogger, startup_timer
@@ -24,8 +23,6 @@ elif "--test" in sys.argv:
 
     app = QApplication(sys.argv)
     app.setApplicationName("Test App")
-
-    Theme().set_global_stylesheet("app/theme_manager/base_style.qss")
 
     from dev_tools.test_harness import TestHarness
     TestHarness.launch_from_test_file(app)
@@ -46,9 +43,6 @@ else:
     app = QApplication(sys.argv)
     app.setApplicationName("MealGenie")
     DebugLogger.log("Starting MealGenie application...\n", "info")
-    #init_db()
-
-    ThemeManager().set_global_stylesheet("app/theme_manager/base_style.qss")
 
     navigation_service_factory = NavigationService.create
 

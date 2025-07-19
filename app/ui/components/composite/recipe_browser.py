@@ -13,7 +13,7 @@ from app.core.services.recipe_service import RecipeService
 from app.ui.components.composite import RecipeCard
 from app.ui.components.composite.recipe_card.constants import LayoutSize
 from app.ui.components.layout.flow_layout import FlowLayout
-from app.ui.components.widgets import ComboBox
+from app.theme_manager.icon import ComboBox
 
 # ── Recipe Browser ───────────────────────────────────────────────────────────────────────────
 class RecipeBrowser(QWidget):
@@ -153,7 +153,7 @@ class RecipeBrowser(QWidget):
         for recipe in recipes:
             card = RecipeCard(self.card_size, parent=self.scroll_container)
             card.set_recipe(recipe)
-            
+
             # Set selection mode on the card
             card.set_selection_mode(self.selection_mode)
 

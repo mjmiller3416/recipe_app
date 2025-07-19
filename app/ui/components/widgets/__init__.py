@@ -5,6 +5,7 @@ from .combobox import ComboBox
 from .ct_button import CTButton
 from .ct_tool_button import CTToolButton
 from .rounded_image import RoundedImage
+from .dropdown_widget import DropDown
 
 __all__ = [
     "CTButton",
@@ -12,4 +13,5 @@ __all__ = [
     "RoundedImage",
     "CircularImage",
     "ComboBox",
+    "DropDown"
 ]

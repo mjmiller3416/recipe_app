@@ -16,9 +16,9 @@ from PySide6.QtWidgets import (QFileDialog, QGraphicsOpacityEffect,
                                QToolButton, QVBoxLayout, QWidget)
 
 from app.config import AppPaths
-from app.config.config import THEME
-from app.ui.components.widgets import CircularImage
-from app.theme_manager.icon.ct_icon import CTIcon
+from app.theme_manager.icon.icon_theme import THEME
+from app.ui.components import CircularImage
+from app.theme_manager.icon import CTIcon
 from data_files.user_settings import UserSettings
 
 # ── Constants ───────────────────────────────────────────────────────────────────

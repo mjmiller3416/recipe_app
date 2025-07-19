@@ -9,33 +9,33 @@ from typing import Any, Optional
 from PySide6.QtWidgets import (QGridLayout, QLabel, QLineEdit, QSizePolicy,
                                QWidget)
 
-from app.ui.components.widgets import ComboBox
+from app.theme_manager.icon import ComboBox
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class FormField(QWidget):
     """
     Base class for form fields, providing a consistent layout and styling.
-    
+
     Attributes:
         label (QLabel): The label for the form field.
         input_widget (QWidget): The input widget (e.g., QLineEdit, QTextEdit).
     """
-    
+
     def __init__(
-            self, 
-            label_text: str, 
-            widget: QWidget, 
+            self,
+            label_text: str,
+            widget: QWidget,
             parent: Optional[QWidget] = None
     ) -> None:
         """Initializes the FormField with a label and an input widget."""
         super().__init__(parent)
         self.setObjectName(self.__class__.__name__)
-        self.lbl = QLabel(label_text) 
+        self.lbl = QLabel(label_text)
         self.input_widget = widget
-        
+
         self._build_ui()
-    
+
     def _build_ui(self):
         """Builds the UI layout for the form field."""
         layout = QGridLayout(self)
@@ -60,19 +60,19 @@ class FormField(QWidget):
 class LineEditField(FormField):
     """
     Form field specifically for QLineEdit input.
-    
+
     Inherits from FormField and initializes with a QLineEdit widget.
     """
-    
+
     def __init__(
-            self, 
-            label_text: str, 
+            self,
+            label_text: str,
             placeholder: Optional[str] = None,
             parent: Optional[QWidget] = None
     ):
         """
         Initializes the LineEditField with a label and a QLineEdit.
-        
+
         Args:
             label_text (str): The text for the label.
             placeholder (str, optional): Placeholder text for the QLineEdit.
@@ -102,7 +102,7 @@ class LineEditField(FormField):
     def text(self):
         """Returns the text from the QLineEdit input widget."""
         return self.input_widget.text()
-    
+
     def clear(self):
         """Clears the current selection in the ComboBox."""
         self.input_widget.clear()
@@ -110,30 +110,30 @@ class LineEditField(FormField):
     def strip(self):
         """
         Returns the text from the QLineEdit input widget with leading and trailing whitespace removed.
-        
+
         Returns:
             str: The stripped text.
         """
         return self.input_widget.text().strip()
-    
+
 # ── Class Definition ────────────────────────────────────────────────────────────
 class ComboBoxField(FormField):
     """
     Form field specifically for ComboBox input.
-    
+
     Inherits from FormField and initializes with a ComboBox widget.
     """
 
     def __init__(
-            self, 
-            label_text: str, 
+            self,
+            label_text: str,
             item_list: list[str],
-            placeholder: Optional[str] = None, 
+            placeholder: Optional[str] = None,
             parent: Optional[QWidget] = None
     ):
         """
         Initializes the ComboBoxField with a label and a ComboBox.
-        
+
         Args:
             label_text (str): The text for the label.
             item_list (list[str]): List of items to populate the combo box.
@@ -147,15 +147,15 @@ class ComboBoxField(FormField):
     def selection_validated(self):
         """Exposes the ComboBox's selection_validated signal."""
         return self.input_widget.selection_validated
-    
+
     def currentText(self):
         """Returns the current text from the ComboBox input widget."""
         return self.input_widget.currentText()
-    
+
     def setCurrentIndex(self, index: int):
         """
         Sets the current index of the ComboBox.
-        
+
         Args:
             index (int): The index to set as current.
         """

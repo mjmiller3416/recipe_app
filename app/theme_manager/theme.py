@@ -24,8 +24,16 @@ class QSingleton(QObject):
 
     def __new__(cls, *args, **kwargs):
         if cls not in cls._instances:
-            cls._instances[cls] = super().__new__(cls)
+            instance = super().__new__(cls)
+            cls._instances[cls] = instance
         return cls._instances[cls]
+
+    def __init__(self, *args, **kwargs):
+        # Prevent re-initialization
+        if hasattr(self, '_initialized'):
+            return
+        super().__init__(*args, **kwargs)
+        self._initialized = True
 
 
 class Theme(QSingleton):
@@ -38,11 +46,8 @@ class Theme(QSingleton):
     theme_refresh = Signal(dict)  # emits the new color map
 
     def __init__(self, parent: Optional[QObject] = None):
-        # prevent re-initialization
-        if hasattr(self, '_initialized'):
-            return
+        """Initialize the Theme manager."""
         super().__init__(parent)
-        self._initialized = True
 
         self._theme_color = Color.INDIGO
         self._theme_mode = Mode.LIGHT
@@ -51,9 +56,16 @@ class Theme(QSingleton):
 
         self._regenerate_theme_colors()
 
+    @classmethod
+    def _get_instance(cls):
+        """Get the singleton instance, creating it if necessary."""
+        if cls not in cls._instances:
+            cls._instances[cls] = cls()  # This properly calls __new__ and __init__
+        return cls._instances[cls]
+
     def _inject_theme_colors(self) -> str:
         """Injects the current theme colors into the given stylesheet content."""
-        base_content = Stylesheet.read(Qss.BASE)
+        base_content = Stylesheet.read(Qss.TEST)
         self._base_style = Stylesheet.inject_theme(base_content, self._current_color_map)
         return self._base_style
 
@@ -74,20 +86,59 @@ class Theme(QSingleton):
 
 
     # ── Public API ───────────────────────────────────────────────────────────────────────────
-    def set_theme(self, mode: Mode):
-        """Sets the application theme."""
-        self._theme_mode = mode
-        self._regenerate_theme_colors()
+
+    # ── Setters ──
+    @classmethod
+    def set_theme(cls, theme_color: Color, mode: Mode):
+        """Sets both the theme color and mode, regenerating the theme."""
+        instance = cls._get_instance()
+        instance._theme_color = theme_color
+        instance._theme_mode = mode
+        instance._regenerate_theme_colors()
+        DebugLogger.log(
+            f"Theme set to color: {instance._theme_color}, mode: {instance._theme_mode}",
+            "Info"
+        )
+
+    @classmethod
+    def set_theme_mode(cls, mode: Mode):
+        """Sets the application theme mode."""
+        instance = cls._get_instance()
+        instance._theme_mode = mode
+        instance._regenerate_theme_colors()
         DebugLogger.log(f"Theme mode changed to: {mode.value}", "Info")
 
-    def set_theme_color(self, theme_color: Color):
+    @classmethod
+    def set_theme_color(cls, theme_color: Color):
         """Changes the theme color and updates the application theme."""
         if isinstance(theme_color, Color):
-            self._theme_color = theme_color
-            self._regenerate_theme_colors()
-            DebugLogger.log(f"Theme color changed to: {self._theme_color}", "Info")
+            instance = cls._get_instance()
+            instance._theme_color = theme_color
+            instance._regenerate_theme_colors()
+            DebugLogger.log(f"Theme color changed to: {instance._theme_color}", "Info")
 
-    def toggle_theme_mode(self):
+    @classmethod
+    def toggle_theme_mode(cls):
         """Toggles between light and dark mode."""
-        current_mode = Mode.DARK if self._theme_mode == Mode.LIGHT else Mode.LIGHT
-        self.set_theme(current_mode)
+        instance = cls._get_instance()
+        current_mode = Mode.DARK if instance._theme_mode == Mode.LIGHT else Mode.LIGHT
+        cls.set_theme_mode(current_mode)
+
+    # ── Getters ──
+    @classmethod
+    def get_current_color_map(cls) -> Dict[str, str]:
+        """Returns the current color map."""
+        instance = cls._get_instance()
+        return instance._current_color_map.copy()
+
+    @classmethod
+    def get_current_theme_color(cls) -> Color:
+        """Returns the current theme color."""
+        instance = cls._get_instance()
+        return instance._theme_color
+
+    @classmethod
+    def get_current_theme_mode(cls) -> Mode:
+        """Returns the current theme mode."""
+        instance = cls._get_instance()
+        return instance._theme_mode

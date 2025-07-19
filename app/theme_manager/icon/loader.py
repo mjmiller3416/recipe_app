@@ -13,7 +13,7 @@ from PySide6.QtCore import QObject
 from app.core.utils import SingletonMixin
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from app.style_manager.theme_controller import ThemeController
+    from app.theme_manager.theme_controller import ThemeController
 from dev_tools import DebugLogger
 from .base import ThemedIcon
 

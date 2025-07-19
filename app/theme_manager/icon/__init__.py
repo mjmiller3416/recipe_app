@@ -4,9 +4,11 @@
 from app.theme_manager.icon.state import IconState
 from app.theme_manager.icon.mixin import IconMixin
 from app.theme_manager.icon.base import ThemedIcon
+from app.theme_manager.icon.ct_icon import CTIcon
 
 __all__ = [
     "IconState",
     "IconMixin",
     "ThemedIcon",
+    "CTIcon",
 ]

@@ -3,16 +3,19 @@
 Provides a base widget combining a QLineEdit, a QCompleter, and an optional
 dropdown arrow button, with shared event handling for popup navigation.
 """
+
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from typing import Sequence
 
 from PySide6.QtCore import QEvent, QStringListModel, Qt, Signal
 from PySide6.QtWidgets import QApplication, QCompleter, QHBoxLayout, QLineEdit, QWidget
 
-from app.ui.components.widgets.ct_tool_button import CTToolButton
+from app.ui.components.widgets import CTToolButton
 from dev_tools import DebugLogger
 
 
-class DropDownWidget(QWidget):
+# ── Dropdown Widget ──────────────────────────────────────────────────────────────────────────
+class DropDown(QWidget):
     """
     Base widget for a line edit with a dropdown completer and optional button.
 

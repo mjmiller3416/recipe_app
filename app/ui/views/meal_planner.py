@@ -12,7 +12,7 @@ from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget, QStackedWidget
 from app.config import AppIcon
 from app.core.services.planner_service import PlannerService
 from app.ui.components.composite import MealWidget
-from app.ui.components.widgets import CTIcon
+from app.theme_manager.icon import CTIcon
 from dev_tools import DebugLogger, StartupTimer
 from app.ui.views.recipe_selection import RecipeSelection
 

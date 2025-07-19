@@ -10,10 +10,12 @@ from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout
 
 from app.ui.components.dialogs.dialog_window import DialogWindow
 from app.ui.components.images.image_cropper import ImageCropper
-from app.ui.helpers.dialog_helpers import (MIN_CROP_DIM_ORIGINAL,
-                                           SELECT_NEW_IMAGE_CODE,
-                                           build_crop_buttons,
-                                           load_pixmap_or_warn)
+from app.ui.helpers.dialog_helpers import (
+    MIN_CROP_DIM_ORIGINAL,
+    SELECT_NEW_IMAGE_CODE,
+    build_crop_buttons,
+    load_pixmap_or_warn
+)
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -30,9 +32,9 @@ class CropDialog(DialogWindow): # Inherit from your BaseDialog or QDialog
         self.initial_image_path = image_path
         self.original_pixmap = load_pixmap_or_warn(image_path, self)
 
-        self._build_ui() 
+        self._build_ui()
         self._connect_signals()
-        
+
         self.image_cropper.set_original_pixmap(self.original_pixmap)
 
     def _build_ui(self):
@@ -44,17 +46,17 @@ class CropDialog(DialogWindow): # Inherit from your BaseDialog or QDialog
         )
         self.instruction_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.instruction_label.setWordWrap(True)
-        self.content_layout.addWidget(self.instruction_label) 
+        self.content_layout.addWidget(self.instruction_label)
 
         # ── Cropper Area ──
         cropper_frame = QFrame()
         cropper_frame.setFrameShape(QFrame.Shape.StyledPanel)
         cropper_layout = QVBoxLayout(cropper_frame) # layout for the frame itself
         cropper_layout.setContentsMargins(0,0,0,0)
-        
+
         self.image_cropper = ImageCropper(self.original_pixmap)
         cropper_layout.addWidget(self.image_cropper)
-        
+
         self.content_layout.addWidget(cropper_frame, 1) # add frame to self.content_layout
 
         # ── Buttons ──

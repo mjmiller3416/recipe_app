@@ -32,7 +32,6 @@ class AppPaths:
     USER_SETTINGS_PATH = DATA_DIR / "user_settings.json"
     THEME_CONFIG_PATH = CONFIG_DIR / "theme_config.json"
     BASE_STYLE = TM_DIR / "base_style.qss"
-    STYLE = TM_DIR / "style"
     QSS_DIR = TM_DIR / "qss"
 
     # ── Path Utilities ──────────────────────────────────────────────────────────

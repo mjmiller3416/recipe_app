@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (QDialog, QDialogButtonBox,
                                QSizePolicy, QSpacerItem, QVBoxLayout)
 
 from app.config import AppIcon
-from app.ui.components.widgets import CTIcon
+from app.theme_manager.icon import CTIcon
 from dev_tools import DebugLogger
 
 

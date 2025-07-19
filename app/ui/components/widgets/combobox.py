@@ -1,17 +1,20 @@
 """app/ui/components/widgets/combobox.py
 
-Defines a custom ComboBox using DropDownWidget for read-only selection with a button.
+Defines a custom ComboBox using DropDown for read-only selection with a button.
 """
+
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from typing import Sequence
 
 from PySide6.QtCore import Qt, QStringListModel, Signal
 from PySide6.QtWidgets import QWidget
 
 from app.config import AppIcon
-from app.ui.components.widgets.dropdown_widget import DropDownWidget
+from app.ui.components.widgets import DropDown
 
 
-class ComboBox(DropDownWidget):
+# ── ComboBox ─────────────────────────────────────────────────────────────────────────────────
+class ComboBox(DropDown):
     """Custom combo box widget with a read-only line edit and a dropdown button."""
     selection_validated = Signal(bool)
     currentTextChanged = Signal(str)

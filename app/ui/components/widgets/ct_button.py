@@ -1,9 +1,9 @@
-"""app/ui/widgets/ct_button.py
+"""app/ui/components/widgets/ct_button.py
 
 Defines the Custom-Themed Buttom class, a QPushButton subclass with theme-aware dynamic SVG icon states.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from pathlib import Path
 
 from PySide6.QtCore import QSize
@@ -14,7 +14,7 @@ from app.theme_manager.icon.loader import IconLoader
 
 from app.theme_manager.icon import IconState, IconMixin
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── Class Definition ─────────────────────────────────────────────────────────────────────────
 class CTButton(QPushButton, IconMixin):
     def __init__(
         self,

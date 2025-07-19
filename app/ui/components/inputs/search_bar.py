@@ -8,7 +8,8 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QGridLayout, QLineEdit, QSizePolicy
 
 from app.config import AppIcon
-from app.ui.components.widgets import CTIcon, CTToolButton
+from app.theme_manager.icon import CTIcon
+from app.ui.components.widgets import CTToolButton
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 

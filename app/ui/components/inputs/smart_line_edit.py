@@ -7,7 +7,7 @@ from typing import Sequence
 from PySide6.QtCore import QEvent, QStringListModel, Qt, QTimer, Signal
 from PySide6.QtWidgets import QCompleter
 
-from app.ui.components.widgets.dropdown_widget import DropDownWidget
+from app.ui.components.widgets import DropDown
 from app.ui.models import IngredientProxyModel
 from dev_tools import DebugLogger
 
@@ -15,7 +15,7 @@ from dev_tools import DebugLogger
 FIXED_HEIGHT = 45
 
 
-class SmartLineEdit(DropDownWidget):
+class SmartLineEdit(DropDown):
     """Line edit with proxy-filtered completer and custom text handling."""
 
     currentTextChanged = Signal(str)

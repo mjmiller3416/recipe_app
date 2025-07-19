@@ -13,7 +13,7 @@ from PySide6.QtWidgets import QFileDialog, QLabel, QStackedLayout, QVBoxLayout, 
 
 from app.config.paths import AppPaths
 from app.config import AppIcon
-from app.ui.components.widgets import CTToolButton, RoundedImage
+from app.ui.components.widgets import RoundedImage, CTToolButton
 from app.ui.helpers.ui_helpers import make_overlay
 from dev_tools import DebugLogger
 

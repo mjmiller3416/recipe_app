@@ -12,7 +12,7 @@ from pathlib import Path
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QLabel
 
-from app.config import AppIcon
+from app.config.app_icon import AppIcon
 from app.theme_manager.icon.loader import IconLoader
 from app.theme_manager.icon.factory import IconFactory
 

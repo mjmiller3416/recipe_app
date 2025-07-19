@@ -9,7 +9,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
 
-from app.ui.components.widgets.combobox import ComboBox
+from app.theme_manager.icon.combobox import ComboBox
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 INITIAL_ITEMS = ["Apple", "Banana", "Cherry"]
@@ -37,21 +37,21 @@ class TestComboBox:
         """Test setting the current text and signal emission."""
         with qtbot.waitSignals([combobox.currentTextChanged, combobox.selection_validated]):
             combobox.setCurrentText("Banana")
-        
+
         assert combobox.currentText() == "Banana"
 
     def test_set_current_index(self, combobox: ComboBox, qtbot: QtBot):
         """Test setting the current index."""
         with qtbot.waitSignal(combobox.selection_validated):
             combobox.setCurrentIndex(2)
-        
+
         assert combobox.currentText() == "Cherry"
 
     def test_set_invalid_index(self, combobox: ComboBox, qtbot: QtBot):
         """Test setting an invalid index."""
         with qtbot.waitSignal(combobox.selection_validated):
             combobox.setCurrentIndex(99)
-        
+
         assert combobox.currentText() == ""
 
     def test_find_text(self, combobox: ComboBox):
