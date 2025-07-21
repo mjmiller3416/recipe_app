@@ -8,8 +8,8 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QGridLayout, QLineEdit, QSizePolicy
 
 from app.config import AppIcon
-from app.theme_manager.icon import CTIcon
-from app.ui.components.widgets import CTToolButton
+from app.theme_manager.icon import Icon
+from app.ui.components.widgets import ToolButton
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 
@@ -44,7 +44,7 @@ class SearchBar(QFrame):
         self.layout.setSpacing(5)
 
         # ── Search Icon ──
-        self.ico_search = CTIcon(AppIcon.SEARCH)
+        self.ico_search = Icon(AppIcon.SEARCH)
         self.layout.addWidget(self.ico_search, 0, 0)
 
         # ── Input Field ──
@@ -56,7 +56,7 @@ class SearchBar(QFrame):
         self.layout.addWidget(self.le_search, 0, 1)
 
         # ── Clear Button ──
-        self.btn_ico_clear = CTToolButton(AppIcon.CLEAR)
+        self.btn_ico_clear = ToolButton(AppIcon.CLEAR)
         self.btn_ico_clear.setVisible(False) # visibility based on text input
         self.layout.addWidget(self.btn_ico_clear, 0, 2)
 

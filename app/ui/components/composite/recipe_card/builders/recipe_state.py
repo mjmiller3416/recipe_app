@@ -14,8 +14,8 @@ from app.config.app_icon import AppIcon, ICON_SPECS
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
 from app.ui.components.layout import Separator
-from app.theme_manager.icon import CTIcon
-from app.ui.components.widgets import CTToolButton, RoundedImage
+from app.theme_manager.icon import Icon
+from app.ui.components.widgets import ToolButton, RoundedImage
 from app.ui.helpers.ui_helpers import make_overlay
 from ..constants import LAYOUT_SIZE, LayoutSize
 
@@ -125,7 +125,7 @@ class RecipeCard:
 
         # favorite button - choose initial icon based on favorite state
         initial_icon = AppIcon.FAVORITE if self.recipe.is_favorite else AppIcon.UNFAVORITE
-        btn_fav = CTToolButton(
+        btn_fav = ToolButton(
             initial_icon,
             checkable = True,
         )
@@ -204,7 +204,7 @@ class RecipeCard:
         # icon
         # use centralized icon specs from AppIcon enum
         spec = ICON_SPECS[icon_enum]
-        ico_meta = CTIcon(
+        ico_meta = Icon(
             icon_or_path=spec.path,
             icon_size=spec.size,
             variant=spec.variant,

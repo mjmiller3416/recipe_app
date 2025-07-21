@@ -12,7 +12,7 @@ from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget, QStackedWidget
 from app.config import AppIcon
 from app.core.services.planner_service import PlannerService
 from app.ui.components.composite import MealWidget
-from app.theme_manager.icon import CTIcon
+from app.theme_manager.icon import Icon
 from dev_tools import DebugLogger, StartupTimer
 from app.ui.views.recipe_selection import RecipeSelection
 
@@ -86,7 +86,7 @@ class MealPlanner(QWidget):
     def new_meal_tab(self):
         """Add the last "+" tab to create new custom meals."""
         new_meal_tab = QWidget()
-        icon_asset = CTIcon(AppIcon.MEAL_PLANNER_ADD)
+        icon_asset = Icon(AppIcon.MEAL_PLANNER_ADD)
         icon = icon_asset.pixmap()
 
         index = self.meal_tabs.addTab(new_meal_tab, icon, "")

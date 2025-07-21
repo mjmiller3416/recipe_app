@@ -16,7 +16,7 @@ from app.core.database.db import create_session
 from app.core.dtos import IngredientSearchDTO
 from app.core.services.ingredient_service import IngredientService
 from app.ui.components.inputs import SmartLineEdit
-from app.ui.components.widgets import ComboBox, CTToolButton
+from app.ui.components.widgets import ComboBox, ToolButton
 from app.ui.helpers import clear_error_styles, dynamic_validation
 from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
 
@@ -83,11 +83,11 @@ class IngredientWidget(QWidget):
         )
         self.grid_layout.addWidget(self.cb_ingredient_category, 0, 3, 1, 1)
 
-        self.btn_ico_subtract = CTToolButton(AppIcon.INGREDIENT_SUBTRACT)
+        self.btn_ico_subtract = ToolButton(AppIcon.INGREDIENT_SUBTRACT)
         self.btn_ico_subtract.setFixedWidth(FIXED_HEIGHT) # square button
         self.grid_layout.addWidget(self.btn_ico_subtract, 0, 4, 1, 1)
 
-        self.btn_ico_add = CTToolButton(AppIcon.INGREDIENT_ADD)
+        self.btn_ico_add = ToolButton(AppIcon.INGREDIENT_ADD)
         self.btn_ico_add.setFixedWidth(FIXED_HEIGHT)  # square button
         self.grid_layout.addWidget(self.btn_ico_add, 0, 5, 1, 1)
 

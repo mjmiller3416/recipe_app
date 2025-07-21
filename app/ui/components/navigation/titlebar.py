@@ -12,8 +12,8 @@ from qframelesswindow.utils.win32_utils import WindowsMoveResize as MoveResize
 
 from app.config import APPLICATION_WINDOW
 from app.config.app_icon import AppIcon, ICON_SPECS
-from app.theme_manager.icon.ct_icon import CTIcon
-from app.ui.components.widgets import CTToolButton
+from app.theme_manager.icon.icon import Icon
+from app.ui.components.widgets import ToolButton
 from app.theme_manager.icon.state import IconState
 
 # ── Constants ─────────────────────────────────────────────────────────────
@@ -38,13 +38,13 @@ class TitleBar(QWidget):
         self.old_pos = None
 
         # ── Title Label ──
-        self.logo = CTIcon(AppIcon.LOGO)
+        self.logo = Icon(AppIcon.LOGO)
         self.logo.setFixedSize(32, 32)
         self.logo.setObjectName("AppLogo")
         self.title = QLabel(SETTINGS["APP_NAME"])
 
         # ── Sidebar Toggle Button ──
-        self.btn_ico_toggle_sidebar = CTToolButton(
+        self.btn_ico_toggle_sidebar = ToolButton(
             AppIcon.TOGGLE_SIDEBAR,
             checkable=True
         )
@@ -52,15 +52,15 @@ class TitleBar(QWidget):
         self.btn_ico_toggle_sidebar.setObjectName("BtnToggleSidebar")
 
         # ── Minimize Button ──
-        self.btn_ico_minimize = CTToolButton(AppIcon.MINIMIZE)
+        self.btn_ico_minimize = ToolButton(AppIcon.MINIMIZE)
         self.btn_ico_minimize.setFixedSize(SETTINGS["BTN_SIZE"])
 
         # ── Maximize/Restore Button ──
-        self.btn_ico_maximize = CTToolButton(AppIcon.MAXIMIZE)
+        self.btn_ico_maximize = ToolButton(AppIcon.MAXIMIZE)
         self.btn_ico_maximize.setFixedSize(SETTINGS["BTN_SIZE"])
 
         # ── Close Button ──
-        self.btn_ico_close = CTToolButton(AppIcon.CLOSE)
+        self.btn_ico_close = ToolButton(AppIcon.CLOSE)
         self.btn_ico_close.setFixedSize(SETTINGS["BTN_SIZE"])
         self.btn_ico_close.setObjectName("BtnClose")
 

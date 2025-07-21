@@ -7,7 +7,7 @@ class Color(Enum):
     INDIGO      = "#3F51B5"
     BLUE        = "#2196F3"
     TEAL        = "#009688"
-    GREEN       = "#4CAF50"
+    GREEN       = "#63A002"
     YELLOW      = "#FFDE3F"
     ORANGE      = "#FF9800"
     RED         = "#F44336"
@@ -24,6 +24,7 @@ class Mode(Enum):
 class Qss(Enum):
     BASE = AppPaths.BASE_STYLE
     TEST = AppPaths.QSS_DIR / "test.qss"
+    CARD = AppPaths.QSS_DIR / "card.qss"
 
     # TODO: add per-widget stylesheets here
     # EXAMPLE: WIDGET_NAME = AppPaths.STYLE / "widget_name.qss"

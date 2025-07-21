@@ -2,16 +2,18 @@
 
 from .circular_image import CircularImage
 from .combobox import ComboBox
-from .ct_button import CTButton
-from .ct_tool_button import CTToolButton
+from .button import Button
+from .tool_button import ToolButton
 from .rounded_image import RoundedImage
 from .dropdown_widget import DropDown
+from .pill_button import PillButton
 
 __all__ = [
-    "CTButton",
-    "CTToolButton",
+    "Button",
+    "ToolButton",
     "RoundedImage",
     "CircularImage",
     "ComboBox",
-    "DropDown"
+    "DropDown",
+    "PillButton",
 ]

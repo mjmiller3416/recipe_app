@@ -10,7 +10,7 @@ from pathlib import Path
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton
 
-from app.ui.components.widgets import CTToolButton
+from app.ui.components.widgets import ToolButton
 from app.theme_manager.icon.factory import IconFactory
 
 
@@ -43,7 +43,7 @@ class NavButton(QPushButton):
         self._icon_checked = themed_icon.icon_for_state("CHECKED")
 
         # ── Internal Widgets ──
-        self._icon = CTToolButton(
+        self._icon = ToolButton(
             icon_or_path=file_path,
             icon_size=icon_size,
             variant=variant,

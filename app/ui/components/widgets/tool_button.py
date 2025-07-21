@@ -19,7 +19,7 @@ from app.theme_manager.icon.state import IconState
 PADDING = 4  # Padding around the icon
 
 # ── Class Definition ────────────────────────────────────────────────────────────
-class CTToolButton(QToolButton, IconMixin):
+class ToolButton(QToolButton, IconMixin):
     def __init__(
         self,
         icon_or_path: AppIcon | str | Path,
@@ -33,7 +33,7 @@ class CTToolButton(QToolButton, IconMixin):
         parent=None
     ):
         """
-        Initializes a CTToolButton instance.
+        Initializes a ToolButton instance.
 
         Args:
             icon_or_path (AppIcon | str | Path): AppIcon enum or path to the SVG icon file.

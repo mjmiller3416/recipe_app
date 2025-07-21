@@ -10,7 +10,7 @@ from typing import Sequence
 from PySide6.QtCore import QEvent, QStringListModel, Qt, Signal
 from PySide6.QtWidgets import QApplication, QCompleter, QHBoxLayout, QLineEdit, QWidget
 
-from .ct_tool_button import CTToolButton
+from .tool_button import ToolButton
 from dev_tools import DebugLogger
 
 
@@ -69,7 +69,7 @@ class DropDown(QWidget):
 
         self.show_button = show_button
         if show_button and button_icon is not None:
-            self.cb_btn = CTToolButton(button_icon)
+            self.cb_btn = ToolButton(button_icon)
             self.cb_btn.setCursor(Qt.PointingHandCursor)
             self.cb_btn.clicked.connect(self._show_popup)
 

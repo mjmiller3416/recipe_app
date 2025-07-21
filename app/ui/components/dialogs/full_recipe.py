@@ -15,7 +15,7 @@ from app.core.models import Recipe
 from app.ui.components.dialogs import DialogWindow
 from app.ui.components.layout import Separator
 from app.ui.components.widgets import RoundedImage
-from app.theme_manager.icon.ct_icon import CTIcon
+from app.theme_manager.icon.icon import Icon
 from app.ui.helpers.ui_helpers import create_framed_layout
 
 
@@ -281,7 +281,7 @@ class FullRecipe(DialogWindow):
 
         # ── Create Icon & Label ──
         spec = ICON_SPECS[icon_key]
-        icon = CTIcon(
+        icon = Icon(
             icon_or_path=spec.path,
             icon_size=spec.size,
             variant=spec.variant,

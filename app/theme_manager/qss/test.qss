@@ -18,5 +18,307 @@ QLabel {
 QFrame[type="primary"] {
     background-color: {primary};
 }
+QLabel[type="on_primary"] {
+    background-color: "transparent";
+    color: red;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QFrame[type="on_primary"] {
+    background-color: {on_primary};
+}
 QLabel[type="primary"] {
-    color: {on_primary};
+    background-color: "transparent";
+    color: {primary};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QFrame[type="primary_container"] {
+    background-color: {primary_container};
+}
+QLabel[type="on_primary_container"] {
+    background-color: "transparent";
+    color: {on_primary_container};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QFrame[type="on_primary_container"] {
+    background-color: {on_primary_container};
+}
+QLabel[type="primary_container"] {
+    background-color: "transparent";
+    color: {primary_container};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Secondary */
+QFrame[type="secondary"] {
+    background-color: {secondary};
+}
+QLabel[type="on_secondary"] {
+    background-color: "transparent";
+    color: {on_secondary};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QFrame[type="on_secondary"] {
+    background-color: {on_secondary};
+}
+QLabel[type="secondary"] {
+    background-color: "transparent";
+    color: {secondary};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QFrame[type="secondary_container"] {
+    background-color: {secondary_container};
+}
+QLabel[type="on_secondary_container"] {
+    background-color: "transparent";
+    color: {on_secondary_container};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QFrame[type="on_secondary_container"] {
+    background-color: {on_secondary_container};
+}
+QLabel[type="secondary_container"] {
+    background-color: "transparent";
+    color: {secondary_container};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Tertiary */
+QFrame[type="tertiary"] {
+    background-color: {tertiary};
+}
+QLabel[type="on_tertiary"] {
+    background-color: "transparent";
+    color: {on_tertiary};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QFrame[type="on_tertiary"] {
+    background-color: {on_tertiary};
+}
+QLabel[type="tertiary"] {
+    background-color: "transparent";
+    color: {tertiary};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QFrame[type="tertiary_container"] {
+    background-color: {tertiary_container};
+}
+QLabel[type="on_tertiary_container"] {
+    background-color: "transparent";
+    color: {on_tertiary_container};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QFrame[type="on_tertiary_container"] {
+    background-color: {on_tertiary_container};
+}
+QLabel[type="tertiary_container"] {
+    background-color: "transparent";
+    color: {tertiary_container};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Error */
+QFrame[type="error"] {
+    background-color: {error};
+}
+QLabel[type="on_error"] {
+    background-color: "transparent";
+    color: {on_error};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QFrame[type="on_error"] {
+    background-color: {on_error};
+}
+QLabel[type="error"] {
+    background-color: "transparent";
+    color: {error};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QFrame[type="error_container"] {
+    background-color: {error_container};
+}
+QLabel[type="on_error_container"] {
+    background-color: "transparent";
+    color: {on_error_container};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QFrame[type="on_error_container"] {
+    background-color: {on_error_container};
+}
+QLabel[type="error_container"] {
+    background-color: "transparent";
+    color: {error_container};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Surface & On_Surface */
+QFrame[type="surface"] {
+    background-color: {surface};
+}
+QFrame[type="on_surface"] {
+    background-color: {on_surface};
+}
+QLabel[type="surface"] {
+    background-color: "transparent";
+    color: {surface};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QFrame[type="surface_variant"] {
+    background-color: {surface_variant};
+}
+QFrame[type="on_surface_variant"] {
+    background-color: {on_surface_variant};
+}
+QLabel[type="surface_variant"] {
+    background-color: "transparent";
+    color: {surface_variant};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Inverse */
+QFrame[type="inverse_surface"] {
+    background-color: {inverse_surface};
+}
+QLabel[type="inverse_on_surface"] {
+    background-color: "transparent";
+    color: {inverse_on_surface};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QFrame[type="inverse_on_surface"] {
+    background-color: {inverse_on_surface};
+}
+QLabel[type="inverse_surface"] {
+    background-color: "transparent";
+    color: {inverse_surface};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QFrame[type="inverse_primary"] {
+    background-color: {inverse_primary};
+}
+
+
+/* --- Standalone Colors --- */
+/* For these roles, the text color defaults to 'on_surface'. */
+
+QLabel[type="on_surface"] {
+    background-color: "transparent";
+    color: {on_surface};
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QFrame[type="surface_dim"] {
+    background-color: {surface_dim};
+}
+QFrame[type="surface_bright"] {
+    background-color: {surface_bright};
+}
+QFrame[type="surface_container_lowest"] {
+    background-color: {surface_container_lowest};
+}
+QFrame[type="surface_container_low"] {
+    background-color: {surface_container_low};
+}
+QFrame[type="surface_container"] {
+    background-color: {surface_container};
+}
+QFrame[type="surface_container_high"] {
+    background-color: {surface_container_high};
+}
+QFrame[type="surface_container_highest"] {
+    background-color: {surface_container_highest};
+}
+QFrame[type="outline"] {
+    background-color: {outline};
+}
+QFrame[type="outline_variant"] {
+    background-color: {outline_variant};
+}
+QFrame[type="scrim"] {
+    background-color: {scrim};
+}
+QFrame[type="shadow"] {
+    background-color: {shadow};
+}
+
+
+/* --- Toolbar & Controls Styling --- */
+QToolBar {
+    background-color: {surface_container};
+    border: none;
+    padding: 4px;
+}
+
+QToolBar QLabel {
+    color: {on_surface_variant};
+    font-size: 14px;
+}
+
+QComboBox {
+    background-color: {surface_container_highest};
+    color: {on_surface};
+    border: 1px solid {outline};
+    border-radius: 4px;
+    padding: 4px 8px;
+}
+
+QComboBox::drop-down {
+    border: none;
+}
+
+QComboBox QAbstractItemView {
+    background-color: {surface_container_high};
+    border: 1px solid {outline};
+    selection-background-color: {primary};
+    selection-color: {on_primary};
+}
+
+QToolButton {
+    background-color: transparent;
+    color: {on_surface_variant};
+    padding: 4px;
+    margin: 2px;
+    border-radius: 4px;
+}
+
+QToolButton:hover {
+    background-color: {surface_container_high};
+}
+
+QToolButton:pressed {
+    background-color: {surface_container_highest};
+}

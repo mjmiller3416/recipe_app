@@ -18,7 +18,7 @@ from PySide6.QtWidgets import (QFileDialog, QGraphicsOpacityEffect,
 from app.config import AppPaths
 from app.theme_manager.icon.icon_theme import THEME
 from ..widgets.circular_image import CircularImage
-from app.theme_manager.icon import CTIcon
+from app.theme_manager.icon import Icon
 from data_files.user_settings import UserSettings
 
 # ── Constants ───────────────────────────────────────────────────────────────────
@@ -70,7 +70,7 @@ class AvatarLoader(QWidget):
         self.edit_button.setToolTip("Edit Avatar")
         self.edit_button.setStyleSheet("background-color: transparent; border: none;")
 
-        self.edit_icon = CTIcon(AppPaths.ICONS_DIR / "edit.svg",
+        self.edit_icon = Icon(AppPaths.ICONS_DIR / "edit.svg",
                                 QSize(32, 32),
                                 THEME["ICON"]["DEFAULT"],
                                 self)

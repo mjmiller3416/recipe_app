@@ -17,6 +17,15 @@ from app.theme_manager.icon.icon_theme import THEME
 
 # ── AppIcon Enum Definition ──────────────────────────────────────────────────────────────────
 class AppIcon(Enum):
+
+    # Test Icons
+    WIFI = auto()
+    BATTERY = auto()
+    SIGNAL = auto()
+    USER = auto()
+    LIGHTBULB = auto()
+
+
     # Title Bar Icons
     LOGO = auto()
     MINIMIZE = auto()
@@ -79,6 +88,34 @@ class AppIcon(Enum):
 # Mapping of AppIcon to IconSpec
 ICON_SPECS: Dict[AppIcon, IconSpec] = {
     # Title Bar Icons
+
+    AppIcon.WIFI: IconSpec(
+        path=AppPaths.ICONS_DIR / "wifi.svg",
+        size=QSize(16, 16),
+        variant=THEME["ICON_STYLES"]["TOOLBUTTON"],
+    ),
+    AppIcon.BATTERY: IconSpec(
+        path=AppPaths.ICONS_DIR / "battery.svg",
+        size=QSize(16, 16),
+        variant=THEME["ICON_STYLES"]["TOOLBUTTON"],
+    ),
+    AppIcon.SIGNAL: IconSpec(
+        path=AppPaths.ICONS_DIR / "signal.svg",
+        size=QSize(16, 16),
+        variant=THEME["ICON_STYLES"]["TOOLBUTTON"],
+    ),
+    AppIcon.USER: IconSpec(
+        path=AppPaths.ICONS_DIR / "user.svg",
+        size=QSize(22, 22),
+        variant=THEME["ICON_STYLES"]["TOOLBUTTON"],
+    ),
+    AppIcon.LIGHTBULB: IconSpec(
+        path=AppPaths.ICONS_DIR / "lightbulb.svg",
+        size=QSize(20, 20),
+        variant=THEME["ICON_STYLES"]["TOOLBUTTON"],
+    ),
+
+    # ────────────────────────────────────────────────────────────────────────────────
     AppIcon.LOGO: IconSpec(
         path=AppPaths.ICONS_DIR / "logo.svg",
         size=QSize(30, 30),

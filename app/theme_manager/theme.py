@@ -65,7 +65,7 @@ class Theme(QSingleton):
 
     def _inject_theme_colors(self) -> str:
         """Injects the current theme colors into the given stylesheet content."""
-        base_content = Stylesheet.read(Qss.TEST)
+        base_content = Stylesheet.read(Qss.BASE)
         self._base_style = Stylesheet.inject_theme(base_content, self._current_color_map)
         return self._base_style
 

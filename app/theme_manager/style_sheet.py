@@ -9,9 +9,7 @@ the material-color-utilities library.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from typing import Dict, Union
 
-from material_color_utilities import (
-    theme_from_argb_color, argb_from_hex
-)
+from material_color_utilities import theme_from_argb_color, argb_from_hex
 
 from dev_tools.debug_logger import DebugLogger
 from .config import Color, Mode, Qss
@@ -27,10 +25,16 @@ class Stylesheet:
     @classmethod
     def inject_theme(cls, stylesheet_content: str, color_map: Dict[str, str]) -> str:
         """Injects color values into a stylesheet template using `{placeholder}` syntax."""
-        result = stylesheet_content # make a copy to avoid mutating the original
+        result = stylesheet_content  # make a copy to avoid mutating the original
 
-        for var_name, color_value in color_map.items():
+        # replace placeholders starting with longest names first to avoid partial matches
+        for var_name in sorted(color_map.keys(), key=lambda name: len(name), reverse=True):
+            color_value = color_map[var_name]
             placeholder = f"{{{var_name}}}"
+            DebugLogger.log(
+                "Replacing placeholder {placeholder} with color code {color_value}",
+                "Debug"
+            )
             result = result.replace(placeholder, color_value)
         return result
 
@@ -71,7 +75,8 @@ class Stylesheet:
             theme = theme_from_argb_color(color_argb)
             scheme = theme.schemes.light if mode == Mode.LIGHT else theme.schemes.dark
 
-            return {
+            # build color map and log for debugging
+            color_map = {
                 # primary colors
                 "primary": scheme.primary,
                 "surface_tint": scheme.surface_tint,
@@ -138,6 +143,8 @@ class Stylesheet:
                 "tertiary_fixed_dim": scheme.tertiary_fixed_dim,
                 "on_tertiary_fixed_variant": scheme.on_tertiary_fixed_variant,
             }
+            DebugLogger.log(f"Generated theme colors: {color_map}", "Debug")
+            return color_map
         except Exception as e:
             DebugLogger.log(f"Error generating theme colors: {e}", "Error")
             return {}  # return empty dict as fallback

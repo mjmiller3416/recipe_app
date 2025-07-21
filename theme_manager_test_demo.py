@@ -1,181 +1,216 @@
 import sys
-from typing import Optional
-
 from PySide6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout,
-    QHBoxLayout, QFrame, QLabel, QComboBox, QToolBar,
+    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+    QLabel, QFrame, QCheckBox, QSpacerItem, QSizePolicy, QStackedWidget
 )
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QAction
-from app.theme_manager.theme import Theme
-from app.theme_manager.config import Color, Mode
+from PySide6.QtGui import QFont, QFontDatabase, QIcon, QPixmap, QColor, QPainter, QPainterPath
+from PySide6.QtCore import Qt, QSize
 
-class ColorWidget(QFrame):
-    """A custom widget to display a color with its name."""
-    def __init__(
-            self,
-            frame_type: str,
-            label_type: str,
-            text: str,
-            parent: Optional[QWidget] = None
-    ) -> QFrame:
+from app.theme_manager.icon import Icon
+from app.ui.components.widgets import ToolButton
+from app.config import AppIcon
+
+# Custom widget for the plant illustrations to get rounded corners
+class ImageLabel(QLabel):
+    def __init__(self, pixmap_path, parent=None):
         super().__init__(parent)
-        self.setProperty("type", frame_type)
-        self.setMinimumSize(100, 60)
+        self.setPixmap(QPixmap(pixmap_path))
+        self.setScaledContents(False) # Let's handle scaling manually if needed
+        self.setAlignment(Qt.AlignCenter)
 
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(12, 12, 12, 12)
-        layout.setAlignment(Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignLeft)
+# A simple rounded color block to act as a placeholder for plant images
+class PlantImagePlaceholder(QWidget):
+    def __init__(self, color, radius, parent=None):
+        super().__init__(parent)
+        self.color = QColor(color)
+        self.radius = radius
+        self.setMinimumSize(100, 100)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
-        label = QLabel(text, self)
-        label.setProperty("type", label_type)
-        label.setWordWrap(True)
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        path = QPainterPath()
+        path.addRoundedRect(self.rect(), self.radius, self.radius)
+        painter.fillPath(path, self.color)
 
-        layout.addWidget(label)
-
-class ThemeTesterWindow(QMainWindow):
-    """The main window for the theme testing application."""
+class PlantAppUI(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Theme Manager Color Tester")
-        self.setGeometry(100, 100, 1400, 900)
+        self.setWindowTitle("Plant Care App")
+        self.setGeometry(100, 100, 400, 850) # Set a mobile-like dimension
 
+        # --- Load Custom Font ---
+        # In a real app, ensure the font file is in the same directory or provide a full path
+        # For this example, we'll fall back to a common font if the custom one isn't found.
+        font_id = QFontDatabase.addApplicationFont("PlayfairDisplay-Regular.ttf")
+        if font_id != -1:
+            font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+            self.title_font = QFont(font_family, 36, QFont.Bold)
+        else:
+            print("Warning: Playfair Display font not found. Using default.")
+            self.title_font = QFont("Serif", 36, QFont.Bold)
 
-        self.setup_ui()
-        self.setup_toolbar()
+        self.stacked_widget = QStackedWidget()
+        self.setCentralWidget(self.stacked_widget)
 
-        # Connect to the theme manager's signal to update window background
-        self.update_window_style()
+        # --- Create Screens ---
+        self.main_screen = self._create_main_screen()
+        self.detail_screen = self._create_detail_screen() # Placeholder for the second screen
 
+        self.stacked_widget.addWidget(self.main_screen)
+        self.stacked_widget.addWidget(self.detail_screen)
 
-    def setup_ui(self):
-        """Create and arrange all the widgets."""
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
-        central_widget.setProperty("type", "background")
+        # --- Apply Stylesheet ---
+        self.setStyleSheet("""
+            QMainWindow, QWidget#MainScreen, QWidget#DetailScreen {
+                background-color: #2c2a28;
+            }
+            QLabel {
+                color: #e0e0e0;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                font-size: 14px;
+            }
+            QLabel#TitleLabel {
+                color: #f0eade;
+                font-size: 48px; /* Adjusted for better visibility */
+            }
+            QLabel#HeaderLabel {
+                font-size: 22px;
+                font-weight: bold;
+                color: #f0eade;
+            }
+            QFrame#CardFrame {
+                background-color: #3a3836;
+                border-radius: 20px;
+            }
+            QFrame#InfoFrame {
+                background-color: #4a5c43;
+                border-radius: 15px;
+            }
+            QCheckBox::indicator {
+                width: 20px;
+                height: 20px;
+                border-radius: 5px;
+            }
+            QCheckBox::indicator:unchecked {
+                background-color: #5e5c5a;
+                border: 1px solid #777;
+            }
+            QCheckBox::indicator:checked {
+                background-color: #d4b483;
+            }
+        """)
 
-        main_layout = QVBoxLayout(central_widget)
-        main_layout.setSpacing(20)
+    def _create_main_screen(self):
+        """Creates the main 'Today' screen widget."""
+        main_widget = QWidget()
+        main_widget.setObjectName("MainScreen")
+        main_layout = QVBoxLayout(main_widget)
         main_layout.setContentsMargins(20, 20, 20, 20)
+        main_layout.setSpacing(20)
 
-        # --- Top Row: Primary, Secondary, Tertiary, Error ---
-        top_row_layout = QHBoxLayout()
-        top_row_layout.setSpacing(15)
-        main_layout.addLayout(top_row_layout)
+        # --- Top Status Bar ---
+        status_bar_layout = QHBoxLayout()
+        time_label = QLabel("10:40")
+        time_label.setFont(QFont("Segoe UI", 12, QFont.Bold))
+        status_bar_layout.addWidget(time_label)
+        status_bar_layout.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
+        # In a real app, these would be icons
+        status_bar_layout.addWidget(Icon(AppIcon.WIFI))
+        status_bar_layout.addWidget(Icon(AppIcon.SIGNAL))
+        status_bar_layout.addWidget(Icon(AppIcon.BATTERY))
+        main_layout.addLayout(status_bar_layout)
 
-        color_groups = [
-            ("Primary", "primary"), ("Secondary", "secondary"),
-            ("Tertiary", "tertiary"), ("Error", "error")
-        ]
+        # --- Header: Today + Profile Icon ---
+        header_layout = QHBoxLayout()
+        today_label = QLabel("Today")
+        today_label.setObjectName("TitleLabel")
+        today_label.setFont(self.title_font)
+        header_layout.addWidget(today_label)
+        header_layout.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
+        # Placeholder for profile icon
+        profile_icon = Icon(AppIcon.USER)
+        profile_icon.setAlignment(Qt.AlignCenter)
+        profile_icon.setFixedSize(40, 40)
+        header_layout.addWidget(profile_icon)
+        main_layout.addLayout(header_layout)
 
-        for group_name, group_prefix in color_groups:
-            group_layout = QVBoxLayout()
-            group_layout.setSpacing(10)
-            group_layout.addWidget(ColorWidget(group_prefix, f"on_{group_prefix}", group_name))
-            group_layout.addWidget(ColorWidget(f"on_{group_prefix}", group_prefix, f"On {group_name}"))
-            group_layout.addWidget(ColorWidget(f"{group_prefix}_container", f"on_{group_prefix}_container", f"{group_name} Container"))
-            group_layout.addWidget(ColorWidget(f"on_{group_prefix}_container", f"{group_prefix}_container", f"On {group_name} Container"))
-            top_row_layout.addLayout(group_layout)
+        # --- Info Box ---
+        info_frame = QFrame()
+        info_frame.setContentsMargins(4, 4, 4, 4)
+        info_frame.setObjectName("InfoFrame")
+        info_frame.setFrameShape(QFrame.StyledPanel)
+        info_layout = QHBoxLayout(info_frame)
+        # Placeholder for lightbulb icon
+        bulb_icon = Icon(AppIcon.LIGHTBULB)
+        info_layout.addWidget(bulb_icon)
+        info_text = QLabel("During the winter your plants slow down and need less water.")
+        info_text.setWordWrap(False)
+        info_text.setStyleSheet("background-color: transparent; color: #f0eade;")
+        info_layout.addWidget(info_text)
+        main_layout.addWidget(info_frame)
 
-        # --- Middle Row: Surfaces and Inverse ---
-        middle_row_layout = QHBoxLayout()
-        middle_row_layout.setSpacing(15)
-        main_layout.addLayout(middle_row_layout)
+        # --- Plant Cards ---
+        main_layout.addWidget(self._create_plant_card("Living Room", ["Water hoya australis", "Feed monstera siltepecana"], "#4a5c43"))
+        main_layout.addWidget(self._create_plant_card("Kitchen", ["Water pilea peperomioides", "Water hoya australis"], "#6a7b63"))
+        main_layout.addWidget(self._create_plant_card("Bedroom", ["Feed monstera siltepecana", "Water philodendron brandi"], "#53654e"))
 
-        # Surface group
-        surface_group = QWidget()
-        surface_layout = QVBoxLayout(surface_group)
-        surface_layout.setSpacing(10)
-        surface_layout.setContentsMargins(0,0,0,0)
+        main_layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
-        surf_row1 = QHBoxLayout()
-        surf_row1.addWidget(ColorWidget("surface_dim", "on_surface", "Surface Dim"))
-        surf_row1.addWidget(ColorWidget("surface", "on_surface", "Surface"))
-        surf_row1.addWidget(ColorWidget("surface_bright", "on_surface", "Surface Bright"))
-        surface_layout.addLayout(surf_row1)
+        return main_widget
 
-        surf_row2 = QHBoxLayout()
-        surf_row2.addWidget(ColorWidget("surface_container_lowest", "on_surface", "Surf. C. Lowest"))
-        surf_row2.addWidget(ColorWidget("surface_container_low", "on_surface", "Surf. C. Low"))
-        surf_row2.addWidget(ColorWidget("surface_container", "on_surface", "Surf. Container"))
-        surf_row2.addWidget(ColorWidget("surface_container_high", "on_surface", "Surf. C. High"))
-        surf_row2.addWidget(ColorWidget("surface_container_highest", "on_surface", "Surf. C. Highest"))
-        surface_layout.addLayout(surf_row2)
+    def _create_plant_card(self, room_name, tasks, image_color):
+        """Helper function to create a plant card widget."""
+        card_frame = QFrame()
+        card_frame.setContentsMargins(10, 10, 10, 10)
+        card_frame.setObjectName("CardFrame")
+        card_frame.setFrameShape(QFrame.StyledPanel)
+        card_layout = QHBoxLayout(card_frame)
+        card_layout.setSpacing(15)
 
-        middle_row_layout.addWidget(surface_group, 3) # 3/4 of the space
+        # Left side: Text content
+        text_layout = QVBoxLayout()
+        text_layout.setSpacing(15)
+        room_label = QLabel(room_name)
+        room_label.setObjectName("HeaderLabel")
+        text_layout.addWidget(room_label)
 
-        # Inverse group
-        inverse_group = QWidget()
-        inverse_layout = QVBoxLayout(inverse_group)
-        inverse_layout.setSpacing(10)
-        inverse_layout.setContentsMargins(0,0,0,0)
-        inverse_layout.addWidget(ColorWidget("inverse_surface", "inverse_on_surface", "Inverse Surface"))
-        inverse_layout.addWidget(ColorWidget("inverse_on_surface", "inverse_surface", "Inverse On Surface"))
-        inverse_layout.addWidget(ColorWidget("inverse_primary", "on_primary", "Inverse Primary")) # Text on inverse primary is on_primary
-        middle_row_layout.addWidget(inverse_group, 1) # 1/4 of the space
+        for task_text in tasks:
+            task_layout = QHBoxLayout()
+            checkbox = QCheckBox()
+            checkbox.setChecked(True) # Match screenshot
+            task_label = QLabel(task_text)
+            task_layout.addWidget(checkbox)
+            task_layout.addWidget(task_label)
+            task_layout.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
+            text_layout.addLayout(task_layout)
 
+        text_layout.addSpacerItem(QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding))
+        card_layout.addLayout(text_layout, 2) # Give text more stretch factor
 
-        # --- Bottom Row: Utility Colors ---
-        bottom_row_layout = QHBoxLayout()
-        bottom_row_layout.setSpacing(15)
-        main_layout.addLayout(bottom_row_layout)
+        # Right side: Image placeholder
+        image_placeholder = PlantImagePlaceholder(image_color, 20)
+        card_layout.addWidget(image_placeholder, 1) # Give image less stretch factor
 
-        bottom_row_layout.addWidget(ColorWidget("on_surface", "surface", "On Surface"))
-        bottom_row_layout.addWidget(ColorWidget("on_surface_variant", "surface_variant", "On Surface Var."))
-        bottom_row_layout.addWidget(ColorWidget("outline", "on_surface", "Outline"))
-        bottom_row_layout.addWidget(ColorWidget("outline_variant", "on_surface", "Outline Variant"))
-        bottom_row_layout.addWidget(ColorWidget("scrim", "on_surface", "Scrim"))
-        bottom_row_layout.addWidget(ColorWidget("shadow", "on_surface", "Shadow"))
+        return card_frame
 
-        main_layout.addStretch()
-
-
-    def setup_toolbar(self):
-        """Create the toolbar with theme controls."""
-        toolbar = QToolBar("Theme Controls")
-        self.addToolBar(toolbar)
-
-        # Theme mode toggle button
-        self.toggle_theme_action = QAction("Toggle Light/Dark Mode", self)
-        self.toggle_theme_action.triggered.connect(Theme.toggle_theme_mode)
-        toolbar.addAction(self.toggle_theme_action)
-
-        toolbar.addSeparator()
-
-        # Color selection dropdown
-        toolbar.addWidget(QLabel("  Theme Color: "))
-        self.color_combo = QComboBox()
-        for color_enum in Color:
-            # Use the enum's built-in .name and format it for display
-            display_text = color_enum.name.replace('_', ' ').title()
-            self.color_combo.addItem(display_text, color_enum)
-
-        # Set the current item based on the formatted name
-        current_theme_color = Theme.get_current_theme_color()
-        initial_text = current_theme_color.name.replace('_', ' ').title()
-        self.color_combo.setCurrentText(initial_text)
-
-        self.color_combo.currentTextChanged.connect(self.on_color_changed)
-        toolbar.addWidget(self.color_combo)
-
-    def on_color_changed(self, text: str):
-        """Handle theme color change from the combobox."""
-        selected_color = self.color_combo.currentData()
-        if selected_color:
-            Theme.set_theme_color(selected_color)
-
-    def update_window_style(self):
-        """Forces a style update on the main window to apply background color."""
-        self.style().unpolish(self)
-        self.style().polish(self)
+    def _create_detail_screen(self):
+        """Creates the detail screen (currently a placeholder)."""
+        detail_widget = QWidget()
+        detail_widget.setObjectName("DetailScreen")
+        layout = QVBoxLayout(detail_widget)
+        label = QLabel("Detail Screen (Placeholder)")
+        label.setAlignment(Qt.AlignCenter)
+        label.setFont(QFont("Arial", 24))
+        layout.addWidget(label)
+        return detail_widget
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app = QApplication(sys.argv)
-
-    Theme.set_theme(Color.YELLOW, Mode.LIGHT)  # Initialize with default theme
-    # Create and show the main window
-    window = ThemeTesterWindow()
+    # Note: For the custom font to work, you need a "PlayfairDisplay-Regular.ttf" file
+    # in the same directory as the script. You can download it from Google Fonts.
+    window = PlantAppUI()
     window.show()
-
     sys.exit(app.exec())

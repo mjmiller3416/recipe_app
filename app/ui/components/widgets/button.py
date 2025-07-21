@@ -15,7 +15,7 @@ from app.theme_manager.icon.loader import IconLoader
 from app.theme_manager.icon import IconState, IconMixin
 
 # ── Class Definition ─────────────────────────────────────────────────────────────────────────
-class CTButton(QPushButton, IconMixin):
+class Button(QPushButton, IconMixin):
     def __init__(
         self,
         icon_or_path: AppIcon | str | Path,
@@ -28,7 +28,7 @@ class CTButton(QPushButton, IconMixin):
         parent=None
     ):
         """
-        Initializes a CTButton instance.
+        Initializes a Button instance.
 
         Args:
             icon_or_path (AppIcon | str | Path): AppIcon enum or path to the SVG icon file.

@@ -1,8 +1,8 @@
 """app/theme_manager/icon/ct_icon.py
 
-Module providing CTIcon widget for theme-aware SVG icons.
+Module providing Icon widget for theme-aware SVG icons.
 
-CTIcon is a QLabel-based widget that renders an SVG icon and adapts
+Icon is a QLabel-based widget that renders an SVG icon and adapts
 to theme changes automatically.
 """
 
@@ -16,7 +16,7 @@ from app.theme_manager.icon.factory import IconFactory
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
-class CTIcon(QLabel):
+class Icon(QLabel):
     """
     QLabel widget that displays a themed SVG icon.
     Automatically updates when the application theme changes.
@@ -54,7 +54,8 @@ class CTIcon(QLabel):
 
         self.file_path = file_path
         self.size = icon_size
-        # Normalize variant: uppercase if string, leave dict as-is
+
+        # normalize variant: uppercase if string, leave dict as-is
         if isinstance(variant, str):
             self.variant = variant.upper()
         else:
