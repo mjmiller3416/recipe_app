@@ -9,11 +9,8 @@ from pathlib import Path
 from PySide6.QtCore import QRegularExpression, QSize
 from PySide6.QtGui import QRegularExpressionValidator
 
-from app.theme_manager.icon.icon_theme import THEME
-
 # ── Icon Defaults ──
 ICON_SIZE  = QSize(20, 20)
-ICON_COLOR = THEME["ICON"]["DEFAULT"]
 
 APPLICATION_WINDOW = {
     "SETTINGS": {
@@ -21,9 +18,6 @@ APPLICATION_WINDOW = {
         "WINDOW_HEIGHT": 1080,
         "WINDOW_WIDTH":  1800,
         "BTN_SIZE": QSize(58, 58),
-        "BTN_STYLE": {
-            "DYNAMIC": THEME["ICON_STYLES"]["TOOLBUTTON"],
-        }
     },
 }
 SIDEBAR = {

@@ -1,4 +1,4 @@
-"""app/style_manager/icons/icon_mixin.py
+"""app/theme_manager/icon/mixin.py
 
 Module providing IconMixin for theme-aware button icons.
 
@@ -8,8 +8,7 @@ on theme changes.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from pathlib import Path
-from PySide6.QtCore import QSize
+from app.theme_manager.icon.config import Name, Size, Type
 from .factory import IconFactory
 
 
@@ -17,29 +16,29 @@ from .factory import IconFactory
 class IconMixin:
     def _init_themed_icon(
         self,
-        icon_path: Path,
-        size: QSize,
-        variant: str = "DEFAULT"
+        icon_name: Name,
+        icon_size: Size,
+        icon_type: Type = Type.DEFAULT
     ) -> None:
-        """Apply themed SVG icon to this button."""
-        self._icon_path = icon_path
-        self._icon_size = size
-        self._icon_variant = variant
+        """Apply themed SVG icon to this button using enum-based config."""
+        self._icon_name = icon_name
+        self._icon_size = icon_size
+        self._icon_type = icon_type
 
-        self._themed_icon = IconFactory(icon_path, size, variant)
+        self._themed_icon = IconFactory(icon_name, icon_size, icon_type)
         self.setIcon(self._themed_icon.icon())
-        self.setIconSize(self._icon_size)
+        self.setIconSize(icon_size.value)
 
     # ── Public Methods ───────────────────────────────────────────────────────────────────────
     def refresh_theme_icon(self, palette: dict) -> None:
         """
         Applies the current theme palette to the icon.
-        Should be implemented by subclasses if needed.
+        Used when the theme is updated dynamically.
         """
         if hasattr(self, "_themed_icon") and self._themed_icon:
             self._themed_icon.palette = palette
             self.setIcon(self._themed_icon.icon())
-            self.setIconSize(self._icon_size)
+            self.setIconSize(self._icon_size.value)
 
     def refresh_theme(self, palette: dict) -> None:
         """

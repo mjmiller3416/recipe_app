@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
     QSpacerItem, QVBoxLayout, QWidget
 )
 
-from app.config.app_icon import AppIcon, ICON_SPECS
+from app.theme_manager.icon.config import AppIcon, ICON_SPECS
 from app.core.models import Recipe
 from app.ui.components.dialogs import DialogWindow
 from app.ui.components.layout import Separator

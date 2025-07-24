@@ -1,68 +1,52 @@
 """app/ui/components/widgets/ct_button.py
 
-Defines the Custom-Themed Buttom class, a QPushButton subclass with theme-aware dynamic SVG icon states.
+Defines the Custom-Themed Button class, a QPushButton subclass with theme-aware dynamic SVG icon states.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from pathlib import Path
-
-from PySide6.QtCore import QSize
+# ── Imports ────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtWidgets import QPushButton
+from app.theme_manager.icon.mixin import IconMixin
+from app.theme_manager.icon import IconLoader, IconState
+from app.theme_manager.icon.config import Name, Size, Type
 
-from app.config import AppIcon, ICON_SIZE
-from app.theme_manager.icon.loader import IconLoader
-
-from app.theme_manager.icon import IconState, IconMixin
-
-# ── Class Definition ─────────────────────────────────────────────────────────────────────────
+# ── Class Definition ────────────────────────────────────────────────────────────────────────
 class Button(QPushButton, IconMixin):
     def __init__(
         self,
-        icon_or_path: AppIcon | str | Path,
-        icon_size: QSize = ICON_SIZE,
-        variant: str = "DEFAULT",
-        height: int = 55,
+        icon_name: Name,
+        icon_size: Size = Size.MEDIUM,
+        icon_type: Type = Type.DEFAULT,
         label: str = "",
         checkable: bool = True,
         hover_effects: bool = True,
         parent=None
     ):
         """
-        Initializes a Button instance.
+        Initializes a Button instance using enum-driven icon config.
 
         Args:
-            icon_or_path (AppIcon | str | Path): AppIcon enum or path to the SVG icon file.
-            icon_size (QSize, optional): The size of the icon. Defaults to ICON_SIZE.
-            variant (str, optional): The variant of the icon. Defaults to "DEFAULT".
-            label (str, optional): The text label for the button. Defaults to "".
-            checkable (bool, optional): Whether the button is checkable. Defaults to True.
-            hover_effects (bool, optional): Whether to apply hover effects. Defaults to True.
-            parent: The parent widget. Defaults to None.
+            icon_name (Name): Enum representing the icon file.
+            icon_size (Size): Enum for icon dimensions.
+            icon_type (Type): Enum for themed icon color behavior.
+            label (str): Optional text label.
+            checkable (bool): Whether the button is checkable.
+            hover_effects (bool): Apply hover/checked effects.
+            parent: Optional QWidget parent.
         """
-        # Support AppIcon enum or direct path
-        from app.config.app_icon import AppIcon, ICON_SPECS
-        if isinstance(icon_or_path, AppIcon):
-            spec = ICON_SPECS[icon_or_path]
-            file_path = spec.path
-            icon_size = spec.size
-            variant = spec.variant
-            # Prefer explicit height argument, else use from spec if present
-            if hasattr(spec, "button_size") and spec.button_size is not None:
-                # Use the height of button_size if not explicitly set
-                if height == 55:  # 55 is the default
-                    height = spec.button_size.height()
-        else:
-            file_path = icon_or_path
-
         super().__init__(label, parent)
-
         self.setCheckable(checkable)
-        self.setFixedHeight(height)
 
-        if hover_effects:
-            IconState.recolor(self, file_path, icon_size, variant)
+        # Apply dynamic recoloring (hover/checked/disabled states)
+        if hover_effects and icon_type != Type.DEFAULT:
+            IconState.recolor(
+                button=self,
+                icon_path=icon_name.path,
+                size=icon_size.value,
+                variant=icon_type.state_map
+            )
 
-        self._init_themed_icon(file_path, icon_size, variant)
+        # Apply base icon (fallback/default state)
+        self._init_themed_icon(icon_name, icon_size, icon_type)
 
-        # ── Register with IconLoader ──
-        IconLoader().register(self)
+        # Register with the IconLoader for theme refresh
+        IconLoader.register(self)

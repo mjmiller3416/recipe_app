@@ -5,71 +5,104 @@ and refreshes all registered icons when the application theme changes.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from typing import Dict
+from typing import Dict, Optional
 from weakref import WeakSet
 
 from PySide6.QtCore import QObject
 
-from app.core.utils import SingletonMixin
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from app.theme_manager.theme_controller import ThemeController
+from app.core.utils import QSingleton
+
+from app.theme_manager.theme import Theme
 from dev_tools import DebugLogger
 from .base import ThemedIcon
 
+# ── Constants ───────────────────────────────────────────────────────────────────
+ICON_COLOR_MAP = {
+    "primary": "icon_primary",
+    "on_primary": "icon_on_primary",
+    "secondary": "icon_secondary",
+    "on_secondary": "icon_on_secondary",
+    "surface": "icon_surface",
+    "on_surface": "icon_on_surface",
+}
 
 # ── Icon Loader ──────────────────────────────────────────────────────────────────────────────
-class IconLoader(QObject, SingletonMixin):
+class IconLoader(QSingleton):
     """Singleton to manage and refresh theme-aware icons.
 
     It stores the active palette and refreshes all registered icons when
     the theme changes.
     """
 
-    def __init__(self) -> None:
-        # only initialize once (SingletonMixin still calls __init__ on each instantiation)
-        if getattr(self, "_initialized", False):
-            return
-        super().__init__()
+    def __init__(self, parent: Optional[QObject] = None) -> None:
+        """Initialize the IconLoader."""
+        super().__init__(parent)
         self._icons: WeakSet[ThemedIcon] = WeakSet()
-        # initialize with empty palette to allow early registration before theme is set
         self._palette: Dict = {}
         self._initialized = True
 
-    # ── Properties ───────────────────────────────────────────────────────────────────────────
-    @property
-    def palette(self) -> Dict:
-        """Get the current active color palette."""
-        return self._palette
-
-    # ── Public Methods ───────────────────────────────────────────────────────────────────────
-    def connect_theme_controller(self, theme_controller: 'ThemeController') -> None:
-        """Connects the loader to a ThemeController instance (lazy to avoid circular imports)."""
-        # Capture the initial palette and subscribe to future changes
-        self._palette = theme_controller.get_current_palette()
-        theme_controller.theme_changed.connect(self._on_theme_changed)
-
-        # immediately refresh all icons
-        for icon in tuple(self._icons):
-            icon.refresh_theme(self._palette)
-
-
-    def register(self, icon: ThemedIcon) -> None:
-        """Track a theme-aware icon and paint it immediately."""
-        if icon not in self._icons:
-            self._icons.add(icon)
-            icon.refresh_theme(self._palette)
-
-    def unregister(self, icon: ThemedIcon) -> None:
-        if icon in self._icons:
-            self._icons.remove(icon)
-            DebugLogger.log(f"Icon unregistered: {icon.objectName()}", "debug")
+        self._initialize_palette()
 
     # ── Private Methods ──────────────────────────────────────────────────────────────────────
-    def _on_theme_changed(self, new_palette: Dict) -> None:
+    def _initialize_palette(self) -> None:
+        """Initialize the color palette for icons by remapping theme keys."""
+        theme_palette = Theme.get_current_color_map()
+        self._palette = self._map_palette(theme_palette)
+
+    def _on_theme_refresh(self, new_palette: Dict) -> None:
         """Slot → emits from ThemeController."""
-        self._palette = new_palette
+        self._palette = self._map_palette(new_palette)
         DebugLogger.log(f"Refreshing {len(self._icons)} icons", "debug")
 
         for icon in tuple(self._icons):
             icon.refresh_theme(new_palette)
+
+    def _map_palette(self, theme_palette: Dict[str, str]) -> Dict[str, str]:
+        return {
+            new_key: theme_palette[old_key]
+            for old_key, new_key in ICON_COLOR_MAP.items()
+            if old_key in theme_palette
+        }
+
+    # ── Public Methods ───────────────────────────────────────────────────────────────────────
+    @classmethod
+    def _get_instance(cls):
+        """Get the singleton instance, creating it if necessary."""
+        if cls not in cls._instances:
+            cls._instances[cls] = cls()  # this properly calls __new__ and __init__
+        return cls._instances[cls]
+
+    @classmethod
+    def connect_theme_controller(cls, theme: Theme) -> None:
+        """Connects the loader to a ThemeController instance."""
+        # capture the initial palette and subscribe to future changes
+        DebugLogger.log("Connecting IconLoader to ThemeController", "debug")
+        instance = cls._get_instance()
+        instance._palette = instance._map_palette(theme.get_current_color_map())
+        theme.theme_refresh.connect(instance._on_theme_refresh)
+
+        # immediately refresh all icons
+        for icon in tuple(instance._icons):
+            icon.refresh_theme(instance._palette)
+
+        DebugLogger.log("Initialized IconLoader with palette: {instance._palette}", "debug")
+
+    @classmethod
+    def register(cls, icon: ThemedIcon) -> None:
+        """Track a theme-aware icon and paint it immediately."""
+        instance = cls._get_instance()
+        if icon not in instance._icons:
+            instance._icons.add(icon)
+            icon.refresh_theme(instance._palette)
+
+    @classmethod
+    def unregister(cls, icon: ThemedIcon) -> None:
+        instance = cls._get_instance()
+        if icon in instance._icons:
+            instance._icons.remove(icon)
+            DebugLogger.log(f"Icon unregistered: {icon.objectName()}", "debug")
+
+    @classmethod
+    def get_palette(cls) -> Dict:
+        """Get the current active color palette."""
+        return cls._get_instance()._palette

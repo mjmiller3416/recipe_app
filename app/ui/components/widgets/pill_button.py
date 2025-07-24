@@ -32,10 +32,10 @@ class PillButton(Button):
         )
 
         # initial pill styling
-        self._apply_pill_style(IconLoader().palette)
+        self._apply_pill_style(IconLoader.get_palette)
 
         # re-register so our refresh_theme gets called
-        IconLoader().register(self)
+        IconLoader.register(self)
 
     def _apply_pill_style(self, palette: dict) -> None:
         radius = int(self.height() / 2)

@@ -143,7 +143,7 @@ class Stylesheet:
                 "tertiary_fixed_dim": scheme.tertiary_fixed_dim,
                 "on_tertiary_fixed_variant": scheme.on_tertiary_fixed_variant,
             }
-            DebugLogger.log(f"Generated theme colors: {color_map}", "Debug")
+            DebugLogger.log("Generated theme colors: {color_map}", "Info")
             return color_map
         except Exception as e:
             DebugLogger.log(f"Error generating theme colors: {e}", "Error")

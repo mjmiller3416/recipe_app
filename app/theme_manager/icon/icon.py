@@ -7,68 +7,35 @@ to theme changes automatically.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from pathlib import Path
-
-from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QLabel
+from app.theme_manager.icon.config import AppIcon
 from app.theme_manager.icon.loader import IconLoader
 from app.theme_manager.icon.factory import IconFactory
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class Icon(QLabel):
-    """
-    QLabel widget that displays a themed SVG icon.
-    Automatically updates when the application theme changes.
-    """
-
-    def __init__(
-        self,
-        icon_or_path: object,
-        icon_size: QSize | None = None,
-        variant: str | None = None,
-        parent=None
-    ):
+    """A QLabel-based widget for displaying themed SVG icons."""
+    def __init__(self, icon: AppIcon, parent=None):
         """
         Args:
-            icon_or_path (AppIcon | str | Path): AppIcon enum or path to the SVG icon file.
-            icon_size (QSize): The size of the icon.
-            variant (str, optional): The variant of the icon. Defaults to "DEFAULT".
+            icon (AppIcon): The pre-configured icon enum.
             parent: The parent widget. Defaults to None.
         """
-        from app.config.app_icon import AppIcon, ICON_SPECS
-        # support passing AppIcon enum directly
-        if isinstance(icon_or_path, AppIcon):
-            spec = ICON_SPECS[icon_or_path]
-            file_path = spec.path
-            icon_size = spec.size
-            variant = spec.variant
-        else:
-            file_path = icon_or_path
-            # icon_size and variant must be provided when using a raw path
-            if icon_size is None:
-                raise ValueError("icon_size must be provided when using a file path")
-            variant = variant or "DEFAULT"
-
         super().__init__(parent)
 
-        self.file_path = file_path
-        self.size = icon_size
+        # Store the icon and its configuration
+        self.app_icon = icon
+        spec = icon.spec
 
-        # normalize variant: uppercase if string, leave dict as-is
-        if isinstance(variant, str):
-            self.variant = variant.upper()
-        else:
-            self.variant = variant
-
-        self.setFixedSize(self.size)
+        self.setFixedSize(spec.size.value)
         self.setStyleSheet("background-color: transparent;")
-        self.setObjectName(Path(file_path).stem)
+        self.setObjectName(spec.name.value)
 
-        IconLoader().register(self)  # auto-tracked for theme refresh
-        self.refresh_theme(IconLoader().palette)
+        # This call handles the initial drawing of the icon.
+        IconLoader.register(self)
 
-    def refresh_theme(self, palette: dict):
-        """Refreshes the displayed icon with current theme colors."""
-        themed_icon = IconFactory(self.file_path, self.size, self.variant)
-        self.setPixmap(themed_icon.pixmap())
+    def refresh_theme(self, palette: dict[str, str]):
+        """Redraw icon using the current theme palette."""
+        factory = IconFactory(self.app_icon)
+        self.setPixmap(factory.pixmap())

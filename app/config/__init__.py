@@ -7,7 +7,7 @@ Centralized configuration access for paths, constants, and user preferences.
 from .config import (
     APPLICATION_WINDOW,
     DEBUG_LAYOUT_BORDERS, FLOAT_PATTERN,
-    FLOAT_VALIDATOR, ICON_COLOR, ICON_SIZE,
+    FLOAT_VALIDATOR, ICON_SIZE,
     INGREDIENT_CATEGORIES, INT_PATTERN,
     INT_VALIDATOR, MEAL_CATEGORIES,
     MEASUREMENT_UNITS, NAME_PATTERN,
@@ -16,8 +16,6 @@ from .config import (
     SORT_OPTIONS
 )
 from .paths import AppPaths, QssPaths
-
-from .app_icon import AppIcon
 
 __all__ = [
     "AppPaths", "QssPaths",
@@ -28,5 +26,5 @@ __all__ = [
     "SIDEBAR", "SORT_OPTIONS",
     "NAME_VALIDATOR", "FLOAT_VALIDATOR", "INT_VALIDATOR",
     "NON_EMPTY_PATTERN", "INT_PATTERN", "FLOAT_PATTERN", "NAME_PATTERN",
-    "ICON_COLOR", "MEAL_CATEGORIES", "AppIcon"
+    "ICON_COLOR", "MEAL_CATEGORIES"
 ]

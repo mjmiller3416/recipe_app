@@ -12,8 +12,10 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor
 
-from app.theme_manager.theme import Theme
-from app.theme_manager.config import Mode, Color
+from app.theme_manager.theme import Theme, Mode, Color
+from app.theme_manager.icon.loader import IconLoader
+from app.theme_manager.icon.config import AppIcon, Name, Size, Type, State  # updated from app_icon.py
+from app.theme_manager.icon.icon import Icon
 
 
 # ── Shadow Effect Enum ───────────────────────────────────────────────────────────────────────
@@ -214,6 +216,7 @@ class MainWindow(QMainWindow):
 
         card = CardWidget(title="Primary")
         card.setObjectName("primaryCard")
+        icon = Icon(AppIcon.DASHBOARD)
         card2 = CardWidget(title="Secondary")
         card2.setObjectName("secondaryCard")
         card3 = CardWidget(title="Tertiary")
@@ -231,7 +234,7 @@ class MainWindow(QMainWindow):
         layout.setSpacing(30)  # Add space between cards for glow effects
         layout.setContentsMargins(40, 40, 40, 40)  # Add margins for glow effects
         layout.addWidget(card, 0, 0)
-        layout.addWidget(card2, 0, 1)
+        layout.addWidget(icon, 0, 1)
         layout.addWidget(card3, 0, 2)
         layout.addWidget(card4, 1, 0)
         layout.addWidget(card5, 1, 1)
@@ -247,6 +250,7 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
-    Theme.setTheme(Color.GREEN, Mode.DARK)
+    Theme.setTheme(Color.GRAY, Mode.DARK)
+    IconLoader.connect_theme_controller(Theme._get_instance())
     window.show()
     sys.exit(app.exec())

@@ -8,43 +8,35 @@ toggle events.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from pathlib import Path
 from app.theme_manager.icon.factory import IconFactory
-from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QAbstractButton
 
-
+from app.theme_manager.icon.config import Name, Size, Type, State  # updated from app_icon.py
 
 # ── Class Definition ─────────────────────────────────────────────────────────────────────────
 class IconState:
     @staticmethod
     def recolor(
         button: QAbstractButton,
-        icon_path: Path,
-        size: QSize,
-        variant: str
+        icon_name: Name,
+        size: Size,
+        icon_type: Type
     ) -> None:
         """Apply dynamic icon recoloring for button states."""
-        # Load all icon states
-        factory = IconFactory(icon_path, size, variant)
-        icon_default = factory.icon()
-        icon_hover = factory.icon_for_state("HOVER")
-        icon_checked = factory.icon_for_state("CHECKED")
-        icon_disabled = factory.icon_for_state("DISABLED")
+        factory = IconFactory(icon_name, size, icon_type)
 
-        # Apply default icon and size
-        button.setIcon(icon_default)
-        button.setIconSize(size)
+        button._icon_default = factory.icon_for_state(State.DEFAULT)
+        button._icon_hover = factory.icon_for_state(State.HOVER)
+        button._icon_checked = factory.icon_for_state(State.CHECKED)
+        button._icon_disabled = factory.icon_for_state(State.DISABLED)
 
-        # Store icons for use in events
-        button._icon_default = icon_default
-        button._icon_hover = icon_hover
-        button._icon_checked = icon_checked
-        button._icon_disabled = icon_disabled
+        button.setIcon(button._icon_default)
+        button.setIconSize(size.value)
 
         # Event overrides
         original_enter = getattr(button, 'enterEvent', None)
         original_leave = getattr(button, 'leaveEvent', None)
+
         def enterEvent(event):
             if not button.isChecked():
                 button.setIcon(button._icon_hover)
@@ -61,7 +53,6 @@ class IconState:
             icon = button._icon_checked if button.isChecked() else button._icon_default
             button.setIcon(icon)
 
-        # Patch events
         button.enterEvent = enterEvent
         button.leaveEvent = leaveEvent
         button.toggled.connect(updateCheckedState)

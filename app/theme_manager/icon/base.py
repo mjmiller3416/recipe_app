@@ -6,7 +6,6 @@ Shared types and protocols for icon package.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from typing import Protocol, Dict
 
-IconName = str
 ColorPalette = Dict[str, str]
 
 # ── Protocol Definitions ─────────────────────────────────────────────────────────────────────

@@ -1,4 +1,6 @@
-"""Module for loading and recoloring SVG icons.
+"""app/theme_manager/icon/svg_loader.py
+
+Module for loading and recoloring SVG icons.
 
 Provides functions to load and recolor SVG files into QPixmaps or QIcons
 with support for high-DPI screens. It replaces specified colors in the SVG

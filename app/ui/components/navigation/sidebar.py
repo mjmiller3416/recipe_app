@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (QButtonGroup, QLabel, QSizePolicy, QSpacerItem,
                                QVBoxLayout, QWidget)
 
 from app.config import SIDEBAR
-from app.config.app_icon import AppIcon, ICON_SPECS
+from app.theme_manager.icon.config import AppIcon, ICON_SPECS
 from app.ui.animations import Animator
 from app.ui.components.images import AvatarLoader
 from app.ui.components.navigation.nav_button import NavButton

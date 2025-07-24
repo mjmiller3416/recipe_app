@@ -15,26 +15,9 @@ from PySide6.QtCore import QObject, Signal
 from PySide6.QtWidgets import QApplication
 
 from dev_tools import DebugLogger
+from app.core.utils import QSingleton
 from .config import Color, Mode, Qss
 from .style_sheet import Stylesheet
-
-class QSingleton(QObject):
-    """A singleton base class for QObject-derived classes."""
-    _instances = {}
-
-    def __new__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            instance = super().__new__(cls)
-            cls._instances[cls] = instance
-        return cls._instances[cls]
-
-    def __init__(self, *args, **kwargs):
-        # Prevent re-initialization
-        if hasattr(self, '_initialized'):
-            return
-        super().__init__(*args, **kwargs)
-        self._initialized = True
-
 
 class Theme(QSingleton):
     """
@@ -49,18 +32,17 @@ class Theme(QSingleton):
         """Initialize the Theme manager."""
         super().__init__(parent)
 
-        self._theme_color = Color.INDIGO
-        self._theme_mode = Mode.LIGHT
+        self._theme_color : Color = None
+        self._theme_mode  : Mode  = None
         self._current_color_map: Dict[str, str] = {}
         self._base_style = None
-
-        self._regenerate_theme_colors()
 
     @classmethod
     def _get_instance(cls):
         """Get the singleton instance, creating it if necessary."""
+        DebugLogger.log("Fetching Theme singleton instance", "debug")
         if cls not in cls._instances:
-            cls._instances[cls] = cls()  # This properly calls __new__ and __init__
+            cls._instances[cls] = cls()  # this properly calls __new__ and __init__
         return cls._instances[cls]
 
     def _inject_theme_colors(self) -> str:

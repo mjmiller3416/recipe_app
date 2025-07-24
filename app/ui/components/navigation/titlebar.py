@@ -11,7 +11,7 @@ from qframelesswindow import FramelessWindow
 from qframelesswindow.utils.win32_utils import WindowsMoveResize as MoveResize
 
 from app.config import APPLICATION_WINDOW
-from app.config.app_icon import AppIcon, ICON_SPECS
+from app.theme_manager.icon.config import AppIcon, ICON_SPECS
 from app.theme_manager.icon.icon import Icon
 from app.ui.components.widgets import ToolButton
 from app.theme_manager.icon.state import IconState

@@ -9,7 +9,6 @@ from typing import Sequence
 from PySide6.QtCore import Qt, QStringListModel, Signal
 from PySide6.QtWidgets import QWidget
 
-from app.config import AppIcon
 from .dropdown_widget import DropDown
 
 

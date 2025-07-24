@@ -10,9 +10,9 @@ from pathlib import Path
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
-from app.config.app_icon import AppIcon, ICON_SPECS
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
+from app.theme_manager.icon.config import Name
 from app.ui.components.layout import Separator
 from app.theme_manager.icon import Icon
 from app.ui.components.widgets import ToolButton, RoundedImage
@@ -39,10 +39,9 @@ class RecipeCard:
             updated_recipe = service.toggle_favorite(recipe_id)
 
             # update the button icon based on the new favorite state
-            from app.config.app_icon import ICON_SPECS
             from app.theme_manager.icon.factory import IconFactory
 
-            new_icon = AppIcon.FAVORITE if updated_recipe.is_favorite else AppIcon.UNFAVORITE
+            new_icon = Icon(Name.FAVORITE) if updated_recipe.is_favorite else Icon(Name.UNFAVORITE)
             spec = ICON_SPECS[new_icon]
 
             # create new themed icon and apply it

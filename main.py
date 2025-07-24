@@ -15,6 +15,7 @@ from app.ui.main_window import MainWindow
 from app.ui.services.navigation_service import NavigationService
 from dev_tools import DebugLogger, startup_timer
 from app.theme_manager.theme import Theme, Mode, Color
+from app.theme_manager.icon.loader import IconLoader
 
 if "--reset" in sys.argv:
         pass
@@ -44,7 +45,9 @@ else:
     app = QApplication(sys.argv)
     app.setApplicationName("MealGenie")
     DebugLogger.log("Starting MealGenie application...\n", "info")
+
     Theme.setTheme(Color.GRAY, Mode.DARK)
+    IconLoader.connect_theme_controller(Theme._get_instance())
     navigation_service_factory = NavigationService.create
 
     main_window = MainWindow(

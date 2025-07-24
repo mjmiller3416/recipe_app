@@ -4,10 +4,10 @@
 from .dt_utils import utcnow
 from .fs_utils import ensure_directory_exists
 from .platform_utils import get_taskbar_rect
-from .singleton_mixin import SingletonMixin
+from .singleton import QSingleton
 
 __all__ = [
-    "SingletonMixin",
+    "QSingleton",
     "utcnow",
     "ensure_directory_exists",
     "get_taskbar_rect",
