@@ -109,26 +109,41 @@ class Type(Enum):
 
     @property
     def state_map(self) -> dict[State, str]:
-        return {
-            Type.DEFAULT: {
+        if self == Type.DEFAULT:
+            return {
                 State.DEFAULT: "icon_on_surface",
                 State.HOVER: "icon_on_surface",
                 State.CHECKED: "icon_on_surface",
                 State.DISABLED: "icon_on_surface",
-            },
-            Type.TBTN: {
+            }
+        elif self == Type.TBTN:
+            return {
                 State.DEFAULT: "icon_primary",
                 State.HOVER: "icon_primary",
                 State.CHECKED: "icon_primary",
                 State.DISABLED: "icon_on_primary",
-            },
-            Type.NAV: {
+            }
+        elif self == Type.NAV:
+            return {
                 State.DEFAULT: "icon_primary",
                 State.HOVER: "icon_primary",
                 State.CHECKED: "icon_primary",
                 State.DISABLED: "icon_on_surface",
-            },
-        }[self]
+            }
+        elif self == Type.TBAR:
+            return {
+                State.DEFAULT: "icon_on_surface",
+                State.HOVER: "icon_on_surface", 
+                State.CHECKED: "icon_on_surface",
+                State.DISABLED: "icon_on_surface",
+            }
+        else:
+            return {
+                State.DEFAULT: "icon_on_surface",
+                State.HOVER: "icon_on_surface",
+                State.CHECKED: "icon_on_surface", 
+                State.DISABLED: "icon_on_surface",
+            }
 
 class IconSpec(NamedTuple):
     name: Name

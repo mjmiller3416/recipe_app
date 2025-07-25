@@ -2,11 +2,10 @@
 
 from .circular_image import CircularImage
 from .combobox import ComboBox
-from .button.button import Button
-from .button.tool_button import ToolButton
+from .button import Button
+from .tool_button import ToolButton
 from .rounded_image import RoundedImage
 from .dropdown_widget import DropDown
-from .button.pill_button import PillButton
 
 __all__ = [
     "Button",

@@ -1,17 +1,15 @@
 """app/ui/components/navigation/nav_button.py
 
 A composite navigation button that synchronizes its hover and checked state with its child icon and label.
-Integrated with ThemedIcon for dynamic icon theming.
+Integrated with the new icon system for dynamic theming.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from pathlib import Path
-
-from PySide6.QtCore import QSize, Qt
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton
 
 from app.ui.components.widgets import ToolButton
-from app.theme_manager.icon.factory import IconFactory
+from app.theme_manager.icon.config import AppIcon
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -23,9 +21,7 @@ class NavButton(QPushButton):
     def __init__(
         self,
         text: str,
-        file_path: Path,
-        variant: str | dict,
-        icon_size: QSize = QSize(22, 22),
+        app_icon: AppIcon,
         height: int = 40,
         width: int | None = None,
         spacing: int = 10,
@@ -36,19 +32,10 @@ class NavButton(QPushButton):
 
         self.setCheckable(checkable)
 
-        # ── Preload Themed Icons ──
-        themed_icon = IconFactory(file_path, icon_size, variant)
-        self._icon_default = themed_icon.icon()
-        self._icon_hover = themed_icon.icon_for_state("HOVER")
-        self._icon_checked = themed_icon.icon_for_state("CHECKED")
-
         # ── Internal Widgets ──
         self._icon = ToolButton(
-            icon_or_path=file_path,
-            icon_size=icon_size,
-            variant=variant,
+            icon_enum=app_icon,
             checkable=checkable,
-            hover_effects=False,
         )
         self._icon.setStyleSheet("border: none; background-color: transparent;")
         self._icon.setFocusPolicy(Qt.NoFocus)
@@ -73,15 +60,16 @@ class NavButton(QPushButton):
             self.setFixedWidth(width)
 
     def _update_visuals(self) -> None:
-        """Helper to set the correct icon and label style property."""
+        """Helper to synchronize the internal icon state and set label style property."""
+        # Sync the internal ToolButton's checked state with our state
+        self._icon.setChecked(self.isChecked())
+        
+        # Set appropriate label state for styling
         if self.isChecked():
-            self._icon.setIcon(self._icon_checked)
             self._label.setProperty("state", "CHECKED")
         elif self.underMouse():
-            self._icon.setIcon(self._icon_hover)
             self._label.setProperty("state", "HOVER")
         else:
-            self._icon.setIcon(self._icon_default)
             self._label.setProperty("state", "DEFAULT")
 
         self.style().unpolish(self._label)

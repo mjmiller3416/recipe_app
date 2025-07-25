@@ -1,12 +1,12 @@
 {
     "version": "2.0.0",
     "tasks": [
-     
+
         // Task to run the main.py script
         {
             "label": "Run main.py",
             "type": "shell",
-            "command": "python",
+            "command": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
             "args": ["main.py"],
             "problemMatcher": []
         },
@@ -53,7 +53,7 @@
                 "kind": "build",
                 "isDefault": true
             }
-        }, 
+        },
 
         // Task to run QtDesigner
         {

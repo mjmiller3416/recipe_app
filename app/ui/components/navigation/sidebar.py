@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (QButtonGroup, QLabel, QSizePolicy, QSpacerItem,
                                QVBoxLayout, QWidget)
 
 from app.config import SIDEBAR
-from app.theme_manager.icon.config import AppIcon, ICON_SPECS
+from app.theme_manager.icon.config import AppIcon
 from app.ui.animations import Animator
 from app.ui.components.images import AvatarLoader
 from app.ui.components.navigation.nav_button import NavButton
@@ -90,15 +90,12 @@ class Sidebar(QWidget):
         """
         # derive enum key from label (e.g. "View Recipes" -> "VIEW_RECIPES")
         enum_key = label.replace(' ', '_').upper()
-        icon_enum = AppIcon[enum_key]
-        spec = ICON_SPECS[icon_enum]
+        app_icon = AppIcon[enum_key]
         object_name = f"{label.replace(' ', '_')}Button"
 
         button = NavButton(
-            file_path=spec.path,
-            icon_size=spec.size,
-            variant=spec.variant,
             text=label,
+            app_icon=app_icon,
             checkable=is_checkable,
             height=82,
         )

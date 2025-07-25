@@ -77,6 +77,14 @@ class Theme(QSingleton):
         instance._theme_color = theme_color
         instance._theme_mode = mode
         instance._regenerate_theme_colors()
+        
+        # Auto-connect icon system (only once)
+        if not hasattr(cls, '_icon_loader_connected'):
+            from app.theme_manager.icon.loader import IconLoader
+            IconLoader.connect_theme_controller(instance)
+            cls._icon_loader_connected = True
+            DebugLogger.log("IconLoader auto-connected to Theme system", "Info")
+        
         DebugLogger.log(
             f"Theme set to color: {instance._theme_color}, mode: {instance._theme_mode}",
             "Info"
