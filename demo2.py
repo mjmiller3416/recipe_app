@@ -217,6 +217,7 @@ class MainWindow(QMainWindow):
         card = CardWidget(title="Primary")
         card.setObjectName("primaryCard")
         icon = Icon(Name.DASHBOARD)
+        icon.setSize(12, 12)
         card2 = CardWidget(title="Secondary")
         card2.setObjectName("secondaryCard")
         card3 = CardWidget(title="Tertiary")
