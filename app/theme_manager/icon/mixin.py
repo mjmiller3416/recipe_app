@@ -9,8 +9,9 @@ from PySide6.QtCore import QEvent
 from PySide6.QtGui import QIcon
 
 from app.theme_manager.icon.config import Name, State, Type
-from app.theme_manager.icon.svg_loader import SVGLoader
 from app.theme_manager.icon.loader import IconLoader
+from app.theme_manager.icon.svg_loader import SVGLoader
+
 
 # ── Icon Mixin ───────────────────────────────────────────────────────────────────────────────
 class IconMixin:

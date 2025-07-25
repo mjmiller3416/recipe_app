@@ -1,4 +1,5 @@
-from PySide6.QtCore import QObject, QEvent
+from PySide6.QtCore import QEvent, QObject
+
 
 class DebugFilter(QObject):
     def eventFilter(self, obj, event):

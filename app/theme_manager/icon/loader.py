@@ -11,9 +11,9 @@ from weakref import WeakSet
 from PySide6.QtCore import QObject
 
 from app.core.utils import QSingleton
-
 from app.theme_manager.theme import Theme
 from dev_tools import DebugLogger
+
 from .base import ThemedIcon
 
 # ── Constants ───────────────────────────────────────────────────────────────────

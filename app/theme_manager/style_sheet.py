@@ -9,10 +9,12 @@ the material-color-utilities library.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from typing import Dict, Union
 
-from material_color_utilities import theme_from_argb_color, argb_from_hex
+from material_color_utilities import argb_from_hex, theme_from_argb_color
 
 from dev_tools.debug_logger import DebugLogger
+
 from .config import Color, Mode, Qss
+
 
 class Stylesheet:
     """

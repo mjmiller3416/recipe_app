@@ -22,13 +22,13 @@ from .layout.widget_frame import WidgetFrame
 from .navigation.nav_button import NavButton
 from .navigation.sidebar import Sidebar
 from .navigation.titlebar import TitleBar
-from .widgets.circular_image import CircularImage
-from .widgets.combobox import ComboBox
 # From widgets
 from .widgets.button.button import Button
 from .widgets.button.tool_button import ToolButton
-from .widgets.rounded_image import RoundedImage
+from .widgets.circular_image import CircularImage
+from .widgets.combobox import ComboBox
 from .widgets.dropdown_widget import DropDown
+from .widgets.rounded_image import RoundedImage
 
 __all__ = [
     # Dialogs

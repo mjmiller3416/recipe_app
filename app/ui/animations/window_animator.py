@@ -6,9 +6,8 @@ This module provides the WindowAnimator class for animating window state changes
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 import sys
 
-from PySide6.QtCore import (
-    QEasingCurve, QObject, QParallelAnimationGroup,
-    QPoint, QPropertyAnimation, QRect, QSize)
+from PySide6.QtCore import (QEasingCurve, QObject, QParallelAnimationGroup,
+                            QPoint, QPropertyAnimation, QRect, QSize)
 from PySide6.QtGui import QGuiApplication
 
 

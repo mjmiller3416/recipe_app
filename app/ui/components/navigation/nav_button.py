@@ -8,8 +8,8 @@ Integrated with the new icon system for dynamic theming.
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton
 
-from app.ui.components.widgets import ToolButton
 from app.theme_manager.icon.config import Name, Type
+from app.ui.components.widgets import ToolButton
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -34,7 +34,8 @@ class NavButton(QPushButton):
 
         # ── Internal Widgets ──
         self._icon = ToolButton(
-            icon=icon_name,
+            icon=name,
+            type=Type.NAVIGATION,
             checkable=checkable,
         )
         self._icon.setStyleSheet("border: none; background-color: transparent;")
@@ -61,10 +62,10 @@ class NavButton(QPushButton):
 
     def _update_visuals(self) -> None:
         """Helper to synchronize the internal icon state and set label style property."""
-        # Sync the internal ToolButton's checked state with our state
+        # sync the internal ToolButton's checked state with our state
         self._icon.setChecked(self.isChecked())
 
-        # Set appropriate label state for styling
+        # set appropriate label state for styling
         if self.isChecked():
             self._label.setProperty("state", "CHECKED")
         elif self.underMouse():
@@ -79,7 +80,7 @@ class NavButton(QPushButton):
     def setChecked(self, checked: bool) -> None:
         """Override setChecked to force a style update."""
         super().setChecked(checked)
-        # Force Qt to re-evaluate the stylesheet for this widget and its children
+
         self.style().unpolish(self)
         self.style().polish(self)
 
@@ -87,14 +88,14 @@ class NavButton(QPushButton):
         """Override enterEvent to update icon and force style update."""
         super().enterEvent(event)
         self._update_visuals()
-        # Re-apply styles to update child widgets like the QLabel
+
         self.style().polish(self)
 
     def leaveEvent(self, event):
         """Override leaveEvent to update icon and force style update."""
         super().leaveEvent(event)
         self._update_visuals()
-        # Re-apply styles to update child widgets like the QLabel
+
         self.style().polish(self)
 
     def setText(self, text: str) -> None:

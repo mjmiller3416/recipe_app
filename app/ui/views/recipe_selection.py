@@ -2,8 +2,8 @@
 
 Defines a RecipeSelection for in-context recipe selection using RecipeBrowser.
 """
-from PySide6.QtWidgets import QWidget, QVBoxLayout
 from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QVBoxLayout, QWidget
 
 from app.ui.components.composite.recipe_browser import RecipeBrowser
 from app.ui.components.composite.recipe_card.constants import LayoutSize

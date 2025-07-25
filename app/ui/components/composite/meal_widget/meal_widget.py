@@ -16,8 +16,7 @@ from app.core.models.meal_selection import MealSelection
 from app.core.services.planner_service import PlannerService
 # use RecipeService instead of direct Recipe.get()
 from app.core.services.recipe_service import RecipeService
-from app.ui.components.composite.recipe_card import RecipeCard
-from app.ui.components.composite.recipe_card import LayoutSize
+from app.ui.components.composite.recipe_card import LayoutSize, RecipeCard
 from dev_tools import DebugLogger
 
 

@@ -8,10 +8,12 @@ dropdown arrow button, with shared event handling for popup navigation.
 from typing import Sequence
 
 from PySide6.QtCore import QEvent, QStringListModel, Qt, Signal
-from PySide6.QtWidgets import QApplication, QCompleter, QHBoxLayout, QLineEdit, QWidget
+from PySide6.QtWidgets import (QApplication, QCompleter, QHBoxLayout,
+                               QLineEdit, QWidget)
+
+from dev_tools import DebugLogger
 
 from .tool_button import ToolButton
-from dev_tools import DebugLogger
 
 
 # ── Dropdown Widget ──────────────────────────────────────────────────────────────────────────

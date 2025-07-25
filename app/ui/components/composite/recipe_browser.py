@@ -5,7 +5,8 @@ Shared recipe browser component for displaying recipes in a grid layout.
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QScrollArea, QHBoxLayout, QCheckBox
+from PySide6.QtWidgets import (QCheckBox, QHBoxLayout, QScrollArea,
+                               QVBoxLayout, QWidget)
 
 from app.config import RECIPE_CATEGORIES, SORT_OPTIONS
 from app.core.dtos import RecipeFilterDTO
@@ -14,6 +15,7 @@ from app.ui.components.composite import RecipeCard
 from app.ui.components.composite.recipe_card.constants import LayoutSize
 from app.ui.components.layout.flow_layout import FlowLayout
 from app.ui.components.widgets import ComboBox
+
 
 # ── Recipe Browser ───────────────────────────────────────────────────────────────────────────
 class RecipeBrowser(QWidget):

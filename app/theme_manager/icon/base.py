@@ -4,7 +4,7 @@ Shared types and protocols for icon package.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from typing import Protocol, Dict
+from typing import Dict, Protocol
 
 ColorPalette = Dict[str, str]
 

@@ -12,12 +12,14 @@ from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
+from app.theme_manager.icon import Icon
 from app.theme_manager.icon.config import Name
 from app.ui.components.layout import Separator
-from app.theme_manager.icon import Icon
-from app.ui.components.widgets import ToolButton, RoundedImage
+from app.ui.components.widgets import RoundedImage, ToolButton
 from app.ui.helpers.ui_helpers import make_overlay
+
 from ..constants import LAYOUT_SIZE, LayoutSize
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 @dataclass(frozen=True, slots=True)

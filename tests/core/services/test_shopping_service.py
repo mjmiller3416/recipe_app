@@ -3,9 +3,9 @@
 import pytest
 
 from app.core.dtos.shopping_dtos import (BulkStateUpdateDTO,
-                                        ManualItemCreateDTO,
-                                        ShoppingItemUpdateDTO,
-                                        ShoppingListGenerationDTO)
+                                         ManualItemCreateDTO,
+                                         ShoppingItemUpdateDTO,
+                                         ShoppingListGenerationDTO)
 from app.core.models.ingredient import Ingredient
 from app.core.models.recipe import Recipe
 from app.core.models.recipe_ingredient import RecipeIngredient

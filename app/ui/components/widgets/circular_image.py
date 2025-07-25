@@ -8,6 +8,7 @@ from PySide6.QtCore import Property, QRectF, Qt
 from PySide6.QtGui import QColor, QPainter, QPainterPath, QPen, QPixmap
 from PySide6.QtWidgets import QStyle, QStyleOption, QWidget
 
+
 # ── Class Definition ────────────────────────────────────────────────────────────
 class CircularImage(QWidget):
     """Displays a 1:1 QPixmap as a circle, with Q_PROPERTY border styling.

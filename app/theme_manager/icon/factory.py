@@ -9,9 +9,11 @@ from pathlib import Path
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon, QPixmap
 
+from app.theme_manager.icon.config import IconSpec, Name, State
+
 from .loader import IconLoader
 from .svg_loader import SVGLoader
-from app.theme_manager.icon.config import Name, State, IconSpec
+
 
 # ── Icon Factory ─────────────────────────────────────────────────────────────────────────────
 class IconFactory:

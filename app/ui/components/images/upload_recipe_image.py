@@ -7,16 +7,16 @@ UploadRecipeImage widget for uploading and cropping recipe images.
 import uuid
 from pathlib import Path
 
-from PySide6.QtCore import Qt, Signal, Slot, QSize
+from PySide6.QtCore import QSize, Qt, Signal, Slot
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QFileDialog, QLabel, QStackedLayout, QVBoxLayout, QWidget
+from PySide6.QtWidgets import (QFileDialog, QLabel, QStackedLayout,
+                               QVBoxLayout, QWidget)
 
 from app.config.paths import AppPaths
-from app.config import AppIcon
+from app.theme_manager.icon.config import Name
 from app.ui.components.widgets import RoundedImage, ToolButton
 from app.ui.helpers.ui_helpers import make_overlay
 from dev_tools import DebugLogger
-
 
 # ── Constants ────────────────────────────────────────────────────────────────────────────────
 IMAGE_SAVE_DIR = Path(AppPaths.RECIPE_IMAGES_DIR)
@@ -46,10 +46,8 @@ class UploadRecipeImage(QWidget):
         self.upload_button_layout.setContentsMargins(0,0,0,0)
         self.upload_button_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.upload_button = ToolButton(
-            AppIcon.UPLOAD_IMAGE,
-            button_size=QSize(200, 200),  # Use a larger size for visibility
-        )
+        self.upload_button = ToolButton(Name.UPLOAD_IMAGE)
+        self.upload_button.setButtonSize(200, 200)
 
         btn_lbl = QLabel("Upload Image")
 

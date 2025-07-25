@@ -6,7 +6,7 @@ Defines a custom ComboBox using DropDown for read-only selection with a button.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from typing import Sequence
 
-from PySide6.QtCore import Qt, QStringListModel, Signal
+from PySide6.QtCore import QStringListModel, Qt, Signal
 from PySide6.QtWidgets import QWidget
 
 from .dropdown_widget import DropDown

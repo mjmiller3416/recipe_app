@@ -8,10 +8,8 @@ IngredientWidget for managing individual ingredients in recipes.
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QGridLayout, QLineEdit, QSizePolicy, QWidget
 
-from app.config import (
-    FLOAT_VALIDATOR, INGREDIENT_CATEGORIES,
-    MEASUREMENT_UNITS, NAME_PATTERN, AppIcon
-    )
+from app.config import (FLOAT_VALIDATOR, INGREDIENT_CATEGORIES,
+                        MEASUREMENT_UNITS, NAME_PATTERN, AppIcon)
 from app.core.database.db import create_session
 from app.core.dtos import IngredientSearchDTO
 from app.core.services.ingredient_service import IngredientService

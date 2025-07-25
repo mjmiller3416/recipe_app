@@ -7,20 +7,17 @@ Defines the RecipeCard class that acts as a dynamic container for different reci
 from typing import Optional
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import (
-    QDialog, QFrame, QPushButton, QStackedWidget,
-    QVBoxLayout
-)
+from PySide6.QtWidgets import (QDialog, QFrame, QPushButton, QStackedWidget,
+                               QVBoxLayout)
 
+from app.core.database.db import create_session
 from app.core.models.recipe import Recipe
+from app.core.services.recipe_service import RecipeService
 from app.ui.components.dialogs.full_recipe import FullRecipe
 from dev_tools import DebugLogger, StartupTimer
 
 from .constants import LayoutSize
 from .frame_factory import FrameFactory
-
-from app.core.database.db import create_session
-from app.core.services.recipe_service import RecipeService
 
 
 # ── Recipe Card ──────────────────────────────────────────────────────────────────────────────

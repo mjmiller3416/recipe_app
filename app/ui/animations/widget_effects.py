@@ -3,12 +3,11 @@
 Provides utility functions to apply QGraphicsEffects to QWidgets.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtWidgets import (
-    QWidget, QGraphicsDropShadowEffect, QGraphicsBlurEffect,
-    QGraphicsColorizeEffect, QGraphicsOpacityEffect
-)
 from PySide6.QtGui import QColor
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+from PySide6.QtWidgets import (QGraphicsBlurEffect, QGraphicsColorizeEffect,
+                               QGraphicsDropShadowEffect,
+                               QGraphicsOpacityEffect, QWidget)
 
 
 # ── Widget Effects ───────────────────────────────────────────────────────────────────────────

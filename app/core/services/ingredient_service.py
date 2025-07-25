@@ -6,9 +6,9 @@ Uses SQLAlchemy repository pattern for database interactions.
 
 from typing import List, Optional
 
+from sqlalchemy.exc import SQLAlchemyError
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError
 
 from ..dtos.ingredient_dtos import (IngredientCreateDTO, IngredientSearchDTO,
                                     IngredientUpdateDTO)

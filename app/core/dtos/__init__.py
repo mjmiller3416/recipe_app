@@ -11,13 +11,13 @@ from .recipe_dtos import (RecipeBaseDTO, RecipeCreateDTO, RecipeFilterDTO,
                           RecipeIngredientDTO, RecipeResponseDTO,
                           RecipeUpdateDTO)
 from .shopping_dtos import (BulkOperationResultDTO, BulkStateUpdateDTO,
-                           IngredientAggregationDTO, IngredientBreakdownDTO,
-                           IngredientBreakdownItemDTO, ManualItemCreateDTO,
-                           ShoppingItemBaseDTO, ShoppingItemCreateDTO,
-                           ShoppingItemResponseDTO, ShoppingItemUpdateDTO,
-                           ShoppingListFilterDTO, ShoppingListGenerationDTO,
-                           ShoppingListGenerationResultDTO,
-                           ShoppingListResponseDTO, ShoppingStateDTO)
+                            IngredientAggregationDTO, IngredientBreakdownDTO,
+                            IngredientBreakdownItemDTO, ManualItemCreateDTO,
+                            ShoppingItemBaseDTO, ShoppingItemCreateDTO,
+                            ShoppingItemResponseDTO, ShoppingItemUpdateDTO,
+                            ShoppingListFilterDTO, ShoppingListGenerationDTO,
+                            ShoppingListGenerationResultDTO,
+                            ShoppingListResponseDTO, ShoppingStateDTO)
 
 __all__ = [
     # Recipe DTOs

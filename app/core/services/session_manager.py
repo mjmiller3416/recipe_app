@@ -5,7 +5,9 @@ Provides a context manager for SQLAlchemy sessions,
 ensuring commit, rollback, and closure are handled.
 """
 from contextlib import contextmanager
+
 from app.core.database.db import create_session
+
 
 @contextmanager
 def session_scope():

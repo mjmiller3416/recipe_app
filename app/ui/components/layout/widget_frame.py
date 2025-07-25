@@ -10,6 +10,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
                                QScrollArea, QSizePolicy, QVBoxLayout, QWidget)
 
+
 class WidgetFrame(QFrame):
     """A QFrame container with integrated layout management and optional header.
 

@@ -8,16 +8,18 @@ run-time changes of source color and light/dark modes.
 """
 
 import re
-from typing import  Dict, Optional
 from enum import Enum
+from typing import Dict, Optional
 
 from PySide6.QtCore import QObject, Signal
 from PySide6.QtWidgets import QApplication
 
-from dev_tools import DebugLogger
 from app.core.utils import QSingleton
+from dev_tools import DebugLogger
+
 from .config import Color, Mode, Qss
 from .style_sheet import Stylesheet
+
 
 class Theme(QSingleton):
     """

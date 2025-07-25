@@ -11,6 +11,7 @@ from PySide6.QtCore import QSize
 
 from app.config.paths import AppPaths
 
+
 # ── AppIcon Enum Definition ──────────────────────────────────────────────────────────────────
 class Path(Enum):
     """Enum for application icons."""
@@ -36,6 +37,8 @@ class Path(Enum):
     ADD_RECIPES = "add_recipes"
     SETTINGS = "settings"
     EXIT = "exit"
+
+    EDIT = "edit"
 
     # ── Add Recipe Page ──
     ADD_IMAGE = "add_image"
@@ -179,6 +182,7 @@ class Name(Enum):
     ADD_RECIPES = IconSpec(Path.ADD_RECIPES, Size.LARGE)
     SETTINGS = IconSpec(Path.SETTINGS, Size.LARGE)
     EXIT = IconSpec(Path.EXIT, Size.LARGE)
+    EDIT = IconSpec(Path.EDIT, Size.SMALL)
 
     # ── Add Recipe Page ──
     ADD_IMAGE = IconSpec(Path.ADD_IMAGE, Size.XXL)

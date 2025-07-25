@@ -11,11 +11,11 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
+from app.theme_manager.icon.loader import IconLoader
+from app.theme_manager.theme import Color, Mode, Theme
 from app.ui.main_window import MainWindow
 from app.ui.services.navigation_service import NavigationService
 from dev_tools import DebugLogger, startup_timer
-from app.theme_manager.theme import Theme, Mode, Color
-from app.theme_manager.icon.loader import IconLoader
 
 if "--reset" in sys.argv:
         pass

@@ -5,17 +5,15 @@ metadata, ingredients, and directions.
 """
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
-    QFrame, QHBoxLayout, QLabel, QSizePolicy,
-    QSpacerItem, QVBoxLayout, QWidget
-)
+from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QSizePolicy,
+                               QSpacerItem, QVBoxLayout, QWidget)
 
-from app.theme_manager.icon.config import AppIcon, ICON_SPECS
 from app.core.models import Recipe
+from app.theme_manager.icon.config import ICON_SPECS, AppIcon
+from app.theme_manager.icon.icon import Icon
 from app.ui.components.dialogs import DialogWindow
 from app.ui.components.layout import Separator
 from app.ui.components.widgets import RoundedImage
-from app.theme_manager.icon.icon import Icon
 from app.ui.helpers.ui_helpers import create_framed_layout
 
 

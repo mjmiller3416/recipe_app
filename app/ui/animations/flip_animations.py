@@ -6,9 +6,9 @@ for widgets that need flip transition capabilities.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import Property, QObject, Signal, QEasingCurve
-from PySide6.QtWidgets import QFrame
+from PySide6.QtCore import Property, QEasingCurve, QObject, Signal
 from PySide6.QtGui import QTransform
+from PySide6.QtWidgets import QFrame
 
 
 # ── Helper Classes ──────────────────────────────────────────────────────────────

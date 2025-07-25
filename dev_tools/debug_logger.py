@@ -7,8 +7,8 @@ import inspect
 import logging
 import re
 import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 import colorlog
 

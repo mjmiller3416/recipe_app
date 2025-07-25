@@ -7,9 +7,10 @@ Handles shopping item creation, updates, and responses.
 # ── Imports ──────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-from typing import Optional, Literal
+from typing import Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+
 
 # ── Base DTOs ──────────────────────────────────────────────────────────────
 class ShoppingItemBaseDTO(BaseModel):

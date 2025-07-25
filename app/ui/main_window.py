@@ -7,7 +7,8 @@ Defines the main application window, including the custom title bar and sidebar.
 from typing import TYPE_CHECKING, Callable
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QHBoxLayout, QLabel, QStackedWidget, QVBoxLayout, QWidget
+from PySide6.QtWidgets import (QHBoxLayout, QLabel, QStackedWidget,
+                               QVBoxLayout, QWidget)
 from qframelesswindow import FramelessWindow
 
 from app.config import APPLICATION_WINDOW

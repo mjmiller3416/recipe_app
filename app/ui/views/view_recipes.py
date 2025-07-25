@@ -7,6 +7,7 @@ flow layout.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QVBoxLayout, QWidget
+
 from app.ui.components.composite.recipe_browser import RecipeBrowser
 from app.ui.components.composite.recipe_card.constants import LayoutSize
 from dev_tools import DebugLogger

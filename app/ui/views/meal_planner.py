@@ -7,14 +7,14 @@ multiple meal planning tabs and integrates with the database to load and save me
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize
-from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget, QStackedWidget
+from PySide6.QtWidgets import QStackedWidget, QTabWidget, QVBoxLayout, QWidget
 
 from app.config import AppIcon
 from app.core.services.planner_service import PlannerService
-from app.ui.components.composite import MealWidget
 from app.theme_manager.icon import Icon
-from dev_tools import DebugLogger, StartupTimer
+from app.ui.components.composite import MealWidget
 from app.ui.views.recipe_selection import RecipeSelection
+from dev_tools import DebugLogger, StartupTimer
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

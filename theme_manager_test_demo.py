@@ -1,15 +1,17 @@
 import sys
-from PySide6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QLabel, QFrame, QCheckBox, QSpacerItem, QSizePolicy, QStackedWidget
-)
-from PySide6.QtGui import QFont, QFontDatabase, QIcon, QPixmap, QColor, QPainter, QPainterPath
-from PySide6.QtCore import Qt, QSize
+
+from PySide6.QtCore import QSize, Qt
+from PySide6.QtGui import (QColor, QFont, QFontDatabase, QIcon, QPainter,
+                           QPainterPath, QPixmap)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QHBoxLayout,
+                               QLabel, QMainWindow, QSizePolicy, QSpacerItem,
+                               QStackedWidget, QVBoxLayout, QWidget)
 
 from app.theme_manager.icon import Icon
-from app.theme_manager.theme import Theme, Mode, Color
-from app.theme_manager.icon.loader import IconLoader
 from app.theme_manager.icon.config import AppIcon
+from app.theme_manager.icon.loader import IconLoader
+from app.theme_manager.theme import Color, Mode, Theme
+
 
 # Custom widget for the plant illustrations to get rounded corners
 class ImageLabel(QLabel):

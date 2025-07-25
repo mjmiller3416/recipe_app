@@ -5,9 +5,8 @@ AddRecipes widget for creating new recipes with ingredients and directions.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
-    QHBoxLayout, QLabel, QPushButton, QTextEdit,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QHBoxLayout, QLabel, QPushButton, QTextEdit,
+                               QVBoxLayout, QWidget)
 
 from app.config.config import INT_VALIDATOR, NAME_VALIDATOR, THEME
 from app.core.dtos import RecipeCreateDTO, RecipeIngredientDTO

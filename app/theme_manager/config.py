@@ -3,6 +3,7 @@ from enum import Enum
 
 from app.config.paths.app_paths import AppPaths
 
+
 class Color(Enum):
     INDIGO      = "#3F51B5"
     BLUE        = "#2196F3"

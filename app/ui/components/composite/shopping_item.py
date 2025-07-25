@@ -8,6 +8,7 @@ including a checkbox to mark items as obtained and a label showing item details.
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QCheckBox, QHBoxLayout, QLabel, QWidget
 
+
 # ── Shopping Item Widget ─────────────────────────────────────────────────────────────────────
 class ShoppingItemWidget(QWidget):
     def __init__(self, item, shopping_svc, breakdown_map, parent=None):

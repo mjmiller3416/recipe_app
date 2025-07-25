@@ -9,11 +9,9 @@ display them in a scrollable list
 from collections import defaultdict
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
-    QCheckBox, QComboBox, QFrame, QHBoxLayout,
-    QLabel, QLineEdit, QPushButton, QScrollArea,
-    QSizePolicy, QSpacerItem, QVBoxLayout, QWidget
-    )
+from PySide6.QtWidgets import (QCheckBox, QComboBox, QFrame, QHBoxLayout,
+                               QLabel, QLineEdit, QPushButton, QScrollArea,
+                               QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
 
 from app.config import MEASUREMENT_UNITS
 from app.core.services.shopping_service import ShoppingService

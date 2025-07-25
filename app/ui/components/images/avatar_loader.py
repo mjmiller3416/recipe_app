@@ -9,21 +9,18 @@ import tempfile
 import uuid
 from pathlib import Path
 
-from PySide6.QtCore import (
-    QEasingCurve, QEvent, QPropertyAnimation,
-    QSize, Qt, Slot
-)
+from PySide6.QtCore import (QEasingCurve, QEvent, QPropertyAnimation, QSize,
+                            Qt, Slot)
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import (
-    QFileDialog, QGraphicsOpacityEffect,
-    QToolButton, QVBoxLayout, QWidget
-)
+from PySide6.QtWidgets import (QFileDialog, QGraphicsOpacityEffect,
+                               QToolButton, QVBoxLayout, QWidget)
 
 from app.config import AppPaths
-from ..widgets.circular_image import CircularImage
 from app.theme_manager.icon import Icon
+from app.theme_manager.icon.config import Name
 from data_files.user_settings import UserSettings
-from app.theme_manager.icon.config import AppIcon
+
+from ..widgets.circular_image import CircularImage
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 TEMP_IMAGE_DIR = Path(tempfile.gettempdir()) / "app_avatar_crops"
@@ -74,7 +71,8 @@ class AvatarLoader(QWidget):
         self.edit_button.setToolTip("Edit Avatar")
         self.edit_button.setStyleSheet("background-color: transparent; border: none;")
 
-        self.edit_icon = Icon(AppIcon.EDIT, size=QSize(24, 24))
+        self.edit_icon = Icon(Name.EDIT)
+        self.edit_icon.setSize(24, 24)
         self.edit_icon.setVisible(False)
 
         self.edit_button.raise_()

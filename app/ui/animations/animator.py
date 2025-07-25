@@ -5,8 +5,9 @@ Supports width animations, fade effects, cross-fading between stacked widgets, a
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QTimer, QPoint
+from PySide6.QtCore import QEasingCurve, QPoint, QPropertyAnimation, QTimer
 from PySide6.QtWidgets import QGraphicsOpacityEffect
+
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class Animator:

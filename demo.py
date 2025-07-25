@@ -2,16 +2,15 @@
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 import sys
-from enum import Enum, auto
 from collections import namedtuple
+from enum import Enum, auto
 
-from PySide6.QtWidgets import (
-    QApplication, QWidget, QLabel, QGridLayout, QVBoxLayout, QMainWindow,
-    QGraphicsDropShadowEffect, QGraphicsBlurEffect, QGraphicsOpacityEffect
-)
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor
-
+from PySide6.QtWidgets import (QApplication, QGraphicsBlurEffect,
+                               QGraphicsDropShadowEffect,
+                               QGraphicsOpacityEffect, QGridLayout, QLabel,
+                               QMainWindow, QVBoxLayout, QWidget)
 
 # ── Shadow Effect Enum ───────────────────────────────────────────────────────────────────────
 ShadowStyle = namedtuple("ShadowStyle", "color blur_radius offset_x offset_y")

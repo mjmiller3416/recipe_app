@@ -2,8 +2,8 @@
 """
 Management script for MealGenie.
 """
-import sys
 import subprocess
+import sys
 from pathlib import Path
 
 try:
