@@ -6,7 +6,6 @@ from app.theme_manager.icon.mixin import IconMixin
 from app.theme_manager.icon.base import ThemedIcon
 from app.theme_manager.icon.icon import Icon
 from app.theme_manager.icon.loader import IconLoader
-from app.theme_manager.icon.config import Name, Size, Type
 
 __all__ = [
     "IconState",
@@ -14,7 +13,4 @@ __all__ = [
     "ThemedIcon",
     "Icon",
     "IconLoader",
-    "Name",
-    "Size",
-    "Type",
 ]

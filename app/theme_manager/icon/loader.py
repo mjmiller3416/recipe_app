@@ -41,8 +41,6 @@ class IconLoader(QSingleton):
         self._palette: Dict = {}
         self._initialized = True
 
-        self._initialize_palette()
-
     # ── Private Methods ──────────────────────────────────────────────────────────────────────
     def _initialize_palette(self) -> None:
         """Initialize the color palette for icons by remapping theme keys."""

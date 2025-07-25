@@ -1,48 +1,63 @@
 """app/theme_manager/icon/mixin.py
 
-Module providing IconMixin for theme-aware button icons.
-
-IconMixin adds support for themed SVG icons on QAbstractButton widgets
-such as QPushButton and QToolButton. It applies and updates icons based
-on theme changes.
+This module provides a mixin for QAbstractButton widgets to handle themed icons
+with state management.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from app.theme_manager.icon.config import Name, Size, Type
-from .factory import IconFactory
+from PySide6.QtCore import QEvent
+from PySide6.QtGui import QIcon
 
+from app.theme_manager.icon.config import AppIcon, State
+from app.theme_manager.icon.factory import IconFactory
+from app.theme_manager.icon.loader import IconLoader
 
-# ── Class Definition ─────────────────────────────────────────────────────────────────────────
+# ── Icon Mixin ───────────────────────────────────────────────────────────────────────────────
 class IconMixin:
-    def _init_themed_icon(
-        self,
-        icon_name: Name,
-        icon_size: Size,
-        icon_type: Type = Type.DEFAULT
-    ) -> None:
-        """Apply themed SVG icon to this button using enum-based config."""
-        self._icon_name = icon_name
-        self._icon_size = icon_size
-        self._icon_type = icon_type
+    """A mixin to provide theme-aware, stateful icon logic to QAbstractButton widgets."""
+    def init_icon(self, icon_enum: AppIcon):
+        """Initializes the icon states, caches them, and registers for theme updates."""
+        self._icon_enum = icon_enum
+        self._icon_spec = icon_enum.spec
+        self._icons: dict[State, QIcon] = {}
 
-        self._themed_icon = IconFactory(icon_name, icon_size, icon_type)
-        self.setIcon(self._themed_icon.icon())
-        self.setIconSize(icon_size.value)
+        self.setIconSize(self._icon_spec.size.value)
+        if self.isCheckable():
+            self.toggled.connect(self._update_icon)
 
-    # ── Public Methods ───────────────────────────────────────────────────────────────────────
-    def refresh_theme_icon(self, palette: dict) -> None:
-        """
-        Applies the current theme palette to the icon.
-        Used when the theme is updated dynamically.
-        """
-        if hasattr(self, "_themed_icon") and self._themed_icon:
-            self._themed_icon.palette = palette
-            self.setIcon(self._themed_icon.icon())
-            self.setIconSize(self._icon_size.value)
+        IconLoader.register(self)
 
     def refresh_theme(self, palette: dict) -> None:
-        """
-        Protocol-compliant wrapper for refresh_theme_icon.
-        Used by IconLoader to trigger icon repaints.
-        """
-        self.refresh_theme_icon(palette)
+        """Called by IconLoader. Regenerates all icon states and applies the correct one."""
+        factory = IconFactory(self._icon_enum)
+        self._icons = {
+            State.DEFAULT: factory.icon_for_state(State.DEFAULT),
+            State.HOVER: factory.icon_for_state(State.HOVER),
+            State.CHECKED: factory.icon_for_state(State.CHECKED),
+            State.DISABLED: factory.icon_for_state(State.DISABLED)
+        }
+        self._update_icon()
+
+    def _update_icon(self) -> None:
+        """Applies the correct icon from the cache based on the button's current state."""
+        if not self.isEnabled():
+            self.setIcon(self._icons.get(State.DISABLED))
+        elif self.isChecked():
+            self.setIcon(self._icons.get(State.CHECKED))
+        else:
+            self.setIcon(self._icons.get(State.DEFAULT))
+
+    def enterEvent(self, event: QEvent) -> None:
+        if self.isEnabled() and not self.isChecked():
+            self.setIcon(self._icons.get(State.HOVER))
+        super().enterEvent(event)
+
+    def leaveEvent(self, event: QEvent) -> None:
+        if self.isEnabled() and not self.isChecked():
+            self._update_icon()
+        super().leaveEvent(event)
+
+    def changeEvent(self, event: QEvent) -> None:
+        if event.type() == QEvent.Type.EnabledChange:
+            self._update_icon()
+        super().changeEvent(event)

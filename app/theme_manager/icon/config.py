@@ -137,6 +137,13 @@ class IconSpec(NamedTuple):
 
 class AppIcon(Enum):
     """Enum for pre-configured application icons."""
+    # ── Test Icons ──
+    WIFI = IconSpec(Name.WIFI, Size.SMALL, Type.DEFAULT)
+    BATTERY = IconSpec(Name.BATTERY, Size.SMALL, Type.DEFAULT)
+    SIGNAL = IconSpec(Name.SIGNAL, Size.SMALL, Type.DEFAULT)
+    USER = IconSpec(Name.USER, Size.SMALL, Type.DEFAULT)
+    LIGHTBULB = IconSpec(Name.LIGHTBULB, Size.SMALL, Type.DEFAULT)
+
     # ── Title Bar Icons ──
     LOGO = IconSpec(Name.LOGO, Size.MEDIUM, Type.TBAR) # og. Qsize(30,30)
     MINIMIZE = IconSpec(Name.MINIMIZE, Size.SMALL, Type.TBAR)

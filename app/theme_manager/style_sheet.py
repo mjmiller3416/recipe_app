@@ -54,13 +54,12 @@ class Stylesheet:
 
 
     @staticmethod
-    def fetch_theme_colors(
+    def generate_material_palette(
         color: Union[Color, str],
         mode: Mode
     ) -> Dict[str, str]:
         """
         Generate a complete Material Design 3 theme dictionary from a theme color.
-
         Args:
             color: Theme color Enum (e.g., "Blue") or hex color (e.g., "#2196F3")
             mode: Theme mode - "light" or "dark"

@@ -1,7 +1,7 @@
 from pathlib import Path
 from PySide6.QtCore import QSize
 from app.config import AppIcon, ICON_SIZE
-from app.ui.components.widgets.button import Button
+from app.ui.components.widgets.button.button import Button
 from app.theme_manager.icon.loader import IconLoader
 
 class PillButton(Button):

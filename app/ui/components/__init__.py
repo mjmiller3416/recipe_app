@@ -25,8 +25,8 @@ from .navigation.titlebar import TitleBar
 from .widgets.circular_image import CircularImage
 from .widgets.combobox import ComboBox
 # From widgets
-from .widgets.button import Button
-from .widgets.tool_button import ToolButton
+from .widgets.button.button import Button
+from .widgets.button.tool_button import ToolButton
 from .widgets.rounded_image import RoundedImage
 from .widgets.dropdown_widget import DropDown
 

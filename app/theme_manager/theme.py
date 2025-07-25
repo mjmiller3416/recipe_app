@@ -53,7 +53,7 @@ class Theme(QSingleton):
 
     def _regenerate_theme_colors(self):
         """Generates the new color map and signals that the theme has changed."""
-        self._current_color_map = Stylesheet.fetch_theme_colors(
+        self._current_color_map = Stylesheet.generate_material_palette(
             self._theme_color, self._theme_mode
         )
         self._inject_theme_colors()

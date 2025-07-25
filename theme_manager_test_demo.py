@@ -9,7 +9,7 @@ from PySide6.QtCore import Qt, QSize
 from app.theme_manager.icon import Icon
 from app.theme_manager.theme import Theme, Mode, Color
 from app.theme_manager.icon.loader import IconLoader
-from app.theme_manager.icon.config import Name, Size, Type, State
+from app.theme_manager.icon.config import AppIcon
 
 # Custom widget for the plant illustrations to get rounded corners
 class ImageLabel(QLabel):
@@ -118,9 +118,9 @@ class PlantAppUI(QMainWindow):
         status_bar_layout.addWidget(time_label)
         status_bar_layout.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
         # In a real app, these would be icons
-        status_bar_layout.addWidget(Icon(Name.WIFI, Size.SMALL, Type.DEFAULT))
-        status_bar_layout.addWidget(Icon(Name.SIGNAL, Size.SMALL, Type.DEFAULT))
-        status_bar_layout.addWidget(Icon(Name.BATTERY, Size.SMALL, Type.DEFAULT))
+        status_bar_layout.addWidget(Icon(AppIcon.WIFI))
+        status_bar_layout.addWidget(Icon(AppIcon.SIGNAL))
+        status_bar_layout.addWidget(Icon(AppIcon.BATTERY))
         main_layout.addLayout(status_bar_layout)
 
         # --- Header: Today + Profile Icon ---
@@ -131,7 +131,7 @@ class PlantAppUI(QMainWindow):
         header_layout.addWidget(today_label)
         header_layout.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
         # Placeholder for profile icon
-        profile_icon = Icon(Name.USER, Size.MEDIUM, Type.DEFAULT)
+        profile_icon = Icon(AppIcon.USER)
         profile_icon.setAlignment(Qt.AlignCenter)
         profile_icon.setFixedSize(40, 40)
         header_layout.addWidget(profile_icon)
@@ -144,7 +144,7 @@ class PlantAppUI(QMainWindow):
         info_frame.setFrameShape(QFrame.StyledPanel)
         info_layout = QHBoxLayout(info_frame)
         # Placeholder for lightbulb icon
-        bulb_icon = Icon(Name.LIGHTBULB, Size.SMALL, Type.DEFAULT)
+        bulb_icon = Icon(AppIcon.LIGHTBULB)
         info_layout.addWidget(bulb_icon)
         info_text = QLabel("During the winter your plants slow down and need less water.")
         info_text.setWordWrap(False)
@@ -212,7 +212,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     # Note: For the custom font to work, you need a "PlayfairDisplay-Regular.ttf" file
     # in the same directory as the script. You can download it from Google Fonts.
-    Theme(Mode.DARK)
+    Theme.setTheme(Color.GRAY, Mode.DARK)
     window = PlantAppUI()
     window.show()
     sys.exit(app.exec())
