@@ -9,7 +9,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton
 
 from app.ui.components.widgets import ToolButton
-from app.theme_manager.icon.config import AppIcon
+from app.theme_manager.icon.config import Name, Type
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -21,7 +21,7 @@ class NavButton(QPushButton):
     def __init__(
         self,
         text: str,
-        app_icon: AppIcon,
+        name: Name,
         height: int = 40,
         width: int | None = None,
         spacing: int = 10,
@@ -34,7 +34,7 @@ class NavButton(QPushButton):
 
         # ── Internal Widgets ──
         self._icon = ToolButton(
-            icon_enum=app_icon,
+            icon=icon_name,
             checkable=checkable,
         )
         self._icon.setStyleSheet("border: none; background-color: transparent;")
@@ -63,7 +63,7 @@ class NavButton(QPushButton):
         """Helper to synchronize the internal icon state and set label style property."""
         # Sync the internal ToolButton's checked state with our state
         self._icon.setChecked(self.isChecked())
-        
+
         # Set appropriate label state for styling
         if self.isChecked():
             self._label.setProperty("state", "CHECKED")

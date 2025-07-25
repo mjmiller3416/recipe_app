@@ -11,7 +11,7 @@ from PySide6.QtGui import QIcon, QPixmap
 
 from .loader import IconLoader
 from .svg_loader import SVGLoader
-from app.theme_manager.icon.config import Name, State, IconSpec, Type
+from app.theme_manager.icon.config import Name, State, IconSpec
 
 # ── Icon Factory ─────────────────────────────────────────────────────────────────────────────
 class IconFactory:
@@ -29,17 +29,16 @@ class IconFactory:
         spec: IconSpec = icon.spec
         self.file_path: Path = spec.name.path
         self.size: QSize = spec.size.value
-        self.icon_type: Type = spec.type
         self.palette: dict[str, str] = IconLoader.get_palette()
 
     def resolve_color(self, state: State = State.DEFAULT) -> str:
         """
         Resolves a hex color for the given state from the current palette.
+        Uses default icon color for all states.
         Args:
             state (State): The state for which to resolve the color.
         """
-        role = self.icon_type.state_map.get(state) or self.icon_type.state_map.get(State.DEFAULT)
-        return self.palette.get(role, "#FF00FF")
+        return self.palette.get("icon_on_surface", "#FF00FF")
 
     def _load_icon_or_pixmap(
             self,
@@ -65,10 +64,10 @@ class IconFactory:
 
         # otherwise, load, cache, and return the new icon/pixmap
         new_item = SVGLoader.load(
-            file_path=self.file_path, #
+            file_path=self.file_path,
             color=color,
-            size=self.size, #
-            as_icon=as_icon #
+            size=self.size,
+            as_icon=as_icon
         )
         self._cache[cache_key] = new_item
         return new_item
@@ -94,7 +93,7 @@ class IconFactory:
         return self._load_icon_or_pixmap(state, as_icon=False)
 
     def __repr__(self) -> str:
-        return f"<IconFactory path='{self.file_path.name}' type='{self.icon_type.name}'>"
+        return f"<IconFactory path='{self.file_path.name}'>"
 
     @classmethod
     def clear_cache(cls):

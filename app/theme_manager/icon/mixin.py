@@ -8,17 +8,18 @@ with state management.
 from PySide6.QtCore import QEvent
 from PySide6.QtGui import QIcon
 
-from app.theme_manager.icon.config import Name, State
-from app.theme_manager.icon.factory import IconFactory
+from app.theme_manager.icon.config import Name, State, Type
+from app.theme_manager.icon.svg_loader import SVGLoader
 from app.theme_manager.icon.loader import IconLoader
 
 # ── Icon Mixin ───────────────────────────────────────────────────────────────────────────────
 class IconMixin:
     """A mixin to provide theme-aware, stateful icon logic to QAbstractButton widgets."""
-    def init_icon(self, icon_enum: Name):
+    def init_icon(self, icon_enum: Name, color_scheme: Type = Type.DEFAULT):
         """Initializes the icon states, caches them, and registers for theme updates."""
         self._icon_enum = icon_enum
         self._icon_spec = icon_enum.spec
+        self._color_scheme = color_scheme
         self._icons: dict[State, QIcon] = {}
 
         self.setIconSize(self._icon_spec.size.value)
@@ -29,13 +30,20 @@ class IconMixin:
 
     def refresh_theme(self, palette: dict) -> None:
         """Called by IconLoader. Regenerates all icon states and applies the correct one."""
-        factory = IconFactory(self._icon_enum)
-        self._icons = {
-            State.DEFAULT: factory.icon_for_state(State.DEFAULT),
-            State.HOVER: factory.icon_for_state(State.HOVER),
-            State.CHECKED: factory.icon_for_state(State.CHECKED),
-            State.DISABLED: factory.icon_for_state(State.DISABLED)
-        }
+        # generate icons for each state using the color scheme
+        self._icons = {}
+        state_colors = self._color_scheme.state_map
+
+        for state, palette_role in state_colors.items():
+            color = palette.get(palette_role, "#000000")
+            pixmap = SVGLoader.load(
+                file_path=self._icon_spec.name.path,
+                color=color,
+                size=self._icon_spec.size.value,
+                as_icon=True
+            )
+            self._icons[state] = pixmap
+
         self._update_icon()
 
     def _update_icon(self) -> None:
