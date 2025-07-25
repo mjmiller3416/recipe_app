@@ -11,7 +11,7 @@ from PySide6.QtGui import QIcon, QPixmap
 
 from .loader import IconLoader
 from .svg_loader import SVGLoader
-from app.theme_manager.icon.config import AppIcon, State, IconSpec, Type
+from app.theme_manager.icon.config import Name, State, IconSpec, Type
 
 # ── Icon Factory ─────────────────────────────────────────────────────────────────────────────
 class IconFactory:
@@ -20,7 +20,7 @@ class IconFactory:
     # class-level cache to store generated icons and pixmaps
     _cache: dict[tuple, QIcon | QPixmap] = {}
 
-    def __init__(self, icon: AppIcon):
+    def __init__(self, icon: Name):
         """
         Initializes a themed icon instance from an AppIcon enum member.
         Args:

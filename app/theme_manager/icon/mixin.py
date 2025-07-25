@@ -8,14 +8,14 @@ with state management.
 from PySide6.QtCore import QEvent
 from PySide6.QtGui import QIcon
 
-from app.theme_manager.icon.config import AppIcon, State
+from app.theme_manager.icon.config import Name, State
 from app.theme_manager.icon.factory import IconFactory
 from app.theme_manager.icon.loader import IconLoader
 
 # ── Icon Mixin ───────────────────────────────────────────────────────────────────────────────
 class IconMixin:
     """A mixin to provide theme-aware, stateful icon logic to QAbstractButton widgets."""
-    def init_icon(self, icon_enum: AppIcon):
+    def init_icon(self, icon_enum: Name):
         """Initializes the icon states, caches them, and registers for theme updates."""
         self._icon_enum = icon_enum
         self._icon_spec = icon_enum.spec

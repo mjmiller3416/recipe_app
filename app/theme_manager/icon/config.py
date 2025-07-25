@@ -12,7 +12,7 @@ from PySide6.QtCore import QSize
 from app.config.paths import AppPaths
 
 # ── AppIcon Enum Definition ──────────────────────────────────────────────────────────────────
-class Name(Enum):
+class Path(Enum):
     """Enum for application icons."""
     WIFI = "wifi"
     BATTERY = "battery"
@@ -91,6 +91,10 @@ class Size(Enum):
     XL = QSize(50, 50)
     XXL = QSize(100, 100)
 
+    @classmethod
+    def custom(cls, width: int, height: int) -> QSize:
+        return QSize(width, height)
+
 class State(Enum):
     DEFAULT = auto()
     HOVER = auto()
@@ -133,7 +137,7 @@ class Type(Enum):
         elif self == Type.TBAR:
             return {
                 State.DEFAULT: "icon_on_surface",
-                State.HOVER: "icon_on_surface", 
+                State.HOVER: "icon_on_surface",
                 State.CHECKED: "icon_on_surface",
                 State.DISABLED: "icon_on_surface",
             }
@@ -141,82 +145,82 @@ class Type(Enum):
             return {
                 State.DEFAULT: "icon_on_surface",
                 State.HOVER: "icon_on_surface",
-                State.CHECKED: "icon_on_surface", 
+                State.CHECKED: "icon_on_surface",
                 State.DISABLED: "icon_on_surface",
             }
 
 class IconSpec(NamedTuple):
-    name: Name
+    name: Path
     size: Size
     type: Type
 
-class AppIcon(Enum):
+class Name(Enum):
     """Enum for pre-configured application icons."""
     # ── Test Icons ──
-    WIFI = IconSpec(Name.WIFI, Size.SMALL, Type.DEFAULT)
-    BATTERY = IconSpec(Name.BATTERY, Size.SMALL, Type.DEFAULT)
-    SIGNAL = IconSpec(Name.SIGNAL, Size.SMALL, Type.DEFAULT)
-    USER = IconSpec(Name.USER, Size.SMALL, Type.DEFAULT)
-    LIGHTBULB = IconSpec(Name.LIGHTBULB, Size.SMALL, Type.DEFAULT)
+    WIFI = IconSpec(Path.WIFI, Size.SMALL, Type.DEFAULT)
+    BATTERY = IconSpec(Path.BATTERY, Size.SMALL, Type.DEFAULT)
+    SIGNAL = IconSpec(Path.SIGNAL, Size.SMALL, Type.DEFAULT)
+    USER = IconSpec(Path.USER, Size.SMALL, Type.DEFAULT)
+    LIGHTBULB = IconSpec(Path.LIGHTBULB, Size.SMALL, Type.DEFAULT)
 
     # ── Title Bar Icons ──
-    LOGO = IconSpec(Name.LOGO, Size.MEDIUM, Type.TBAR) # og. Qsize(30,30)
-    MINIMIZE = IconSpec(Name.MINIMIZE, Size.SMALL, Type.TBAR)
-    MAXIMIZE = IconSpec(Name.MAXIMIZE, Size.SMALL, Type.TBAR)
-    RESTORE = IconSpec(Name.RESTORE, Size.SMALL, Type.TBAR)
-    CLOSE = IconSpec(Name.CLOSE, Size.SMALL, Type.TBAR)
-    TOGGLE_SIDEBAR = IconSpec(Name.TOGGLE_SIDEBAR, Size.MEDIUM, Type.TBAR)
+    LOGO = IconSpec(Path.LOGO, Size.MEDIUM, Type.TBAR) # og. Qsize(30,30)
+    MINIMIZE = IconSpec(Path.MINIMIZE, Size.SMALL, Type.TBAR)
+    MAXIMIZE = IconSpec(Path.MAXIMIZE, Size.SMALL, Type.TBAR)
+    RESTORE = IconSpec(Path.RESTORE, Size.SMALL, Type.TBAR)
+    CLOSE = IconSpec(Path.CLOSE, Size.SMALL, Type.TBAR)
+    TOGGLE_SIDEBAR = IconSpec(Path.TOGGLE_SIDEBAR, Size.MEDIUM, Type.TBAR)
 
     # ── Sidebar Icons ──
-    DASHBOARD = IconSpec(Name.DASHBOARD, Size.LARGE, Type.NAV)
-    MEAL_PLANNER = IconSpec(Name.MEAL_PLANNER, Size.LARGE, Type.NAV)
-    VIEW_RECIPES = IconSpec(Name.VIEW_RECIPES, Size.LARGE, Type.NAV)
-    SHOPPING_LIST = IconSpec(Name.SHOPPING_LIST, Size.LARGE, Type.NAV)
-    ADD_RECIPES = IconSpec(Name.ADD_RECIPES, Size.LARGE, Type.NAV)
-    SETTINGS = IconSpec(Name.SETTINGS, Size.LARGE, Type.NAV)
-    EXIT = IconSpec(Name.EXIT, Size.LARGE, Type.NAV)
+    DASHBOARD = IconSpec(Path.DASHBOARD, Size.LARGE, Type.NAV)
+    MEAL_PLANNER = IconSpec(Path.MEAL_PLANNER, Size.LARGE, Type.NAV)
+    VIEW_RECIPES = IconSpec(Path.VIEW_RECIPES, Size.LARGE, Type.NAV)
+    SHOPPING_LIST = IconSpec(Path.SHOPPING_LIST, Size.LARGE, Type.NAV)
+    ADD_RECIPES = IconSpec(Path.ADD_RECIPES, Size.LARGE, Type.NAV)
+    SETTINGS = IconSpec(Path.SETTINGS, Size.LARGE, Type.NAV)
+    EXIT = IconSpec(Path.EXIT, Size.LARGE, Type.NAV)
 
     # ── Add Recipe Page ──
-    ADD_IMAGE = IconSpec(Name.ADD_IMAGE, Size.XXL, Type.NAV)
+    ADD_IMAGE = IconSpec(Path.ADD_IMAGE, Size.XXL, Type.NAV)
 
     # ── Meal Planner Page ──
-    MEAL_PLANNER_ADD = IconSpec(Name.MEAL_PLANNER_ADD, Size.SMALL, Type.NAV)
+    MEAL_PLANNER_ADD = IconSpec(Path.MEAL_PLANNER_ADD, Size.SMALL, Type.NAV)
 
     # ── Search ──
-    SEARCH = IconSpec(Name.SEARCH, Size.SMALL, Type.NAV)
-    CLEAR = IconSpec(Name.CLEAR, Size.SMALL, Type.NAV)
+    SEARCH = IconSpec(Path.SEARCH, Size.SMALL, Type.NAV)
+    CLEAR = IconSpec(Path.CLEAR, Size.SMALL, Type.NAV)
 
     # ── Upload Recipe Image ──
-    UPLOAD_IMAGE = IconSpec(Name.UPLOAD_IMAGE, Size.SMALL, Type.NAV)
+    UPLOAD_IMAGE = IconSpec(Path.UPLOAD_IMAGE, Size.SMALL, Type.NAV)
 
     # ── Ingredient Widget ──
-    INGREDIENT_ADD = IconSpec(Name.INGREDIENT_ADD, Size.SMALL, Type.NAV)
-    INGREDIENT_SUBTRACT = IconSpec(Name.INGREDIENT_SUBTRACT, Size.SMALL, Type.NAV)
+    INGREDIENT_ADD = IconSpec(Path.INGREDIENT_ADD, Size.SMALL, Type.NAV)
+    INGREDIENT_SUBTRACT = IconSpec(Path.INGREDIENT_SUBTRACT, Size.SMALL, Type.NAV)
 
     # ── Custom ComboBox ──
-    COMBOBOX_ARROW = IconSpec(Name.COMBOBOX_ARROW, Size.SMALL, Type.NAV)
+    COMBOBOX_ARROW = IconSpec(Path.COMBOBOX_ARROW, Size.SMALL, Type.NAV)
 
     # ── Empty State ──
-    ADD_MEAL = IconSpec(Name.ADD_MEAL, Size.SMALL, Type.NAV)
+    ADD_MEAL = IconSpec(Path.ADD_MEAL, Size.SMALL, Type.NAV)
 
     # ── Recipe Card ──
-    TOTAL_TIME = IconSpec(Name.TOTAL_TIME, Size.SMALL, Type.NAV)
-    SERVINGS = IconSpec(Name.SERVINGS, Size.SMALL, Type.NAV)
-    FAVORITE = IconSpec(Name.FAVORITE, Size.SMALL, Type.NAV)
-    UNFAVORITE = IconSpec(Name.UNFAVORITE, Size.SMALL, Type.NAV)
-    MEAL_TYPE = IconSpec(Name.MEAL_TYPE, Size.SMALL, Type.NAV)
-    DIET_PREF = IconSpec(Name.DIET_PREF, Size.SMALL, Type.NAV)
+    TOTAL_TIME = IconSpec(Path.TOTAL_TIME, Size.SMALL, Type.NAV)
+    SERVINGS = IconSpec(Path.SERVINGS, Size.SMALL, Type.NAV)
+    FAVORITE = IconSpec(Path.FAVORITE, Size.SMALL, Type.NAV)
+    UNFAVORITE = IconSpec(Path.UNFAVORITE, Size.SMALL, Type.NAV)
+    MEAL_TYPE = IconSpec(Path.MEAL_TYPE, Size.SMALL, Type.NAV)
+    DIET_PREF = IconSpec(Path.DIET_PREF, Size.SMALL, Type.NAV)
 
     # ── Recipe Dialog ──
-    DIALOG_SERVINGS = IconSpec(Name.DIALOG_SERVINGS, Size.SMALL, Type.NAV)
-    DIALOG_TOTAL_TIME = IconSpec(Name.DIALOG_TOTAL_TIME, Size.SMALL, Type.NAV)
-    DIALOG_CATEGORY = IconSpec(Name.DIALOG_CATEGORY, Size.SMALL, Type.NAV)
+    DIALOG_SERVINGS = IconSpec(Path.DIALOG_SERVINGS, Size.SMALL, Type.NAV)
+    DIALOG_TOTAL_TIME = IconSpec(Path.DIALOG_TOTAL_TIME, Size.SMALL, Type.NAV)
+    DIALOG_CATEGORY = IconSpec(Path.DIALOG_CATEGORY, Size.SMALL, Type.NAV)
 
     # ── Message Dialog ──
-    MESSAGE_INFO = IconSpec(Name.MESSAGE_INFO, Size.XL, Type.NAV)
-    MESSAGE_WARNING = IconSpec(Name.MESSAGE_WARNING, Size.XL, Type.NAV)
-    MESSAGE_ERROR = IconSpec(Name.MESSAGE_ERROR, Size.XL, Type.NAV)
-    MESSAGE_SUCCESS = IconSpec(Name.MESSAGE_SUCCESS, Size.XL, Type.NAV)
+    MESSAGE_INFO = IconSpec(Path.MESSAGE_INFO, Size.XL, Type.NAV)
+    MESSAGE_WARNING = IconSpec(Path.MESSAGE_WARNING, Size.XL, Type.NAV)
+    MESSAGE_ERROR = IconSpec(Path.MESSAGE_ERROR, Size.XL, Type.NAV)
+    MESSAGE_SUCCESS = IconSpec(Path.MESSAGE_SUCCESS, Size.XL, Type.NAV)
 
     @property
     def spec(self) -> IconSpec:

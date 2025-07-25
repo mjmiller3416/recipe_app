@@ -8,17 +8,17 @@ to theme changes automatically.
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtWidgets import QLabel
-from app.theme_manager.icon.config import AppIcon
+from app.theme_manager.icon.config import Name
 from app.theme_manager.icon.loader import IconLoader
 from app.theme_manager.icon.factory import IconFactory
 
 # ── Icon  ────────────────────────────────────────────────────────────────────────────────────
 class Icon(QLabel):
     """A QLabel-based widget for displaying themed SVG icons."""
-    def __init__(self, icon: AppIcon, parent=None):
+    def __init__(self, icon: Name, parent=None):
         """
         Args:
-            icon (AppIcon): The pre-configured icon enum.
+            icon (Name): The pre-configured icon enum.
             parent: The parent widget. Defaults to None.
         """
         super().__init__(parent)

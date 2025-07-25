@@ -14,7 +14,7 @@ from PySide6.QtGui import QColor
 
 from app.theme_manager.theme import Theme, Mode, Color
 from app.theme_manager.icon.loader import IconLoader
-from app.theme_manager.icon.config import AppIcon, Name, Size, Type, State  # updated from app_icon.py
+from app.theme_manager.icon.config import Name  # updated from app_icon.py
 from app.theme_manager.icon.icon import Icon
 
 
@@ -216,7 +216,7 @@ class MainWindow(QMainWindow):
 
         card = CardWidget(title="Primary")
         card.setObjectName("primaryCard")
-        icon = Icon(AppIcon.DASHBOARD)
+        icon = Icon(Name.DASHBOARD)
         card2 = CardWidget(title="Secondary")
         card2.setObjectName("secondaryCard")
         card3 = CardWidget(title="Tertiary")
