@@ -7,10 +7,13 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QHBoxLayout,
                                QLabel, QMainWindow, QSizePolicy, QSpacerItem,
                                QStackedWidget, QVBoxLayout, QWidget)
 
-from app.theme_manager.icon import Icon
+from app.config import ERROR_COLOR
+from app.theme_manager.icon import Icon, Type
 from app.theme_manager.icon.config import Name
 from app.theme_manager.icon.loader import IconLoader
 from app.theme_manager.theme import Color, Mode, Theme
+from app.ui.components.widgets import Button
+from app.ui.components.widgets.tool_button import ToolButton
 
 
 # Custom widget for the plant illustrations to get rounded corners
@@ -92,8 +95,9 @@ class PlantAppUI(QMainWindow):
         header_layout.addWidget(today_label)
         header_layout.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
         # Placeholder for profile icon
-        profile_icon = Icon(Name.USER)
-        profile_icon.setAlignment(Qt.AlignCenter)
+        profile_icon = ToolButton(Type.PRIMARY)
+        profile_icon.setIconFromName(Name.USER)
+
         profile_icon.setFixedSize(40, 40)
         header_layout.addWidget(profile_icon)
         main_layout.addLayout(header_layout)
@@ -115,11 +119,29 @@ class PlantAppUI(QMainWindow):
         main_layout.addWidget(info_frame)
 
         # --- Plant Cards ---
-        main_layout.addWidget(self._create_plant_card("Living Room", ["Water hoya australis", "Feed monstera siltepecana"], "#4a5c43"))
-        main_layout.addWidget(self._create_plant_card("Kitchen", ["Water pilea peperomioides", "Water hoya australis"], "#6a7b63"))
-        main_layout.addWidget(self._create_plant_card("Bedroom", ["Feed monstera siltepecana", "Water philodendron brandi"], "#53654e"))
+        color_map = Theme.get_current_color_map()
+
+        main_layout.addWidget(self._create_plant_card("Living Room", ["Water hoya australis", "Feed monstera siltepecana"], color_map.get("primary", ERROR_COLOR)))
+        main_layout.addWidget(self._create_plant_card("Kitchen", ["Water pilea peperomioides", "Water hoya australis"], color_map.get("secondary", ERROR_COLOR)))
+        main_layout.addWidget(self._create_plant_card("Bedroom", ["Feed monstera siltepecana", "Water philodendron brandi"], color_map.get("tertiary", ERROR_COLOR)))
 
         main_layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
+
+        #--- Bottom Navigation Bar ---
+        button = Button("Add Plant")
+        button.setIconFromName(Name.ADD)
+        main_layout.addWidget(button)
+
+        nav_layout = QHBoxLayout()
+        nav_layout.setContentsMargins(0, 0, 0, 0)
+        nav_layout.setSpacing(40)
+
+        for icon_name in [Name.DASHBOARD, Name.MEAL_PLANNER, Name.VIEW_RECIPES, Name.SHOPPING_LIST, Name.SETTINGS]:
+            btn = ToolButton(Type.TOOL)
+            btn.setIconFromName(icon_name)
+            btn.setButtonSize(40, 40)
+            nav_layout.addWidget(btn)
+        main_layout.addLayout(nav_layout)
 
         return main_widget
 
@@ -174,7 +196,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     # Note: For the custom font to work, you need a "PlayfairDisplay-Regular.ttf" file
     # in the same directory as the script. You can download it from Google Fonts.
-    Theme.setTheme(Color.GRAY, Mode.DARK)
+    Theme.setTheme(Color.GREEN, Mode.DARK)
     window = PlantAppUI()
     window.show()
     sys.exit(app.exec())

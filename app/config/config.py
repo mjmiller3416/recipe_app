@@ -11,6 +11,7 @@ from PySide6.QtGui import QRegularExpressionValidator
 
 # ── Icon Defaults ──
 ICON_SIZE  = QSize(20, 20)
+ERROR_COLOR = "#DD0AE0"  # A bright magenta for error states
 
 APPLICATION_WINDOW = {
     "SETTINGS": {

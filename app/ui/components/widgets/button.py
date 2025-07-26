@@ -14,8 +14,8 @@ from app.theme_manager.icon.mixin import IconMixin
 class Button(QPushButton, IconMixin):
     def __init__(
         self,
-        type: Type = Type.DEFAULT,
         label: str = "",
+        type: Type = Type.DEFAULT,
         parent=None
     ):
         """

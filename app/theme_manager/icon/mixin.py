@@ -8,6 +8,7 @@ with state management.
 from PySide6.QtCore import QEvent
 from PySide6.QtGui import QIcon
 
+from app.config import ERROR_COLOR
 from app.theme_manager.icon.config import Name, State, Type
 from app.theme_manager.icon.loader import IconLoader
 from app.theme_manager.icon.svg_loader import SVGLoader
@@ -16,19 +17,6 @@ from app.theme_manager.icon.svg_loader import SVGLoader
 # ── Icon Mixin ───────────────────────────────────────────────────────────────────────────────
 class IconMixin:
     """A mixin to provide theme-aware, stateful icon logic to QAbstractButton widgets."""
-    def setIconFromName(self, icon_enum: Name):
-        """Sets the icon for this button from a Name enum."""
-        # Get type from button class (should be set during button initialization)
-        button_type = getattr(self, '_button_type', Type.DEFAULT)
-        self._init_icon(icon_enum, button_type)
-    
-    def _resolve_color_for_state(self, state: State) -> str:
-        """Resolve the color for a given state based on the button type."""
-        palette = IconLoader.get_palette()
-        state_colors = self._type.state_map
-        palette_role = state_colors.get(state, "icon_on_surface")
-        return palette.get(palette_role, "#000000")
-
     def _init_icon(self, icon_enum: Name, type: Type = Type.DEFAULT):
         """Initializes the icon states, caches them, and registers for theme updates."""
         self._icon_enum = icon_enum
@@ -37,21 +25,37 @@ class IconMixin:
         self._icons: dict[State, QIcon] = {}
 
         self.setIconSize(self._icon_spec.size.value)
-        
+
         IconLoader.register(self)
-        
+
         # Ensure icons are immediately available even if palette is empty
         if not self._icons:
             palette = IconLoader.get_palette()
             if palette:
                 self.refresh_theme(palette)
 
+    def setIconFromName(self, icon_enum: Name):
+        """Sets the icon for this button from a Name enum."""
+        # Get type from button class (should be set during button initialization)
+        button_type = getattr(self, '_button_type', Type.DEFAULT)
+        self._init_icon(icon_enum, button_type)
+
+    def _resolve_color_for_state(self, state: State) -> str:
+        """Resolve the color for a given state based on the button type."""
+        palette = IconLoader.get_palette()
+        state_colors = self._type.state_map
+        palette_role = state_colors.get(state, "icon_on_surface")
+        return palette.get(palette_role, ERROR_COLOR)
+
     def refresh_theme(self, palette: dict) -> None:
         """Called by IconLoader. Regenerates all icon states and applies the correct one."""
         # Clear cache to ensure fresh icons with new colors
         SVGLoader.clear_cache()
-        
-        # Generate icons for each state using the simplified approach
+
+        # use the custom size if it's been set, otherwise use the default from the spec
+        render_size = self._custom_icon_size if self._custom_icon_size else self._icon_spec.size.value
+
+        # generate icons for each state using the simplified approach
         self._icons = {}
         for state in State:
             color = self._resolve_color_for_state(state)
@@ -68,18 +72,18 @@ class IconMixin:
     def _update_icon(self) -> None:
         """Applies the correct icon from the cache based on the button's current state."""
         from PySide6.QtWidgets import QAbstractButton
-        
+
         # Ensure icons are loaded before trying to use them
         if not self._icons:
             return
-        
+
         if not self.isEnabled():
             icon = self._icons.get(State.DISABLED)
         elif self.isChecked():
             icon = self._icons.get(State.CHECKED)
         else:
             icon = self._icons.get(State.DEFAULT)
-        
+
         # Only set icon if we have a valid one
         if icon is not None:
             QAbstractButton.setIcon(self, icon)
