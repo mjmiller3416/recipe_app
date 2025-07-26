@@ -49,8 +49,7 @@ class IconMixin:
 
     def refresh_theme(self, palette: dict) -> None:
         """Called by IconLoader. Regenerates all icon states and applies the correct one."""
-        # Clear cache to ensure fresh icons with new colors
-        SVGLoader.clear_cache()
+        # Cache clearing is now handled centrally by IconLoader
 
         # use the custom size if it's been set, otherwise use the default from the spec
         render_size = self._custom_icon_size if self._custom_icon_size else self._icon_spec.size.value

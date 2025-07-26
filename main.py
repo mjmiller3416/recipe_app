@@ -43,6 +43,7 @@ elif "--import-recipes" in sys.argv:
 else:
     app = QApplication(sys.argv)
     app.setApplicationName("MealGenie")
+    DebugLogger.set_log_level("info")
     DebugLogger.log("Starting MealGenie application...\n", "info")
 
     Theme.setTheme(Color.GRAY, Mode.DARK)

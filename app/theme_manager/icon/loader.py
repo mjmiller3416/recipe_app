@@ -76,6 +76,10 @@ class IconLoader(QSingleton):
         self._palette = self._map_palette(new_palette)
         DebugLogger.log(f"Refreshing {len(self._icons)} icons", "debug")
 
+        # Clear SVG cache once before refreshing all icons
+        from app.theme_manager.icon.svg_loader import SVGLoader
+        SVGLoader.clear_cache()
+
         for icon in tuple(self._icons):
             icon.refresh_theme(new_palette)
 
@@ -103,11 +107,14 @@ class IconLoader(QSingleton):
         instance._palette = instance._map_palette(theme.get_current_color_map())
         theme.theme_refresh.connect(instance._on_theme_refresh)
 
-        # immediately refresh all icons
+        # Clear cache once and immediately refresh all icons
+        from app.theme_manager.icon.svg_loader import SVGLoader
+        SVGLoader.clear_cache()
+        
         for icon in tuple(instance._icons):
             icon.refresh_theme(instance._palette)
 
-        DebugLogger.log("Initialized IconLoader with palette: {instance._palette}", "debug")
+        DebugLogger.log(f"Initialized IconLoader with palette: {instance._palette}", "debug")
 
     @classmethod
     def register(cls, icon: ThemedIcon) -> None:
