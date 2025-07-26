@@ -3,17 +3,14 @@ import sys
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import (QColor, QFont, QFontDatabase, QIcon, QPainter,
                            QPainterPath, QPixmap)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QHBoxLayout,
-                               QLabel, QMainWindow, QSizePolicy, QSpacerItem,
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFrame, QHBoxLayout,
+                               QLabel, QMainWindow, QPushButton, QSizePolicy, QSpacerItem,
                                QStackedWidget, QVBoxLayout, QWidget)
 
 from app.config import ERROR_COLOR
-from app.theme_manager.icon import Icon, Type
-from app.theme_manager.icon.config import Name
-from app.theme_manager.icon.loader import IconLoader
+from app.theme_manager.icon import Icon, Type, Name
 from app.theme_manager.theme import Color, Mode, Theme
-from app.ui.components.widgets import Button
-from app.ui.components.widgets.tool_button import ToolButton
+from app.ui.components.widgets import Button, ToolButton
 
 
 # Custom widget for the plant illustrations to get rounded corners
@@ -101,6 +98,35 @@ class PlantAppUI(QMainWindow):
         profile_icon.setFixedSize(40, 40)
         header_layout.addWidget(profile_icon)
         main_layout.addLayout(header_layout)
+
+        # --- Theme Controls ---
+        theme_controls_layout = QHBoxLayout()
+
+        # Color selector
+        color_label = QLabel("Color:")
+        self.color_combo = QComboBox()
+        for color in Color:
+            self.color_combo.addItem(color.name.title(), color)
+        self.color_combo.setCurrentText("Green")
+
+        # Mode toggle
+        mode_label = QLabel("Mode:")
+        self.mode_combo = QComboBox()
+        for mode in Mode:
+            self.mode_combo.addItem(mode.value.title(), mode)
+        self.mode_combo.setCurrentText("Dark")
+
+        # Connect for immediate updates
+        self.color_combo.currentIndexChanged.connect(self._apply_theme)
+        self.mode_combo.currentIndexChanged.connect(self._apply_theme)
+
+        theme_controls_layout.addWidget(color_label)
+        theme_controls_layout.addWidget(self.color_combo)
+        theme_controls_layout.addWidget(mode_label)
+        theme_controls_layout.addWidget(self.mode_combo)
+        theme_controls_layout.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
+
+        main_layout.addLayout(theme_controls_layout)
 
         # --- Info Box ---
         info_frame = QFrame()
@@ -190,6 +216,15 @@ class PlantAppUI(QMainWindow):
         label.setFont(QFont("Arial", 24))
         layout.addWidget(label)
         return detail_widget
+
+    def _apply_theme(self):
+        """Apply the selected theme color and mode dynamically."""
+        selected_color = self.color_combo.currentData()
+        selected_mode = self.mode_combo.currentData()
+        if selected_color and selected_mode:
+            Theme.setTheme(selected_color, selected_mode)
+            # The theme system will automatically update stylesheets and emit signals
+            # Icons and other themed elements will refresh automatically
 
 
 if __name__ == '__main__':
