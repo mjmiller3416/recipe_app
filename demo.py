@@ -219,6 +219,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Styled Card Example")
 
         card = CardWidget(title="Primary")
+        Effects.apply_shadow(card, Shadow.ELEVATION_6)
         card.setType(WidgetType.CARD)
         card2 = CardWidget(title="Secondary")
         card2.setType(WidgetType.CARD)

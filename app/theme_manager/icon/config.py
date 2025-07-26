@@ -37,6 +37,8 @@ class Path(Enum):
     MENU            = "menu"
     MINIMIZE        = "minimize"
     RESTORE         = "restore"
+    REFRESH         = "refresh"
+    SAVE            = "save"
     SEARCH          = "search"
     SERVINGS        = "servings"
     SETTINGS        = "settings"
@@ -123,7 +125,6 @@ class Name(Enum):
 
     # ── Small Icons ─────────────────────────────
     ADD             = IconSpec(Path.ADD, Size.SMALL)
-    ADD_RECIPES     = IconSpec(Path.ADD_RECIPES, Size.SMALL)
     BATTERY         = IconSpec(Path.BATTERY, Size.SMALL)
     CATEGORY        = IconSpec(Path.CATEGORY, Size.SMALL)
     CROSS           = IconSpec(Path.CROSS, Size.SMALL)
@@ -136,7 +137,9 @@ class Name(Enum):
     MAXIMIZE        = IconSpec(Path.MAXIMIZE, Size.SMALL)
     MEAL_TYPE       = IconSpec(Path.MEAL_TYPE, Size.SMALL)
     MINIMIZE        = IconSpec(Path.MINIMIZE, Size.SMALL)
+    REFRESH         = IconSpec(Path.REFRESH, Size.SMALL)
     RESTORE         = IconSpec(Path.RESTORE, Size.SMALL)
+    SAVE            = IconSpec(Path.SAVE, Size.SMALL)
     SEARCH          = IconSpec(Path.SEARCH, Size.SMALL)
     SERVINGS        = IconSpec(Path.SERVINGS, Size.SMALL)
     SIGNAL          = IconSpec(Path.SIGNAL, Size.SMALL)
@@ -150,12 +153,14 @@ class Name(Enum):
     MENU            = IconSpec(Path.MENU, Size.MEDIUM)
 
     # ── Large Icons ─────────────────────────────
+    ADD_RECIPES     = IconSpec(Path.ADD_RECIPES, Size.LARGE)
     DASHBOARD       = IconSpec(Path.DASHBOARD, Size.LARGE)
     MEAL_PLANNER    = IconSpec(Path.MEAL_PLANNER, Size.LARGE)
     VIEW_RECIPES    = IconSpec(Path.VIEW_RECIPES, Size.LARGE)
     SHOPPING_LIST   = IconSpec(Path.SHOPPING_LIST, Size.LARGE)
     SETTINGS        = IconSpec(Path.SETTINGS, Size.LARGE)
     EXIT            = IconSpec(Path.EXIT, Size.LARGE)
+
 
     # ── XL Icons ────────────────────────────────
     INFO            = IconSpec(Path.INFO, Size.XL)

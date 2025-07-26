@@ -214,6 +214,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Styled Card Example")
 
         card = CardWidget(title="Primary")
+        Effects.apply_glow(card, Shadow.ELEVATION_12)
         card.setObjectName("primaryCard")
         icon = Icon(Name.DASHBOARD)
         icon.setSize(32, 32)

@@ -1,18 +1,165 @@
 import sys
+from collections import namedtuple
+from enum import Enum, auto
 
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import (QColor, QFont, QFontDatabase, QIcon, QPainter,
-                           QPainterPath, QPixmap)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFrame, QHBoxLayout,
-                               QLabel, QMainWindow, QPushButton, QSizePolicy, QSpacerItem,
-                               QStackedWidget, QVBoxLayout, QWidget)
+                           QPainterPath, QPixmap, QPalette)
+from PySide6.QtWidgets import (
+    QApplication, QCheckBox, QComboBox, QFrame, QHBoxLayout,
+    QLabel, QMainWindow, QPushButton, QSizePolicy, QSpacerItem,
+    QStackedWidget, QVBoxLayout, QWidget, QGraphicsDropShadowEffect,
+    QGraphicsBlurEffect, QGraphicsOpacityEffect
+)
 
 from app.config import ERROR_COLOR
 from app.theme_manager.icon import Icon, Type, Name
 from app.theme_manager.theme import Color, Mode, Theme
 from app.ui.components.widgets import Button, ToolButton
 
+# ── Shadow Effect Enum ───────────────────────────────────────────────────────────────────────
+ShadowStyle = namedtuple("ShadowStyle", "color blur_radius offset_x offset_y")
 
+class Shadow(Enum):
+    """
+    Predefined shadow styles for elevation effects.
+
+    - ELEVATION_0: No shadow, flat appearance.
+    - ELEVATION_1: Subtle shadow for resting cards.
+    - ELEVATION_3: More pronounced shadow for hover/active states.
+    - ELEVATION_6: Stronger shadow for floating cards.
+    - ELEVATION_12: Heaviest shadow for dialogs/modals.
+    """
+    ELEVATION_0 = ShadowStyle(QColor(0, 0, 0, 0), 0.0, 0.0, 0.0)
+    ELEVATION_1 = ShadowStyle(QColor(0, 0, 0, 40), 8.0, 0.0, 2.0)
+    ELEVATION_3 = ShadowStyle(QColor(0, 0, 0, 60), 12.0, 0.0, 4.0)
+    ELEVATION_6 = ShadowStyle(QColor(0, 0, 0, 80), 16.0, 0.0, 6.0)
+    ELEVATION_12 = ShadowStyle(QColor(0, 0, 0, 100), 24.0, 0.0, 8.0)
+
+
+# ── Glow Effect Enum ─────────────────────────────────────────────────────────────────────────
+GlowStyle = namedtuple("GlowStyle", "color blur_radius")
+
+class Glow(Enum):
+    CYAN = GlowStyle(QColor(0, 255, 255, 200), 60.0)
+    PINK = GlowStyle(QColor(255, 0, 255, 220), 50.0)
+    GOLD = GlowStyle(QColor(255, 215, 0, 180), 40.0)
+    ERROR = GlowStyle(QColor(255, 0, 0, 150), 30.0)
+    PRIMARY = GlowStyle(QColor(100, 149, 237, 180), 45.0)  # Cornflower Blue-ish
+
+
+# ── Widget Effects ───────────────────────────────────────────────────────────────────────────
+class Effects:
+    """
+    A collection of QGraphicsEffect class methods to apply visual effects to QWidgets.
+    """
+
+    @classmethod
+    def apply_shadow(
+        cls,
+        widget: QWidget,
+        shadow: Shadow = Shadow.ELEVATION_1,
+    ) -> None:
+        """
+        Applies a QGraphicsDropShadowEffect to the given widget.
+
+        Args:
+            widget (QWidget): The widget to apply the effect to.
+            color (QColor): The color of the shadow. Default is semi-transparent black.
+            blur_radius (float): The blur radius of the shadow.
+            offset_x (float): The horizontal offset of the shadow.
+            offset_y (float): The vertical offset of the shadow.
+        """
+        _color = shadow.value.color
+        _blur_radius = shadow.value.blur_radius
+        _offset_x = shadow.value.offset_x
+        _offset_y = shadow.value.offset_y
+
+        shadow_effect = QGraphicsDropShadowEffect(widget)
+        shadow_effect.setColor(_color)
+        shadow_effect.setBlurRadius(_blur_radius)
+        shadow_effect.setOffset(_offset_x, _offset_y)
+        widget.setGraphicsEffect(shadow_effect)
+        print(f"Applied Drop Shadow to "
+              f"{widget.objectName() if widget.objectName() else widget.__class__.__name__}"
+        )
+
+    @classmethod
+    def apply_blur(cls, widget: QWidget, blur_radius: float = 10.0):
+        """
+        Applies a QGraphicsBlurEffect to the given widget.
+
+        Args:
+            widget (QWidget): The widget to apply the effect to.
+            blur_radius (float): The blur radius of the effect.
+        """
+        blur_effect = QGraphicsBlurEffect(widget)
+        blur_effect.setBlurRadius(blur_radius)
+        widget.setGraphicsEffect(blur_effect)
+        widget.update()
+        print(f"Applied Blur to "
+              f"{widget.objectName() if widget.objectName() else widget.__class__.__name__}"
+        )
+
+    @classmethod
+    def apply_glow(
+        cls,
+        widget: QWidget,
+        glow: Glow = Glow.PRIMARY,
+    ) -> None:
+        """
+        Applies a "glow" effect to the given widget using QGraphicsDropShadowEffect.
+
+        A glow is a shadow with zero offset, making it radiate from the center.
+
+        Args:
+            widget (QWidget): The widget to apply the effect to.
+            color (QColor): The color of the glow.
+            blur_radius (float): The blur radius of the glow.
+        """
+        _color = glow.value.color
+        _blur_radius = glow.value.blur_radius
+
+        glow_effect = QGraphicsDropShadowEffect(widget)
+        glow_effect.setColor(_color)
+        glow_effect.setBlurRadius(_blur_radius)
+
+        # set offset to zero to create a centered glow
+        glow_effect.setOffset(0, 0)
+
+        widget.setGraphicsEffect(glow_effect)
+
+    @classmethod
+    def apply_opacity(cls, widget: QWidget, opacity: float = 0.5):
+        """
+        Applies a QGraphicsOpacityEffect to the given widget.
+
+        Args:
+            widget (QWidget): The widget to apply the effect to.
+            opacity (float): Opacity level
+                (0.0 for fully transparent, 1.0 for fully opaque).
+        """
+        opacity_effect = QGraphicsOpacityEffect(widget)
+        opacity_effect.setOpacity(opacity)
+        widget.setGraphicsEffect(opacity_effect)
+        widget.update()
+        print(f"Applied Opacity to "
+              f"{widget.objectName() if widget.objectName() else widget.__class__.__name__}"
+        )
+
+    @classmethod
+    def clear_effect(cls, widget: QWidget):
+        """
+        Clears any QGraphicsEffect applied to the given widget.
+
+        Args:
+            widget (QWidget): The widget to clear the effect from.
+        """
+        widget.setGraphicsEffect(None)
+        widget.update()
+        print(f"Cleared effect from "
+              f"{widget.objectName() if widget.objectName() else widget.__class__.__name__}"
+        )
 # Custom widget for the plant illustrations to get rounded corners
 class ImageLabel(QLabel):
     def __init__(self, pixmap_path, parent=None):
@@ -147,9 +294,17 @@ class PlantAppUI(QMainWindow):
         # --- Plant Cards ---
         color_map = Theme.get_current_color_map()
 
-        main_layout.addWidget(self._create_plant_card("Living Room", ["Water hoya australis", "Feed monstera siltepecana"], color_map.get("primary", ERROR_COLOR)))
-        main_layout.addWidget(self._create_plant_card("Kitchen", ["Water pilea peperomioides", "Water hoya australis"], color_map.get("secondary", ERROR_COLOR)))
-        main_layout.addWidget(self._create_plant_card("Bedroom", ["Feed monstera siltepecana", "Water philodendron brandi"], color_map.get("tertiary", ERROR_COLOR)))
+        living_card = self._create_plant_card("Living Room", ["Water hoya australis", "Feed monstera siltepecana"], color_map.get("primary", ERROR_COLOR))
+        Effects.apply_shadow(living_card, Shadow.ELEVATION_6)
+        main_layout.addWidget(living_card)
+
+        kitchen_card = self._create_plant_card("Kitchen", ["Water pilea peperomioides", "Water hoya australis"], color_map.get("secondary", ERROR_COLOR))
+        Effects.apply_shadow(kitchen_card, Shadow.ELEVATION_6)
+        main_layout.addWidget(kitchen_card)
+
+        bedroom_card = self._create_plant_card("Bedroom", ["Feed monstera siltepecana", "Water philodendron brandi"], color_map.get("tertiary", ERROR_COLOR))
+        Effects.apply_shadow(bedroom_card, Shadow.ELEVATION_6)
+        main_layout.addWidget(bedroom_card)
 
         main_layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
@@ -231,7 +386,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     # Note: For the custom font to work, you need a "PlayfairDisplay-Regular.ttf" file
     # in the same directory as the script. You can download it from Google Fonts.
-    Theme.setTheme(Color.GREEN, Mode.DARK)
+    Theme.setTheme(Color.RED, Mode.DARK)
     window = PlantAppUI()
     window.show()
     sys.exit(app.exec())
