@@ -43,7 +43,7 @@ class SearchBar(QFrame):
         self.layout.setSpacing(5)
 
         # ── Search Icon ──
-        self.ico_search = Icon(AppIcon.SEARCH)
+        self.ico_search = Icon(Name.SEARCH)
         self.layout.addWidget(self.ico_search, 0, 0)
 
         # ── Input Field ──
@@ -56,7 +56,7 @@ class SearchBar(QFrame):
 
         # ── Clear Button ──
         self.btn_ico_clear = ToolButton(Type.DEFAULT)
-        self.btn_ico_clear.setIcon(Name.CLEAR)
+        self.btn_ico_clear.setIcon(Name.CROSS)
         self.btn_ico_clear.setVisible(False) # visibility based on text input
         self.layout.addWidget(self.btn_ico_clear, 0, 2)
 

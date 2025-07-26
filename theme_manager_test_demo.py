@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QHBoxLayout,
                                QStackedWidget, QVBoxLayout, QWidget)
 
 from app.theme_manager.icon import Icon
-from app.theme_manager.icon.config import AppIcon
+from app.theme_manager.icon.config import Name
 from app.theme_manager.icon.loader import IconLoader
 from app.theme_manager.theme import Color, Mode, Theme
 
@@ -64,47 +64,6 @@ class PlantAppUI(QMainWindow):
         self.stacked_widget.addWidget(self.main_screen)
         self.stacked_widget.addWidget(self.detail_screen)
 
-        # --- Apply Stylesheet ---
-        self.setStyleSheet("""
-            QMainWindow, QWidget#MainScreen, QWidget#DetailScreen {
-                background-color: #2c2a28;
-            }
-            QLabel {
-                color: #e0e0e0;
-                font-family: 'Segoe UI', Arial, sans-serif;
-                font-size: 14px;
-            }
-            QLabel#TitleLabel {
-                color: #f0eade;
-                font-size: 48px; /* Adjusted for better visibility */
-            }
-            QLabel#HeaderLabel {
-                font-size: 22px;
-                font-weight: bold;
-                color: #f0eade;
-            }
-            QFrame#CardFrame {
-                background-color: #3a3836;
-                border-radius: 20px;
-            }
-            QFrame#InfoFrame {
-                background-color: #4a5c43;
-                border-radius: 15px;
-            }
-            QCheckBox::indicator {
-                width: 20px;
-                height: 20px;
-                border-radius: 5px;
-            }
-            QCheckBox::indicator:unchecked {
-                background-color: #5e5c5a;
-                border: 1px solid #777;
-            }
-            QCheckBox::indicator:checked {
-                background-color: #d4b483;
-            }
-        """)
-
     def _create_main_screen(self):
         """Creates the main 'Today' screen widget."""
         main_widget = QWidget()
@@ -120,9 +79,9 @@ class PlantAppUI(QMainWindow):
         status_bar_layout.addWidget(time_label)
         status_bar_layout.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
         # In a real app, these would be icons
-        status_bar_layout.addWidget(Icon(AppIcon.WIFI))
-        status_bar_layout.addWidget(Icon(AppIcon.SIGNAL))
-        status_bar_layout.addWidget(Icon(AppIcon.BATTERY))
+        status_bar_layout.addWidget(Icon(Name.WIFI))
+        status_bar_layout.addWidget(Icon(Name.SIGNAL))
+        status_bar_layout.addWidget(Icon(Name.BATTERY))
         main_layout.addLayout(status_bar_layout)
 
         # --- Header: Today + Profile Icon ---
@@ -133,7 +92,7 @@ class PlantAppUI(QMainWindow):
         header_layout.addWidget(today_label)
         header_layout.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
         # Placeholder for profile icon
-        profile_icon = Icon(AppIcon.USER)
+        profile_icon = Icon(Name.USER)
         profile_icon.setAlignment(Qt.AlignCenter)
         profile_icon.setFixedSize(40, 40)
         header_layout.addWidget(profile_icon)
@@ -145,8 +104,9 @@ class PlantAppUI(QMainWindow):
         info_frame.setObjectName("InfoFrame")
         info_frame.setFrameShape(QFrame.StyledPanel)
         info_layout = QHBoxLayout(info_frame)
+
         # Placeholder for lightbulb icon
-        bulb_icon = Icon(AppIcon.LIGHTBULB)
+        bulb_icon = Icon(Name.LIGHTBULB)
         info_layout.addWidget(bulb_icon)
         info_text = QLabel("During the winter your plants slow down and need less water.")
         info_text.setWordWrap(False)

@@ -23,8 +23,8 @@ from .navigation.nav_button import NavButton
 from .navigation.sidebar import Sidebar
 from .navigation.titlebar import TitleBar
 # From widgets
-from .widgets.button.button import Button
-from .widgets.button.tool_button import ToolButton
+from .widgets.button import Button
+from .widgets.tool_button import ToolButton
 from .widgets.circular_image import CircularImage
 from .widgets.combobox import ComboBox
 from .widgets.dropdown_widget import DropDown

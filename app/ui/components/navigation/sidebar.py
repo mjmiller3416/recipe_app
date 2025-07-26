@@ -95,7 +95,7 @@ class Sidebar(QWidget):
 
         button = NavButton(
             text=label,
-            app_icon=app_icon,
+            name=app_icon,
             checkable=is_checkable,
             height=82,
         )

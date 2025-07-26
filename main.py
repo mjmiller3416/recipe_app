@@ -11,7 +11,6 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
-from app.theme_manager.icon.loader import IconLoader
 from app.theme_manager.theme import Color, Mode, Theme
 from app.ui.main_window import MainWindow
 from app.ui.services.navigation_service import NavigationService
@@ -47,7 +46,6 @@ else:
     DebugLogger.log("Starting MealGenie application...\n", "info")
 
     Theme.setTheme(Color.GRAY, Mode.DARK)
-    IconLoader.connect_theme_controller(Theme._get_instance())
     navigation_service_factory = NavigationService.create
 
     main_window = MainWindow(

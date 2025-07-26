@@ -14,15 +14,22 @@ from app.core.utils import QSingleton
 from app.theme_manager.theme import Theme
 from dev_tools import DebugLogger
 
-from .base import ThemedIcon
+# Protocol for theme-aware icons
+from typing import Protocol
+
+class ThemedIcon(Protocol):
+    """Protocol for any theme-aware icon-like object."""
+    def refresh_theme(self, palette: dict[str, str]) -> None: ...
+    def objectName(self) -> str: ...
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 ICON_COLOR_MAP = {
-    # default
-    "default": "icon_surface_variant",
-    "on_default": "icon_on_surface_variant",
-    "default_container": "icon_surface_bright",
-    "on_default_container": "icon_surface_dim",
+    # default (mapped to surface variants)
+    "surface_variant": "icon_surface_variant",
+    "on_surface_variant": "icon_on_surface_variant",
+    "surface_bright": "icon_surface_bright",
+    "surface_dim": "icon_surface_dim",
+    "on_surface": "icon_on_surface",
 
     # primary
     "primary": "icon_primary",

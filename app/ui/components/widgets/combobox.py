@@ -9,6 +9,7 @@ from typing import Sequence
 from PySide6.QtCore import QStringListModel, Qt, Signal
 from PySide6.QtWidgets import QWidget
 
+from app.theme_manager.icon.config import Name
 from .dropdown_widget import DropDown
 
 
@@ -31,7 +32,7 @@ class ComboBox(DropDown):
             placeholder=placeholder,
             read_only=True,
             show_button=True,
-            button_icon=AppIcon.COMBOBOX_ARROW,
+            button_icon=Name.ANGLE_DOWN,
             completion_mode=None,
             layout_margins=(5, 5, 2, 5),
             layout_spacing=0,

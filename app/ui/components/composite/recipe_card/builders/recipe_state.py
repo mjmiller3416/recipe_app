@@ -41,7 +41,8 @@ class RecipeCard:
             updated_recipe = service.toggle_favorite(recipe_id)
 
             # update the button icon based on the new favorite state
-            new_icon = Name.FAVORITE if updated_recipe.is_favorite else Name.UNFAVORITE
+            new_icon = Name.HEART if updated_recipe.is_favorite else Name.HEART_FILLED
+
             button.setIcon(new_icon)
 
         except Exception:
@@ -119,7 +120,7 @@ class RecipeCard:
         )
 
         # favorite button - choose initial icon based on favorite state
-        initial_icon = Name.FAVORITE if self.recipe.is_favorite else Name.UNFAVORITE
+        initial_icon = Name.HEART if self.recipe.is_favorite else Name.HEART_FILLED
         btn_fav = ToolButton(Type.DEFAULT)
         btn_fav.setIcon(initial_icon)
         btn_fav.setButtonCheckable(True)
@@ -147,7 +148,7 @@ class RecipeCard:
         # add servings
         lyt_meta.addLayout(
             self._create_meta_section(
-                AppIcon.SERVINGS,
+                Icon(Name.SERVINGS),
                 heading="Servings",
                 value=self.recipe.formatted_servings(),
             )
@@ -159,7 +160,7 @@ class RecipeCard:
         # add total time
         lyt_meta.addLayout(
             self._create_meta_section(
-                AppIcon.TOTAL_TIME,
+                Icon(Name.TOTAL_TIME),
                 heading="Time",
                 value=self.recipe.formatted_time(),
             )
@@ -179,11 +180,11 @@ class RecipeCard:
         """
         raise NotImplementedError("Large frame layout is not yet implemented.")
 
-    def _create_meta_section(self, icon_enum: AppIcon, heading: str, value: str) -> QVBoxLayout:
+    def _create_meta_section(self, icon_widget: Icon, heading: str, value: str) -> QVBoxLayout:
         """Create a vertical layout section for displaying metadata with an icon, heading, and value.
 
         Args:
-            file_path (path): File path of the icon to display (e.g., "servings.svg").
+            icon_widget (Icon): The Icon widget to display.
             heading (str): Label heading (e.g., "Servings", "Time").
             value (str): Value associated with the heading (e.g., "4", "30 min").
 
@@ -195,16 +196,9 @@ class RecipeCard:
         lyt.setContentsMargins(0, 0, 0, 0)
         lyt.setSpacing(2)
 
-        # icon
-        # use centralized icon specs from AppIcon enum
-        spec = ICON_SPECS[icon_enum]
-        ico_meta = Icon(
-            icon_or_path=spec.path,
-            icon_size=spec.size,
-            variant=spec.variant,
-        )
-        ico_meta.setAlignment(Qt.AlignCenter)
-        lyt.addWidget(ico_meta, 0, Qt.AlignCenter) # add to layout
+        # icon - use the provided icon widget directly
+        icon_widget.setAlignment(Qt.AlignCenter)
+        lyt.addWidget(icon_widget, 0, Qt.AlignCenter) # add to layout
 
         # heading
         lbl_heading = QLabel(heading)

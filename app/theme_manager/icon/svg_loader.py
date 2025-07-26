@@ -39,7 +39,10 @@ def _replace_svg_colors(svg_data: str, source: str, new_color: str) -> str:
 
 # ── Class Definition ─────────────────────────────────────────────────────────────────────────
 class SVGLoader:
-    """Utility class for loading and recoloring SVG files."""
+    """Utility class for loading and recoloring SVG files with caching."""
+    
+    # Class-level cache for all SVG operations
+    _cache: dict[tuple, Union[QPixmap, QIcon]] = {}
 
     @staticmethod
     def load(
@@ -76,6 +79,11 @@ class SVGLoader:
         # ── Validate Size ──
         if logical_size.width() <= 0 or logical_size.height() <= 0:
             logical_size = QSize(24, 24)
+            
+        # ── Check Cache ──
+        cache_key = (str(file_path), color, logical_size.width(), logical_size.height(), source, as_icon)
+        if cache_key in SVGLoader._cache:
+            return SVGLoader._cache[cache_key]
 
         # ── Read SVG ──
         try:
@@ -150,5 +158,14 @@ class SVGLoader:
         painter.end()
         pixmap.setDevicePixelRatio(dpr)
 
-        # ── Retun QIcon or QPixmap ──
-        return QIcon(pixmap) if as_icon else pixmap
+        # ── Return QIcon or QPixmap ──
+        result = QIcon(pixmap) if as_icon else pixmap
+        
+        # ── Cache Result ──
+        SVGLoader._cache[cache_key] = result
+        return result
+    
+    @classmethod
+    def clear_cache(cls):
+        """Clear the SVG cache. Useful for memory management or theme changes."""
+        cls._cache.clear()

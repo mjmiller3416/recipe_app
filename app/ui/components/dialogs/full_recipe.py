@@ -9,8 +9,7 @@ from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QSizePolicy,
                                QSpacerItem, QVBoxLayout, QWidget)
 
 from app.core.models import Recipe
-from app.theme_manager.icon.config import ICON_SPECS, AppIcon
-from app.theme_manager.icon.icon import Icon
+from app.theme_manager.icon import Icon, Name
 from app.ui.components.dialogs import DialogWindow
 from app.ui.components.layout import Separator
 from app.ui.components.widgets import RoundedImage
@@ -98,16 +97,16 @@ class FullRecipe(DialogWindow):
         """Creates the meta information widget."""
         self.meta_info_widget, lyt_meta = create_framed_layout(line_width=0)
 
-        # add meta info to layout using AppIcon specs
-        for icon_key, text in (
-            (AppIcon.DIALOG_SERVINGS, str(self.recipe.servings)),
-            (AppIcon.DIALOG_TOTAL_TIME, str(self.recipe.total_time)),
-            (AppIcon.DIALOG_CATEGORY, self.recipe.recipe_category),
-            (AppIcon.MEAL_TYPE, self.recipe.meal_type),
-            (AppIcon.DIET_PREF, self.recipe.diet_pref or "None"),
+        # add meta info to layout using Name enum
+        for icon_name, text in (
+            (Name.DIALOG_SERVINGS, str(self.recipe.servings)),
+            (Name.DIALOG_TOTAL_TIME, str(self.recipe.total_time)),
+            (Name.DIALOG_CATEGORY, self.recipe.recipe_category),
+            (Name.MEAL_TYPE, self.recipe.meal_type),
+            (Name.DIET_PREF, self.recipe.diet_pref or "None"),
         ):
             lyt_meta.addWidget(
-                self._build_meta_row(icon_key, text)
+                self._build_meta_row(icon_name, text)
             )
 
         return self.meta_info_widget
@@ -269,7 +268,7 @@ class FullRecipe(DialogWindow):
 
         return lyt
 
-    def _build_meta_row(self, icon_key: AppIcon, text: str) -> QWidget:
+    def _build_meta_row(self, icon_name: Name, text: str) -> QWidget:
         """Helper to create a row with an icon and label, nicely spaced."""
         # ── Create Row ──
         container = QWidget()
@@ -278,12 +277,7 @@ class FullRecipe(DialogWindow):
         lyt.setSpacing(20)
 
         # ── Create Icon & Label ──
-        spec = ICON_SPECS[icon_key]
-        icon = Icon(
-            icon_or_path=spec.path,
-            icon_size=spec.size,
-            variant=spec.variant,
-        )
+        icon = Icon(icon_name)
         lbl = QLabel(text)
         lbl.setProperty("metaTitle", True)
         lbl.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)

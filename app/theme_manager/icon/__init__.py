@@ -1,17 +1,17 @@
 # app/theme_manager/icon/__init__.py
 
-"""Icons subpackage: Provides core icon utilities. Icon is available via its module."""
-from app.theme_manager.icon.base import ThemedIcon
+"""Icons subpackage: Simplified theme-aware icon system."""
 from app.theme_manager.icon.icon import Icon
 from app.theme_manager.icon.loader import IconLoader
 from app.theme_manager.icon.mixin import IconMixin
 from app.theme_manager.icon.config import Name, State, Type
+from app.theme_manager.icon.svg_loader import SVGLoader
 
 __all__ = [
     "IconMixin",
-    "ThemedIcon",
-    "Icon",
+    "Icon", 
     "IconLoader",
+    "SVGLoader",
     "Name",
     "State",
     "Type",

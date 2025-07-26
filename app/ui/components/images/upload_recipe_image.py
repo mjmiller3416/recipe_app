@@ -7,7 +7,7 @@ UploadRecipeImage widget for uploading and cropping recipe images.
 import uuid
 from pathlib import Path
 
-from PySide6.QtCore import QSize, Qt, Signal, Slot
+from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (QFileDialog, QLabel, QStackedLayout,
                                QVBoxLayout, QWidget)
@@ -28,7 +28,7 @@ class UploadRecipeImage(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("UploadRecipeImage")
-        self.selected_image_path: Path | None = None # will store path to the final cropped image
+        self.selected_image_path: Path | None = None # store path to the final cropped image
         self.original_selected_file_path: str | None = None # path from QFileDialog
 
         self._build_ui()
@@ -47,7 +47,7 @@ class UploadRecipeImage(QWidget):
         self.upload_button_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.upload_button = ToolButton(Type.DEFAULT)
-        self.upload_button.setIcon(Name.UPLOAD_IMAGE)
+        self.upload_button.setIcon(Name.ADD)
         self.upload_button.setButtonSize(200, 200)
 
         btn_lbl = QLabel("Upload Image")
@@ -65,9 +65,9 @@ class UploadRecipeImage(QWidget):
         # roundedImage will be created/updated when an image is processed
         self.image_display: RoundedImage | None = None
 
-        # ensure the widget has a fixed size based on the button, important for layout stability
-        button_qsize = self.upload_button.button_size # this is QSize
-        self.setFixedSize(button_qsize)
+        # ensure widget has fixed size based on the button, important for layout stability
+        # Use the same size that was set on the button
+        self.setFixedSize(200, 200)
 
 
     def _connect_signals(self):
@@ -93,7 +93,9 @@ class UploadRecipeImage(QWidget):
         from app.ui.components.dialogs.crop_dialog import CropDialog
         crop_dialog = CropDialog(image_path, self)
         crop_dialog.crop_finalized.connect(self._handle_crop_saved)
-        crop_dialog.select_new_image_requested.connect(self._handle_select_new_from_crop_dialog)
+        crop_dialog.select_new_image_requested.connect(
+            self._handle_select_new_from_crop_dialog
+        )
         crop_dialog.exec()
 
 
@@ -138,7 +140,11 @@ class UploadRecipeImage(QWidget):
             # determine radii (e.g., fixed, or from style)
             radii = 15
 
-            self.image_display = RoundedImage(image_path=image_path, size=button_qsize, radii=radii)
+            self.image_display = RoundedImage(
+                image_path=image_path,
+                size=button_qsize,
+                radii=radii
+            )
             self.stacked_layout.addWidget(self.image_display) # add to page 1 (index 1)
         else:
             self.image_display.set_image_path(image_path)

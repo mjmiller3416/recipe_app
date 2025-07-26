@@ -5,10 +5,12 @@ AddRecipes widget for creating new recipes with ingredients and directions.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QHBoxLayout, QLabel, QPushButton, QTextEdit,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QHBoxLayout, QLabel, QPushButton, QTextEdit,
+    QVBoxLayout, QWidget
+)
 
-from app.config.config import INT_VALIDATOR, NAME_VALIDATOR, THEME
+from app.config.config import INT_VALIDATOR, NAME_VALIDATOR
 from app.core.dtos import RecipeCreateDTO, RecipeIngredientDTO
 from app.core.services.recipe_service import RecipeService
 from app.ui.components.dialogs import MessageDialog
@@ -194,7 +196,11 @@ class AddRecipes(QWidget):
 
     def _display_save_message(self, message: str, success: bool = True):
         """Display save result message in the header label."""
-        color = THEME["FONT"]["COLOR"]["SUCCESS"] if success else THEME["FONT"]["COLOR"]["ERROR"]
+        from app.theme_manager.theme import Theme
+        
+        color_map = Theme.get_current_color_map()
+        color = color_map.get("primary", "#4CAF50") if success else color_map.get("error", "#F44336")
+        
         self.lbl_header.setText(message)
         self.lbl_header.setStyleSheet(f"color: {color}; font-style: italic;")
 

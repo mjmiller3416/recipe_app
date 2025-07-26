@@ -38,7 +38,7 @@ INGREDIENT_CATEGORIES = [
     "produce", "meat", "seafood", "pantry", "dairy", "deli", "frozen",
     "bakery", "baking", "condiments", "spices", "other",
 ]
-MEAL_CATEGORIES = [
+MEAL_TYPE = [
     "All", "Breakfast", "Lunch", "Dinner", "Snack", "Dessert",
 ]
 RECIPE_CATEGORIES = [

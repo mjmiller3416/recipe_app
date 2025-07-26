@@ -43,7 +43,7 @@ class TitleBar(QWidget):
 
         # ── Sidebar Toggle Button ──
         self.btn_ico_toggle_sidebar = ToolButton(Type.DEFAULT)
-        self.btn_ico_toggle_sidebar.setIcon(Name.TOGGLE_SIDEBAR)
+        self.btn_ico_toggle_sidebar.setIcon(Name.MENU)
         self.btn_ico_toggle_sidebar.setCheckable(True)
 
         self.btn_ico_toggle_sidebar.setFixedSize(SETTINGS["BTN_SIZE"])
@@ -61,7 +61,7 @@ class TitleBar(QWidget):
 
         # ── Close Button ──
         self.btn_ico_close = ToolButton(Type.DEFAULT)
-        self.btn_ico_close.setIcon(Name.CLOSE)
+        self.btn_ico_close.setIcon(Name.CROSS)
         self.btn_ico_close.setFixedSize(SETTINGS["BTN_SIZE"])
         self.btn_ico_close.setObjectName("BtnClose")
 

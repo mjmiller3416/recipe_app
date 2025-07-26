@@ -16,11 +16,18 @@ from app.theme_manager.icon.svg_loader import SVGLoader
 # ── Icon Mixin ───────────────────────────────────────────────────────────────────────────────
 class IconMixin:
     """A mixin to provide theme-aware, stateful icon logic to QAbstractButton widgets."""
-    def setIcon(self, icon_enum: Name):
-        """Sets the icon for this button."""
+    def setIconFromName(self, icon_enum: Name):
+        """Sets the icon for this button from a Name enum."""
         # Get type from button class (should be set during button initialization)
         button_type = getattr(self, '_button_type', Type.DEFAULT)
         self._init_icon(icon_enum, button_type)
+    
+    def _resolve_color_for_state(self, state: State) -> str:
+        """Resolve the color for a given state based on the button type."""
+        palette = IconLoader.get_palette()
+        state_colors = self._type.state_map
+        palette_role = state_colors.get(state, "icon_on_surface")
+        return palette.get(palette_role, "#000000")
 
     def _init_icon(self, icon_enum: Name, type: Type = Type.DEFAULT):
         """Initializes the icon states, caches them, and registers for theme updates."""
@@ -30,41 +37,59 @@ class IconMixin:
         self._icons: dict[State, QIcon] = {}
 
         self.setIconSize(self._icon_spec.size.value)
-        if self.isCheckable():
-            self.toggled.connect(self._update_icon)
-
+        
         IconLoader.register(self)
+        
+        # Ensure icons are immediately available even if palette is empty
+        if not self._icons:
+            palette = IconLoader.get_palette()
+            if palette:
+                self.refresh_theme(palette)
 
     def refresh_theme(self, palette: dict) -> None:
         """Called by IconLoader. Regenerates all icon states and applies the correct one."""
-        # generate icons for each state using the type
+        # Clear cache to ensure fresh icons with new colors
+        SVGLoader.clear_cache()
+        
+        # Generate icons for each state using the simplified approach
         self._icons = {}
-        state_colors = self._type.state_map
-
-        for state, palette_role in state_colors.items():
-            color = palette.get(palette_role, "#000000")
-            pixmap = SVGLoader.load(
+        for state in State:
+            color = self._resolve_color_for_state(state)
+            icon = SVGLoader.load(
                 file_path=self._icon_spec.name.path,
                 color=color,
                 size=self._icon_spec.size.value,
                 as_icon=True
             )
-            self._icons[state] = pixmap
+            self._icons[state] = icon
 
         self._update_icon()
 
     def _update_icon(self) -> None:
         """Applies the correct icon from the cache based on the button's current state."""
+        from PySide6.QtWidgets import QAbstractButton
+        
+        # Ensure icons are loaded before trying to use them
+        if not self._icons:
+            return
+        
         if not self.isEnabled():
-            super().setIcon(self._icons.get(State.DISABLED))
+            icon = self._icons.get(State.DISABLED)
         elif self.isChecked():
-            super().setIcon(self._icons.get(State.CHECKED))
+            icon = self._icons.get(State.CHECKED)
         else:
-            super().setIcon(self._icons.get(State.DEFAULT))
+            icon = self._icons.get(State.DEFAULT)
+        
+        # Only set icon if we have a valid one
+        if icon is not None:
+            QAbstractButton.setIcon(self, icon)
 
     def enterEvent(self, event: QEvent) -> None:
-        if self.isEnabled() and not self.isChecked():
-            super().setIcon(self._icons.get(State.HOVER))
+        if self.isEnabled() and not self.isChecked() and self._icons:
+            from PySide6.QtWidgets import QAbstractButton
+            hover_icon = self._icons.get(State.HOVER)
+            if hover_icon is not None:
+                QAbstractButton.setIcon(self, hover_icon)
         super().enterEvent(event)
 
     def leaveEvent(self, event: QEvent) -> None:

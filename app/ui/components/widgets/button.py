@@ -71,12 +71,10 @@ class Button(QPushButton, IconMixin):
 
         # connect toggled signal to update icon state when checked/unchecked
         if checkable:
-            # disconnect first to avoid duplicate connections
-            try:
-                self.toggled.disconnect(self._update_icon)
-            except TypeError:
-                pass  # signal wasn't connected - which is fine
-            self.toggled.connect(self._update_icon)
+            # only connect if not already connected to avoid duplicates
+            if not hasattr(self, '_icon_toggle_connected'):
+                self.toggled.connect(self._update_icon)
+                self._icon_toggle_connected = True
 
     def setIcon(self, icon_name: Name):
         """
@@ -85,4 +83,4 @@ class Button(QPushButton, IconMixin):
         Args:
             icon_name (Name): The Name enum member specifying the icon.
         """
-        super().setIcon(icon_name)
+        self.setIconFromName(icon_name)
