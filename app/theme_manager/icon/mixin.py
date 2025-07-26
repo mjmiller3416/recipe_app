@@ -16,11 +16,17 @@ from app.theme_manager.icon.svg_loader import SVGLoader
 # ── Icon Mixin ───────────────────────────────────────────────────────────────────────────────
 class IconMixin:
     """A mixin to provide theme-aware, stateful icon logic to QAbstractButton widgets."""
-    def init_icon(self, icon_enum: Name, color_scheme: Type = Type.DEFAULT):
+    def setIcon(self, icon_enum: Name):
+        """Sets the icon for this button."""
+        # Get type from button class (should be set during button initialization)
+        button_type = getattr(self, '_button_type', Type.DEFAULT)
+        self._init_icon(icon_enum, button_type)
+
+    def _init_icon(self, icon_enum: Name, type: Type = Type.DEFAULT):
         """Initializes the icon states, caches them, and registers for theme updates."""
         self._icon_enum = icon_enum
         self._icon_spec = icon_enum.spec
-        self._color_scheme = color_scheme
+        self._type = type
         self._icons: dict[State, QIcon] = {}
 
         self.setIconSize(self._icon_spec.size.value)
@@ -31,9 +37,9 @@ class IconMixin:
 
     def refresh_theme(self, palette: dict) -> None:
         """Called by IconLoader. Regenerates all icon states and applies the correct one."""
-        # generate icons for each state using the color scheme
+        # generate icons for each state using the type
         self._icons = {}
-        state_colors = self._color_scheme.state_map
+        state_colors = self._type.state_map
 
         for state, palette_role in state_colors.items():
             color = palette.get(palette_role, "#000000")
@@ -50,15 +56,15 @@ class IconMixin:
     def _update_icon(self) -> None:
         """Applies the correct icon from the cache based on the button's current state."""
         if not self.isEnabled():
-            self.setIcon(self._icons.get(State.DISABLED))
+            super().setIcon(self._icons.get(State.DISABLED))
         elif self.isChecked():
-            self.setIcon(self._icons.get(State.CHECKED))
+            super().setIcon(self._icons.get(State.CHECKED))
         else:
-            self.setIcon(self._icons.get(State.DEFAULT))
+            super().setIcon(self._icons.get(State.DEFAULT))
 
     def enterEvent(self, event: QEvent) -> None:
         if self.isEnabled() and not self.isChecked():
-            self.setIcon(self._icons.get(State.HOVER))
+            super().setIcon(self._icons.get(State.HOVER))
         super().enterEvent(event)
 
     def leaveEvent(self, event: QEvent) -> None:

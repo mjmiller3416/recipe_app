@@ -7,8 +7,7 @@ This module defines a custom search widget that includes a search icon, a text i
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QGridLayout, QLineEdit, QSizePolicy
 
-from app.config import AppIcon
-from app.theme_manager.icon import Icon
+from app.theme_manager.icon import Icon, Name, Type
 from app.ui.components.widgets import ToolButton
 
 # ── Constants ───────────────────────────────────────────────────────────────────
@@ -56,7 +55,8 @@ class SearchBar(QFrame):
         self.layout.addWidget(self.le_search, 0, 1)
 
         # ── Clear Button ──
-        self.btn_ico_clear = ToolButton(AppIcon.CLEAR)
+        self.btn_ico_clear = ToolButton(Type.DEFAULT)
+        self.btn_ico_clear.setIcon(Name.CLEAR)
         self.btn_ico_clear.setVisible(False) # visibility based on text input
         self.layout.addWidget(self.btn_ico_clear, 0, 2)
 

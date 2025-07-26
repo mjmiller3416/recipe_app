@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (QFileDialog, QLabel, QStackedLayout,
                                QVBoxLayout, QWidget)
 
 from app.config.paths import AppPaths
-from app.theme_manager.icon.config import Name
+from app.theme_manager.icon.config import Name, Type
 from app.ui.components.widgets import RoundedImage, ToolButton
 from app.ui.helpers.ui_helpers import make_overlay
 from dev_tools import DebugLogger
@@ -46,7 +46,8 @@ class UploadRecipeImage(QWidget):
         self.upload_button_layout.setContentsMargins(0,0,0,0)
         self.upload_button_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.upload_button = ToolButton(Name.UPLOAD_IMAGE)
+        self.upload_button = ToolButton(Type.DEFAULT)
+        self.upload_button.setIcon(Name.UPLOAD_IMAGE)
         self.upload_button.setButtonSize(200, 200)
 
         btn_lbl = QLabel("Upload Image")

@@ -6,15 +6,14 @@ Icon is a QLabel-based widget that renders an SVG icon and adapts
 to theme changes automatically.
 """
 
-from PySide6.QtCore import QSize
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
+from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QLabel
 
 from app.theme_manager.icon.config import Name, State
 from app.theme_manager.icon.factory import IconFactory
 from app.theme_manager.icon.loader import IconLoader
 from app.theme_manager.icon.svg_loader import SVGLoader
-
 
 # ── Icon  ────────────────────────────────────────────────────────────────────────────────────
 class Icon(QLabel):

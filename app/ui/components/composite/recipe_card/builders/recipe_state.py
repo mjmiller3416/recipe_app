@@ -13,7 +13,7 @@ from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
 from app.theme_manager.icon import Icon
-from app.theme_manager.icon.config import Name
+from app.theme_manager.icon.config import Name, Type
 from app.ui.components.layout import Separator
 from app.ui.components.widgets import RoundedImage, ToolButton
 from app.ui.helpers.ui_helpers import make_overlay
@@ -41,14 +41,8 @@ class RecipeCard:
             updated_recipe = service.toggle_favorite(recipe_id)
 
             # update the button icon based on the new favorite state
-            from app.theme_manager.icon.factory import IconFactory
-
-            new_icon = Icon(Name.FAVORITE) if updated_recipe.is_favorite else Icon(Name.UNFAVORITE)
-            spec = ICON_SPECS[new_icon]
-
-            # create new themed icon and apply it
-            icon_factory = IconFactory(spec.path, spec.size, spec.variant)
-            button.setIcon(icon_factory.icon())
+            new_icon = Name.FAVORITE if updated_recipe.is_favorite else Name.UNFAVORITE
+            button.setIcon(new_icon)
 
         except Exception:
             pass
@@ -125,11 +119,10 @@ class RecipeCard:
         )
 
         # favorite button - choose initial icon based on favorite state
-        initial_icon = AppIcon.FAVORITE if self.recipe.is_favorite else AppIcon.UNFAVORITE
-        btn_fav = ToolButton(
-            initial_icon,
-            checkable = True,
-        )
+        initial_icon = Name.FAVORITE if self.recipe.is_favorite else Name.UNFAVORITE
+        btn_fav = ToolButton(Type.DEFAULT)
+        btn_fav.setIcon(initial_icon)
+        btn_fav.setButtonCheckable(True)
         btn_fav.setCursor(Qt.PointingHandCursor)
         btn_fav.setChecked(bool(self.recipe.is_favorite)) # set initial state
         btn_fav.toggled.connect(

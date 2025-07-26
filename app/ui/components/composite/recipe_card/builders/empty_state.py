@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QFrame, QVBoxLayout
 
-from app.config import AppIcon
+from app.theme_manager.icon import Name, Type
 from app.ui.components.widgets import Button
 
 from ..constants import LAYOUT_SIZE, LayoutSize
@@ -44,7 +44,8 @@ class EmptyState:
         lyt.setContentsMargins(0, 0, 0, 0)
 
         # add meal button
-        btn_add = Button(AppIcon.ADD_RECIPES)
+        btn_add = Button(Type.DEFAULT)
+        btn_add.setIcon(Name.ADD_RECIPES)
         btn_add.setObjectName("AddMealButton") # slot looks for this
         btn_add.setCursor(Qt.PointingHandCursor)
         lyt.addWidget(btn_add, 0, Qt.AlignCenter) # add to layout

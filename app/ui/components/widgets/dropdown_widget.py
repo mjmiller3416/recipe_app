@@ -71,7 +71,9 @@ class DropDown(QWidget):
 
         self.show_button = show_button
         if show_button and button_icon is not None:
-            self.cb_btn = ToolButton(button_icon)
+            from app.theme_manager.icon import Type
+            self.cb_btn = ToolButton(Type.DEFAULT)
+            self.cb_btn.setIcon(button_icon)
             self.cb_btn.setCursor(Qt.PointingHandCursor)
             self.cb_btn.clicked.connect(self._show_popup)
 

@@ -18,12 +18,29 @@ from .base import ThemedIcon
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 ICON_COLOR_MAP = {
+    # default
+    "default": "icon_surface_variant",
+    "on_default": "icon_on_surface_variant",
+    "default_container": "icon_surface_bright",
+    "on_default_container": "icon_surface_dim",
+
+    # primary
     "primary": "icon_primary",
     "on_primary": "icon_on_primary",
+    "primary_container": "icon_primary_container",
+    "on_primary_container": "icon_on_primary_container",
+
+    # secondary
     "secondary": "icon_secondary",
     "on_secondary": "icon_on_secondary",
-    "surface": "icon_surface",
-    "on_surface": "icon_on_surface",
+    "secondary_container": "icon_secondary_container",
+    "on_secondary_container": "icon_on_secondary_container",
+
+    # tertiary
+    "tertiary": "icon_tertiary",
+    "on_tertiary": "icon_on_tertiary",
+    "tertiary_container": "icon_tertiary_container",
+    "on_tertiary_container": "icon_on_tertiary_container",
 }
 
 # ── Icon Loader ──────────────────────────────────────────────────────────────────────────────

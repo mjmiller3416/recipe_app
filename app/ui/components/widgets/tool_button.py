@@ -3,55 +3,35 @@
 Module providing ToolButton widget with theme-aware icons.
 """
 
-from PySide6.QtCore import QSize
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
+from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QToolButton
 
 from app.theme_manager.icon.config import Name, Type
 from app.theme_manager.icon.mixin import IconMixin
 
-
 # ── Tool Button ──────────────────────────────────────────────────────────────────────────────
 class ToolButton(QToolButton, IconMixin):
     def __init__(
         self,
-        icon: Name,
         type: Type = Type.DEFAULT,
-        checkable: bool = False,
-        button_size: QSize = None,
-        icon_size: QSize = None,
         parent=None
     ):
         """
         A theme-aware QToolButton with dynamic, stateful icons.
 
         Args:
-            icon (Name): The Name enum member specifying the icon.
-            checkable (bool): Whether the button is checkable.
             type (Type): The button type (e.g., default, primary, etc.).
-            button_size (QSize): Custom button size. If None, uses default size.
-            icon_size (QSize): Custom icon size. If None, uses icon's default size.
             parent: QWidget parent.
         """
         super().__init__(parent)
-        self.setObjectName(icon.spec.name.value)
-        self.setCheckable(checkable)
+
+        # store button type for icon setup
+        self._button_type = type
 
         # store sizes for access
-        self._button_size = button_size
-        self._custom_icon_size = icon_size
-
-
-        # set custom button size if specified
-        if button_size:
-            self.setFixedSize(button_size)
-
-        # initialize icon logic
-        self.init_icon(icon, type)
-
-        # set custom icon size if specified (must be after init_icon)
-        if icon_size:
-            self.setIconSize(icon_size)
+        self._button_size = None
+        self._custom_icon_size = None
 
     def setButtonSize(self, width: int, height: int):
         """
@@ -76,3 +56,31 @@ class ToolButton(QToolButton, IconMixin):
         size = QSize(width, height)
         self._custom_icon_size = size
         self.setIconSize(size)
+
+    def setButtonCheckable(self, checkable: bool):
+        """
+        Set whether the button is checkable.
+
+        Args:
+            checkable (bool): True if button should be checkable, False otherwise.
+        """
+        self.setCheckable(checkable)
+
+        # connect toggled signal to update icon state when checked/unchecked
+        if checkable:
+            # disconnect first to avoid duplicate connections
+            try:
+                self.toggled.disconnect(self._update_icon)
+            except TypeError:
+                pass  # signal wasn't connected - which is fine
+            self.toggled.connect(self._update_icon)
+
+    def setIcon(self, icon_name: Name):
+        """
+        Set the icon for this button.
+
+        Args:
+            icon_name (Name): The Name enum member specifying the icon.
+        """
+        self.setObjectName(icon_name.spec.name.value)
+        super().setIcon(icon_name)

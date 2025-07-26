@@ -108,49 +108,42 @@ class State(Enum):
         return self.name  # allows dict.get(str(state), ...) if needed
 
 class Type(Enum):
-    """Enum for button color schemes that define icon colors for different states."""
-    DEFAULT = "default"
-    NAVIGATION = "navigation"
-    TITLE_BAR = "title_bar"
-    BUTTON = "button"
+    """Enum for button types that define icon colors for different states."""
+    DEFAULT   = "default"
+    PRIMARY   = "primary"
+    SECONDARY = "secondary"
+    TOOL      = "tool"
 
     @property
     def state_map(self) -> dict[State, str]:
         """Returns the color palette role for each button state."""
         if self == Type.DEFAULT:
             return {
-                State.DEFAULT: "icon_on_surface",
-                State.HOVER: "icon_on_surface",
-                State.CHECKED: "icon_on_surface",
-                State.DISABLED: "icon_on_surface",
+                State.DEFAULT: "icon_surface_variant",
+                State.HOVER: "icon_on_surface_variant",
+                State.CHECKED: "icon_surface_bright",
+                State.DISABLED: "icon_surface_dim",
             }
-        elif self == Type.BUTTON:
+        elif self == Type.PRIMARY:
             return {
                 State.DEFAULT: "icon_primary",
-                State.HOVER: "icon_primary",
-                State.CHECKED: "icon_primary",
-                State.DISABLED: "icon_on_primary",
+                State.HOVER: "icon_on_primary",
+                State.CHECKED: "icon_primary_container",
+                State.DISABLED: "icon_on_primary_container",
             }
-        elif self == Type.NAVIGATION:
+        elif self == Type.SECONDARY:
             return {
-                State.DEFAULT: "icon_primary",
-                State.HOVER: "icon_primary",
-                State.CHECKED: "icon_primary",
-                State.DISABLED: "icon_on_surface",
+                State.DEFAULT: "icon_secondary",
+                State.HOVER: "icon_on_secondary",
+                State.CHECKED: "icon_secondary_container",
+                State.DISABLED: "icon_on_secondary_container",
             }
-        elif self == Type.TITLE_BAR:
+        elif self == Type.TOOL:
             return {
-                State.DEFAULT: "icon_on_surface",
-                State.HOVER: "icon_on_surface",
-                State.CHECKED: "icon_on_surface",
-                State.DISABLED: "icon_on_surface",
-            }
-        else:
-            return {
-                State.DEFAULT: "icon_on_surface",
-                State.HOVER: "icon_on_surface",
-                State.CHECKED: "icon_on_surface",
-                State.DISABLED: "icon_on_surface",
+                State.DEFAULT: "icon_tertiary",
+                State.HOVER: "icon_on_tertiary",
+                State.CHECKED: "icon_tertiary_container",
+                State.DISABLED: "icon_on_tertiary_container",
             }
 
 class IconSpec(NamedTuple):

@@ -9,7 +9,8 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QGridLayout, QLineEdit, QSizePolicy, QWidget
 
 from app.config import (FLOAT_VALIDATOR, INGREDIENT_CATEGORIES,
-                        MEASUREMENT_UNITS, NAME_PATTERN, AppIcon)
+                        MEASUREMENT_UNITS, NAME_PATTERN)
+from app.theme_manager.icon import Name, Type
 from app.core.database.db import create_session
 from app.core.dtos import IngredientSearchDTO
 from app.core.services.ingredient_service import IngredientService
@@ -81,11 +82,13 @@ class IngredientWidget(QWidget):
         )
         self.grid_layout.addWidget(self.cb_ingredient_category, 0, 3, 1, 1)
 
-        self.btn_ico_subtract = ToolButton(AppIcon.INGREDIENT_SUBTRACT)
+        self.btn_ico_subtract = ToolButton(Type.DEFAULT)
+        self.btn_ico_subtract.setIcon(Name.INGREDIENT_SUBTRACT)
         self.btn_ico_subtract.setFixedWidth(FIXED_HEIGHT) # square button
         self.grid_layout.addWidget(self.btn_ico_subtract, 0, 4, 1, 1)
 
-        self.btn_ico_add = ToolButton(AppIcon.INGREDIENT_ADD)
+        self.btn_ico_add = ToolButton(Type.DEFAULT)
+        self.btn_ico_add.setIcon(Name.INGREDIENT_ADD)
         self.btn_ico_add.setFixedWidth(FIXED_HEIGHT)  # square button
         self.grid_layout.addWidget(self.btn_ico_add, 0, 5, 1, 1)
 
