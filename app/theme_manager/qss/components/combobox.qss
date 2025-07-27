@@ -1,0 +1,117 @@
+/* ------------------------------------------------------------------
+   CUSTOM COMBOBOX STYLESHEET - Material Design 3
+   ------------------------------------------------------------------ */
+
+#ComboBox {
+    background-color: {surface_container};
+    border: 1px solid {outline_variant};
+    border-radius: 8px;
+    padding: 2px;
+}
+
+#ComboBox:hover {
+    background-color: {surface_container_high};
+    border-color: {outline};
+}
+
+#ComboBox:focus {
+    background-color: {surface_container_highest};
+    border: 2px solid {primary};
+    padding: 1px; /* Adjust for thicker border */
+}
+
+#ComboBox #CBLineEdit {
+    background-color: transparent;
+    color: {on_surface};
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    padding: 8px 12px;
+    padding-left: 8px;
+    selection-background-color: {primary_container};
+    selection-color: {on_primary_container};
+}
+
+#ComboBox #CBLineEdit:focus {
+    color: {on_surface};
+    background-color: transparent;
+}
+
+#ComboBox #CBLineEdit:disabled {
+    color: {on_surface_variant};
+    background-color: {surface_dim};
+}
+
+#ComboBox #CBButton {
+    background-color: transparent;
+    border: none;
+    border-radius: 4px;
+    padding: 4px;
+    margin: 2px;
+}
+
+#ComboBox #CBButton:hover {
+    background-color: {surface_container_highest};
+}
+
+#ComboBox #CBButton:pressed {
+    background-color: {primary_container};
+}
+
+/* Dropdown popup styling */
+#CompleterPopup {
+    background-color: {surface_container_low};
+    color: {on_surface};
+    border: 1px solid {outline_variant};
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    padding: 4px;
+    /* Add shadow effect */
+    qproperty-windowOpacity: 0.98;
+}
+
+#CompleterPopup:item {
+    border: none;
+    outline: none;
+    padding: 8px 12px;
+    margin: 1px;
+    border-radius: 4px;
+    color: {on_surface};
+}
+
+#CompleterPopup:item:hover {
+    background-color: {surface_container};
+    color: {on_surface};
+}
+
+#CompleterPopup:item:selected {
+    background-color: {secondary_container};
+    color: {on_secondary_container};
+    border: none;
+    border-radius: 4px;
+    outline: none;
+}
+
+#CompleterPopup:item:selected:hover {
+    background-color: {primary_container};
+    color: {on_primary_container};
+}
+
+/* Disabled state */
+#ComboBox:disabled {
+    background-color: {surface_dim};
+    border-color: {outline_variant};
+    color: {on_surface_variant};
+}
+
+#ComboBox:disabled #CBLineEdit {
+    color: {on_surface_variant};
+}
+
+#ComboBox:disabled #CBButton {
+    background-color: transparent;
+}
+

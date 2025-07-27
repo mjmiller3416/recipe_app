@@ -1,0 +1,107 @@
+/* ------------------------------------------------------------------
+   RECIPE CARD STYLESHEET - Material Design 3
+   ------------------------------------------------------------------ */
+
+/* Main RecipeCard container */
+#RecipeCard {
+    background-color: {surface_container};
+    border: 1px solid {outline_variant};
+    border-radius: 12px;
+    padding: 0px;
+}
+
+#RecipeCard:hover {
+    background-color: {surface_container_high};
+    border-color: {outline};
+}
+
+/* State frames */
+#RecipeCard, #EmptyStateFrame, #ErrorStateFrame {
+    background-color: {surface_container};
+    border: 1px solid {outline_variant};
+    border-radius: 12px;
+}
+
+#EmptyStateFrame:hover, #ErrorStateFrame:hover {
+    background-color: {surface_container_high};
+    border-color: {outline};
+}
+
+/* Default text styling for recipe cards */
+#RecipeCard QLabel {
+    color: {on_surface};
+    font-size: 14px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-weight: 600;
+    background-color: transparent;
+    border: none;
+}
+
+/* Title text for medium layout */
+#RecipeCard[layout_size="medium"] [title_text="true"] {
+    font-size: 16px;
+    font-weight: 700;
+    color: {on_surface};
+    padding: 8px 12px;
+    margin: 0px;
+}
+
+/* Label text (metadata labels) */
+#RecipeCard [label_text="true"] {
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: {on_surface_variant};
+    font-weight: 500;
+    font-size: 12px;
+}
+
+/* Value text (metadata values) */
+#RecipeCard [value_text="true"] {
+    color: {on_surface};
+    font-weight: 600;
+    font-size: 13px;
+}
+
+/* Small layout specific styling */
+#RecipeCard[layout_size="small"] {
+    background-color: {surface_container_low};
+}
+
+#RecipeCard[layout_size="small"] QLabel {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 8px;
+}
+
+/* Large layout specific styling */
+#RecipeCard[layout_size="large"] {
+    background-color: {surface_container_high};
+    border: 2px solid {outline};
+}
+
+/* Interactive states */
+#RecipeCard:pressed {
+    background-color: {primary_container};
+    border-color: {primary};
+}
+
+#RecipeCard:pressed QLabel {
+    color: {on_primary_container};
+}
+
+/* Focus state for accessibility */
+#RecipeCard:focus {
+    border: 2px solid {primary};
+    outline: none;
+}
+
+/* Disabled state */
+#RecipeCard:disabled {
+    background-color: {surface_dim};
+    border-color: {outline_variant};
+    opacity: 0.6;
+}
+
+#RecipeCard:disabled QLabel {
+    color: {on_surface_variant};
+}
+

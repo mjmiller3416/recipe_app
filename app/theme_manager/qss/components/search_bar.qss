@@ -1,0 +1,26 @@
+/* ------------------------------------------------------------------
+   SEARCH WIDGET STYLING
+   ------------------------------------------------------------------ */
+
+#SearchBar {
+background-color: {BACKGROUND_WIDGET}; /* Search Widget Background Color */
+border-radius: 10px;
+}
+
+#SearchBar #le_search {
+    background-color: transparent;
+    border: none;
+    font-size: {FONT_SIZE_DEFAULT};
+}
+
+#SearchBar #le_search:focus {
+    border: none;
+    outline: none;
+}
+
+#SearchBar #clear {
+    background-color: transparent;
+}
+#SearchBar #btn_ico_clear:hover {
+    border-radius: 10px;
+}

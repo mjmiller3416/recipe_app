@@ -1,0 +1,13 @@
+#UploadRecipeImage QToolButton {
+    background-color: {BACKGROUND_WIDGET};
+    border: 2px solid {BORDER_DEFAULT};
+    border-radius: 16px;
+    padding-bottom: 32px;
+}
+#UploadRecipeImage QLabel{
+    color: {FONT_COLOR_DEFAULT};
+    font-weight: bold;
+    font-size: {FONT_SIZE_LARGE};
+    font-family: {FONT_FAMILY_DEFAULT};
+    padding-bottom: 6px;
+}
