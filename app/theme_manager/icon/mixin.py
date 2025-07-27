@@ -8,7 +8,7 @@ with state management.
 from PySide6.QtCore import QEvent
 from PySide6.QtGui import QIcon
 
-from app.config import ERROR_COLOR
+from app.config import FALLBACK_COLOR
 from app.theme_manager.icon.config import Name, State, Type
 from app.theme_manager.icon.loader import IconLoader
 from app.theme_manager.icon.svg_loader import SVGLoader
@@ -45,7 +45,7 @@ class IconMixin:
         palette = IconLoader.get_palette()
         state_colors = self._type.state_map
         palette_role = state_colors.get(state, "icon_on_surface")
-        return palette.get(palette_role, ERROR_COLOR)
+        return palette.get(palette_role, FALLBACK_COLOR)
 
     def refresh_theme(self, palette: dict) -> None:
         """Called by IconLoader. Regenerates all icon states and applies the correct one."""

@@ -10,6 +10,7 @@ to theme changes automatically.
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QLabel
 
+from app.config import FALLBACK_COLOR
 from app.theme_manager.icon.config import Name, State
 from app.theme_manager.icon.loader import IconLoader
 from app.theme_manager.icon.svg_loader import SVGLoader
@@ -62,11 +63,11 @@ class Icon(QLabel):
             else:
                 # It's a palette role
                 palette = IconLoader.get_palette()
-                color = palette.get(self._custom_color, "#DD0AE0")
+                color = palette.get(self._custom_color, FALLBACK_COLOR)
         else:
             # Use default color
             palette = IconLoader.get_palette()
-            color = palette.get("icon_on_surface", "#DD0AE0")
+            color = palette.get("icon_on_surface", FALLBACK_COLOR)
 
         # Load and set the pixmap
         pixmap = SVGLoader.load(

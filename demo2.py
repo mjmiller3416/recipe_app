@@ -12,6 +12,11 @@ from PySide6.QtWidgets import (QApplication, QGraphicsBlurEffect,
                                QGraphicsOpacityEffect, QGridLayout, QLabel,
                                QMainWindow, QVBoxLayout, QWidget)
 
+from app.theme_manager.icon.config import Name  # updated from app_icon.py
+from app.theme_manager.icon.icon import Icon
+from app.theme_manager.icon.loader import IconLoader
+from app.theme_manager.theme import Color, Mode, Theme
+
 # ── Shadow Effect Enum ───────────────────────────────────────────────────────────────────────
 ShadowStyle = namedtuple("ShadowStyle", "color blur_radius offset_x offset_y")
 
@@ -191,19 +196,9 @@ class CardWidget(StyledWidget):
         self._layout.setSpacing(0)
         self._layout.setContentsMargins(12, 12, 12, 12)
 
-        self.header = StyledLabel(title)
-        self.header.setFontType(FontType.HEADER)
-
-        self.body = StyledLabel(body)
-        self.body.setFontType(FontType.BODY)
-        self.body.setWordWrap(False)
-
-        self.footer = StyledLabel(footer)
-        self.footer.setFontType(FontType.FOOTER)
-
+        self.header = QLabel(title)
+        self.header.setAlignment(Qt.AlignCenter)
         self._layout.addWidget(self.header)
-        self._layout.addWidget(self.body)
-        self._layout.addWidget(self.footer)
 
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
         """
@@ -219,65 +214,45 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Styled Card Example")
 
         card = CardWidget(title="Primary")
-        Effects.apply_shadow(card, Shadow.ELEVATION_6)
-        card.setType(WidgetType.CARD)
+        Effects.apply_glow(card, Shadow.ELEVATION_12)
+        card.setObjectName("primaryCard")
+        icon = Icon(Name.DASHBOARD)
+        icon.setSize(60, 60)
+        icon.setColor("icon_primary")
         card2 = CardWidget(title="Secondary")
-        card2.setType(WidgetType.CARD)
+        card2.setObjectName("secondaryCard")
         card3 = CardWidget(title="Tertiary")
-        card3.setType(WidgetType.CARD)
+        card3.setObjectName("tertiaryCard")
+
+        card4 = CardWidget(title="Primary Container")
+        card4.setObjectName("primaryContainer")
+        card5 = CardWidget(title="Secondary Container")
+        card5.setObjectName("secondaryContainer")
+        card6 = CardWidget(title="Tertiary Container")
+        card6.setObjectName("tertiaryContainer")
 
         container = QWidget()
         layout = QGridLayout(container)
         layout.setSpacing(30)  # Add space between cards for glow effects
         layout.setContentsMargins(40, 40, 40, 40)  # Add margins for glow effects
         layout.addWidget(card, 0, 0)
-        layout.addWidget(card2, 0, 1)
+        layout.addWidget(icon, 0, 1)
         layout.addWidget(card3, 0, 2)
+        layout.addWidget(card4, 1, 0)
+        layout.addWidget(card5, 1, 1)
+        layout.addWidget(card6, 1, 2)
+
         layout.setAlignment(Qt.AlignCenter)
 
         self.setCentralWidget(container)
         self.setMinimumSize(400, 200)
 
-        # Apply styles
-        self.setStyleSheet(qss)
-
-# ── QSS Styling ──
-qss = """
-QMainWindow { background-color: #585858; }
-
-/* Base Card Styling */
-CardWidget[widgetType="CARD"] {
-    background-color: #242424;
-    border-radius: 12px;
-    border: 1px solid #444;
-}
-
-/* Header */
-[fontType="HEADER"] {
-    font-size: 18px;
-    font-weight: bold;
-    padding-bottom: 8px;
-    color: #FFD700; /* Gold color for header text */
-}
-
-/* Body */
-[fontType="BODY"] {
-    font-size: 14px;
-    padding: 4px 0;
-    color: #DDD;
-}
-
-/* Footer */
-[fontType="FOOTER"] {
-    font-size: 12px;
-    color: gray;
-    padding-top: 8px;
-}
-"""
 
 # ── Entry Point ──
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
+    Theme.setTheme(Color.GRAY, Mode.DARK)
+    IconLoader.connect_theme_controller(Theme._get_instance())
     window.show()
     sys.exit(app.exec())
