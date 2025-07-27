@@ -1,0 +1,46 @@
+/* ------------------------------------------------------------------
+   TITLE BAR STYLESHEET
+   ------------------------------------------------------------------ */
+#TitleBar {
+    background-color: {surface};
+    border: 1px solid {outline_variant};
+    border-top-left-radius: 10px; /* App Window Border Radius */
+    border-top-right-radius: 10px; /* App Window Border Radius */
+}
+
+#TitleBar QLabel {
+    background-color: transparent;
+    font-weight: 600;
+    font-size: 24px;
+}
+
+#TitleBar #AppLogo {
+    margin-left: 2px;
+}
+
+#TitleBar QToolButton {
+    background-color: transparent;
+}
+
+#TitleBar QToolButton:hover {
+    background-color: {surface_container}; /* Button Hover Background Color */
+    border: none;
+}
+
+#TitleBar #BtnToggleSidebar {
+    border-top-left-radius: 8px; /* App Window Border Radius */
+    margin-left: 1px;
+}
+
+#TitleBar #BtnToggleSidebar:hover {
+    background-color: {surface_container}; /* Toggle Sidebar Button Background Color */
+}
+
+#TitleBar #BtnClose {
+    border-top-right-radius: 8px; /* App Window Border Radius */
+    margin-right: 1px;
+}
+
+#TitleBar #BtnClose:hover{
+    background-color: {error_container}; /* Close Button Background Color */
+}
