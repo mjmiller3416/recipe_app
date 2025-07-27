@@ -8,6 +8,7 @@ from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout
 
+from dev_tools import DebugLogger
 from app.ui.components.dialogs.dialog_window import DialogWindow
 from app.ui.components.images.image_cropper import ImageCropper
 from app.ui.helpers.dialog_helpers import (MIN_CROP_DIM_ORIGINAL,
@@ -94,7 +95,7 @@ class CropDialog(DialogWindow): # Inherit from your BaseDialog or QDialog
             self.accept() # QDialog's accept slot
         else:
             # Handle error - e.g., show a message
-            print("Error: Could not get a valid cropped image.")
+            DebugLogger.log("Failed to get valid cropped image from dialog", "error")
             # Potentially show a QMessageBox to the user
 
     @Slot()

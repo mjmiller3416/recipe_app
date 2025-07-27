@@ -33,7 +33,7 @@ class NavButton(QPushButton):
         self.setCheckable(checkable)
 
         # ── Internal Widgets ──
-        self._icon = ToolButton(Type.TOOL)
+        self._icon = ToolButton(Type.SECONDARY)
         self._icon.setIcon(name)
         self._icon.setButtonCheckable(checkable)
         self._icon.setStyleSheet("border: none; background-color: transparent;")

@@ -85,11 +85,11 @@ class Theme(QSingleton):
             from app.theme_manager.icon.loader import IconLoader
             IconLoader.connect_theme_controller(instance)
             cls._icon_loader_connected = True
-            DebugLogger.log("IconLoader auto-connected to Theme system", "Info")
+            DebugLogger.log("IconLoader auto-connected to Theme system", "info")
         
         DebugLogger.log(
-            f"Theme set to color: {instance._theme_color}, mode: {instance._theme_mode}",
-            "Info"
+            "Theme set to color: {instance._theme_color}, mode: {instance._theme_mode}",
+            "info"
         )
 
     @classmethod
@@ -98,7 +98,7 @@ class Theme(QSingleton):
         instance = cls._get_instance()
         instance._theme_mode = mode
         instance._regenerate_theme_colors()
-        DebugLogger.log(f"Theme mode changed to: {mode.value}", "Info")
+        DebugLogger.log("Theme mode changed to: {mode.value}", "info")
 
     @classmethod
     def setThemeColor(cls, theme_color: Color):
@@ -107,7 +107,7 @@ class Theme(QSingleton):
             instance = cls._get_instance()
             instance._theme_color = theme_color
             instance._regenerate_theme_colors()
-            DebugLogger.log(f"Theme color changed to: {instance._theme_color}", "Info")
+            DebugLogger.log("Theme color changed to: {instance._theme_color}", "info")
 
     @classmethod
     def toggleThemeMode(cls):

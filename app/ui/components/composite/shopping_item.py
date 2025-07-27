@@ -8,6 +8,8 @@ including a checkbox to mark items as obtained and a label showing item details.
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QCheckBox, QHBoxLayout, QLabel, QWidget
 
+from dev_tools import DebugLogger
+
 
 # ── Shopping Item Widget ─────────────────────────────────────────────────────────────────────
 class ShoppingItemWidget(QWidget):
@@ -68,21 +70,19 @@ class ShoppingItemWidget(QWidget):
 
     def _set_tooltip_if_needed(self):
         """Sets the recipe breakdown tooltip."""
-        print(f"DEBUG: _set_tooltip_if_needed called for {self.item.ingredient_name}")
-        print(f"DEBUG: Item source: {self.item.source}")
-        print(f"DEBUG: Item key: {self.item.key()}")
+        DebugLogger.log("Setting tooltip for ingredient {ingredient_name}, source: {source}, key: {key}", "debug", ingredient_name=self.item.ingredient_name, source=self.item.source, key=self.item.key())
 
         if self.item.source == "recipe":
             parts = self.breakdown_map.get(self.item.key(), [])
-            print(f"DEBUG: Found {len(parts)} parts in breakdown_map")
+            DebugLogger.log("Found {count} parts in breakdown_map for ingredient", "debug", count=len(parts))
             if parts:
                 # Create a more readable tooltip format
                 header = f"Used in {len(parts)} recipe(s):"
                 recipe_lines = [f"• {qty} {unit} - {name}" for name, qty, unit in parts]
                 text = f"{header}\n" + "\n".join(recipe_lines)
-                print(f"DEBUG: Setting tooltip: {text}")
+                DebugLogger.log("Setting ingredient tooltip: {text}", "debug", text=text)
                 self.label.setToolTip(text)
             else:
-                print("DEBUG: No parts found, no tooltip set")
+                DebugLogger.log("No recipe parts found for ingredient, skipping tooltip", "debug")
         else:
-            print("DEBUG: Not a recipe item, no tooltip needed")
+            DebugLogger.log("Non-recipe shopping item, no tooltip needed", "debug")

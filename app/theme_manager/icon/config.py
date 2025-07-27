@@ -103,9 +103,9 @@ class Type(Enum):
             }
         elif self == Type.SECONDARY:
             return {
-                State.DEFAULT: "icon_secondary",
-                State.HOVER: "icon_on_secondary",
-                State.CHECKED: "icon_secondary_container",
+                State.DEFAULT: "icon_primary",
+                State.HOVER: "icon_secondary",
+                State.CHECKED: "icon_tertiary",
                 State.DISABLED: "icon_on_secondary_container",
             }
         elif self == Type.TOOL:

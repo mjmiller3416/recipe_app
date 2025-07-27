@@ -12,6 +12,8 @@ from typing import List, Optional
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from dev_tools import DebugLogger
+
 from ..dtos.planner_dtos import (MealPlanSaveResultDTO, MealPlanSummaryDTO,
                                  MealPlanValidationDTO, MealSelectionCreateDTO,
                                  MealSelectionResponseDTO,
@@ -46,7 +48,7 @@ class PlannerService:
         try:
             return self.repo.get_saved_meal_ids()
         except SQLAlchemyError as e:
-            print(f"Error loading saved meal IDs: {e}")
+            DebugLogger.log("Failed to load saved meal IDs: {e}", "error")
             return []
 
     def get_saved_meal_plan(self) -> List[MealSelectionResponseDTO]:
@@ -117,7 +119,7 @@ class PlannerService:
             self.session.commit()
         except SQLAlchemyError as e:
             self.session.rollback()
-            print(f"Error saving active meal IDs: {e}")
+            DebugLogger.log("Failed to save active meal IDs, transaction rolled back: {e}", "error")
             raise
 
     def clear_meal_plan(self) -> bool:
@@ -214,8 +216,7 @@ class PlannerService:
 
         except (SQLAlchemyError, ValueError) as e:
             self.session.rollback()
-            # log error in production
-            print(f"Error creating meal selection: {e}")
+            DebugLogger.log("Failed to create meal selection, transaction rolled back: {e}", "error")
             return None
 
     def update_meal_selection(self, meal_id: int, update_dto: MealSelectionUpdateDTO) -> Optional[MealSelectionResponseDTO]:
@@ -267,7 +268,7 @@ class PlannerService:
 
         except (SQLAlchemyError, ValueError) as e:
             self.session.rollback()
-            print(f"Error updating meal selection: {e}")
+            DebugLogger.log("Failed to update meal selection {meal_id}, transaction rolled back: {e}", "error")
             return None
 
     def get_meal_selection(self, meal_id: int) -> Optional[MealSelectionResponseDTO]:

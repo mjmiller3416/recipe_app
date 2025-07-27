@@ -48,10 +48,10 @@ class Stylesheet:
             with open(path.value, 'r', encoding='utf-8') as f:
                 return f.read()
         except FileNotFoundError:
-            DebugLogger.log(f"Stylesheet file not found: {path.value}", "Error")
+            DebugLogger.log("Stylesheet file not found: {path.value}", "error")
             return ""
         except Exception as e:
-            DebugLogger.log(f"Error reading stylesheet: {e}", "Error")
+            DebugLogger.log("Error reading stylesheet: {e}", "error")
             return ""
 
 
@@ -69,6 +69,9 @@ class Stylesheet:
         Returns:
             Dictionary with all 27 Material Design 3 semantic roles mapped to hex colors
         """
+        import time
+        start_time = time.time()
+        
         try:
             color_hex = color.value if isinstance(color, Color) else color
             # convert hex string to ARGB integer
@@ -144,8 +147,9 @@ class Stylesheet:
                 "tertiary_fixed_dim": scheme.tertiary_fixed_dim,
                 "on_tertiary_fixed_variant": scheme.on_tertiary_fixed_variant,
             }
-            DebugLogger.log("Generated theme colors: {color_map}", "Info")
+            duration = time.time() - start_time
+            DebugLogger.log("Generated theme colors in {duration:.3f}s: {color_map}", "info")
             return color_map
         except Exception as e:
-            DebugLogger.log(f"Error generating theme colors: {e}", "Error")
+            DebugLogger.log("Error generating theme colors: {e}", "error")
             return {}  # return empty dict as fallback

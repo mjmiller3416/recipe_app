@@ -8,6 +8,8 @@ RecipeService using SQLAlchemy repository pattern.
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from dev_tools import DebugLogger
+
 from ..dtos.ingredient_dtos import IngredientCreateDTO
 from ..dtos.recipe_dtos import (RecipeCreateDTO, RecipeFilterDTO,
                                 RecipeIngredientDTO)
@@ -113,8 +115,9 @@ class RecipeService:
         # persist the change
         try:
             self.session.commit()
-        except Exception:
+        except Exception as e:
             self.session.rollback()
+            DebugLogger.log("Failed to toggle recipe {recipe_id} favorite status, rolling back: {e}", "error")
             raise
         return updated_recipe
 

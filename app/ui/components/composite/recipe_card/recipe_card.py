@@ -101,7 +101,7 @@ class RecipeCard(QFrame):
                 self.recipe_selected.emit(rid)
 
         except Exception as exc:                      # catch render errors
-            print(f"[RecipeCard] Failed to build card: {exc}")
+            DebugLogger.log("RecipeCard failed to build card: {exc}", "error", exc=exc)
             self._stack.setCurrentIndex(2)            # show error page
 
     def set_selection_mode(self, selection_mode: bool) -> None:
@@ -169,9 +169,9 @@ class RecipeCard(QFrame):
             if selected_recipe:
                 self.set_recipe(selected_recipe)
             else:
-                print("No recipe selected.")
+                DebugLogger.log("No recipe selected in recipe selection dialog", "debug")
         else:
-            print("Recipe selection cancelled.")
+            DebugLogger.log("Recipe selection dialog cancelled by user", "debug")
 
         self._recipe_selection_dialog.deleteLater()
         self._recipe_selection_dialog = None
