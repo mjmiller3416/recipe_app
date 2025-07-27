@@ -88,19 +88,19 @@ class IconMixin:
             QAbstractButton.setIcon(self, icon)
 
     def enterEvent(self, event: QEvent) -> None:
+        """Handle icon state change on mouse enter. Override in concrete classes to call parent."""
         if self.isEnabled() and not self.isChecked() and self._icons:
             from PySide6.QtWidgets import QAbstractButton
             hover_icon = self._icons.get(State.HOVER)
             if hover_icon is not None:
                 QAbstractButton.setIcon(self, hover_icon)
-        super().enterEvent(event)
 
     def leaveEvent(self, event: QEvent) -> None:
+        """Handle icon state change on mouse leave. Override in concrete classes to call parent."""
         if self.isEnabled() and not self.isChecked():
             self._update_icon()
-        super().leaveEvent(event)
 
     def changeEvent(self, event: QEvent) -> None:
+        """Handle icon state change on widget state changes. Override in concrete classes to call parent."""
         if event.type() == QEvent.Type.EnabledChange:
             self._update_icon()
-        super().changeEvent(event)

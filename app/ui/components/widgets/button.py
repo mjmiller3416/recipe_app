@@ -4,7 +4,7 @@ Module providing Button widget with theme-aware icons.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QSize
+from PySide6.QtCore import QEvent, QSize
 from PySide6.QtWidgets import QPushButton
 
 from app.theme_manager.icon.config import Name, Type
@@ -84,3 +84,18 @@ class Button(QPushButton, IconMixin):
             icon_name (Name): The Name enum member specifying the icon.
         """
         self.setIconFromName(icon_name)
+
+    def enterEvent(self, event: QEvent) -> None:
+        """Handle mouse enter events for hover icon state."""
+        IconMixin.enterEvent(self, event)
+        super().enterEvent(event)
+
+    def leaveEvent(self, event: QEvent) -> None:
+        """Handle mouse leave events to restore default icon state."""
+        IconMixin.leaveEvent(self, event)
+        super().leaveEvent(event)
+
+    def changeEvent(self, event: QEvent) -> None:
+        """Handle change events for enabled/disabled icon state."""
+        IconMixin.changeEvent(self, event)
+        super().changeEvent(event)
