@@ -3,18 +3,17 @@
 Title bar component for the main application window.
 """
 
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QPoint, Qt, Signal
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
-from qframelesswindow import FramelessWindow
-# ── Imports ───────────────────────────────────────────────────────────────
 from qframelesswindow.utils.win32_utils import WindowsMoveResize as MoveResize
 
 from app.config import APPLICATION_WINDOW
 from app.theme_manager.icon import Icon, Name, Type
 from app.ui.components.widgets import ToolButton
 
-# ── Constants ─────────────────────────────────────────────────────────────
+# ── Constants ────────────────────────────────────────────────────────────────────────────────
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]
 
 

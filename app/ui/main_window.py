@@ -62,9 +62,6 @@ class MainWindow(FramelessWindow):
         self.setObjectName("App")
         self.setMinimumSize(800, 360)
 
-        # ── Theme & Services ──
-        # TODO: Refactor Icon system to support new theme system
-
         # ── Title Bar & Main Layout ──
         self.title_bar = TitleBar(self)
         self.setTitleBar(self.title_bar)
