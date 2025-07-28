@@ -61,10 +61,10 @@ class Theme(QSingleton):
         """Refresh stylesheets for all registered widget instances."""
         if not self._current_color_map:
             return
-            
+
         # Create a copy of the registry to avoid issues if widgets are destroyed during iteration
         widget_instances = list(self._widget_instance_registry.items())
-        
+
         for widget, qss_enum in widget_instances:
             try:
                 # Check if widget still exists (not destroyed)
@@ -109,7 +109,7 @@ class Theme(QSingleton):
     def registerWidgetStyle(cls, widget_class: type, qss_enum: Qss):
         """
         Register a widget class with its corresponding QSS stylesheet.
-        
+
         Args:
             widget_class: The widget class to register (e.g., TitleBar, SearchBar)
             qss_enum: The QSS enum value for the stylesheet (e.g., Qss.TITLEBAR)
@@ -124,24 +124,24 @@ class Theme(QSingleton):
     def applyWidgetStyle(cls, widget):
         """
         Apply the registered stylesheet to a widget instance.
-        
+
         Args:
             widget: The widget instance to style
         """
         instance = cls._get_instance()
         widget_class = widget.__class__
-        
-        # Check if this widget class is registered
+
+        # check if this widget class is registered
         if widget_class not in cls._widget_class_registry:
             DebugLogger.log(
                 f"Widget class {widget_class.__name__} not registered for styling",
                 "warning"
             )
             return
-            
+
         qss_enum = cls._widget_class_registry[widget_class]
-        
-        # Read and process the stylesheet
+
+        # read and process the stylesheet
         stylesheet_content = Stylesheet.read(qss_enum)
         if not stylesheet_content:
             DebugLogger.log(
@@ -149,16 +149,16 @@ class Theme(QSingleton):
                 "error"
             )
             return
-            
-        # Inject current theme colors
+
+        # inject current theme colors
         processed_stylesheet = Stylesheet.inject_theme(stylesheet_content, instance._current_color_map)
-        
-        # Apply to widget
+
+        # apply to widget
         widget.setStyleSheet(processed_stylesheet)
-        
-        # Register instance for theme refresh updates
+
+        # register instance for theme refresh updates
         cls._widget_instance_registry[widget] = qss_enum
-        
+
         DebugLogger.log(
             f"Applied {qss_enum.name} stylesheet to {widget_class.__name__} instance",
             "info"
@@ -172,14 +172,14 @@ class Theme(QSingleton):
         instance._theme_color = theme_color
         instance._theme_mode = mode
         instance._regenerate_theme_colors()
-        
+
         # Auto-connect icon system (only once)
         if not hasattr(cls, '_icon_loader_connected'):
             from app.theme_manager.icon.loader import IconLoader
             IconLoader.connect_theme_controller(instance)
             cls._icon_loader_connected = True
             DebugLogger.log("IconLoader auto-connected to Theme system", "info")
-        
+
         DebugLogger.log(
             "Theme set to color: {instance._theme_color}, mode: {instance._theme_mode}",
             "info"
@@ -208,6 +208,41 @@ class Theme(QSingleton):
         instance = cls._get_instance()
         current_mode = Mode.DARK if instance._theme_mode == Mode.LIGHT else Mode.LIGHT
         cls.setThemeMode(current_mode)
+
+    @classmethod
+    def setCustomColorMap(cls, file_path: str, mode: Mode):
+        """
+        Set theme using custom color map from JSON file.
+
+        Args:
+            file_path: Path to JSON file containing color schemes
+            mode: Theme mode (LIGHT or DARK) to apply
+        """
+        from .custom_color_loader import CustomColorLoader
+
+        custom_color_map = CustomColorLoader.load_from_file(file_path, mode)
+        if custom_color_map:
+            instance = cls._get_instance()
+            instance._current_color_map = custom_color_map
+            instance._theme_mode = mode
+            instance._theme_color = None  # Mark as custom (not from predefined colors)
+
+            instance._inject_theme_colors()
+            instance._load_global_stylesheet()
+            instance._refresh_widget_instances()
+
+            # Auto-connect icon system (only once)
+            if not hasattr(cls, '_icon_loader_connected'):
+                from app.theme_manager.icon.loader import IconLoader
+                IconLoader.connect_theme_controller(instance)
+                cls._icon_loader_connected = True
+                DebugLogger.log("IconLoader auto-connected to Theme system", "info")
+
+            instance.theme_refresh.emit(instance._current_color_map)
+
+            DebugLogger.log(f"Applied custom color map from {file_path} in {mode.value} mode", "info")
+        else:
+            DebugLogger.log(f"Failed to load custom color map from {file_path}", "error")
 
     # ── Getters ──
     @classmethod

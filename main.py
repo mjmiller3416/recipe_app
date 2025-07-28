@@ -46,7 +46,11 @@ else:
     DebugLogger.set_log_level("debug")
     DebugLogger.log("Starting MealGenie application...\n", "info")
 
-    Theme.setTheme(Color.ORANGE, Mode.DARK)
+    Theme.setTheme(Color.INDIGO, Mode.DARK)
+
+    # ── Custom Color Map ──
+    #Theme.setCustomColorMap("material-theme-example.json", Mode.LIGHT)
+
     navigation_service_factory = NavigationService.create
 
     main_window = MainWindow(
