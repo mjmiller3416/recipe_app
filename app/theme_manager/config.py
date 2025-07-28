@@ -27,3 +27,15 @@ class Qss(Enum):
 
     # Widget-specific stylesheets
     TITLEBAR = AppPaths.QSS_DIR / "titlebar.qss"
+    RECIPE_CARD = AppPaths.QSS_DIR / "recipe_card.qss"
+    SEARCH_BAR = AppPaths.QSS_DIR / "search_bar.qss"
+    COMBOBOX = AppPaths.QSS_DIR / "combobox.qss"
+    CARD = AppPaths.QSS_DIR / "card.qss"
+    MAIN_WINDOW = AppPaths.QSS_DIR / "main_window.qss"
+    DASHBOARD = AppPaths.QSS_DIR / "dashboard.qss"
+    MEAL_PLANNER = AppPaths.QSS_DIR / "meal_planner.qss"
+    SHOPPING_LIST = AppPaths.QSS_DIR / "shopping_list.qss"
+    VIEW_RECIPES = AppPaths.QSS_DIR / "view_recipes.qss"
+    INGREDIENT_WIDGET = AppPaths.QSS_DIR / "ingredient_widget.qss"
+    DIALOG_WINDOW = AppPaths.QSS_DIR / "dialog_window.qss"
+    UPLOAD_IMAGE = AppPaths.QSS_DIR / "upload_image.qss"
