@@ -18,11 +18,11 @@ def center_on_screen(self):
         screen = QGuiApplication.primaryScreen()
         screen_geometry = screen.availableGeometry()
         window_geometry = self.frameGeometry()
-        
+
         # calculate center position
         center_x = (screen_geometry.width() - window_geometry.width()) // 2
         center_y = (screen_geometry.height() - window_geometry.height()) // 2
-        
+
         # move window to center
         self.move(center_x, center_y)
 
@@ -69,6 +69,7 @@ def create_fixed_wrapper(
         QWidget: Wrapper widget with layout and given contents.
     """
     wrapper = QWidget()
+    wrapper.setObjectName("FixedWrapper")
     wrapper.setFixedWidth(fixed_width)
 
     LayoutClass = QVBoxLayout if direction == "vertical" else QHBoxLayout
@@ -91,7 +92,7 @@ def create_fixed_wrapper(
 def create_hbox_with_widgets(*widgets, parent=None):
     """
     Creates a QHBoxLayout and adds the given widgets to it.
-    
+
     Args:
         *widgets: Variable number of QWidget instances to add to the layout.
         parent (QWidget, optional): Parent widget for the layout. Defaults to None.
@@ -104,7 +105,7 @@ def create_hbox_with_widgets(*widgets, parent=None):
 def create_vbox_with_widgets(*widgets, parent=None):
     """
     Creates a QVBoxLayout and adds the given widgets to it.
-    
+
     Args:
         *widgets: Variable number of QWidget instances to add to the layout.
         parent (QWidget, optional): Parent widget for the layout. Defaults to None.

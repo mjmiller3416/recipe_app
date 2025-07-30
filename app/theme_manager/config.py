@@ -34,14 +34,18 @@ class Qss(Enum):
     # TODO: Implement feature to load additional custom stylesheets in addition to base
 
     # Component Styles
+    AVATAR_LOADER = AppPaths.QSS_DIR / "avatar_loader.qss"
     CARD = AppPaths.QSS_DIR / "card.qss"
     COMBOBOX = AppPaths.QSS_DIR / "combobox.qss"
     DIALOG_WINDOW = AppPaths.QSS_DIR / "dialog_window.qss"
     EMPTY_STATE = AppPaths.QSS_DIR / "empty_state.qss"
     INGREDIENT_WIDGET = AppPaths.QSS_DIR / "ingredient_widget.qss"
+    NAV_BUTTON = AppPaths.QSS_DIR / "nav_button.qss"
     RECIPE_CARD = AppPaths.QSS_DIR / "recipe_card.qss"
     RECIPE_DIALOG = AppPaths.QSS_DIR / "recipe_dialog.qss"
     SEARCH_BAR = AppPaths.QSS_DIR / "search_bar.qss"
+    SIDEBAR = AppPaths.QSS_DIR / "sidebar.qss"
+    TITLE_BAR = AppPaths.QSS_DIR / "title_bar.qss"
     UPLOAD_IMAGE = AppPaths.QSS_DIR / "upload_image.qss"
 
     # View Styles

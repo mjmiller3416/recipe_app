@@ -8,9 +8,11 @@ run-time changes of source color and light/dark modes.
 """
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from typing import Dict, Optional
+import weakref
+from collections import defaultdict
 
 from PySide6.QtCore import QObject, Signal
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QWidget
 
 from app.core.utils import QSingleton
 from dev_tools import DebugLogger
@@ -36,6 +38,10 @@ class Theme(QSingleton):
         self._theme_mode  : Mode  = None
         self._current_color_map: Dict[str, str] = {}
         self._base_style = None
+        
+        # Widget registry for per-widget styling
+        self._registered_widgets = weakref.WeakKeyDictionary()  # {widget: qss_type}
+        self._component_styles_cache: Dict[Qss, str] = {}  # Cache for processed component styles
 
     @classmethod
     def _get_instance(cls):
@@ -58,6 +64,11 @@ class Theme(QSingleton):
         )
         self._inject_theme_colors()
         self._load_global_stylesheet()
+        
+        # Clear component styles cache and update registered widgets
+        self._component_styles_cache.clear()
+        self._update_registered_widgets()
+        
         self.theme_refresh.emit(self._current_color_map)
 
 
@@ -65,6 +76,34 @@ class Theme(QSingleton):
         """Applies the processed global stylesheet to the application."""
         app = QApplication.instance()
         app.setStyleSheet(self._base_style)
+
+    def _get_component_style(self, qss_type: Qss) -> str:
+        """Get processed stylesheet for a component type, using cache when possible."""
+        if qss_type in self._component_styles_cache:
+            return self._component_styles_cache[qss_type]
+        
+        # Read and process the component stylesheet
+        component_content = Stylesheet.read(qss_type)
+        if component_content:
+            processed_style = Stylesheet.inject_theme(component_content, self._current_color_map)
+            self._component_styles_cache[qss_type] = processed_style
+            return processed_style
+        
+        DebugLogger.log(f"Failed to load component stylesheet: {qss_type.value}", "warning")
+        return ""
+
+    def _update_registered_widgets(self):
+        """Update all registered widgets with their component-specific styles."""
+        for widget, qss_type in list(self._registered_widgets.items()):
+            if widget is not None:  # Ensure widget still exists
+                self._apply_component_style(widget, qss_type)
+
+    def _apply_component_style(self, widget: QWidget, qss_type: Qss):
+        """Apply component-specific stylesheet to a widget."""
+        component_style = self._get_component_style(qss_type)
+        if component_style:
+            widget.setStyleSheet(component_style)
+            DebugLogger.log(f"Applied {qss_type.name} stylesheet to {widget.objectName()}", "debug")
 
 
     # ── Public API ───────────────────────────────────────────────────────────────────────────
@@ -132,6 +171,10 @@ class Theme(QSingleton):
 
             instance._inject_theme_colors()
             instance._load_global_stylesheet()
+            
+            # Clear component styles cache and update registered widgets
+            instance._component_styles_cache.clear()
+            instance._update_registered_widgets()
 
             # Auto-connect icon system (only once)
             if not hasattr(cls, '_icon_loader_connected'):
@@ -164,3 +207,21 @@ class Theme(QSingleton):
         """Returns the current theme mode."""
         instance = cls._get_instance()
         return instance._theme_mode
+
+    @classmethod
+    def register_widget(cls, widget: QWidget, qss_type: Qss):
+        """
+        Register a widget for component-specific styling.
+        
+        Args:
+            widget: The widget to apply styling to
+            qss_type: The Qss enum specifying which stylesheet to use
+        """
+        instance = cls._get_instance()
+        instance._registered_widgets[widget] = qss_type
+        
+        # Apply the style immediately if we have a color map
+        if instance._current_color_map:
+            instance._apply_component_style(widget, qss_type)
+        
+        DebugLogger.log(f"Registered {widget.objectName()} for {qss_type.name} styling", "debug")

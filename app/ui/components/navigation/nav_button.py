@@ -8,6 +8,8 @@ Integrated with the new icon system for dynamic theming.
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton
 
+from app.theme_manager import Theme
+from app.theme_manager.config import Qss
 from app.theme_manager.icon.config import Name, Type
 from app.ui.components.widgets import ToolButton
 
@@ -31,6 +33,9 @@ class NavButton(QPushButton):
         super().__init__("", parent)
 
         self.setCheckable(checkable)
+
+        # Register for component-specific styling
+        Theme.register_widget(self, Qss.NAV_BUTTON)
 
         # ── Internal Widgets ──
         self._icon = ToolButton(Type.SECONDARY)

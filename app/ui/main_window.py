@@ -59,7 +59,6 @@ class MainWindow(FramelessWindow):
         super().__init__()
 
         # ── Window Properties ──
-        self.setObjectName("App")
         self.setMinimumSize(800, 360)
 
         # ── Title Bar & Main Layout ──
@@ -74,7 +73,6 @@ class MainWindow(FramelessWindow):
 
         # ── Body Layout ──
         self.window_body = QWidget(self)
-        self.window_body.setObjectName("ApplicationWindow")
         self.body_layout = QHBoxLayout(self.window_body)
         self.body_layout.setContentsMargins(1, 0, 1, 1)
         self.body_layout.setSpacing(0)

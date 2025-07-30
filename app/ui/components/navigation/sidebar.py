@@ -9,6 +9,8 @@ from PySide6.QtWidgets import (QButtonGroup, QLabel, QSizePolicy, QSpacerItem,
                                QVBoxLayout, QWidget)
 
 from app.config import SIDEBAR
+from app.theme_manager import Theme
+from app.theme_manager.config import Qss
 from app.theme_manager.icon.config import Name
 from app.ui.animations import Animator
 from app.ui.components.images import AvatarLoader
@@ -32,6 +34,9 @@ class Sidebar(QWidget):
         self.setMinimumWidth(0)
         self.setMaximumWidth(START)
         self._is_expanded = True
+
+        # register for component-specific styling
+        Theme.register_widget(self, Qss.SIDEBAR)
 
         self.mainLayout = QVBoxLayout(self)
         self.mainLayout.setContentsMargins(0, 0, 0, 0)

@@ -4,11 +4,12 @@ This module contains utility functions for interacting with the underlying
 operating system in a platform-specific way.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 import sys
+import winreg
 
 
-# ── Functions ───────────────────────────────────────────────────────────────────
+# ── Functions ────────────────────────────────────────────────────────────────────────────────
 def get_taskbar_rect():
     """
     Gets the bounding rectangle of the Windows taskbar.
@@ -31,3 +32,13 @@ def get_taskbar_rect():
         # pywin32 not installed or an API error occurred
         return None
     return None
+
+def disable_system_border_accent():
+    """Disable Windows 11 border accent by setting ColorPrevalence = 0"""
+    try:
+        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"SOFTWARE\Microsoft\Windows\DWM", 0, winreg.KEY_SET_VALUE)
+        winreg.SetValueEx(key, "ColorPrevalence", 0, winreg.REG_DWORD, 0)
+        winreg.CloseKey(key)
+        print("✅ System border accent disabled (ColorPrevalence = 0)")
+    except Exception as e:
+        print(f"❌ Failed to disable border accent: {e}")

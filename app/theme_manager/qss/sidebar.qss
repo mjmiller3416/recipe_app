@@ -1,0 +1,11 @@
+#Sidebar {
+    background-color: {surface_container};
+  }
+
+#UsernameLabel {
+    color: {on_surface_variant};
+    font-weight: 600;
+    font-size: 22px;
+    padding-top: 5px;
+}
+

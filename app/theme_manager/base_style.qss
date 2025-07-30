@@ -1,26 +1,27 @@
 /* ------------------------------------------------------------------
    APPLICATION WINDOW STYLESHEET
    ------------------------------------------------------------------ */
-#ApplicationWindow {
-    background-color: {surface_container};
-    border-right: 1px solid {outline_variant};
-    border-bottom: 1px solid {outline_variant};
-    border-left: 1px solid {outline_variant};
-    border-bottom-left-radius: 10px; /* App Window Border Radius */
-    border-bottom-right-radius: 10px; /* App Window Border Radius */
+#FixedWrapper, #FixedWrapper QWidget {
+    background-color: transparent;
+}
+
+#ContentArea, #ContentArea QWidget {
+    background-color: {surface};
+}
+
+[tag="Header"] {
+    color: {FONT_COLOR_DEFAULT};
+    font-family: {FONT_FAMILY_HEADER};
+    font-size: 40px;
+    font-weight: 600;
 }
 
 /* Universal Settings */
 QWidget {
     font-family: 'Roboto';
-    font-size: 10pt;
-    background-color: {background};
+    font-size: 22px;
+    background-color: {surface_container};
     color: {on_surface};
-}
-
-/* Window and Dialogs */
-QMainWindow, QDialog {
-    background-color: {background};
 }
 
 /* GroupBox for visual separation */
@@ -170,3 +171,4 @@ QScrollBar::add-line, QScrollBar::sub-line {
     height: 0px;
     width: 0px;
 }
+

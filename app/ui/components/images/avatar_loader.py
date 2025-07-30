@@ -16,6 +16,8 @@ from PySide6.QtWidgets import (QFileDialog, QGraphicsOpacityEffect,
                                QToolButton, QVBoxLayout, QWidget)
 
 from app.config import AppPaths
+from app.theme_manager import Theme
+from app.theme_manager.config import Qss
 from app.theme_manager.icon import Icon
 from app.theme_manager.icon.config import Name
 from data_files.user_settings import UserSettings
@@ -42,8 +44,12 @@ class AvatarLoader(QWidget):
         super().__init__(parent)
         self._size = size
         self.settings = UserSettings()
+        self.setObjectName("AvatarLoader")
 
-        # fix the widget’s size to the diameter you want:
+        # register for component-specific styling
+        Theme.register_widget(self, Qss.AVATAR_LOADER)
+
+        # fix the widget's size to the diameter you want:
         self.setFixedSize(self._size)
         self._setup_ui()
         self._connect_signals()

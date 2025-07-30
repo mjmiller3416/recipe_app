@@ -11,6 +11,10 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
+import qframelesswindow.utils.win32_utils
+
+# Force-disable the border accent globally in the library
+qframelesswindow.utils.win32_utils.isSystemBorderAccentEnabled = lambda: False
 from app.theme_manager.theme import Color, Mode, Theme
 from app.ui.main_window import MainWindow
 from app.ui.services.navigation_service import NavigationService
@@ -49,7 +53,7 @@ else:
     #Theme.setTheme(Color.GREEN, Mode.DARK)
 
     # ── Custom Color Map ──
-    Theme.setCustomColorMap("material-theme-example.json", Mode.DARK)
+    Theme.setCustomColorMap("material-theme.json", Mode.DARK)
 
     navigation_service_factory = NavigationService.create
 

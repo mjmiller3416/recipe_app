@@ -10,6 +10,7 @@ from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
 from qframelesswindow.utils.win32_utils import WindowsMoveResize as MoveResize
 
 from app.config import APPLICATION_WINDOW
+from app.theme_manager import Theme, Qss
 from app.theme_manager.icon import Icon, Name, Type
 from app.ui.components.widgets import ToolButton
 
@@ -30,6 +31,10 @@ class TitleBar(QWidget):
         super().__init__(parent)
         self.setObjectName("TitleBar")
         self.setAttribute(Qt.WA_StyledBackground)
+
+        # Register for component-specific styling
+        Theme.register_widget(self, Qss.TITLE_BAR)
+
         self.setFixedHeight(60)
 
         self.old_pos = None
