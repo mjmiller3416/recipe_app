@@ -12,7 +12,6 @@ from PySide6.QtCore import QSize
 from app.config.paths import AppPaths
 
 
-# ── AppIcon Enum Definition ──────────────────────────────────────────────────────────────────
 class Path(Enum):
     """Enum for application icons."""
     ADD             = "add"
@@ -82,7 +81,7 @@ class Type(Enum):
     DEFAULT   = "default"
     PRIMARY   = "primary"
     SECONDARY = "secondary"
-    TOOL      = "tool"
+    TOOLBTN      = "tool"
 
     @property
     def state_map(self) -> dict[State, str]:
@@ -108,10 +107,10 @@ class Type(Enum):
                 State.CHECKED: "icon_tertiary",
                 State.DISABLED: "icon_on_secondary_container",
             }
-        elif self == Type.TOOL:
+        elif self == Type.TOOLBTN:
             return {
                 State.DEFAULT: "icon_tertiary",
-                State.HOVER: "icon_on_tertiary",
+                State.HOVER: "icon_on_primary",
                 State.CHECKED: "icon_tertiary_container",
                 State.DISABLED: "icon_on_tertiary_container",
             }

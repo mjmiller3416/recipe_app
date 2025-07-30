@@ -46,10 +46,10 @@ else:
     DebugLogger.set_log_level("debug")
     DebugLogger.log("Starting MealGenie application...\n", "info")
 
-    Theme.setTheme(Color.INDIGO, Mode.DARK)
+    #Theme.setTheme(Color.GREEN, Mode.DARK)
 
     # ── Custom Color Map ──
-    #Theme.setCustomColorMap("material-theme-example.json", Mode.LIGHT)
+    Theme.setCustomColorMap("material-theme-example.json", Mode.DARK)
 
     navigation_service_factory = NavigationService.create
 
@@ -62,3 +62,5 @@ else:
     startup_timer.StartupTimer.summary("MealGenie startup") # log total startup time
 
     sys.exit(app.exec())
+
+

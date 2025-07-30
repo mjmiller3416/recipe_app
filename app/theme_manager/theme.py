@@ -6,9 +6,7 @@ This module provides a system to apply a color palette to a global base
 stylesheet and to individual widget-specific stylesheets. It allows for
 run-time changes of source color and light/dark modes.
 """
-
-import re
-from enum import Enum
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from typing import Dict, Optional
 
 from PySide6.QtCore import QObject, Signal
@@ -20,7 +18,7 @@ from dev_tools import DebugLogger
 from .config import Color, Mode, Qss
 from .style_sheet import Stylesheet
 
-
+# ── Theme Manager ────────────────────────────────────────────────────────────────────────────
 class Theme(QSingleton):
     """
     A singleton manager for the application's visual theme.
@@ -29,10 +27,6 @@ class Theme(QSingleton):
     and orchestrates updates for all registered widgets.
     """
     theme_refresh = Signal(dict)  # emits the new color map
-
-    # Widget styling registry
-    _widget_class_registry: Dict[type, Qss] = {}  # Maps widget classes to QSS enums
-    _widget_instance_registry: Dict[object, Qss] = {}  # Maps widget instances to QSS enums
 
     def __init__(self, parent: Optional[QObject] = None):
         """Initialize the Theme manager."""
@@ -57,34 +51,6 @@ class Theme(QSingleton):
         self._base_style = Stylesheet.inject_theme(base_content, self._current_color_map)
         return self._base_style
 
-    def _refresh_widget_instances(self):
-        """Refresh stylesheets for all registered widget instances."""
-        if not self._current_color_map:
-            return
-
-        # Create a copy of the registry to avoid issues if widgets are destroyed during iteration
-        widget_instances = list(self._widget_instance_registry.items())
-
-        for widget, qss_enum in widget_instances:
-            try:
-                # Check if widget still exists (not destroyed)
-                if hasattr(widget, 'setStyleSheet'):
-                    stylesheet_content = Stylesheet.read(qss_enum)
-                    if stylesheet_content:
-                        processed_stylesheet = Stylesheet.inject_theme(stylesheet_content, self._current_color_map)
-                        widget.setStyleSheet(processed_stylesheet)
-                        DebugLogger.log(
-                            f"Refreshed {qss_enum.name} stylesheet for {widget.__class__.__name__}",
-                            "debug"
-                        )
-                else:
-                    # Widget was destroyed, remove from registry
-                    del self._widget_instance_registry[widget]
-            except RuntimeError:
-                # Widget was destroyed, remove from registry
-                if widget in self._widget_instance_registry:
-                    del self._widget_instance_registry[widget]
-
     def _regenerate_theme_colors(self):
         """Generates the new color map and signals that the theme has changed."""
         self._current_color_map = Stylesheet.generate_material_palette(
@@ -92,7 +58,6 @@ class Theme(QSingleton):
         )
         self._inject_theme_colors()
         self._load_global_stylesheet()
-        self._refresh_widget_instances()
         self.theme_refresh.emit(self._current_color_map)
 
 
@@ -103,68 +68,6 @@ class Theme(QSingleton):
 
 
     # ── Public API ───────────────────────────────────────────────────────────────────────────
-
-    # ── Widget Styling ──
-    @classmethod
-    def registerWidgetStyle(cls, widget_class: type, qss_enum: Qss):
-        """
-        Register a widget class with its corresponding QSS stylesheet.
-
-        Args:
-            widget_class: The widget class to register (e.g., TitleBar, SearchBar)
-            qss_enum: The QSS enum value for the stylesheet (e.g., Qss.TITLEBAR)
-        """
-        cls._widget_class_registry[widget_class] = qss_enum
-        DebugLogger.log(
-            f"Registered widget class {widget_class.__name__} with stylesheet {qss_enum.name}",
-            "info"
-        )
-
-    @classmethod
-    def applyWidgetStyle(cls, widget):
-        """
-        Apply the registered stylesheet to a widget instance.
-
-        Args:
-            widget: The widget instance to style
-        """
-        instance = cls._get_instance()
-        widget_class = widget.__class__
-
-        # check if this widget class is registered
-        if widget_class not in cls._widget_class_registry:
-            DebugLogger.log(
-                f"Widget class {widget_class.__name__} not registered for styling",
-                "warning"
-            )
-            return
-
-        qss_enum = cls._widget_class_registry[widget_class]
-
-        # read and process the stylesheet
-        stylesheet_content = Stylesheet.read(qss_enum)
-        if not stylesheet_content:
-            DebugLogger.log(
-                f"Failed to read stylesheet {qss_enum.name} for {widget_class.__name__}",
-                "error"
-            )
-            return
-
-        # inject current theme colors
-        processed_stylesheet = Stylesheet.inject_theme(stylesheet_content, instance._current_color_map)
-
-        # apply to widget
-        widget.setStyleSheet(processed_stylesheet)
-
-        # register instance for theme refresh updates
-        cls._widget_instance_registry[widget] = qss_enum
-
-        DebugLogger.log(
-            f"Applied {qss_enum.name} stylesheet to {widget_class.__name__} instance",
-            "info"
-        )
-
-    # ── Setters ──
     @classmethod
     def setTheme(cls, theme_color: Color, mode: Mode):
         """Sets both the theme color and mode, regenerating the theme."""
@@ -229,7 +132,6 @@ class Theme(QSingleton):
 
             instance._inject_theme_colors()
             instance._load_global_stylesheet()
-            instance._refresh_widget_instances()
 
             # Auto-connect icon system (only once)
             if not hasattr(cls, '_icon_loader_connected'):
@@ -244,7 +146,7 @@ class Theme(QSingleton):
         else:
             DebugLogger.log(f"Failed to load custom color map from {file_path}", "error")
 
-    # ── Getters ──
+
     @classmethod
     def get_current_color_map(cls) -> Dict[str, str]:
         """Returns the current color map."""
