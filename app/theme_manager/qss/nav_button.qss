@@ -4,22 +4,27 @@ NavButton {
     border-radius: 0px;
   }
 
-  NavButton:hover {
-    background-color: {primary_container};
-  }
+NavButton:hover {
+background-color: {primary_container};
+}
 
-  NavButton:checked {
-    background-color: {secondary_container};
-    border-left: 4px solid {primary};
-  }
+NavButton:checked {
+background-color: {secondary_container};
+border-left: 4px solid {primary};
+}
 
-  NavButton QLabel {
-    color: {on_surface};
-    font-size: 22px;
-    padding-left: 20px;
-  }
+NavButton QLabel {
+color: {on_surface};
+font-size: 22px;
+padding-left: 20px;
+}
 
-  NavButton QLabel[state="CHECKED"] {
-    color: {on_secondary_container};
-    font-weight: 600;
-  }
+NavButton QLabel[state="CHECKED"] {
+color: {on_secondary_container};
+font-weight: 600;
+}
+
+NavButton ToolButton {
+    background-color: transparent;
+    border: none;
+}

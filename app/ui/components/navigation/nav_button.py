@@ -41,7 +41,6 @@ class NavButton(QPushButton):
         self._icon = ToolButton(Type.SECONDARY)
         self._icon.setIcon(name)
         self._icon.setButtonCheckable(checkable)
-        self._icon.setStyleSheet("border: none; background-color: transparent;")
         self._icon.setFocusPolicy(Qt.NoFocus)
         self._icon.setAttribute(Qt.WA_TransparentForMouseEvents)
 

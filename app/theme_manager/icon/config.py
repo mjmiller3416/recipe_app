@@ -88,31 +88,31 @@ class Type(Enum):
         """Returns the color palette role for each button state."""
         if self == Type.DEFAULT:
             return {
-                State.DEFAULT: "icon_surface_variant",
-                State.HOVER: "icon_on_surface_variant",
-                State.CHECKED: "icon_surface_bright",
-                State.DISABLED: "icon_surface_dim",
+                State.DEFAULT: "surface_variant",
+                State.HOVER: "on_surface_variant",
+                State.CHECKED: "surface_bright",
+                State.DISABLED: "surface_dim",
             }
         elif self == Type.PRIMARY:
             return {
-                State.DEFAULT: "icon_primary",
-                State.HOVER: "icon_on_primary",
-                State.CHECKED: "icon_primary_container",
-                State.DISABLED: "icon_on_primary_container",
+                State.DEFAULT: "primary",
+                State.HOVER: "on_primary",
+                State.CHECKED: "primary_container",
+                State.DISABLED: "on_primary_container",
             }
         elif self == Type.SECONDARY:
             return {
-                State.DEFAULT: "icon_primary",
-                State.HOVER: "icon_secondary",
-                State.CHECKED: "icon_tertiary",
-                State.DISABLED: "icon_on_secondary_container",
+                State.DEFAULT: "on_surface_container",
+                State.HOVER: "on_primary_container",
+                State.CHECKED: "on_secondary_container",
+                State.DISABLED: "on_secondary_container",
             }
         elif self == Type.TOOLBTN:
             return {
-                State.DEFAULT: "icon_tertiary",
-                State.HOVER: "icon_on_primary",
-                State.CHECKED: "icon_tertiary_container",
-                State.DISABLED: "icon_on_tertiary_container",
+                State.DEFAULT: "tertiary",
+                State.HOVER: "on_primary",
+                State.CHECKED: "tertiary_container",
+                State.DISABLED: "on_tertiary_container",
             }
 
 class IconSpec(NamedTuple):

@@ -41,7 +41,6 @@ class TitleBar(QWidget):
 
         # ── Title Label ──
         self.logo = Icon(Name.LOGO)
-        self.logo.setColor("icon_on_primary_container")
         self.logo.setSize(32,32)
         self.logo.setObjectName("AppLogo")
         self.title = QLabel(SETTINGS["APP_NAME"])

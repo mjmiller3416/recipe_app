@@ -22,33 +22,6 @@ class ThemedIcon(Protocol):
     def refresh_theme(self, palette: dict[str, str]) -> None: ...
     def objectName(self) -> str: ...
 
-# ── Constants ───────────────────────────────────────────────────────────────────
-ICON_COLOR_MAP = {
-    # default (mapped to surface variants)
-    "surface_variant": "icon_surface_variant",
-    "on_surface_variant": "icon_on_surface_variant",
-    "surface_bright": "icon_surface_bright",
-    "surface_dim": "icon_surface_dim",
-    "on_surface": "icon_on_surface",
-
-    # primary
-    "primary": "icon_primary",
-    "on_primary": "icon_on_primary",
-    "primary_container": "icon_primary_container",
-    "on_primary_container": "icon_on_primary_container",
-
-    # secondary
-    "secondary": "icon_secondary",
-    "on_secondary": "icon_on_secondary",
-    "secondary_container": "icon_secondary_container",
-    "on_secondary_container": "icon_on_secondary_container",
-
-    # tertiary
-    "tertiary": "icon_tertiary",
-    "on_tertiary": "icon_on_tertiary",
-    "tertiary_container": "icon_tertiary_container",
-    "on_tertiary_container": "icon_on_tertiary_container",
-}
 
 # ── Icon Loader ──────────────────────────────────────────────────────────────────────────────
 class IconLoader(QSingleton):
@@ -67,13 +40,12 @@ class IconLoader(QSingleton):
 
     # ── Private Methods ──────────────────────────────────────────────────────────────────────
     def _initialize_palette(self) -> None:
-        """Initialize the color palette for icons by remapping theme keys."""
-        theme_palette = Theme.get_current_color_map()
-        self._palette = self._map_palette(theme_palette)
+        """Initialize the color palette for icons."""
+        self._palette = Theme.get_current_color_map()
 
     def _on_theme_refresh(self, new_palette: Dict) -> None:
         """Slot → emits from ThemeController."""
-        self._palette = self._map_palette(new_palette)
+        self._palette = new_palette
         DebugLogger.log(f"Refreshing {len(self._icons)} icons", "debug")
 
         # Clear SVG cache once before refreshing all icons
@@ -83,12 +55,6 @@ class IconLoader(QSingleton):
         for icon in tuple(self._icons):
             icon.refresh_theme(new_palette)
 
-    def _map_palette(self, theme_palette: Dict[str, str]) -> Dict[str, str]:
-        return {
-            new_key: theme_palette[old_key]
-            for old_key, new_key in ICON_COLOR_MAP.items()
-            if old_key in theme_palette
-        }
 
     # ── Public Methods ───────────────────────────────────────────────────────────────────────
     @classmethod
@@ -104,7 +70,7 @@ class IconLoader(QSingleton):
         # capture the initial palette and subscribe to future changes
         DebugLogger.log("Connecting IconLoader to ThemeController", "debug")
         instance = cls._get_instance()
-        instance._palette = instance._map_palette(theme.get_current_color_map())
+        instance._palette = theme.get_current_color_map()
         theme.theme_refresh.connect(instance._on_theme_refresh)
 
         # Clear cache once and immediately refresh all icons

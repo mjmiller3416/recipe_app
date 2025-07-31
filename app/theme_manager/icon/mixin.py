@@ -44,7 +44,7 @@ class IconMixin:
         """Resolve the color for a given state based on the button type."""
         palette = IconLoader.get_palette()
         state_colors = self._type.state_map
-        palette_role = state_colors.get(state, "icon_on_surface")
+        palette_role = state_colors.get(state, "on_surface")
         return palette.get(palette_role, FALLBACK_COLOR)
 
     def refresh_theme(self, palette: dict) -> None:

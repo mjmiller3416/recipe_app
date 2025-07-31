@@ -67,7 +67,7 @@ class Icon(QLabel):
         else:
             # Use default color
             palette = IconLoader.get_palette()
-            color = palette.get("icon_on_surface", FALLBACK_COLOR)
+            color = palette.get("on_surface", FALLBACK_COLOR)
 
         # Load and set the pixmap
         pixmap = SVGLoader.load(
