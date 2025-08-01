@@ -4,14 +4,17 @@
     border-radius: 10px;
 }
 
-QLabel[font="Header"] {
-    font: {header_large};
-    color: {on_surface};
-}
-
-QLabel[font="Subheader"] {
-    font: {header_medium};
+[tag="Card"] QLabel {
+    background-color: transparent;
     color: {on_surface_variant};
 }
 
-QLabel {background-color: transparent; color: {on_surface_variant};}
+QFrame[tag="Card"] QLabel[font="Header"] {
+    font: {header_large} !important;
+    color: {on_surface} !important;
+}
+
+QFrame[tag="Card"] QLabel[font="Subheader"] {
+    font: {header_medium} !important;
+    color: {on_surface_variant} !important;
+}

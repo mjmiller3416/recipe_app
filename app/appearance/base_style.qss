@@ -12,12 +12,6 @@
     color: {on_surface};
 }
 
-[tag="Card"] {
-    background-color: {surface_variant};
-    border: 1px solid {outline};
-    border-radius: 8px;
-}
-
 /* QWidget */
 QWidget {
     font-family: 'Roboto';

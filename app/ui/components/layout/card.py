@@ -50,13 +50,11 @@ class Card(QFrame):
         if title:
             self._title_label = QLabel(title)
             self._title_label.setProperty("font", "Header")
-            self._title_label.setAttribute(Qt.WA_StyledBackground)
             self._layout.addWidget(self._title_label)
 
         if subtitle:
             self._subtitle_label = QLabel(subtitle)
             self._subtitle_label.setProperty("font", "Subheader")
-            self._subtitle_label.setAttribute(Qt.WA_StyledBackground)
             self._layout.addWidget(self._subtitle_label)
 
         # ── Content Area ──
