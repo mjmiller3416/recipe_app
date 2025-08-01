@@ -10,7 +10,7 @@ from PySide6.QtGui import QScreen
 from PySide6.QtWidgets import (QApplication, QFrame, QMainWindow, QVBoxLayout,
                                QWidget)
 
-from app.ui.animations.animator import Animator
+from app.appearance.animation.animator import Animator
 from dev_tools import DebugLogger
 
 

@@ -16,10 +16,10 @@ from PySide6.QtWidgets import (QFileDialog, QGraphicsOpacityEffect,
                                QToolButton, QVBoxLayout, QWidget)
 
 from app.config import AppPaths
-from app.theme_manager import Theme
-from app.theme_manager.config import Qss
-from app.theme_manager.icon import Icon
-from app.theme_manager.icon.config import Name
+from app.appearance import Theme
+from app.appearance.config import Qss
+from app.appearance.icon import Icon
+from app.appearance.icon.config import Name
 from data_files.user_settings import UserSettings
 
 from ..widgets.circular_image import CircularImage

@@ -7,8 +7,8 @@ Module providing ToolButton widget with theme-aware icons.
 from PySide6.QtCore import QEvent, QSize
 from PySide6.QtWidgets import QToolButton
 
-from app.theme_manager.icon.config import Name, Type
-from app.theme_manager.icon.mixin import IconMixin
+from app.appearance.icon.config import Name, Type
+from app.appearance.icon.mixin import IconMixin
 
 # ── Tool Button ──────────────────────────────────────────────────────────────────────────────
 class ToolButton(QToolButton, IconMixin):

@@ -1,0 +1,17 @@
+[tag="Card"] {
+    background-color: {surface_container};
+    border: none;
+    border-radius: 10px;
+}
+
+QLabel[font="Header"] {
+    font: {header_large};
+    color: {on_surface};
+}
+
+QLabel[font="Subheader"] {
+    font: {header_medium};
+    color: {on_surface_variant};
+}
+
+QLabel {background-color: transparent; color: {on_surface_variant};}

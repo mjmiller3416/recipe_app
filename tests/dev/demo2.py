@@ -12,10 +12,10 @@ from PySide6.QtWidgets import (QApplication, QGraphicsBlurEffect,
                                QGraphicsOpacityEffect, QGridLayout, QLabel,
                                QMainWindow, QVBoxLayout, QWidget)
 
-from app.theme_manager.icon.config import Name  # updated from app_icon.py
-from app.theme_manager.icon.icon import Icon
-from app.theme_manager.icon.loader import IconLoader
-from app.theme_manager.theme import Color, Mode, Theme
+from app.appearance.icon.config import Name  # updated from app_icon.py
+from app.appearance.icon.icon import Icon
+from app.appearance.icon.loader import IconLoader
+from app.appearance.theme import Color, Mode, Theme
 
 # ── Shadow Effect Enum ───────────────────────────────────────────────────────────────────────
 ShadowStyle = namedtuple("ShadowStyle", "color blur_radius offset_x offset_y")
@@ -185,7 +185,7 @@ class StyledLabel(QLabel):
 
 # ── Custom CardWidget ────────────────────────────────────────────────────────────────────────
 class CardWidget(StyledWidget):
-    def __init__(self, title: str = "", body: str = "", footer: str = "", parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self.setType(WidgetType.CARD)
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -195,10 +195,6 @@ class CardWidget(StyledWidget):
         self._layout = QVBoxLayout(self)
         self._layout.setSpacing(0)
         self._layout.setContentsMargins(12, 12, 12, 12)
-
-        self.header = QLabel(title)
-        self.header.setAlignment(Qt.AlignCenter)
-        self._layout.addWidget(self.header)
 
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
         """
@@ -214,7 +210,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Styled Card Example")
 
         card = CardWidget(title="Primary")
-        Effects.apply_glow(card, Shadow.ELEVATION_12)
+        Effects.apply_glow(card, Shadow.ELEVATION_3)
         card.setObjectName("primaryCard")
         icon = Icon(Name.DASHBOARD)
         icon.setSize(60, 60)

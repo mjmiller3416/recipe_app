@@ -160,6 +160,9 @@ class DebugLogger:
                 value = cls._resolve_variable(expr, local_vars, self_instance)
                 if value is None:
                     value = "None"
+                elif isinstance(value, str) and value.startswith("Error:"):
+                    # If resolution failed, return the original placeholder unchanged
+                    return match.group(0)
             except Exception:
                 return match.group(0)  # return the original placeholder if resolution fails
 

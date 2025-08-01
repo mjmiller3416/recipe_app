@@ -7,7 +7,7 @@ Connects signals to their respective slots for handling sidebar and page navigat
 from PySide6.QtWidgets import QStackedWidget
 
 from app.core.services import PlannerService, ShoppingService
-from app.ui.animations import Animator
+from app.appearance.animation import Animator
 from app.ui.views import (AddRecipes, Dashboard, MealPlanner, ShoppingList,
                           ViewRecipes)
 
@@ -61,7 +61,7 @@ class NavigationService:
             shopping_svc = ShoppingService()
             recipe_ids = shopping_svc.get_recipe_ids_from_meals(meal_ids)
             next_widget.load_shopping_list(recipe_ids)
-        
+
         if current_widget != next_widget:
             Animator.transition_stack(current_widget, next_widget, self.sw_pages)
         else:

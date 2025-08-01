@@ -70,17 +70,17 @@ class ShoppingItemWidget(QWidget):
 
     def _set_tooltip_if_needed(self):
         """Sets the recipe breakdown tooltip."""
-        DebugLogger.log("Setting tooltip for ingredient {ingredient_name}, source: {source}, key: {key}", "debug", ingredient_name=self.item.ingredient_name, source=self.item.source, key=self.item.key())
+        DebugLogger.log(f"Setting tooltip for ingredient {self.item.ingredient_name}, source: {self.item.source}, key: {self.item.key()}", "debug")
 
         if self.item.source == "recipe":
             parts = self.breakdown_map.get(self.item.key(), [])
-            DebugLogger.log("Found {count} parts in breakdown_map for ingredient", "debug", count=len(parts))
+            DebugLogger.log(f"Found {len(parts)} parts in breakdown_map for ingredient", "debug")
             if parts:
                 # Create a more readable tooltip format
                 header = f"Used in {len(parts)} recipe(s):"
                 recipe_lines = [f"• {qty} {unit} - {name}" for name, qty, unit in parts]
                 text = f"{header}\n" + "\n".join(recipe_lines)
-                DebugLogger.log("Setting ingredient tooltip: {text}", "debug", text=text)
+                DebugLogger.log(f"Setting ingredient tooltip: {text}", "debug", text=text)
                 self.label.setToolTip(text)
             else:
                 DebugLogger.log("No recipe parts found for ingredient, skipping tooltip", "debug")

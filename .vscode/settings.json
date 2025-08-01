@@ -31,6 +31,13 @@
 
     "editor.tokenColorCustomizations": {
         "textMateRules": [
+            {
+      "scope": "entity.name.tag.custom-widget.themed-qss",
+      "settings": {
+        "foreground": "#4EC9B0",  // or any other accent you love
+        "fontStyle": "bold"
+      }
+    },
           {
             "scope": "entity.other.attribute-name.themed-qss",
             "settings": {
@@ -79,12 +86,25 @@
             }
           },
           {
+      "scope": "meta.rule.block.themed-qss",
+      "settings": {
+        "foreground": "#4EC9B0", // 💖 Hot pink... because why not?
+        "fontStyle": "bold"
+      }
+    },
+          {
             "scope": "entity.other.attribute-name.id.themed-qss",
             "settings": {
               "foreground": "#569CD6",  // Pinky-purple, nice for {PLACEHOLDER}
             }
           },
-
+          {
+      "scope": "entity.pseudo-element.qss",
+      "settings": {
+        "foreground": "#c7a051",   // coral or anything else you love
+        "fontStyle": "bold"
+      }
+    },
           {
             "scope": "support.type.property-name.themed-qss",
             "settings": {
@@ -102,7 +122,7 @@
     //** Workbench settings **//
     "workbench.editor.enablePreviewFromQuickOpen": true, // Disable preview from quick open
     "workbench.editor.enablePreview": true, // Disable preview editor
-    //"workbench.editor.pinnedTabSizing": "compact", // Set pinned tab sizing to compact
+    "workbench.editor.pinnedTabSizing": "compact", // Set pinned tab sizing to compact
 
     //** Terminal settings **//
     "terminal.integrated.fontSize": 12, // Set terminal font size to 14
@@ -178,6 +198,8 @@
       "meal_widget": "Class",
       "theme_manager": "Theme",
       "qss": "Theme",
+      "appearance": "Theme",
+      "effects": "Terraform",
 
       //** Subfolders **//
       "app_helpers": "App",

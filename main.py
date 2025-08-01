@@ -15,7 +15,7 @@ import qframelesswindow.utils.win32_utils
 
 # Force-disable the border accent globally in the library
 qframelesswindow.utils.win32_utils.isSystemBorderAccentEnabled = lambda: False
-from app.theme_manager.theme import Color, Mode, Theme
+from app.appearance.theme import Color, Mode, Theme
 from app.ui.main_window import MainWindow
 from app.ui.services.navigation_service import NavigationService
 from dev_tools import DebugLogger, startup_timer
@@ -50,7 +50,7 @@ else:
     DebugLogger.set_log_level("debug")
     DebugLogger.log("Starting MealGenie application...\n", "info")
 
-    #Theme.setTheme(Color.GREEN, Mode.DARK)
+    ##Theme.setTheme(Color.GREEN, Mode.DARK)
 
     # ── Custom Color Map ──
     Theme.setCustomColorMap("material-theme.json", Mode.DARK)

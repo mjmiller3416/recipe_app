@@ -1,8 +1,0 @@
-#AvatarImage {
-    qproperty-borderColor: {primary};
-    qproperty-borderWidth: 6;
-  }
-
-
-
-

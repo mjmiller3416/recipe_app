@@ -8,6 +8,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 from dev_tools import DebugLogger, StartupTimer
+from app.ui.components.layout.card import Card
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -22,9 +23,21 @@ class Dashboard(QWidget):
         # Initialize & Setup UI
         self.setObjectName("Dashboard")
 
-        self.setObjectName("Dashboard")
-        self.setMinimumSize(984, 818)
-
         self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(0, 0, 0, 0)  
+        self.layout.setContentsMargins(20, 20, 20, 20)
+
+        # Example Card
+        card = Card(title="Dashboard Overview", subtitle="Summary of key metrics")
+        card.setAttribute(Qt.WA_StyledBackground, True)
+        card.setSpacing(30)
+        summary_label = QLabel("This is a placeholder for dashboard content.")
+        summary_label.setProperty("font", "Body")
+        summary_label.setWordWrap(True)
+        card.content_area.addWidget(summary_label)
+        self.layout.addWidget(card)
+
+        # Add stretch to push content to top
+        self.layout.addStretch()
+
+
 

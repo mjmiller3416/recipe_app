@@ -196,7 +196,7 @@ class AddRecipes(QWidget):
 
     def _display_save_message(self, message: str, success: bool = True):
         """Display save result message in the header label."""
-        from app.theme_manager.theme import Theme
+        from app.appearance.theme import Theme
 
         color_map = Theme.get_current_color_map()
         color = color_map.get("primary", "#4CAF50") if success else color_map.get("error", "#F44336")

@@ -8,9 +8,9 @@ Integrated with the new icon system for dynamic theming.
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton
 
-from app.theme_manager import Theme
-from app.theme_manager.config import Qss
-from app.theme_manager.icon.config import Name, Type
+from app.appearance import Theme
+from app.appearance.config import Qss
+from app.appearance.icon.config import Name, Type
 from app.ui.components.widgets import ToolButton
 
 
@@ -31,6 +31,7 @@ class NavButton(QPushButton):
         parent=None
     ):
         super().__init__("", parent)
+        self.setObjectName("NavButton")
 
         self.setCheckable(checkable)
 
@@ -42,7 +43,6 @@ class NavButton(QPushButton):
         self._icon.setIcon(name)
         self._icon.setButtonCheckable(checkable)
         self._icon.setFocusPolicy(Qt.NoFocus)
-        self._icon.setAttribute(Qt.WA_TransparentForMouseEvents)
 
         self._label = QLabel(text)
         self._label.setAttribute(Qt.WA_TransparentForMouseEvents)
@@ -91,12 +91,18 @@ class NavButton(QPushButton):
         super().enterEvent(event)
         self._update_visuals()
 
+        # Manually trigger icon hover state
+        self._icon.enterEvent(event)
+
         self.style().polish(self)
 
     def leaveEvent(self, event):
         """Override leaveEvent to update icon and force style update."""
         super().leaveEvent(event)
         self._update_visuals()
+
+        # Manually trigger icon leave state
+        self._icon.leaveEvent(event)
 
         self.style().polish(self)
 

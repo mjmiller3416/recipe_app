@@ -1,0 +1,17 @@
+/* ------------------------------------------------------------------
+   TITLE BAR STYLESHEET
+   ------------------------------------------------------------------ */
+
+#TitleBar {background-color: {surface_container_high};}
+
+#TitleBar #BtnClose:hover{background-color: {error_container};}
+
+#TitleBar #AppLogo {margin-left: 4px;}
+
+#TitleBar QToolButton {background-color: transparent;}
+
+#TitleBar QLabel {font-weight: 600; font-size: 28px;}
+
+#TitleBar QToolButton:hover {background-color: {surface_bright}; border: none;}
+
+

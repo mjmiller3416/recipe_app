@@ -19,7 +19,7 @@ class AppPaths:
     ASSETS_DIR = APP_DIR / "assets"
     DATA_DIR = ROOT_DIR / "data_files"
     USER_PROFILE_DIR = DATA_DIR / "user_profile"
-    TM_DIR = APP_DIR / "theme_manager"
+    TM_DIR = APP_DIR / "appearance"
 
     # ── Asset Directories ───────────────────────────────────────────────────────
     ICONS_DIR = ASSETS_DIR / "icons"

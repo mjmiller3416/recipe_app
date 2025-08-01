@@ -10,8 +10,8 @@ from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
 from qframelesswindow.utils.win32_utils import WindowsMoveResize as MoveResize
 
 from app.config import APPLICATION_WINDOW
-from app.theme_manager import Theme, Qss
-from app.theme_manager.icon import Icon, Name, Type
+from app.appearance import Theme, Qss
+from app.appearance.icon import Icon, Name, Type
 from app.ui.components.widgets import ToolButton
 
 # ── Constants ────────────────────────────────────────────────────────────────────────────────
@@ -46,7 +46,7 @@ class TitleBar(QWidget):
         self.title = QLabel(SETTINGS["APP_NAME"])
 
         # ── Sidebar Toggle Button ──
-        self.btn_ico_toggle_sidebar = ToolButton(Type.TOOLBTN)
+        self.btn_ico_toggle_sidebar = ToolButton(Type.SECONDARY)
         self.btn_ico_toggle_sidebar.setIcon(Name.MENU)
         self.btn_ico_toggle_sidebar.setCheckable(True)
 
@@ -54,17 +54,17 @@ class TitleBar(QWidget):
         self.btn_ico_toggle_sidebar.setObjectName("BtnToggleSidebar")
 
         # ── Minimize Button ──
-        self.btn_ico_minimize = ToolButton(Type.TOOLBTN)
+        self.btn_ico_minimize = ToolButton(Type.TITLEBAR)
         self.btn_ico_minimize.setIcon(Name.MINIMIZE)
         self.btn_ico_minimize.setFixedSize(SETTINGS["BTN_SIZE"])
 
         # ── Maximize/Restore Button ──
-        self.btn_ico_maximize = ToolButton(Type.TOOLBTN)
+        self.btn_ico_maximize = ToolButton(Type.TITLEBAR)
         self.btn_ico_maximize.setIcon(Name.MAXIMIZE)
         self.btn_ico_maximize.setFixedSize(SETTINGS["BTN_SIZE"])
 
         # ── Close Button ──
-        self.btn_ico_close = ToolButton(Type.TOOLBTN)
+        self.btn_ico_close = ToolButton(Type.TITLEBAR)
         self.btn_ico_close.setIcon(Name.CROSS)
         self.btn_ico_close.setFixedSize(SETTINGS["BTN_SIZE"])
         self.btn_ico_close.setObjectName("BtnClose")
