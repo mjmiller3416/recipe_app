@@ -130,15 +130,15 @@ class IngredientWidget(QWidget):
 
         if not current_text:
             self.cb_ingredient_category.setCurrentIndex(-1)
-            clear_error_styles(self.sle_ingredient_name.line_edit)  # Access QLineEdit directly
+            clear_error_styles(self.sle_ingredient_name)  # SmartLineEdit is now a QLineEdit
             return
 
         # validate the ingredient name against the NAME_PATTERN
         if not NAME_PATTERN.match(current_text):
-            self.sle_ingredient_name.line_edit.setStyleSheet("border: 1px solid red;")
+            self.sle_ingredient_name.setStyleSheet("border: 1px solid red;")
             return
         else:
-            clear_error_styles(self.sle_ingredient_name.line_edit)
+            clear_error_styles(self.sle_ingredient_name)
 
         search_dto = IngredientSearchDTO(search_term=current_text)
         matching_ingredients = self.ingredient_service.find_matching_ingredients(search_dto)
@@ -190,7 +190,7 @@ class IngredientWidget(QWidget):
     def to_payload(self) -> dict:
         """Returns a plain dict that matches RecipeIngredientDTO fields"""
         return {
-        "ingredient_name": self.sle_ingredient_name.line_edit.text().strip(),
+        "ingredient_name": self.sle_ingredient_name.text().strip(),
         "ingredient_category": self.cb_ingredient_category.currentText().strip(),
         "unit": self.cb_unit.currentText().strip(),
         "quantity": float(self.le_quantity.text().strip() or 0),

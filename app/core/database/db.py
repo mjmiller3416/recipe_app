@@ -67,3 +67,24 @@ def create_session() -> Session:
             session.close()
     """
     return SessionLocal()
+
+
+class DatabaseSession:
+    """Context manager for database sessions."""
+    
+    def __init__(self):
+        self.session = None
+        
+    def __enter__(self) -> Session:
+        self.session = create_session()
+        return self.session
+        
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.session:
+            try:
+                if exc_type is None:
+                    self.session.commit()
+                else:
+                    self.session.rollback()
+            finally:
+                self.session.close()

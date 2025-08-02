@@ -10,6 +10,7 @@ from app.core.services import PlannerService, ShoppingService
 from app.appearance.animation import Animator
 from app.ui.views import (AddRecipes, Dashboard, MealPlanner, ShoppingList,
                           ViewRecipes)
+from dev_tools import DebugLogger
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -56,11 +57,17 @@ class NavigationService:
 
         # refresh ShoppingList if navigating to it
         if page_name == "shopping_list" and isinstance(next_widget, ShoppingList):
-            planner_svc = PlannerService()
-            meal_ids = planner_svc.load_saved_meal_ids()
-            shopping_svc = ShoppingService()
-            recipe_ids = shopping_svc.get_recipe_ids_from_meals(meal_ids)
-            next_widget.load_shopping_list(recipe_ids)
+            # Use context manager to ensure proper session cleanup
+            from app.core.database.db import DatabaseSession
+            try:
+                with DatabaseSession() as session:
+                    planner_svc = PlannerService(session)
+                    meal_ids = planner_svc.load_saved_meal_ids()
+                    shopping_svc = ShoppingService(session)
+                    recipe_ids = shopping_svc.get_recipe_ids_from_meals(meal_ids)
+                    next_widget.load_shopping_list(recipe_ids)
+            except Exception as e:
+                DebugLogger.log(f"Error refreshing shopping list: {e}", "error")
 
         if current_widget != next_widget:
             Animator.transition_stack(current_widget, next_widget, self.sw_pages)

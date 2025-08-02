@@ -4,10 +4,7 @@ A form for adding new recipes, including fields for recipe details and an image
 upload button.
 """
 
-# ── Constants ───────────────────────────────────────────────────────────────────
-FIXED_HEIGHT = 60  # fixed height for input fields in the recipe form
-
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QGridLayout, QLabel, QWidget
 
@@ -15,8 +12,11 @@ from app.config import MEAL_TYPE, RECIPE_CATEGORIES
 from app.ui.components.forms.form_field import ComboBoxField, LineEditField
 from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
 
+# ── Constants ───────────────────────────────────────────────────────────────────
+FIXED_HEIGHT = 60  # fixed height for input fields in the recipe form
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+
+# ── Recipe Form ──────────────────────────────────────────────────────────────────────────────
 class RecipeForm(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)

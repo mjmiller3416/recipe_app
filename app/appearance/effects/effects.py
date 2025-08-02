@@ -29,10 +29,7 @@ class Effects:
 
         Args:
             widget (QWidget): The widget to apply the effect to.
-            color (QColor): The color of the shadow. Default is semi-transparent black.
-            blur_radius (float): The blur radius of the shadow.
-            offset_x (float): The horizontal offset of the shadow.
-            offset_y (float): The vertical offset of the shadow.
+            shadow (Shadow): The shadow configuration to apply.
         """
         _color = shadow.value.color
         _blur_radius = shadow.value.blur_radius
@@ -47,6 +44,7 @@ class Effects:
         print(f"Applied Drop Shadow to "
               f"{widget.objectName() if widget.objectName() else widget.__class__.__name__}"
         )
+
 
     @classmethod
     def apply_blur(cls, widget: QWidget, blur_radius: float = 10.0):

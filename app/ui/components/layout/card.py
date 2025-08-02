@@ -16,15 +16,15 @@ class Card(QFrame):
     """A card widget with a header, sub-header and content area.
 
     This class provides a convenient way to create card-like UI components
-    with a title, optional subtitle, and a content area for other widgets.
+    with a header, optional subheader, and a content area for other widgets.
     """
 
-    def __init__(self, title: str = "", subtitle: str = "", parent=None):
+    def __init__(self, header: str = "", subheader: str = "", parent=None):
         """Initialize the Card widget.
 
         Args:
-            title (str): The main title of the card.
-            subtitle (str): An optional subtitle for the card.
+            header (str): The main header of the card.
+            subheader (str): An optional subheader for the card.
             parent: The parent widget, if any.
         """
         super().__init__(parent)
@@ -50,15 +50,15 @@ class Card(QFrame):
         self._header_container = QVBoxLayout()
         self._header_container.setContentsMargins(0, 0, 0, 0)
         self._header_container.setSpacing(6)
-        if title:
-            self._title_label = QLabel(title)
-            self._title_label.setObjectName("Header")
-            self._header_container.addWidget(self._title_label)
+        if header:
+            self._header_label = QLabel(header)
+            self._header_label.setObjectName("Header")
+            self._header_container.addWidget(self._header_label)
 
-        if subtitle:
-            self._subtitle_label = QLabel(subtitle)
-            self._subtitle_label.setObjectName("Subheader")
-            self._header_container.addWidget(self._subtitle_label)
+        if subheader:
+            self._subheader_label = QLabel(subheader)
+            self._subheader_label.setObjectName("Subheader")
+            self._header_container.addWidget(self._subheader_label)
 
         self._layout.addLayout(self._header_container)
 

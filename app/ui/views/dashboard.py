@@ -9,6 +9,7 @@ from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 from dev_tools import DebugLogger, StartupTimer
 from app.ui.components.layout.card import Card
+from app.ui.components.inputs import SmartLineEdit
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -27,7 +28,7 @@ class Dashboard(QWidget):
         self.layout.setContentsMargins(20, 20, 20, 20)
 
         # Example Card
-        card = Card(title="Dashboard Overview", subtitle="Summary of key metrics")
+        card = Card(header="Dashboard Overview", subheader="Summary of key metrics")
         card.setAttribute(Qt.WA_StyledBackground, True)
         card.setSpacing(36)
         summary_label = QLabel("This is a placeholder for dashboard content.")
@@ -35,6 +36,12 @@ class Dashboard(QWidget):
         summary_label.setWordWrap(True)
         card.content_area.addWidget(summary_label)
         self.layout.addWidget(card)
+
+        # Example Input
+        search_input = SmartLineEdit(placeholder="Search...")
+        search_input.setProperty("font", "Body")
+        self.layout.addWidget(search_input)
+
 
         # Add stretch to push content to top
         self.layout.addStretch()
