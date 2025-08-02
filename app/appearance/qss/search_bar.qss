@@ -7,7 +7,6 @@ background-color: {surface_container}; /* Search Widget Background Color */
 border-radius: 30px;
 }
 
-
 #SearchBar #le_search {
     background-color: transparent;
     padding-left: 10px;
@@ -19,6 +18,11 @@ border-radius: 30px;
     border: none;
     outline: none;
 }
+
+#SearchBar #le_search[text=""] {
+      color: {on_surface_variant};
+      font-style: italic;
+  }
 
 #SearchBar #btn_ico_clear {
     background-color: transparent;

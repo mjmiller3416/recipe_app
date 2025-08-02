@@ -1,3 +1,7 @@
+/* ------------------------------------------------------------------
+   CARD WIDGET STYLING
+   ------------------------------------------------------------------ */
+
 [tag="Card"] {
     background-color: {surface_container};
     border: none;
@@ -11,7 +15,6 @@ Card QLabel#Header {
 
 Card QLabel#Subheader {
     font: {subheader};
-    color: {on_surface_variant};
 }
 
 QLabel {

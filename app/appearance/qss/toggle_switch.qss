@@ -1,0 +1,19 @@
+/* ------------------------------------------------------------------
+   TOGGLE SWITCH WIDGET STYLING
+   ------------------------------------------------------------------ */
+
+#ToggleSwitch {
+    background-color: transparent;
+    border: none;
+}
+
+/* Focus effects */
+#ToggleSwitch:focus {
+    outline: 2px solid {primary};
+    outline-offset: 2px;
+}
+
+/* Disabled state */
+#ToggleSwitch:disabled {
+    opacity: 0.38;
+}

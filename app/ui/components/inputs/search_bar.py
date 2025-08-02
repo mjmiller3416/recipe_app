@@ -66,6 +66,8 @@ class SearchBar(QFrame):
         self.btn_ico_clear = ToolButton(Type.DEFAULT)
         self.btn_ico_clear.setObjectName("btn_ico_clear")
         self.btn_ico_clear.setIcon(Name.CROSS)
+        self.btn_ico_clear.setStateDefault("on_surface")
+        self.btn_ico_clear.setStateHover("on_surface")  # Override hover state color
         self.btn_ico_clear.setVisible(False) # visibility based on text input
         self.layout.addWidget(self.btn_ico_clear, 0, 2)
 
@@ -77,6 +79,10 @@ class SearchBar(QFrame):
 
     def _on_text_changed(self, text):
         self.btn_ico_clear.setVisible(bool(text))
+        # Update property for placeholder styling
+        self.le_search.setProperty("text", text)
+        self.le_search.style().unpolish(self.le_search)
+        self.le_search.style().polish(self.le_search)
 
     def _on_return_pressed(self):
         self.search_triggered.emit(self.le_search.text())

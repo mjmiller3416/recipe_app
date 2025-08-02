@@ -23,6 +23,7 @@ class IconMixin:
         self._icon_spec = icon_enum.spec
         self._type = type
         self._icons: dict[State, QIcon] = {}
+        self._state_overrides: dict[State, str] = {}
 
         self.setIconSize(self._icon_spec.size.value)
 
@@ -40,11 +41,63 @@ class IconMixin:
         button_type = getattr(self, '_button_type', Type.DEFAULT)
         self._init_icon(icon_enum, button_type)
 
+    def setStateDefault(self, color_role: str):
+        """Override the default state color with a specific palette role."""
+        if not hasattr(self, '_state_overrides'):
+            self._state_overrides = {}
+        self._state_overrides[State.DEFAULT] = color_role
+        self._refresh_if_ready()
+
+    def setStateHover(self, color_role: str):
+        """Override the hover state color with a specific palette role."""
+        if not hasattr(self, '_state_overrides'):
+            self._state_overrides = {}
+        self._state_overrides[State.HOVER] = color_role
+        self._refresh_if_ready()
+
+    def setStateChecked(self, color_role: str):
+        """Override the checked state color with a specific palette role."""
+        if not hasattr(self, '_state_overrides'):
+            self._state_overrides = {}
+        self._state_overrides[State.CHECKED] = color_role
+        self._refresh_if_ready()
+
+    def setStateDisabled(self, color_role: str):
+        """Override the disabled state color with a specific palette role."""
+        if not hasattr(self, '_state_overrides'):
+            self._state_overrides = {}
+        self._state_overrides[State.DISABLED] = color_role
+        self._refresh_if_ready()
+
+    def clearStateOverride(self, state: State):
+        """Clear a specific state override, reverting to the Type default."""
+        if state in self._state_overrides:
+            del self._state_overrides[state]
+            self._refresh_if_ready()
+
+    def clearAllStateOverrides(self):
+        """Clear all state overrides, reverting to Type defaults."""
+        self._state_overrides.clear()
+        self._refresh_if_ready()
+
+    def _refresh_if_ready(self):
+        """Refresh icons if the button is initialized and has a palette."""
+        if hasattr(self, '_icon_enum') and IconLoader.get_palette():
+            palette = IconLoader.get_palette()
+            self.refresh_theme(palette)
+
     def _resolve_color_for_state(self, state: State) -> str:
-        """Resolve the color for a given state based on the button type."""
+        """Resolve the color for a given state based on overrides or button type."""
         palette = IconLoader.get_palette()
-        state_colors = self._type.state_map
-        palette_role = state_colors.get(state, "on_surface")
+        
+        # Check for state override first
+        if hasattr(self, '_state_overrides') and state in self._state_overrides:
+            palette_role = self._state_overrides[state]
+        else:
+            # Fall back to Type defaults
+            state_colors = self._type.state_map
+            palette_role = state_colors.get(state, "on_surface")
+        
         return palette.get(palette_role, FALLBACK_COLOR)
 
     def refresh_theme(self, palette: dict) -> None:
