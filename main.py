@@ -62,6 +62,12 @@ else:
     )
     main_window.show() # show the main window
 
+    # ── Simple QSS Inspector ──
+    # Uncomment the lines below to enable the simple terminal-based QSS inspector
+    from dev_tools.qss_inspector import enable_qss_inspector
+    inspector = enable_qss_inspector(app, main_window)
+    DebugLogger.log("Simple QSS Inspector enabled - Press Shift+Alt+E to toggle inspection mode\n", "info")
+
     QApplication.processEvents()  # make sure all pending events are flushed
     startup_timer.StartupTimer.summary("MealGenie startup") # log total startup time
 

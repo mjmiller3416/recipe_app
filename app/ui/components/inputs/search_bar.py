@@ -7,8 +7,10 @@ This module defines a custom search widget that includes a search icon, a text i
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QGridLayout, QLineEdit, QSizePolicy
 
+from app.appearance.config import Qss
 from app.appearance.icon import Icon, Name, Type
 from app.ui.components.widgets import ToolButton
+from app.appearance import Theme
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 
@@ -29,9 +31,12 @@ class SearchBar(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("SearchBar")
-        self.setMinimumHeight(60)
-        self.setMaximumHeight(80)
-        self.setFixedWidth(400)
+
+        # Register for component-specific styling
+        Theme.register_widget(self, Qss.SEARCH_BAR)
+
+        self.setFixedHeight(60)
+        self.setFixedWidth(500)
 
         self._setup_ui()
         self._setup_events()
@@ -39,12 +44,15 @@ class SearchBar(QFrame):
     def _setup_ui(self):
         """Creates and lays out the internal UI elements."""
         self.layout = QGridLayout(self)
-        self.layout.setContentsMargins(12, 0, 8, 0)  # Left/right padding for breathing room
+        self.layout.setContentsMargins(20, 0, 20, 0)  # Left/right padding for breathing room
         self.layout.setSpacing(5)
 
         # ── Search Icon ──
         self.ico_search = Icon(Name.SEARCH)
+        self.ico_search.setSize(24, 24)
+        self.ico_search.setObjectName("ico_search")
         self.layout.addWidget(self.ico_search, 0, 0)
+
 
         # ── Input Field ──
         self.le_search = QLineEdit(self)
@@ -56,6 +64,7 @@ class SearchBar(QFrame):
 
         # ── Clear Button ──
         self.btn_ico_clear = ToolButton(Type.DEFAULT)
+        self.btn_ico_clear.setObjectName("btn_ico_clear")
         self.btn_ico_clear.setIcon(Name.CROSS)
         self.btn_ico_clear.setVisible(False) # visibility based on text input
         self.layout.addWidget(self.btn_ico_clear, 0, 2)

@@ -3,14 +3,16 @@
    ------------------------------------------------------------------ */
 
 #SearchBar {
-background-color: {BACKGROUND_WIDGET}; /* Search Widget Background Color */
-border-radius: 10px;
+background-color: {surface_container}; /* Search Widget Background Color */
+border-radius: 30px;
 }
+
 
 #SearchBar #le_search {
     background-color: transparent;
+    padding-left: 10px;
     border: none;
-    font-size: {FONT_SIZE_DEFAULT};
+    font: {body_large};
 }
 
 #SearchBar #le_search:focus {
@@ -18,9 +20,10 @@ border-radius: 10px;
     outline: none;
 }
 
-#SearchBar #clear {
+#SearchBar #btn_ico_clear {
     background-color: transparent;
 }
 #SearchBar #btn_ico_clear:hover {
     border-radius: 10px;
 }
+

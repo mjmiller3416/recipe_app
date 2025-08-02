@@ -29,7 +29,7 @@ class Dashboard(QWidget):
         # Example Card
         card = Card(title="Dashboard Overview", subtitle="Summary of key metrics")
         card.setAttribute(Qt.WA_StyledBackground, True)
-        card.setSpacing(30)
+        card.setSpacing(36)
         summary_label = QLabel("This is a placeholder for dashboard content.")
         summary_label.setProperty("font", "Body")
         summary_label.setWordWrap(True)

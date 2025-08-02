@@ -93,7 +93,7 @@ class MainWindow(FramelessWindow):
 
         # Header Layout
         self.header_layout = QHBoxLayout()
-        self.header_layout.setContentsMargins(20, 20, 20, 20)
+        self.header_layout.setContentsMargins(20, 30, 20, 20)
         self.content_outer_layout.addLayout(self.header_layout)
 
         # Header Widgets

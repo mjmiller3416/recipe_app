@@ -29,7 +29,7 @@ class Card(QFrame):
         """
         super().__init__(parent)
 
-        # Register for component-specific styling
+        # register for component-specific styling
         Theme.register_widget(self, Qss.CARD)
 
         # ── Configure Frame Properties ──
@@ -47,15 +47,20 @@ class Card(QFrame):
         self._layout.setSpacing(self._spacing)
 
         # ── Create Header ──
+        self._header_container = QVBoxLayout()
+        self._header_container.setContentsMargins(0, 0, 0, 0)
+        self._header_container.setSpacing(6)
         if title:
             self._title_label = QLabel(title)
-            self._title_label.setProperty("font", "Header")
-            self._layout.addWidget(self._title_label)
+            self._title_label.setObjectName("Header")
+            self._header_container.addWidget(self._title_label)
 
         if subtitle:
             self._subtitle_label = QLabel(subtitle)
-            self._subtitle_label.setProperty("font", "Subheader")
-            self._layout.addWidget(self._subtitle_label)
+            self._subtitle_label.setObjectName("Subheader")
+            self._header_container.addWidget(self._subtitle_label)
+
+        self._layout.addLayout(self._header_container)
 
         # ── Content Area ──
         self.content_area = QVBoxLayout()
