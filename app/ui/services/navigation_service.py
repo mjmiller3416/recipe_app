@@ -70,6 +70,10 @@ class NavigationService:
                 DebugLogger.log(f"Error refreshing shopping list: {e}", "error")
 
         if current_widget != next_widget:
+            self.sw_pages.setCurrentWidget(next_widget)
+
+        # ⚠️ Temporarily disabled until multi-effects solution is stable
+        """ if current_widget != next_widget:
             Animator.transition_stack(current_widget, next_widget, self.sw_pages)
         else:
-            self.sw_pages.setCurrentWidget(next_widget)
+            self.sw_pages.setCurrentWidget(next_widget) """

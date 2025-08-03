@@ -53,7 +53,7 @@ else:
     ##Theme.setTheme(Color.GREEN, Mode.DARK)
 
     # ── Custom Color Map ──
-    Theme.setCustomColorMap("material-theme.json", Mode.LIGHT)
+    Theme.setCustomColorMap("material-theme.json", Mode.DARK)
 
     navigation_service_factory = NavigationService.create
 
