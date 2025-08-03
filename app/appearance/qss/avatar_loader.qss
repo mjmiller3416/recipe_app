@@ -2,3 +2,11 @@
     qproperty-borderColor: {primary};
     qproperty-borderWidth: 6;
 }
+
+#AvatarEditButton {
+    background-color: {surface_variant};
+    border: 2px solid {outline};
+    border-radius: 15px; /* half of width/height for circular button */
+    margin: 10px;
+    color: {on_surface_variant};
+}

@@ -9,17 +9,18 @@ import tempfile
 import uuid
 from pathlib import Path
 
-from PySide6.QtCore import (QEasingCurve, QEvent, QPropertyAnimation, QSize,
-                            Qt, Slot)
+from PySide6.QtCore import QEvent, QSize, Qt, Slot
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import (QFileDialog, QGraphicsOpacityEffect,
-                               QToolButton, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QFileDialog, QToolButton, QVBoxLayout, QWidget)
 
 from app.config import AppPaths
 from app.appearance import Theme
+from app.appearance.animation.animator import Animator
 from app.appearance.config import Qss
 from app.appearance.icon import Icon
-from app.appearance.icon.config import Name
+from app.appearance.icon.config import Name, Type
+from app.ui.components.widgets import Button
+from app.ui.helpers.ui_helpers import make_overlay
 from data_files.user_settings import UserSettings
 
 from ..widgets.circular_image import CircularImage
@@ -64,24 +65,24 @@ class AvatarLoader(QWidget):
         diameter = self._size.width()
         self.avatar_display = CircularImage(diameter=diameter)
         self.avatar_display.setObjectName("AvatarImage")
-        self.main_layout.addWidget(self.avatar_display)
-
-        # add opacity effect for hover animation
-        self.opacity_effect = QGraphicsOpacityEffect(self)
-        self.setGraphicsEffect(self.opacity_effect)
 
         # create the edit button overlay
-        self.edit_button = QToolButton(self)
-        self.edit_button.setFixedSize(self._size)
-        self.edit_button.setCursor(Qt.PointingHandCursor)
-        self.edit_button.setToolTip("Edit Avatar")
+        self.edit_button = Button("Edit", Type.DEFAULT)
+        self.edit_button.setIcon(Name.EDIT)
+        self.edit_button.setStateDefault("primary")
+        self.edit_button.setObjectName("AvatarEditButton")
+        self.edit_button.setVisible(True)
 
-        self.edit_icon = Icon(Name.EDIT)
-        self.edit_icon.setSize(24, 24)
-        self.edit_icon.setVisible(False)
+        # use overlay helper to properly stack button over avatar
+        # margins: (left, top, right, bottom) for bottom-left positioning
+        overlay_container = make_overlay(
+            base_widget=self.avatar_display,
+            overlay_widget=self.edit_button,
+            margins=(8, 0, 0, 8),  # 8px from left, 8px from bottom
+            align=Qt.AlignBottom | Qt.AlignLeft
+        )
 
-        self.edit_button.raise_()
-        self.edit_icon.raise_()
+        self.main_layout.addWidget(overlay_container)
 
     def _connect_signals(self):
         """Connect signals to slots."""
@@ -134,18 +135,7 @@ class AvatarLoader(QWidget):
         self.avatar_display.setPixmap(QPixmap(str(perm_path)))
 
     # ── Event Handlers ─────────────────────────────────────────────────────────────
-    def resizeEvent(self, event):
-        """Ensure overlay widgets are centered.
-
-        Args:
-            event (QResizeEvent): The resize event.
-        """
-        super().resizeEvent(event)
-        self.edit_button.setGeometry(0, 0, self.width(), self.height())
-        self.edit_icon.move(
-            (self.width() - self.edit_icon.width()) // 2,
-            (self.height() - self.edit_icon.height()) // 2
-        )
+    # resizeEvent no longer needed - overlay helper handles positioning
 
     def enterEvent(self, event: QEvent):
         """Handle mouse hover to show edit indication.
@@ -153,13 +143,11 @@ class AvatarLoader(QWidget):
         Args:
             event (QEvent): The enter event.
         """
-        self.opacity_animation = QPropertyAnimation(self.opacity_effect, b"opacity")
-        self.opacity_animation.setDuration(200)
-        self.opacity_animation.setStartValue(1.0)
-        self.opacity_animation.setEndValue(0.7)
-        self.opacity_animation.setEasingCurve(QEasingCurve.InOutQuad)
-        self.opacity_animation.start()
-        self.edit_icon.setVisible(True)
+        # fade widget using Animator
+        self.fade_animation = Animator.fade_widget(self, duration=200, start=1.0, end=0.7)
+        self.fade_animation.start()
+
+
         return super().enterEvent(event)
 
     def leaveEvent(self, event: QEvent):
@@ -168,11 +156,7 @@ class AvatarLoader(QWidget):
         Args:
             event (QEvent): The leave event.
         """
-        self.opacity_animation = QPropertyAnimation(self.opacity_effect, b"opacity")
-        self.opacity_animation.setDuration(200)
-        self.opacity_animation.setStartValue(self.opacity_effect.opacity())
-        self.opacity_animation.setEndValue(1.0)
-        self.opacity_animation.setEasingCurve(QEasingCurve.InOutQuad)
-        self.opacity_animation.start()
-        self.edit_icon.setVisible(False)
+        # restore opacity using Animator
+        self.fade_animation = Animator.fade_widget(self, duration=200, start=0.7, end=1.0)
+        self.fade_animation.start()
         return super().leaveEvent(event)

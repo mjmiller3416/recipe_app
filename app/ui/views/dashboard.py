@@ -10,6 +10,8 @@ from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 from dev_tools import DebugLogger, StartupTimer
 from app.ui.components.layout.card import Card
 from app.ui.components.inputs import SmartLineEdit
+from app.ui.components.widgets.button import Button
+from app.appearance.icon.config import Type, Name
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -36,6 +38,13 @@ class Dashboard(QWidget):
         summary_label.setWordWrap(True)
         card.content_area.addWidget(summary_label)
         self.layout.addWidget(card)
+
+        # add test button with icon
+        self.btn = Button("Test Button", Type.PRIMARY)
+        self.btn.setIcon(Name.SEARCH)
+        self.btn.adjustSize()
+
+        self.layout.addWidget(self.btn)
 
         # Add stretch to push content to top
         self.layout.addStretch()

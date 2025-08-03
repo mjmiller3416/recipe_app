@@ -137,10 +137,11 @@ def make_overlay(base_widget: QWidget,
 
     # put the base in cell (0,0)
     grid.addWidget(base_widget, 0, 0)
-
+    
     # wrap the overlay in its own widget to get padding
     pad = QWidget()
-    pad.setStyleSheet("background:transparent;")
+    pad.setObjectName("OverlayPadding")
+    #pad.setStyleSheet("background:transparent;")
     pad.setAttribute(Qt.WA_TranslucentBackground)
     vlyt = QVBoxLayout(pad)
     vlyt.setContentsMargins(*margins)
