@@ -37,12 +37,6 @@ class Dashboard(QWidget):
         card.content_area.addWidget(summary_label)
         self.layout.addWidget(card)
 
-        # Example Input
-        search_input = SmartLineEdit(placeholder="Search...")
-        search_input.setProperty("font", "Body")
-        self.layout.addWidget(search_input)
-
-
         # Add stretch to push content to top
         self.layout.addStretch()
 

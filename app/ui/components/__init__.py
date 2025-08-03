@@ -27,7 +27,7 @@ from .widgets.button import Button
 from .widgets.tool_button import ToolButton
 from .widgets.circular_image import CircularImage
 from .widgets.combobox import ComboBox
-from .widgets.dropdown_widget import DropDown
+from .widgets.dropdown_menu import DropdownMenu
 from .widgets.rounded_image import RoundedImage
 
 __all__ = [
@@ -44,5 +44,5 @@ __all__ = [
     # Navigation
     "NavButton", "Sidebar", "TitleBar",
     # Widgets
-    "Button", "ToolButton", "RoundedImage", "CircularImage", "DropDown"
+    "Button", "ToolButton", "RoundedImage", "CircularImage", "DropdownMenu"
 ]

@@ -69,7 +69,7 @@ class Card(QFrame):
         self._layout.addLayout(self.content_area)
 
         # ── Apply Effects ──
-        Effects.apply_shadow(self, Shadow.ELEVATION_6)
+        Effects.apply_shadow(self, Shadow.ELEVATION_12)
 
     def add_widget(self, widget):
         """Add a widget to the content area of the card.

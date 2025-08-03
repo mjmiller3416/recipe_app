@@ -75,7 +75,6 @@ class AvatarLoader(QWidget):
         self.edit_button.setFixedSize(self._size)
         self.edit_button.setCursor(Qt.PointingHandCursor)
         self.edit_button.setToolTip("Edit Avatar")
-        self.edit_button.setStyleSheet("background-color: transparent; border: none;")
 
         self.edit_icon = Icon(Name.EDIT)
         self.edit_icon.setSize(24, 24)

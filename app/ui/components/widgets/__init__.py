@@ -5,7 +5,7 @@ from .checkbox import CheckBox
 from .circular_image import CircularImage
 from .combobox import ComboBox
 from .dropdown_menu import DropdownMenu
-from .dropdown_widget import DropDown
+from .dropdown_menu import DropdownMenu
 from .filtered_dropdown_menu import FilteredDropdownMenu
 from .rounded_image import RoundedImage
 from .tool_button import ToolButton
@@ -17,7 +17,6 @@ __all__ = [
     "RoundedImage",
     "CircularImage",
     "ComboBox",
-    "DropDown",
     "DropdownMenu",
     "FilteredDropdownMenu",
     "PillButton",
