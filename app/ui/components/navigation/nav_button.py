@@ -2,6 +2,9 @@
 
 A composite navigation button that synchronizes its hover and checked state with its child icon and label.
 Integrated with the new icon system for dynamic theming.
+
+⚠️ Class is has been moved to app/ui/components/widgets/button.py
+and will be removed from this location in future releases ⚠️
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────

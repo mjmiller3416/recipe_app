@@ -68,9 +68,13 @@ class AvatarLoader(QWidget):
         self.main_layout.addWidget(self.avatar_display, alignment=Qt.AlignCenter)
 
         # edit button
-        self.edit_button = Button(label=" Edit", type=Type.DEFAULT, parent=self)
+        self.edit_button = Button(
+            label=" Edit",
+            type=Type.DEFAULT,
+            parent=self
+        )
         self.edit_button.setIcon(Name.EDIT)
-        self.edit_button.setButtonSize(100, 40)
+        self.edit_button.setCustomIconSize(20, 20)
         self.edit_button.setStateDefault("primary")
         self.edit_button.setObjectName("AvatarEditButton")
         # self.edit_button.setVisible(True)  # hidden until hover
@@ -83,7 +87,8 @@ class AvatarLoader(QWidget):
             y_offset=0,
         )
 
-
+        self.edit_button.adjustSize()
+        self.edit_button.raise_()
 
     def _connect_signals(self):
         """Connect signals to slots."""

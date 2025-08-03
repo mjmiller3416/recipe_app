@@ -2,6 +2,9 @@
 
 This module provides a mixin for QAbstractButton widgets to handle themed icons
 with state management.
+
+⚠️ Class is has been moved to app/appearance/icon/icon.py
+and will be removed from this location in future releases ⚠️
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────

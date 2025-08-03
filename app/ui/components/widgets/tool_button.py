@@ -1,6 +1,9 @@
 """app/ui/components/widgets/button/tool_button.py
 
 Module providing ToolButton widget with theme-aware icons.
+
+⚠️ Class is has been moved to app/ui/components/widgets/button.py
+and will be removed from this location in future releases ⚠️
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────

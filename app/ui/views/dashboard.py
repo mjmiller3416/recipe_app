@@ -12,6 +12,7 @@ from app.ui.components.layout.card import Card
 from app.ui.components.inputs import SmartLineEdit
 from app.ui.components.widgets.button import Button
 from app.appearance.icon.config import Type, Name
+from app.ui.components.navigation import NavButton
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -40,11 +41,17 @@ class Dashboard(QWidget):
         self.layout.addWidget(card)
 
         # add test button with icon
-        self.btn = Button("Test Button", Type.PRIMARY)
+        self.btn = Button(
+            label = "Test Button",
+            type  = Type.PRIMARY
+        )
         self.btn.setIcon(Name.SEARCH)
-        self.btn.setCustomIconSize(60, 60)
+        self.btn.setCustomIconSize(20, 20)
 
         self.layout.addWidget(self.btn)
+
+        self.testNavButton = NavButton(text="Go to Recipes", name=Name.DASHBOARD, height=40, width=200)
+        self.layout.addWidget(self.testNavButton)
 
         # Add stretch to push content to top
         self.layout.addStretch()

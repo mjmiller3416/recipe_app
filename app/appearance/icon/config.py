@@ -160,7 +160,6 @@ class Name(Enum):
     SETTINGS        = IconSpec(Path.SETTINGS, Size.LARGE)
     EXIT            = IconSpec(Path.EXIT, Size.LARGE)
 
-
     # ── XL Icons ────────────────────────────────
     INFO            = IconSpec(Path.INFO, Size.XL)
     WARNING         = IconSpec(Path.WARNING, Size.XL)
