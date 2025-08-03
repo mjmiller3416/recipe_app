@@ -20,7 +20,7 @@ from app.appearance.config import Qss
 from app.appearance.icon import Icon
 from app.appearance.icon.config import Name, Type
 from app.ui.components.widgets import Button
-from app.ui.helpers.ui_helpers import make_overlay
+from app.ui.helpers import CornerAnchor
 from data_files.user_settings import UserSettings
 
 from ..widgets.circular_image import CircularImage
@@ -65,24 +65,25 @@ class AvatarLoader(QWidget):
         diameter = self._size.width()
         self.avatar_display = CircularImage(diameter=diameter)
         self.avatar_display.setObjectName("AvatarImage")
+        self.main_layout.addWidget(self.avatar_display, alignment=Qt.AlignCenter)
 
-        # create the edit button overlay
-        self.edit_button = Button("Edit", Type.DEFAULT)
+        # edit button
+        self.edit_button = Button(label=" Edit", type=Type.DEFAULT, parent=self)
         self.edit_button.setIcon(Name.EDIT)
+        self.edit_button.setButtonSize(100, 40)
         self.edit_button.setStateDefault("primary")
         self.edit_button.setObjectName("AvatarEditButton")
-        self.edit_button.setVisible(True)
+        # self.edit_button.setVisible(True)  # hidden until hover
 
-        # use overlay helper to properly stack button over avatar
-        # margins: (left, top, right, bottom) for bottom-left positioning
-        overlay_container = make_overlay(
-            base_widget=self.avatar_display,
-            overlay_widget=self.edit_button,
-            margins=(8, 0, 0, 8),  # 8px from left, 8px from bottom
-            align=Qt.AlignBottom | Qt.AlignLeft
+        self.anchor = CornerAnchor(
+            anchor_widget=self.avatar_display,
+            target_widget=self.edit_button,
+            corner="bottom-left",
+            x_offset=0,
+            y_offset=0,
         )
 
-        self.main_layout.addWidget(overlay_container)
+
 
     def _connect_signals(self):
         """Connect signals to slots."""
@@ -135,8 +136,6 @@ class AvatarLoader(QWidget):
         self.avatar_display.setPixmap(QPixmap(str(perm_path)))
 
     # ── Event Handlers ─────────────────────────────────────────────────────────────
-    # resizeEvent no longer needed - overlay helper handles positioning
-
     def enterEvent(self, event: QEvent):
         """Handle mouse hover to show edit indication.
 
@@ -146,8 +145,6 @@ class AvatarLoader(QWidget):
         # fade widget using Animator
         self.fade_animation = Animator.fade_widget(self, duration=200, start=1.0, end=0.7)
         self.fade_animation.start()
-
-
         return super().enterEvent(event)
 
     def leaveEvent(self, event: QEvent):

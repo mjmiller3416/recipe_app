@@ -7,6 +7,7 @@ with state management.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QEvent
 from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QSizePolicy
 
 from app.config import FALLBACK_COLOR
 from app.appearance.icon.config import Name, State, Type
@@ -24,8 +25,11 @@ class IconMixin:
         self._type = type
         self._icons: dict[State, QIcon] = {}
         self._state_overrides: dict[State, str] = {}
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
-        self.setIconSize(self._icon_spec.size.value)
+        # Only set default size if no custom size is already set
+        if not hasattr(self, '_custom_icon_size') or self._custom_icon_size is None:
+            self.setIconSize(self._icon_spec.size.value)
 
         IconLoader.register(self)
 
@@ -89,7 +93,7 @@ class IconMixin:
     def _resolve_color_for_state(self, state: State) -> str:
         """Resolve the color for a given state based on overrides or button type."""
         palette = IconLoader.get_palette()
-        
+
         # Check for state override first
         if hasattr(self, '_state_overrides') and state in self._state_overrides:
             palette_role = self._state_overrides[state]
@@ -97,7 +101,7 @@ class IconMixin:
             # Fall back to Type defaults
             state_colors = self._type.state_map
             palette_role = state_colors.get(state, "on_surface")
-        
+
         return palette.get(palette_role, FALLBACK_COLOR)
 
     def refresh_theme(self, palette: dict) -> None:
@@ -114,7 +118,7 @@ class IconMixin:
             icon = SVGLoader.load(
                 file_path=self._icon_spec.name.path,
                 color=color,
-                size=self._icon_spec.size.value,
+                size=render_size,
                 as_icon=True
             )
             self._icons[state] = icon

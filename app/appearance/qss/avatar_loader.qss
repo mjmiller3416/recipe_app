@@ -6,7 +6,6 @@
 #AvatarEditButton {
     background-color: {surface_variant};
     border: 2px solid {outline};
-    border-radius: 15px; /* half of width/height for circular button */
-    margin: 10px;
+    border-radius: 10px; /* half of width/height for circular button */
     color: {on_surface_variant};
 }

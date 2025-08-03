@@ -42,7 +42,7 @@ class Dashboard(QWidget):
         # add test button with icon
         self.btn = Button("Test Button", Type.PRIMARY)
         self.btn.setIcon(Name.SEARCH)
-        self.btn.adjustSize()
+        self.btn.setCustomIconSize(60, 60)
 
         self.layout.addWidget(self.btn)
 

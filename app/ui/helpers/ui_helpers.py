@@ -6,13 +6,64 @@ Helper functions for creating UI components in PySide6.
 from typing import Iterable, Union
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QObject, QTimer, QEvent
 from PySide6.QtGui import QGuiApplication
-# ── Functions ───────────────────────────────────────────────────────────────────
-from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
-                               QLayout, QSizePolicy, QVBoxLayout, QWidget)
+
+from PySide6.QtWidgets import (
+    QFrame, QGridLayout, QHBoxLayout, QLabel,
+    QLayout, QSizePolicy, QVBoxLayout, QWidget,
+)
+
+# ── Corner Anchor Util ───────────────────────────────────────────────────────────────────────
+class CornerAnchor(QObject):
+    def __init__(self, anchor_widget, target_widget,
+                 corner="bottom-left", x_offset=0, y_offset=0):
+        super().__init__()
+        self.anchor = anchor_widget
+        self.target = target_widget
+        self.corner = corner
+        self.x_offset = x_offset
+        self.y_offset = y_offset
+
+        # watch for resize events on anchor's parent
+        self.anchor.parent().installEventFilter(self)
+
+        # delay the initial position update until layout is applied
+        QTimer.singleShot(0, self.update_position)
+
+        # make sure the target floats above
+        self.target.raise_()
+
+    def update_position(self):
+        anchor_pos = self.anchor.mapToParent(self.anchor.rect().topLeft())
+        anchor_size = self.anchor.size()
+        target_size = self.target.size()
+
+        match self.corner:
+            case "top-left":
+                x = anchor_pos.x()
+                y = anchor_pos.y()
+            case "top-right":
+                x = anchor_pos.x() + anchor_size.width() - target_size.width()
+                y = anchor_pos.y()
+            case "bottom-left":
+                x = anchor_pos.x()
+                y = anchor_pos.y() + anchor_size.height() - target_size.height()
+            case "bottom-right":
+                x = anchor_pos.x() + anchor_size.width() - target_size.width()
+                y = anchor_pos.y() + anchor_size.height() - target_size.height()
+            case _:
+                raise ValueError(f"Unsupported corner: {self.corner}")
+
+        self.target.move(x + self.x_offset, y + self.y_offset)
+
+    def eventFilter(self, obj, event):
+        if obj == self.anchor.parent() and event.type() == QEvent.Resize:
+            QTimer.singleShot(0, self.update_position)
+        return super().eventFilter(obj, event)
 
 
+# ── Helper Functions ─────────────────────────────────────────────────────────────────────────
 def center_on_screen(self):
         """Centers the window on the screen."""
         screen = QGuiApplication.primaryScreen()
@@ -137,11 +188,10 @@ def make_overlay(base_widget: QWidget,
 
     # put the base in cell (0,0)
     grid.addWidget(base_widget, 0, 0)
-    
+
     # wrap the overlay in its own widget to get padding
     pad = QWidget()
     pad.setObjectName("OverlayPadding")
-    #pad.setStyleSheet("background:transparent;")
     pad.setAttribute(Qt.WA_TranslucentBackground)
     vlyt = QVBoxLayout(pad)
     vlyt.setContentsMargins(*margins)
