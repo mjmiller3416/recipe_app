@@ -38,7 +38,7 @@ class BaseIcon:
         self._custom_size = None
         self._custom_color = None
 
-        # Default to spec size
+        # default to spec size
         self._current_size = self._icon_spec.size.value
 
     def setSize(self, width: int, height: int):
@@ -48,8 +48,8 @@ class BaseIcon:
             width (int): Width in pixels.
             height (int): Height in pixels.
         """
-        # Validate size bounds
-        width = max(1, min(width, 512))  # Reasonable limits
+        # validate size bounds
+        width = max(1, min(width, 512))  # reasonable limits
         height = max(1, min(height, 512))
 
         self._custom_size = QSize(width, height)
@@ -80,7 +80,7 @@ class BaseIcon:
             if self._custom_color.startswith("#"):
                 return self._custom_color
             else:
-                # It's a palette role - subclasses should handle this
+                # it's a palette role - subclasses should handle this
                 return FALLBACK_COLOR
         return FALLBACK_COLOR
 
@@ -116,13 +116,13 @@ class ThemedIcon(BaseIcon):
         """
         super().__init__(icon_enum)
 
-        # Callback for when theme changes - set by owner widget
+        # callback for when theme changes - set by owner widget
         self._refresh_callback = None
 
-        # Debounce timer for theme updates
+        # debounce timer for theme updates
         self._refresh_timer = None
 
-        # Register for theme updates
+        # register for theme updates
         IconLoader.register(self)
 
     def __del__(self):
@@ -130,7 +130,7 @@ class ThemedIcon(BaseIcon):
         try:
             IconLoader.unregister(self)
         except:
-            pass  # IconLoader might already be destroyed
+            pass  # iconLoader might already be destroyed
 
     def set_refresh_callback(self, callback):
         """Set callback function to call when theme refreshes.
@@ -149,7 +149,7 @@ class ThemedIcon(BaseIcon):
         Args:
             palette (dict[str, str]): The current color map from ThemeManager.
         """
-        # Debounce rapid theme changes
+        # debounce rapid theme changes
         if self._refresh_timer:
             self._refresh_timer.stop()
 
@@ -168,21 +168,21 @@ class ThemedIcon(BaseIcon):
     def setSize(self, width: int, height: int):
         """Override to ensure theme refreshes are respected when size changes."""
         super().setSize(width, height)
-        # Trigger immediate update via callback
+        # trigger immediate update via callback
         if self._refresh_callback:
             self._refresh_callback()
 
     def setColor(self, color: str):
         """Override to update icon immediately with new theme role or static color."""
         super().setColor(color)
-        # Trigger immediate update via callback
+        # trigger immediate update via callback
         if self._refresh_callback:
             self._refresh_callback()
 
     def clearColor(self):
         """Clear any override and fallback to default color role."""
         super().clearColor()
-        # Trigger immediate update via callback
+        # trigger immediate update via callback
         if self._refresh_callback:
             self._refresh_callback()
 
@@ -192,11 +192,11 @@ class ThemedIcon(BaseIcon):
             if self._custom_color.startswith("#"):
                 return self._custom_color
             else:
-                # It's a palette role
+                # it's a palette role
                 palette = IconLoader.get_palette()
                 return palette.get(self._custom_color, FALLBACK_COLOR)
         else:
-            # Use default theme color
+            # use default theme color
             palette = IconLoader.get_palette()
             return palette.get("on_surface", FALLBACK_COLOR)
 
@@ -237,18 +237,18 @@ class Icon(QLabel):
         """
         super().__init__(parent)
 
-        # Initialize ThemedIcon functionality via composition
+        # initialize ThemedIcon functionality via composition
         self._themed_icon = ThemedIcon(icon_enum)
 
-        # Set callback so ThemedIcon can update this widget when theme changes
+        # set callback so ThemedIcon can update this widget when theme changes
         self._themed_icon.set_refresh_callback(self._render_icon)
 
-        # Set up the widget
+        # set up the widget
         self.setFixedSize(self._themed_icon._icon_spec.size.value)
         self.setStyleSheet("background-color: transparent;")
         self.setObjectName(self._themed_icon._icon_spec.name.value)
 
-        # Initial render
+        # initial render
         self._render_icon()
 
     def _render_icon(self):
@@ -257,7 +257,7 @@ class Icon(QLabel):
         color = self._themed_icon._get_color()
 
         try:
-            # Load and set the pixmap
+            # load and set the pixmap
             pixmap = SVGLoader.load(
                 file_path=self._themed_icon._icon_spec.name.path,
                 color=color,
@@ -303,34 +303,34 @@ class StateIcon(QWidget):
         """
         super().__init__()
 
-        # Initialize ThemedIcon functionality via composition
+        # initialize ThemedIcon functionality via composition
         self._themed_icon = ThemedIcon(icon_enum)
 
-        # Set callback so ThemedIcon can update this widget when theme changes
+        # set callback so ThemedIcon can update this widget when theme changes
         self._themed_icon.set_refresh_callback(self._on_theme_refresh)
 
         self._type = type
         self._current_state = State.DEFAULT
 
-        # Separate custom colors from state overrides (fixes edge case)
-        self._global_custom_color = None  # Global custom color (like Icon class)
-        self._state_overrides = {}  # Per-state color overrides
+        # separate custom colors from state overrides (fixes edge case)
+        self._global_custom_color = None  # global custom color (like Icon class)
+        self._state_overrides = {}  # per-state color overrides
 
-        # Set up widget
+        # set up widget
         self.setFixedSize(self._themed_icon._icon_spec.size.value)
         self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
-        # Cache for rendered pixmaps by state
+        # cache for rendered pixmaps by state
         self._state_pixmaps = {}
 
-        # Internal label for displaying pixmaps
+        # internal label for displaying pixmaps
         self._label = QLabel(self)
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self._label)
         self._label.setAlignment(Qt.AlignCenter)
 
-        # Initial render
+        # initial render
         self._render_needed_states()
         self._update_display()
 
@@ -399,7 +399,7 @@ class StateIcon(QWidget):
         self._render_needed_states()
         self._update_display()
 
-    # Legacy API compatibility - delegates to new methods
+    # legacy API compatibility - delegates to new methods
     def setStateDefault(self, color_role: str):
         """Legacy: Override the color role for default state."""
         self.setStateColor(State.DEFAULT, color_role)
@@ -432,7 +432,7 @@ class StateIcon(QWidget):
         """
         if state != self._current_state:
             self._current_state = state
-            # Ensure the new state is rendered if needed
+            # ensure the new state is rendered if needed
             if state not in self._state_pixmaps:
                 self._render_state(state)
             self._update_display()
@@ -458,7 +458,7 @@ class StateIcon(QWidget):
 
         if new_state != self._current_state:
             self._current_state = new_state
-            # Ensure the new state is rendered if needed
+            # ensure the new state is rendered if needed
             if new_state not in self._state_pixmaps:
                 self._render_state(new_state)
             self._update_display()
@@ -474,19 +474,19 @@ class StateIcon(QWidget):
         palette = IconLoader.get_palette()
 
         if state in self._state_overrides:
-            # State-specific override takes highest priority
+            # state-specific override takes highest priority
             palette_role = self._state_overrides[state]
             return palette.get(palette_role, FALLBACK_COLOR)
 
         elif self._global_custom_color:
-            # Global custom color applies to all states (unless overridden)
+            # global custom color applies to all states (unless overridden)
             if self._global_custom_color.startswith("#"):
                 return self._global_custom_color
             else:
                 return palette.get(self._global_custom_color, FALLBACK_COLOR)
 
         else:
-            # Fall back to Type defaults
+            # fall back to Type defaults
             state_colors = self._type.state_map
             palette_role = state_colors.get(state, "on_surface")
             return palette.get(palette_role, FALLBACK_COLOR)
@@ -509,19 +509,19 @@ class StateIcon(QWidget):
 
     def _render_needed_states(self):
         """Render only the states that might actually be used (performance optimization)."""
-        # Always render these base states
+        # always render these base states
         base_states = [State.DEFAULT, State.HOVER, State.DISABLED]
 
-        # Only render CHECKED if parent is checkable (if we have a parent)
+        # only render CHECKED if parent is checkable (if we have a parent)
         if hasattr(self, 'parent') and self.parent():
             parent = self.parent()
             if hasattr(parent, 'isCheckable') and parent.isCheckable():
                 base_states.append(State.CHECKED)
         else:
-            # If no parent context, render CHECKED just in case
+            # if no parent context, render CHECKED just in case
             base_states.append(State.CHECKED)
 
-        # Clear cache and render needed states
+        # clear cache and render needed states
         self._state_pixmaps.clear()
         for state in base_states:
             self._render_state(state)
@@ -533,11 +533,11 @@ class StateIcon(QWidget):
         if self._current_state in self._state_pixmaps:
             pixmap = self._state_pixmaps[self._current_state]
         elif State.DEFAULT in self._state_pixmaps:
-            # Fallback to DEFAULT if current state isn't rendered
+            # fallback to DEFAULT if current state isn't rendered
             pixmap = self._state_pixmaps[State.DEFAULT]
             DebugLogger.log(f"StateIcon falling back to DEFAULT state for {self._current_state.name}", "debug")
         else:
-            # Last resort - render on demand
+            # last resort - render on demand
             DebugLogger.log(f"StateIcon rendering {self._current_state.name} on demand", "debug")
             self._render_state(self._current_state)
             pixmap = self._state_pixmaps.get(self._current_state)
@@ -547,24 +547,25 @@ class StateIcon(QWidget):
 
     def _on_theme_refresh(self):
         """Called when theme changes - clear cache and re-render states."""
-        # Clear old pixmaps to free memory
+        # clear old pixmaps to free memory
         self._state_pixmaps.clear()
 
-        # Re-render needed states and update display
+        # re-render needed states and update display
         self._render_needed_states()
         self._update_display()
+
+    def sizeHint(self) -> QSize:
+        """Return the preferred size for this StateIcon widget."""
+        return self._themed_icon._current_size
 
     def setSize(self, width: int, height: int):
         """Override to update widget size and re-render."""
         self._themed_icon.setSize(width, height)
         self.setFixedSize(self._themed_icon._current_size)
-        # Theme icon size change will trigger callback, but let's be explicit
+        # theme icon size change will trigger callback, but let's be explicit
         self._render_needed_states()
         self._update_display()
 
     def objectName(self) -> str:
         """Return object name for IconLoader protocol."""
         return super().objectName()
-
-    # Note: Removed enterEvent/leaveEvent to avoid conflicts with parent button handling
-    # Parent buttons should control state via autoDetectState() calls

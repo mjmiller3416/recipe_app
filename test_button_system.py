@@ -113,13 +113,10 @@ class ButtonTestWindow(QWidget):
         size_row = QHBoxLayout()
 
         self.size_small = Button("Small", Type.PRIMARY, Name.SETTINGS)
-        self.size_small.setButtonSize(80, 25)
 
         self.size_medium = Button("Medium", Type.SECONDARY, Name.SETTINGS)
-        self.size_medium.setButtonSize(120, 35)
 
         self.size_large = Button("Large", Type.DEFAULT, Name.SETTINGS)
-        self.size_large.setButtonSize(160, 45)
 
         size_row.addWidget(self.size_small)
         size_row.addWidget(self.size_medium)
@@ -133,12 +130,15 @@ class ButtonTestWindow(QWidget):
         icon_size_row = QHBoxLayout()
 
         self.icon_small = ToolButton(Name.HEART, Type.PRIMARY)
+        self.icon_small.setCheckable(True)
         self.icon_small.setIconSize(12, 12)
 
         self.icon_medium = ToolButton(Name.HEART, Type.PRIMARY)
+        self.icon_medium.setCheckable(True)
         self.icon_medium.setIconSize(24, 24)
 
         self.icon_large = ToolButton(Name.HEART, Type.PRIMARY)
+        self.icon_large.setCheckable(True)
         self.icon_large.setIconSize(48, 48)
 
         icon_size_row.addWidget(QLabel("12px"))

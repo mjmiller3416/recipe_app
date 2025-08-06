@@ -10,10 +10,8 @@ for theme-aware icons while leveraging Qt's native button behavior.
 from PySide6.QtCore import QSize, QEvent, Qt
 from PySide6.QtWidgets import QPushButton, QToolButton, QHBoxLayout, QLabel, QSizePolicy
 
-from app.appearance.icon.config import Name, Type, State
+from app.appearance.icon.config import Name, Type
 from app.appearance.icon.icon import StateIcon
-
-from dev_tools import DebugLogger
 
 
 # ── Button ───────────────────────────────────────────────────────────────────────────────────
@@ -40,36 +38,36 @@ class Button(QPushButton):
         self.state_icon = None
         self._has_custom_button_size = False
 
-        # Setup layout if we have an icon
+        # setup layout if we have an icon
         if icon:
             self._setup_layout_with_icon(label, icon)
-        
-        # Connect state change signals for icon sync
+
+        # connect state change signals for icon sync
         self.toggled.connect(self._sync_icon_state)
 
     def _setup_layout_with_icon(self, label: str, icon: Name):
         """Setup layout with icon and text."""
-        # Clear the default text since we'll use a layout
+        # clear the default text since we'll use a layout
         self.setText("")
-        
-        # Create layout
+
+        # create layout
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(8, 4, 8, 4)
+        layout.setContentsMargins(8, 8, 8, 8)
         layout.setSpacing(self._icon_spacing)
 
-        # Add icon
+        # add icon
         self.state_icon = StateIcon(icon, self._type)
         layout.addWidget(self.state_icon)
 
-        # Add label
+        # add label
         self.label = QLabel(label)
         self.label.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.label)
 
-        # Set proper size policy to allow expansion
+        # set proper size policy to allow expansion
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        
-        # Initialize state sync
+
+        # initialize state sync
         self._sync_icon_state()
 
     def _sync_icon_state(self):
@@ -104,7 +102,21 @@ class Button(QPushButton):
             width (int): Button width in pixels.
             height (int): Button height in pixels.
         """
-        self.setFixedSize(width, height)
+        # calculate minimum required size to prevent content clipping
+        if self.layout():
+            layout_hint = self.layout().sizeHint()
+            margins = self.contentsMargins()
+            min_width = layout_hint.width() + margins.left() + margins.right()
+            min_height = layout_hint.height() + margins.top() + margins.bottom()
+
+            # use the larger of requested size or minimum required size
+            final_width = max(width, min_width)
+            final_height = max(height, min_height)
+
+            self.setFixedSize(final_width, final_height)
+        else:
+            self.setFixedSize(width, height)
+
         self._has_custom_button_size = True
 
     def setIconSize(self, width: int, height: int):
@@ -116,19 +128,19 @@ class Button(QPushButton):
         """
         if self.state_icon:
             self.state_icon.setSize(width, height)
-            # If no custom button size is set, allow button to resize automatically
+            # if no custom button size is set, allow button to resize automatically
             if not self._has_custom_button_size:
-                # Clear any fixed size constraints and let the layout determine size
+                # clear any fixed size constraints and let the layout determine size
                 self.setMinimumSize(0, 0)
                 self.setMaximumSize(16777215, 16777215)  # Qt's default max size
                 self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-                # Force layout to recalculate
+                # force layout to recalculate
                 layout = self.layout()
                 if layout:
                     layout.invalidate()
                     layout.activate()
             self.updateGeometry()
-            # Force a repaint to ensure visual update
+            # force a repaint to ensure visual update
             self.update()
 
     def setIconSpacing(self, pixels: int):
@@ -149,10 +161,10 @@ class Button(QPushButton):
             text (str): New label to display.
         """
         if hasattr(self, 'label') and self.label:
-            # Button with icon - update label widget
+            # button with icon - update label widget
             self.label.setText(text)
         else:
-            # Text-only button - use native setText
+            # text-only button - use native setText
             super().setText(text)
 
     def text(self) -> str:
@@ -173,14 +185,14 @@ class Button(QPushButton):
             icon (Name): The icon enum to display.
         """
         current_text = self.text()
-        
+
         if self.state_icon:
-            # Replace existing icon
+            # replace existing icon
             layout = self.layout()
             layout.removeWidget(self.state_icon)
             self.state_icon.deleteLater()
 
-        # Create new icon and setup layout if needed
+        # create new icon and setup layout if needed
         if not self.layout():
             self._setup_layout_with_icon(current_text, icon)
         else:
@@ -188,7 +200,7 @@ class Button(QPushButton):
             self.layout().insertWidget(0, self.state_icon)
             self._sync_icon_state()
 
-    # State override methods for icon
+    # state override methods for icon
     def setStateHover(self, role: str):
         """Override the color role used for the hover state."""
         if self.state_icon:
@@ -217,17 +229,17 @@ class Button(QPushButton):
     def sizeHint(self) -> QSize:
         """Calculate the preferred size for the button based on its contents."""
         if self._has_custom_button_size:
-            return self.size()  # Return the explicitly set size
-        
+            return self.size()  # return the custom size (already adjusted for minimum in setButtonSize)
+
         if self.layout():
-            # Use layout's size hint plus button margins
+            # use layout's size hint plus button margins
             layout_hint = self.layout().sizeHint()
             margins = self.contentsMargins()
             total_width = layout_hint.width() + margins.left() + margins.right()
             total_height = layout_hint.height() + margins.top() + margins.bottom()
             return QSize(total_width, total_height)
         else:
-            # Fall back to QPushButton's default size hint for text-only buttons
+            # fall back to QPushButton's default size hint for text-only buttons
             return super().sizeHint()
 
     def icon(self) -> StateIcon:
@@ -261,7 +273,7 @@ class ToolButton(QToolButton):
         self.state_icon = None
         self._has_custom_button_size = False
 
-        # Setup layout with StateIcon
+        # setup layout with StateIcon
         layout = QHBoxLayout(self)
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(0)
@@ -269,13 +281,16 @@ class ToolButton(QToolButton):
         self.state_icon = StateIcon(icon, type)
         layout.addWidget(self.state_icon)
 
-        # Set proper size policy to allow the button to size itself naturally
+        # Use Preferred policy to allow hover effects while resisting layout stretching
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-
-        # Connect state change signals
-        self.toggled.connect(self._sync_icon_state)
         
-        # Initialize state sync
+        # Override Qt's default checkable button styling that adds padding
+        self.setStyleSheet("QToolButton { padding: 0px; margin: 0px; }")
+
+        # connect state change signals
+        self.toggled.connect(self._sync_icon_state)
+
+        # initialize state sync
         self._sync_icon_state()
 
     def _sync_icon_state(self):
@@ -310,7 +325,21 @@ class ToolButton(QToolButton):
             width (int): Button width in pixels.
             height (int): Button height in pixels.
         """
-        self.setFixedSize(width, height)
+        # calculate minimum required size to prevent content clipping
+        if self.layout():
+            layout_hint = self.layout().sizeHint()
+            margins = self.contentsMargins()
+            min_width = layout_hint.width() + margins.left() + margins.right()
+            min_height = layout_hint.height() + margins.top() + margins.bottom()
+
+            # use the larger of requested size or minimum required size
+            final_width = max(width, min_width)
+            final_height = max(height, min_height)
+
+            self.setFixedSize(final_width, final_height)
+        else:
+            self.setFixedSize(width, height)
+
         self._has_custom_button_size = True
 
     def setIconSize(self, width: int, height: int):
@@ -322,19 +351,28 @@ class ToolButton(QToolButton):
         """
         if self.state_icon:
             self.state_icon.setSize(width, height)
-            # If no custom button size is set, allow button to resize automatically
+            # if no custom button size is set, auto-resize ToolButton to fit icon exactly
             if not self._has_custom_button_size:
-                # Clear any fixed size constraints and let the layout determine size
-                self.setMinimumSize(0, 0)
-                self.setMaximumSize(16777215, 16777215)  # Qt's default max size
-                self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-                # Force layout to recalculate
+                # get the actual size needed by asking the layout
                 layout = self.layout()
                 if layout:
+                    # force the StateIcon to update its size first
                     layout.invalidate()
                     layout.activate()
+
+                    # get the layout's size hint (which should include the StateIcon's size)
+                    layout_size = layout.sizeHint()
+                    margins = self.contentsMargins()
+
+                    new_width = layout_size.width() + margins.left() + margins.right()
+                    new_height = layout_size.height() + margins.top() + margins.bottom()
+
+                    # set the calculated size using min/max to preserve hover effects
+                    self.setMinimumSize(new_width, new_height)
+                    self.setMaximumSize(new_width, new_height)
+                    self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
             self.updateGeometry()
-            # Force a repaint to ensure visual update
+            # force a repaint to ensure visual update
             self.update()
 
     def setIcon(self, icon: Name):
@@ -344,17 +382,17 @@ class ToolButton(QToolButton):
             icon (Name): The new icon to display.
         """
         if self.state_icon:
-            # Replace existing icon
+            # replace existing icon
             layout = self.layout()
             layout.removeWidget(self.state_icon)
             self.state_icon.deleteLater()
 
-        # Create new icon
+        # create new icon
         self.state_icon = StateIcon(icon, self._type)
         self.layout().addWidget(self.state_icon)
         self._sync_icon_state()
 
-    # State override methods for icon
+    # state override methods for icon
     def setStateHover(self, role: str):
         """Override the color role used for the hover state."""
         if self.state_icon:
@@ -380,20 +418,49 @@ class ToolButton(QToolButton):
         if self.state_icon:
             self.state_icon.clearAllStateOverrides()
 
+    def setCheckable(self, checkable: bool):
+        """Override setCheckable to handle sizing issues with checkable tool buttons.
+        
+        Args:
+            checkable (bool): Whether the button should be checkable.
+        """
+        super().setCheckable(checkable)
+        
+        if checkable and self.state_icon and not self._has_custom_button_size:
+            # Apply proper sizing when button becomes checkable
+            # This ensures checkable buttons without explicit setIconSize() calls get proper sizing
+            layout = self.layout()
+            if layout:
+                # Force layout update
+                layout.invalidate()
+                layout.activate()
+                
+                # Get the actual required size
+                layout_size = layout.sizeHint()
+                margins = self.contentsMargins()
+                
+                required_width = layout_size.width() + margins.left() + margins.right()
+                required_height = layout_size.height() + margins.top() + margins.bottom()
+                
+                # Set exact size to prevent Qt from adding extra padding for checkable buttons
+                self.setMinimumSize(required_width, required_height)
+                self.setMaximumSize(required_width, required_height)
+                self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+
     def sizeHint(self) -> QSize:
         """Calculate the preferred size for the tool button based on its icon."""
         if self._has_custom_button_size:
-            return self.size()  # Return the explicitly set size
-        
+            return self.size()  # return the custom size (already adjusted for minimum in setButtonSize)
+
         if self.layout() and self.state_icon:
-            # Use layout's size hint plus button margins
+            # use layout's size hint plus button margins
             layout_hint = self.layout().sizeHint()
             margins = self.contentsMargins()
             total_width = layout_hint.width() + margins.left() + margins.right()
             total_height = layout_hint.height() + margins.top() + margins.bottom()
             return QSize(total_width, total_height)
         else:
-            # Fall back to QToolButton's default size hint
+            # fall back to QToolButton's default size hint
             return super().sizeHint()
 
     def icon(self) -> StateIcon:
