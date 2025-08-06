@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QFrame, QVBoxLayout
 
 from app.appearance.icon import Name, Type
 from app.ui.components.widgets import Button
-from app.ui.components.widgets.tool_button import ToolButton
+from app.ui.components.widgets.button import ToolButton
 
 from ..constants import LAYOUT_SIZE, LayoutSize
 

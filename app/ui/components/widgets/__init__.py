@@ -8,7 +8,7 @@ from .dropdown_menu import DropdownMenu
 from .dropdown_menu import DropdownMenu
 from .filtered_dropdown_menu import FilteredDropdownMenu
 from .rounded_image import RoundedImage
-from .tool_button import ToolButton
+from .button import ToolButton
 
 __all__ = [
     "Button",
