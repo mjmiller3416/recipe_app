@@ -45,8 +45,7 @@ class EmptyState:
         lyt.setContentsMargins(0, 0, 0, 0)
 
         # add meal button
-        btn_add = ToolButton(Type.DEFAULT)
-        btn_add.setIcon(Name.ADD_RECIPES)
+        btn_add = ToolButton(Name.ADD_RECIPES, Type.DEFAULT)
         btn_add.setObjectName("AddMealButton") # slot looks for this
         btn_add.setCursor(Qt.PointingHandCursor)
         lyt.addWidget(btn_add, 0, Qt.AlignCenter) # add to layout

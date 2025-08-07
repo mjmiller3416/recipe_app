@@ -23,6 +23,7 @@ class Color(Enum):
     DEEP_PURPLE = "#673AB7"
     BROWN       = "#795548"
     GRAY        = "#607D8B"
+    FOJI_GREEN  = "#00CD84"
 
 class Mode(Enum):
     LIGHT = "light"

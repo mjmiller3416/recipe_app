@@ -12,6 +12,8 @@ from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
+from app.appearance import Theme
+from app.appearance.config import Qss
 from app.appearance.icon import Icon
 from app.appearance.icon.config import Name, Type
 from app.ui.components.layout import Separator
@@ -121,9 +123,8 @@ class RecipeCard:
 
         # favorite button - choose initial icon based on favorite state
         initial_icon = Name.HEART if self.recipe.is_favorite else Name.HEART_FILLED
-        btn_fav = ToolButton(type=Type.DEFAULT)
-        btn_fav.setIcon(initial_icon)
-        btn_fav.setButtonCheckable(True)
+        btn_fav = ToolButton(initial_icon, Type.DEFAULT)
+        btn_fav.setCheckable(True)
         btn_fav.setCursor(Qt.PointingHandCursor)
         btn_fav.setChecked(bool(self.recipe.is_favorite)) # set initial state
         btn_fav.toggled.connect(
