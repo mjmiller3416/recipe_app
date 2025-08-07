@@ -121,7 +121,7 @@ class RecipeCard:
 
         # favorite button - choose initial icon based on favorite state
         initial_icon = Name.HEART if self.recipe.is_favorite else Name.HEART_FILLED
-        btn_fav = ToolButton(Type.DEFAULT)
+        btn_fav = ToolButton(type=Type.DEFAULT)
         btn_fav.setIcon(initial_icon)
         btn_fav.setButtonCheckable(True)
         btn_fav.setCursor(Qt.PointingHandCursor)

@@ -14,7 +14,7 @@ from app.appearance.config import Qss
 from app.appearance.icon.config import Name
 from app.appearance.animation import Animator
 from app.ui.components.images import AvatarLoader
-from app.ui.components.navigation.nav_button import NavButton
+from ..widgets.button import Button
 from app.ui.helpers.ui_helpers import create_fixed_wrapper
 from dev_tools import DebugLogger
 
@@ -60,7 +60,7 @@ class Sidebar(QWidget):
         self.btn_exit = self._create_nav_button("Exit", is_checkable=False)
 
     @property
-    def buttons(self) -> dict[str, NavButton]:
+    def buttons(self) -> dict[str, Button]:
         return {
             "btn_dashboard": self.btn_dashboard,
             "btn_meal_planner": self.btn_meal_planner,
@@ -89,7 +89,7 @@ class Sidebar(QWidget):
         self._is_expanded = not self._is_expanded
 
     # ── Private Methods ──
-    def _create_nav_button(self, label: str, is_checkable: bool = True) -> NavButton:
+    def _create_nav_button(self, label: str, is_checkable: bool = True) -> Button:
         """
         Create a navigation button using the AppIcon enum for icon specification.
         """
@@ -98,13 +98,12 @@ class Sidebar(QWidget):
         app_icon = Name[enum_key]
         object_name = f"{label.replace(' ', '_')}Button"
 
-        button = NavButton(
-            text=label,
-            name=app_icon,
-            checkable=is_checkable,
-            height=82,
+        button = Button(
+            label=label,
+            icon=app_icon,
         )
         button.setObjectName(object_name)
+        button.setCheckable(is_checkable)
         self.mainLayout.addWidget(button)
 
         if is_checkable:

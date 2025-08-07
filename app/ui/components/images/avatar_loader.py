@@ -74,7 +74,7 @@ class AvatarLoader(QWidget):
             parent=self
         )
         self.edit_button.setIcon(Name.EDIT)
-        self.edit_button.setCustomIconSize(20, 20)
+        self.edit_button.setIconSize(20, 20)
         self.edit_button.setStateDefault("primary")
         self.edit_button.setObjectName("AvatarEditButton")
         # self.edit_button.setVisible(True)  # hidden until hover

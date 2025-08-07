@@ -45,12 +45,24 @@ class BaseIcon:
         """Set a custom rendering size for the icon.
 
         Args:
-            width (int): Width in pixels.
-            height (int): Height in pixels.
+            width (int): Width in pixels (1-512).
+            height (int): Height in pixels (1-512).
+            
+        Raises:
+            TypeError: If width or height are not integers.
+            ValueError: If width or height are outside valid range.
         """
-        # validate size bounds
+        # Validate input types
+        if not isinstance(width, int) or not isinstance(height, int):
+            raise TypeError(f"Size parameters must be integers, got width={type(width)}, height={type(height)}")
+        
+        # Validate and clamp size bounds with warnings
+        original_width, original_height = width, height
         width = max(1, min(width, 512))  # reasonable limits
         height = max(1, min(height, 512))
+        
+        if width != original_width or height != original_height:
+            DebugLogger.log(f"Size clamped from ({original_width}, {original_height}) to ({width}, {height})", "warning")
 
         self._custom_size = QSize(width, height)
         self._current_size = self._custom_size
@@ -119,8 +131,10 @@ class ThemedIcon(BaseIcon):
         # callback for when theme changes - set by owner widget
         self._refresh_callback = None
 
-        # debounce timer for theme updates
-        self._refresh_timer = None
+        # debounce timer for theme updates (reused to prevent memory accumulation)
+        self._refresh_timer = QTimer()
+        self._refresh_timer.setSingleShot(True)
+        self._refresh_timer.timeout.connect(self._do_theme_refresh)
 
         # register for theme updates
         IconLoader.register(self)
@@ -128,9 +142,20 @@ class ThemedIcon(BaseIcon):
     def __del__(self):
         """Cleanup when object is destroyed."""
         try:
+            # Stop and cleanup timer first
+            if hasattr(self, '_refresh_timer') and self._refresh_timer:
+                self._refresh_timer.stop()
+                self._refresh_timer.deleteLater()
+            
+            # Unregister from IconLoader
             IconLoader.unregister(self)
-        except:
-            pass  # iconLoader might already be destroyed
+        except (AttributeError, RuntimeError, TypeError) as e:
+            # IconLoader might already be destroyed during application shutdown
+            # or object might be in an invalid state
+            DebugLogger.log(f"ThemedIcon cleanup warning: {e}", "debug")
+        except Exception as e:
+            # Log any unexpected exceptions for debugging
+            DebugLogger.log(f"Unexpected error during ThemedIcon cleanup: {e}", "warning")
 
     def set_refresh_callback(self, callback):
         """Set callback function to call when theme refreshes.
@@ -149,13 +174,10 @@ class ThemedIcon(BaseIcon):
         Args:
             palette (dict[str, str]): The current color map from ThemeManager.
         """
-        # debounce rapid theme changes
-        if self._refresh_timer:
+        # debounce rapid theme changes using reused timer
+        if self._refresh_timer.isActive():
             self._refresh_timer.stop()
-
-        self._refresh_timer = QTimer()
-        self._refresh_timer.setSingleShot(True)
-        self._refresh_timer.timeout.connect(self._do_theme_refresh)
+        
         self._refresh_timer.start(50)  # 50ms debounce
 
     def _do_theme_refresh(self):
@@ -351,7 +373,24 @@ class StateIcon(QWidget):
 
         Args:
             color (str): Hex color or theme role to use for all states.
+            
+        Raises:
+            TypeError: If color is not a string.
+            ValueError: If color is empty.
         """
+        # Validate color parameter
+        if not isinstance(color, str):
+            raise TypeError(f"Color must be a string, got {type(color)}")
+        
+        if not color.strip():
+            raise ValueError("Color cannot be empty")
+        
+        # Check if color role exists in palette (warning only)
+        if not color.startswith("#"):
+            palette = IconLoader.get_palette()
+            if palette and color not in palette:
+                DebugLogger.log(f"Color role '{color}' not found in current palette", "warning")
+        
         self._global_custom_color = color
         self._render_needed_states()
         self._update_display()
@@ -368,7 +407,27 @@ class StateIcon(QWidget):
         Args:
             state (State): Which state to override.
             color_role (str): Theme palette role string.
+            
+        Raises:
+            TypeError: If state is not a State enum.
+            ValueError: If color_role is empty or invalid.
         """
+        # Validate state parameter
+        if not isinstance(state, State):
+            raise TypeError(f"State must be a State enum, got {type(state)}")
+        
+        # Validate color_role parameter
+        if not isinstance(color_role, str):
+            raise TypeError(f"Color role must be a string, got {type(color_role)}")
+        
+        if not color_role.strip():
+            raise ValueError("Color role cannot be empty")
+        
+        # Check if color role exists in palette (warning only)
+        palette = IconLoader.get_palette()
+        if palette and color_role not in palette and not color_role.startswith("#"):
+            DebugLogger.log(f"Color role '{color_role}' not found in current palette", "warning")
+        
         self._state_overrides[state] = color_role
         self._render_state(state)
         if self._current_state == state:
@@ -379,12 +438,21 @@ class StateIcon(QWidget):
 
         Args:
             state (State): Which state to clear.
+            
+        Raises:
+            TypeError: If state is not a State enum.
         """
+        # Validate state parameter
+        if not isinstance(state, State):
+            raise TypeError(f"State must be a State enum, got {type(state)}")
+        
         if state in self._state_overrides:
             del self._state_overrides[state]
             self._render_state(state)
             if self._current_state == state:
                 self._update_display()
+        else:
+            DebugLogger.log(f"No override found for state {state.name}, ignoring clear request", "debug")
 
     def clearAllStateOverrides(self):
         """Clear all state-specific overrides but PRESERVE global custom color."""
@@ -429,7 +497,14 @@ class StateIcon(QWidget):
 
         Args:
             state (State): State to switch to (e.g. HOVER).
+            
+        Raises:
+            TypeError: If state is not a State enum.
         """
+        # Validate state parameter
+        if not isinstance(state, State):
+            raise TypeError(f"State must be a State enum, got {type(state)}")
+        
         if state != self._current_state:
             self._current_state = state
             # ensure the new state is rendered if needed
@@ -466,30 +541,62 @@ class StateIcon(QWidget):
     def _resolve_color_for_state(self, state: State) -> str:
         """Resolve the color for a given state with proper precedence.
 
-        Priority order:
-        1. State-specific override
-        2. Global custom color
-        3. Type-based default
+        Priority order (highest to lowest):
+        1. State-specific override (via setStateColor)
+        2. Global custom color (via setGlobalColor) 
+        3. Type-based default (from Type.state_map)
+        4. Fallback color (safety net)
+
+        Args:
+            state (State): The state to resolve color for
+
+        Returns:
+            str: Resolved hex color string
         """
+        # Validate inputs
+        if not isinstance(state, State):
+            DebugLogger.log(f"Invalid state type: {type(state)}, using DEFAULT", "warning")
+            state = State.DEFAULT
+
         palette = IconLoader.get_palette()
+        if not palette:
+            DebugLogger.log("No palette available, using fallback color", "warning")
+            return FALLBACK_COLOR
 
+        resolved_color = None
+        resolution_source = "unknown"
+
+        # Priority 1: State-specific override
         if state in self._state_overrides:
-            # state-specific override takes highest priority
             palette_role = self._state_overrides[state]
-            return palette.get(palette_role, FALLBACK_COLOR)
+            resolved_color = palette.get(palette_role, FALLBACK_COLOR)
+            resolution_source = f"state override ({palette_role})"
 
+        # Priority 2: Global custom color
         elif self._global_custom_color:
-            # global custom color applies to all states (unless overridden)
             if self._global_custom_color.startswith("#"):
-                return self._global_custom_color
+                resolved_color = self._global_custom_color
+                resolution_source = "global hex color"
             else:
-                return palette.get(self._global_custom_color, FALLBACK_COLOR)
+                resolved_color = palette.get(self._global_custom_color, FALLBACK_COLOR)
+                resolution_source = f"global palette role ({self._global_custom_color})"
 
+        # Priority 3: Type-based default
         else:
-            # fall back to Type defaults
             state_colors = self._type.state_map
             palette_role = state_colors.get(state, "on_surface")
-            return palette.get(palette_role, FALLBACK_COLOR)
+            resolved_color = palette.get(palette_role, FALLBACK_COLOR)
+            resolution_source = f"type default ({palette_role})"
+
+        # Final validation
+        if not resolved_color or not resolved_color.startswith("#"):
+            DebugLogger.log(f"Color resolution failed for {state.name}, using fallback. Source was: {resolution_source}", "warning")
+            resolved_color = FALLBACK_COLOR
+
+        # Debug logging for color resolution (only in debug mode)
+        DebugLogger.log(f"StateIcon color resolved: {state.name} -> {resolved_color} (from {resolution_source})", "debug")
+        
+        return resolved_color
 
     def _render_state(self, state: State):
         """Render a specific state and cache the result."""

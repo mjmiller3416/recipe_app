@@ -432,7 +432,7 @@ def main():
 
     # Initialize theme
     try:
-        Theme.setTheme(Color.TEAL, Mode.LIGHT)
+        Theme.setCustomColorMap("material-theme.json", Mode.DARK)
         print("Theme system initialized successfully")
     except Exception as e:
         print(f"Warning: Could not initialize theme system: {e}")

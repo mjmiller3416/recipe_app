@@ -46,12 +46,9 @@ class Dashboard(QWidget):
             type  = Type.PRIMARY
         )
         self.btn.setIcon(Name.SEARCH)
-        self.btn.setCustomIconSize(20, 20)
+        self.btn.setIconSize(20, 20)
 
         self.layout.addWidget(self.btn)
-
-        self.testNavButton = NavButton(text="Go to Recipes", name=Name.DASHBOARD, height=40, width=200)
-        self.layout.addWidget(self.testNavButton)
 
         # Add stretch to push content to top
         self.layout.addStretch()

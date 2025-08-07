@@ -8,7 +8,7 @@ for theme-aware icons while leveraging Qt's native button behavior.
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, QEvent, Qt
-from PySide6.QtWidgets import QPushButton, QToolButton, QHBoxLayout, QLabel, QSizePolicy
+from PySide6.QtWidgets import QPushButton, QToolButton, QHBoxLayout, QLabel, QSizePolicy, QApplication
 
 from app.appearance.icon.config import Name, Type
 from app.appearance.icon.icon import StateIcon
@@ -32,6 +32,27 @@ def _calculate_button_size(widget, custom_size_width=None, custom_size_height=No
         return max(custom_size_width, min_width), max(custom_size_height, min_height)
     
     return min_width, min_height
+
+
+def _ensure_layout_updated(widget):
+    """Ensure layout calculations are completed synchronously to prevent race conditions.
+    
+    Args:
+        widget: Widget with layout that needs to be synchronized.
+    """
+    layout = widget.layout()
+    if layout:
+        # Force immediate layout calculation
+        layout.invalidate()
+        layout.activate()
+        
+        # Process any pending layout events to ensure consistency
+        QApplication.processEvents()
+        
+        # Verify layout is in expected state
+        if layout.isEmpty():
+            from dev_tools import DebugLogger
+            DebugLogger.log(f"Warning: Layout appears empty after synchronization for {widget.objectName()}", "warning")
 
 
 class _StateIconMixin:
@@ -149,9 +170,20 @@ class Button(QPushButton, _StateIconMixin):
         """Set a fixed size for the entire button widget.
 
         Args:
-            width (int): Button width in pixels.
-            height (int): Button height in pixels.
+            width (int): Button width in pixels (1-2048).
+            height (int): Button height in pixels (1-2048).
+            
+        Raises:
+            TypeError: If width or height are not integers.
         """
+        # Validate input types
+        if not isinstance(width, int) or not isinstance(height, int):
+            raise TypeError(f"Button size parameters must be integers, got width={type(width)}, height={type(height)}")
+        
+        # Validate reasonable bounds
+        if width < 1 or height < 1 or width > 2048 or height > 2048:
+            from dev_tools import DebugLogger
+            DebugLogger.log(f"Button size ({width}, {height}) outside recommended bounds (1-2048)", "warning")
         # calculate minimum required size to prevent content clipping
         if self.layout():
             layout_hint = self.layout().sizeHint()
@@ -173,9 +205,24 @@ class Button(QPushButton, _StateIconMixin):
         """Set the icon's size within the button.
 
         Args:
-            width (int): Icon width in pixels.
-            height (int): Icon height in pixels.
+            width (int): Icon width in pixels (1-512).
+            height (int): Icon height in pixels (1-512).
+            
+        Raises:
+            TypeError: If width or height are not integers.
         """
+        # Validate input types
+        if not isinstance(width, int) or not isinstance(height, int):
+            raise TypeError(f"Icon size parameters must be integers, got width={type(width)}, height={type(height)}")
+        
+        # Validate and clamp size bounds
+        original_width, original_height = width, height
+        width = max(1, min(width, 512))
+        height = max(1, min(height, 512))
+        
+        if width != original_width or height != original_height:
+            from dev_tools import DebugLogger
+            DebugLogger.log(f"Icon size clamped from ({original_width}, {original_height}) to ({width}, {height})", "warning")
         if self.state_icon:
             self.state_icon.setSize(width, height)
             # if no custom button size is set, allow button to resize automatically
@@ -184,11 +231,8 @@ class Button(QPushButton, _StateIconMixin):
                 self.setMinimumSize(0, 0)
                 self.setMaximumSize(16777215, 16777215)  # Qt's default max size
                 self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-                # force layout to recalculate
-                layout = self.layout()
-                if layout:
-                    layout.invalidate()
-                    layout.activate()
+                # ensure layout calculations are synchronized
+                _ensure_layout_updated(self)
             self.updateGeometry()
             # force a repaint to ensure visual update
             self.update()
@@ -368,9 +412,20 @@ class ToolButton(QToolButton, _StateIconMixin):
         """Set a fixed size for the entire button widget.
 
         Args:
-            width (int): Button width in pixels.
-            height (int): Button height in pixels.
+            width (int): Button width in pixels (1-2048).
+            height (int): Button height in pixels (1-2048).
+            
+        Raises:
+            TypeError: If width or height are not integers.
         """
+        # Validate input types
+        if not isinstance(width, int) or not isinstance(height, int):
+            raise TypeError(f"Button size parameters must be integers, got width={type(width)}, height={type(height)}")
+        
+        # Validate reasonable bounds
+        if width < 1 or height < 1 or width > 2048 or height > 2048:
+            from dev_tools import DebugLogger
+            DebugLogger.log(f"Button size ({width}, {height}) outside recommended bounds (1-2048)", "warning")
         # calculate minimum required size to prevent content clipping
         if self.layout():
             layout_hint = self.layout().sizeHint()
@@ -392,9 +447,24 @@ class ToolButton(QToolButton, _StateIconMixin):
         """Set the icon's size within the button.
 
         Args:
-            width (int): Icon width in pixels.
-            height (int): Icon height in pixels.
+            width (int): Icon width in pixels (1-512).
+            height (int): Icon height in pixels (1-512).
+            
+        Raises:
+            TypeError: If width or height are not integers.
         """
+        # Validate input types
+        if not isinstance(width, int) or not isinstance(height, int):
+            raise TypeError(f"Icon size parameters must be integers, got width={type(width)}, height={type(height)}")
+        
+        # Validate and clamp size bounds
+        original_width, original_height = width, height
+        width = max(1, min(width, 512))
+        height = max(1, min(height, 512))
+        
+        if width != original_width or height != original_height:
+            from dev_tools import DebugLogger
+            DebugLogger.log(f"Icon size clamped from ({original_width}, {original_height}) to ({width}, {height})", "warning")
         if self.state_icon:
             self.state_icon.setSize(width, height)
             # if no custom button size is set, auto-resize ToolButton to fit icon exactly
@@ -402,9 +472,8 @@ class ToolButton(QToolButton, _StateIconMixin):
                 # get the actual size needed by asking the layout
                 layout = self.layout()
                 if layout:
-                    # force the StateIcon to update its size first
-                    layout.invalidate()
-                    layout.activate()
+                    # ensure layout calculations are synchronized
+                    _ensure_layout_updated(self)
 
                     # get the layout's size hint (which should include the StateIcon's size)
                     layout_size = layout.sizeHint()
@@ -453,9 +522,8 @@ class ToolButton(QToolButton, _StateIconMixin):
             # This ensures checkable buttons without explicit setIconSize() calls get proper sizing
             layout = self.layout()
             if layout:
-                # Force layout update
-                layout.invalidate()
-                layout.activate()
+                # Ensure layout calculations are synchronized
+                _ensure_layout_updated(self)
                 
                 # Get the actual required size
                 layout_size = layout.sizeHint()
