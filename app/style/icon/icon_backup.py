@@ -1,25 +1,33 @@
-"""app/theme_manager/icon/mixin.py
+"""app/theme_manager/icon/icon.py
 
-This module provides a mixin for QAbstractButton widgets to handle themed icons
-with state management.
+Module providing Icon widget for theme-aware SVG icons.
 
-⚠️ Class is has been moved to app/appearance/icon/icon.py
-and will be removed from this location in future releases ⚠️
+Icon is a QLabel-based widget that renders an SVG icon and adapts
+to theme changes automatically.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QEvent
+from PySide6.QtCore import QSize, QEvent
+from PySide6.QtWidgets import QLabel, QSizePolicy
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QSizePolicy
 
 from app.config import FALLBACK_COLOR
-from app.appearance.icon.config import Name, State, Type
-from app.appearance.icon.loader import IconLoader
-from app.appearance.icon.svg_loader import SVGLoader
+from app.style.icon.config import Name, State, Type
+from app.style.icon.loader import IconLoader
+from app.style.icon.svg_loader import SVGLoader
+
+# ── Icon Base ────────────────────────────────────────────────────────────────────────────────
+class IconBase:
+    # TODO: Base class for Icon and IconMixin to share common logic.
+    # It will handle size, color overrides, and palette management.
+    pass
 
 
 # ── Icon Mixin ───────────────────────────────────────────────────────────────────────────────
 class IconMixin:
+    # TODO: Refactor class name from 'IconMixin' to 'IconState' for improved clarity.
+    # This mixin will provide theme-aware, stateful icon logic to QAbstractButton widgets
+    # It will be used by Button, ToolButton, and NavButton (NavButton may be deprecated).
     """A mixin to provide theme-aware, stateful icon logic to QAbstractButton widgets."""
     def _init_icon(self, icon_enum: Name, type: Type = Type.DEFAULT):
         """Initializes the icon states, caches them, and registers for theme updates."""
@@ -164,3 +172,72 @@ class IconMixin:
         """Handle icon state change on widget state changes. Override in concrete classes to call parent."""
         if event.type() == QEvent.Type.EnabledChange:
             self._update_icon()
+
+
+# ── Icon  ────────────────────────────────────────────────────────────────────────────────────
+class Icon(QLabel):
+    # TODO: Inherit from IconBase
+    """A theme-aware icon widget that renders SVG icons with dynamic sizing and coloring."""
+    def __init__(self, icon: Name, parent=None):
+        """
+        Args:
+            icon (Name): The pre-configured icon enum.
+            parent: The parent widget. Defaults to None.
+        """
+        super().__init__(parent)
+
+        # Store the icon configuration
+        self._icon_enum = icon
+        self._icon_spec = icon.spec
+        self._custom_size = None
+        self._custom_color = None
+
+        # Set up the widget
+        self.setFixedSize(self._icon_spec.size.value)
+        self.setStyleSheet("background-color: transparent;")
+        self.setObjectName(self._icon_spec.name.value)
+
+        # Register for theme updates and render initial icon
+        IconLoader.register(self)
+
+    def setSize(self, width: int, height: int):
+        """Set custom icon size."""
+        self._custom_size = QSize(width, height)
+        self.setFixedSize(self._custom_size)
+        self._render_icon()
+
+    def setColor(self, color: str):
+        """Set custom icon color (hex color or palette role)."""
+        self._custom_color = color
+        self._render_icon()
+
+    def _render_icon(self):
+        """Render the icon with current settings."""
+        # Determine size
+        size = self._custom_size if self._custom_size else self._icon_spec.size.value
+
+        # Determine color
+        if self._custom_color:
+            if self._custom_color.startswith("#"):
+                color = self._custom_color
+            else:
+                # It's a palette role
+                palette = IconLoader.get_palette()
+                color = palette.get(self._custom_color, FALLBACK_COLOR)
+        else:
+            # Use default color
+            palette = IconLoader.get_palette()
+            color = palette.get("on_surface", FALLBACK_COLOR)
+
+        # Load and set the pixmap
+        pixmap = SVGLoader.load(
+            file_path=self._icon_spec.name.path,
+            color=color,
+            size=size,
+            as_icon=False
+        )
+        self.setPixmap(pixmap)
+
+    def refresh_theme(self, palette: dict[str, str]):
+        """Called by IconLoader when theme changes."""
+        self._render_icon()

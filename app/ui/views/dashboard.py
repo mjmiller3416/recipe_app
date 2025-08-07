@@ -11,7 +11,7 @@ from dev_tools import DebugLogger, StartupTimer
 from app.ui.components.layout.card import Card
 from app.ui.components.inputs import SmartLineEdit
 from app.ui.components.widgets.button import Button
-from app.appearance.icon.config import Type, Name
+from app.style.icon.config import Type, Name
 from app.ui.components.navigation import NavButton
 
 

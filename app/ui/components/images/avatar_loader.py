@@ -14,11 +14,11 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (QFileDialog, QToolButton, QVBoxLayout, QWidget)
 
 from app.config import AppPaths
-from app.appearance import Theme
-from app.appearance.animation.animator import Animator
-from app.appearance.config import Qss
-from app.appearance.icon import Icon
-from app.appearance.icon.config import Name, Type
+from app.style import Theme
+from app.style.animation.animator import Animator
+from app.style.theme.config import Qss
+from app.style.icon import Icon
+from app.style.icon.config import Name, Type
 from app.ui.components.widgets import Button
 from app.ui.helpers import CornerAnchor
 from data_files.user_settings import UserSettings

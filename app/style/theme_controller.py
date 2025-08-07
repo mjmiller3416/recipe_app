@@ -17,8 +17,8 @@ from PySide6.QtWidgets import QApplication, QWidget
 from app.core.utils import QSingleton
 from dev_tools import DebugLogger
 
-from .config import Color, Mode, Qss, Typography
-from .style_sheet import Stylesheet
+from .theme.config import Color, Mode, Qss, Typography
+from .theme.style_sheet import Stylesheet
 
 # ── Theme Manager ────────────────────────────────────────────────────────────────────────────
 class Theme(QSingleton):
@@ -133,7 +133,7 @@ class Theme(QSingleton):
 
         # auto-connect icon system (only once)
         if not hasattr(cls, '_icon_loader_connected'):
-            from app.appearance.icon.loader import IconLoader
+            from app.style.icon.loader import IconLoader
             IconLoader.connect_theme_controller(instance)
             cls._icon_loader_connected = True
             DebugLogger.log("IconLoader auto-connected to Theme system", "info")
@@ -176,7 +176,7 @@ class Theme(QSingleton):
             file_path: Path to JSON file containing color schemes
             mode: Theme mode (LIGHT or DARK) to apply
         """
-        from .custom_color_loader import CustomColorLoader
+        from .theme.custom_color_loader import CustomColorLoader
 
         custom_color_map = CustomColorLoader.load_from_file(file_path, mode)
         if custom_color_map:
@@ -194,7 +194,7 @@ class Theme(QSingleton):
 
             # auto-connect icon system (only once)
             if not hasattr(cls, '_icon_loader_connected'):
-                from app.appearance.icon.loader import IconLoader
+                from app.style.icon.loader import IconLoader
                 IconLoader.connect_theme_controller(instance)
                 cls._icon_loader_connected = True
                 DebugLogger.log("IconLoader auto-connected to Theme system", "info")

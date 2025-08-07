@@ -15,8 +15,8 @@ from PySide6.QtWidgets import (
     QTabWidget, QTextEdit, QTreeView, QVBoxLayout, QWidget
 )
 
-from app.appearance.icon import Icon, Type, Name
-from app.appearance.theme import Theme, Color, Mode
+from app.style.icon import Icon, Type, Name
+from app.style.theme_controller import Theme, Color, Mode
 from app.ui.components.widgets import Button, ToolButton
 
 class Name(Enum):

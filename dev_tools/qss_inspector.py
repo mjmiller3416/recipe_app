@@ -196,7 +196,7 @@ class QSSInspector(QObject):
         """Check if widget is registered with the theme system"""
         try:
             # Try to import your theme system
-            from app.appearance.theme import Theme
+            from app.style.theme_controller import Theme
 
             # This is a simplified check - you might need to adjust based on your Theme class
             if hasattr(Theme, '_registered_widgets'):

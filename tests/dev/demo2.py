@@ -12,10 +12,10 @@ from PySide6.QtWidgets import (QApplication, QGraphicsBlurEffect,
                                QGraphicsOpacityEffect, QGridLayout, QLabel,
                                QMainWindow, QVBoxLayout, QWidget)
 
-from app.appearance.icon.config import Name  # updated from app_icon.py
-from app.appearance.icon.icon import Icon
-from app.appearance.icon.loader import IconLoader
-from app.appearance.theme import Color, Mode, Theme
+from app.style.icon.config import Name  # updated from app_icon.py
+from app.style.icon.icon import Icon
+from app.style.icon.loader import IconLoader
+from app.style.theme_controller import Color, Mode, Theme
 
 # ── Shadow Effect Enum ───────────────────────────────────────────────────────────────────────
 ShadowStyle = namedtuple("ShadowStyle", "color blur_radius offset_x offset_y")

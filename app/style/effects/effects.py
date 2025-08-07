@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
     QGraphicsOpacityEffect, QWidget
 )
 
-from app.appearance.effects.config import Shadow, Glow
+from app.style.effects.config import Shadow, Glow
 
 
 # ── Effects ──────────────────────────────────────────────────────────────────────────────────

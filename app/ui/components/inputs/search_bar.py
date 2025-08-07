@@ -7,10 +7,10 @@ This module defines a custom search widget that includes a search icon, a text i
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QGridLayout, QLineEdit, QSizePolicy
 
-from app.appearance.config import Qss
-from app.appearance.icon import Icon, Name, Type
+from app.style.theme.config import Qss
+from app.style.icon import Icon, Name, Type
 from app.ui.components.widgets import ToolButton
-from app.appearance import Theme
+from app.style import Theme
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 

@@ -11,7 +11,7 @@ from weakref import WeakSet
 from PySide6.QtCore import QObject
 
 from app.core.utils import QSingleton
-from app.appearance.theme import Theme
+from app.style.theme_controller import Theme
 from dev_tools import DebugLogger
 
 # Protocol for theme-aware icons
@@ -49,7 +49,7 @@ class IconLoader(QSingleton):
         DebugLogger.log(f"Refreshing {len(self._icons)} icons", "debug")
 
         # Clear SVG cache once before refreshing all icons
-        from app.appearance.icon.svg_loader import SVGLoader
+        from app.style.icon.svg_loader import SVGLoader
         SVGLoader.clear_cache()
 
         for icon in tuple(self._icons):
@@ -74,7 +74,7 @@ class IconLoader(QSingleton):
         theme.theme_refresh.connect(instance._on_theme_refresh)
 
         # Clear cache once and immediately refresh all icons
-        from app.appearance.icon.svg_loader import SVGLoader
+        from app.style.icon.svg_loader import SVGLoader
         SVGLoader.clear_cache()
 
         for icon in tuple(instance._icons):

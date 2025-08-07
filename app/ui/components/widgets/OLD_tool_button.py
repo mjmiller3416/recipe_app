@@ -10,8 +10,8 @@ and will be removed from this location in future releases ⚠️
 from PySide6.QtCore import QEvent, QSize
 from PySide6.QtWidgets import QToolButton
 
-from app.appearance.icon.config import Name, Type
-from app.appearance.icon.mixin import IconMixin
+from app.style.icon.config import Name, Type
+from app.style.icon.mixin import IconMixin
 
 # ── Tool Button ──────────────────────────────────────────────────────────────────────────────
 class ToolButton(QToolButton, IconMixin):

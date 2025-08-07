@@ -7,7 +7,7 @@ Connects signals to their respective slots for handling sidebar and page navigat
 from PySide6.QtWidgets import QStackedWidget
 
 from app.core.services import PlannerService, ShoppingService
-from app.appearance.animation import Animator
+from app.style.animation import Animator
 from app.ui.views import (AddRecipes, Dashboard, MealPlanner, ShoppingList,
                           ViewRecipes)
 from dev_tools import DebugLogger

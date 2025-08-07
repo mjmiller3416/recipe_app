@@ -10,10 +10,10 @@ and will be removed from this location in future releases ⚠️
 from PySide6.QtCore import QEvent, QSize, Qt
 from PySide6.QtWidgets import QPushButton, QSizePolicy, QToolButton, QLabel, QHBoxLayout
 
-from app.appearance.icon.config import Name, Type
-from app.appearance.icon.mixin import IconMixin
-from app.appearance.theme import Theme
-from app.appearance.config import Qss
+from app.style.icon.config import Name, Type
+from app.style.icon.mixin import IconMixin
+from app.style.theme_controller import Theme
+from app.style.theme.config import Qss
 
 
 # ── Button ───────────────────────────────────────────────────────────────────────────────────

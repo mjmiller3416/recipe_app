@@ -224,7 +224,7 @@ class Animator:
         Returns:
             PageFlipContainer: A new container ready for page flip animations
         """
-        from app.appearance.animation.flip_animations import PageFlipContainer
+        from app.style.animation.flip_animations import PageFlipContainer
         return PageFlipContainer(parent)
 
     @staticmethod
@@ -257,7 +257,7 @@ class Animator:
             scale (bool): Whether to scale during flip
             callback (callable): Optional callback when animation completes
         """
-        from app.appearance.animation.flip_animations import FlipAnimationHelper
+        from app.style.animation.flip_animations import FlipAnimationHelper
 
         helper = FlipAnimationHelper(widget)
         helper.duration = duration

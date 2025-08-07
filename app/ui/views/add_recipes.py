@@ -7,7 +7,7 @@ Defines the AddRecipes view for the recipe application.
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
-from app.appearance import Theme, Qss
+from app.style import Theme, Qss
 from app.ui.components.layout.card import Card
 from app.ui.components.forms.recipe_form import RecipeForm
 

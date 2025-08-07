@@ -17,9 +17,9 @@ from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
 from PySide6.QtCore import Qt, QTimer
 
 from app.ui.components.widgets.button import Button, ToolButton
-from app.appearance.icon.config import Name, Type, State
-from app.appearance.theme import Theme
-from app.appearance.config import Color, Mode
+from app.style.icon.config import Name, Type, State
+from app.style.theme_controller import Theme
+from app.style.theme.config import Color, Mode
 
 
 class ButtonTestWindow(QWidget):
@@ -200,8 +200,8 @@ class ButtonTestWindow(QWidget):
         self.state_btn = Button("Custom States", Type.DEFAULT, Name.HEART)
         self.state_btn.setCheckable(True)
         self.state_btn.setStateDefault("error")
-        self.state_btn.setStateHover("primary")
-        self.state_btn.setStateChecked("tertiary")
+        self.state_btn.setStateHover("error")
+        self.state_btn.setStateChecked("error")
 
         self.state_tool = ToolButton(Name.LIGHTBULB, Type.DEFAULT)
         self.state_tool.setCheckable(True)

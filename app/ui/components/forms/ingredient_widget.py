@@ -10,7 +10,7 @@ from PySide6.QtWidgets import QGridLayout, QLineEdit, QSizePolicy, QWidget
 
 from app.config import (FLOAT_VALIDATOR, INGREDIENT_CATEGORIES,
                         MEASUREMENT_UNITS, NAME_PATTERN)
-from app.appearance.icon import Name, Type
+from app.style.icon import Name, Type
 from app.core.database.db import create_session
 from app.core.dtos import IngredientSearchDTO
 from app.core.services.ingredient_service import IngredientService

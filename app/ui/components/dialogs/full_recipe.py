@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QSizePolicy,
                                QSpacerItem, QVBoxLayout, QWidget)
 
 from app.core.models import Recipe
-from app.appearance.icon import Icon, Name
+from app.style.icon import Icon, Name
 from app.ui.components.dialogs import DialogWindow
 from app.ui.components.layout import Separator
 from app.ui.components.widgets import RoundedImage

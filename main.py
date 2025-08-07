@@ -15,7 +15,7 @@ import qframelesswindow.utils.win32_utils
 
 # Force-disable the border accent globally in the library
 qframelesswindow.utils.win32_utils.isSystemBorderAccentEnabled = lambda: False
-from app.appearance.theme import Color, Mode, Theme
+from app.style.theme_controller import Color, Mode, Theme
 from app.ui.main_window import MainWindow
 from app.ui.services.navigation_service import NavigationService
 from dev_tools import DebugLogger, startup_timer

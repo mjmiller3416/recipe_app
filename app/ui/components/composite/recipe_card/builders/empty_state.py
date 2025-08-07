@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QFrame, QVBoxLayout
 
-from app.appearance.icon import Name, Type
+from app.style.icon import Name, Type
 from app.ui.components.widgets import Button
 from app.ui.components.widgets.button import ToolButton
 

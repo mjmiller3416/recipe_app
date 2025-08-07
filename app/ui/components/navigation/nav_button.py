@@ -11,9 +11,9 @@ and will be removed from this location in future releases ⚠️
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton
 
-from app.appearance import Theme
-from app.appearance.config import Qss
-from app.appearance.icon.config import Name, Type
+from app.style import Theme
+from app.style.theme.config import Qss
+from app.style.icon.config import Name, Type
 from app.ui.components.widgets import ToolButton
 
 

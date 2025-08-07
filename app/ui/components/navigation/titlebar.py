@@ -10,8 +10,8 @@ from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
 from qframelesswindow.utils.win32_utils import WindowsMoveResize as MoveResize
 
 from app.config import APPLICATION_WINDOW
-from app.appearance import Theme, Qss
-from app.appearance.icon import Icon, Name, Type
+from app.style import Theme, Qss
+from app.style.icon import Icon, Name, Type
 from ..widgets.button import ToolButton
 
 # ── Constants ────────────────────────────────────────────────────────────────────────────────

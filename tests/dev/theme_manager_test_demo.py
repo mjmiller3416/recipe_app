@@ -13,8 +13,8 @@ from PySide6.QtWidgets import (
 )
 
 from app.config import ERROR_COLOR
-from app.appearance.icon import Icon, Type, Name
-from app.appearance.theme import Color, Mode, Theme
+from app.style.icon import Icon, Type, Name
+from app.style.theme_controller import Color, Mode, Theme
 from app.ui.components.widgets import Button, ToolButton
 
 # ── Shadow Effect Enum ───────────────────────────────────────────────────────────────────────

@@ -9,10 +9,10 @@ from PySide6.QtWidgets import (QButtonGroup, QLabel, QSizePolicy, QSpacerItem,
                                QVBoxLayout, QWidget)
 
 from app.config import SIDEBAR
-from app.appearance import Theme
-from app.appearance.config import Qss
-from app.appearance.icon.config import Name
-from app.appearance.animation import Animator
+from app.style import Theme
+from app.style.theme.config import Qss
+from app.style.icon.config import Name
+from app.style.animation import Animator
 from app.ui.components.images import AvatarLoader
 from ..widgets.button import Button
 from app.ui.helpers.ui_helpers import create_fixed_wrapper

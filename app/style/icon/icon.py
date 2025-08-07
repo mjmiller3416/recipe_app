@@ -12,9 +12,9 @@ from PySide6.QtWidgets import QLabel, QWidget, QSizePolicy, QVBoxLayout
 from PySide6.QtGui import QIcon
 
 from app.config import FALLBACK_COLOR
-from app.appearance.icon.config import Name, State, Type
-from app.appearance.icon.loader import IconLoader
-from app.appearance.icon.svg_loader import SVGLoader
+from app.style.icon.config import Name, State, Type
+from app.style.icon.loader import IconLoader
+from app.style.icon.svg_loader import SVGLoader
 
 from dev_tools import DebugLogger
 
@@ -47,7 +47,7 @@ class BaseIcon:
         Args:
             width (int): Width in pixels (1-512).
             height (int): Height in pixels (1-512).
-            
+
         Raises:
             TypeError: If width or height are not integers.
             ValueError: If width or height are outside valid range.
@@ -55,12 +55,12 @@ class BaseIcon:
         # Validate input types
         if not isinstance(width, int) or not isinstance(height, int):
             raise TypeError(f"Size parameters must be integers, got width={type(width)}, height={type(height)}")
-        
+
         # Validate and clamp size bounds with warnings
         original_width, original_height = width, height
         width = max(1, min(width, 512))  # reasonable limits
         height = max(1, min(height, 512))
-        
+
         if width != original_width or height != original_height:
             DebugLogger.log(f"Size clamped from ({original_width}, {original_height}) to ({width}, {height})", "warning")
 
@@ -146,7 +146,7 @@ class ThemedIcon(BaseIcon):
             if hasattr(self, '_refresh_timer') and self._refresh_timer:
                 self._refresh_timer.stop()
                 self._refresh_timer.deleteLater()
-            
+
             # Unregister from IconLoader
             IconLoader.unregister(self)
         except (AttributeError, RuntimeError, TypeError) as e:
@@ -177,7 +177,7 @@ class ThemedIcon(BaseIcon):
         # debounce rapid theme changes using reused timer
         if self._refresh_timer.isActive():
             self._refresh_timer.stop()
-        
+
         self._refresh_timer.start(50)  # 50ms debounce
 
     def _do_theme_refresh(self):
@@ -345,6 +345,12 @@ class StateIcon(QWidget):
         # cache for rendered pixmaps by state
         self._state_pixmaps = {}
 
+        # track which states have been accessed for lazy loading
+        self._accessed_states = {State.DEFAULT}  # Always need default state
+
+        # performance tracking for optimization
+        self._render_count = 0
+
         # internal label for displaying pixmaps
         self._label = QLabel(self)
         layout = QVBoxLayout(self)
@@ -352,8 +358,8 @@ class StateIcon(QWidget):
         layout.addWidget(self._label)
         self._label.setAlignment(Qt.AlignCenter)
 
-        # initial render
-        self._render_needed_states()
+        # lazy render - only render DEFAULT state initially
+        self._render_state(State.DEFAULT)
         self._update_display()
 
     def setType(self, type: Type):
@@ -373,7 +379,7 @@ class StateIcon(QWidget):
 
         Args:
             color (str): Hex color or theme role to use for all states.
-            
+
         Raises:
             TypeError: If color is not a string.
             ValueError: If color is empty.
@@ -381,16 +387,16 @@ class StateIcon(QWidget):
         # Validate color parameter
         if not isinstance(color, str):
             raise TypeError(f"Color must be a string, got {type(color)}")
-        
+
         if not color.strip():
             raise ValueError("Color cannot be empty")
-        
+
         # Check if color role exists in palette (warning only)
         if not color.startswith("#"):
             palette = IconLoader.get_palette()
             if palette and color not in palette:
                 DebugLogger.log(f"Color role '{color}' not found in current palette", "warning")
-        
+
         self._global_custom_color = color
         self._render_needed_states()
         self._update_display()
@@ -407,7 +413,7 @@ class StateIcon(QWidget):
         Args:
             state (State): Which state to override.
             color_role (str): Theme palette role string.
-            
+
         Raises:
             TypeError: If state is not a State enum.
             ValueError: If color_role is empty or invalid.
@@ -415,19 +421,19 @@ class StateIcon(QWidget):
         # Validate state parameter
         if not isinstance(state, State):
             raise TypeError(f"State must be a State enum, got {type(state)}")
-        
+
         # Validate color_role parameter
         if not isinstance(color_role, str):
             raise TypeError(f"Color role must be a string, got {type(color_role)}")
-        
+
         if not color_role.strip():
             raise ValueError("Color role cannot be empty")
-        
+
         # Check if color role exists in palette (warning only)
         palette = IconLoader.get_palette()
         if palette and color_role not in palette and not color_role.startswith("#"):
             DebugLogger.log(f"Color role '{color_role}' not found in current palette", "warning")
-        
+
         self._state_overrides[state] = color_role
         self._render_state(state)
         if self._current_state == state:
@@ -438,14 +444,14 @@ class StateIcon(QWidget):
 
         Args:
             state (State): Which state to clear.
-            
+
         Raises:
             TypeError: If state is not a State enum.
         """
         # Validate state parameter
         if not isinstance(state, State):
             raise TypeError(f"State must be a State enum, got {type(state)}")
-        
+
         if state in self._state_overrides:
             del self._state_overrides[state]
             self._render_state(state)
@@ -497,16 +503,18 @@ class StateIcon(QWidget):
 
         Args:
             state (State): State to switch to (e.g. HOVER).
-            
+
         Raises:
             TypeError: If state is not a State enum.
         """
         # Validate state parameter
         if not isinstance(state, State):
             raise TypeError(f"State must be a State enum, got {type(state)}")
-        
+
         if state != self._current_state:
             self._current_state = state
+            # Track that this state has been accessed
+            self._accessed_states.add(state)
             # ensure the new state is rendered if needed
             if state not in self._state_pixmaps:
                 self._render_state(state)
@@ -533,6 +541,8 @@ class StateIcon(QWidget):
 
         if new_state != self._current_state:
             self._current_state = new_state
+            # Track that this state has been accessed
+            self._accessed_states.add(new_state)
             # ensure the new state is rendered if needed
             if new_state not in self._state_pixmaps:
                 self._render_state(new_state)
@@ -543,7 +553,7 @@ class StateIcon(QWidget):
 
         Priority order (highest to lowest):
         1. State-specific override (via setStateColor)
-        2. Global custom color (via setGlobalColor) 
+        2. Global custom color (via setGlobalColor)
         3. Type-based default (from Type.state_map)
         4. Fallback color (safety net)
 
@@ -595,7 +605,7 @@ class StateIcon(QWidget):
 
         # Debug logging for color resolution (only in debug mode)
         DebugLogger.log(f"StateIcon color resolved: {state.name} -> {resolved_color} (from {resolution_source})", "debug")
-        
+
         return resolved_color
 
     def _render_state(self, state: State):
@@ -611,27 +621,28 @@ class StateIcon(QWidget):
                 as_icon=False
             )
             self._state_pixmaps[state] = pixmap
+            self._render_count += 1
+
+            # Debug logging for lazy loading
+            from dev_tools import DebugLogger
+            DebugLogger.log(f"StateIcon rendered {state.name} (total renders: {self._render_count})", "debug")
+
         except Exception as e:
+            from dev_tools import DebugLogger
             DebugLogger.log(f"Failed to render state {state.name} for icon {self._themed_icon._icon_enum.name}: {e}", "warning")
 
     def _render_needed_states(self):
-        """Render only the states that might actually be used (performance optimization)."""
-        # always render these base states
-        base_states = [State.DEFAULT, State.HOVER, State.DISABLED]
-
-        # only render CHECKED if parent is checkable (if we have a parent)
-        if hasattr(self, 'parent') and self.parent():
-            parent = self.parent()
-            if hasattr(parent, 'isCheckable') and parent.isCheckable():
-                base_states.append(State.CHECKED)
-        else:
-            # if no parent context, render CHECKED just in case
-            base_states.append(State.CHECKED)
-
-        # clear cache and render needed states
+        """Render only the states that have been accessed (lazy loading optimization)."""
+        # Clear cache and render only accessed states
         self._state_pixmaps.clear()
-        for state in base_states:
+
+        # Render all states that have been accessed so far
+        for state in self._accessed_states:
             self._render_state(state)
+
+        # Debug logging for lazy loading performance
+        from dev_tools import DebugLogger
+        DebugLogger.log(f"StateIcon lazy render: rendered {len(self._accessed_states)} states out of {len(State)}", "debug")
 
     def _update_display(self):
         """Update the displayed pixmap based on current state."""
@@ -672,6 +683,20 @@ class StateIcon(QWidget):
         # theme icon size change will trigger callback, but let's be explicit
         self._render_needed_states()
         self._update_display()
+
+    def get_performance_stats(self) -> dict:
+        """Get performance statistics for lazy loading optimization.
+
+        Returns:
+            dict: Performance metrics including render count and accessed states
+        """
+        return {
+            'total_renders': self._render_count,
+            'accessed_states': len(self._accessed_states),
+            'total_states': len(State),
+            'efficiency_ratio': len(self._accessed_states) / len(State),
+            'cached_pixmaps': len(self._state_pixmaps)
+        }
 
     def objectName(self) -> str:
         """Return object name for IconLoader protocol."""

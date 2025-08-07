@@ -11,6 +11,7 @@ data before rendering.
 import re
 from pathlib import Path
 from typing import Union
+from collections import OrderedDict
 
 from PySide6.QtCore import QByteArray, QRectF, QSize, Qt
 from PySide6.QtGui import QIcon, QPainter, QPixmap
@@ -96,13 +97,21 @@ def _replace_svg_colors(svg_data: str, source: str, new_color: str) -> str:
 
 # ── Class Definition ─────────────────────────────────────────────────────────────────────────
 class SVGLoader:
-    """Utility class for loading and recoloring SVG files with caching."""
+    """Utility class for loading and recoloring SVG files with smart caching."""
     
-    # Class-level cache for all SVG operations
-    _cache: dict[tuple, Union[QPixmap, QIcon]] = {}
+    # Smart cache with LRU eviction using OrderedDict
+    _cache: OrderedDict[tuple, Union[QPixmap, QIcon]] = OrderedDict()
+    
+    # Cache configuration
+    _MAX_CACHE_SIZE = 200  # Maximum number of cached items
+    _CACHE_HIGH_WATER_MARK = 150  # Start evicting when we reach this
     
     # Track which icons have had fill attributes injected (for logging purposes)
     _injected_icons: set[str] = set()
+    
+    # Performance statistics
+    _cache_hits = 0
+    _cache_misses = 0
 
     @staticmethod
     def load(
@@ -143,7 +152,13 @@ class SVGLoader:
         # ── Check Cache ──
         cache_key = (str(file_path), color, logical_size.width(), logical_size.height(), source, as_icon)
         if cache_key in SVGLoader._cache:
-            return SVGLoader._cache[cache_key]
+            # Move to end (mark as recently used) for LRU
+            result = SVGLoader._cache[cache_key]
+            SVGLoader._cache.move_to_end(cache_key)
+            SVGLoader._cache_hits += 1
+            return result
+        
+        SVGLoader._cache_misses += 1
 
         # ── Read SVG ──
         try:
@@ -232,9 +247,24 @@ class SVGLoader:
         # ── Return QIcon or QPixmap ──
         result = QIcon(pixmap) if as_icon else pixmap
         
-        # ── Cache Result ──
+        # ── Cache Result with Smart Eviction ──
         SVGLoader._cache[cache_key] = result
+        SVGLoader._manage_cache_size()
         return result
+    
+    @classmethod
+    def _manage_cache_size(cls):
+        """Manage cache size using LRU eviction when high water mark is reached."""
+        if len(cls._cache) > cls._CACHE_HIGH_WATER_MARK:
+            # Remove oldest items until we're at a reasonable size
+            target_size = cls._CACHE_HIGH_WATER_MARK - 20  # Remove some extra items
+            items_to_remove = len(cls._cache) - target_size
+            
+            for _ in range(items_to_remove):
+                if cls._cache:
+                    cls._cache.popitem(last=False)  # Remove oldest item
+            
+            DebugLogger.log(f"svg_loader: Cache evicted {items_to_remove} items (now {len(cls._cache)} items)", "debug")
     
     @classmethod
     def clear_cache(cls):
@@ -242,6 +272,41 @@ class SVGLoader:
         cache_size = len(cls._cache)
         cls._cache.clear()
         cls._injected_icons.clear()
+        cls._cache_hits = 0
+        cls._cache_misses = 0
         # Only log if there was actually something to clear
         if cache_size > 0:
             DebugLogger.log(f"svg_loader: Cache cleared ({cache_size} items)", "debug")
+    
+    @classmethod
+    def get_cache_stats(cls) -> dict:
+        """Get cache performance statistics.
+        
+        Returns:
+            dict: Cache performance metrics
+        """
+        total_requests = cls._cache_hits + cls._cache_misses
+        hit_rate = (cls._cache_hits / total_requests * 100) if total_requests > 0 else 0
+        
+        return {
+            'cache_size': len(cls._cache),
+            'max_cache_size': cls._MAX_CACHE_SIZE,
+            'cache_hits': cls._cache_hits,
+            'cache_misses': cls._cache_misses,
+            'hit_rate_percent': round(hit_rate, 2),
+            'injected_icons': len(cls._injected_icons)
+        }
+    
+    @classmethod
+    def set_cache_limits(cls, max_size: int, high_water_mark: int = None):
+        """Configure cache size limits.
+        
+        Args:
+            max_size (int): Maximum number of items to cache
+            high_water_mark (int, optional): Start evicting when reaching this size
+        """
+        cls._MAX_CACHE_SIZE = max_size
+        cls._CACHE_HIGH_WATER_MARK = high_water_mark or int(max_size * 0.75)
+        
+        # Immediately manage cache if it's now over the new limit
+        cls._manage_cache_size()

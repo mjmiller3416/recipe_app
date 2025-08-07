@@ -9,7 +9,7 @@ from typing import Sequence
 from PySide6.QtCore import QEvent, QStringListModel, Qt, Signal
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QWidget
 
-from app.appearance.icon.config import Name
+from app.style.icon.config import Name
 from .dropdown_menu import DropdownMenu
 from .button import ToolButton
 
@@ -39,7 +39,7 @@ class ComboBox(QWidget):
         self.line_edit.setObjectName("CBLineEdit")
 
         # Create dropdown button
-        from app.appearance.icon import Type
+        from app.style.icon import Type
         self.cb_btn = ToolButton(Name.ANGLE_DOWN, Type.DEFAULT)
         self.cb_btn.setCursor(Qt.PointingHandCursor)
         self.cb_btn.setObjectName("CBButton")

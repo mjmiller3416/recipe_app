@@ -7,9 +7,9 @@ A card widget with a header, sub-header and content area.
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QFrame, QLabel, QVBoxLayout, QSizePolicy)
 
-from app.appearance.config import Qss
-from app.appearance.theme import Color, Mode, Theme
-from app.appearance.effects import Effects, Shadow, Glow
+from app.style.theme.config import Qss
+from app.style.theme_controller import Color, Mode, Theme
+from app.style.effects import Effects, Shadow, Glow
 
 # ── Card Widget ──────────────────────────────────────────────────────────────────────────────
 class Card(QFrame):
