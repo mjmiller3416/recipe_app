@@ -44,6 +44,7 @@ class TitleBar(QWidget):
         self.logo.setSize(32,32)
         self.logo.setObjectName("AppLogo")
         self.title = QLabel(SETTINGS["APP_NAME"])
+        self.title.setObjectName("AppTitle")
 
         # ── Sidebar Toggle Button ──
         self.btn_ico_toggle_sidebar = ToolButton(Name.MENU, Type.SECONDARY)

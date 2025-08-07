@@ -6,12 +6,14 @@
 
 #TitleBar #BtnClose:hover{background-color: {error_container};}
 
-#TitleBar #AppLogo {margin-left: 4px;}
+#TitleBar #AppTitle {margin-left: 2px; color: {on_surface};}
 
-#TitleBar QToolButton {background-color: transparent;}
+#TitleBar ToolButton {background-color: transparent; border: none;}
+
+#TitleBar ToolButton:hover {background-color: {surface_bright};}
 
 #TitleBar QLabel {font-weight: 600; font-size: 28px;}
 
-#TitleBar QToolButton:hover {background-color: {surface_bright}; border: none;}
+
 
 

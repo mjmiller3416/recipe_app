@@ -9,3 +9,29 @@
     padding-top: 5px;
 }
 
+#Sidebar #NavButton {
+    background-color: transparent;
+    border: none;
+    border-radius: 0px;
+}
+
+#Sidebar #NavButton:hover {
+    background-color: {error};
+}
+
+#Sidebar #NavButton:checked {
+    background-color: {secondary_container};
+    border-left: 4px solid {primary};
+}
+
+#Sidebar #NavButton QLabel {
+    color: {on_surface};
+    font-size: 22px;
+    padding-left: 20px;
+}
+
+#Sidebar #NavButton QLabel[state="CHECKED"] {
+    color: {on_secondary_container};
+    font-weight: 600;
+}
+

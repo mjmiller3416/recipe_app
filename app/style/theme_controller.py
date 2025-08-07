@@ -9,7 +9,6 @@ run-time changes of source color and light/dark modes.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from typing import Dict, Optional
 import weakref
-from collections import defaultdict
 
 from PySide6.QtCore import QObject, Signal
 from PySide6.QtWidgets import QApplication, QWidget

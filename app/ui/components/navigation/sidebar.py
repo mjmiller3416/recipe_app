@@ -5,8 +5,10 @@ Sidebar navigation component for the main window.
 
 # ── Imports ───────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import (QButtonGroup, QLabel, QSizePolicy, QSpacerItem,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QButtonGroup, QLabel, QSizePolicy, QSpacerItem,
+    QVBoxLayout, QWidget
+)
 
 from app.config import SIDEBAR
 from app.style import Theme
