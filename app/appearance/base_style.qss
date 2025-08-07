@@ -35,6 +35,27 @@ QGroupBox::title {
     color: {on_surface_variant};
 }
 
+/* Tool Buttons */
+ToolButton {
+    background-color: {surface};
+    border: 1px solid {outline};
+    padding: 8px;
+    border-radius: 4px;
+}
+ToolButton:hover {
+    background-color: {primary_container};
+    color: {on_primary};
+    border: 1px solid {primary};
+}
+ToolButton:pressed, ToolButton:checked {
+    background-color: {primary};
+    border: 1px solid {primary};
+}
+ToolButton:disabled {
+    background-color: {surface};
+
+}
+
 /* Labels */
 QLabel {background-color: transparent;}
 

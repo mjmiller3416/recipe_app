@@ -14,8 +14,61 @@ from app.appearance.icon.config import Name, Type
 from app.appearance.icon.icon import StateIcon
 
 
+# ── Shared Helper Functions ──────────────────────────────────────────────────────────────────────
+def _calculate_button_size(widget, custom_size_width=None, custom_size_height=None):
+    """Calculate button size based on layout and optional custom constraints."""
+    layout = widget.layout()
+    if not layout:
+        return custom_size_width or 0, custom_size_height or 0
+    
+    layout_hint = layout.sizeHint()
+    margins = widget.contentsMargins()
+    
+    min_width = layout_hint.width() + margins.left() + margins.right()
+    min_height = layout_hint.height() + margins.top() + margins.bottom()
+    
+    if custom_size_width is not None and custom_size_height is not None:
+        # Use larger of requested or minimum required size
+        return max(custom_size_width, min_width), max(custom_size_height, min_height)
+    
+    return min_width, min_height
+
+
+class _StateIconMixin:
+    """Mixin class providing state override methods for StateIcon integration."""
+    
+    def setStateHover(self, role: str):
+        """Override the color role used for the hover state."""
+        if hasattr(self, 'state_icon') and self.state_icon:
+            self.state_icon.setStateHover(role)
+
+    def setStateDefault(self, role: str):
+        """Override the default icon color role."""
+        if hasattr(self, 'state_icon') and self.state_icon:
+            self.state_icon.setStateDefault(role)
+
+    def setStateChecked(self, role: str):
+        """Override the checked icon color role."""
+        if hasattr(self, 'state_icon') and self.state_icon:
+            self.state_icon.setStateChecked(role)
+
+    def setStateDisabled(self, role: str):
+        """Override the disabled icon color role."""
+        if hasattr(self, 'state_icon') and self.state_icon:
+            self.state_icon.setStateDisabled(role)
+
+    def clearAllStateOverrides(self):
+        """Clears all icon state color overrides, restoring type-based defaults."""
+        if hasattr(self, 'state_icon') and self.state_icon:
+            self.state_icon.clearAllStateOverrides()
+
+    def icon(self) -> StateIcon:
+        """Returns the StateIcon widget used in the button."""
+        return getattr(self, 'state_icon', None)
+
+
 # ── Button ───────────────────────────────────────────────────────────────────────────────────
-class Button(QPushButton):
+class Button(QPushButton, _StateIconMixin):
     """A QPushButton with integrated StateIcon support.
 
     Combines QPushButton's native behavior with StateIcon for theme-aware icons.
@@ -64,10 +117,7 @@ class Button(QPushButton):
         self.label.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.label)
 
-        # set proper size policy to allow expansion
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-
-        # initialize state sync
         self._sync_icon_state()
 
     def _sync_icon_state(self):
@@ -252,7 +302,7 @@ class Button(QPushButton):
 
 
 # ── ToolButton ───────────────────────────────────────────────────────────────────────────────
-class ToolButton(QToolButton):
+class ToolButton(QToolButton, _StateIconMixin):
     """A QToolButton with integrated StateIcon support.
 
     Icon-only button that leverages QToolButton's native behavior while
@@ -281,11 +331,7 @@ class ToolButton(QToolButton):
         self.state_icon = StateIcon(icon, type)
         layout.addWidget(self.state_icon)
 
-        # Use Preferred policy to allow hover effects while resisting layout stretching
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        
-        # Override Qt's default checkable button styling that adds padding
-        self.setStyleSheet("QToolButton { padding: 0px; margin: 0px; }")
 
         # connect state change signals
         self.toggled.connect(self._sync_icon_state)
@@ -370,7 +416,7 @@ class ToolButton(QToolButton):
                     # set the calculated size using min/max to preserve hover effects
                     self.setMinimumSize(new_width, new_height)
                     self.setMaximumSize(new_width, new_height)
-                    self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+                    self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
             self.updateGeometry()
             # force a repaint to ensure visual update
             self.update()
@@ -392,31 +438,7 @@ class ToolButton(QToolButton):
         self.layout().addWidget(self.state_icon)
         self._sync_icon_state()
 
-    # state override methods for icon
-    def setStateHover(self, role: str):
-        """Override the color role used for the hover state."""
-        if self.state_icon:
-            self.state_icon.setStateHover(role)
-
-    def setStateDefault(self, role: str):
-        """Override the default icon color role."""
-        if self.state_icon:
-            self.state_icon.setStateDefault(role)
-
-    def setStateChecked(self, role: str):
-        """Override the checked icon color role."""
-        if self.state_icon:
-            self.state_icon.setStateChecked(role)
-
-    def setStateDisabled(self, role: str):
-        """Override the disabled icon color role."""
-        if self.state_icon:
-            self.state_icon.setStateDisabled(role)
-
-    def clearAllStateOverrides(self):
-        """Clears all icon state color overrides, restoring type-based defaults."""
-        if self.state_icon:
-            self.state_icon.clearAllStateOverrides()
+    # State override methods inherited from _StateIconMixin
 
     def setCheckable(self, checkable: bool):
         """Override setCheckable to handle sizing issues with checkable tool buttons.
@@ -443,9 +465,13 @@ class ToolButton(QToolButton):
                 required_height = layout_size.height() + margins.top() + margins.bottom()
                 
                 # Set exact size to prevent Qt from adding extra padding for checkable buttons
-                self.setMinimumSize(required_width, required_height)
-                self.setMaximumSize(required_width, required_height)
-                self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+                # Ensure minimum size for proper hover detection
+                min_button_size = max(required_width, 24)  # At least 24px wide
+                min_button_height = max(required_height, 24)  # At least 24px tall
+                
+                self.setMinimumSize(min_button_size, min_button_height)
+                self.setMaximumSize(min_button_size, min_button_height)
+                self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 
     def sizeHint(self) -> QSize:
         """Calculate the preferred size for the tool button based on its icon."""
@@ -463,10 +489,4 @@ class ToolButton(QToolButton):
             # fall back to QToolButton's default size hint
             return super().sizeHint()
 
-    def icon(self) -> StateIcon:
-        """Returns the StateIcon widget used in the button.
-
-        Returns:
-            StateIcon: The button's internal themed icon widget.
-        """
-        return self.state_icon
+    # icon() method inherited from _StateIconMixin
