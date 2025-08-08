@@ -16,7 +16,7 @@
 }
 
 #Sidebar #NavButton:hover {
-    background-color: {error};
+    background-color: {secondary_container};
 }
 
 #Sidebar #NavButton:checked {
@@ -27,7 +27,6 @@
 #Sidebar #NavButton QLabel {
     color: {on_surface};
     font-size: 22px;
-    padding-left: 20px;
 }
 
 #Sidebar #NavButton QLabel[state="CHECKED"] {

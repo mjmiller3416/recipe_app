@@ -196,6 +196,7 @@ class BaseButton:
         self._type = type
         self.state_icon = None
         self._has_custom_button_size = False
+        self._is_hovered = False  # Track hover state manually
 
     def _connect_signals(self):
         """Connect Qt signals. Call this after Qt widget is fully initialized."""
@@ -221,18 +222,20 @@ class BaseButton:
         if self.state_icon:
             self.state_icon.autoDetectState(
                 checked=self.isChecked(),
-                hovered=self.underMouse(),
+                hovered=self._is_hovered,
                 enabled=self.isEnabled()
             )
 
     def enterEvent(self, event):
         """Handle mouse enter for hover state."""
         super().enterEvent(event)
+        self._is_hovered = True
         self._sync_icon_state()
 
     def leaveEvent(self, event):
         """Handle mouse leave for hover state."""
         super().leaveEvent(event)
+        self._is_hovered = False
         self._sync_icon_state()
 
     def changeEvent(self, event):
@@ -242,6 +245,15 @@ class BaseButton:
             self._sync_icon_state()
 
     # ── Size Management ──────────────────────────────────────────────────────────────────────
+    def _on_icon_size_changed(self):
+        """Handle icon size changes. Subclasses can override for specific behavior."""
+        # if no custom button size is set, allow automatic resize
+        if not self._has_custom_button_size:
+            SizeManager.apply_auto_resize(self)
+        else:
+            self.updateGeometry()
+            self.update()
+
     def setButtonSize(self, width: int, height: int):
         """Set a fixed size for the entire button widget.
 
@@ -278,14 +290,30 @@ class BaseButton:
             # Subclass-specific behavior for size changes
             self._on_icon_size_changed()
 
-    def _on_icon_size_changed(self):
-        """Handle icon size changes. Subclasses can override for specific behavior."""
-        # if no custom button size is set, allow automatic resize
-        if not self._has_custom_button_size:
-            SizeManager.apply_auto_resize(self)
-        else:
-            self.updateGeometry()
-            self.update()
+    def setFixedHeight(self, height: int):
+        """Set a fixed height while allowing width to stretch dynamically.
+
+        Args:
+            height (int): Button height in pixels (1-2048).
+
+        Raises:
+            TypeError: If height is not an integer.
+        """
+        # Validate using SizeManager
+        if not isinstance(height, int):
+            raise TypeError(f"Height parameter must be an integer, got {type(height)}")
+
+        if height < 1 or height > 2048:
+            from dev_tools import DebugLogger
+            DebugLogger.log(f"Button height ({height}) outside recommended bounds (1-2048)", "warning")
+
+        # Set fixed height but allow width to expand
+        self.setMinimumHeight(height)
+        self.setMaximumHeight(height)
+
+        # Allow width to stretch
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self._has_custom_button_size = True
 
     # ── StateIcon Integration ────────────────────────────────────────────────────────────────
     def _setup_state_icon(self, icon: Name, type: Type):
@@ -329,62 +357,31 @@ class BaseButton:
     def setStateHover(self, role: str):
         """Override the color role used for the hover state."""
         if self.state_icon:
-            self.state_icon.setStateHover(role)
+            from app.style.icon.config import State
+            self.state_icon.setStateColor(State.HOVER, role)
 
     def setStateDefault(self, role: str):
         """Override the default icon color role."""
         if self.state_icon:
-            self.state_icon.setStateDefault(role)
+            from app.style.icon.config import State
+            self.state_icon.setStateColor(State.DEFAULT, role)
 
     def setStateChecked(self, role: str):
         """Override the checked icon color role."""
         if self.state_icon:
-            self.state_icon.setStateChecked(role)
+            from app.style.icon.config import State
+            self.state_icon.setStateColor(State.CHECKED, role)
 
     def setStateDisabled(self, role: str):
         """Override the disabled icon color role."""
         if self.state_icon:
-            self.state_icon.setStateDisabled(role)
+            from app.style.icon.config import State
+            self.state_icon.setStateColor(State.DISABLED, role)
 
     def clearAllStateOverrides(self):
         """Clears all icon state color overrides, restoring type-based defaults."""
         if self.state_icon:
             self.state_icon.clearAllStateOverrides()
-
-
-# ── Legacy Mixin for Backward Compatibility ─────────────────────────────────────────────────
-class _StateIconMixin:
-    """Legacy mixin class for backward compatibility. Use BaseButton instead."""
-
-    def setStateHover(self, role: str):
-        """Override the color role used for the hover state."""
-        if hasattr(self, 'state_icon') and self.state_icon:
-            self.state_icon.setStateHover(role)
-
-    def setStateDefault(self, role: str):
-        """Override the default icon color role."""
-        if hasattr(self, 'state_icon') and self.state_icon:
-            self.state_icon.setStateDefault(role)
-
-    def setStateChecked(self, role: str):
-        """Override the checked icon color role."""
-        if hasattr(self, 'state_icon') and self.state_icon:
-            self.state_icon.setStateChecked(role)
-
-    def setStateDisabled(self, role: str):
-        """Override the disabled icon color role."""
-        if hasattr(self, 'state_icon') and self.state_icon:
-            self.state_icon.setStateDisabled(role)
-
-    def clearAllStateOverrides(self):
-        """Clears all icon state color overrides, restoring type-based defaults."""
-        if hasattr(self, 'state_icon') and self.state_icon:
-            self.state_icon.clearAllStateOverrides()
-
-    def icon(self) -> StateIcon:
-        """Returns the StateIcon widget used in the button."""
-        return getattr(self, 'state_icon', None)
-
 
 # ── Button ───────────────────────────────────────────────────────────────────────────────────
 class Button(QPushButton, BaseButton):
@@ -463,6 +460,17 @@ class Button(QPushButton, BaseButton):
 
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 
+    def text(self) -> str:
+        """Get the current text label.
+
+        Returns:
+            str: Current button text.
+        """
+        if hasattr(self, 'label') and self.label:
+            return self.label.text()
+        else:
+            return super().text()
+
     def setIconSpacing(self, pixels: int):
         """Set the spacing between the icon and label inside the layout.
 
@@ -487,17 +495,6 @@ class Button(QPushButton, BaseButton):
             # text-only button - use native setText
             super().setText(text)
 
-    def text(self) -> str:
-        """Get the current text label.
-
-        Returns:
-            str: Current button text.
-        """
-        if hasattr(self, 'label') and self.label:
-            return self.label.text()
-        else:
-            return super().text()
-
     def setIcon(self, icon: Name):
         """Set or change the button's icon.
 
@@ -520,6 +517,24 @@ class Button(QPushButton, BaseButton):
             self.layout().insertWidget(0, self.state_icon)
             self._sync_icon_state()
 
+    def setLayoutMargins(self, left: int, top: int, right: int, bottom: int):
+        """Set custom margins for the button layout.
+
+        Args:
+            left (int): Left margin in pixels.
+            top (int): Top margin in pixels.
+            right (int): Right margin in pixels.
+            bottom (int): Bottom margin in pixels.
+        """
+        layout = self.layout()
+        if layout:
+            layout.setContentsMargins(left, top, right, bottom)
+
+    def addLayoutStretch(self):
+        """Add a stretch to the button's layout to push content to the left."""
+        layout = self.layout()
+        if layout and hasattr(layout, 'addStretch'):
+            layout.addStretch()
 
     def sizeHint(self) -> QSize:
         """Calculate the preferred size for the button based on its contents."""

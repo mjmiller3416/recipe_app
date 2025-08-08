@@ -71,9 +71,9 @@ class ButtonTestWindow(QWidget):
         tool_row = QHBoxLayout()
 
         self.tool_edit = ToolButton(Name.EDIT, Type.PRIMARY)
-        self.tool_save = ToolButton(Name.SAVE, Type.SECONDARY)
-        self.tool_refresh = ToolButton(Name.REFRESH, Type.DEFAULT)
-        self.tool_cross = ToolButton(Name.CROSS, Type.DEFAULT)
+        self.tool_save = ToolButton(Name.SAVE, Type.PRIMARY)
+        self.tool_refresh = ToolButton(Name.REFRESH, Type.PRIMARY)
+        self.tool_cross = ToolButton(Name.CROSS, Type.PRIMARY)
 
         tool_row.addWidget(self.tool_edit)
         tool_row.addWidget(self.tool_save)
@@ -432,8 +432,8 @@ def main():
 
     # Initialize theme
     try:
-        #Theme.setCustomColorMap("material-theme.json", Mode.DARK)
-        Theme.setTheme(Color.FOJI_GREEN, Mode.DARK)
+        Theme.setCustomColorMap("material-theme.json", Mode.DARK)
+        #Theme.setTheme(Color.FOJI_GREEN, Mode.DARK)
         print("Theme system initialized successfully")
     except Exception as e:
         print(f"Warning: Could not initialize theme system: {e}")

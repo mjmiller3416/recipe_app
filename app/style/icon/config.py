@@ -96,8 +96,8 @@ class Type(Enum):
         elif self == Type.PRIMARY:
             return {
                 State.DEFAULT: "primary",
-                State.HOVER: "secondary",
-                State.CHECKED: "primary_container",
+                State.HOVER: "tertiary",
+                State.CHECKED: "tertiary",
                 State.DISABLED: "on_primary_container",
             }
         elif self == Type.SECONDARY:

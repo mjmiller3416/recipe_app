@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (
 from app.config import SIDEBAR
 from app.style import Theme
 from app.style.theme.config import Qss
-from app.style.icon.config import Name
+from app.style.icon.config import Name, State, Type
 from app.style.animation import Animator
 from app.ui.components.images import AvatarLoader
 from ..widgets.button import Button
@@ -93,19 +93,25 @@ class Sidebar(QWidget):
     # ── Private Methods ──
     def _create_nav_button(self, label: str, is_checkable: bool = True) -> Button:
         """
-        Create a navigation button using the AppIcon enum for icon specification.
+        Create a navigation button using the Button class with NavButton-like styling.
         """
         # derive enum key from label (e.g. "View Recipes" -> "VIEW_RECIPES")
         enum_key = label.replace(' ', '_').upper()
         app_icon = Name[enum_key]
-        object_name = f"{label.replace(' ', '_')}Button"
 
         button = Button(
             label=label,
+            type=Type.PRIMARY,
             icon=app_icon,
         )
-        button.setObjectName(object_name)
+
+        # button attributes
+        button.setObjectName("NavButton")
         button.setCheckable(is_checkable)
+        button.setFixedHeight(85)
+        button.setIconSpacing(30)
+        button.addLayoutStretch()
+
         self.mainLayout.addWidget(button)
 
         if is_checkable:

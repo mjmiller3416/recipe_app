@@ -325,6 +325,9 @@ class StateIcon(QWidget):
         """
         super().__init__()
 
+        # Make StateIcon transparent to mouse events so parent button can detect hover properly
+        self.setAttribute(Qt.WA_TransparentForMouseEvents, True)
+
         # initialize ThemedIcon functionality via composition
         self._themed_icon = ThemedIcon(icon_enum)
 
@@ -353,6 +356,7 @@ class StateIcon(QWidget):
 
         # internal label for displaying pixmaps
         self._label = QLabel(self)
+
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self._label)
@@ -473,30 +477,6 @@ class StateIcon(QWidget):
         self._render_needed_states()
         self._update_display()
 
-    # legacy API compatibility - delegates to new methods
-    def setStateDefault(self, color_role: str):
-        """Legacy: Override the color role for default state."""
-        self.setStateColor(State.DEFAULT, color_role)
-
-    def setStateHover(self, color_role: str):
-        """Legacy: Override the color role for hover state."""
-        self.setStateColor(State.HOVER, color_role)
-
-    def setStateChecked(self, color_role: str):
-        """Legacy: Override the color role for checked state."""
-        self.setStateColor(State.CHECKED, color_role)
-
-    def setStateDisabled(self, color_role: str):
-        """Legacy: Override the color role for disabled state."""
-        self.setStateColor(State.DISABLED, color_role)
-
-    def setColor(self, color: str):
-        """Legacy: Set global custom color (for backwards compatibility)."""
-        self.setGlobalColor(color)
-
-    def clearColor(self):
-        """Legacy: Clear global custom color (for backwards compatibility)."""
-        self.clearGlobalColor()
 
     def updateState(self, state: State):
         """Force the icon to switch to a specific state.
