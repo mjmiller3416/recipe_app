@@ -443,7 +443,7 @@ class Button(QPushButton, BaseButton):
         print(f"DEBUG: Button.__init__ called with label='{label}'")
         QPushButton.__init__(self, label, parent)
         self._init_base_button(type)
-        print(f"DEBUG: Button MRO: {[cls.__name__ for cls in type(self).__mro__]}")
+        print(f"DEBUG: Button MRO: {[cls.__name__ for cls in self.__class__.__mro__]}")
 
         self._icon_spacing = 6
 
