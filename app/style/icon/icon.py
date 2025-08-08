@@ -492,6 +492,7 @@ class StateIcon(QWidget):
             raise TypeError(f"State must be a State enum, got {type(state)}")
 
         if state != self._current_state:
+            print(f"DEBUG: StateIcon updateState - {self._current_state.name} -> {state.name}")
             self._current_state = state
             # Track that this state has been accessed
             self._accessed_states.add(state)
@@ -499,6 +500,8 @@ class StateIcon(QWidget):
             if state not in self._state_pixmaps:
                 self._render_state(state)
             self._update_display()
+        else:
+            print(f"DEBUG: StateIcon updateState - no change, staying in {state.name}")
 
     def autoDetectState(self, checked: bool, hovered: bool, enabled: bool):
         """Set icon state automatically based on standard button logic.
@@ -519,7 +522,10 @@ class StateIcon(QWidget):
         else:
             new_state = State.DEFAULT
 
+        print(f"DEBUG: StateIcon autoDetectState - checked={checked}, hovered={hovered}, enabled={enabled} -> {new_state.name}")
+
         if new_state != self._current_state:
+            print(f"DEBUG: StateIcon autoDetectState - changing from {self._current_state.name} to {new_state.name}")
             self._current_state = new_state
             # Track that this state has been accessed
             self._accessed_states.add(new_state)
@@ -527,6 +533,8 @@ class StateIcon(QWidget):
             if new_state not in self._state_pixmaps:
                 self._render_state(new_state)
             self._update_display()
+        else:
+            print(f"DEBUG: StateIcon autoDetectState - no change, staying in {new_state.name}")
 
     def _resolve_color_for_state(self, state: State) -> str:
         """Resolve the color for a given state with proper precedence.
@@ -630,18 +638,24 @@ class StateIcon(QWidget):
 
         if self._current_state in self._state_pixmaps:
             pixmap = self._state_pixmaps[self._current_state]
+            print(f"DEBUG: StateIcon _update_display - using cached pixmap for {self._current_state.name}")
         elif State.DEFAULT in self._state_pixmaps:
             # fallback to DEFAULT if current state isn't rendered
             pixmap = self._state_pixmaps[State.DEFAULT]
+            print(f"DEBUG: StateIcon _update_display - falling back to DEFAULT for {self._current_state.name}")
             DebugLogger.log(f"StateIcon falling back to DEFAULT state for {self._current_state.name}", "debug")
         else:
             # last resort - render on demand
+            print(f"DEBUG: StateIcon _update_display - rendering {self._current_state.name} on demand")
             DebugLogger.log(f"StateIcon rendering {self._current_state.name} on demand", "debug")
             self._render_state(self._current_state)
             pixmap = self._state_pixmaps.get(self._current_state)
 
         if pixmap:
             self._label.setPixmap(pixmap)
+            print(f"DEBUG: StateIcon _update_display - pixmap set successfully for {self._current_state.name}")
+        else:
+            print(f"DEBUG: StateIcon _update_display - NO PIXMAP FOUND for {self._current_state.name}")
 
     def _on_theme_refresh(self):
         """Called when theme changes - clear cache and re-render states."""

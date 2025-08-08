@@ -220,6 +220,7 @@ class BaseButton:
     def _sync_icon_state(self):
         """Synchronize StateIcon with current button state."""
         if self.state_icon:
+            print(f"DEBUG: _sync_icon_state - checked={self.isChecked()}, hovered={self._is_hovered}, enabled={self.isEnabled()}")
             self.state_icon.autoDetectState(
                 checked=self.isChecked(),
                 hovered=self._is_hovered,
@@ -230,12 +231,14 @@ class BaseButton:
         """Handle mouse enter for hover state."""
         super().enterEvent(event)
         self._is_hovered = True
+        print(f"DEBUG: Button hover ENTER - {self.objectName() or type(self).__name__}")
         self._sync_icon_state()
 
     def leaveEvent(self, event):
         """Handle mouse leave for hover state."""
         super().leaveEvent(event)
         self._is_hovered = False
+        print(f"DEBUG: Button hover LEAVE - {self.objectName() or type(self).__name__}")
         self._sync_icon_state()
 
     def changeEvent(self, event):
