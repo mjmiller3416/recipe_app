@@ -230,29 +230,53 @@ class BaseButton:
     def event(self, event):
         """Override event to debug all mouse events."""
         if event.type().name in ['MouseButtonPress', 'MouseButtonRelease', 'MouseMove', 'Enter', 'Leave', 'HoverEnter', 'HoverLeave', 'HoverMove']:
-            print(f"DEBUG: Button.event() - {event.type().name} on {self.objectName() or type(self).__name__}")
-        return super().event(event)
+            print(f"DEBUG: BaseButton.event() - {event.type().name} on {self.objectName() or type(self).__name__}")
+        # Call the Qt widget's event method directly to avoid MRO issues
+        if isinstance(self, QPushButton):
+            return QPushButton.event(self, event)
+        elif isinstance(self, QToolButton):  
+            return QToolButton.event(self, event)
+        else:
+            return super().event(event)
 
     def enterEvent(self, event):
         """Handle mouse enter for hover state."""
-        print(f"DEBUG: Button enterEvent CALLED - {self.objectName() or type(self).__name__}")
-        super().enterEvent(event)
+        print(f"DEBUG: BaseButton enterEvent CALLED - {self.objectName() or type(self).__name__}")
+        # Call the Qt widget's enterEvent directly to avoid MRO issues
+        if isinstance(self, QPushButton):
+            QPushButton.enterEvent(self, event)
+        elif isinstance(self, QToolButton):
+            QToolButton.enterEvent(self, event)
+        else:
+            super().enterEvent(event)
         self._is_hovered = True
-        print(f"DEBUG: Button hover ENTER - {self.objectName() or type(self).__name__}")
+        print(f"DEBUG: BaseButton hover ENTER - {self.objectName() or type(self).__name__}")
         self._sync_icon_state()
 
     def leaveEvent(self, event):
         """Handle mouse leave for hover state."""
-        print(f"DEBUG: Button leaveEvent CALLED - {self.objectName() or type(self).__name__}")
-        super().leaveEvent(event)
+        print(f"DEBUG: BaseButton leaveEvent CALLED - {self.objectName() or type(self).__name__}")
+        # Call the Qt widget's leaveEvent directly to avoid MRO issues
+        if isinstance(self, QPushButton):
+            QPushButton.leaveEvent(self, event)
+        elif isinstance(self, QToolButton):
+            QToolButton.leaveEvent(self, event)
+        else:
+            super().leaveEvent(event)
         self._is_hovered = False
-        print(f"DEBUG: Button hover LEAVE - {self.objectName() or type(self).__name__}")
+        print(f"DEBUG: BaseButton hover LEAVE - {self.objectName() or type(self).__name__}")
         self._sync_icon_state()
 
     def mousePressEvent(self, event):
         """Handle mouse press for debugging."""
-        print(f"DEBUG: Button mousePressEvent CALLED - {self.objectName() or type(self).__name__}")
-        super().mousePressEvent(event)
+        print(f"DEBUG: BaseButton mousePressEvent CALLED - {self.objectName() or type(self).__name__}")
+        # Call the Qt widget's mousePressEvent directly to avoid MRO issues
+        if isinstance(self, QPushButton):
+            QPushButton.mousePressEvent(self, event)
+        elif isinstance(self, QToolButton):
+            QToolButton.mousePressEvent(self, event)
+        else:
+            super().mousePressEvent(event)
 
     def changeEvent(self, event):
         """Handle enabled/disabled state changes."""
@@ -416,8 +440,10 @@ class Button(QPushButton, BaseButton):
             icon (Name, optional): Optional icon enum to display.
             parent: Optional parent widget.
         """
+        print(f"DEBUG: Button.__init__ called with label='{label}'")
         QPushButton.__init__(self, label, parent)
         self._init_base_button(type)
+        print(f"DEBUG: Button MRO: {[cls.__name__ for cls in type(self).__mro__]}")
 
         self._icon_spacing = 6
 
