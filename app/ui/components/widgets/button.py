@@ -454,6 +454,22 @@ class Button(QPushButton, BaseButton):
         # Connect signals after widget is fully initialized
         self._connect_signals()
 
+    def enterEvent(self, event):
+        """Handle mouse enter for hover state."""
+        print(f"DEBUG: Button.enterEvent CALLED - {self.objectName() or 'Button'}")
+        QPushButton.enterEvent(self, event)
+        self._is_hovered = True
+        print(f"DEBUG: Button hover ENTER - {self.objectName() or 'Button'}")
+        self._sync_icon_state()
+
+    def leaveEvent(self, event):
+        """Handle mouse leave for hover state."""
+        print(f"DEBUG: Button.leaveEvent CALLED - {self.objectName() or 'Button'}")
+        QPushButton.leaveEvent(self, event)
+        self._is_hovered = False
+        print(f"DEBUG: Button hover LEAVE - {self.objectName() or 'Button'}")
+        self._sync_icon_state()
+
     def setIconSize(self, width: int, height: int):
         """Set the icon's size within the button (Button-specific method)."""
         self.setStateIconSize(width, height)
@@ -628,6 +644,22 @@ class ToolButton(QToolButton, BaseButton):
 
         # Connect signals after widget is fully initialized
         self._connect_signals()
+
+    def enterEvent(self, event):
+        """Handle mouse enter for hover state."""
+        print(f"DEBUG: ToolButton.enterEvent CALLED - {self.objectName() or 'ToolButton'}")
+        QToolButton.enterEvent(self, event)
+        self._is_hovered = True
+        print(f"DEBUG: ToolButton hover ENTER - {self.objectName() or 'ToolButton'}")
+        self._sync_icon_state()
+
+    def leaveEvent(self, event):
+        """Handle mouse leave for hover state."""
+        print(f"DEBUG: ToolButton.leaveEvent CALLED - {self.objectName() or 'ToolButton'}")
+        QToolButton.leaveEvent(self, event)
+        self._is_hovered = False
+        print(f"DEBUG: ToolButton hover LEAVE - {self.objectName() or 'ToolButton'}")
+        self._sync_icon_state()
 
     def setIconSize(self, *args):
         """Override QToolButton.setIconSize to support both QSize and (width, height) arguments."""
