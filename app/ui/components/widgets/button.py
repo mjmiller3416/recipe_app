@@ -227,8 +227,15 @@ class BaseButton:
                 enabled=self.isEnabled()
             )
 
+    def event(self, event):
+        """Override event to debug all mouse events."""
+        if event.type().name in ['MouseButtonPress', 'MouseButtonRelease', 'MouseMove', 'Enter', 'Leave', 'HoverEnter', 'HoverLeave', 'HoverMove']:
+            print(f"DEBUG: Button.event() - {event.type().name} on {self.objectName() or type(self).__name__}")
+        return super().event(event)
+
     def enterEvent(self, event):
         """Handle mouse enter for hover state."""
+        print(f"DEBUG: Button enterEvent CALLED - {self.objectName() or type(self).__name__}")
         super().enterEvent(event)
         self._is_hovered = True
         print(f"DEBUG: Button hover ENTER - {self.objectName() or type(self).__name__}")
@@ -236,10 +243,16 @@ class BaseButton:
 
     def leaveEvent(self, event):
         """Handle mouse leave for hover state."""
+        print(f"DEBUG: Button leaveEvent CALLED - {self.objectName() or type(self).__name__}")
         super().leaveEvent(event)
         self._is_hovered = False
         print(f"DEBUG: Button hover LEAVE - {self.objectName() or type(self).__name__}")
         self._sync_icon_state()
+
+    def mousePressEvent(self, event):
+        """Handle mouse press for debugging."""
+        print(f"DEBUG: Button mousePressEvent CALLED - {self.objectName() or type(self).__name__}")
+        super().mousePressEvent(event)
 
     def changeEvent(self, event):
         """Handle enabled/disabled state changes."""

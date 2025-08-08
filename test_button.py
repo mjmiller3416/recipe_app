@@ -49,6 +49,28 @@ class ButtonTestWindow(QWidget):
         basic_group = QGroupBox("Basic Button Tests")
         basic_layout = QVBoxLayout(basic_group)
 
+        # Test standard QPushButton for comparison
+        basic_layout.addWidget(QLabel("Standard QPushButton (for mouse event comparison):"))
+        standard_row = QHBoxLayout()
+        
+        class DebugPushButton(QPushButton):
+            def enterEvent(self, event):
+                print("DEBUG: Standard QPushButton enterEvent CALLED")
+                super().enterEvent(event)
+            
+            def leaveEvent(self, event):
+                print("DEBUG: Standard QPushButton leaveEvent CALLED") 
+                super().leaveEvent(event)
+            
+            def mousePressEvent(self, event):
+                print("DEBUG: Standard QPushButton mousePressEvent CALLED")
+                super().mousePressEvent(event)
+
+        self.debug_button = DebugPushButton("Standard Button")
+        standard_row.addWidget(self.debug_button)
+        standard_row.addStretch()
+        basic_layout.addLayout(standard_row)
+
         # Test Button widgets with icons and labels
         basic_layout.addWidget(QLabel("Button widgets (icon + label):"))
         button_row = QHBoxLayout()

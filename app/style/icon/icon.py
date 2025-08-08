@@ -327,6 +327,7 @@ class StateIcon(QWidget):
 
         # Make StateIcon transparent to mouse events so parent button can detect hover properly
         self.setAttribute(Qt.WA_TransparentForMouseEvents, True)
+        print(f"DEBUG: StateIcon init - WA_TransparentForMouseEvents set to {self.testAttribute(Qt.WA_TransparentForMouseEvents)}")
 
         # initialize ThemedIcon functionality via composition
         self._themed_icon = ThemedIcon(icon_enum)
@@ -356,6 +357,9 @@ class StateIcon(QWidget):
 
         # internal label for displaying pixmaps
         self._label = QLabel(self)
+        # Ensure the internal label is also transparent to mouse events
+        self._label.setAttribute(Qt.WA_TransparentForMouseEvents, True)
+        print(f"DEBUG: StateIcon._label - WA_TransparentForMouseEvents set to {self._label.testAttribute(Qt.WA_TransparentForMouseEvents)}")
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
