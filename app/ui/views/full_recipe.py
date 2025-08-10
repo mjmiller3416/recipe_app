@@ -1,53 +1,69 @@
-"""app/ui/components/dialogs/full_recipe.py
+"""app/ui/views/full_recipe.py
 
-Defines the FullRecipe class, a custom dialog for displaying full recipe details including
+Defines the FullRecipe class, a view for displaying full recipe details including
 metadata, ingredients, and directions.
 """
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QSizePolicy,
                                QSpacerItem, QVBoxLayout, QWidget)
 
 from app.core.models import Recipe
 from app.style.icon import Icon, Name
-from app.ui.components.dialogs import DialogWindow
+from app.style import Theme, Qss
 from app.ui.components.layout import Separator
 from app.ui.components.widgets import RoundedImage
+from app.ui.components.widgets.button import Button
 from app.ui.helpers.ui_helpers import create_framed_layout
+from app.style.icon.config import Type
 
 
 # ── Full Recipe ──────────────────────────────────────────────────────────────────────────────
-class FullRecipe(DialogWindow):
-    """Dialog for displaying a complete recipe with custom layout.
-
-    Inherits:
-        BaseDialog: Provides window chrome and layout container.
+class FullRecipe(QWidget):
+    """View for displaying a complete recipe with custom layout.
 
     Displays:
+        - Back button to return to recipe list
         - Header with recipe name
         - Meta info (servings, time, category)
         - Ingredients list
         - Step-by-step directions
     """
-    def __init__(self, recipe: Recipe):
-        super().__init__(width=720, height=980)
+    
+    back_clicked = Signal()
+    
+    def __init__(self, recipe: Recipe, parent=None):
+        super().__init__(parent)
         self.recipe = recipe
 
-        # ── Window Properties ──
-        self.title_bar.btn_ico_maximize.setVisible(False)
-        self.title_bar.btn_ico_toggle_sidebar.setVisible(False)
-        self.setObjectName("RecipeDialog")
+        # register for component-specific styling
+        Theme.register_widget(self, Qss.FULL_RECIPE)
+
+        # ── Widget Properties ──
+        self.setObjectName("FullRecipeView")
 
         # ── Setup UI ──
         self.setup_ui()
 
     # ── Public Methods ───────────────────────────────────────────────────────────────────────
     def setup_ui(self) -> None:
-        """Set up the full dialog layout with header, left, and right columns."""
+        """Set up the full view layout with back button, header, left, and right columns."""
         # ── Create Main Layout ──
         lyt_main = QVBoxLayout()
         lyt_main.setSpacing(30)
-        lyt_main.setContentsMargins(20, 0, 20, 20)
+        lyt_main.setContentsMargins(20, 20, 20, 20)
+
+        # ── Add Back Button ──
+        back_button_layout = QHBoxLayout()
+        self.btn_back = Button(
+            label="Back to Recipes",
+            type=Type.SECONDARY
+        )
+        self.btn_back.setIcon(Name.BACK)
+        self.btn_back.clicked.connect(self.back_clicked.emit)
+        back_button_layout.addWidget(self.btn_back)
+        back_button_layout.addStretch()
+        lyt_main.addLayout(back_button_layout)
 
         # add header
         header_frame = self.build_header_frame()
@@ -61,8 +77,8 @@ class FullRecipe(DialogWindow):
         lyt_body.addLayout(right_column, 3)
         lyt_main.addLayout(lyt_body, 1)
 
-        # ── Add Header & Columns ──
-        self.content_layout.addLayout(lyt_main)
+        # ── Set Main Layout ──
+        self.setLayout(lyt_main)
 
     def build_header_frame(self) -> QFrame:
         """Creates the recipe image widget."""
@@ -99,9 +115,9 @@ class FullRecipe(DialogWindow):
 
         # add meta info to layout using Name enum
         for icon_name, text in (
-            (Name.DIALOG_SERVINGS, str(self.recipe.servings)),
-            (Name.DIALOG_TOTAL_TIME, str(self.recipe.total_time)),
-            (Name.DIALOG_CATEGORY, self.recipe.recipe_category),
+            (Name.SERVINGS, str(self.recipe.servings)),
+            (Name.TOTAL_TIME, str(self.recipe.total_time)),
+            (Name.CATEGORY, self.recipe.recipe_category),
             (Name.MEAL_TYPE, self.recipe.meal_type),
             (Name.DIET_PREF, self.recipe.diet_pref or "None"),
         ):
@@ -249,7 +265,7 @@ class FullRecipe(DialogWindow):
 
     # ── Private Methods ─────────────────────────────────────────────────────────────────
     def _build_left_column(self) -> QVBoxLayout:
-        """Constructs the left side of the dialog (Image + Ingredients)."""
+        """Constructs the left side of the view (Image + Ingredients)."""
         lyt = QVBoxLayout()
         lyt.setSpacing(30)
 
@@ -259,7 +275,7 @@ class FullRecipe(DialogWindow):
         return lyt
 
     def _build_right_column(self) -> QVBoxLayout:
-        """Constructs the right side of the dialog (Meta Info + Directions)."""
+        """Constructs the right side of the view (Meta Info + Directions)."""
         lyt = QVBoxLayout()
         lyt.setSpacing(30)
 
@@ -288,7 +304,5 @@ class FullRecipe(DialogWindow):
         lyt.addStretch() # add stretch to push widgets to the left
 
         return container
-
-
 
 

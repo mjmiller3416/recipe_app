@@ -5,7 +5,7 @@ A generic container widget with elevation effects and flexible layout management
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QFrame, QVBoxLayout, QHBoxLayout, QGridLayout, QSizePolicy, QWidget)
+from PySide6.QtWidgets import (QFrame, QVBoxLayout, QHBoxLayout, QGridLayout, QSizePolicy, QWidget, QLabel)
 
 from app.style.theme.config import Qss
 from app.style.theme_controller import Color, Mode, Theme
@@ -20,7 +20,7 @@ class Card(QFrame):
     layout types (QVBox, QHBox, QGrid) and provides a clean API for content management.
     """
 
-    def __init__(self, parent=None, elevation=Shadow.ELEVATION_1):
+    def __init__(self, parent=None, elevation=Shadow.ELEVATION_6):
         """Initialize the Card widget.
 
         Args:
@@ -43,6 +43,7 @@ class Card(QFrame):
         self._current_layout = None
         self._elevation = elevation
         self._elevation_enabled = True
+        self._header_label = None
 
         # ── Create Default Layout ──
         self.addLayout("vbox")  # Default to vertical box layout
@@ -170,7 +171,7 @@ class Card(QFrame):
 
     def expandWidth(self, expand: bool = True):
         """Enable or disable width expansion.
-        
+
         Args:
             expand (bool): Whether the card should expand horizontally to fill available space.
         """
@@ -179,10 +180,10 @@ class Card(QFrame):
             self.setSizePolicy(QSizePolicy.Expanding, current_policy.verticalPolicy())
         else:
             self.setSizePolicy(QSizePolicy.Fixed, current_policy.verticalPolicy())
-    
+
     def expandHeight(self, expand: bool = True):
         """Enable or disable height expansion.
-        
+
         Args:
             expand (bool): Whether the card should expand vertically to fill available space.
         """
@@ -191,10 +192,10 @@ class Card(QFrame):
             self.setSizePolicy(current_policy.horizontalPolicy(), QSizePolicy.Expanding)
         else:
             self.setSizePolicy(current_policy.horizontalPolicy(), QSizePolicy.Fixed)
-    
+
     def expandBoth(self, expand: bool = True):
         """Enable or disable both width and height expansion.
-        
+
         Args:
             expand (bool): Whether the card should expand to fill all available space.
         """
@@ -202,3 +203,23 @@ class Card(QFrame):
             self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         else:
             self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+
+    def setHeader(self, text: str, tag: str = "Sub-Header"):
+        """Set or update the header label for the card.
+
+        Args:
+            text (str): The header text to display.
+            tag (str): The tag property for styling purposes (default: "Sub-Header").
+        """
+        if self._header_label is None:
+            self._header_label = QLabel(text)
+            self._header_label.setProperty("tag", tag)
+            # Insert at the top of the layout
+            if self._current_layout:
+                self._current_layout.insertWidget(0, self._header_label)
+        else:
+            self._header_label.setText(text)
+            self._header_label.setProperty("tag", tag)
+            # Force style update to apply new tag
+            self._header_label.style().unpolish(self._header_label)
+            self._header_label.style().polish(self._header_label)

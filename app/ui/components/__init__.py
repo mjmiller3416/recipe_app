@@ -3,7 +3,6 @@
 # From dialogs
 from .dialogs.crop_dialog import CropDialog
 from .dialogs.dialog_window import DialogWindow
-from .dialogs.full_recipe import FullRecipe
 from .dialogs.message_dialog import MessageDialog
 # From forms
 from .forms.form_field import ComboBoxField, FormField, LineEditField
@@ -29,7 +28,7 @@ from .widgets.rounded_image import RoundedImage
 
 __all__ = [
     # Dialogs
-    "CropDialog", "DialogWindow", "FullRecipe", "MessageDialog", "RecipeSelection",
+    "CropDialog", "DialogWindow", "MessageDialog", "RecipeSelection",
     # Forms
     "FormField", "LineEditField", "ComboBoxField",
     # Image

@@ -35,7 +35,7 @@ class MealPlanner(QWidget):
         self.planner_service = PlannerService()
 
         self.setObjectName("MealPlanner")
-        DebugLogger.log("Initializing MealPlanner page", "debug")
+        DebugLogger.log("Initializing MealPlanner page", "info")
 
         # ── Create planner and selection widgets ──
         self.meal_tabs = QTabWidget()

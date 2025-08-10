@@ -11,6 +11,10 @@
     font: {header_large};
     color: {on_surface};
 }
+[tag="Sub-Header"] {
+    font: {header_small};
+    color: {on_surface};
+}
 
 /* QWidget */
 QWidget {

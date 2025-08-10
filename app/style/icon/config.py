@@ -16,6 +16,7 @@ class Path(Enum):
     """Enum for application icons."""
     ADD             = "add"
     ADD_RECIPES     = "add_recipes"
+    BACK            = "back"
     BATTERY         = "battery"
     CATEGORY        = "category"
     CROSS           = "cross"
@@ -124,6 +125,7 @@ class Name(Enum):
 
     # ── Small Icons ─────────────────────────────
     ADD             = IconSpec(Path.ADD, Size.SMALL)
+    BACK            = IconSpec(Path.BACK, Size.SMALL)
     BATTERY         = IconSpec(Path.BATTERY, Size.SMALL)
     CATEGORY        = IconSpec(Path.CATEGORY, Size.SMALL)
     CROSS           = IconSpec(Path.CROSS, Size.SMALL)

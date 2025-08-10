@@ -21,7 +21,7 @@ class Dashboard(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        DebugLogger.log("Initializing Dashboard page", "debug")
+        DebugLogger.log("Initializing Dashboard page", "info")
 
         # Initialize & Setup UI
         self.setObjectName("Dashboard")
@@ -33,11 +33,14 @@ class Dashboard(QWidget):
         card = Card()
         card.setAttribute(Qt.WA_StyledBackground, True)
         card.setSpacing(36)
+        card.expandWidth(False)
+        card.setHeader("Dashboard Overview")
         summary_label = QLabel("This is a placeholder for dashboard content.")
         summary_label.setProperty("font", "Body")
         summary_label.setWordWrap(True)
         card.addWidget(summary_label)
         self.layout.addWidget(card)
+
 
         # add test button with icon
         self.btn = Button(

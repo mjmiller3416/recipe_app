@@ -27,7 +27,7 @@ class ShoppingList(QWidget):
         super().__init__(parent)
         self.setObjectName("ShoppingList")
 
-        DebugLogger.log("Initializing ShoppingList page", "debug")
+        DebugLogger.log("Initializing ShoppingList page", "info")
 
         self.active_recipe_ids: list[int] = []  # store latest recipe list
         self.shopping_svc = None  # initialize shopping service

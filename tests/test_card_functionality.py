@@ -318,7 +318,7 @@ class CardContentArea(QFrame):
         small_card.addLayout("vbox")
         small_card.addWidget(QLabel("Small Card"))
         small_card.addWidget(QPushButton("Button"))
-        row1_layout.addWidget(small_card)
+        row1_layout.addWidget(small_card, 0, Qt.AlignLeft)
         
         # Medium content card
         medium_card = Card()
@@ -326,7 +326,7 @@ class CardContentArea(QFrame):
         medium_card.addWidget(QLabel("Medium Content Card"))
         medium_card.addWidget(QLabel("This card has more content\nto demonstrate size-to-contents behavior"))
         medium_card.addWidget(QPushButton("Action Button"))
-        row1_layout.addWidget(medium_card)
+        row1_layout.addWidget(medium_card, 0, Qt.AlignLeft)
         
         # Large content card
         large_card = Card()
@@ -337,7 +337,7 @@ class CardContentArea(QFrame):
         desc_text.setMaximumHeight(100)
         large_card.addWidget(desc_text)
         large_card.addWidget(QPushButton("Process"))
-        row1_layout.addWidget(large_card)
+        row1_layout.addWidget(large_card, 0, Qt.AlignLeft)
         
         row1_layout.addStretch()  # Push cards to left
         layout.addWidget(row1_frame)

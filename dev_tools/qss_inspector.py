@@ -16,6 +16,8 @@ from PySide6.QtCore import QObject, QEvent, Qt
 from PySide6.QtGui import QMouseEvent, QKeyEvent
 from PySide6.QtWidgets import QApplication, QWidget
 
+from dev_tools.debug_logger import DebugLogger
+
 class QSSInspector(QObject):
     """Simple terminal-based widget inspector"""
 
@@ -28,9 +30,8 @@ class QSSInspector(QObject):
         # Install global event filter
         app.installEventFilter(self)
 
-        print("🔍 Simple QSS Inspector initialized")
-        print("   Press Shift+Alt+E to toggle inspection mode")
-        print("   Click widgets to see debug info")
+        DebugLogger.log(
+            "🔍 Simple QSS Inspector initialized. [* Press Shift+Alt+E to toggle inspection mode *]", "info")
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         """Global event filter to handle hotkey and clicks"""

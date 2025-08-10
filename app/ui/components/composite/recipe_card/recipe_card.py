@@ -13,7 +13,6 @@ from PySide6.QtWidgets import (QDialog, QFrame, QPushButton, QStackedWidget,
 from app.core.database.db import create_session
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
-from app.ui.components.dialogs.full_recipe import FullRecipe
 from dev_tools import DebugLogger, StartupTimer
 
 from .constants import LayoutSize
@@ -144,14 +143,9 @@ class RecipeCard(QFrame):
         new_frame.mousePressEvent = self._emit_card_clicked
 
     def _emit_card_clicked(self, event) -> None:
-        """Emit the card_clicked signal and optionally open the recipe dialog."""
+        """Emit the card_clicked signal."""
         if event.button() == Qt.LeftButton and self._recipe:
             self.card_clicked.emit(self._recipe)
-
-            # open the recipe dialog
-            if not self._selection_mode:  # Prevent opening in selection mode
-                dlg = FullRecipe(self._recipe)
-                dlg.exec()
 
     def _handle_add_meal_click(self):
         """

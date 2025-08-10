@@ -1,73 +1,41 @@
 [
     {
         "type": "Group",
-        "name": "Main",
+        "name": "Configs",
         "parent_id": null,
         "workspaceRoot": null,
         "workspacePath": null,
-        "id": "E1O8pMjUCdn2De6T"
+        "id": "E1O8pMjUCdn2De6T",
+        "iconColor": "rgb(147, 112, 219)"
     },
     {
         "type": "File",
-        "name": "g:\\My Drive\\Python\\recipe_app\\features\\add_recipes\\add_recipes.py",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\config\\config.py",
         "parent_id": "E1O8pMjUCdn2De6T",
-        "fsPath": "g:\\My Drive\\Python\\recipe_app\\features\\add_recipes\\add_recipes.py",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\config\\config.py",
         "workspaceRoot": null,
         "workspacePath": null,
-        "id": "wi620h8oXjsAEHbf"
+        "id": "ZV3mgFNxlCD9b5OQ",
+        "label": "Main Config"
     },
     {
         "type": "File",
-        "name": "g:\\My Drive\\Python\\recipe_app\\core\\application\\application.py",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\icon\\config.py",
         "parent_id": "E1O8pMjUCdn2De6T",
-        "fsPath": "g:\\My Drive\\Python\\recipe_app\\core\\application\\application.py",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\icon\\config.py",
         "workspaceRoot": null,
         "workspacePath": null,
-        "id": "LKQV0rie3cxdkI1H"
+        "id": "0stOZcuhzgNCd3m8",
+        "label": "Icon Config"
     },
     {
         "type": "File",
-        "name": "g:\\My Drive\\Python\\recipe_app\\features\\view_recipes\\view_recipes.py",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\config.py",
         "parent_id": "E1O8pMjUCdn2De6T",
-        "fsPath": "g:\\My Drive\\Python\\recipe_app\\features\\view_recipes\\view_recipes.py",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\config.py",
         "workspaceRoot": null,
         "workspacePath": null,
-        "id": "N01u6SqkAZVWwKOb"
-    },
-    {
-        "type": "File",
-        "name": "g:\\My Drive\\Python\\recipe_app\\features\\meal_planner\\meal_planner.py",
-        "parent_id": "E1O8pMjUCdn2De6T",
-        "fsPath": "g:\\My Drive\\Python\\recipe_app\\features\\meal_planner\\meal_planner.py",
-        "workspaceRoot": null,
-        "workspacePath": null,
-        "id": "gAw4unza8Uqtv9bo"
-    },
-    {
-        "type": "File",
-        "name": "g:\\My Drive\\Python\\recipe_app\\features\\shopping_list\\shopping_list.py",
-        "parent_id": "E1O8pMjUCdn2De6T",
-        "fsPath": "g:\\My Drive\\Python\\recipe_app\\features\\shopping_list\\shopping_list.py",
-        "workspaceRoot": null,
-        "workspacePath": null,
-        "id": "mJEiOSDv3Vp09bBK"
-    },
-    {
-        "type": "File",
-        "name": "g:\\My Drive\\Python\\recipe_app\\features\\dashboard\\dashboard.py",
-        "parent_id": "E1O8pMjUCdn2De6T",
-        "fsPath": "g:\\My Drive\\Python\\recipe_app\\features\\dashboard\\dashboard.py",
-        "workspaceRoot": null,
-        "workspacePath": null,
-        "id": "82a9FHPCmRlMQVhd"
-    },
-    {
-        "type": "Directory",
-        "name": "g:\\My Drive\\Python\\recipe_app\\app\\style_manager\\stylesheets",
-        "parent_id": null,
-        "fsPath": "g:\\My Drive\\Python\\recipe_app\\app\\style_manager\\stylesheets",
-        "workspaceRoot": null,
-        "workspacePath": null,
-        "id": "ZlgA3SkvFHtyNhXr"
+        "id": "ZIYcMavnTHL57CXA",
+        "label": "Theme Config"
     }
 ]

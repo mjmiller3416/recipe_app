@@ -47,7 +47,7 @@ elif "--import-recipes" in sys.argv:
 else:
     app = QApplication(sys.argv)
     app.setApplicationName("MealGenie")
-    DebugLogger.set_log_level("warning")
+    DebugLogger.set_log_level("info")
     DebugLogger.log("Starting MealGenie application...\n", "info")
 
     ##Theme.setTheme(Color.GREEN, Mode.DARK)
@@ -66,7 +66,6 @@ else:
     # Uncomment the lines below to enable the simple terminal-based QSS inspector
     from dev_tools.qss_inspector import enable_qss_inspector
     inspector = enable_qss_inspector(app, main_window)
-    DebugLogger.log("Simple QSS Inspector enabled - Press Shift+Alt+E to toggle inspection mode\n", "info")
 
     QApplication.processEvents()  # make sure all pending events are flushed
     startup_timer.StartupTimer.summary("MealGenie startup") # log total startup time
