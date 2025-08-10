@@ -88,7 +88,13 @@ class WindowAnimator(QObject):
         """
         self._stop_current_animation() # prevent animation conflicts
 
-        # capture the starting geometry
+        # If window is maximized, restore it first to avoid geometry conflicts
+        if self._is_maximized:
+            self.window.showNormal()
+            self._is_maximized = False
+            self.window.title_bar.update_maximize_icon(False)
+
+        # capture the starting geometry after potential restore
         start_geometry = self.window.geometry()
 
         # calculate the target position (taskbar center or screen bottom center)

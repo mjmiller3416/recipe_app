@@ -65,6 +65,9 @@ else:
         navigation_service_factory=navigation_service_factory
     )
     main_window.showMaximized() # show the main window maximized
+    # Sync the window animator state with the actual maximized state
+    main_window.animator._is_maximized = True
+    main_window.title_bar.update_maximize_icon(True)
 
     # ── Simple QSS Inspector ──
     # Uncomment the lines below to enable the simple terminal-based QSS inspector
