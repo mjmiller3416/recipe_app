@@ -1,3 +1,222 @@
 /* ------------------------------------------------------------------
-   FULL RECIPE STYLING
+   FULL RECIPE VIEW STYLING
+   Material Design 3 inspired with injection variables
    ------------------------------------------------------------------ */
+
+/* ── Main Container ──────────────────────────────────────────── */
+QWidget#FullRecipe {
+    background-color: {surface};
+}
+
+QScrollArea#FullRecipeScroll {
+    background-color: {surface};
+    border: none;
+}
+
+QWidget#FullRecipeContent {
+    background-color: {surface};
+}
+
+/* ── Recipe Title ──────────────────────────────────────────────── */
+QLabel#RecipeTitle {
+    font: {header_large};
+    color: {on_surface};
+    margin: 20px 0;
+}
+
+/* ── Recipe Tags ─────────────────────────────────────────────────── */
+QFrame#RecipeTag {
+    background-color: {surface_container_high};
+    border: 1px solid {outline_variant};
+    border-radius: 20px;
+    padding: 8px 16px;
+}
+
+QLabel#RecipeTagText {
+    font: {body_medium};
+    color: {on_surface};
+    font-weight: 500;
+}
+
+QLabel#RecipeTagIcon {
+    color: {primary};
+}
+
+/* ── Recipe Image ──────────────────────────────────────────────── */
+QFrame#RecipeImage {
+    background-color: {surface_container};
+    border: 1px solid {outline_variant};
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+QLabel#RecipeImagePlaceholderIcon {
+    color: {on_surface_variant};
+}
+
+QLabel#RecipeImagePlaceholderText {
+    font: {body_large};
+    color: {on_surface_variant};
+    font-weight: 500;
+}
+
+QLabel#RecipeImageDimensionsText {
+    font: {title_small};
+    color: {outline};
+    font-weight: bold;
+}
+
+/* ── Info Cards Container ─────────────────────────────────────── */
+QFrame#InfoContainer {
+    background-color: {surface_container};
+    border: 1px solid {outline_variant};
+    border-radius: 12px;
+    margin: 10px 0;
+}
+
+/* ── Individual Info Cards ──────────────────────────────────── */
+QWidget#InfoCard {
+    background-color: transparent;
+    padding: 10px;
+}
+
+QLabel#InfoCardIcon {
+    color: {primary};
+}
+
+QLabel#InfoCardTitle {
+    font: {title_small};
+    color: {on_surface_variant};
+    font-weight: 500;
+}
+
+QLabel#InfoCardValue {
+    font: {body_large};
+    color: {on_surface};
+    font-weight: bold;
+}
+
+/* ── Section Cards (Ingredients, Directions, Notes) ───────── */
+[tag="Card"]#SectionCard {
+    background-color: {surface_container};
+    border: 1px solid {outline_variant};
+    border-radius: 12px;
+    margin: 5px 0;
+}
+
+/* ── Section Headers ───────────────────────────────────────── */
+QLabel#SectionHeader {
+    font: {header_small};
+    color: {on_surface};
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+QLabel#SectionIcon {
+    color: {primary};
+}
+
+/* ── Ingredient List ─────────────────────────────────────────── */
+QWidget#IngredientList {
+    background-color: transparent;
+}
+
+QWidget#IngredientItem {
+    background-color: transparent;
+    margin: 2px 0;
+}
+
+QLabel#IngredientAmount {
+    font: {body_medium};
+    color: {primary};
+    font-weight: bold;
+    padding-right: 15px;
+    min-width: 100px;
+}
+
+QLabel#IngredientName {
+    font: {body_medium};
+    color: {on_surface};
+}
+
+/* ── Directions List ───────────────────────────────────────── */
+QWidget#DirectionsList {
+    background-color: transparent;
+}
+
+QWidget#DirectionItem {
+    background-color: transparent;
+    margin: 5px 0;
+}
+
+QLabel#DirectionNumber {
+    font: {body_large};
+    color: {primary};
+    font-weight: bold;
+    min-width: 30px;
+}
+
+QLabel#DirectionText {
+    font: {body_medium};
+    color: {on_surface};
+    line-height: 1.5;
+}
+
+QLabel#EmptyDirections {
+    font: {body_medium};
+    color: {on_surface_variant};
+    font-style: italic;
+}
+
+/* ── Notes Section ───────────────────────────────────────────── */
+QLabel#NotesText {
+    font: {body_medium};
+    color: {on_surface_variant};
+    font-style: italic;
+    line-height: 1.5;
+}
+
+/* ── Back Button ───────────────────────────────────────────── */
+QWidget#BackBar {
+    background-color: transparent;
+    margin-bottom: 10px;
+}
+
+QPushButton#BackButton {
+    background-color: {primary_container};
+    color: {on_primary_container};
+    font: {body_medium};
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+}
+
+QPushButton#BackButton:hover {
+    background-color: {primary_container_hover};
+}
+
+QPushButton#BackButton:pressed {
+    background-color: {primary_container_pressed};
+}
+
+/* ── Responsive Design ──────────────────────────────────────── */
+@media (max-width: 800px) {
+    QLabel#RecipeTitle {
+        font: {header_small};
+    }
+    
+    QFrame#InfoContainer QHBoxLayout {
+        flex-direction: column;
+    }
+}
+
+/* ── Hover Effects ───────────────────────────────────────────── */
+QFrame#RecipeTag:hover {
+    background-color: {surface_container_highest};
+}
+
+[tag="Card"]#SectionCard:hover {
+    background-color: {surface_container_high};
+    border: 1px solid {outline};
+}

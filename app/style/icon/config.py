@@ -38,6 +38,7 @@ class Path(Enum):
     MENU            = "menu"
     MINIMIZE        = "minimize"
     NOTES           = "notes"
+    PRINT           = "print"
     RESTORE         = "restore"
     REFRESH         = "refresh"
     SAVE            = "save"
@@ -156,6 +157,7 @@ class Name(Enum):
     LOGO            = IconSpec(Path.LOGO, Size.MEDIUM)
     MENU            = IconSpec(Path.MENU, Size.MEDIUM)
     NOTES           = IconSpec(Path.NOTES, Size.MEDIUM)
+    PRINT           = IconSpec(Path.PRINT, Size.MEDIUM)
 
     # ── Large Icons ─────────────────────────────
     ADD_RECIPES     = IconSpec(Path.ADD_RECIPES, Size.LARGE)
@@ -177,5 +179,5 @@ class Name(Enum):
         return self.value
 
 
-# Alias for better readability in different contexts  
+# Alias for better readability in different contexts
 Icon = Name  # More intuitive when used with buttons: Button(Type.PRIMARY, Icon.DASHBOARD)
