@@ -33,12 +33,13 @@ class Typography(Enum):
     """Typography styles for the application using CSS font shorthand syntax."""
 
     # CSS font shorthand format: [font-style] [font-weight] [font-size] [font-family]
-    HEADER_LARGE    = 'normal 600 52px "Roboto"'
+    TITLE           = 'normal 500 56px "Roboto"'
+    HEADER_LARGE    = 'normal 600 52px "Lora"'
     HEADER_SMALL    = 'normal 500 32px "Roboto"'
     SUBHEADER       = 'italic 400 24px "Roboto"'
-    TITLE_SMALL     = 'normal 500 14px "Roboto"'
+    TITLE_SMALL     = 'normal 500 20px "Roboto"'
     BODY_LARGE      = 'normal 400 22px "Roboto"'
-    BODY_MEDIUM     = 'normal 400 14px "Roboto"'
+    BODY_MEDIUM     = 'normal 400 18px "Roboto"'
     LABEL_SMALL     = 'normal 500 12px "Roboto"'
 
     @classmethod
@@ -56,10 +57,13 @@ class Qss(Enum):
     COMBOBOX          = AppPaths.QSS_DIR / "combobox.qss"
     DIALOG_WINDOW     = AppPaths.QSS_DIR / "dialog_window.qss"
     EMPTY_STATE       = AppPaths.QSS_DIR / "empty_state.qss"
+    INFO_CARD         = AppPaths.QSS_DIR / "info_card.qss"
     INGREDIENT_WIDGET = AppPaths.QSS_DIR / "ingredient_widget.qss"
     NAV_BUTTON        = AppPaths.QSS_DIR / "nav_button.qss"
+    RECIPE_BANNER     = AppPaths.QSS_DIR / "recipe_banner.qss"
     RECIPE_CARD       = AppPaths.QSS_DIR / "recipe_card.qss"
     RECIPE_DIALOG     = AppPaths.QSS_DIR / "recipe_dialog.qss"
+    RECIPE_TAG        = AppPaths.QSS_DIR / "recipe_tag.qss"
     SEARCH_BAR        = AppPaths.QSS_DIR / "search_bar.qss"
     SIDEBAR           = AppPaths.QSS_DIR / "sidebar.qss"
     TITLE_BAR         = AppPaths.QSS_DIR / "title_bar.qss"

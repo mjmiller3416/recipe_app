@@ -228,6 +228,7 @@ class FullRecipe(QWidget):
 
         # Scroll content
         content = QWidget()
+        content.setContentsMargins(100, 0, 100, 0)
         content.setObjectName("FullRecipeContent")
         scroll.setWidget(content)
 
@@ -265,9 +266,9 @@ class FullRecipe(QWidget):
         page.addWidget(recipe_image)
 
         # ── Info Cards Container
-        info_container = QFrame()
+        info_container = Card()
         info_container.setObjectName("InfoContainer")
-        info_layout = QHBoxLayout(info_container)
+        info_layout = info_container.getLayout()
         info_layout.setContentsMargins(20, 15, 20, 15)
         info_layout.setSpacing(40)
 
@@ -289,7 +290,7 @@ class FullRecipe(QWidget):
         content_row = QHBoxLayout()
         content_row.setContentsMargins(0, 0, 0, 0)
         content_row.setSpacing(30)
-        
+
         # ── Left Column: Ingredients (1/3 width)
         ingredients_card = Card(content)
         ingredients_card.setObjectName("SectionCard")
@@ -306,7 +307,7 @@ class FullRecipe(QWidget):
         ingredient_details = getattr(self.recipe, "get_ingredient_details", lambda: [])()
         ingredients_list.setIngredients(ingredient_details)
         ingredients_layout.addWidget(ingredients_list)
-        
+
         # Add ingredients to left column (1/3 width)
         content_row.addWidget(ingredients_card, 1)
 
@@ -314,7 +315,7 @@ class FullRecipe(QWidget):
         right_column = QVBoxLayout()
         right_column.setContentsMargins(0, 0, 0, 0)
         right_column.setSpacing(25)
-        
+
         # ── Directions Section
         directions_card = Card(content)
         directions_card.setObjectName("SectionCard")
@@ -352,15 +353,15 @@ class FullRecipe(QWidget):
             notes_text.setWordWrap(True)
             notes_layout.addWidget(notes_text)
             right_column.addWidget(notes_card)
-            
+
         # Add stretch to right column to prevent unnecessary expansion
         right_column.addStretch()
-        
+
         # Create widget for right column and add to content row (2/3 width)
         right_column_widget = QWidget()
         right_column_widget.setLayout(right_column)
         content_row.addWidget(right_column_widget, 2)
-        
+
         # Add the content row to main page layout
         page.addLayout(content_row)
 

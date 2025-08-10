@@ -63,5 +63,15 @@
         "workspacePath": null,
         "id": "JhWBybf5nwqVKucF",
         "label": "Base-Style Config"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\style_sheet.py",
+        "parent_id": null,
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\style_sheet.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "wyTop46BFi59ZvDR",
+        "label": "Injection Variables"
     }
 ]

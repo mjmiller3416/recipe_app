@@ -8,7 +8,7 @@
 #ContentArea, #ContentArea QWidget {background-color: {surface};}
 
 [tag="Header"] {
-    font: {header_large};
+    font: {title};
     color: {on_surface};
 }
 [tag="Sub-Header"] {

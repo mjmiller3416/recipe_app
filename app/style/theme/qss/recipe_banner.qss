@@ -1,0 +1,23 @@
+/* ------------------------------------------------------------------
+   RECIPE BANNER STYLING
+   ------------------------------------------------------------------ */
+QFrame#RecipeBanner {
+    background-color: {surface_container};
+    border: 6px dotted {outline_variant};
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+QLabel {background-color: transparent;}
+
+QLabel#RecipeBannerPlaceholderText {
+    font: {header_small};
+    color: {on_surface_variant};
+    padding-top: 20px;
+}
+
+QLabel#RecipeBannerDimensionsText {
+    font: {header_large};
+    font-family: "Roboto";
+    color: {outline};
+}

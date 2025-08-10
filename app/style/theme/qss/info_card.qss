@@ -1,0 +1,22 @@
+/* ------------------------------------------------------------------
+   RECIPE TAG STYLING
+   ------------------------------------------------------------------ */
+
+QWidget#InfoCard {
+    background-color: transparent;
+    padding: 10px;
+}
+
+QLabel {background-color: transparent;}
+
+QLabel#InfoCardTitle {
+    font: {body_large};
+    color: {on_secondary_container};
+    font-weight: bold;
+}
+
+QLabel#InfoCardValue {
+    font: {body_large};
+    color: {tertiary};
+    font-weight: 400;
+}

@@ -1,6 +1,5 @@
 /* ------------------------------------------------------------------
    FULL RECIPE VIEW STYLING
-   Material Design 3 inspired with injection variables
    ------------------------------------------------------------------ */
 
 /* ── Main Container ──────────────────────────────────────────── */
@@ -24,51 +23,9 @@ QLabel#RecipeTitle {
     margin: 20px 0;
 }
 
-/* ── Recipe Tags ─────────────────────────────────────────────────── */
-QFrame#RecipeTag {
-    background-color: {surface_container_high};
-    border: 1px solid {outline_variant};
-    border-radius: 20px;
-    padding: 8px 16px;
-}
-
-QLabel#RecipeTagText {
-    font: {body_medium};
-    color: {on_surface};
-    font-weight: 500;
-}
-
-QLabel#RecipeTagIcon {
-    color: {primary};
-}
-
-/* ── Recipe Image ──────────────────────────────────────────────── */
-QFrame#RecipeImage {
-    background-color: {surface_container};
-    border: 1px solid {outline_variant};
-    border-radius: 12px;
-    margin: 20px 0;
-}
-
-QLabel#RecipeImagePlaceholderIcon {
-    color: {on_surface_variant};
-}
-
-QLabel#RecipeImagePlaceholderText {
-    font: {body_large};
-    color: {on_surface_variant};
-    font-weight: 500;
-}
-
-QLabel#RecipeImageDimensionsText {
-    font: {title_small};
-    color: {outline};
-    font-weight: bold;
-}
-
 /* ── Info Cards Container ─────────────────────────────────────── */
 QFrame#InfoContainer {
-    background-color: {surface_container};
+    background-color: {secondary_container};
     border: 1px solid {outline_variant};
     border-radius: 12px;
     margin: 10px 0;
@@ -205,7 +162,7 @@ QPushButton#BackButton:pressed {
     QLabel#RecipeTitle {
         font: {header_small};
     }
-    
+
     QFrame#InfoContainer QHBoxLayout {
         flex-direction: column;
     }

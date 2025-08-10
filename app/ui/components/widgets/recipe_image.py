@@ -8,59 +8,63 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QFrame, QVBoxLayout, QLabel, QSizePolicy
 from PySide6.QtGui import QPixmap
 
+from app.style import Theme, Qss
 from app.style.icon import AppIcon
 from app.style.icon.config import Icon
 
 
 class RecipeImage(QFrame):
     """Recipe banner image component with fixed 2:1 aspect ratio (1200x600)."""
-    
+
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setObjectName("RecipeImage")
-        self.setProperty("tag", "RecipeImage")
-        
+        self.setObjectName("RecipeBanner")
+        self.setProperty("tag", "RecipeBanner")
+
+        # register for component-specific styling
+        Theme.register_widget(self, Qss.RECIPE_BANNER)
+
         # Fixed aspect ratio (2:1 - 1200x600)
-        self.setMinimumHeight(300)
-        self.setMaximumHeight(400) 
+        self.setFixedHeight(600)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        
+
         # Layout
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setAlignment(Qt.AlignCenter)
-        
+
         # Placeholder content
         self._create_placeholder()
-        
+
     def _create_placeholder(self):
-        """Create placeholder content for when no image is uploaded."""
+        """Create placeholder content for when no banner image is uploaded."""
         # Icon
         self.placeholder_icon = AppIcon(Icon.PHOTO)
-        self.placeholder_icon.setFixedSize(QSize(48, 48))
-        self.placeholder_icon.setObjectName("RecipeImagePlaceholderIcon")
-        
+        self.placeholder_icon.setSize(120, 120)
+        self.placeholder_icon.setObjectName("RecipeBannerPlaceholderIcon")
+
         # Text
         self.placeholder_text = QLabel("No image uploaded")
-        self.placeholder_text.setObjectName("RecipeImagePlaceholderText")
+        self.placeholder_text.setObjectName("RecipeBannerPlaceholderText")
         self.placeholder_text.setAlignment(Qt.AlignCenter)
-        
+
         # Dimensions text
         self.dimensions_text = QLabel("1200 × 600")
-        self.dimensions_text.setObjectName("RecipeImageDimensionsText")
+        self.dimensions_text.setObjectName("RecipeBannerDimensionsText")
         self.dimensions_text.setAlignment(Qt.AlignCenter)
-        
+
         # Add to layout
         self.layout().addWidget(self.placeholder_icon, 0, Qt.AlignCenter)
+        self.layout().addSpacing(40)
         self.layout().addWidget(self.placeholder_text)
         self.layout().addWidget(self.dimensions_text)
-        
+
     def setImage(self, pixmap: QPixmap):
-        """Set the recipe image (future implementation)."""
+        """Set the recipe banner image (future implementation)."""
         # TODO: Implement actual image display
         # For now, keep placeholder
         pass
-        
+
     def clearImage(self):
         """Clear the image and show placeholder."""
         # Placeholder is always shown for now

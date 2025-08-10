@@ -1,0 +1,16 @@
+/* ------------------------------------------------------------------
+   RECIPE TAG STYLING
+   ------------------------------------------------------------------ */
+
+QFrame#RecipeTag {
+    background-color: {secondary_container};
+    border-radius: 20px;
+    padding: 8px 16px;
+}
+
+QLabel#RecipeTagText {
+    background-color: transparent;
+    font: {body_large};
+    color: {on_surface};
+    font-weight: 500;
+}
