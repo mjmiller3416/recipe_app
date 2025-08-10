@@ -64,7 +64,10 @@ else:
     main_window = MainWindow(
         navigation_service_factory=navigation_service_factory
     )
-    main_window.showMaximized() # show the main window maximized
+    # Show the window in normal size first to establish restore geometry
+    main_window.show()
+    # Then immediately maximize to get the desired startup appearance
+    main_window.showMaximized()
     # Sync the window animator state with the actual maximized state
     main_window.animator._is_maximized = True
     main_window.title_bar.update_maximize_icon(True)
