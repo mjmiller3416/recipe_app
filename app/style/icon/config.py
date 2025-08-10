@@ -19,6 +19,7 @@ class Path(Enum):
     BACK            = "back"
     BATTERY         = "battery"
     CATEGORY        = "category"
+    CHECKLIST       = "checklist"
     CROSS           = "cross"
     DASHBOARD       = "dashboard"
     DIET_PREF       = "diet_pref"
@@ -36,6 +37,7 @@ class Path(Enum):
     MEAL_TYPE       = "meal_type"
     MENU            = "menu"
     MINIMIZE        = "minimize"
+    NOTES           = "notes"
     RESTORE         = "restore"
     REFRESH         = "refresh"
     SAVE            = "save"
@@ -150,8 +152,10 @@ class Name(Enum):
     WIFI            = IconSpec(Path.WIFI, Size.SMALL)
 
     # ── Medium Icons ────────────────────────────
+    CHECKLIST       = IconSpec(Path.CHECKLIST, Size.MEDIUM)
     LOGO            = IconSpec(Path.LOGO, Size.MEDIUM)
     MENU            = IconSpec(Path.MENU, Size.MEDIUM)
+    NOTES           = IconSpec(Path.NOTES, Size.MEDIUM)
 
     # ── Large Icons ─────────────────────────────
     ADD_RECIPES     = IconSpec(Path.ADD_RECIPES, Size.LARGE)
