@@ -31,7 +31,7 @@ from PySide6.QtWidgets import (
 
 # ── App Imports ──────────────────────────────────────────────────────────────────────────────
 # Icons
-from app.style.icon import Icon  # QLabel-based themed icon widget
+from app.style.icon import AppIcon  # QLabel-based themed icon widget
 from app.style.icon.config import Name  # Icon enum
 
 # Theme hook (component registration)
@@ -77,7 +77,7 @@ class Chip(QFrame):
         lyt.setContentsMargins(10, 4, 10, 4)
         lyt.setSpacing(8)
 
-        icn = Icon(icon)
+        icn = AppIcon(icon)
         # slightly smaller icon for chips
         icn.setFixedSize(QSize(18, 18))
 
@@ -96,7 +96,7 @@ def _kv_row(icon: Name, title: str, value: str) -> QWidget:
     col.setContentsMargins(0, 0, 0, 0)
     col.setSpacing(4)
 
-    icn = Icon(icon)
+    icn = AppIcon(icon)
     icn.setFixedSize(QSize(22, 22))
     icn.setObjectName("MetaIcon")
 

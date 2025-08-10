@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
     QGridLayout, QLabel, QSizePolicy, QSpacerItem, QVBoxLayout
 )
 
-from app.style.icon import Icon, Name
+from app.style.icon import AppIcon, Icon, Name
 from dev_tools import DebugLogger
 
 

@@ -11,7 +11,7 @@ from qframelesswindow.utils.win32_utils import WindowsMoveResize as MoveResize
 
 from app.config import APPLICATION_WINDOW
 from app.style import Theme, Qss
-from app.style.icon import Icon, Name, Type
+from app.style.icon import AppIcon, Name, Type, Icon
 from ..widgets.button import ToolButton, BaseButton
 
 # ── Constants ────────────────────────────────────────────────────────────────────────────────
@@ -40,29 +40,29 @@ class TitleBar(QWidget):
         self.old_pos = None
 
         # ── Title Label ──
-        self.logo = Icon(Name.LOGO)
+        self.logo = AppIcon(Name.LOGO)
         self.logo.setSize(32,32)
         self.logo.setObjectName("AppLogo")
         self.title = QLabel(SETTINGS["APP_NAME"])
         self.title.setObjectName("AppTitle")
 
         # ── Sidebar Toggle Button ──
-        self.btn_ico_toggle_sidebar = ToolButton(Type.SECONDARY, Name.MENU)
+        self.btn_ico_toggle_sidebar = ToolButton(Type.SECONDARY, Icon.MENU)
         self.btn_ico_toggle_sidebar.setCheckable(True)
 
         self.btn_ico_toggle_sidebar.setFixedSize(SETTINGS["BTN_SIZE"])
         self.btn_ico_toggle_sidebar.setObjectName("BtnToggleSidebar")
 
         # ── Minimize Button ──
-        self.btn_ico_minimize = ToolButton(Type.TITLEBAR, Name.MINIMIZE)
+        self.btn_ico_minimize = ToolButton(Type.TITLEBAR, Icon.MINIMIZE)
         self.btn_ico_minimize.setFixedSize(SETTINGS["BTN_SIZE"])
 
         # ── Maximize/Restore Button ──
-        self.btn_ico_maximize = ToolButton(Type.TITLEBAR, Name.MAXIMIZE)
+        self.btn_ico_maximize = ToolButton(Type.TITLEBAR, Icon.MAXIMIZE)
         self.btn_ico_maximize.setFixedSize(SETTINGS["BTN_SIZE"])
 
         # ── Close Button ──
-        self.btn_ico_close = ToolButton(Type.TITLEBAR, Name.CROSS)
+        self.btn_ico_close = ToolButton(Type.TITLEBAR, Icon.CROSS)
         self.btn_ico_close.setFixedSize(SETTINGS["BTN_SIZE"])
         self.btn_ico_close.setObjectName("BtnClose")
 
@@ -96,7 +96,7 @@ class TitleBar(QWidget):
         }
 
     def update_maximize_icon(self, maximized: bool):
-        icon_name = Name.RESTORE if maximized else Name.MAXIMIZE
+        icon_name = Icon.RESTORE if maximized else Icon.MAXIMIZE
         # Use BaseButton's setIcon method explicitly to avoid Qt's native setIcon
         BaseButton.setIcon(self.btn_ico_maximize, icon_name)
 

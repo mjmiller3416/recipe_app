@@ -9,9 +9,8 @@ multiple meal planning tabs and integrates with the database to load and save me
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QStackedWidget, QTabWidget, QVBoxLayout, QWidget
 
-from app.style.icon import Icon, Name
+from app.style.icon import AppIcon, Name, Icon
 from app.core.services.planner_service import PlannerService
-from app.style.icon import Icon
 from app.ui.components.composite import MealWidget
 from app.ui.views.recipe_selection import RecipeSelection
 from dev_tools import DebugLogger, StartupTimer
@@ -86,7 +85,7 @@ class MealPlanner(QWidget):
     def new_meal_tab(self):
         """Add the last "+" tab to create new custom meals."""
         new_meal_tab = QWidget()
-        icon_asset = Icon(Name.ADD)
+        icon_asset = AppIcon(Icon.ADD)
         icon = icon_asset.pixmap()
 
         index = self.meal_tabs.addTab(new_meal_tab, icon, "")

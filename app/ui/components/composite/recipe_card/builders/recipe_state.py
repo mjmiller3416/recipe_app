@@ -14,7 +14,7 @@ from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
 from app.style import Theme
 from app.style.theme.config import Qss
-from app.style.icon import Icon
+from app.style.icon import AppIcon, Icon
 from app.style.icon.config import Name, Type
 from app.ui.components.layout import Separator
 from app.ui.components.widgets import RoundedImage, ToolButton
@@ -149,7 +149,7 @@ class RecipeCard:
         # add servings
         lyt_meta.addLayout(
             self._create_meta_section(
-                Icon(Name.SERVINGS),
+                AppIcon(Name.SERVINGS),
                 heading="Servings",
                 value=self.recipe.formatted_servings(),
             )
@@ -161,7 +161,7 @@ class RecipeCard:
         # add total time
         lyt_meta.addLayout(
             self._create_meta_section(
-                Icon(Name.TOTAL_TIME),
+                AppIcon(Name.TOTAL_TIME),
                 heading="Time",
                 value=self.recipe.formatted_time(),
             )
@@ -181,11 +181,11 @@ class RecipeCard:
         """
         raise NotImplementedError("Large frame layout is not yet implemented.")
 
-    def _create_meta_section(self, icon_widget: Icon, heading: str, value: str) -> QVBoxLayout:
+    def _create_meta_section(self, icon_widget: AppIcon, heading: str, value: str) -> QVBoxLayout:
         """Create a vertical layout section for displaying metadata with an icon, heading, and value.
 
         Args:
-            icon_widget (Icon): The Icon widget to display.
+            icon_widget (AppIcon): The AppIcon widget to display.
             heading (str): Label heading (e.g., "Servings", "Time").
             value (str): Value associated with the heading (e.g., "4", "30 min").
 

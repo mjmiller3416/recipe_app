@@ -177,5 +177,5 @@ class Name(Enum):
         return self.value
 
 
-# Alias for better readability in different contexts
+# Alias for better readability in different contexts  
 Icon = Name  # More intuitive when used with buttons: Button(Type.PRIMARY, Icon.DASHBOARD)

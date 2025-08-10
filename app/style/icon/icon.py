@@ -242,8 +242,8 @@ class ThemedIcon(BaseIcon):
         )
 
 
-# ── Icon ─────────────────────────────────────────────────────────────────────────────────────
-class Icon(QLabel):
+# ── AppIcon ─────────────────────────────────────────────────────────────────────────────────────
+class AppIcon(QLabel):
     """Standalone visual widget for themed SVG icons.
 
     QLabel-based icon widget that reflects theme changes and displays

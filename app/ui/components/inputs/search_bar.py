@@ -8,7 +8,7 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QGridLayout, QLineEdit, QSizePolicy
 
 from app.style.theme.config import Qss
-from app.style.icon import Icon, Name, Type
+from app.style.icon import AppIcon, Icon, Name, Type
 from app.ui.components.widgets import ToolButton
 from app.style import Theme
 
@@ -48,7 +48,7 @@ class SearchBar(QFrame):
         self.layout.setSpacing(5)
 
         # ── Search Icon ──
-        self.ico_search = Icon(Name.SEARCH)
+        self.ico_search = AppIcon(Name.SEARCH)
         self.ico_search.setSize(24, 24)
         self.ico_search.setObjectName("ico_search")
         self.layout.addWidget(self.ico_search, 0, 0)
