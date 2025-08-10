@@ -201,6 +201,35 @@ class FullRecipe(QWidget):
 
         return self.directions_widget
 
+    def build_notes_frame(self) -> QFrame:
+        """Creates the notes widget with formatted text."""
+        self.notes_widget, lyt_notes = create_framed_layout(line_width=0)
+        self.notes_widget.setObjectName("NotesFrame")
+
+        # ── Header ──
+        lbl_notes_header = QLabel("Notes")
+        lbl_notes_header.setProperty("textHeader", True)
+        lyt_notes.addWidget(lbl_notes_header, 0, Qt.AlignTop)
+
+        # ── Notes Content ──
+        notes_content = self.recipe.notes or ""
+        if notes_content:
+            lbl_notes = QLabel(notes_content)
+            lbl_notes.setProperty("textNotes", True)
+            lbl_notes.setWordWrap(True)
+            lbl_notes.setAlignment(Qt.AlignTop)
+            lyt_notes.addWidget(lbl_notes, 0, Qt.AlignTop)
+        else:
+            lbl_empty = QLabel("No notes available.")
+            lbl_empty.setWordWrap(True)
+            lyt_notes.addWidget(lbl_empty, 0, Qt.AlignTop)
+
+        # ── Spacer ──
+        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        lyt_notes.addItem(spacer)
+
+        return self.notes_widget
+
     def build_list_block(
     self,
     items: list[str],
@@ -275,12 +304,16 @@ class FullRecipe(QWidget):
         return lyt
 
     def _build_right_column(self) -> QVBoxLayout:
-        """Constructs the right side of the view (Meta Info + Directions)."""
+        """Constructs the right side of the view (Meta Info + Directions + Notes)."""
         lyt = QVBoxLayout()
         lyt.setSpacing(30)
 
         lyt.addWidget(self.build_meta_frame(),1)
         lyt.addWidget(self.build_directions_frame(),3)
+        
+        # Add notes section if notes exist
+        if self.recipe.notes:
+            lyt.addWidget(self.build_notes_frame(),1)
 
         return lyt
 

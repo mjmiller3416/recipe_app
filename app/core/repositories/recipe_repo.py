@@ -37,6 +37,7 @@ class RecipeRepo:
             total_time=recipe_dto.total_time,
             servings=recipe_dto.servings,
             directions=recipe_dto.directions,
+            notes=recipe_dto.notes,
             image_path=recipe_dto.image_path
         )
         self.session.add(recipe)

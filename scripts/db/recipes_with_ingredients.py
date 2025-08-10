@@ -35,9 +35,12 @@ def insert_recipes_from_csv(csv_file: str) -> None:
             try:
                 recipe_name = row["recipe_name"].strip()
                 recipe_category = row["recipe_category"].strip()
+                meal_type = row.get("meal_type", "Dinner").strip()
+                diet_pref = row.get("diet_pref", "None").strip() if row.get("diet_pref") != "None" else None
                 total_time = int(row.get("total_time", 0)) if row.get("total_time") else None
                 servings = int(row.get("servings", 0)) if row.get("servings") else None
                 directions = row.get("directions", "").strip()
+                notes = row.get("notes", "").strip()
                 image_path = row.get("image_path", "").strip()
                 ingredient_name = row["ingredient_name"].strip()
                 ingredient_category = row["ingredient_category"].strip()
@@ -52,9 +55,12 @@ def insert_recipes_from_csv(csv_file: str) -> None:
                 recipes[key] = {"recipe_data": {
                     "recipe_name": recipe_name,
                     "recipe_category": recipe_category,
+                    "meal_type": meal_type,
+                    "diet_pref": diet_pref,
                     "total_time": total_time,
                     "servings": servings,
                     "directions": directions,
+                    "notes": notes,
                     "image_path": image_path,
                     "ingredients": []
                 }}
@@ -79,9 +85,12 @@ def insert_recipes_from_csv(csv_file: str) -> None:
             create_dto = RecipeCreateDTO(
                 recipe_name=rd["recipe_name"],
                 recipe_category=rd["recipe_category"],
+                meal_type=rd.get("meal_type"),
+                diet_pref=rd.get("diet_pref"),
                 total_time=rd.get("total_time"),
                 servings=rd.get("servings"),
                 directions=rd.get("directions"),
+                notes=rd.get("notes"),
                 image_path=rd.get("image_path"),
                 ingredients=ing_dtos
             )

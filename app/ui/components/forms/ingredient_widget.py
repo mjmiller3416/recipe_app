@@ -82,13 +82,11 @@ class IngredientWidget(QWidget):
         )
         self.grid_layout.addWidget(self.cb_ingredient_category, 0, 3, 1, 1)
 
-        self.btn_ico_subtract = ToolButton(Type.DEFAULT)
-        self.btn_ico_subtract.setIcon(Name.SUBTRACT)
+        self.btn_ico_subtract = ToolButton(Type.DEFAULT, Name.SUBTRACT)
         self.btn_ico_subtract.setFixedWidth(FIXED_HEIGHT) # square button
         self.grid_layout.addWidget(self.btn_ico_subtract, 0, 4, 1, 1)
 
-        self.btn_ico_add = ToolButton(Type.DEFAULT)
-        self.btn_ico_add.setIcon(Name.ADD)
+        self.btn_ico_add = ToolButton(Type.DEFAULT, Name.ADD)
         self.btn_ico_add.setFixedWidth(FIXED_HEIGHT)  # square button
         self.grid_layout.addWidget(self.btn_ico_add, 0, 5, 1, 1)
 

@@ -46,8 +46,7 @@ class UploadRecipeImage(QWidget):
         self.upload_button_layout.setContentsMargins(0,0,0,0)
         self.upload_button_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.upload_button = ToolButton(Type.DEFAULT)
-        self.upload_button.setIcon(Name.ADD)
+        self.upload_button = ToolButton(Type.DEFAULT, Name.ADD)
         self.upload_button.setButtonSize(200, 200)
 
         btn_lbl = QLabel("Upload Image")

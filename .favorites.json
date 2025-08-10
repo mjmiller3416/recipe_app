@@ -37,5 +37,21 @@
         "workspacePath": null,
         "id": "ZIYcMavnTHL57CXA",
         "label": "Theme Config"
+    },
+    {
+        "type": "Group",
+        "name": "Views",
+        "parent_id": "ZIYcMavnTHL57CXA",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "WYjalJBzVcSPITUZ"
+    },
+    {
+        "type": "Group",
+        "name": "Views",
+        "parent_id": "ZIYcMavnTHL57CXA",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "SEraXpg7Y0yWO5Dm"
     }
 ]

@@ -35,6 +35,7 @@ class Recipe(Base):
     total_time: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     servings: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     directions: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     image_path: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     is_favorite: Mapped[bool] = mapped_column(Boolean, default=False)

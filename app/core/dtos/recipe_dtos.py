@@ -48,6 +48,7 @@ class RecipeBaseDTO(BaseModel):
     total_time: Optional[int] = Field(None, ge=0)
     servings: Optional[int] = Field(None, ge=1)
     directions: Optional[str] = None
+    notes: Optional[str] = None
     image_path: Optional[str] = None
 
     @field_validator("recipe_name", "recipe_category", "meal_type", mode="before")
@@ -75,6 +76,7 @@ class RecipeUpdateDTO(BaseModel):
     total_time: Optional[int] = Field(None, ge=0)
     servings: Optional[int] = Field(None, ge=1)
     directions: Optional[str] = None
+    notes: Optional[str] = None
     image_path: Optional[str] = None
     ingredients: Optional[List[RecipeIngredientDTO]] = None
     is_favorite: Optional[bool] = None
