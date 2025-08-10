@@ -19,7 +19,7 @@ class Path(Enum):
     BACK            = "back"
     BATTERY         = "battery"
     CATEGORY        = "category"
-    CHECKLIST       = "checklist"
+    CHECKLIST       = "check_list"
     CROSS           = "cross"
     DASHBOARD       = "dashboard"
     DIET_PREF       = "diet_pref"
@@ -38,6 +38,7 @@ class Path(Enum):
     MENU            = "menu"
     MINIMIZE        = "minimize"
     NOTES           = "notes"
+    PHOTO           = "photo"
     PRINT           = "print"
     RESTORE         = "restore"
     REFRESH         = "refresh"
@@ -164,6 +165,7 @@ class Name(Enum):
     DASHBOARD       = IconSpec(Path.DASHBOARD, Size.LARGE)
     MEAL_PLANNER    = IconSpec(Path.MEAL_PLANNER, Size.LARGE)
     VIEW_RECIPES    = IconSpec(Path.VIEW_RECIPES, Size.LARGE)
+    PHOTO           = IconSpec(Path.PHOTO, Size.LARGE)
     SHOPPING_LIST   = IconSpec(Path.SHOPPING_LIST, Size.LARGE)
     SETTINGS        = IconSpec(Path.SETTINGS, Size.LARGE)
     EXIT            = IconSpec(Path.EXIT, Size.LARGE)

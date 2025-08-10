@@ -51,90 +51,87 @@ from app.core.models import Recipe
 # ── Helper Classes ──────────────────────────────────────────────────────────────────────────
 class IngredientList(QWidget):
     """A list widget for displaying recipe ingredients with amounts and names."""
-    
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("IngredientList")
-        
+
         # Main layout
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(12)
-        
+
     def setIngredients(self, ingredient_details: Iterable):
         """Set the ingredients to display."""
         # Clear existing ingredients
         self._clearIngredients()
-        
+
         # Add new ingredients
         for detail in ingredient_details:
             self._addIngredientItem(detail)
-            
-        # Add stretch to push items to top if few ingredients
-        self.layout.addStretch()
-        
+
     def _clearIngredients(self):
         """Clear all ingredient items from the layout."""
         while self.layout.count():
             child = self.layout.takeAt(0)
             if child.widget():
                 child.widget().deleteLater()
-                
+
     def _addIngredientItem(self, detail):
         """Add a single ingredient item to the list."""
         # Create ingredient row widget
         item_widget = QWidget()
         item_widget.setObjectName("IngredientItem")
-        
+
         item_layout = QHBoxLayout(item_widget)
         item_layout.setContentsMargins(0, 0, 0, 0)
         item_layout.setSpacing(15)
-        
+
         # Extract ingredient details
         qty = f"{getattr(detail, 'quantity', '') or ''}"
         unit = f"{getattr(detail, 'unit', '') or ''}"
         amount_text = " ".join(x for x in [qty, unit] if x).strip()
         ingredient_name = getattr(detail, "ingredient_name", "") or ""
-        
+
         # Amount label (fixed width for alignment)
         amount_label = QLabel(amount_text)
         amount_label.setObjectName("IngredientAmount")
         amount_label.setMinimumWidth(100)
         amount_label.setAlignment(Qt.AlignLeft)
-        
+
         # Ingredient name label
         name_label = QLabel(ingredient_name)
         name_label.setObjectName("IngredientName")
-        
+
         # Add to layout
         item_layout.addWidget(amount_label)
         item_layout.addWidget(name_label)
         item_layout.addStretch()
-        
+
         # Add to main layout
         self.layout.addWidget(item_widget)
 
 
 class DirectionsList(QWidget):
     """A numbered list widget for displaying recipe directions."""
-    
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("DirectionsList")
-        
+
         # Main layout
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(15)
-        
+
     def setDirections(self, directions: str):
         """Set the directions to display."""
         # Clear existing directions
         self._clearDirections()
-        
+
         # Parse directions
         steps = [s.strip() for s in directions.splitlines() if s.strip()] if directions else []
-        
+
         if not steps:
             empty_label = QLabel("No directions available.")
             empty_label.setObjectName("EmptyDirections")
@@ -144,43 +141,40 @@ class DirectionsList(QWidget):
             # Add numbered steps
             for i, step in enumerate(steps, start=1):
                 self._addDirectionItem(i, step)
-                
-        # Add stretch to push items to top
-        self.layout.addStretch()
-        
+
     def _clearDirections(self):
         """Clear all direction items from the layout."""
         while self.layout.count():
             child = self.layout.takeAt(0)
             if child.widget():
                 child.widget().deleteLater()
-                
+
     def _addDirectionItem(self, number: int, text: str):
         """Add a single direction item to the list."""
         # Create direction row widget
         item_widget = QWidget()
         item_widget.setObjectName("DirectionItem")
-        
+
         item_layout = QHBoxLayout(item_widget)
         item_layout.setContentsMargins(0, 0, 0, 0)
         item_layout.setSpacing(12)
-        
+
         # Number label
         number_label = QLabel(f"{number}.")
         number_label.setObjectName("DirectionNumber")
         number_label.setMinimumWidth(30)
         number_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-        
+
         # Text label
         text_label = QLabel(text)
         text_label.setObjectName("DirectionText")
         text_label.setWordWrap(True)
         text_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-        
+
         # Add to layout
         item_layout.addWidget(number_label)
         item_layout.addWidget(text_label, 1)
-        
+
         # Add to main layout
         self.layout.addWidget(item_widget)
 
@@ -252,12 +246,12 @@ class FullRecipe(QWidget):
         tags_layout = QHBoxLayout(tags_container)
         tags_layout.setContentsMargins(0, 0, 0, 0)
         tags_layout.addStretch()
-        
+
         # Add recipe tags with proper icons
         meal_type = getattr(self.recipe, "meal_type", None) or "Dinner"
         category = getattr(self.recipe, "recipe_category", None) or "Main Course"
         diet_pref = getattr(self.recipe, "diet_pref", None) or "High-Protein"
-        
+
         tags_layout.addWidget(RecipeTag(Icon.MEAL_TYPE, meal_type))
         tags_layout.addSpacing(20)
         tags_layout.addWidget(RecipeTag(Icon.CATEGORY, category))
@@ -276,56 +270,68 @@ class FullRecipe(QWidget):
         info_layout = QHBoxLayout(info_container)
         info_layout.setContentsMargins(20, 15, 20, 15)
         info_layout.setSpacing(40)
-        
+
         # Get recipe data with fallbacks
         total_time = str(getattr(self.recipe, "total_time", "")) or "2 hours 30 mins"
         servings = str(getattr(self.recipe, "servings", "")) or "6"
         category = getattr(self.recipe, "recipe_category", "") or "Main Course"
         diet_pref = getattr(self.recipe, "diet_pref", "") or "High-Protein"
-        
+
         # Add info cards
         info_layout.addWidget(InfoCard(Icon.TOTAL_TIME, "Total Time", total_time))
         info_layout.addWidget(InfoCard(Icon.SERVINGS, "Servings", servings))
         info_layout.addWidget(InfoCard(Icon.CATEGORY, "Category", category))
         info_layout.addWidget(InfoCard(Icon.DIET_PREF, "Dietary", diet_pref))
-        
+
         page.addWidget(info_container)
 
-        # ── Ingredients Section
+        # ── Content Row: Two Column Layout (Ingredients | Directions + Notes)
+        content_row = QHBoxLayout()
+        content_row.setContentsMargins(0, 0, 0, 0)
+        content_row.setSpacing(30)
+        
+        # ── Left Column: Ingredients (1/3 width)
         ingredients_card = Card(content)
         ingredients_card.setObjectName("SectionCard")
         ingredients_layout = ingredients_card.getLayout()
         ingredients_layout.setContentsMargins(25, 25, 25, 25)
         ingredients_layout.setSpacing(15)
-        
+
         # Header with icon
-        ingredients_header = self._create_section_header(Icon.INGREDIENT_LIST, "Ingredients")
+        ingredients_header = self._create_section_header(Icon.CHECKLIST, "Ingredients")
         ingredients_layout.addWidget(ingredients_header)
-        
+
         # Ingredients list
         ingredients_list = IngredientList()
         ingredient_details = getattr(self.recipe, "get_ingredient_details", lambda: [])()
         ingredients_list.setIngredients(ingredient_details)
         ingredients_layout.addWidget(ingredients_list)
-        page.addWidget(ingredients_card)
+        
+        # Add ingredients to left column (1/3 width)
+        content_row.addWidget(ingredients_card, 1)
 
+        # ── Right Column: Directions + Notes (2/3 width)
+        right_column = QVBoxLayout()
+        right_column.setContentsMargins(0, 0, 0, 0)
+        right_column.setSpacing(25)
+        
         # ── Directions Section
         directions_card = Card(content)
         directions_card.setObjectName("SectionCard")
         directions_layout = directions_card.getLayout()
         directions_layout.setContentsMargins(25, 25, 25, 25)
         directions_layout.setSpacing(15)
-        
+
         # Header with icon
-        directions_header = self._create_section_header(Icon.DIRECTION_LIST, "Directions")
+        directions_header = self._create_section_header(Icon.MEAL_PLANNER, "Directions")
         directions_layout.addWidget(directions_header)
-        
+
         # Directions list
         directions_list = DirectionsList()
         recipe_directions = getattr(self.recipe, "directions", "") or ""
         directions_list.setDirections(recipe_directions)
         directions_layout.addWidget(directions_list)
-        page.addWidget(directions_card)
+        right_column.addWidget(directions_card)
 
         # ── Notes Section (optional)
         notes = getattr(self.recipe, "notes", None)
@@ -335,41 +341,52 @@ class FullRecipe(QWidget):
             notes_layout = notes_card.getLayout()
             notes_layout.setContentsMargins(25, 25, 25, 25)
             notes_layout.setSpacing(15)
-            
+
             # Header with icon
             notes_header = self._create_section_header(Icon.NOTES, "Notes")
             notes_layout.addWidget(notes_header)
-            
+
             # Notes text
             notes_text = QLabel(notes)
             notes_text.setObjectName("NotesText")
             notes_text.setWordWrap(True)
             notes_layout.addWidget(notes_text)
-            page.addWidget(notes_card)
+            right_column.addWidget(notes_card)
+            
+        # Add stretch to right column to prevent unnecessary expansion
+        right_column.addStretch()
+        
+        # Create widget for right column and add to content row (2/3 width)
+        right_column_widget = QWidget()
+        right_column_widget.setLayout(right_column)
+        content_row.addWidget(right_column_widget, 2)
+        
+        # Add the content row to main page layout
+        page.addLayout(content_row)
 
         # Bottom spacer
         page.addStretch()
-        
+
     def _create_section_header(self, icon: Icon, title: str) -> QWidget:
         """Create a section header with icon and title."""
         header_widget = QWidget()
         header_layout = QHBoxLayout(header_widget)
         header_layout.setContentsMargins(0, 0, 0, 0)
         header_layout.setSpacing(10)
-        
+
         # Icon
         header_icon = AppIcon(icon)
         header_icon.setFixedSize(QSize(24, 24))
         header_icon.setObjectName("SectionIcon")
-        
+
         # Title
         header_title = QLabel(title)
         header_title.setObjectName("SectionHeader")
-        
+
         header_layout.addWidget(header_icon)
         header_layout.addWidget(header_title)
         header_layout.addStretch()
-        
+
         return header_widget
 
 
