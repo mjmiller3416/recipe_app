@@ -9,6 +9,7 @@ import os
 os.environ["QT_FONT_DPI"] = "96"
 import sys
 
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
 
 import qframelesswindow.utils.win32_utils
@@ -45,12 +46,15 @@ elif "--import-recipes" in sys.argv:
 
 # ── Application Entry Point ──
 else:
+
     app = QApplication(sys.argv)
     app.setApplicationName("MealGenie")
     DebugLogger.set_log_level("info")
     DebugLogger.log("Starting MealGenie application...\n", "info")
 
-    ##Theme.setTheme(Color.GREEN, Mode.DARK)
+
+
+    # Theme.setTheme(Color.GREEN, Mode.DARK)
 
     # ── Custom Color Map ──
     Theme.setCustomColorMap("material-theme.json", Mode.DARK)
@@ -60,7 +64,7 @@ else:
     main_window = MainWindow(
         navigation_service_factory=navigation_service_factory
     )
-    main_window.show() # show the main window
+    main_window.showMaximized() # show the main window maximized
 
     # ── Simple QSS Inspector ──
     # Uncomment the lines below to enable the simple terminal-based QSS inspector

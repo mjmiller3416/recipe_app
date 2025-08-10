@@ -53,5 +53,15 @@
         "workspaceRoot": null,
         "workspacePath": null,
         "id": "SEraXpg7Y0yWO5Dm"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\base_style.qss",
+        "parent_id": "E1O8pMjUCdn2De6T",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\base_style.qss",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "JhWBybf5nwqVKucF",
+        "label": "Base-Style Config"
     }
 ]

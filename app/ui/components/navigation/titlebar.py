@@ -12,7 +12,7 @@ from qframelesswindow.utils.win32_utils import WindowsMoveResize as MoveResize
 from app.config import APPLICATION_WINDOW
 from app.style import Theme, Qss
 from app.style.icon import Icon, Name, Type
-from ..widgets.button import ToolButton
+from ..widgets.button import ToolButton, BaseButton
 
 # ── Constants ────────────────────────────────────────────────────────────────────────────────
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]
@@ -97,7 +97,8 @@ class TitleBar(QWidget):
 
     def update_maximize_icon(self, maximized: bool):
         icon_name = Name.RESTORE if maximized else Name.MAXIMIZE
-        self.btn_ico_maximize.setIcon(icon_name)
+        # Use BaseButton's setIcon method explicitly to avoid Qt's native setIcon
+        BaseButton.setIcon(self.btn_ico_maximize, icon_name)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.LeftButton:

@@ -1,341 +1,361 @@
 """app/ui/views/full_recipe.py
 
-Defines the FullRecipe class, a view for displaying full recipe details including
-metadata, ingredients, and directions.
+FullRecipe view — matches the mock UI with Cards for:
+- Title + chips
+- Banner placeholder (1200×600)
+- Meta summary (time, servings, category, dietary)
+- Ingredients
+- Directions
+- Notes
+
+Styling:
+- Registers for component-specific QSS with Theme.register_widget(self, Qss.FULLRECIPE)
+- Expect an external stylesheet to target objectNames/properties set here.
 """
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QSizePolicy,
-                               QSpacerItem, QVBoxLayout, QWidget)
+from __future__ import annotations
 
-from app.core.models import Recipe
-from app.style.icon import Icon, Name
+from typing import Iterable
+
+from PySide6.QtCore import Qt, QSize, Signal
+from PySide6.QtWidgets import (
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QGridLayout,
+    QLabel,
+    QFrame,
+    QSizePolicy,
+    QSpacerItem,
+    QScrollArea,  # <-- Added missing import
+)
+
+# ── App Imports ──────────────────────────────────────────────────────────────────────────────
+# Icons
+from app.style.icon import Icon  # QLabel-based themed icon widget
+from app.style.icon.config import Name  # Icon enum
+
+# Theme hook (component registration)
 from app.style import Theme, Qss
-from app.ui.components.layout import Separator
-from app.ui.components.widgets import RoundedImage
-from app.ui.components.widgets.button import Button
-from app.ui.helpers.ui_helpers import create_framed_layout
-from app.style.icon.config import Type
+
+# Card container
+from app.ui.components.layout.card import Card
+
+# Data model
+from app.core.models import Recipe
 
 
-# ── Full Recipe ──────────────────────────────────────────────────────────────────────────────
+# ── Helpers ──────────────────────────────────────────────────────────────────────────────────
+class BannerPlaceholder(QFrame):
+    """Simple banner placeholder (1200×600) until upload/cropping is implemented."""
+
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.setObjectName("BannerPlaceholder")
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.setMinimumHeight(360)  # keeps a nice aspect on most windows
+        self.setProperty("tag", "Banner")  # style hook
+
+        lyt = QVBoxLayout(self)
+        lyt.setContentsMargins(0, 0, 0, 0)
+
+        lbl = QLabel("1200 × 600", self)
+        lbl.setAlignment(Qt.AlignCenter)
+        lbl.setObjectName("BannerText")
+        lyt.addWidget(lbl)
+
+
+class Chip(QFrame):
+    """A tiny pill chip with an icon + label."""
+
+    def __init__(self, icon: Name, text: str, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.setObjectName("Chip")
+        self.setProperty("tag", "Chip")
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+
+        lyt = QHBoxLayout(self)
+        lyt.setContentsMargins(10, 4, 10, 4)
+        lyt.setSpacing(8)
+
+        icn = Icon(icon)
+        # slightly smaller icon for chips
+        icn.setFixedSize(QSize(18, 18))
+
+        lbl = QLabel(text)
+        lbl.setObjectName("ChipText")
+
+        lyt.addWidget(icn)
+        lyt.addWidget(lbl)
+
+
+def _kv_row(icon: Name, title: str, value: str) -> QWidget:
+    """Meta metric (icon + small title + value)."""
+    w = QWidget()
+    w.setObjectName("MetaCell")
+    col = QVBoxLayout(w)
+    col.setContentsMargins(0, 0, 0, 0)
+    col.setSpacing(4)
+
+    icn = Icon(icon)
+    icn.setFixedSize(QSize(22, 22))
+    icn.setObjectName("MetaIcon")
+
+    t = QLabel(title)
+    t.setObjectName("MetaTitle")
+    t.setProperty("typo", "label")
+
+    v = QLabel(value)
+    v.setObjectName("MetaValue")
+    v.setProperty("typo", "value")
+
+    row = QHBoxLayout()
+    row.setContentsMargins(0, 0, 0, 0)
+    row.setSpacing(8)
+    row.addWidget(icn)
+    row.addWidget(t)
+    row.addStretch(1)
+
+    col.addLayout(row)
+    col.addWidget(v)
+    return w
+
+
+# ── FullRecipe View ─────────────────────────────────────────────────────────────────────────
 class FullRecipe(QWidget):
-    """View for displaying a complete recipe with custom layout.
+    """Full recipe detail view (visual-only, no editing/upload yet)."""
 
-    Displays:
-        - Back button to return to recipe list
-        - Header with recipe name
-        - Meta info (servings, time, category)
-        - Ingredients list
-        - Step-by-step directions
-    """
-    
     back_clicked = Signal()
-    
-    def __init__(self, recipe: Recipe, parent=None):
+
+    def __init__(self, recipe: Recipe, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.recipe = recipe
 
-        # register for component-specific styling
+        # Register this view for component-scoped QSS.
         Theme.register_widget(self, Qss.FULL_RECIPE)
 
-        # ── Widget Properties ──
-        self.setObjectName("FullRecipeView")
+        self.setObjectName("FullRecipe")
+        self._build_ui()
 
-        # ── Setup UI ──
-        self.setup_ui()
+    # ── Layout ───────────────────────────────────────────────────────────────────────────────
+    def _make_back_button(self):
+        """Create a simple back button; styled via QSS."""
+        from PySide6.QtWidgets import QPushButton, QHBoxLayout, QWidget
 
-    # ── Public Methods ───────────────────────────────────────────────────────────────────────
-    def setup_ui(self) -> None:
-        """Set up the full view layout with back button, header, left, and right columns."""
-        # ── Create Main Layout ──
-        lyt_main = QVBoxLayout()
-        lyt_main.setSpacing(30)
-        lyt_main.setContentsMargins(20, 20, 20, 20)
+        w = QWidget(self)
+        w.setObjectName("BackBar")
+        row = QHBoxLayout(w)
+        row.setContentsMargins(0, 0, 0, 0)
+        row.setSpacing(8)
 
-        # ── Add Back Button ──
-        back_button_layout = QHBoxLayout()
-        self.btn_back = Button(
-            label="Back to Recipes",
-            type=Type.SECONDARY
-        )
-        self.btn_back.setIcon(Name.BACK)
-        self.btn_back.clicked.connect(self.back_clicked.emit)
-        back_button_layout.addWidget(self.btn_back)
-        back_button_layout.addStretch()
-        lyt_main.addLayout(back_button_layout)
+        btn = QPushButton("Back")
+        btn.setObjectName("BackButton")
+        btn.clicked.connect(self.back_clicked.emit)
 
-        # add header
-        header_frame = self.build_header_frame()
-        lyt_main.addWidget(header_frame, 0) # add header to main layout
+        row.addWidget(btn, 0, Qt.AlignLeft)
+        row.addStretch(1)
+        return w
 
-        # ── Add Left & Right Columns ──
-        lyt_body = QHBoxLayout()
-        left_column = self._build_left_column()
-        right_column = self._build_right_column()
-        lyt_body.addLayout(left_column, 2)
-        lyt_body.addLayout(right_column, 3)
-        lyt_main.addLayout(lyt_body, 1)
+    def _build_ui(self) -> None:
+    # Root layout holds a single scroll area (avoid multiple nested scrolls)
+        root = QVBoxLayout(self)
+        root.setContentsMargins(0, 0, 0, 0)
+        root.setSpacing(0)
 
-        # ── Set Main Layout ──
-        self.setLayout(lyt_main)
+        scroll = QScrollArea(self)
+        scroll.setObjectName("FullRecipeScroll")
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.setWidgetResizable(True)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        root.addWidget(scroll)
 
-    def build_header_frame(self) -> QFrame:
-        """Creates the recipe image widget."""
-        self.header_frame, lyt_header = create_framed_layout(line_width=0)
+        # Scroll content
+        content = QWidget()
+        content.setObjectName("FullRecipeContent")
+        scroll.setWidget(content)
 
-        # recipe name
-        self.lbl_recipe_name = QLabel(self.recipe.recipe_name)
-        self.lbl_recipe_name.setObjectName("RecipeName")
-        self.lbl_recipe_name.setAlignment(Qt.AlignCenter)
-        lyt_header.addWidget(self.lbl_recipe_name, 0, Qt.AlignHCenter) # add to layout
-        # separator
-        self.separator = Separator.horizontal(690)
-        lyt_header.addWidget(self.separator, 0, Qt.AlignHCenter) # add to layout
+        page = QVBoxLayout(content)
+        page.setContentsMargins(24, 24, 24, 24)
+        page.setSpacing(24)
 
-        return self.header_frame
+        # Back bar
+        page.addWidget(self._make_back_button())
 
-    def build_image_frame(self) -> QFrame:
-        """Creates the recipe image widget."""
-        self.image_frame, lyt_image = create_framed_layout(line_width=0)
+        # ── Title Card
+        card_title = Card(content)
+        card_title.setObjectName("CardTitle")
+        card_title.expandWidth(True)
+        title_layout = card_title.getLayout()
+        title_layout.setSpacing(12)
 
-        # add image to layout
-        self.recipe_image = RoundedImage(
-            image_path = (self.recipe.image_path),
-            size = 280,
-            radii= (0, 0, 0, 0)  # no rounded corners for full image
-        )
-        lyt_image.addWidget(self.recipe_image, 0, Qt.AlignCenter)
+        title = QLabel(self.recipe.recipe_name or "Untitled Recipe")
+        title.setObjectName("RecipeTitle")
+        title.setAlignment(Qt.AlignHCenter)
+        title.setProperty("typo", "display")
+        title_layout.addWidget(title)
 
-        return self.image_frame
+        chips_row = QHBoxLayout()
+        chips_row.setContentsMargins(0, 0, 0, 0)
+        chips_row.setSpacing(8)
+        chips_row.setAlignment(Qt.AlignHCenter)
+        chips_row.addWidget(Chip(Name.MEAL_TYPE, self.recipe.meal_type or "Dinner"))
+        chips_row.addWidget(Chip(Name.CATEGORY, self.recipe.recipe_category or "Beef"))
+        chips_row.addWidget(Chip(Name.DIET_PREF, getattr(self.recipe, "diet_pref", None) or "High-Protein"))
+        title_layout.addLayout(chips_row)
+        page.addWidget(card_title)
 
-    def build_meta_frame(self) -> QFrame:
-        """Creates the meta information widget."""
-        self.meta_info_widget, lyt_meta = create_framed_layout(line_width=0)
+        # ── Banner Card
+        card_banner = Card(content)
+        card_banner.setObjectName("CardBanner")
+        card_banner.expandWidth(True)
+        banner_layout = card_banner.getLayout()
+        banner_layout.setContentsMargins(16, 16, 16, 16)
+        banner_layout.addWidget(BannerPlaceholder(card_banner))
+        page.addWidget(card_banner)
 
-        # add meta info to layout using Name enum
-        for icon_name, text in (
-            (Name.SERVINGS, str(self.recipe.servings)),
-            (Name.TOTAL_TIME, str(self.recipe.total_time)),
-            (Name.CATEGORY, self.recipe.recipe_category),
-            (Name.MEAL_TYPE, self.recipe.meal_type),
-            (Name.DIET_PREF, self.recipe.diet_pref or "None"),
-        ):
-            lyt_meta.addWidget(
-                self._build_meta_row(icon_name, text)
-            )
+        # ── Meta Summary Card
+        card_meta = Card(content)
+        card_meta.setObjectName("CardMeta")
+        card_meta.expandWidth(True)
 
-        return self.meta_info_widget
+        grid = QGridLayout()
+        grid.setContentsMargins(16, 10, 16, 10)
+        grid.setHorizontalSpacing(40)
+        grid.setVerticalSpacing(8)
 
-    def build_ingredients_frame(self) -> QFrame:
-        """Creates the ingredients list widget with bulleted items."""
-        self.ingredients_widget, lyt_ingredients = create_framed_layout(line_width=0)
+        total_time = str(getattr(self.recipe, "total_time", "")) or "—"
+        servings   = str(getattr(self.recipe, "servings", "")) or "—"
+        category   = getattr(self.recipe, "recipe_category", "") or "—"
+        diet       = getattr(self.recipe, "diet_pref", "") or "—"
 
-        # header
-        lbl_ingredients_header = QLabel("Ingredients")
-        lbl_ingredients_header.setProperty("textHeader", True)
-        lyt_ingredients.addWidget(lbl_ingredients_header, 0, Qt.AlignTop) # add to layout
+        cells = [
+            _kv_row(Name.TOTAL_TIME, "Total Time", total_time),
+            _kv_row(Name.SERVINGS, "Servings", servings),
+            _kv_row(Name.CATEGORY, "Category", category),
+            _kv_row(Name.DIET_PREF, "Dietary", diet),
+        ]
+        for i, cell in enumerate(cells):
+            grid.addWidget(cell, 0, i)
 
-        # pull in the flattened details (quantity + unit + name)
-        details = self.recipe.get_ingredient_details()
+        card_meta.addWidget(QWidget())
+        card_meta.getLayout().addLayout(grid)
+        page.addWidget(card_meta)
 
-        if details:
-            # format them into human‐readable strings:
-            lines = []
-            for d in details:
-                qty = f"{d.quantity:g}" if d.quantity is not None else ""
-                unit = d.unit or ""
-                prefix = f"{qty} {unit}".strip()
-                label = f"{prefix} - {d.ingredient_name}" if prefix else d.ingredient_name
-                lines.append(label)
+        # ── Content Row: Ingredients + Directions
+        row = QHBoxLayout()
+        row.setContentsMargins(0, 0, 0, 0)
+        row.setSpacing(24)
 
-            ingredients_block = self.build_list_block(
-                items=lines,
-                bullet_symbol="•",
-                bullet_color="#3B575B",
-                margins=(12, 20, 4, 4),
-                spacing=12,
-                label_property="textIngredients",
-            )
-            lyt_ingredients.addWidget(ingredients_block)
-        else:
-            lyt_ingredients.addWidget(QLabel("No ingredients available."))
+        card_ingredients = Card(content)
+        card_ingredients.setObjectName("CardIngredients")
+        col_ing = card_ingredients.getLayout()
+        col_ing.setSpacing(12)
+        ing_title = QLabel("Ingredients")
+        ing_title.setObjectName("SectionTitle")
+        col_ing.addWidget(ing_title)
+        col_ing.addLayout(self._build_ingredient_grid())
+        row.addWidget(card_ingredients, 1)
 
-        # spacer
-        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-        lyt_ingredients.addItem(spacer) # add to layout
+        card_directions = Card(content)
+        card_directions.setObjectName("CardDirections")
+        col_dir = card_directions.getLayout()
+        col_dir.setSpacing(12)
+        dir_title = QLabel("Directions")
+        dir_title.setObjectName("SectionTitle")
+        col_dir.addWidget(dir_title)
+        col_dir.addLayout(self._build_directions_block())
+        row.addWidget(card_directions, 1)
 
-        return self.ingredients_widget
+        page.addLayout(row)
 
-    def build_directions_frame(self) -> QFrame:
-        """Creates the directions list widget with each step on its own line."""
-        self.directions_widget, lyt_directions = create_framed_layout(line_width=0)
-        self.directions_widget.setObjectName("DirectionsFrame")
+        # ── Notes (optional)
+        notes = getattr(self.recipe, "notes", None)
+        if notes:
+            card_notes = Card(content)
+            card_notes.setObjectName("CardNotes")
+            col_notes = card_notes.getLayout()
+            col_notes.setSpacing(12)
+            notes_title = QLabel("Notes")
+            notes_title.setObjectName("SectionTitle")
+            col_notes.addWidget(notes_title)
+            lbl = QLabel(notes)
+            lbl.setWordWrap(True)
+            lbl.setObjectName("NotesText")
+            col_notes.addWidget(lbl)
+            page.addWidget(card_notes)
 
-        # ── Header ──
-        lbl_directions_header = QLabel("Directions")
-        lbl_directions_header.setProperty("textHeader", True)
-        lyt_directions.addWidget(lbl_directions_header, 0, Qt.AlignTop)
-
-        # ── Directions List ──
-        directions = self.recipe.directions or ""
-        lines = [line.strip() for line in directions.splitlines() if line.strip()]
-
-        if lines:
-            directions_block = self.build_list_block(
-                items=lines,
-                bullet_symbol= None,
-                margins= (8, 20, 4, 4),
-                spacing=20, # space between steps
-                label_property="textDirections",
-            )
-            lyt_directions.addWidget(directions_block)
-        else:
-            lbl_empty = QLabel("No directions available.")
-            lbl_empty.setWordWrap(True)
-            lyt_directions.addWidget(lbl_empty, 0, Qt.AlignTop)
-
-        # ── Spacer ──
-        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-        lyt_directions.addItem(spacer)
-
-        return self.directions_widget
-
-    def build_notes_frame(self) -> QFrame:
-        """Creates the notes widget with formatted text."""
-        self.notes_widget, lyt_notes = create_framed_layout(line_width=0)
-        self.notes_widget.setObjectName("NotesFrame")
-
-        # ── Header ──
-        lbl_notes_header = QLabel("Notes")
-        lbl_notes_header.setProperty("textHeader", True)
-        lyt_notes.addWidget(lbl_notes_header, 0, Qt.AlignTop)
-
-        # ── Notes Content ──
-        notes_content = self.recipe.notes or ""
-        if notes_content:
-            lbl_notes = QLabel(notes_content)
-            lbl_notes.setProperty("textNotes", True)
-            lbl_notes.setWordWrap(True)
-            lbl_notes.setAlignment(Qt.AlignTop)
-            lyt_notes.addWidget(lbl_notes, 0, Qt.AlignTop)
-        else:
-            lbl_empty = QLabel("No notes available.")
-            lbl_empty.setWordWrap(True)
-            lyt_notes.addWidget(lbl_empty, 0, Qt.AlignTop)
-
-        # ── Spacer ──
-        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-        lyt_notes.addItem(spacer)
-
-        return self.notes_widget
-
-    def build_list_block(
-    self,
-    items: list[str],
-    bullet_symbol: str | None = "•",
-    bullet_color: str = "#3B575B",
-    margins: tuple = (4, 4, 4, 4),
-    spacing: int = 6,
-    label_property: str | None = None,
-    property_value: any = True,
-) -> QFrame:
-        """
-        Builds a styled QFrame containing a formatted list.
-
-        Args:
-            items (list[str]): List of strings to display.
-            bullet_symbol (str | None, optional): Symbol to use as a bullet (e.g., '•', '1.', or None to disable).
-                Use "numbers" to auto-number each line. Set to None or "" to omit bullets entirely.
-            bullet_color (str, optional): Color of the bullet symbol (ignored if bullet_symbol is None).
-            margins (tuple, optional): Layout margins (left, top, right, bottom).
-            spacing (int, optional): Vertical spacing between list items (in pixels).
-
-        Returns:
-            QFrame: A framed widget containing the formatted list.
-        """
-        # ── Create sub-frame ──
-        frame, layout = create_framed_layout(
-            frame_shape=QFrame.NoFrame,
-            margins=margins,
-            spacing=0,
-        )
-
-        # ── Format list into RichText ──
-        html = ""
-        for idx, item in enumerate(items, start=1):
-            if bullet_symbol == "numbers":
-                bullet_html = f'<span style="color:{bullet_color};">{idx}.</span> '
-            elif bullet_symbol:  # handles non-empty string like '•'
-                bullet_html = f'<span style="color:{bullet_color};">{bullet_symbol}</span> '
-            else:
-                bullet_html = ""
-
-            html += (
-                f'<div style="margin-bottom:{spacing}px;">'
-                f'{bullet_html}{item}'
-                f'</div>'
-            )
-
-        # ── Create QLabel for RichText ──
-        lbl_list = QLabel()
-        lbl_list.setTextFormat(Qt.RichText)
-        lbl_list.setText(html)
-        lbl_list.setWordWrap(True)
-        lbl_list.setStyleSheet("padding: 2px 4px;")
-
-        # ── Optional QSS property ──
-        if label_property:
-            lbl_list.setProperty(label_property, property_value)
-
-        layout.addWidget(lbl_list)
-
-        return frame
-
-    # ── Private Methods ─────────────────────────────────────────────────────────────────
-    def _build_left_column(self) -> QVBoxLayout:
-        """Constructs the left side of the view (Image + Ingredients)."""
-        lyt = QVBoxLayout()
-        lyt.setSpacing(30)
-
-        lyt.addWidget(self.build_image_frame(),1)
-        lyt.addWidget(self.build_ingredients_frame(),2)
-
-        return lyt
-
-    def _build_right_column(self) -> QVBoxLayout:
-        """Constructs the right side of the view (Meta Info + Directions + Notes)."""
-        lyt = QVBoxLayout()
-        lyt.setSpacing(30)
-
-        lyt.addWidget(self.build_meta_frame(),1)
-        lyt.addWidget(self.build_directions_frame(),3)
-        
-        # Add notes section if notes exist
-        if self.recipe.notes:
-            lyt.addWidget(self.build_notes_frame(),1)
-
-        return lyt
-
-    def _build_meta_row(self, icon_name: Name, text: str) -> QWidget:
-        """Helper to create a row with an icon and label, nicely spaced."""
-        # ── Create Row ──
-        container = QWidget()
-        lyt = QHBoxLayout(container)
-        lyt.setContentsMargins(0, 0, 0, 0)
-        lyt.setSpacing(20)
-
-        # ── Create Icon & Label ──
-        icon = Icon(icon_name)
-        lbl = QLabel(text)
-        lbl.setProperty("metaTitle", True)
-        lbl.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-
-        # ── add widgets to layout ──
-        lyt.addWidget(icon)
-        lyt.addWidget(lbl)
-        lyt.addStretch() # add stretch to push widgets to the left
-
-        return container
+        # bottom spacer so last card clears shadow
+        page.addItem(QSpacerItem(0, 12, QSizePolicy.Minimum, QSizePolicy.Fixed))
 
 
+    # ── Builders ─────────────────────────────────────────────────────────────────────────────
+    def _build_ingredient_grid(self) -> QGridLayout:
+        """Two-column grid (qty/unit | ingredient name)."""
+        grid = QGridLayout()
+        grid.setContentsMargins(4, 4, 4, 4)
+        grid.setHorizontalSpacing(18)
+        grid.setVerticalSpacing(8)
+
+        # header row (styled via QSS)
+        h1 = QLabel(" ")
+        h2 = QLabel(" ")
+        h1.setObjectName("IngredientsLeftHeader")
+        h2.setObjectName("IngredientsRightHeader")
+        grid.addWidget(h1, 0, 0)
+        grid.addWidget(h2, 0, 1)
+
+        # rows
+        row = 1
+        details: Iterable = getattr(self.recipe, "get_ingredient_details", lambda: [])()
+        for d in details:
+            qty = f"{getattr(d, 'quantity', '') or ''}"
+            unit = f"{getattr(d, 'unit', '') or ''}"
+            left = " ".join(x for x in [qty, unit] if x).strip()
+            right = getattr(d, "ingredient_name", "") or ""
+
+            l_lbl = QLabel(left)
+            r_lbl = QLabel(right)
+            l_lbl.setObjectName("IngredientQty")
+            r_lbl.setObjectName("IngredientName")
+
+            grid.addWidget(l_lbl, row, 0, Qt.AlignLeft)
+            grid.addWidget(r_lbl, row, 1, Qt.AlignLeft)
+            row += 1
+
+        return grid
+
+    def _build_directions_block(self) -> QVBoxLayout:
+        """Numbered step list."""
+        col = QVBoxLayout()
+        col.setContentsMargins(4, 4, 4, 4)
+        col.setSpacing(10)
+
+        raw = getattr(self.recipe, "directions", "") or ""
+        steps = [s.strip() for s in raw.splitlines() if s.strip()]
+
+        if not steps:
+            empty = QLabel("No directions available.")
+            empty.setWordWrap(True)
+            empty.setObjectName("EmptyDirections")
+            col.addWidget(empty)
+            return col
+
+        for i, step in enumerate(steps, start=1):
+            line = QWidget()
+            line.setObjectName("DirectionLine")
+            h = QHBoxLayout(line)
+            h.setContentsMargins(0, 0, 0, 0)
+            h.setSpacing(12)
+
+            num = QLabel(f"{i}.")
+            num.setObjectName("DirectionNumber")
+
+            txt = QLabel(step)
+            txt.setWordWrap(True)
+            txt.setObjectName("DirectionText")
+
+            h.addWidget(num, 0, Qt.AlignTop)
+            h.addWidget(txt, 1)
+
+            col.addWidget(line)
+
+        return col

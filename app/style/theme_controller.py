@@ -54,15 +54,27 @@ class Theme(QSingleton):
 
     def _inject_theme_colors(self) -> str:
         """Injects the current theme colors and fonts into the given stylesheet content."""
-        base_content = Stylesheet.read(Qss.BASE)
+        try:
+            base_content = Stylesheet.read(Qss.BASE)
+            if not base_content:
+                DebugLogger.log(f"Failed to load base stylesheet: {Qss.BASE.value}", "error")
+                return ""
+            DebugLogger.log(f"Loaded base stylesheet: {Qss.BASE.value}", "info")
 
-        # combine all variable maps
-        all_variables = self._current_color_map.copy()
-        all_variables.update(self._current_font_map)
-        all_variables['theme_name'] = self._theme_name
+            # combine all variable maps
+            all_variables = self._current_color_map.copy()
+            all_variables.update(self._current_font_map)
+            all_variables['theme_name'] = self._theme_name
 
-        self._base_style = Stylesheet.inject_theme(base_content, all_variables)
-        return self._base_style
+            self._base_style = Stylesheet.inject_theme(base_content, all_variables)
+            if not self._base_style:
+                DebugLogger.log(f"Failed to process base stylesheet with theme variables", "error")
+                return ""
+            DebugLogger.log(f"Processed base stylesheet with theme variables for {self._theme_name} mode", "info")
+            return self._base_style
+        except Exception as e:
+            DebugLogger.log(f"Error in _inject_theme_colors: {e}", "error")
+            return ""
 
     def _regenerate_theme_colors(self):
         """Generates the new color map and signals that the theme has changed."""
@@ -84,28 +96,51 @@ class Theme(QSingleton):
 
     def _load_global_stylesheet(self):
         """Applies the processed global stylesheet to the application."""
-        app = QApplication.instance()
-        app.setStyleSheet(self._base_style)
+        try:
+            app = QApplication.instance()
+            if not app:
+                DebugLogger.log("No QApplication instance found for stylesheet application", "error")
+                return
+
+            if not self._base_style:
+                DebugLogger.log("No base stylesheet available to apply", "error")
+                return
+
+            app.setStyleSheet(self._base_style)
+            DebugLogger.log(f"Applied global stylesheet to application for {self._theme_name} theme", "info")
+        except Exception as e:
+            DebugLogger.log(f"Error applying global stylesheet: {e}", "error")
 
     def _get_component_style(self, qss_type: Qss) -> str:
         """Get processed stylesheet for a component type, using cache when possible."""
-        if qss_type in self._component_styles_cache:
-            return self._component_styles_cache[qss_type]
+        try:
+            if qss_type in self._component_styles_cache:
+                DebugLogger.log(f"Retrieved cached component stylesheet: {qss_type.value}", "info")
+                return self._component_styles_cache[qss_type]
 
-        # read and process the component stylesheet
-        component_content = Stylesheet.read(qss_type)
-        if component_content:
-            # combine all variable maps
-            all_variables = self._current_color_map.copy()
-            all_variables.update(self._current_font_map)
-            all_variables['theme_name'] = self._theme_name
+            # read and process the component stylesheet
+            component_content = Stylesheet.read(qss_type)
+            if component_content:
+                DebugLogger.log(f"Loaded component stylesheet: {qss_type.value}", "info")
+                # combine all variable maps
+                all_variables = self._current_color_map.copy()
+                all_variables.update(self._current_font_map)
+                all_variables['theme_name'] = self._theme_name
 
-            processed_style = Stylesheet.inject_theme(component_content, all_variables)
-            self._component_styles_cache[qss_type] = processed_style
-            return processed_style
+                processed_style = Stylesheet.inject_theme(component_content, all_variables)
+                if not processed_style:
+                    DebugLogger.log(f"Failed to process component stylesheet: {qss_type.value}", "error")
+                    return ""
 
-        DebugLogger.log(f"Failed to load component stylesheet: {qss_type.value}", "warning")
-        return ""
+                self._component_styles_cache[qss_type] = processed_style
+                DebugLogger.log(f"Processed and cached component stylesheet: {qss_type.value}", "info")
+                return processed_style
+            else:
+                DebugLogger.log(f"Failed to load component stylesheet: {qss_type.value}", "error")
+                return ""
+        except Exception as e:
+            DebugLogger.log(f"Error processing component stylesheet {qss_type.value}: {e}", "error")
+            return ""
 
     def _update_registered_widgets(self):
         """Update all registered widgets with their component-specific styles."""
@@ -115,10 +150,15 @@ class Theme(QSingleton):
 
     def _apply_component_style(self, widget: QWidget, qss_type: Qss):
         """Apply component-specific stylesheet to a widget."""
-        component_style = self._get_component_style(qss_type)
-        if component_style:
-            widget.setStyleSheet(component_style)
-            DebugLogger.log(f"Applied {qss_type.name} stylesheet to {widget.objectName()}", "debug")
+        try:
+            component_style = self._get_component_style(qss_type)
+            if component_style:
+                widget.setStyleSheet(component_style)
+                DebugLogger.log(f"Applied {qss_type.name} stylesheet to {widget.objectName()}", "info")
+            else:
+                DebugLogger.log(f"No stylesheet available for {qss_type.name} component on {widget.objectName()}", "warning")
+        except Exception as e:
+            DebugLogger.log(f"Error applying stylesheet to {widget.objectName()}: {e}", "error")
 
 
     # ── Public API ───────────────────────────────────────────────────────────────────────────
