@@ -1,8 +1,10 @@
 # Python cache files
 __pycache__/
 *.py[cod]
-app/core/data/app_data.db
-data_files/recipe_images/
+app/core/database/app_data.db
+# Exclude temporary and user-specific data
+data_files/temp_crops/
+data_files/user_profile/
 examples/basic_input/button/demo.py
 examples/basic_input/check_box/demo.py
 examples/basic_input/combo_box/demo.py
