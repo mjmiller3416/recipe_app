@@ -63,7 +63,7 @@ class SearchBar(QFrame):
         self.layout.addWidget(self.le_search, 0, 1)
 
         # ── Clear Button ──
-        self.btn_ico_clear = ToolButton(Name.CROSS, Type.DEFAULT)
+        self.btn_ico_clear = ToolButton(Type.DEFAULT, Name.CROSS)
         self.btn_ico_clear.setObjectName("btn_ico_clear")
         self.btn_ico_clear.setStateDefault("on_surface")
         self.btn_ico_clear.setStateHover("on_surface")  # Override hover state color

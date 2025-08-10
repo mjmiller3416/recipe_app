@@ -49,6 +49,7 @@ from PySide6.QtWidgets import QPushButton, QToolButton, QHBoxLayout, QLabel, QSi
 
 from app.style.icon.config import Name, Type
 from app.style.icon.icon import StateIcon
+from dev_tools import DebugLogger
 
 
 # ── SizeManager Utility Class ───────────────────────────────────────────────────────────────────
@@ -92,7 +93,6 @@ class SizeManager:
 
             # Verify layout is in expected state
             if layout.isEmpty():
-                from dev_tools import DebugLogger
                 DebugLogger.log(f"Warning: Layout appears empty after synchronization for {widget.objectName()}", "warning")
 
     @staticmethod
@@ -156,7 +156,6 @@ class SizeManager:
         height = max(1, min(height, 512))
 
         if width != original_width or height != original_height:
-            from dev_tools import DebugLogger
             DebugLogger.log(f"{param_name} clamped from ({original_width}, {original_height}) to ({width}, {height})", "warning")
 
         return width, height
@@ -169,8 +168,7 @@ class SizeManager:
             raise TypeError(f"Button size parameters must be integers, got width={type(width)}, height={type(height)}")
 
         # Validate reasonable bounds for buttons (larger than icons)
-        if width < 1 or height < 1 or width > 2048 or height > 2048:
-            from dev_tools import DebugLogger
+        if width < 1 or width > 2048 or height < 1 or height > 2048:
             DebugLogger.log(f"Button size ({width}, {height}) outside recommended bounds (1-2048)", "warning")
 
         return width, height
@@ -220,7 +218,7 @@ class BaseButton:
     def _sync_icon_state(self):
         """Synchronize StateIcon with current button state."""
         if self.state_icon:
-            print(f"DEBUG: _sync_icon_state - checked={self.isChecked()}, hovered={self._is_hovered}, enabled={self.isEnabled()}")
+            DebugLogger.log(f"_sync_icon_state - checked={self.isChecked()}, hovered={self._is_hovered}, enabled={self.isEnabled()}", "debug")
             self.state_icon.autoDetectState(
                 checked=self.isChecked(),
                 hovered=self._is_hovered,
@@ -230,18 +228,18 @@ class BaseButton:
     def event(self, event):
         """Override event to debug all mouse events."""
         if event.type().name in ['MouseButtonPress', 'MouseButtonRelease', 'MouseMove', 'Enter', 'Leave', 'HoverEnter', 'HoverLeave', 'HoverMove']:
-            print(f"DEBUG: BaseButton.event() - {event.type().name} on {self.objectName() or type(self).__name__}")
+            DebugLogger.log(f"BaseButton.event() - {event.type().name} on {self.objectName() or type(self).__name__}", "debug")
         # Call the Qt widget's event method directly to avoid MRO issues
         if isinstance(self, QPushButton):
             return QPushButton.event(self, event)
-        elif isinstance(self, QToolButton):  
+        elif isinstance(self, QToolButton):
             return QToolButton.event(self, event)
         else:
             return super().event(event)
 
     def enterEvent(self, event):
         """Handle mouse enter for hover state."""
-        print(f"DEBUG: BaseButton enterEvent CALLED - {self.objectName() or type(self).__name__}")
+        DebugLogger.log(f"BaseButton enterEvent CALLED - {self.objectName() or type(self).__name__}", "debug")
         # Call the Qt widget's enterEvent directly to avoid MRO issues
         if isinstance(self, QPushButton):
             QPushButton.enterEvent(self, event)
@@ -250,12 +248,12 @@ class BaseButton:
         else:
             super().enterEvent(event)
         self._is_hovered = True
-        print(f"DEBUG: BaseButton hover ENTER - {self.objectName() or type(self).__name__}")
+        DebugLogger.log(f"BaseButton hover ENTER - {self.objectName() or type(self).__name__}", "debug")
         self._sync_icon_state()
 
     def leaveEvent(self, event):
         """Handle mouse leave for hover state."""
-        print(f"DEBUG: BaseButton leaveEvent CALLED - {self.objectName() or type(self).__name__}")
+        DebugLogger.log(f"BaseButton leaveEvent CALLED - {self.objectName() or type(self).__name__}", "debug")
         # Call the Qt widget's leaveEvent directly to avoid MRO issues
         if isinstance(self, QPushButton):
             QPushButton.leaveEvent(self, event)
@@ -264,12 +262,12 @@ class BaseButton:
         else:
             super().leaveEvent(event)
         self._is_hovered = False
-        print(f"DEBUG: BaseButton hover LEAVE - {self.objectName() or type(self).__name__}")
+        DebugLogger.log(f"BaseButton hover LEAVE - {self.objectName() or type(self).__name__}", "debug")
         self._sync_icon_state()
 
     def mousePressEvent(self, event):
         """Handle mouse press for debugging."""
-        print(f"DEBUG: BaseButton mousePressEvent CALLED - {self.objectName() or type(self).__name__}")
+        DebugLogger.log(f"BaseButton mousePressEvent CALLED - {self.objectName() or type(self).__name__}", "debug")
         # Call the Qt widget's mousePressEvent directly to avoid MRO issues
         if isinstance(self, QPushButton):
             QPushButton.mousePressEvent(self, event)
@@ -344,7 +342,6 @@ class BaseButton:
             raise TypeError(f"Height parameter must be an integer, got {type(height)}")
 
         if height < 1 or height > 2048:
-            from dev_tools import DebugLogger
             DebugLogger.log(f"Button height ({height}) outside recommended bounds (1-2048)", "warning")
 
         # Set fixed height but allow width to expand
@@ -440,10 +437,10 @@ class Button(QPushButton, BaseButton):
             icon (Name, optional): Optional icon enum to display.
             parent: Optional parent widget.
         """
-        print(f"DEBUG: Button.__init__ called with label='{label}'")
+        DebugLogger.log(f"Button.__init__ called with label='{label}'", "debug")
         QPushButton.__init__(self, label, parent)
         self._init_base_button(type)
-        print(f"DEBUG: Button MRO: {[cls.__name__ for cls in self.__class__.__mro__]}")
+        DebugLogger.log(f"Button MRO: {[cls.__name__ for cls in self.__class__.__mro__]}", "debug")
 
         self._icon_spacing = 6
 
@@ -456,18 +453,18 @@ class Button(QPushButton, BaseButton):
 
     def enterEvent(self, event):
         """Handle mouse enter for hover state."""
-        print(f"DEBUG: Button.enterEvent CALLED - {self.objectName() or 'Button'}")
+        DebugLogger.log(f"Button.enterEvent CALLED - {self.objectName() or 'Button'}", "debug")
         QPushButton.enterEvent(self, event)
         self._is_hovered = True
-        print(f"DEBUG: Button hover ENTER - {self.objectName() or 'Button'}")
+        DebugLogger.log(f"Button hover ENTER - {self.objectName() or 'Button'}", "debug")
         self._sync_icon_state()
 
     def leaveEvent(self, event):
         """Handle mouse leave for hover state."""
-        print(f"DEBUG: Button.leaveEvent CALLED - {self.objectName() or 'Button'}")
+        DebugLogger.log(f"Button.leaveEvent CALLED - {self.objectName() or 'Button'}", "debug")
         QPushButton.leaveEvent(self, event)
         self._is_hovered = False
-        print(f"DEBUG: Button hover LEAVE - {self.objectName() or 'Button'}")
+        DebugLogger.log(f"Button hover LEAVE - {self.objectName() or 'Button'}", "debug")
         self._sync_icon_state()
 
     def setIconSize(self, width: int, height: int):
@@ -620,7 +617,7 @@ class ToolButton(QToolButton, BaseButton):
     providing StateIcon integration for theme-aware icons.
     """
 
-    def __init__(self, icon: Name, type: Type = Type.DEFAULT, parent=None):
+    def __init__(self, type: Type = Type.DEFAULT, icon: Name = None, parent=None):
         """Create a compact icon-only tool button.
 
         Args:
@@ -647,18 +644,18 @@ class ToolButton(QToolButton, BaseButton):
 
     def enterEvent(self, event):
         """Handle mouse enter for hover state."""
-        print(f"DEBUG: ToolButton.enterEvent CALLED - {self.objectName() or 'ToolButton'}")
+        DebugLogger.log(f"ToolButton.enterEvent CALLED - {self.objectName() or 'ToolButton'}", "debug")
         QToolButton.enterEvent(self, event)
         self._is_hovered = True
-        print(f"DEBUG: ToolButton hover ENTER - {self.objectName() or 'ToolButton'}")
+        DebugLogger.log(f"ToolButton hover ENTER - {self.objectName() or 'ToolButton'}", "debug")
         self._sync_icon_state()
 
     def leaveEvent(self, event):
         """Handle mouse leave for hover state."""
-        print(f"DEBUG: ToolButton.leaveEvent CALLED - {self.objectName() or 'ToolButton'}")
+        DebugLogger.log(f"ToolButton.leaveEvent CALLED - {self.objectName() or 'ToolButton'}", "debug")
         QToolButton.leaveEvent(self, event)
         self._is_hovered = False
-        print(f"DEBUG: ToolButton hover LEAVE - {self.objectName() or 'ToolButton'}")
+        DebugLogger.log(f"ToolButton hover LEAVE - {self.objectName() or 'ToolButton'}", "debug")
         self._sync_icon_state()
 
     def setIconSize(self, *args):

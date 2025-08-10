@@ -19,7 +19,6 @@ from .layout.flow_layout import FlowLayout
 from .layout.separator import Separator
 from .layout.widget_frame import WidgetFrame
 # From navigation
-from .navigation.nav_button import NavButton
 from .navigation.sidebar import Sidebar
 from .navigation.titlebar import TitleBar
 # From widgets
@@ -40,7 +39,7 @@ __all__ = [
     # Layout
     "Separator", "WidgetFrame", "FlowLayout",
     # Navigation
-    "NavButton", "Sidebar", "TitleBar",
+    "Sidebar", "TitleBar",
     # Widgets
     "Button", "ToolButton", "RoundedImage", "CircularImage", "DropdownMenu"
 ]

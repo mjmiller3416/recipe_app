@@ -41,9 +41,6 @@ class Effects:
         shadow_effect.setBlurRadius(_blur_radius)
         shadow_effect.setOffset(_offset_x, _offset_y)
         widget.setGraphicsEffect(shadow_effect)
-        print(f"Applied Drop Shadow to "
-              f"{widget.objectName() if widget.objectName() else widget.__class__.__name__}"
-        )
 
 
     @classmethod
@@ -59,9 +56,6 @@ class Effects:
         blur_effect.setBlurRadius(blur_radius)
         widget.setGraphicsEffect(blur_effect)
         widget.update()
-        print(f"Applied Blur to "
-              f"{widget.objectName() if widget.objectName() else widget.__class__.__name__}"
-        )
 
     @classmethod
     def apply_glow(
@@ -105,9 +99,6 @@ class Effects:
         opacity_effect.setOpacity(opacity)
         widget.setGraphicsEffect(opacity_effect)
         widget.update()
-        print(f"Applied Opacity to "
-              f"{widget.objectName() if widget.objectName() else widget.__class__.__name__}"
-        )
 
     @classmethod
     def clear_effect(cls, widget: QWidget):
@@ -119,6 +110,3 @@ class Effects:
         """
         widget.setGraphicsEffect(None)
         widget.update()
-        print(f"Cleared effect from "
-              f"{widget.objectName() if widget.objectName() else widget.__class__.__name__}"
-        )

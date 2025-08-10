@@ -31,3 +31,10 @@ border-radius: 30px;
     border-radius: 10px;
 }
 
+ToolButton {
+    background-color: transparent;
+    border: none;
+    border-radius: 5px;
+    padding: 8px;
+}
+

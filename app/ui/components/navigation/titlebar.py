@@ -47,22 +47,22 @@ class TitleBar(QWidget):
         self.title.setObjectName("AppTitle")
 
         # ── Sidebar Toggle Button ──
-        self.btn_ico_toggle_sidebar = ToolButton(Name.MENU, Type.SECONDARY)
+        self.btn_ico_toggle_sidebar = ToolButton(Type.SECONDARY, Name.MENU)
         self.btn_ico_toggle_sidebar.setCheckable(True)
 
         self.btn_ico_toggle_sidebar.setFixedSize(SETTINGS["BTN_SIZE"])
         self.btn_ico_toggle_sidebar.setObjectName("BtnToggleSidebar")
 
         # ── Minimize Button ──
-        self.btn_ico_minimize = ToolButton(Name.MINIMIZE, Type.TITLEBAR)
+        self.btn_ico_minimize = ToolButton(Type.TITLEBAR, Name.MINIMIZE)
         self.btn_ico_minimize.setFixedSize(SETTINGS["BTN_SIZE"])
 
         # ── Maximize/Restore Button ──
-        self.btn_ico_maximize = ToolButton(Name.MAXIMIZE, Type.TITLEBAR)
+        self.btn_ico_maximize = ToolButton(Type.TITLEBAR, Name.MAXIMIZE)
         self.btn_ico_maximize.setFixedSize(SETTINGS["BTN_SIZE"])
 
         # ── Close Button ──
-        self.btn_ico_close = ToolButton(Name.CROSS, Type.TITLEBAR)
+        self.btn_ico_close = ToolButton(Type.TITLEBAR, Name.CROSS)
         self.btn_ico_close.setFixedSize(SETTINGS["BTN_SIZE"])
         self.btn_ico_close.setObjectName("BtnClose")
 

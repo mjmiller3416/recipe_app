@@ -5,14 +5,13 @@ Placeholder class for the Dashboard screen.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget, QSizePolicy
 
 from dev_tools import DebugLogger, StartupTimer
 from app.ui.components.layout.card import Card
 from app.ui.components.inputs import SmartLineEdit
 from app.ui.components.widgets.button import Button
 from app.style.icon.config import Type, Name
-from app.ui.components.navigation import NavButton
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -31,13 +30,13 @@ class Dashboard(QWidget):
         self.layout.setContentsMargins(20, 20, 20, 20)
 
         # Example Card
-        card = Card(header="Dashboard Overview", subheader="Summary of key metrics")
+        card = Card()
         card.setAttribute(Qt.WA_StyledBackground, True)
         card.setSpacing(36)
         summary_label = QLabel("This is a placeholder for dashboard content.")
         summary_label.setProperty("font", "Body")
         summary_label.setWordWrap(True)
-        card.content_area.addWidget(summary_label)
+        card.addWidget(summary_label)
         self.layout.addWidget(card)
 
         # add test button with icon
@@ -47,6 +46,7 @@ class Dashboard(QWidget):
         )
         self.btn.setIcon(Name.SEARCH)
         self.btn.setIconSize(20, 20)
+        self.btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
         self.layout.addWidget(self.btn)
 

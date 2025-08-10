@@ -52,16 +52,16 @@ class ButtonTestWindow(QWidget):
         # Test standard QPushButton for comparison
         basic_layout.addWidget(QLabel("Standard QPushButton (for mouse event comparison):"))
         standard_row = QHBoxLayout()
-        
+
         class DebugPushButton(QPushButton):
             def enterEvent(self, event):
                 print("DEBUG: Standard QPushButton enterEvent CALLED")
                 super().enterEvent(event)
-            
+
             def leaveEvent(self, event):
-                print("DEBUG: Standard QPushButton leaveEvent CALLED") 
+                print("DEBUG: Standard QPushButton leaveEvent CALLED")
                 super().leaveEvent(event)
-            
+
             def mousePressEvent(self, event):
                 print("DEBUG: Standard QPushButton mousePressEvent CALLED")
                 super().mousePressEvent(event)
@@ -92,10 +92,10 @@ class ButtonTestWindow(QWidget):
         basic_layout.addWidget(QLabel("ToolButton widgets (icon only):"))
         tool_row = QHBoxLayout()
 
-        self.tool_edit = ToolButton(Name.EDIT, Type.PRIMARY)
-        self.tool_save = ToolButton(Name.SAVE, Type.PRIMARY)
-        self.tool_refresh = ToolButton(Name.REFRESH, Type.PRIMARY)
-        self.tool_cross = ToolButton(Name.CROSS, Type.PRIMARY)
+        self.tool_edit = ToolButton(Type.PRIMARY, Name.EDIT)
+        self.tool_save = ToolButton(Type.PRIMARY, Name.SAVE)
+        self.tool_refresh = ToolButton(Type.PRIMARY, Name.REFRESH)
+        self.tool_cross = ToolButton(Type.PRIMARY, Name.CROSS)
 
         tool_row.addWidget(self.tool_edit)
         tool_row.addWidget(self.tool_save)
@@ -116,7 +116,7 @@ class ButtonTestWindow(QWidget):
         self.check_btn = Button("Toggle Me", Type.PRIMARY, Name.HEART)
         self.check_btn.setCheckable(True)
 
-        self.check_tool = ToolButton(Name.HEART_FILLED, Type.SECONDARY)
+        self.check_tool = ToolButton(Type.SECONDARY, Name.HEART_FILLED)
         self.check_tool.setCheckable(True)
 
         check_row.addWidget(self.check_btn)
@@ -151,15 +151,15 @@ class ButtonTestWindow(QWidget):
         sizing_layout.addWidget(QLabel("Custom Icon Sizes:"))
         icon_size_row = QHBoxLayout()
 
-        self.icon_small = ToolButton(Name.HEART, Type.PRIMARY)
+        self.icon_small = ToolButton(Type.PRIMARY, Name.HEART)
         self.icon_small.setCheckable(True)
         self.icon_small.setIconSize(12, 12)
 
-        self.icon_medium = ToolButton(Name.HEART, Type.PRIMARY)
+        self.icon_medium = ToolButton(Type.PRIMARY, Name.HEART)
         self.icon_medium.setCheckable(True)
         self.icon_medium.setIconSize(24, 24)
 
-        self.icon_large = ToolButton(Name.HEART, Type.PRIMARY)
+        self.icon_large = ToolButton(Type.PRIMARY, Name.HEART)
         self.icon_large.setCheckable(True)
         self.icon_large.setIconSize(48, 48)
 
@@ -177,7 +177,7 @@ class ButtonTestWindow(QWidget):
         sizing_layout.addWidget(QLabel("Dynamic Icon Sizing (use spinbox):"))
         dynamic_row = QHBoxLayout()
 
-        self.dynamic_tool = ToolButton(Name.SETTINGS, Type.SECONDARY)
+        self.dynamic_tool = ToolButton(Type.SECONDARY, Name.SETTINGS)
         self.icon_size_spinbox = QSpinBox()
         self.icon_size_spinbox.setRange(8, 64)
         self.icon_size_spinbox.setValue(24)
@@ -225,7 +225,7 @@ class ButtonTestWindow(QWidget):
         self.state_btn.setStateHover("error")
         self.state_btn.setStateChecked("error")
 
-        self.state_tool = ToolButton(Name.LIGHTBULB, Type.DEFAULT)
+        self.state_tool = ToolButton(Type.DEFAULT, Name.LIGHTBULB)
         self.state_tool.setCheckable(True)
         self.state_tool.setStateDefault("secondary")
         self.state_tool.setStateHover("tertiary")

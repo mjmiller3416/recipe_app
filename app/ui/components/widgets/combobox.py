@@ -40,7 +40,7 @@ class ComboBox(QWidget):
 
         # Create dropdown button
         from app.style.icon import Type
-        self.cb_btn = ToolButton(Name.ANGLE_DOWN, Type.DEFAULT)
+        self.cb_btn = ToolButton(Type.DEFAULT, Name.ANGLE_DOWN)
         self.cb_btn.setCursor(Qt.PointingHandCursor)
         self.cb_btn.setObjectName("CBButton")
 

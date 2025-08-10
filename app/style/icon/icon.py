@@ -327,7 +327,7 @@ class StateIcon(QWidget):
 
         # Make StateIcon transparent to mouse events so parent button can detect hover properly
         self.setAttribute(Qt.WA_TransparentForMouseEvents, True)
-        print(f"DEBUG: StateIcon init - WA_TransparentForMouseEvents set to {self.testAttribute(Qt.WA_TransparentForMouseEvents)}")
+        DebugLogger.log(f"StateIcon init - WA_TransparentForMouseEvents set to {self.testAttribute(Qt.WA_TransparentForMouseEvents)}", "debug")
 
         # initialize ThemedIcon functionality via composition
         self._themed_icon = ThemedIcon(icon_enum)
@@ -359,7 +359,7 @@ class StateIcon(QWidget):
         self._label = QLabel(self)
         # Ensure the internal label is also transparent to mouse events
         self._label.setAttribute(Qt.WA_TransparentForMouseEvents, True)
-        print(f"DEBUG: StateIcon._label - WA_TransparentForMouseEvents set to {self._label.testAttribute(Qt.WA_TransparentForMouseEvents)}")
+        DebugLogger.log(f"StateIcon._label - WA_TransparentForMouseEvents set to {self._label.testAttribute(Qt.WA_TransparentForMouseEvents)}", "debug")
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -496,7 +496,7 @@ class StateIcon(QWidget):
             raise TypeError(f"State must be a State enum, got {type(state)}")
 
         if state != self._current_state:
-            print(f"DEBUG: StateIcon updateState - {self._current_state.name} -> {state.name}")
+            DebugLogger.log(f"StateIcon updateState - changing from {self._current_state.name} to {state.name}", "debug")
             self._current_state = state
             # Track that this state has been accessed
             self._accessed_states.add(state)
@@ -505,7 +505,7 @@ class StateIcon(QWidget):
                 self._render_state(state)
             self._update_display()
         else:
-            print(f"DEBUG: StateIcon updateState - no change, staying in {state.name}")
+            DebugLogger.log(f"StateIcon updateState - no change, staying in {state.name}", "debug")
 
     def autoDetectState(self, checked: bool, hovered: bool, enabled: bool):
         """Set icon state automatically based on standard button logic.
@@ -526,10 +526,10 @@ class StateIcon(QWidget):
         else:
             new_state = State.DEFAULT
 
-        print(f"DEBUG: StateIcon autoDetectState - checked={checked}, hovered={hovered}, enabled={enabled} -> {new_state.name}")
+        DebugLogger.log(f"StateIcon autoDetectState - checked={checked}, hovered={hovered}, enabled={enabled} -> {new_state.name}", "debug")
 
         if new_state != self._current_state:
-            print(f"DEBUG: StateIcon autoDetectState - changing from {self._current_state.name} to {new_state.name}")
+            DebugLogger.log(f"StateIcon autoDetectState - changing from {self._current_state.name} to {new_state.name}", "debug")
             self._current_state = new_state
             # Track that this state has been accessed
             self._accessed_states.add(new_state)
@@ -538,7 +538,7 @@ class StateIcon(QWidget):
                 self._render_state(new_state)
             self._update_display()
         else:
-            print(f"DEBUG: StateIcon autoDetectState - no change, staying in {new_state.name}")
+            DebugLogger.log(f"StateIcon autoDetectState - no change, staying in {new_state.name}", "debug")
 
     def _resolve_color_for_state(self, state: State) -> str:
         """Resolve the color for a given state with proper precedence.
@@ -642,24 +642,22 @@ class StateIcon(QWidget):
 
         if self._current_state in self._state_pixmaps:
             pixmap = self._state_pixmaps[self._current_state]
-            print(f"DEBUG: StateIcon _update_display - using cached pixmap for {self._current_state.name}")
+            DebugLogger.log(f"StateIcon _update_display - using cached pixmap for {self._current_state.name}", "debug")
         elif State.DEFAULT in self._state_pixmaps:
             # fallback to DEFAULT if current state isn't rendered
             pixmap = self._state_pixmaps[State.DEFAULT]
-            print(f"DEBUG: StateIcon _update_display - falling back to DEFAULT for {self._current_state.name}")
-            DebugLogger.log(f"StateIcon falling back to DEFAULT state for {self._current_state.name}", "debug")
+            DebugLogger.log(f"StateIcon _update_display - falling back to DEFAULT for {self._current_state.name}", "debug")
         else:
             # last resort - render on demand
-            print(f"DEBUG: StateIcon _update_display - rendering {self._current_state.name} on demand")
-            DebugLogger.log(f"StateIcon rendering {self._current_state.name} on demand", "debug")
+            DebugLogger.log(f"StateIcon _update_display - rendering {self._current_state.name} on demand", "debug")
             self._render_state(self._current_state)
             pixmap = self._state_pixmaps.get(self._current_state)
 
         if pixmap:
             self._label.setPixmap(pixmap)
-            print(f"DEBUG: StateIcon _update_display - pixmap set successfully for {self._current_state.name}")
+            DebugLogger.log(f"StateIcon _update_display - pixmap set successfully for {self._current_state.name}", "debug")
         else:
-            print(f"DEBUG: StateIcon _update_display - NO PIXMAP FOUND for {self._current_state.name}")
+            DebugLogger.log(f"StateIcon _update_display - NO PIXMAP FOUND for {self._current_state.name}", "debug")
 
     def _on_theme_refresh(self):
         """Called when theme changes - clear cache and re-render states."""

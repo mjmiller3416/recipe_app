@@ -26,13 +26,13 @@ class AddRecipes(QWidget):
         self.layout.setContentsMargins(20, 20, 20, 20)
 
         # Example Card
-        card = Card(header="Add New Recipe", subheader="Fill in the details below")
+        card = Card()
         card.setAttribute(Qt.WA_StyledBackground, True)
         card.setSpacing(36)
-        summary_label = QLabel("This is a placeholder for add recipe content.")
+        summary_label = QLabel("This is a placeholder for dashboard content.")
         summary_label.setProperty("font", "Body")
         summary_label.setWordWrap(True)
-        card.content_area.addWidget(summary_label)
+        card.addWidget(summary_label)
         self.layout.addWidget(card)
 
         # Add stretch to push content to top
