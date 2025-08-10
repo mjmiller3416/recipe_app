@@ -26,7 +26,7 @@ from PySide6.QtWidgets import (
     QFrame,
     QSizePolicy,
     QSpacerItem,
-    QScrollArea,  # <-- Added missing import
+    QScrollArea,
 )
 
 # ── App Imports ──────────────────────────────────────────────────────────────────────────────
