@@ -48,37 +48,21 @@ class WindowAnimator(QObject):
         self.animation_group = None  # force cleanup
 
     def animate_toggle_maximize(self):
-        """Animates the window between maximized and normal (restored) states."""
+        """Toggle maximize using native Qt behavior instead of custom animation.
+        
+        FramelessWindow provides smooth native maximize/restore animations that work
+        better than custom geometry animations.
+        """
         self._stop_current_animation()
-
-        start_geometry = self.window.geometry()
-
-        if not self._is_maximized:
-            self.window._normal_geometry = start_geometry
-            end_geometry = QGuiApplication.primaryScreen().availableGeometry()
+        
+        if self._is_maximized:
+            self.window.showNormal()
+            self._is_maximized = False
         else:
-            end_geometry = getattr(
-                self.window, "_normal_geometry",
-                QRect(QGuiApplication.primaryScreen().availableGeometry().center() - QPoint(400, 300), QSize(800, 600))
-            )
-
-        self.animation_group = QParallelAnimationGroup(self)
-
-        geom_animation = QPropertyAnimation(self.window, b"geometry", self)
-        geom_animation.setDuration(self.duration)
-        geom_animation.setStartValue(start_geometry)
-        geom_animation.setEndValue(end_geometry)
-        geom_animation.setEasingCurve(self.easing_curve)
-
-        self.animation_group.addAnimation(geom_animation)
-        self.animation_group.finished.connect(self._on_maximize_finished)
-        self.animation_group.start(QPropertyAnimation.DeleteWhenStopped)
-
-    def _on_maximize_finished(self):
-        """Finalizes state after maximize/restore animation completes."""
-        self._is_maximized = not self._is_maximized
+            self.window.showMaximized()
+            self._is_maximized = True
+            
         self.window.title_bar.update_maximize_icon(self._is_maximized)
-        self.animation_group = None
 
     def animate_minimize(self):
         """Minimize window using native Qt minimize (no custom animation).
