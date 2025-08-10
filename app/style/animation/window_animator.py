@@ -81,95 +81,12 @@ class WindowAnimator(QObject):
         self.animation_group = None
 
     def animate_minimize(self):
-        """Animates the window shrinking to the taskbar.
-
-        The window fades out and shrinks towards the center of the taskbar
-        or the bottom center of the screen if taskbar information is unavailable.
+        """Minimize window using native Qt minimize (no custom animation).
+        
+        Custom geometry animations can conflict with FramelessWindow's window management,
+        so we use the native minimize behavior instead.
         """
-        self._stop_current_animation() # prevent animation conflicts
-
-        # If window is maximized, restore it first to avoid geometry conflicts
-        if self._is_maximized:
-            self.window.showNormal()
-            self._is_maximized = False
-            self.window.title_bar.update_maximize_icon(False)
-
-        # capture the starting geometry after potential restore
-        start_geometry = self.window.geometry()
-
-        # calculate the target position (taskbar center or screen bottom center)
-        screen_rect = QGuiApplication.primaryScreen().availableGeometry()
-        target_x = screen_rect.center().x()
-        target_y = screen_rect.bottom() # default target Y
-
-        taskbar_coords = self._get_taskbar_rect()
-        if taskbar_coords:
-            taskbar_rect = QRect(QPoint(taskbar_coords[0], taskbar_coords[1]), QPoint(taskbar_coords[2], taskbar_coords[3]))
-            target_y = taskbar_rect.center().y()
-
-        # the animation ends with a zero-sized rectangle at the target
-        end_geometry = QRect(target_x, target_y, 0, 0)
-
-        # animation group to handle multiple properties
-        self.animation_group = QParallelAnimationGroup(self)
-
-        # geometry Animation
-        geom_anim = QPropertyAnimation(self.window, b"geometry")
-        geom_anim.setStartValue(start_geometry)
-        geom_anim.setEndValue(end_geometry)
-        geom_anim.setEasingCurve(self.easing_curve)
-        geom_anim.setDuration(self.duration)
-
-        # opacity Animation
-        opacity_anim = QPropertyAnimation(self.window, b"windowOpacity")
-        opacity_anim.setStartValue(1.0)
-        opacity_anim.setEndValue(0.0)
-        opacity_anim.setEasingCurve(QEasingCurve.InQuad) # Fade out quickly
-        opacity_anim.setDuration(self.duration)
-
-        self.animation_group.addAnimation(geom_anim)
-        self.animation_group.addAnimation(opacity_anim)
-
-        self.animation_group.finished.connect(
-            lambda: self._on_minimize_finished(start_geometry)
-        )
-        self.animation_group.start(QPropertyAnimation.DeleteWhenStopped)
-
-    def _on_minimize_finished(self, original_geometry: QRect):
-        """Finalizes state after minimize animation completes.
-
-        Hides the window, resets its opacity and geometry to their pre-animation
-        values, and then shows the window in a minimized state.
-
-        Args:
-            original_geometry (QRect): The geometry of the window before the
-                minimize animation started.
-        """
+        self._stop_current_animation()  # Stop any running animations
         self.window.showMinimized()
-        # reset properties now that it's hidden
-        self.window.setWindowOpacity(1.0)
-        self.window.setGeometry(original_geometry)
-        self.animation_group = None
 
-    def _get_taskbar_rect(self):
-        """
-        Gets the bounding rectangle of the Windows taskbar.
 
-        Returns:
-            tuple (left, top, right, bottom) of the taskbar, or None if not on Windows
-            or if the taskbar can't be found.
-        """
-        if sys.platform != "win32":
-            return None
-
-        try:
-            import win32gui
-
-            # the taskbar window class name is "Shell_TrayWnd"
-            taskbar_hwnd = win32gui.FindWindow("Shell_TrayWnd", None)
-            if taskbar_hwnd:
-                return win32gui.GetWindowRect(taskbar_hwnd)
-        except (ImportError, Exception):
-            # pywin32 not installed or an API error occurred
-            return None
-        return None
