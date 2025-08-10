@@ -978,3 +978,4 @@ qfluentwidgets/window/__init__.py
 qfluentwidgets/window/fluent_window.py
 qfluentwidgets/window/splash_screen.py
 qfluentwidgets/window/stacked_widget.py
+app/core/database/app_data.db
