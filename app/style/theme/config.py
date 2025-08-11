@@ -57,6 +57,7 @@ class Qss(Enum):
     COMBOBOX          = AppPaths.QSS_DIR / "combobox.qss"
     DIALOG_WINDOW     = AppPaths.QSS_DIR / "dialog_window.qss"
     EMPTY_STATE       = AppPaths.QSS_DIR / "empty_state.qss"
+    ICON              = AppPaths.QSS_DIR / "icon.qss"
     INFO_CARD         = AppPaths.QSS_DIR / "info_card.qss"
     INGREDIENT_WIDGET = AppPaths.QSS_DIR / "ingredient_widget.qss"
     NAV_BUTTON        = AppPaths.QSS_DIR / "nav_button.qss"

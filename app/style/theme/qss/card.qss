@@ -20,6 +20,11 @@
     font: {header_small};
 }
 
+/* Override for AppIcon widgets in cards */
+  [card="Default"] AppIcon {
+      background-color: blue;
+  }
+
 /* Widgets inside card content (using cardContext property) */
 [cardContext="Default"] {
     background-color: {surface_container};

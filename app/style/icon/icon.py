@@ -12,6 +12,7 @@ from PySide6.QtWidgets import QLabel, QWidget, QSizePolicy, QVBoxLayout
 from PySide6.QtGui import QIcon
 
 from app.config import FALLBACK_COLOR
+from app.style import Theme, Qss
 from app.style.icon.config import Name, State, Type
 from app.style.icon.loader import IconLoader
 from app.style.icon.svg_loader import SVGLoader
@@ -262,12 +263,14 @@ class AppIcon(QLabel):
         # initialize ThemedIcon functionality via composition
         self._themed_icon = ThemedIcon(icon_enum)
 
+        # register for component-specific styling
+        Theme.register_widget(self, Qss.ICON)
+
         # set callback so ThemedIcon can update this widget when theme changes
         self._themed_icon.set_refresh_callback(self._render_icon)
 
         # set up the widget
         self.setFixedSize(self._themed_icon._icon_spec.size.value)
-        self.setStyleSheet("background-color: transparent;")
         self.setObjectName(self._themed_icon._icon_spec.name.value)
 
         # initial render

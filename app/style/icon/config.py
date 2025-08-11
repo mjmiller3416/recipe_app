@@ -19,10 +19,10 @@ class Path(Enum):
     BACK            = "back"
     BATTERY         = "battery"
     CATEGORY        = "category"
-    CHECKLIST       = "check_list"
     CROSS           = "cross"
     DASHBOARD       = "dashboard"
     DIET_PREF       = "diet_pref"
+    DIRECTIONS      = "directions"
     ANGLE_DOWN      = "angle_down"
     EDIT            = "edit"
     ERROR           = "error"
@@ -154,7 +154,7 @@ class Name(Enum):
     WIFI            = IconSpec(Path.WIFI, Size.SMALL)
 
     # ── Medium Icons ────────────────────────────
-    CHECKLIST       = IconSpec(Path.CHECKLIST, Size.MEDIUM)
+    DIRECTIONS      = IconSpec(Path.DIRECTIONS, Size.MEDIUM)
     LOGO            = IconSpec(Path.LOGO, Size.MEDIUM)
     MENU            = IconSpec(Path.MENU, Size.MEDIUM)
     NOTES           = IconSpec(Path.NOTES, Size.MEDIUM)

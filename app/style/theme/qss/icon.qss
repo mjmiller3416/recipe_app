@@ -1,0 +1,16 @@
+/* ------------------------------------------------------------------
+   ICON WIDGET STYLING
+   ------------------------------------------------------------------ */
+
+
+   #ContentArea AppIcon {background-color: transparent;}
+
+/* Force transparent background for header icons */
+  AppIcon#HeaderIcon {
+      background-color: transparent !important;
+  }
+
+  /* Also try targeting by class and object name */
+  [card="Default"] AppIcon#HeaderIcon {
+      background-color: transparent !important;
+  }

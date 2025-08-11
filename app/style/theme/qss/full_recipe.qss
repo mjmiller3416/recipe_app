@@ -16,6 +16,10 @@ QWidget#FullRecipeContent {
     background-color: {surface};
 }
 
+QWidget#RecipeTagsContainer {
+    background-color: green;
+}
+
 /* ── Recipe Title ──────────────────────────────────────────────── */
 QLabel#RecipeTitle {
     font: {header_large};
@@ -70,3 +74,8 @@ QFrame#RecipeTag:hover {
     background-color: {surface_container_high};
     border: 1px solid {outline};
 }
+
+
+#RightColumnContainer{
+      background-color: transparent;
+  }

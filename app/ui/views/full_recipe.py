@@ -30,8 +30,7 @@ from PySide6.QtWidgets import (
 
 # ── App Imports ──────────────────────────────────────────────────────────────────────────────
 # Icons
-from app.style.icon import AppIcon
-from app.style.icon.config import Icon
+from app.style.icon import Icon, AppIcon
 
 # Theme hook (component registration)
 from app.style import Theme, Qss
@@ -244,6 +243,7 @@ class FullRecipe(QWidget):
 
         # ── Recipe Tags Row
         tags_container = QWidget()
+        tags_container.setObjectName("RecipeTagsContainer")
         tags_layout = QHBoxLayout(tags_container)
         tags_layout.setContentsMargins(0, 0, 0, 0)
         tags_layout.addStretch()
@@ -300,7 +300,7 @@ class FullRecipe(QWidget):
         ingredients_card.setContentMargins(25, 25, 25, 25)
         ingredients_card.setSpacing(15)
         ingredients_card.expandWidth(True)  # Allow width expansion
-        
+
         # Ingredients list
         ingredients_list = IngredientList()
         ingredients_list.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -318,7 +318,7 @@ class FullRecipe(QWidget):
 
         # ── Directions Section
         directions_card = Card(content)
-        directions_card.setHeader("Directions")
+        directions_card.setHeader("Directions", Icon.DIRECTIONS)
         directions_card.setContentMargins(25, 25, 25, 25)
         directions_card.setSpacing(15)
         directions_card.expandWidth(True)  # Allow width expansion
