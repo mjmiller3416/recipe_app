@@ -80,34 +80,49 @@ class IngredientList(QWidget):
 
     def _addIngredientItem(self, detail):
         """Add a single ingredient item to the list."""
-        # Create ingredient row widget
+        # Create ingredient row widget  
         item_widget = QWidget()
         item_widget.setObjectName("IngredientItem")
 
-        item_layout = QHBoxLayout(item_widget)
+        # Use QGridLayout for precise alignment
+        item_layout = QGridLayout(item_widget)
         item_layout.setContentsMargins(0, 0, 0, 0)
-        item_layout.setSpacing(15)
+        item_layout.setHorizontalSpacing(10)
+        item_layout.setVerticalSpacing(0)
+        
+        # Set column stretch: quantity (fixed), unit (fixed), name (expanding)
+        item_layout.setColumnStretch(0, 0)  # Quantity column - fixed width
+        item_layout.setColumnStretch(1, 0)  # Unit column - fixed width  
+        item_layout.setColumnStretch(2, 1)  # Name column - expanding
 
-        # Extract ingredient details
-        qty = f"{getattr(detail, 'quantity', '') or ''}"
-        unit = f"{getattr(detail, 'unit', '') or ''}"
-        amount_text = " ".join(x for x in [qty, unit] if x).strip()
+        # Get formatted ingredient details using new DTO properties
+        formatted_qty = getattr(detail, 'formatted_quantity', '')
+        abbreviated_unit = getattr(detail, 'abbreviated_unit', '')
         ingredient_name = getattr(detail, "ingredient_name", "") or ""
 
-        # Amount label (fixed width for alignment)
-        amount_label = QLabel(amount_text)
-        amount_label.setObjectName("IngredientAmount")
-        amount_label.setMinimumWidth(100)
-        amount_label.setAlignment(Qt.AlignLeft)
+        # Quantity label (right-aligned, fixed width)
+        qty_label = QLabel(formatted_qty)
+        qty_label.setObjectName("IngredientQuantity")
+        qty_label.setMinimumWidth(60)
+        qty_label.setMaximumWidth(60)
+        qty_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
-        # Ingredient name label
+        # Unit label (left-aligned, fixed width)
+        unit_label = QLabel(abbreviated_unit)
+        unit_label.setObjectName("IngredientUnit")  
+        unit_label.setMinimumWidth(50)
+        unit_label.setMaximumWidth(50)
+        unit_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+
+        # Ingredient name label (left-aligned, expanding)
         name_label = QLabel(ingredient_name)
         name_label.setObjectName("IngredientName")
+        name_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
-        # Add to layout
-        item_layout.addWidget(amount_label)
-        item_layout.addWidget(name_label)
-        item_layout.addStretch()
+        # Add to grid: row 0, columns 0, 1, 2
+        item_layout.addWidget(qty_label, 0, 0)
+        item_layout.addWidget(unit_label, 0, 1)  
+        item_layout.addWidget(name_label, 0, 2)
 
         # Add to main layout
         self.layout.addWidget(item_widget)
@@ -238,6 +253,8 @@ class FullRecipe(QWidget):
         page.setSpacing(25)
 
         # ── Back Button
+        # TODO: Implement sticky back button that remains visible during scrolling
+        # Requirements: Fixed position overlay, semi-transparent background, proper z-index
         back_bar = self._make_back_button()
         page.addWidget(back_bar)
 
@@ -308,6 +325,8 @@ class FullRecipe(QWidget):
         # ── Left Column: Ingredients (1/3 width)
         ingredients_card = Card(content, card_type="Primary")
         ingredients_card.setHeader("Ingredients", Icon.INGREDIENTS)
+        ingredients_card.headerIcon.setSize(30, 30)
+        ingredients_card.headerIcon.setColor("primary")
         ingredients_card.setContentMargins(25, 25, 25, 25)
         ingredients_card.setSpacing(15)
         ingredients_card.expandWidth(True)  # Allow width expansion
@@ -325,6 +344,8 @@ class FullRecipe(QWidget):
         # ── Directions Section (Right Column, Row 0)
         directions_card = Card(content, card_type="Primary")
         directions_card.setHeader("Directions", Icon.DIRECTIONS)
+        directions_card.headerIcon.setSize(30, 30)
+        directions_card.headerIcon.setColor("primary")
         directions_card.setContentMargins(25, 25, 25, 25)
         directions_card.setSpacing(15)
         directions_card.expandWidth(True)  # Allow width expansion
@@ -344,6 +365,8 @@ class FullRecipe(QWidget):
         if notes:
             notes_card = Card(content, card_type="Primary")
             notes_card.setHeader("Notes", Icon.NOTES)
+            notes_card.headerIcon.setSize(30, 30)
+            notes_card.headerIcon.setColor("primary")
             notes_card.setContentMargins(25, 25, 25, 25)
             notes_card.setSpacing(15)
             notes_card.expandWidth(True)  # Allow width expansion

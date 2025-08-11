@@ -76,3 +76,21 @@ class IngredientDetailDTO(BaseModel):
     ingredient_category: str
     quantity: Optional[float] = None
     unit: Optional[str] = None
+    
+    @property
+    def formatted_quantity(self) -> str:
+        """Return quantity formatted as fractions/whole numbers."""
+        if self.quantity is None:
+            return ""
+        
+        from ..utils.format_utils import format_quantity
+        return format_quantity(self.quantity)
+    
+    @property 
+    def abbreviated_unit(self) -> str:
+        """Return unit in abbreviated form."""
+        if self.unit is None:
+            return ""
+            
+        from ..utils.format_utils import abbreviate_unit
+        return abbreviate_unit(self.unit)

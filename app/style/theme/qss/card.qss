@@ -42,11 +42,12 @@
 [card="Primary"] QLabel {
     background-color: {surface_container};
     color: {on_surface_variant};
+    font: {title_small};
 }
 
 [card="Primary"] QLabel#Header {
     font: {header_small};
-    color: {tertiary};
+    color: {secondary};
 }
 
 [cardContext="Primary"] {
@@ -55,9 +56,12 @@
 }
 
 [cardContext="Primary"] QLabel {
+    font: {body_large};
     background-color: {surface_container};
     color: {on_surface_variant};
 }
+
+
 
 /* Example: Secondary card variant */
 [card="Secondary"] {

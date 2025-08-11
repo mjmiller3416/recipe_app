@@ -20,6 +20,22 @@ QWidget#RecipeTagsContainer {
     background-color: {surface};
 }
 
+/* ── Ingredient List Styling ──────────────────────────────────── */
+QLabel#IngredientQuantity {
+    font-weight: 600;
+    color: {primary};
+}
+
+QLabel#IngredientUnit {
+    color: {on_surface_variant};
+    font-style: italic;
+}
+
+QLabel#IngredientName {
+    color: {on_surface};
+}
+
+
 /* ── Recipe Title ──────────────────────────────────────────────── */
 QLabel#RecipeTitle {
     font: {header_large};
@@ -34,8 +50,6 @@ QLabel#RecipeTitle {
     border-radius: 12px;
     margin: 10px 0;
 }
-
-
 
 /* ── Back Button ───────────────────────────────────────────── */
 QWidget#BackBar {
