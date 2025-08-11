@@ -2,19 +2,87 @@
    CARD WIDGET STYLING
    ------------------------------------------------------------------ */
 
+/* Card container styling */
 [card="Default"] {
     background-color: {surface_container};
     border: none;
     border-radius: 10px;
 }
 
+/* Direct child QLabels of the card */
 [card="Default"] QLabel {
     background-color: {surface_container};
     color: {on_surface_variant};
 }
 
+/* Card header styling */
 [card="Default"] QLabel#Header {
     font: {header_small};
+}
+
+/* Widgets inside card content (using cardContext property) */
+[cardContext="Default"] {
+    background-color: {surface_container};
+    color: {on_surface_variant};
+}
+
+[cardContext="Default"] QLabel {
+    background-color: {surface_container};
+    color: {on_surface_variant};
+}
+
+/* Example: Primary card variant */
+[card="Primary"] {
+    background-color: {primary_container};
+    border: none;
+    border-radius: 10px;
+}
+
+[card="Primary"] QLabel {
+    background-color: {primary_container};
+    color: {on_primary_container};
+}
+
+[card="Primary"] QLabel#Header {
+    font: {header_small};
+    color: {on_primary_container};
+}
+
+[cardContext="Primary"] {
+    background-color: {primary_container};
+    color: {on_primary_container};
+}
+
+[cardContext="Primary"] QLabel {
+    background-color: {primary_container};
+    color: {on_primary_container};
+}
+
+/* Example: Secondary card variant */
+[card="Secondary"] {
+    background-color: {secondary_container};
+    border: none;
+    border-radius: 10px;
+}
+
+[card="Secondary"] QLabel {
+    background-color: {secondary_container};
+    color: {on_secondary_container};
+}
+
+[card="Secondary"] QLabel#Header {
+    font: {header_small};
+    color: {on_secondary_container};
+}
+
+[cardContext="Secondary"] {
+    background-color: {secondary_container};
+    color: {on_secondary_container};
+}
+
+[cardContext="Secondary"] QLabel {
+    background-color: {secondary_container};
+    color: {on_secondary_container};
 }
 
 

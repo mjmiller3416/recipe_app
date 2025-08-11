@@ -266,6 +266,7 @@ class FullRecipe(QWidget):
         page.addWidget(recipe_image)
 
         # ── Info Cards Container
+        # TODO: Update to new Card API pattern (info_container.addWidget) once card styling variants are implemented
         info_container = Card(layout="hbox")
         info_container.setObjectName("InfoContainer")
         info_container.setProperty("tag", "Container")
@@ -296,18 +297,19 @@ class FullRecipe(QWidget):
         # ── Left Column: Ingredients (1/3 width)
         ingredients_card = Card(content)
         ingredients_card.setHeader("Ingredients")
-        ingredients_layout = ingredients_card.getLayout()
-        ingredients_layout.setContentsMargins(25, 25, 25, 25)
-        ingredients_layout.setSpacing(15)
-
+        ingredients_card.setContentMargins(25, 25, 25, 25)
+        ingredients_card.setSpacing(15)
+        ingredients_card.expandWidth(True)  # Allow width expansion
+        
         # Ingredients list
         ingredients_list = IngredientList()
+        ingredients_list.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
         ingredient_details = getattr(self.recipe, "get_ingredient_details", lambda: [])()
         ingredients_list.setIngredients(ingredient_details)
-        ingredients_layout.addWidget(ingredients_list)
+        ingredients_card.addWidget(ingredients_list)
 
-        # Add ingredients to left column (1/3 width)
-        content_row.addWidget(ingredients_card, 1)
+        # Add ingredients to left column (1/3 width) with top alignment
+        content_row.addWidget(ingredients_card, 1, Qt.AlignTop)
 
         # ── Right Column: Directions + Notes (2/3 width)
         right_column = QVBoxLayout()
@@ -316,40 +318,35 @@ class FullRecipe(QWidget):
 
         # ── Directions Section
         directions_card = Card(content)
-        directions_card.setObjectName("SectionCard")
-        directions_layout = directions_card.getLayout()
-        directions_layout.setContentsMargins(25, 25, 25, 25)
-        directions_layout.setSpacing(15)
-
-        # Header with icon
-        directions_header = self._create_section_header(Icon.MEAL_PLANNER, "Directions")
-        directions_layout.addWidget(directions_header)
+        directions_card.setHeader("Directions")
+        directions_card.setContentMargins(25, 25, 25, 25)
+        directions_card.setSpacing(15)
+        directions_card.expandWidth(True)  # Allow width expansion
 
         # Directions list
         directions_list = DirectionsList()
+        directions_list.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
         recipe_directions = getattr(self.recipe, "directions", "") or ""
         directions_list.setDirections(recipe_directions)
-        directions_layout.addWidget(directions_list)
+        directions_card.addWidget(directions_list)
+
+        # Add directions card to right column
         right_column.addWidget(directions_card)
 
         # ── Notes Section (optional)
         notes = getattr(self.recipe, "notes", None)
         if notes:
             notes_card = Card(content)
-            notes_card.setObjectName("SectionCard")
-            notes_layout = notes_card.getLayout()
-            notes_layout.setContentsMargins(25, 25, 25, 25)
-            notes_layout.setSpacing(15)
-
-            # Header with icon
-            notes_header = self._create_section_header(Icon.NOTES, "Notes")
-            notes_layout.addWidget(notes_header)
+            notes_card.setHeader("Notes")
+            notes_card.setContentMargins(25, 25, 25, 25)
+            notes_card.setSpacing(15)
+            notes_card.expandWidth(True)  # Allow width expansion
 
             # Notes text
             notes_text = QLabel(notes)
             notes_text.setObjectName("NotesText")
             notes_text.setWordWrap(True)
-            notes_layout.addWidget(notes_text)
+            notes_card.addWidget(notes_text)
             right_column.addWidget(notes_card)
 
         # Add stretch to right column to prevent unnecessary expansion

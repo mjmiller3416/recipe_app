@@ -49,13 +49,6 @@ QPushButton#BackButton {
     padding: 8px 16px;
 }
 
-QPushButton#BackButton:hover {
-    background-color: {primary_container_hover};
-}
-
-QPushButton#BackButton:pressed {
-    background-color: {primary_container_pressed};
-}
 
 /* ── Responsive Design ──────────────────────────────────────── */
 @media (max-width: 800px) {
