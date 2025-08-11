@@ -266,8 +266,10 @@ class FullRecipe(QWidget):
         page.addWidget(recipe_image)
 
         # ── Info Cards Container
-        info_container = Card()
+        info_container = Card(layout="hbox")
         info_container.setObjectName("InfoContainer")
+        info_container.setProperty("tag", "Container")
+        info_container.expandWidth(True)
         info_layout = info_container.getLayout()
         info_layout.setContentsMargins(20, 15, 20, 15)
         info_layout.setSpacing(40)
@@ -293,14 +295,10 @@ class FullRecipe(QWidget):
 
         # ── Left Column: Ingredients (1/3 width)
         ingredients_card = Card(content)
-        ingredients_card.setObjectName("SectionCard")
+        ingredients_card.setHeader("Ingredients")
         ingredients_layout = ingredients_card.getLayout()
         ingredients_layout.setContentsMargins(25, 25, 25, 25)
         ingredients_layout.setSpacing(15)
-
-        # Header with icon
-        ingredients_header = self._create_section_header(Icon.CHECKLIST, "Ingredients")
-        ingredients_layout.addWidget(ingredients_header)
 
         # Ingredients list
         ingredients_list = IngredientList()

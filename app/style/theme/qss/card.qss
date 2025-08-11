@@ -2,22 +2,19 @@
    CARD WIDGET STYLING
    ------------------------------------------------------------------ */
 
-[tag="Card"] {
+[card="Default"] {
     background-color: {surface_container};
     border: none;
     border-radius: 10px;
 }
 
-Card QLabel#Header {
-    font: {header_small};
-    color: {on_surface};
-}
-
-Card QLabel#Subheader {
-    font: {subheader};
-}
-
-QLabel {
-    background-color: transparent;
+[card="Default"] QLabel {
+    background-color: {surface_container};
     color: {on_surface_variant};
 }
+
+[card="Default"] QLabel#Header {
+    font: {header_small};
+}
+
+

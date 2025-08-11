@@ -4,12 +4,26 @@ A generic container widget with elevation effects and flexible layout management
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QFrame, QVBoxLayout, QHBoxLayout, QGridLayout, QSizePolicy, QWidget, QLabel)
+from __future__ import annotations
 
-from app.style.theme.config import Qss
-from app.style.theme_controller import Color, Mode, Theme
+import warnings
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
+    QFrame,
+    QVBoxLayout,
+    QHBoxLayout,
+    QGridLayout,
+    QSizePolicy,
+    QWidget,
+    QLabel,
+    QLayout,
+)
+from typing import Optional, Tuple
+
+from app.style import Theme, Qss
+from app.style.icon import AppIcon, Name
 from app.style.effects import Effects, Shadow, Glow
+
 
 # ── Card Widget ──────────────────────────────────────────────────────────────────────────────
 class Card(QFrame):
@@ -20,161 +34,150 @@ class Card(QFrame):
     layout types (QVBox, QHBox, QGrid) and provides a clean API for content management.
     """
 
-    def __init__(self, parent=None, elevation=Shadow.ELEVATION_6):
+    def __init__(
+        self,
+        parent: QWidget | None = None,
+        elevation: Shadow = Shadow.ELEVATION_6,
+        layout: str = "vbox",
+    ):
         """Initialize the Card widget.
 
         Args:
-            parent: The parent widget, if any.
-            elevation: Shadow elevation level from Shadow enum (default: ELEVATION_1).
+            parent: Optional parent widget.
+            elevation: Shadow elevation level from Shadow enum (default: ELEVATION_6).
+            layout: Initial layout type: "vbox" (default), "hbox", or "grid".
         """
         super().__init__(parent)
 
-        # register for component-specific styling
+        # Register for component-specific styling
         Theme.register_widget(self, Qss.CARD)
 
         # ── Configure Frame Properties ──
-        self.setProperty("tag", "Card")  # set a custom property for styling
+        self.setProperty("card", "Default")  # custom property for styling
         self.setAttribute(Qt.WA_StyledBackground)
 
-        # sizing policy to size to contents (not expand beyond necessary)
+        # Size to contents by default
         self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
-        # ── Initialize Layout Variables ──
-        self._current_layout = None
+        # ── Internal State ──
+        self._current_layout: QLayout | None = None
         self._elevation = elevation
         self._elevation_enabled = True
-        self._header_label = None
 
-        # ── Create Default Layout ──
-        self.addLayout("vbox")  # Default to vertical box layout
+        # Header bits
+        self._header_container: QWidget | None = None
+        self._header_layout: QHBoxLayout | None = None
+        self._header_label: QLabel | None = None
+        self._header_icon_widget: QWidget | None = None  # exposed via headerIcon property
+
+        # ── Create Initial Layout ──
+        self._add_layout(layout_type=layout, spacing=10)  # defaults to vbox if invalid
 
         # ── Apply Effects ──
         if self._elevation_enabled:
             Effects.apply_shadow(self, self._elevation)
 
-    def addLayout(self, layout_type: str, spacing: int = 10):
-        """Add or replace the current layout.
+    # ── Layout Helpers ────────────────────────────────────────────────────────────────────────
+    def _clear_current_layout(self) -> None:
+        """Remove all child widgets and delete the current layout (internal)."""
+        if not self._current_layout:
+            return
 
-        Args:
-            layout_type (str): Type of layout - 'vbox', 'hbox', or 'grid'.
-            spacing (int): Spacing between layout items in pixels.
+        while self._current_layout.count():
+            item = self._current_layout.takeAt(0)
+            w = item.widget()
+            if w is not None:
+                w.setParent(None)
+                w.deleteLater()
 
-        Returns:
-            The created layout object.
-        """
-        # Clear existing layout if any
-        if self._current_layout:
-            # Clear the existing layout
-            while self._current_layout.count():
-                item = self._current_layout.takeAt(0)
-                if item.widget():
-                    item.widget().setParent(None)
-            self._current_layout.deleteLater()
+        self._current_layout.deleteLater()
+        self._current_layout = None
 
-        # Create new layout based on type
-        layout_type = layout_type.lower()
-        if layout_type == "vbox":
-            self._current_layout = QVBoxLayout(self)
-        elif layout_type == "hbox":
+    def _add_layout(self, layout_type: str = "vbox", spacing: int = 10):
+        """Create/replace the internal layout. Private API."""
+        lt = (layout_type or "vbox").strip().lower()
+
+        self._clear_current_layout()
+
+        if lt == "hbox":
             self._current_layout = QHBoxLayout(self)
-        elif layout_type == "grid":
+        elif lt == "grid":
             self._current_layout = QGridLayout(self)
         else:
-            raise ValueError(f"Unsupported layout type: {layout_type}. Use 'vbox', 'hbox', or 'grid'.")
+            # default fallback to vbox
+            self._current_layout = QVBoxLayout(self)
 
-        # Set default content margins (20px on all sides)
         self._current_layout.setContentsMargins(20, 20, 20, 20)
         self._current_layout.setSpacing(spacing)
-
         return self._current_layout
 
+    def setLayoutType(self, layout_type: str, *, spacing: Optional[int] = None) -> None:
+        """Public wrapper to switch between 'vbox' | 'hbox' | 'grid' at runtime."""
+        self._add_layout(layout_type=layout_type, spacing=(spacing if spacing is not None else 10))
+        # If a header existed, reinsert it at the top
+        if self._header_container and self._current_layout:
+            self._current_layout.insertWidget(0, self._header_container)
+
+
+    # ── Public Layout API ─────────────────────────────────────────────────────────────────────
     def addWidget(self, widget: QWidget, *args, **kwargs):
         """Add a widget to the current layout.
 
-        Args:
-            widget: The widget to add.
-            *args, **kwargs: Additional arguments passed to the layout's addWidget method.
-                           For QGridLayout: row, column, rowSpan=1, columnSpan=1
-                           For QVBoxLayout/QHBoxLayout: stretch=0, alignment=Qt.Alignment()
+        For QGridLayout: row, column, rowSpan=1, columnSpan=1
+        For QVBoxLayout/QHBoxLayout: stretch=0, alignment=Qt.Alignment()
         """
         if not self._current_layout:
-            self.add_layout("vbox")  # Default layout if none exists
+            self._add_layout("vbox")
 
         if isinstance(self._current_layout, QGridLayout):
-            # For grid layout, expect row, column as minimum args
             if len(args) < 2:
                 raise ValueError("Grid layout requires at least row and column arguments")
             self._current_layout.addWidget(widget, *args, **kwargs)
         else:
-            # For box layouts
             self._current_layout.addWidget(widget, *args, **kwargs)
 
     def setContentMargins(self, left: int, top: int, right: int, bottom: int):
-        """Set the content margins of the current layout.
-
-        Args:
-            left (int): Left margin in pixels.
-            top (int): Top margin in pixels.
-            right (int): Right margin in pixels.
-            bottom (int): Bottom margin in pixels.
-        """
+        """Set the content margins of the current layout."""
         if self._current_layout:
             self._current_layout.setContentsMargins(left, top, right, bottom)
 
     def setSpacing(self, spacing: int):
-        """Set the spacing between elements in the current layout.
-
-        Args:
-            spacing (int): The spacing in pixels.
-        """
+        """Set the spacing between elements in the current layout."""
         if self._current_layout:
             self._current_layout.setSpacing(spacing)
 
-    def setElevation(self, elevation: Shadow):
-        """Set the elevation effect.
+    def getLayout(self) -> QLayout | None:
+        """Get the current layout object (QVBoxLayout, QHBoxLayout, or QGridLayout)."""
+        return self._current_layout
 
-        Args:
-            elevation: Shadow elevation level from Shadow enum.
-        """
+    def clearWidgets(self):
+        """Clear all widgets from the current layout (excludes header container)."""
+        if not self._current_layout:
+            return
+        # Keep header container if present (index 0)
+        start_index = 1 if self._header_container is not None else 0
+        for i in range(self._current_layout.count() - 1, start_index - 1, -1):
+            item = self._current_layout.takeAt(i)
+            w = item.widget()
+            if w is not None:
+                w.deleteLater()
+
+    def setElevation(self, elevation: Shadow):
+        """Set the elevation effect."""
         self._elevation = elevation
         if self._elevation_enabled:
             Effects.apply_shadow(self, self._elevation)
 
     def enableElevation(self, enabled: bool = True):
-        """Enable or disable elevation effects.
-
-        Args:
-            enabled (bool): Whether to enable elevation effects.
-        """
+        """Enable or disable elevation effects."""
         self._elevation_enabled = enabled
         if enabled:
             Effects.apply_shadow(self, self._elevation)
         else:
-            # Remove shadow effect by applying ELEVATION_0
             Effects.apply_shadow(self, Shadow.ELEVATION_0)
 
-    def getLayout(self):
-        """Get the current layout object.
-
-        Returns:
-            The current layout (QVBoxLayout, QHBoxLayout, or QGridLayout).
-        """
-        return self._current_layout
-
-    def clearWidgets(self):
-        """Clear all widgets from the current layout."""
-        if self._current_layout:
-            while self._current_layout.count():
-                item = self._current_layout.takeAt(0)
-                if item.widget():
-                    item.widget().deleteLater()
-
     def expandWidth(self, expand: bool = True):
-        """Enable or disable width expansion.
-
-        Args:
-            expand (bool): Whether the card should expand horizontally to fill available space.
-        """
+        """Enable or disable width expansion."""
         current_policy = self.sizePolicy()
         if expand:
             self.setSizePolicy(QSizePolicy.Expanding, current_policy.verticalPolicy())
@@ -182,11 +185,7 @@ class Card(QFrame):
             self.setSizePolicy(QSizePolicy.Fixed, current_policy.verticalPolicy())
 
     def expandHeight(self, expand: bool = True):
-        """Enable or disable height expansion.
-
-        Args:
-            expand (bool): Whether the card should expand vertically to fill available space.
-        """
+        """Enable or disable height expansion."""
         current_policy = self.sizePolicy()
         if expand:
             self.setSizePolicy(current_policy.horizontalPolicy(), QSizePolicy.Expanding)
@@ -194,32 +193,110 @@ class Card(QFrame):
             self.setSizePolicy(current_policy.horizontalPolicy(), QSizePolicy.Fixed)
 
     def expandBoth(self, expand: bool = True):
-        """Enable or disable both width and height expansion.
-
-        Args:
-            expand (bool): Whether the card should expand to fill all available space.
-        """
+        """Enable or disable both width and height expansion."""
         if expand:
             self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         else:
             self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
-    def setHeader(self, text: str, tag: str = "Sub-Header"):
-        """Set or update the header label for the card.
+    # ── Header (with optional icon) ─────────────────────────────────────────────────────────
+    def setHeader(
+        self,
+        text: str,
+        *,
+        icon: Optional[object] = None,
+    ):
+        """Set or update the header with optional icon.
 
         Args:
-            text (str): The header text to display.
-            tag (str): The tag property for styling purposes (default: "Sub-Header").
+            text: Header text.
+            tag: QSS tag used for styling (defaults to "Header").
+            icon: Optional icon. One of:
+                  - Name enum (preferred) -> will construct an AppIcon
+                  - QWidget (e.g., AppIcon/StateIcon) -> used as-is
+                  - None -> text-only header
         """
-        if self._header_label is None:
+        # Lazily build a container for [icon][label] the first time
+        if self._header_container is None:
+            self._header_container = QWidget(self)
+            self._header_container.setAttribute(Qt.WA_StyledBackground, False)
+
+            self._header_layout = QHBoxLayout(self._header_container)
+            self._header_layout.setContentsMargins(0, 0, 0, 0)
+            self._header_layout.setSpacing(8)  # gap between icon and text
+
             self._header_label = QLabel(text)
-            self._header_label.setProperty("tag", tag)
-            # Insert at the top of the layout
+            self._header_label.setObjectName("Header")
+
+            # Insert at the top of the card layout
             if self._current_layout:
-                self._current_layout.insertWidget(0, self._header_label)
+                self._current_layout.insertWidget(0, self._header_container)
+
+            # Add label last (icon slot is before it)
+            self._header_layout.addWidget(self._header_label, 0, Qt.AlignVCenter)
         else:
+            # Update text + tag
             self._header_label.setText(text)
-            self._header_label.setProperty("tag", tag)
-            # Force style update to apply new tag
+            self._header_label.setObjectName("Header")
+            # Force style refresh when tag changes
             self._header_label.style().unpolish(self._header_label)
             self._header_label.style().polish(self._header_label)
+
+        # If an icon is provided, apply it; if explicitly None, remove any existing icon
+        if icon is not None:
+            self.setHeaderIcon(icon)
+        elif self._header_icon_widget is not None:
+            self.clearHeaderIcon()
+
+    def setHeaderIcon(self, icon: object):
+        """Set or replace the header's icon.
+
+        The resulting widget is exposed via the `headerIcon` property for direct calls.
+
+        Args:
+            icon:
+                - Name enum (preferred): constructs an AppIcon
+                - QWidget (AppIcon/StateIcon/etc.): used as-is
+        """
+        if self._header_container is None or self._header_layout is None:
+            # Ensure header base exists (creates label-only if needed)
+            self.setHeader(text=(self._header_label.text() if self._header_label else ""))
+
+        # Remove previous icon
+        if self._header_icon_widget is not None:
+            self._header_layout.removeWidget(self._header_icon_widget)
+            self._header_icon_widget.deleteLater()
+            self._header_icon_widget = None
+
+        # Accept either a ready-made QWidget or a Name enum
+        if isinstance(icon, QWidget):
+            self._header_icon_widget = icon
+        else:
+            created = False
+            if Name is not None and hasattr(icon, "spec"):
+                if AppIcon is None:
+                    raise ImportError(
+                        "AppIcon widget not available. Ensure 'app.appearance.icon.icon' is importable."
+                    )
+                self._header_icon_widget = AppIcon(icon)
+                created = True
+
+            if not created:
+                raise TypeError(
+                    "Unsupported icon type. Pass a Name enum value or a QWidget (e.g., AppIcon/StateIcon)."
+                )
+
+        # Insert icon before the label
+        self._header_layout.insertWidget(0, self._header_icon_widget, 0, Qt.AlignVCenter)
+
+    def clearHeaderIcon(self):
+        """Remove the header icon, leaving text-only."""
+        if self._header_icon_widget is not None and self._header_layout is not None:
+            self._header_layout.removeWidget(self._header_icon_widget)
+            self._header_icon_widget.deleteLater()
+            self._header_icon_widget = None
+
+    @property
+    def headerIcon(self) -> QWidget | None:
+        """Direct access to the header's icon widget, if any."""
+        return self._header_icon_widget
