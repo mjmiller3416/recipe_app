@@ -17,7 +17,7 @@ QWidget#FullRecipeContent {
 }
 
 QWidget#RecipeTagsContainer {
-    background-color: green;
+    background-color: {surface};
 }
 
 /* ── Recipe Title ──────────────────────────────────────────────── */

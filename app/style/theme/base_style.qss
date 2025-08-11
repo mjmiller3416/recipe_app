@@ -3,8 +3,8 @@
    ------------------------------------------------------------------ */
 
 /* Global Styles */
-#FixedWrapper, #FixedWrapper QWidget {background-color: transparent;}
-
+#FixedWrapper {background-color: transparent;}
+QWidget#ContentArea{background-color: {surface};}
 
 [tag="Header"] {
     font: {title};
@@ -17,11 +17,11 @@
 
 AppIcon {background-color: transparent;}
 
+
 /* QWidget */
 QWidget {
     font-family: 'Roboto';
     font-size: 22px;
-    background-color: {surface_container};
     color: {on_surface};
 }
 
@@ -175,3 +175,6 @@ QScrollBar::add-line, QScrollBar::sub-line {
     width: 0px;
 }
 
+QStackedWidget {
+    background-color: {surface};
+}

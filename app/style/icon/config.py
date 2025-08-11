@@ -30,6 +30,7 @@ class Path(Enum):
     HEART           = "heart"
     HEART_FILLED    = "heart_filled"
     INFO            = "info"
+    INGREDIENTS     = "ingredients"
     LIGHTBULB       = "lightbulb"
     LOGO            = "logo"
     MAXIMIZE        = "maximize"
@@ -155,6 +156,7 @@ class Name(Enum):
 
     # ── Medium Icons ────────────────────────────
     DIRECTIONS      = IconSpec(Path.DIRECTIONS, Size.MEDIUM)
+    INGREDIENTS     = IconSpec(Path.INGREDIENTS, Size.MEDIUM)
     LOGO            = IconSpec(Path.LOGO, Size.MEDIUM)
     MENU            = IconSpec(Path.MENU, Size.MEDIUM)
     NOTES           = IconSpec(Path.NOTES, Size.MEDIUM)

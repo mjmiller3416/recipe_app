@@ -100,6 +100,7 @@ class MainWindow(FramelessWindow):
 
         # Header Widgets
         self.lbl_header = QLabel()
+        self.lbl_header.setObjectName("AppHeader")
         self.lbl_header.setProperty("tag", "Header")
         self.lbl_header.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.header_layout.addWidget(self.lbl_header, alignment=Qt.AlignLeft)

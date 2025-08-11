@@ -20,17 +20,18 @@ from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
+    QGridLayout,
     QLabel,
     QFrame,
     QSizePolicy,
     QSpacerItem,
     QScrollArea,
-    QPushButton,
 )
 
 # ── App Imports ──────────────────────────────────────────────────────────────────────────────
 # Icons
 from app.style.icon import Icon, AppIcon
+from app.style.icon.config import Name, Type
 
 # Theme hook (component registration)
 from app.style import Theme, Qss
@@ -39,6 +40,7 @@ from app.style import Theme, Qss
 from app.ui.components.layout.card import Card
 
 # Custom components
+from app.ui.components.widgets.button import Button
 from app.ui.components.widgets.recipe_tag import RecipeTag
 from app.ui.components.widgets.info_card import InfoCard
 from app.ui.components.widgets.recipe_image import RecipeImage
@@ -196,14 +198,14 @@ class FullRecipe(QWidget):
 
     # ── Layout ───────────────────────────────────────────────────────────────────────────────
     def _make_back_button(self):
-        """Create a simple back button; styled via QSS."""
+        """Create a simple back button using custom Button class."""
         w = QWidget(self)
         w.setObjectName("BackBar")
         row = QHBoxLayout(w)
         row.setContentsMargins(0, 0, 0, 0)
         row.setSpacing(8)
 
-        btn = QPushButton("Back")
+        btn = Button("Back", Type.SECONDARY, Name.BACK)
         btn.setObjectName("BackButton")
         btn.clicked.connect(self.back_clicked.emit)
 
@@ -234,6 +236,10 @@ class FullRecipe(QWidget):
         page = QVBoxLayout(content)
         page.setContentsMargins(30, 30, 30, 30)
         page.setSpacing(25)
+
+        # ── Back Button
+        back_bar = self._make_back_button()
+        page.addWidget(back_bar)
 
         # ── Title Section
         title = QLabel(self.recipe.recipe_name or "Untitled Recipe")
@@ -289,14 +295,19 @@ class FullRecipe(QWidget):
 
         page.addWidget(info_container)
 
-        # ── Content Row: Two Column Layout (Ingredients | Directions + Notes)
-        content_row = QHBoxLayout()
-        content_row.setContentsMargins(0, 0, 0, 0)
-        content_row.setSpacing(30)
+        # ── Content Grid: Two Column Layout (Ingredients | Directions + Notes)
+        content_grid = QGridLayout()
+        content_grid.setContentsMargins(0, 0, 0, 0)
+        content_grid.setHorizontalSpacing(30)
+        content_grid.setVerticalSpacing(25)
+
+        # Set column stretch ratios (1:2 for ingredients:directions)
+        content_grid.setColumnStretch(0, 1)  # Ingredients column
+        content_grid.setColumnStretch(1, 2)  # Directions/Notes column
 
         # ── Left Column: Ingredients (1/3 width)
-        ingredients_card = Card(content)
-        ingredients_card.setHeader("Ingredients")
+        ingredients_card = Card(content, card_type="Primary")
+        ingredients_card.setHeader("Ingredients", Icon.INGREDIENTS)
         ingredients_card.setContentMargins(25, 25, 25, 25)
         ingredients_card.setSpacing(15)
         ingredients_card.expandWidth(True)  # Allow width expansion
@@ -309,15 +320,10 @@ class FullRecipe(QWidget):
         ingredients_card.addWidget(ingredients_list)
 
         # Add ingredients to left column (1/3 width) with top alignment
-        content_row.addWidget(ingredients_card, 1, Qt.AlignTop)
+        content_grid.addWidget(ingredients_card, 0, 0, Qt.AlignTop)
 
-        # ── Right Column: Directions + Notes (2/3 width)
-        right_column = QVBoxLayout()
-        right_column.setContentsMargins(0, 0, 0, 0)
-        right_column.setSpacing(25)
-
-        # ── Directions Section
-        directions_card = Card(content)
+        # ── Directions Section (Right Column, Row 0)
+        directions_card = Card(content, card_type="Primary")
         directions_card.setHeader("Directions", Icon.DIRECTIONS)
         directions_card.setContentMargins(25, 25, 25, 25)
         directions_card.setSpacing(15)
@@ -330,14 +336,14 @@ class FullRecipe(QWidget):
         directions_list.setDirections(recipe_directions)
         directions_card.addWidget(directions_list)
 
-        # Add directions card to right column
-        right_column.addWidget(directions_card)
+        # Add directions card to right column, row 0
+        content_grid.addWidget(directions_card, 0, 1, Qt.AlignTop)
 
         # ── Notes Section (optional)
         notes = getattr(self.recipe, "notes", None)
         if notes:
-            notes_card = Card(content)
-            notes_card.setHeader("Notes")
+            notes_card = Card(content, card_type="Primary")
+            notes_card.setHeader("Notes", Icon.NOTES)
             notes_card.setContentMargins(25, 25, 25, 25)
             notes_card.setSpacing(15)
             notes_card.expandWidth(True)  # Allow width expansion
@@ -347,18 +353,12 @@ class FullRecipe(QWidget):
             notes_text.setObjectName("NotesText")
             notes_text.setWordWrap(True)
             notes_card.addWidget(notes_text)
-            right_column.addWidget(notes_card)
 
-        # Add stretch to right column to prevent unnecessary expansion
-        right_column.addStretch()
+            # Add notes card to right column, row 1
+            content_grid.addWidget(notes_card, 1, 1, Qt.AlignTop)
 
-        # Create widget for right column and add to content row (2/3 width)
-        right_column_widget = QWidget()
-        right_column_widget.setLayout(right_column)
-        content_row.addWidget(right_column_widget, 2)
-
-        # Add the content row to main page layout
-        page.addLayout(content_row)
+        # Add the content grid to main page layout
+        page.addLayout(content_grid)
 
         # Bottom spacer
         page.addStretch()

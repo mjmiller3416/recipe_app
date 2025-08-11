@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
 from app.config.config import INT_VALIDATOR, NAME_VALIDATOR
 from app.core.dtos import RecipeCreateDTO, RecipeIngredientDTO
 from app.core.services.recipe_service import RecipeService
+from app.style import Theme, Qss
 from app.ui.components.dialogs import MessageDialog
 from app.ui.components.forms import IngredientWidget, RecipeForm
 from app.ui.components.images.upload_recipe_image import UploadRecipeImage
@@ -28,6 +29,9 @@ class AddRecipes(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("AddRecipes")
+
+        # register for component-specific styling
+        Theme.register_widget(self, Qss.ADD_RECIPE)
 
         DebugLogger.log("Initializing Add Recipes page", "debug")
 

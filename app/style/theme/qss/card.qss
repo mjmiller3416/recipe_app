@@ -20,11 +20,6 @@
     font: {header_small};
 }
 
-/* Override for AppIcon widgets in cards */
-  [card="Default"] AppIcon {
-      background-color: blue;
-  }
-
 /* Widgets inside card content (using cardContext property) */
 [cardContext="Default"] {
     background-color: {surface_container};
@@ -36,31 +31,32 @@
     color: {on_surface_variant};
 }
 
+
 /* Example: Primary card variant */
 [card="Primary"] {
-    background-color: {primary_container};
+    background-color: {surface_container};
     border: none;
     border-radius: 10px;
 }
 
 [card="Primary"] QLabel {
-    background-color: {primary_container};
-    color: {on_primary_container};
+    background-color: {surface_container};
+    color: {on_surface_variant};
 }
 
 [card="Primary"] QLabel#Header {
     font: {header_small};
-    color: {on_primary_container};
+    color: {tertiary};
 }
 
 [cardContext="Primary"] {
-    background-color: {primary_container};
-    color: {on_primary_container};
+    background-color: {surface_container};
+    color: {on_surface_variant};
 }
 
 [cardContext="Primary"] QLabel {
-    background-color: {primary_container};
-    color: {on_primary_container};
+    background-color: {surface_container};
+    color: {on_surface_variant};
 }
 
 /* Example: Secondary card variant */
