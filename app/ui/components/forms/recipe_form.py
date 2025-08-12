@@ -6,10 +6,10 @@ upload button.
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QGridLayout, QLabel, QWidget
+from PySide6.QtWidgets import QGridLayout, QLabel, QWidget, QLineEdit, QVBoxLayout
 
-from app.config import MEAL_TYPE, RECIPE_CATEGORIES
-from app.ui.components.forms.form_field import ComboBoxField, LineEditField
+from app.config import MEAL_TYPE, RECIPE_CATEGORIES, DIETARY_PREFERENCES
+from app.ui.components.widgets import ComboBox
 from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
 
 # ── Constants ───────────────────────────────────────────────────────────────────
@@ -27,43 +27,60 @@ class RecipeForm(QWidget):
         self._layout.setContentsMargins(10, 10, 10, 10)
         self._layout.setSpacing(10)
 
-        # create form fields for recipe details
-        self.le_recipe_name = LineEditField(
-            label_text  = "Recipe Name:",
-            placeholder = "Enter recipe name here...",
-        )
-        self.le_recipe_name.setObjectName("RecipeNameLineEdit")  # for debugging
+        # create labels and inputs for recipe details - labels above inputs
+        # Recipe Name (full width)
+        self.lbl_recipe_name = QLabel("Recipe Name")
+        self.le_recipe_name = QLineEdit()
+        self.le_recipe_name.setPlaceholderText("e.g. Spaghetti Carbonara")
+        self.le_recipe_name.setObjectName("RecipeNameLineEdit")
+        
+        # Total Time
+        self.lbl_time = QLabel("Total Time")
+        self.le_time = QLineEdit()
+        self.le_time.setPlaceholderText("e.g. 30 mins")
+        self.le_time.setObjectName("TotalTimeLineEdit")
+        
+        # Servings
+        self.lbl_servings = QLabel("Servings")
+        self.le_servings = QLineEdit()
+        self.le_servings.setPlaceholderText("e.g. 4")
+        self.le_servings.setObjectName("ServingsLineEdit")
+        
+        # Meal Type
+        self.lbl_meal_type = QLabel("Meal Type")
+        self.cb_meal_type = ComboBox(list_items=MEAL_TYPE, placeholder="Select meal type")
+        self.cb_meal_type.setObjectName("MealTypeComboBox")
+        
+        # Category
+        self.lbl_category = QLabel("Category")
+        self.cb_recipe_category = ComboBox(list_items=RECIPE_CATEGORIES, placeholder="Select category")
+        self.cb_recipe_category.setObjectName("RecipeCategoryComboBox")
+        
+        # Dietary Preference
+        self.lbl_dietary_preference = QLabel("Dietary Preference")
+        self.cb_dietary_preference = ComboBox(list_items=DIETARY_PREFERENCES, placeholder="Select dietary preference")
+        self.cb_dietary_preference.setObjectName("DietaryPreferenceComboBox")
 
-        self.cb_recipe_category = ComboBoxField(
-            label_text = "Category:",
-            placeholder = "Select a category...",
-            item_list  = RECIPE_CATEGORIES,
-        )
-        self.cb_recipe_category.setObjectName("RecipeCategoryComboBox")  # for debugging
-
-        self.le_time = LineEditField(
-            label_text = "Total Time:",
-            placeholder = "e.g. 30 mins...",
-        )
-        self.le_time.setObjectName("TotalTimeLineEdit")  # for debugging
-
-        self.cb_meal_type = ComboBoxField(
-            label_text = "Meal Type:",
-            placeholder = "Select a meal type...",
-            item_list  = MEAL_TYPE,
-        )
-        self.cb_meal_type.setObjectName("MealTypeComboBox") # for debugging
-        self.le_servings = LineEditField(
-            label_text=  "Servings:",
-            placeholder="e.g. 4 servings...",
-        )
-
-        # add widgets to the form layout
-        self._layout.addWidget(self.le_recipe_name, 0, 0, 1, 2)  # row 1
-        self._layout.addWidget(self.cb_recipe_category, 1, 0, 1, 1)  # row 2
-        self._layout.addWidget(self.le_time, 1, 1, 1, 1)
-        self._layout.addWidget(self.cb_meal_type, 2, 0, 1, 1)  # row 3
-        self._layout.addWidget(self.le_servings, 2, 1, 1, 1)
+        # add labels and widgets to the form layout - two column layout with labels above inputs
+        # Row 0: Recipe Name (full width)
+        self._layout.addWidget(self.lbl_recipe_name, 0, 0, 1, 2)
+        self._layout.addWidget(self.le_recipe_name, 1, 0, 1, 2)
+        
+        # Row 2-3: Total Time (left) and Servings (right)
+        self._layout.addWidget(self.lbl_time, 2, 0, 1, 1)
+        self._layout.addWidget(self.lbl_servings, 2, 1, 1, 1)
+        self._layout.addWidget(self.le_time, 3, 0, 1, 1)
+        self._layout.addWidget(self.le_servings, 3, 1, 1, 1)
+        
+        # Row 4-5: Meal Type (left) and Category (right)
+        self._layout.addWidget(self.lbl_meal_type, 4, 0, 1, 1)
+        self._layout.addWidget(self.lbl_category, 4, 1, 1, 1)
+        self._layout.addWidget(self.cb_meal_type, 5, 0, 1, 1)
+        self._layout.addWidget(self.cb_recipe_category, 5, 1, 1, 1)
+        
+        # Row 6-7: Dietary Preference (left column only)
+        self._layout.addWidget(self.lbl_dietary_preference, 6, 0, 1, 1)
+        self._layout.addWidget(self.cb_dietary_preference, 7, 0, 1, 1)
 
         set_fixed_height_for_layout_widgets(
             layout = self._layout,

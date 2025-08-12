@@ -45,6 +45,9 @@ MEAL_TYPE = [
 RECIPE_CATEGORIES = [
     "All", "Ground Beef", "Chicken", "Seafood", "Veggie",
 ]
+DIETARY_PREFERENCES = [
+    "None", "Vegetarian", "Vegan", "Gluten-Free", "Keto", "Paleo", "Low-Carb",
+]
 SORT_OPTIONS = [
     "A-Z", "Z-A"
 ]
