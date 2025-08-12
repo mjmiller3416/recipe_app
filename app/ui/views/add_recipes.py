@@ -56,15 +56,6 @@ class AddRecipes(QWidget):
         self.lyt_main.setContentsMargins(20, 20, 20, 20)
         self.lyt_main.setSpacing(16)
 
-        # create header label - used for feedback messages
-        self.lbl_header = QLabel("")
-
-        self.lbl_header.setObjectName("HeaderLabel")
-
-        self.lyt_main.addWidget( # add header label to main layout
-            self.lbl_header,
-            alignment=Qt.AlignLeft)
-
         # main content layout
         self.lyt_main_content = QHBoxLayout()  # horizontal layout for left and right sections
         self.lyt_left_section = QVBoxLayout()  # left section for recipe details and ingredients
@@ -197,16 +188,6 @@ class AddRecipes(QWidget):
     def _update_image_path(self, image_path: str):
         """Update the selected image path when an image is selected."""
         self.selected_image_path = image_path if image_path else None
-
-    def _display_save_message(self, message: str, success: bool = True):
-        """Display save result message in the header label."""
-        from app.style.theme_controller import Theme
-
-        color_map = Theme.get_current_color_map()
-        color = color_map.get("primary", "#4CAF50") if success else color_map.get("error", "#F44336")
-
-        self.lbl_header.setText(message)
-        self.lbl_header.setStyleSheet(f"color: {color}; font-style: italic;")
 
     def save_recipe(self):
         """
