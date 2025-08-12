@@ -35,6 +35,13 @@ QLabel#IngredientName {
     color: {on_surface};
 }
 
+/* ── Notes Text Styling ──────────────────────────────────────── */
+QLabel#NotesText {
+    font: {body_large};
+    color: {on_surface_variant};
+    background-color: {surface_container};
+}
+
 
 /* ── Recipe Title ──────────────────────────────────────────────── */
 QLabel#RecipeTitle {

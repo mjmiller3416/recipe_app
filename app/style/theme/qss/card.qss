@@ -32,7 +32,7 @@
 }
 
 
-/* Example: Primary card variant */
+/* Primary card variant */
 [card="Primary"] {
     background-color: {surface_container};
     border: none;
@@ -42,25 +42,13 @@
 [card="Primary"] QLabel {
     background-color: {surface_container};
     color: {on_surface_variant};
-    font: {title_small};
+    font: 24px;
 }
 
 [card="Primary"] QLabel#Header {
     font: {header_small};
     color: {secondary};
 }
-
-[cardContext="Primary"] {
-    background-color: {surface_container};
-    color: {on_surface_variant};
-}
-
-[cardContext="Primary"] QLabel {
-    font: {body_large};
-    background-color: {surface_container};
-    color: {on_surface_variant};
-}
-
 
 
 /* Example: Secondary card variant */
