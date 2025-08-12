@@ -15,6 +15,7 @@ from typing import Optional
 from app.style import Theme, Qss
 from app.style.icon import AppIcon, Name
 from app.style.effects import Effects, Shadow
+from app.ui.components.widgets.button import Button
 
 
 class Card(QFrame):
@@ -60,6 +61,9 @@ class Card(QFrame):
         self._header_label: QLabel | None = None
         self._header_icon_widget: QWidget | None = None
         self._subheader_label: QLabel | None = None
+        
+        # Footer components
+        self._footer_button: Button | None = None
 
         self._add_layout(layout, 20)
 
@@ -97,8 +101,11 @@ class Card(QFrame):
     def setLayoutType(self, layout_type: str, *, spacing: Optional[int] = None) -> None:
         """Switch between 'vbox' | 'hbox' | 'grid' at runtime."""
         self._add_layout(layout_type, spacing if spacing is not None else 10)
+        # Reinsert header and footer if they existed
         if self._header_container and self._current_layout:
             self._current_layout.insertWidget(0, self._header_container)
+        if self._footer_button and self._current_layout:
+            self._current_layout.addWidget(self._footer_button)
 
     def addWidget(self, widget: QWidget, *args, **kwargs):
         """Add a widget to the current layout.
@@ -136,6 +143,7 @@ class Card(QFrame):
             item.widget() for i in range(self._current_layout.count())
             if (item := self._current_layout.itemAt(i)) and item.widget()
             and item.widget() is not self._header_container
+            and item.widget() is not self._footer_button
         ]
 
         for widget in widgets_to_remove:
@@ -276,3 +284,41 @@ class Card(QFrame):
         """Helper to refresh widget styling."""
         widget.style().unpolish(widget)
         widget.style().polish(widget)
+
+    # ── Footer Button Management ─────────────────────────────────────────────────────────────
+    def addButton(self, text: str, button_type=None, icon=None):
+        """Add a footer button to the card.
+
+        Args:
+            text: Button text
+            button_type: Button type from Type enum (optional)
+            icon: Button icon from Name enum (optional)
+        """
+        from app.style.icon.config import Type
+        
+        # Remove existing button if present
+        if self._footer_button:
+            self.removeButton()
+        
+        # Create button with default type if not specified
+        if button_type is None:
+            button_type = Type.PRIMARY
+        
+        self._footer_button = Button(text, button_type, icon)
+        self._footer_button.setObjectName("CardFooterButton")
+        
+        # Add to layout
+        if self._current_layout:
+            self._current_layout.addWidget(self._footer_button)
+    
+    def removeButton(self):
+        """Remove the footer button if it exists."""
+        if self._footer_button and self._current_layout:
+            self._current_layout.removeWidget(self._footer_button)
+            self._footer_button.deleteLater()
+            self._footer_button = None
+    
+    @property
+    def button(self) -> Button | None:
+        """Direct access to the footer button widget."""
+        return self._footer_button

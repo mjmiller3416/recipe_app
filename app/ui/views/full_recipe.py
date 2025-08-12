@@ -43,7 +43,7 @@ from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
 from app.ui.components.widgets.recipe_tag import RecipeTag
 from app.ui.components.widgets.info_card import InfoCard
-from app.ui.components.widgets.recipe_image import RecipeImage
+from app.ui.components.images.recipe_image import RecipeImage
 
 # Data model
 from app.core.models import Recipe
