@@ -33,13 +33,12 @@ class Typography(Enum):
     """Typography styles for the application using CSS font shorthand syntax."""
 
     # CSS font shorthand format: [font-style] [font-weight] [font-size] [font-family]
-    DEFAULT         = 'normal 400 12px "Roboto"'
+    DEFAULT         = 'normal 400 22px "Roboto"'
     TITLE           = 'normal 500 56px "Roboto"'
     HEADER_LARGE    = 'normal 600 52px "Lora"'
     HEADER_SMALL    = 'normal 500 32px "Roboto"'
     SUB_HEADER      = 'normal 400 22px "Roboto"'
     TITLE_SMALL     = 'normal 500 20px "Roboto"'
-    BODY_MEDIUM     = 'normal 400 24px "Roboto"'
     LABEL_SMALL     = 'normal 500 12px "Roboto"'
 
     @classmethod

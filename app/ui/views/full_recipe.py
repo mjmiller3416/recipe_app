@@ -289,6 +289,7 @@ class FullRecipe(QWidget):
         page.addWidget(recipe_image)
 
         # ── Info Cards Container
+        # TODO: Fix QLabel font styling - {body-medium} -- not working for info_container
         # TODO: Update to new Card API pattern (info_container.addWidget) once card styling variants are implemented
         info_container = Card(layout="hbox")
         info_container.setObjectName("InfoContainer")

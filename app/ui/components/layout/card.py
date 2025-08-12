@@ -76,7 +76,7 @@ class Card(QFrame):
         self._SubHeader_label: QLabel | None = None
 
         # ── Create Initial Layout ──
-        self._add_layout(layout_type=layout, spacing=10)  # defaults to vbox if invalid
+        self._add_layout(layout_type=layout, spacing=20)  # defaults to vbox if invalid
 
         # ── Apply Effects ──
         if self._elevation_enabled:

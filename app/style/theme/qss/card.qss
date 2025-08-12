@@ -11,6 +11,7 @@
 [card="Default"] QLabel {
     background-color: {surface_container};
     color: {on_surface_variant};
+    font: {default};
 }
 
 /* Header styling */
@@ -20,7 +21,7 @@
 
 /* Subheader styling */
 [card="Default"] QLabel#SubHeader {
-    font: {sub_header};
+    font: {default};
     color: {outline};
 }
 
@@ -37,7 +38,7 @@ Primary card variant
 [card="Primary"] QLabel {
     background-color: {surface_container};
     color: {on_surface_variant};
-    font: {body_medium};
+    font: {default};
 }
 
 /* Header styling */
@@ -48,7 +49,7 @@ Primary card variant
 
 /* Subheader styling */
 [card="Primary"] QLabel#SubHeader {
-    font: {sub_header};
+    font: {default};
     color: {outline};
 }
 
@@ -75,6 +76,6 @@ Secondary card variant
 
 /* Subheader styling */
 [card="Secondary"] QLabel#SubHeader {
-    font: {sub_header};
+    font: {default};
     color: {outline};
 }
