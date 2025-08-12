@@ -139,8 +139,6 @@ class Card(QFrame):
         else:
             self._current_layout.addWidget(widget, *args, **kwargs)
 
-        # Apply card context to the newly added widget and its children
-        self._applyCardContextToWidget(widget)
 
     def setContentMargins(self, left: int, top: int, right: int, bottom: int):
         """Set the content margins of the current layout."""
@@ -308,7 +306,7 @@ class Card(QFrame):
 
     # ── Card Type Management ─────────────────────────────────────────────────────────────────
     def setCardType(self, card_type: str):
-        """Set the card type for styling and propagate to child widgets."""
+        """Set the card type for styling."""
         self._card_type = card_type
         self.setProperty("card", card_type)
 
@@ -316,53 +314,7 @@ class Card(QFrame):
         self.style().unpolish(self)
         self.style().polish(self)
 
-        # Propagate card context to all child widgets
-        self._propagateCardContext()
-
     def getCardType(self) -> str:
         """Get the current card type."""
         return self._card_type
 
-    def _propagateCardContext(self):
-        """Recursively set card context property on all child widgets."""
-        def set_card_context_recursive(widget: QWidget, card_type: str):
-            # Skip the card itself and header container
-            if widget is self or widget is self._header_container:
-                return
-
-            # Set card context property for QSS targeting
-            widget.setProperty("cardContext", card_type)
-
-            # Force style refresh
-            widget.style().unpolish(widget)
-            widget.style().polish(widget)
-
-            # Recurse to children
-            for child in widget.findChildren(QWidget, options=Qt.FindChildrenRecursively):
-                if child is not self and child is not self._header_container:
-                    child.setProperty("cardContext", card_type)
-                    child.style().unpolish(child)
-                    child.style().polish(child)
-
-        # Apply to all child widgets
-        for child in self.findChildren(QWidget):
-            set_card_context_recursive(child, self._card_type)
-
-    def _applyCardContextToWidget(self, widget: QWidget):
-        """Apply card context property to a widget and all its children."""
-        if widget is self or widget is self._header_container:
-            return
-
-        # Set card context property for QSS targeting
-        widget.setProperty("cardContext", self._card_type)
-
-        # Force style refresh
-        widget.style().unpolish(widget)
-        widget.style().polish(widget)
-
-        # Apply to all child widgets recursively
-        for child in widget.findChildren(QWidget, options=Qt.FindChildrenRecursively):
-            if child is not self and child is not self._header_container:
-                child.setProperty("cardContext", self._card_type)
-                child.style().unpolish(child)
-                child.style().polish(child)

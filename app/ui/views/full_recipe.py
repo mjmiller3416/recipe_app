@@ -80,7 +80,7 @@ class IngredientList(QWidget):
 
     def _addIngredientItem(self, detail):
         """Add a single ingredient item to the list."""
-        # Create ingredient row widget  
+        # Create ingredient row widget
         item_widget = QWidget()
         item_widget.setObjectName("IngredientItem")
 
@@ -89,10 +89,10 @@ class IngredientList(QWidget):
         item_layout.setContentsMargins(0, 0, 0, 0)
         item_layout.setHorizontalSpacing(10)
         item_layout.setVerticalSpacing(0)
-        
+
         # Set column stretch: quantity (fixed), unit (fixed), name (expanding)
         item_layout.setColumnStretch(0, 0)  # Quantity column - fixed width
-        item_layout.setColumnStretch(1, 0)  # Unit column - fixed width  
+        item_layout.setColumnStretch(1, 0)  # Unit column - fixed width
         item_layout.setColumnStretch(2, 1)  # Name column - expanding
 
         # Get formatted ingredient details using new DTO properties
@@ -109,7 +109,7 @@ class IngredientList(QWidget):
 
         # Unit label (left-aligned, fixed width)
         unit_label = QLabel(abbreviated_unit)
-        unit_label.setObjectName("IngredientUnit")  
+        unit_label.setObjectName("IngredientUnit")
         unit_label.setMinimumWidth(50)
         unit_label.setMaximumWidth(50)
         unit_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
@@ -121,7 +121,7 @@ class IngredientList(QWidget):
 
         # Add to grid: row 0, columns 0, 1, 2
         item_layout.addWidget(qty_label, 0, 0)
-        item_layout.addWidget(unit_label, 0, 1)  
+        item_layout.addWidget(unit_label, 0, 1)
         item_layout.addWidget(name_label, 0, 2)
 
         # Add to main layout
@@ -361,6 +361,7 @@ class FullRecipe(QWidget):
         # Add directions to right column
         right_column_layout.addWidget(directions_card)
 
+        # TODO: Fix line spacing
         # ── Notes Section (optional)
         notes = getattr(self.recipe, "notes", None)
         if notes:

@@ -39,7 +39,7 @@ class Typography(Enum):
     SUBHEADER       = 'italic 400 24px "Roboto"'
     TITLE_SMALL     = 'normal 500 20px "Roboto"'
     BODY_LARGE      = 'normal 400 22px "Roboto"'
-    BODY_MEDIUM     = 'normal 400 18px "Roboto"'
+    BODY_MEDIUM     = 'normal 400 24px "Roboto"'
     LABEL_SMALL     = 'normal 500 12px "Roboto"'
 
     @classmethod

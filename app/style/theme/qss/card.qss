@@ -42,7 +42,7 @@
 [card="Primary"] QLabel {
     background-color: {surface_container};
     color: {on_surface_variant};
-    font: 24px;
+    font: {body_medium};
 }
 
 [card="Primary"] QLabel#Header {
