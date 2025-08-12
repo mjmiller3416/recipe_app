@@ -72,6 +72,7 @@ class Card(QFrame):
         self._header_layout: QHBoxLayout | None = None
         self._header_label: QLabel | None = None
         self._header_icon_widget: QWidget | None = None  # exposed via headerIcon property
+        self._subheader_label: QLabel | None = None
 
         # ── Create Initial Layout ──
         self._add_layout(layout_type=layout, spacing=10)  # defaults to vbox if invalid
@@ -117,9 +118,12 @@ class Card(QFrame):
     def setLayoutType(self, layout_type: str, *, spacing: Optional[int] = None) -> None:
         """Public wrapper to switch between 'vbox' | 'hbox' | 'grid' at runtime."""
         self._add_layout(layout_type=layout_type, spacing=(spacing if spacing is not None else 10))
-        # If a header existed, reinsert it at the top
+        # Reinsert header and subheader if they existed
         if self._header_container and self._current_layout:
             self._current_layout.insertWidget(0, self._header_container)
+        if self._subheader_label and self._current_layout:
+            insert_index = 1 if self._header_container else 0
+            self._current_layout.insertWidget(insert_index, self._subheader_label)
 
 
     # ── Public Layout API ─────────────────────────────────────────────────────────────────────
@@ -155,16 +159,21 @@ class Card(QFrame):
         return self._current_layout
 
     def clearWidgets(self):
-        """Clear all widgets from the current layout (excludes header container)."""
+        """Clear all widgets from the current layout (excludes header container and subheader)."""
         if not self._current_layout:
             return
-        # Keep header container if present (index 0)
-        start_index = 1 if self._header_container is not None else 0
-        for i in range(self._current_layout.count() - 1, start_index - 1, -1):
-            item = self._current_layout.takeAt(i)
-            w = item.widget()
-            if w is not None:
-                w.deleteLater()
+        # Keep header container and subheader if present
+        reserved_widgets = {self._header_container, self._subheader_label}
+        widgets_to_remove = []
+        
+        for i in range(self._current_layout.count()):
+            item = self._current_layout.itemAt(i)
+            if item and item.widget() and item.widget() not in reserved_widgets:
+                widgets_to_remove.append(item.widget())
+        
+        for widget in widgets_to_remove:
+            self._current_layout.removeWidget(widget)
+            widget.deleteLater()
 
     def setElevation(self, elevation: Shadow):
         """Set the elevation effect."""
@@ -317,4 +326,47 @@ class Card(QFrame):
     def getCardType(self) -> str:
         """Get the current card type."""
         return self._card_type
+
+    # ── Subheader Management ─────────────────────────────────────────────────────────────────
+    def setSubheader(self, text: str):
+        """Set or update the subheader text.
+
+        The subheader will be inserted directly below the header if one exists,
+        or at the top of the card if no header is present.
+
+        Args:
+            text: Subheader text to display.
+        """
+        if self._subheader_label is None:
+            # Create subheader label
+            self._subheader_label = QLabel(text)
+            self._subheader_label.setObjectName("SubHeader")
+            
+            # Determine insertion position
+            insert_index = 0
+            if self._header_container is not None:
+                # Insert after header
+                insert_index = 1
+            
+            # Insert into main layout
+            if self._current_layout:
+                self._current_layout.insertWidget(insert_index, self._subheader_label)
+        else:
+            # Update existing subheader text
+            self._subheader_label.setText(text)
+
+    def clearSubheader(self):
+        """Remove the subheader if it exists."""
+        if self._subheader_label is not None and self._current_layout is not None:
+            self._current_layout.removeWidget(self._subheader_label)
+            self._subheader_label.deleteLater()
+            self._subheader_label = None
+
+    def getSubheader(self) -> str | None:
+        """Get the current subheader text.
+
+        Returns:
+            The subheader text if set, None otherwise.
+        """
+        return self._subheader_label.text() if self._subheader_label else None
 
