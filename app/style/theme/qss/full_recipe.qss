@@ -37,7 +37,7 @@ QLabel#IngredientName {
 
 /* ── Notes Text Styling ──────────────────────────────────────── */
 QLabel#NotesText {
-    font: {body_large};
+    font: {default};
     color: {on_surface_variant};
     background-color: {surface_container};
 }

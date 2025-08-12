@@ -11,7 +11,7 @@ border-radius: 30px;
     background-color: transparent;
     padding-left: 10px;
     border: none;
-    font: {body_large};
+    font: {default};
 }
 
 #SearchBar #le_search:focus {

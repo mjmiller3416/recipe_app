@@ -10,13 +10,13 @@ QWidget#InfoCard {
 QLabel {background-color: transparent;}
 
 QLabel#InfoCardTitle {
-    font: {body_large};
+    font: {default};
     color: {on_secondary_container};
     font-weight: bold;
 }
 
 QLabel#InfoCardValue {
-    font: {body_large};
+    font: {default};
     color: {tertiary};
     font-weight: 400;
 }

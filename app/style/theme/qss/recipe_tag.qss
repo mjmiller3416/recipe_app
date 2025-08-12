@@ -10,7 +10,7 @@ QFrame#RecipeTag {
 
 QLabel#RecipeTagText {
     background-color: transparent;
-    font: {body_large};
+    font: {default};
     color: {on_surface};
     font-weight: 500;
 }

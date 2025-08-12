@@ -22,8 +22,6 @@
 [card="Default"] QLabel#SubHeader {
     font: {sub_header};
     color: {outline};
-    margin-bottom: 15px;
-    text-align: left;
 }
 
 /* -----------------------------------------------------------------
@@ -50,10 +48,8 @@ Primary card variant
 
 /* Subheader styling */
 [card="Primary"] QLabel#SubHeader {
-    font: {header_small};
-    color: {secondary};
-    margin-bottom: 15px;
-    text-align: left;
+    font: {sub_header};
+    color: {outline};
 }
 
 /* -----------------------------------------------------------------
@@ -81,6 +77,4 @@ Secondary card variant
 [card="Secondary"] QLabel#SubHeader {
     font: {sub_header};
     color: {outline};
-    margin-bottom: 15px;
-    text-align: left;
 }

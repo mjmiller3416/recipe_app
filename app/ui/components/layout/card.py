@@ -67,12 +67,13 @@ class Card(QFrame):
         self._elevation = elevation
         self._elevation_enabled = True
 
-        # Header bits
+        # Header section components
         self._header_container: QWidget | None = None
-        self._header_layout: QHBoxLayout | None = None
+        self._header_main_layout: QVBoxLayout | None = None  # Main vertical layout for header section
+        self._header_row_layout: QHBoxLayout | None = None   # Horizontal layout for icon + header text
         self._header_label: QLabel | None = None
         self._header_icon_widget: QWidget | None = None  # exposed via headerIcon property
-        self._subheader_label: QLabel | None = None
+        self._SubHeader_label: QLabel | None = None
 
         # ── Create Initial Layout ──
         self._add_layout(layout_type=layout, spacing=10)  # defaults to vbox if invalid
@@ -118,12 +119,9 @@ class Card(QFrame):
     def setLayoutType(self, layout_type: str, *, spacing: Optional[int] = None) -> None:
         """Public wrapper to switch between 'vbox' | 'hbox' | 'grid' at runtime."""
         self._add_layout(layout_type=layout_type, spacing=(spacing if spacing is not None else 10))
-        # Reinsert header and subheader if they existed
+        # Reinsert header container if it existed
         if self._header_container and self._current_layout:
             self._current_layout.insertWidget(0, self._header_container)
-        if self._subheader_label and self._current_layout:
-            insert_index = 1 if self._header_container else 0
-            self._current_layout.insertWidget(insert_index, self._subheader_label)
 
 
     # ── Public Layout API ─────────────────────────────────────────────────────────────────────
@@ -159,16 +157,15 @@ class Card(QFrame):
         return self._current_layout
 
     def clearWidgets(self):
-        """Clear all widgets from the current layout (excludes header container and subheader)."""
+        """Clear all widgets from the current layout (excludes header container)."""
         if not self._current_layout:
             return
-        # Keep header container and subheader if present
-        reserved_widgets = {self._header_container, self._subheader_label}
+        # Keep header container if present
         widgets_to_remove = []
 
         for i in range(self._current_layout.count()):
             item = self._current_layout.itemAt(i)
-            if item and item.widget() and item.widget() not in reserved_widgets:
+            if item and item.widget() and item.widget() is not self._header_container:
                 widgets_to_remove.append(item.widget())
 
         for widget in widgets_to_remove:
@@ -212,7 +209,31 @@ class Card(QFrame):
         else:
             self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
-    # ── Header (with optional icon) ─────────────────────────────────────────────────────────
+    # ── Header Section Management ──────────────────────────────────────────────────────────
+    def _ensure_header_container(self):
+        """Ensure the header container exists with proper nested layout structure."""
+        if self._header_container is None:
+            # Create main header container
+            self._header_container = QWidget(self)
+            self._header_container.setAttribute(Qt.WA_StyledBackground, False)
+
+            # Create main vertical layout for the header section
+            self._header_main_layout = QVBoxLayout(self._header_container)
+            self._header_main_layout.setContentsMargins(0, 0, 0, 0)
+            self._header_main_layout.setSpacing(4)  # Small gap between header and SubHeader
+
+            # Create horizontal layout for icon + header text
+            self._header_row_layout = QHBoxLayout()
+            self._header_row_layout.setContentsMargins(0, 0, 0, 0)
+            self._header_row_layout.setSpacing(8)  # gap between icon and text
+
+            # Add the header row to the main layout
+            self._header_main_layout.addLayout(self._header_row_layout)
+
+            # Insert header container at the top of the card layout
+            if self._current_layout:
+                self._current_layout.insertWidget(0, self._header_container)
+
     def setHeader(
         self,
         text: str,
@@ -222,39 +243,25 @@ class Card(QFrame):
 
         Args:
             text: Header text.
-            tag: QSS tag used for styling (defaults to "Header").
             icon: Optional icon. One of:
                   - Name enum (preferred) -> will construct an AppIcon
                   - QWidget (e.g., AppIcon/StateIcon) -> used as-is
                   - None -> text-only header
         """
-        # Lazily build a container for [icon][label] the first time
-        if self._header_container is None:
-            self._header_container = QWidget(self)
-            self._header_container.setAttribute(Qt.WA_StyledBackground, False)
+        self._ensure_header_container()
 
-            self._header_layout = QHBoxLayout(self._header_container)
-            self._header_layout.setContentsMargins(0, 0, 0, 0)
-            self._header_layout.setSpacing(8)  # gap between icon and text
-
+        # Create or update header label
+        if self._header_label is None:
             self._header_label = QLabel(text)
             self._header_label.setObjectName("Header")
-
-            # Insert at the top of the card layout
-            if self._current_layout:
-                self._current_layout.insertWidget(0, self._header_container)
-
-            # Add label last (icon slot is before it)
-            self._header_layout.addWidget(self._header_label, 0, Qt.AlignVCenter)
+            self._header_row_layout.addWidget(self._header_label, 0, Qt.AlignVCenter)
         else:
-            # Update text + tag
             self._header_label.setText(text)
-            self._header_label.setObjectName("Header")
-            # Force style refresh when tag changes
+            # Force style refresh
             self._header_label.style().unpolish(self._header_label)
             self._header_label.style().polish(self._header_label)
 
-        # If an icon is provided, apply it; if explicitly None, remove any existing icon
+        # Handle icon
         if icon is not None:
             self.setHeaderIcon(icon)
         elif self._header_icon_widget is not None:
@@ -270,13 +277,11 @@ class Card(QFrame):
                 - Name enum (preferred): constructs an AppIcon
                 - QWidget (AppIcon/StateIcon/etc.): used as-is
         """
-        if self._header_container is None or self._header_layout is None:
-            # Ensure header base exists (creates label-only if needed)
-            self.setHeader(text=(self._header_label.text() if self._header_label else ""))
+        self._ensure_header_container()
 
         # Remove previous icon
         if self._header_icon_widget is not None:
-            self._header_layout.removeWidget(self._header_icon_widget)
+            self._header_row_layout.removeWidget(self._header_icon_widget)
             self._header_icon_widget.deleteLater()
             self._header_icon_widget = None
 
@@ -298,13 +303,13 @@ class Card(QFrame):
                     "Unsupported icon type. Pass a Name enum value or a QWidget (e.g., AppIcon/StateIcon)."
                 )
 
-        # Insert icon before the label
-        self._header_layout.insertWidget(0, self._header_icon_widget, 0, Qt.AlignVCenter)
+        # Insert icon before the label in the header row
+        self._header_row_layout.insertWidget(0, self._header_icon_widget, 0, Qt.AlignVCenter)
 
     def clearHeaderIcon(self):
         """Remove the header icon, leaving text-only."""
-        if self._header_icon_widget is not None and self._header_layout is not None:
-            self._header_layout.removeWidget(self._header_icon_widget)
+        if self._header_icon_widget is not None and self._header_row_layout is not None:
+            self._header_row_layout.removeWidget(self._header_icon_widget)
             self._header_icon_widget.deleteLater()
             self._header_icon_widget = None
 
@@ -327,46 +332,41 @@ class Card(QFrame):
         """Get the current card type."""
         return self._card_type
 
-    # ── Subheader Management ─────────────────────────────────────────────────────────────────
+    # ── SubHeader Management ─────────────────────────────────────────────────────────────────
     def setSubHeader(self, text: str):
-        """Set or update the subheader text.
+        """Set or update the SubHeader text.
 
-        The subheader will be inserted directly below the header if one exists,
-        or at the top of the card if no header is present.
+        The SubHeader will be positioned directly below the header in the header container,
+        ensuring perfect alignment with the header text.
 
         Args:
-            text: Subheader text to display.
+            text: SubHeader text to display.
         """
-        if self._subheader_label is None:
-            # Create subheader label
-            self._subheader_label = QLabel(text)
-            self._subheader_label.setObjectName("SubHeader")
+        self._ensure_header_container()
 
-            # Determine insertion position
-            insert_index = 0
-            if self._header_container is not None:
-                # Insert after header
-                insert_index = 1
+        if self._SubHeader_label is None:
+            # Create SubHeader label
+            self._SubHeader_label = QLabel(text)
+            self._SubHeader_label.setObjectName("SubHeader")
 
-            # Insert into main layout
-            if self._current_layout:
-                self._current_layout.insertWidget(insert_index, self._subheader_label)
+            # Add to the header container's main layout (below the header row)
+            self._header_main_layout.addWidget(self._SubHeader_label)
         else:
-            # Update existing subheader text
-            self._subheader_label.setText(text)
+            # Update existing SubHeader text
+            self._SubHeader_label.setText(text)
 
-    def clearSubheader(self):
-        """Remove the subheader if it exists."""
-        if self._subheader_label is not None and self._current_layout is not None:
-            self._current_layout.removeWidget(self._subheader_label)
-            self._subheader_label.deleteLater()
-            self._subheader_label = None
+    def clearSubHeader(self):
+        """Remove the SubHeader if it exists."""
+        if self._SubHeader_label is not None and self._header_main_layout is not None:
+            self._header_main_layout.removeWidget(self._SubHeader_label)
+            self._SubHeader_label.deleteLater()
+            self._SubHeader_label = None
 
-    def getSubheader(self) -> str | None:
-        """Get the current subheader text.
+    def getSubHeader(self) -> str | None:
+        """Get the current SubHeader text.
 
         Returns:
-            The subheader text if set, None otherwise.
+            The SubHeader text if set, None otherwise.
         """
-        return self._subheader_label.text() if self._subheader_label else None
+        return self._SubHeader_label.text() if self._SubHeader_label else None
 
