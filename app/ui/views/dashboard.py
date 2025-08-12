@@ -30,11 +30,11 @@ class Dashboard(QWidget):
         self.layout.setContentsMargins(20, 20, 20, 20)
 
         # Example Card
-        card = Card()
+        card = Card(card_type="Primary")
         card.setAttribute(Qt.WA_StyledBackground, True)
-        card.setSpacing(36)
         card.expandWidth(False)
         card.setHeader("Dashboard Overview")
+        card.setSubHeader("This is a placeholder for dashboard content.")
         summary_label = QLabel("This is a placeholder for dashboard content.")
         summary_label.setProperty("font", "Body")
         summary_label.setWordWrap(True)

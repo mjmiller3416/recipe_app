@@ -165,12 +165,12 @@ class Card(QFrame):
         # Keep header container and subheader if present
         reserved_widgets = {self._header_container, self._subheader_label}
         widgets_to_remove = []
-        
+
         for i in range(self._current_layout.count()):
             item = self._current_layout.itemAt(i)
             if item and item.widget() and item.widget() not in reserved_widgets:
                 widgets_to_remove.append(item.widget())
-        
+
         for widget in widgets_to_remove:
             self._current_layout.removeWidget(widget)
             widget.deleteLater()
@@ -328,7 +328,7 @@ class Card(QFrame):
         return self._card_type
 
     # ── Subheader Management ─────────────────────────────────────────────────────────────────
-    def setSubheader(self, text: str):
+    def setSubHeader(self, text: str):
         """Set or update the subheader text.
 
         The subheader will be inserted directly below the header if one exists,
@@ -341,13 +341,13 @@ class Card(QFrame):
             # Create subheader label
             self._subheader_label = QLabel(text)
             self._subheader_label.setObjectName("SubHeader")
-            
+
             # Determine insertion position
             insert_index = 0
             if self._header_container is not None:
                 # Insert after header
                 insert_index = 1
-            
+
             # Insert into main layout
             if self._current_layout:
                 self._current_layout.insertWidget(insert_index, self._subheader_label)

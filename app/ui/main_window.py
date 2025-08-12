@@ -94,6 +94,7 @@ class MainWindow(FramelessWindow):
         self.content_outer_layout.setSpacing(0)
 
         # Header Layout
+        # TODO: Add subheader - brief description specific to each view.
         self.header_layout = QHBoxLayout()
         self.header_layout.setContentsMargins(20, 30, 20, 20)
         self.content_outer_layout.addLayout(self.header_layout)

@@ -36,7 +36,7 @@ class Typography(Enum):
     TITLE           = 'normal 500 56px "Roboto"'
     HEADER_LARGE    = 'normal 600 52px "Lora"'
     HEADER_SMALL    = 'normal 500 32px "Roboto"'
-    SUBHEADER       = 'italic 400 24px "Roboto"'
+    SUB_HEADER      = 'normal 400 22px "Roboto"'
     TITLE_SMALL     = 'normal 500 20px "Roboto"'
     BODY_LARGE      = 'normal 400 22px "Roboto"'
     BODY_MEDIUM     = 'normal 400 24px "Roboto"'
