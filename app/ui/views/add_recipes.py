@@ -172,28 +172,31 @@ class AddRecipes(QWidget):
         self.ingredients_card = Card(card_type="Default")
         self.ingredients_card.setHeader("Ingredients")
         self.ingredients_card.setSubHeader("List of ingredients for the recipe.")
+        self.ingredients_card.expandWidth(True)
         self.lyt_main.addWidget(self.ingredients_card)  # add left section to main content layout
         #endregion
 
         #region ── Directions & Notes Card ──
         self.directions_notes_card = DirectionsNotesCard()
+        self.directions_notes_card.expandBoth(True)
+
 
         # Expose text edits for convenience (for form validation, saving, etc.)
         self.te_directions = self.directions_notes_card.te_directions
         self.te_notes = self.directions_notes_card.te_notes
         #endregion
 
-        """ #region ── Image Card ──
+        #region ── Image Card ──
         self.image_card = ImageCard()
         self.image_card.setHeader("Recipe Image")
         self.image_card.setSubHeader("Upload an image of your recipe.")
         self.image_card.addButton("Upload Image")
-        #endregion """
+        #endregion
 
         # hbox layout for directions and image
         self.h = QHBoxLayout()
         self.h.addWidget(self.directions_notes_card)
-        #self.h.addWidget(self.image_card)
+        self.h.addWidget(self.image_card)
         self.lyt_main.addLayout(self.h)
 
     """ def _connect_signals(self):
