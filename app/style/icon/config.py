@@ -52,6 +52,7 @@ class Path(Enum):
     SUCCESS         = "success"
     SUBTRACT        = "subtract"
     TOTAL_TIME      = "total_time"
+    TRASH           = "trash"
     USER            = "user"
     VIEW_RECIPES    = "view_recipes"
     WARNING         = "warning"
@@ -150,6 +151,7 @@ class Name(Enum):
     SERVINGS        = IconSpec(Path.SERVINGS, Size.SMALL)
     SIGNAL          = IconSpec(Path.SIGNAL, Size.SMALL)
     SUBTRACT        = IconSpec(Path.SUBTRACT, Size.SMALL)
+    TRASH           = IconSpec(Path.TRASH, Size.SMALL)
     TOTAL_TIME      = IconSpec(Path.TOTAL_TIME, Size.SMALL)
     USER            = IconSpec(Path.USER, Size.SMALL)
     WIFI            = IconSpec(Path.WIFI, Size.SMALL)

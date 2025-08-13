@@ -9,6 +9,7 @@ from .dropdown_menu import DropdownMenu
 from .filtered_dropdown_menu import FilteredDropdownMenu
 from .rounded_image import RoundedImage
 from .button import ToolButton
+from .toggle_switch import ToggleSwitch
 
 __all__ = [
     "Button",
@@ -19,5 +20,5 @@ __all__ = [
     "ComboBox",
     "DropdownMenu",
     "FilteredDropdownMenu",
-    "PillButton",
+    "ToggleSwitch",
 ]

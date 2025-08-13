@@ -33,7 +33,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from app.ui.components.widgets.combobox import ComboBox
-from app.ui.components.inputs.toggle_switch import ToggleSwitch
+from app.ui.components.widgets.toggle_switch import ToggleSwitch
 from app.ui.components.widgets.button import Button
 from app.ui.components.layout.card import Card
 from app.style.theme.config import Color, Mode
@@ -301,25 +301,25 @@ class CardContentArea(QFrame):
     def _create_sizing_section(self):
         """Demonstrate sizing behavior and expansion options."""
         section, layout = self._create_section_frame("Card Sizing & Expansion")
-        
+
         # Description
         desc = QLabel("Cards now size to their contents by default. Use expansion methods to control growth behavior.")
         desc.setStyleSheet("color: #666; font-style: italic; margin-bottom: 15px;")
         desc.setWordWrap(True)
         layout.addWidget(desc)
-        
+
         # Row 1: Default sizing behavior
         row1_frame = QFrame()
         row1_layout = QHBoxLayout(row1_frame)
         row1_layout.setSpacing(15)
-        
+
         # Small content card
         small_card = Card()
         small_card.addLayout("vbox")
         small_card.addWidget(QLabel("Small Card"))
         small_card.addWidget(QPushButton("Button"))
         row1_layout.addWidget(small_card, 0, Qt.AlignLeft)
-        
+
         # Medium content card
         medium_card = Card()
         medium_card.addLayout("vbox")
@@ -327,7 +327,7 @@ class CardContentArea(QFrame):
         medium_card.addWidget(QLabel("This card has more content\nto demonstrate size-to-contents behavior"))
         medium_card.addWidget(QPushButton("Action Button"))
         row1_layout.addWidget(medium_card, 0, Qt.AlignLeft)
-        
+
         # Large content card
         large_card = Card()
         large_card.addLayout("vbox")
@@ -338,60 +338,60 @@ class CardContentArea(QFrame):
         large_card.addWidget(desc_text)
         large_card.addWidget(QPushButton("Process"))
         row1_layout.addWidget(large_card, 0, Qt.AlignLeft)
-        
+
         row1_layout.addStretch()  # Push cards to left
         layout.addWidget(row1_frame)
-        
+
         # Row 2: Expansion demonstration
         row2_frame = QFrame()
         row2_layout = QVBoxLayout(row2_frame)
         row2_layout.setSpacing(10)
-        
+
         # Expansion controls label
         exp_label = QLabel("Expansion Controls:")
         exp_label.setStyleSheet("font-weight: bold; margin-top: 15px;")
         row2_layout.addWidget(exp_label)
-        
+
         # Container for expansion cards
         exp_container = QHBoxLayout()
         exp_container.setSpacing(15)
-        
+
         # Width expansion card
         width_card = Card()
         width_card.addLayout("vbox")
         width_card.addWidget(QLabel("Width Expansion"))
-        
+
         expand_width_btn = QPushButton("Expand Width")
         expand_width_btn.clicked.connect(lambda: self._toggle_width_expansion(width_card, expand_width_btn))
         width_card.addWidget(expand_width_btn)
-        
+
         exp_container.addWidget(width_card, 0, Qt.AlignLeft)
-        
-        # Height expansion card  
+
+        # Height expansion card
         height_card = Card()
         height_card.addLayout("vbox")
         height_card.addWidget(QLabel("Height Expansion"))
-        
+
         expand_height_btn = QPushButton("Expand Height")
         expand_height_btn.clicked.connect(lambda: self._toggle_height_expansion(height_card, expand_height_btn))
         height_card.addWidget(expand_height_btn)
-        
+
         exp_container.addWidget(height_card, 0, Qt.AlignLeft)
-        
+
         # Both expansion card
         both_card = Card()
         both_card.addLayout("vbox")
         both_card.addWidget(QLabel("Both Directions"))
-        
+
         expand_both_btn = QPushButton("Expand Both")
         expand_both_btn.clicked.connect(lambda: self._toggle_both_expansion(both_card, expand_both_btn))
         both_card.addWidget(expand_both_btn)
-        
+
         exp_container.addWidget(both_card, 0, Qt.AlignLeft)
-        
+
         exp_container.addStretch()
         row2_layout.addLayout(exp_container)
-        
+
         layout.addWidget(row2_frame)
         return section
 
@@ -405,7 +405,7 @@ class CardContentArea(QFrame):
             card.expandWidth(False)
             button.setText("Expand Width")
             self.widget_event.emit("size_change", {"type": "width_contract", "card": "width_card"})
-    
+
     def _toggle_height_expansion(self, card: Card, button: QPushButton):
         """Toggle height expansion for a card."""
         if "Expand" in button.text():
@@ -416,7 +416,7 @@ class CardContentArea(QFrame):
             card.expandHeight(False)
             button.setText("Expand Height")
             self.widget_event.emit("size_change", {"type": "height_contract", "card": "height_card"})
-    
+
     def _toggle_both_expansion(self, card: Card, button: QPushButton):
         """Toggle both width and height expansion for a card."""
         if "Expand" in button.text():

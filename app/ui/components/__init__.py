@@ -10,7 +10,7 @@ from .images.image_cropper import ImageCropper
 # From inputs
 from .inputs.search_bar import SearchBar
 from .inputs.smart_line_edit import SmartLineEdit
-from .inputs.toggle_switch import ToggleSwitch
+from .widgets.toggle_switch import ToggleSwitch
 from .layout.flow_layout import FlowLayout
 # From layout
 from .layout.separator import Separator

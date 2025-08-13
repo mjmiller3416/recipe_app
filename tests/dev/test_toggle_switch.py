@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QFont
 
 from app.style.theme_controller import Theme, Mode, Color
-from app.ui.components.inputs.toggle_switch import ToggleSwitch
+from app.ui.components.widgets.toggle_switch import ToggleSwitch
 
 
 class ToggleSwitchDemo(QMainWindow):
