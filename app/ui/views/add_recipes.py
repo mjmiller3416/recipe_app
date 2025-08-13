@@ -22,6 +22,7 @@ from app.ui.components.layout.card import Card
 from app.ui.components.layout.image_card import ImageCard
 from app.ui.components.widgets.button import Button
 from app.ui.helpers import clear_error_styles, dynamic_validation
+from app.ui.helpers.card_utils import add_two_column
 from dev_tools import DebugLogger
 
 
@@ -30,7 +31,7 @@ class DirectionsNotesCard(Card):
     """Custom card with toggle between Directions and Notes content."""
 
     def __init__(self, parent=None):
-        super().__init__(parent, card_type="Default")
+        super().__init__(card_type="Default")
         self.setHeader("Directions & Notes")
 
         # Create toggle buttons container
@@ -193,11 +194,15 @@ class AddRecipes(QWidget):
         self.image_card.addButton("Upload Image")
         #endregion
 
-        # hbox layout for directions and image
-        self.h = QHBoxLayout()
-        self.h.addWidget(self.directions_notes_card)
-        self.h.addWidget(self.image_card)
-        self.lyt_main.addLayout(self.h)
+        # Add directions and image using shadow-safe utility
+        add_two_column(
+            self.lyt_main,
+            self.directions_notes_card,
+            self.image_card,
+            left_proportion=2,
+            right_proportion=1,
+            match_heights=True
+        )
 
     """ def _connect_signals(self):
         self.btn_save.clicked.connect(self.save_recipe)
