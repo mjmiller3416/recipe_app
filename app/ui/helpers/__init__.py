@@ -1,5 +1,8 @@
 # app/ui/helpers/__init__.py
 
+from .card_utils import (add_cards_horizontal, add_cards_vertical, add_two_column, 
+                         add_three_column, setup_proportional_cards, 
+                         match_card_heights, match_card_widths)
 from .dialog_helpers import (MIN_CROP_DIM_ORIGINAL, SELECT_NEW_IMAGE_CODE,
                              build_crop_buttons, load_pixmap_or_warn)
 from .types import ThemedIcon as ThemedIconProtocol  # Rename to avoid conflict
@@ -10,6 +13,15 @@ from .validation import (apply_error_style, clear_error_styles,
                          dynamic_validation)
 
 __all__ = [
+    # From card_utils.py
+    "add_cards_horizontal",
+    "add_cards_vertical", 
+    "add_two_column",
+    "add_three_column",
+    "setup_proportional_cards",
+    "match_card_heights",
+    "match_card_widths",
+
     # From types.py
     "ThemedIconProtocol",
 

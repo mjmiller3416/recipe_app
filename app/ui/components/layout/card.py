@@ -29,7 +29,6 @@ class Card(QFrame):
     def __init__(
         self,
         parent: QWidget | None = None,
-        elevation: Shadow = Shadow.ELEVATION_6,
         layout: str = "vbox",
         card_type: str = "Default",
     ):
@@ -37,7 +36,6 @@ class Card(QFrame):
 
         Args:
             parent: Optional parent widget.
-            elevation: Shadow elevation level from Shadow enum (default: ELEVATION_6).
             layout: Initial layout type: "vbox" (default), "hbox", or "grid".
             card_type: Card styling type for QSS (default: "Default").
         """
@@ -48,10 +46,10 @@ class Card(QFrame):
         self._card_type = card_type
         self.setProperty("card", card_type)
         self.setAttribute(Qt.WA_StyledBackground)
-        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 
         self._current_layout: QLayout | None = None
-        self._elevation = elevation
+        self._elevation = Shadow.ELEVATION_6  # Default elevation
         self._elevation_enabled = True
 
         # Header components
@@ -61,9 +59,10 @@ class Card(QFrame):
         self._header_label: QLabel | None = None
         self._header_icon_widget: QWidget | None = None
         self._subheader_label: QLabel | None = None
-        
+
         # Footer components
         self._footer_button: Button | None = None
+        self._button_alignment = Qt.AlignCenter
 
         self._add_layout(layout, 20)
 
@@ -105,7 +104,7 @@ class Card(QFrame):
         if self._header_container and self._current_layout:
             self._current_layout.insertWidget(0, self._header_container)
         if self._footer_button and self._current_layout:
-            self._current_layout.addWidget(self._footer_button)
+            self._current_layout.addWidget(self._footer_button, 0, self._button_alignment)
 
     def addWidget(self, widget: QWidget, *args, **kwargs):
         """Add a widget to the current layout.
@@ -169,7 +168,7 @@ class Card(QFrame):
         """Enable or disable width expansion."""
         policy = self.sizePolicy()
         self._set_expansion(
-            QSizePolicy.Expanding if expand else QSizePolicy.Fixed,
+            QSizePolicy.Expanding if expand else QSizePolicy.Preferred,
             policy.verticalPolicy()
         )
 
@@ -178,13 +177,19 @@ class Card(QFrame):
         policy = self.sizePolicy()
         self._set_expansion(
             policy.horizontalPolicy(),
-            QSizePolicy.Expanding if expand else QSizePolicy.Fixed
+            QSizePolicy.Expanding if expand else QSizePolicy.Preferred
         )
 
     def expandBoth(self, expand: bool = True):
         """Enable or disable both width and height expansion."""
-        policy = QSizePolicy.Expanding if expand else QSizePolicy.Fixed
+        policy = QSizePolicy.Expanding if expand else QSizePolicy.Preferred
         self._set_expansion(policy, policy)
+
+    def setFixed(self):
+        """Set card to fixed size (content-based)."""
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        return self
+
 
     def _ensure_header_container(self):
         """Ensure the header container exists with proper nested layout structure."""
@@ -193,6 +198,7 @@ class Card(QFrame):
 
         self._header_container = QWidget(self)
         self._header_container.setAttribute(Qt.WA_StyledBackground, False)
+        self._header_container.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)  # Keep header at top
 
         self._header_main_layout = QVBoxLayout(self._header_container)
         self._header_main_layout.setContentsMargins(0, 0, 0, 0)
@@ -255,15 +261,6 @@ class Card(QFrame):
         """Direct access to the header's icon widget."""
         return self._header_icon_widget
 
-    def setCardType(self, card_type: str):
-        """Set the card type for styling."""
-        self._card_type = card_type
-        self.setProperty("card", card_type)
-        self._refresh_style(self)
-
-    def getCardType(self) -> str:
-        """Get the current card type."""
-        return self._card_type
 
     def setSubHeader(self, text: str):
         """Set or update the subheader text."""
@@ -286,38 +283,40 @@ class Card(QFrame):
         widget.style().polish(widget)
 
     # ── Footer Button Management ─────────────────────────────────────────────────────────────
-    def addButton(self, text: str, button_type=None, icon=None):
-        """Add a footer button to the card.
+    def addButton(self, text: str, button_type=None, icon=None, alignment=Qt.AlignCenter):
+        """Add a footer button to the card with alignment control.
 
         Args:
             text: Button text
             button_type: Button type from Type enum (optional)
             icon: Button icon from Name enum (optional)
+            alignment: Button alignment (Qt.AlignLeft, Qt.AlignCenter, Qt.AlignRight)
         """
         from app.style.icon.config import Type
-        
+
         # Remove existing button if present
         if self._footer_button:
             self.removeButton()
-        
+
         # Create button with default type if not specified
         if button_type is None:
             button_type = Type.PRIMARY
-        
+
         self._footer_button = Button(text, button_type, icon)
         self._footer_button.setObjectName("CardFooterButton")
-        
-        # Add to layout
+        self._button_alignment = alignment
+
+        # Add to layout with alignment
         if self._current_layout:
-            self._current_layout.addWidget(self._footer_button)
-    
+            self._current_layout.addWidget(self._footer_button, 0, alignment)
+
     def removeButton(self):
         """Remove the footer button if it exists."""
         if self._footer_button and self._current_layout:
             self._current_layout.removeWidget(self._footer_button)
             self._footer_button.deleteLater()
             self._footer_button = None
-    
+
     @property
     def button(self) -> Button | None:
         """Direct access to the footer button widget."""
