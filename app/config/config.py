@@ -43,7 +43,7 @@ MEAL_TYPE = [
     "All", "Breakfast", "Lunch", "Dinner", "Snack", "Dessert",
 ]
 RECIPE_CATEGORIES = [
-    "All", "Ground Beef", "Chicken", "Seafood", "Veggie",
+    "All", "Ground Beef", "Chicken", "Seafood", "Veggie", "Other"
 ]
 DIETARY_PREFERENCES = [
     "None", "Vegetarian", "Vegan", "Gluten-Free", "Keto", "Paleo", "Low-Carb",

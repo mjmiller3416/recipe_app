@@ -13,7 +13,7 @@ from app.config.paths.app_paths import AppPaths
 class Color(Enum):
     INDIGO      = "#3F51B5"
     BLUE        = "#2196F3"
-    TEAL        = "#009688"
+    TEAL        = "#2BA286"
     GREEN       = "#63A002"
     YELLOW      = "#FFDE3F"
     ORANGE      = "#FF9800"

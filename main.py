@@ -54,7 +54,7 @@ else:
 
 
 
-    # Theme.setTheme(Color.GREEN, Mode.DARK)
+    #Theme.setTheme(Color.TEAL, Mode.DARK)
 
     # ── Custom Color Map ──
     Theme.setCustomColorMap("material-theme.json", Mode.DARK)

@@ -40,14 +40,14 @@ class IngredientWidget(QWidget):
             parent (QWidget, optional): Parent widget for this ingredient widget.
         """
         super().__init__(parent)
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.setAttribute(Qt.WA_StyledBackground, True)
 
         # Register with Theme API for Material3 styling
         Theme.register_widget(self, Qss.INGREDIENT_WIDGET)
 
         # Create horizontal layout for row-based design
         self.main_layout = QHBoxLayout(self)
-        self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.main_layout.setContentsMargins(18, 18, 18, 18)
         self.main_layout.setSpacing(12)
         self.setObjectName("IngredientWidget")
         # Initialize IngredientService with a new DB session
@@ -63,7 +63,9 @@ class IngredientWidget(QWidget):
         # Drag handle for reordering
         self.drag_handle = ToolButton(Type.DEFAULT, Name.GRIP_DOTS)
         self.drag_handle.setObjectName("DragHandle")
-        self.drag_handle.setFixedSize(24, 24)
+        self.drag_handle.setIconSize(24, 24)
+        self.drag_handle.setStateDefault("on_surface")
+        self.drag_handle.setStateHover("tertiary")
         self.main_layout.addWidget(self.drag_handle)
 
         # Quantity field - compact
@@ -104,7 +106,9 @@ class IngredientWidget(QWidget):
         # Delete button - replaces subtract/add buttons
         self.btn_delete = ToolButton(Type.DEFAULT, Name.TRASH)
         self.btn_delete.setObjectName("DeleteButton")
-        self.btn_delete.setFixedSize(32, 32)
+        self.btn_delete.setIconSize(32, 32)
+        self.btn_delete.setStateDefault("on_surface")
+        self.btn_delete.setStateHover("tertiary")
         self.main_layout.addWidget(self.btn_delete)
 
         # Set stretch factors for proper proportions

@@ -7,16 +7,18 @@
 #IngredientWidget {
     background-color: {surface};
     border: 1px solid {outline_variant};
-    border-radius: 12px;
-    padding: 8px 12px;
-    margin: 2px 0px;
 }
 
 /* Hover state for entire widget */
 #IngredientWidget:hover {
     background-color: {surface_container_high};
-    border-color: {outline};
 }
+
+#IngredientWidget QLineEdit {border: 1px solid {outline_variant};}
+#IngredientWidget ComboBox {border: 1px solid {outline_variant};}
+
+#IngredientWidget #DeleteButton {background-color: transparent; border: none;}
+#IngredientWidget #DeleteButton:hover {border: none;}
 
 /* Drag handle styling */
 #IngredientWidget #DragHandle {
@@ -27,10 +29,6 @@
     color: {outline};
 }
 
-#IngredientWidget #DragHandle:hover {
-    background-color: {surface_container_highest};
-    color: {on_surface};
-}
 
 /* Quantity field - smaller width */
 #IngredientWidget #QuantityField {
