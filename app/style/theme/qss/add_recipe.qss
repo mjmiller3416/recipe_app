@@ -1,6 +1,15 @@
 /* ------------------------------------------------------------------
    ADD RECIPE STYLSHEET
    ------------------------------------------------------------------ */
-#AddRecipes QWidget {background-color: green;}
+#AddRecipeContent {
+    background-color: {surface};
+    border: none;
+}
+
+#AddRecipes QScrollArea {
+    border: none;
+}
+
+
 
 

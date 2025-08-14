@@ -327,6 +327,7 @@ class StateIcon(QWidget):
             type (Type): Button type to determine default state colors.
         """
         super().__init__()
+        self.setObjectName("StateIcon")
 
         # Make StateIcon transparent to mouse events so parent button can detect hover properly
         self.setAttribute(Qt.WA_TransparentForMouseEvents, True)

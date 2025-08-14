@@ -8,8 +8,8 @@
 }
 
 /* Card content styling */
-[card="Default"] QLabel {
-    background-color: {surface_container};
+[card="Default"] QLabel#Card {
+    background-color: purple;
     color: {on_surface_variant};
     font: {default};
 }

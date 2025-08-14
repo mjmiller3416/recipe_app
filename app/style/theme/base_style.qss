@@ -1,6 +1,7 @@
 /* ------------------------------------------------------------------
    BASE STYLESHEET
    ------------------------------------------------------------------ */
+/* Main Window */
 
 /* Global Styles */
 #FixedWrapper {background-color: transparent;}

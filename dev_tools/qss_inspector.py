@@ -97,6 +97,9 @@ class QSSInspector(QObject):
             # Widget stylesheet
             self._print_widget_stylesheet(widget)
 
+            # CSS cascade analysis
+            self._print_cascade_analysis(widget)
+
             # Possible selectors
             self._print_possible_selectors(widget)
 
@@ -128,7 +131,7 @@ class QSSInspector(QObject):
             properties_found = True
 
         # Check for other common properties
-        for prop_name in ["theme", "style", "variant", "state", "role"]:
+        for prop_name in ["theme", "style", "variant", "state", "role", "context", "card"]:
             prop_value = widget.property(prop_name)
             if prop_value:
                 print(f"   • {prop_name}: {prop_value}")
@@ -201,8 +204,10 @@ class QSSInspector(QObject):
 
             # This is a simplified check - you might need to adjust based on your Theme class
             if hasattr(Theme, '_registered_widgets'):
-                if widget in Theme._registered_widgets:
-                    print("   ✅ Widget is registered with theme system")
+                instance = Theme._get_instance()
+                if widget in instance._registered_widgets:
+                    qss_type = instance._registered_widgets[widget]
+                    print(f"   ✅ Widget is registered with theme system: {qss_type.name}")
                 else:
                     print("   ❌ Widget is NOT registered with theme system")
             else:
@@ -210,6 +215,44 @@ class QSSInspector(QObject):
 
         except ImportError:
             print("   ❓ Theme system not available")
+        except Exception as e:
+            print(f"   ⚠️ Error checking theme registration: {e}")
+
+    def _print_cascade_analysis(self, widget: QWidget):
+        """Print CSS cascade analysis showing all stylesheets affecting this widget"""
+        print(f"\n🔄 CSS CASCADE ANALYSIS:")
+        
+        # Walk up the widget hierarchy and check stylesheets
+        current = widget
+        level = 0
+        
+        while current and level < 10:  # Prevent infinite loops
+            stylesheet = current.styleSheet()
+            if stylesheet:
+                indent = "  " * level
+                name = current.objectName() or current.__class__.__name__
+                print(f"{indent}📄 {name}: {len(stylesheet)} chars of CSS")
+                
+                # Check if this stylesheet contains CBButton rules
+                if "#CBButton" in stylesheet or "CBButton" in stylesheet:
+                    print(f"{indent}   🎯 Contains CBButton rules!")
+                    # Show a snippet of the relevant rules
+                    lines = stylesheet.split('\n')
+                    cbbutton_lines = [line.strip() for line in lines if 'CBButton' in line]
+                    if cbbutton_lines:
+                        print(f"{indent}   📝 CBButton rules found:")
+                        for line in cbbutton_lines[:3]:  # Show first 3 matches
+                            print(f"{indent}      {line}")
+            
+            current = current.parent()
+            level += 1
+        
+        # Check application-level stylesheet
+        app = QApplication.instance()
+        if app and app.styleSheet():
+            print(f"🌐 Application stylesheet: {len(app.styleSheet())} chars")
+            if "#CBButton" in app.styleSheet() or "CBButton" in app.styleSheet():
+                print("   🎯 Application CSS contains CBButton rules!")
 
     def _print_possible_selectors(self, widget: QWidget):
         """Print all possible QSS selectors for this widget"""

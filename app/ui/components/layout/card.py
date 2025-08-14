@@ -44,6 +44,7 @@ class Card(QFrame):
         Theme.register_widget(self, Qss.CARD)
 
         self._card_type = card_type
+        self.setObjectName("Card")
         self.setProperty("card", card_type)
         self.setAttribute(Qt.WA_StyledBackground)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)

@@ -9,6 +9,7 @@ from typing import Sequence, Optional
 from PySide6.QtCore import QAbstractItemModel, QEvent, QStringListModel, Qt, Signal
 from PySide6.QtWidgets import QApplication, QCompleter, QWidget
 
+from app.style import Qss, Theme
 from dev_tools import DebugLogger
 
 
@@ -42,6 +43,9 @@ class DropdownMenu(QWidget):
     ):
         super().__init__(parent)
 
+        # register for component-specific styling
+        Theme.register_widget(self, Qss.DROPDOWN_MENU)
+
         # set up model
         if model is not None:
             self.model = model
@@ -58,7 +62,7 @@ class DropdownMenu(QWidget):
         popup.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         popup.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         popup.setObjectName("DropdownMenuPopup")
-        
+
         # Critical fix: Isolate popup from parent graphics effects
         popup.setParent(None)
         popup.setWindowFlags(Qt.Popup | Qt.FramelessWindowHint)

@@ -9,6 +9,7 @@ from typing import Sequence
 from PySide6.QtCore import QEvent, QStringListModel, Qt, Signal
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QWidget
 
+from app.style import Qss, Theme
 from app.style.icon.config import Name
 from .dropdown_menu import DropdownMenu
 from .button import ToolButton
@@ -27,6 +28,10 @@ class ComboBox(QWidget):
         placeholder: str | None = None,
     ):
         super().__init__(parent)
+        self.setObjectName("ComboBox")
+
+        # register for component-specific styling
+        Theme.register_widget(self, Qss.COMBOBOX)
 
         # Create model
         self.model = QStringListModel(list_items or [])
@@ -40,9 +45,11 @@ class ComboBox(QWidget):
 
         # Create dropdown button
         from app.style.icon import Type
-        self.cb_btn = ToolButton(Type.DEFAULT, Name.ANGLE_DOWN)
+        self.cb_btn = ToolButton(Type.PRIMARY, Name.ANGLE_DOWN)
+        self.cb_btn.setIconSize(26, 26)
         self.cb_btn.setCursor(Qt.PointingHandCursor)
         self.cb_btn.setObjectName("CBButton")
+        self.cb_btn.setProperty("tag", "Dropdown-Button")
 
         # Create dropdown menu
         self.dropdown_menu = DropdownMenu(
@@ -53,7 +60,7 @@ class ComboBox(QWidget):
 
         # Set up layout
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(5, 5, 2, 5)
+        layout.setContentsMargins(5, 5, 10, 5)
         layout.setSpacing(0)
         layout.addWidget(self.line_edit)
         layout.addWidget(self.cb_btn)
@@ -62,6 +69,10 @@ class ComboBox(QWidget):
         self.setObjectName("ComboBox")
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setFocusPolicy(Qt.StrongFocus)
+
+        # Set unique scope property for CSS isolation testing
+        unique_id = f"ComboBox_{id(self)}"
+        self.setProperty("test_scope", unique_id)
 
         # Connect signals
         self.line_edit.textChanged.connect(self._on_text_changed)

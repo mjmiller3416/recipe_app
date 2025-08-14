@@ -43,7 +43,7 @@ class RecipeCard:
             updated_recipe = service.toggle_favorite(recipe_id)
 
             # update the button icon based on the new favorite state
-            new_icon = Name.HEART if updated_recipe.is_favorite else Name.HEART_FILLED
+            new_icon = Name.FAV if updated_recipe.is_favorite else Name.FAV_FILLED
 
             button.setIcon(new_icon)
 
@@ -122,7 +122,7 @@ class RecipeCard:
         )
 
         # favorite button - choose initial icon based on favorite state
-        initial_icon = Name.HEART if self.recipe.is_favorite else Name.HEART_FILLED
+        initial_icon = Name.FAV if self.recipe.is_favorite else Name.FAV_FILLED
         btn_fav = ToolButton(Type.DEFAULT, initial_icon)
         btn_fav.setCheckable(True)
         btn_fav.setCursor(Qt.PointingHandCursor)

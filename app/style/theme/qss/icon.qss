@@ -1,9 +1,9 @@
 /* ------------------------------------------------------------------
    ICON WIDGET STYLING
    ------------------------------------------------------------------ */
+AppIcon {background-color: transparent;}
 
-
-   #ContentArea AppIcon {background-color: transparent;}
+#ContentArea AppIcon {background-color: transparent;}
 
 /* Force transparent background for header icons */
   AppIcon#HeaderIcon {
@@ -14,3 +14,5 @@
   [card="Default"] AppIcon#HeaderIcon {
       background-color: transparent !important;
   }
+
+

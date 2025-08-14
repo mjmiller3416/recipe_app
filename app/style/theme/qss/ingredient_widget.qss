@@ -1,0 +1,58 @@
+/* ------------------------------------------------------------------
+   INGREDIENT WIDGET STYLING - Material3 Design
+   Modern ingredient row design with hover states and drag handles
+   ------------------------------------------------------------------ */
+
+/* Main ingredient widget container */
+#IngredientWidget {
+    background-color: {surface};
+    border: 1px solid {outline_variant};
+    border-radius: 12px;
+    padding: 8px 12px;
+    margin: 2px 0px;
+}
+
+/* Hover state for entire widget */
+#IngredientWidget:hover {
+    background-color: {surface_container_high};
+    border-color: {outline};
+}
+
+/* Drag handle styling */
+#IngredientWidget #DragHandle {
+    background-color: transparent;
+    border: none;
+    padding: 4px;
+    border-radius: 6px;
+    color: {outline};
+}
+
+#IngredientWidget #DragHandle:hover {
+    background-color: {surface_container_highest};
+    color: {on_surface};
+}
+
+/* Quantity field - smaller width */
+#IngredientWidget #QuantityField {
+    max-width: 80px;
+    min-width: 60px;
+}
+
+/* Unit field - smaller width */
+#IngredientWidget .UnitField {
+    max-width: 100px;
+    min-width: 80px;
+}
+
+/* Name field - expandable */
+#IngredientWidget #NameField {
+    min-width: 200px;
+}
+
+/* Category field - medium width */
+#IngredientWidget .CategoryField {
+    max-width: 150px;
+    min-width: 120px;
+}
+
+

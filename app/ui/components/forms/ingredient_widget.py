@@ -6,10 +6,11 @@ IngredientWidget for managing individual ingredients in recipes.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QGridLayout, QLineEdit, QSizePolicy, QWidget
+from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QSizePolicy, QWidget
 
 from app.config import (FLOAT_VALIDATOR, INGREDIENT_CATEGORIES,
                         MEASUREMENT_UNITS, NAME_PATTERN)
+from app.style import Theme, Qss
 from app.style.icon import Name, Type
 from app.core.database.db import create_session
 from app.core.dtos import IngredientSearchDTO
@@ -40,12 +41,15 @@ class IngredientWidget(QWidget):
         """
         super().__init__(parent)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        self.grid_layout = QGridLayout(self)
-        self.grid_layout.setContentsMargins(0, 0, 0, 0)
-        self.grid_layout.setHorizontalSpacing(5)
-        self.grid_layout.setVerticalSpacing(5)
+
+        # Register with Theme API for Material3 styling
+        Theme.register_widget(self, Qss.INGREDIENT_WIDGET)
+
+        # Create horizontal layout for row-based design
+        self.main_layout = QHBoxLayout(self)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.main_layout.setSpacing(12)
         self.setObjectName("IngredientWidget")
-        self.setProperty("class", "IngredientWidget")
         # Initialize IngredientService with a new DB session
         self._session = create_session()
         self.ingredient_service = IngredientService(self._session)
@@ -55,59 +59,66 @@ class IngredientWidget(QWidget):
 
     def _setup_ui(self):
         """Sets up the UI components and layout for the ingredient widget."""
-        self.grid_layout.setAlignment(Qt.AlignTop)
 
+        # Drag handle for reordering
+        self.drag_handle = ToolButton(Type.DEFAULT, Name.GRIP_DOTS)
+        self.drag_handle.setObjectName("DragHandle")
+        self.drag_handle.setFixedSize(24, 24)
+        self.main_layout.addWidget(self.drag_handle)
+
+        # Quantity field - compact
         self.le_quantity = QLineEdit(self)
-        self.le_quantity.setPlaceholderText("Qty.")
-        self.grid_layout.addWidget(self.le_quantity, 0, 0, 1, 1)
+        self.le_quantity.setPlaceholderText("Qty")
+        self.le_quantity.setObjectName("QuantityField")
+        self.le_quantity.setFixedHeight(40)
+        self.main_layout.addWidget(self.le_quantity)
 
+        # Unit field - compact
         self.cb_unit = ComboBox(
-            list_items  = MEASUREMENT_UNITS,
-            placeholder = "Unit"
+            list_items=MEASUREMENT_UNITS,
+            placeholder="Unit"
         )
-        self.cb_unit.completer.popup().setObjectName("CompleterPopup")
-        self.grid_layout.addWidget(self.cb_unit, 0, 1, 1, 1)
+        self.cb_unit.setObjectName("ComboBox UnitField")
+        self.cb_unit.setFixedHeight(40)
+        self.main_layout.addWidget(self.cb_unit)
 
+        # Ingredient name field - expandable
         all_ingredient_names = self.ingredient_service.list_distinct_names()
         self.sle_ingredient_name = SmartLineEdit(
-            list_items  = all_ingredient_names,
-            placeholder = "Ingredient Name",
+            list_items=all_ingredient_names,
+            placeholder="Ingredient Name"
         )
-        self.sle_ingredient_name.setFixedHeight(FIXED_HEIGHT)
-        self.grid_layout.addWidget(self.sle_ingredient_name, 0, 2, 1, 1)
+        self.sle_ingredient_name.setObjectName("NameField")
+        self.sle_ingredient_name.setFixedHeight(40)
+        self.main_layout.addWidget(self.sle_ingredient_name)
 
+        # Category field - medium width
         self.cb_ingredient_category = ComboBox(
-            list_items  = INGREDIENT_CATEGORIES,
-            placeholder = "Category"
+            list_items=INGREDIENT_CATEGORIES,
+            placeholder="Category"
         )
-        self.grid_layout.addWidget(self.cb_ingredient_category, 0, 3, 1, 1)
+        self.cb_ingredient_category.setObjectName("ComboBox CategoryField")
+        self.cb_ingredient_category.setFixedHeight(40)
+        self.main_layout.addWidget(self.cb_ingredient_category)
 
-        self.btn_ico_subtract = ToolButton(Type.DEFAULT, Name.SUBTRACT)
-        self.btn_ico_subtract.setFixedWidth(FIXED_HEIGHT) # square button
-        self.grid_layout.addWidget(self.btn_ico_subtract, 0, 4, 1, 1)
+        # Delete button - replaces subtract/add buttons
+        self.btn_delete = ToolButton(Type.DEFAULT, Name.TRASH)
+        self.btn_delete.setObjectName("DeleteButton")
+        self.btn_delete.setFixedSize(32, 32)
+        self.main_layout.addWidget(self.btn_delete)
 
-        self.btn_ico_add = ToolButton(Type.DEFAULT, Name.ADD)
-        self.btn_ico_add.setFixedWidth(FIXED_HEIGHT)  # square button
-        self.grid_layout.addWidget(self.btn_ico_add, 0, 5, 1, 1)
-
-        # set column stretch factors: qty, unit, category = 1; name = 3; buttons = 0
-        self.grid_layout.setColumnStretch(0, 1)  # Qty
-        self.grid_layout.setColumnStretch(1, 1)  # Unit
-        self.grid_layout.setColumnStretch(2, 3)  # Ingredient Name (larger)
-        self.grid_layout.setColumnStretch(3, 1)  # Category
-        self.grid_layout.setColumnStretch(4, 0)  # Subtract button
-        self.grid_layout.setColumnStretch(5, 0)  # Add button
-
-        set_fixed_height_for_layout_widgets(
-            layout = self.grid_layout,
-            height = FIXED_HEIGHT,
-        )
+        # Set stretch factors for proper proportions
+        self.main_layout.setStretchFactor(self.drag_handle, 0)
+        self.main_layout.setStretchFactor(self.le_quantity, 0)  # Fixed width
+        self.main_layout.setStretchFactor(self.cb_unit, 0)  # Fixed width
+        self.main_layout.setStretchFactor(self.sle_ingredient_name, 3)  # Expandable
+        self.main_layout.setStretchFactor(self.cb_ingredient_category, 0)  # Fixed width
+        self.main_layout.setStretchFactor(self.btn_delete, 0)
 
     def setup_event_logic(self):
         """Connects signals to their respective slots for handling ingredient data."""
-        self.btn_ico_add.clicked.connect(self.emit_ingredient_data)
-        self.btn_ico_subtract.clicked.connect(self.request_removal)
-        self.ingredient_validated.connect(self.add_ingredient)
+        self.btn_delete.clicked.connect(self.request_removal)
+        # Note: Add ingredient functionality will be handled at container level
 
         dynamic_validation(self.le_quantity, FLOAT_VALIDATOR)
 
@@ -171,14 +182,9 @@ class IngredientWidget(QWidget):
             self.cb_ingredient_category.setCurrentIndex(-1)
             self.cb_ingredient_category.setEnabled(True)
 
-    def emit_ingredient_data(self):
-        """Emits the ingredient data as a dictionary when the add button is clicked."""
-        payload = self.to_payload()
-        self.ingredient_validated.emit(payload)
-
-    def add_ingredient(self):
-        """Emits a signal to request adding a new ingredient widget."""
-        self.add_ingredient_requested.emit(self)
+    def get_ingredient_data(self) -> dict:
+        """Returns the ingredient data as a dictionary for external collection."""
+        return self.to_payload()
 
     def request_removal(self):
         """Emits a signal to request removal of this ingredient widget."""

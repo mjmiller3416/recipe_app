@@ -27,8 +27,9 @@ class Path(Enum):
     EDIT            = "edit"
     ERROR           = "error"
     EXIT            = "exit"
-    HEART           = "heart"
-    HEART_FILLED    = "heart_filled"
+    GRIP_DOTS       = "grip_dots"
+    FAV             = "fav"
+    FAV_FILLED      = "fav_filled"
     INFO            = "info"
     INGREDIENTS     = "ingredients"
     LIGHTBULB       = "lightbulb"
@@ -40,6 +41,7 @@ class Path(Enum):
     MINIMIZE        = "minimize"
     NOTES           = "notes"
     PHOTO           = "photo"
+    PLAY            = "play"
     PRINT           = "print"
     RESTORE         = "restore"
     REFRESH         = "refresh"
@@ -138,12 +140,14 @@ class Name(Enum):
     DIET_PREF       = IconSpec(Path.DIET_PREF, Size.SMALL)
     ANGLE_DOWN      = IconSpec(Path.ANGLE_DOWN, Size.SMALL)
     EDIT            = IconSpec(Path.EDIT, Size.SMALL)
-    HEART           = IconSpec(Path.HEART, Size.SMALL)
-    HEART_FILLED    = IconSpec(Path.HEART_FILLED, Size.SMALL)
+    GRIP_DOTS       = IconSpec(Path.GRIP_DOTS, Size.SMALL)
+    FAV             = IconSpec(Path.FAV, Size.SMALL)
+    FAV_FILLED      = IconSpec(Path.FAV_FILLED, Size.SMALL)
     LIGHTBULB       = IconSpec(Path.LIGHTBULB, Size.SMALL)
     MAXIMIZE        = IconSpec(Path.MAXIMIZE, Size.SMALL)
     MEAL_TYPE       = IconSpec(Path.MEAL_TYPE, Size.SMALL)
     MINIMIZE        = IconSpec(Path.MINIMIZE, Size.SMALL)
+    PLAY            = IconSpec(Path.PLAY, Size.SMALL)
     REFRESH         = IconSpec(Path.REFRESH, Size.SMALL)
     RESTORE         = IconSpec(Path.RESTORE, Size.SMALL)
     SAVE            = IconSpec(Path.SAVE, Size.SMALL)

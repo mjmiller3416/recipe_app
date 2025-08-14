@@ -6,7 +6,7 @@ AddRecipes widget for creating new recipes with ingredients and directions.
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
-    QHBoxLayout, QLabel, QPushButton, QTextEdit,
+    QHBoxLayout, QLabel, QPushButton, QScrollArea, QTextEdit,
     QVBoxLayout, QWidget
 )
 
@@ -16,6 +16,7 @@ from app.core.services.recipe_service import RecipeService
 from app.style import Theme, Qss
 from app.style.icon.config import Type, Name
 from app.ui.components.dialogs import MessageDialog
+from app.ui.components.containers import IngredientContainer
 from app.ui.components.forms import IngredientWidget, RecipeForm
 from app.ui.components.images.upload_recipe_image import UploadRecipeImage
 from app.ui.components.layout.card import Card
@@ -109,7 +110,6 @@ class AddRecipes(QWidget):
 
         DebugLogger.log("Initializing Add Recipes page", "debug")
 
-        self.ingredient_widgets = []
         self.stored_ingredients = []
         self.selected_image_path = None
 
@@ -125,10 +125,28 @@ class AddRecipes(QWidget):
         QTimer.singleShot(0, self.le_recipe_name.setFocus)
 
     def _build_ui(self):
-        # main vertical layout
+        # main vertical layout for the entire widget
         self.lyt_main = QVBoxLayout(self)
-        self.lyt_main.setContentsMargins(20, 20, 20, 20)
-        self.lyt_main.setSpacing(16)
+        self.lyt_main.setContentsMargins(0, 0, 0, 0)
+        self.lyt_main.setSpacing(0)
+
+        # create scroll area
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+
+        # create content widget for the scroll area
+        self.scroll_content = QWidget()
+        self.scroll_layout = QVBoxLayout(self.scroll_content)
+        self.scroll_layout.setContentsMargins(20, 20, 20, 20)
+        self.scroll_layout.setSpacing(30)
+        self.scroll_layout.setContentsMargins(100, 20, 100, 20)
+        self.scroll_content.setObjectName("AddRecipeContent")
+
+        # set the content widget to the scroll area
+        self.scroll_area.setWidget(self.scroll_content)
+        self.lyt_main.addWidget(self.scroll_area)
 
         #region ── Recipe Details ──
         # recipe details form wrapped in a Card
@@ -147,7 +165,7 @@ class AddRecipes(QWidget):
         self.cb_dietary_preference = self.recipe_form.cb_dietary_preference
         self.le_servings = self.recipe_form.le_servings
 
-        self.lyt_main.addWidget(self.recipe_details_card)  # add recipe form card to layout
+        self.scroll_layout.addWidget(self.recipe_details_card)  # add recipe form card to layout
         #endregion
 
         # ── Note ─────────────────────────────────────────────────────────────────────────────
@@ -169,12 +187,10 @@ class AddRecipes(QWidget):
         # ─────────────────────────────────────────────────────────────────────────────────────
 
 
-        #region ── Ingredients Card ──
-        self.ingredients_card = Card(card_type="Default")
-        self.ingredients_card.setHeader("Ingredients")
-        self.ingredients_card.setSubHeader("List of ingredients for the recipe.")
-        self.ingredients_card.expandWidth(True)
-        self.lyt_main.addWidget(self.ingredients_card)  # add left section to main content layout
+        #region ── Ingredients Container ──
+        self.ingredient_container = IngredientContainer()
+        self.ingredient_container.expandWidth(True)
+        self.scroll_layout.addWidget(self.ingredient_container)
         #endregion
 
         #region ── Directions & Notes Card ──
@@ -196,7 +212,7 @@ class AddRecipes(QWidget):
 
         # Add directions and image using shadow-safe utility
         add_two_column(
-            self.lyt_main,
+            self.scroll_layout,
             self.directions_notes_card,
             self.image_card,
             left_proportion=2,
@@ -226,36 +242,17 @@ class AddRecipes(QWidget):
         QWidget.setTabOrder(self.cb_meal_type, self.cb_recipe_category)
         QWidget.setTabOrder(self.cb_recipe_category, self.cb_dietary_preference)
         # ingredients - chain through the first ingredient widget if it exists
-        if self.ingredient_widgets:
-            w = self.ingredient_widgets[0]
+        ingredient_widgets = self.ingredient_container.ingredient_widgets
+        if ingredient_widgets:
+            w = ingredient_widgets[0]
             QWidget.setTabOrder(self.le_servings, w.le_quantity)
             QWidget.setTabOrder(w.le_quantity, w.cb_unit)
             QWidget.setTabOrder(w.cb_unit, w.sle_ingredient_name)
             QWidget.setTabOrder(w.sle_ingredient_name, w.cb_ingredient_category)
-            QWidget.setTabOrder(w.cb_ingredient_category, w.btn_ico_subtract)
-            QWidget.setTabOrder(w.btn_ico_subtract, w.btn_ico_add)
+            QWidget.setTabOrder(w.cb_ingredient_category, w.btn_delete)
             # then to directions
-            QWidget.setTabOrder(w.btn_ico_add, self.te_directions)
+            QWidget.setTabOrder(w.btn_delete, self.te_directions)
 
-    def _add_ingredient(self, removable=True):
-        widget = IngredientWidget(removable=removable)
-
-        widget.remove_ingredient_requested.connect(self._remove_ingredient)
-        widget.add_ingredient_requested.connect(self._add_ingredient)
-        widget.ingredient_validated.connect(self._store_ingredient)
-        self.ingredient_widgets.append(widget)
-        self.ingredients_card.addWidget(widget)
-
-    def _remove_ingredient(self, widget):
-        """Remove the specified ingredient widget from the card."""
-        self.ingredients_card.removeWidget(widget)
-        widget.deleteLater()
-        self.ingredients_card.update()
-        if widget in self.ingredient_widgets:
-            self.ingredient_widgets.remove(widget)
-
-    def _store_ingredient(self, data):
-        self.stored_ingredients.append(data)
 
     def _update_image_path(self, image_path: str):
         """Update the selected image path when an image is selected."""
@@ -270,10 +267,7 @@ class AddRecipes(QWidget):
         recipe_data = self.to_payload()
 
         # ── payload raw ingredients ──
-        raw_ingredients = [
-            widget.to_payload()
-            for widget in self.ingredient_widgets
-        ]
+        raw_ingredients = self.ingredient_container.get_all_ingredients_data()
 
         # ── convert raw_ingredients ──
         try:
@@ -327,11 +321,7 @@ class AddRecipes(QWidget):
         # ── clear form and reset state ──
         self._clear_form()
         self.stored_ingredients.clear()
-        for widget in self.ingredient_widgets:
-            container = widget.parent()
-            if container:
-                container.deleteLater()
-        self.ingredient_widgets = []
+        self.ingredient_container.clear_all_ingredients()
 
     def to_payload(self):
         """Collect all recipe form data and return it as a dict for API calls."""
@@ -360,11 +350,4 @@ class AddRecipes(QWidget):
 
         # clear stored ingredients and widgets
         self.stored_ingredients.clear()
-        for widget in self.ingredient_widgets:
-            container = widget.parent()
-            self.ingredients_card.removeWidget(container)
-            container.deleteLater()
-        self.ingredient_widgets.clear()
-
-        # add back the initial ingredient widget
-        self._add_ingredient(removable=False)
+        self.ingredient_container.clear_all_ingredients()
