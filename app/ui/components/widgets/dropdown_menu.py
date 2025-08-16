@@ -99,12 +99,24 @@ class DropdownMenu(QWidget):
 
     def set_filter(self, filter_text: str):
         """Set filter text for the completer model (if supported)."""
-        # this method should be overridden by proxy models that support filtering
-        pass
+        # Check if the model is a proxy model with filtering capability
+        if hasattr(self.model, 'setFilterFixedString'):
+            self.model.setFilterFixedString(filter_text)
+        elif hasattr(self.model, 'setFilterRegularExpression'):
+            self.model.setFilterRegularExpression(filter_text)
 
     def clear_filter(self):
         """Clear any active filter."""
         self.set_filter("")
+        
+    def set_proxy_model(self, proxy_model):
+        """Set a proxy model for advanced filtering (used by SmartLineEdit)."""
+        self.model = proxy_model
+        self.completer.setModel(proxy_model)
+        
+    def get_model(self):
+        """Get the current model (useful for setting source models)."""
+        return self.model
 
     def _on_item_activated(self, text: str):
         """Handle item activation from the completer."""

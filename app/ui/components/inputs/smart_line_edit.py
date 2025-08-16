@@ -10,6 +10,7 @@ from PySide6.QtCore import QEvent, QStringListModel, Qt, QTimer, Signal
 from PySide6.QtWidgets import QCompleter, QLineEdit
 
 from app.ui.models import IngredientProxyModel
+from app.ui.components.widgets.dropdown_menu import DropdownMenu
 from dev_tools import DebugLogger
 
 # fixed height for the line edit
@@ -45,31 +46,30 @@ class SmartLineEdit(QLineEdit):
         self.setFixedHeight(FIXED_HEIGHT)
         self.setObjectName("SmartLineEdit")
 
-        # Create and configure completer directly (simpler approach)
-        self.completer = QCompleter(self.proxy, self)
-        self.completer.setCompletionMode(QCompleter.UnfilteredPopupCompletion)
-        self.completer.setCaseSensitivity(Qt.CaseInsensitive)
-        
-        self.completer.popup().setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.completer.popup().setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.completer.popup().setObjectName("SmartLineEditPopup")
+        # Create DropdownMenu with proxy model for filtering
+        self.dropdown_menu = DropdownMenu(
+            parent=self,
+            completion_mode=QCompleter.UnfilteredPopupCompletion
+        )
+        self.dropdown_menu.set_proxy_model(self.proxy)
+        self.dropdown_menu.set_case_sensitivity(Qt.CaseInsensitive)
         
         # Set the completer for this line edit
-        self.setCompleter(self.completer)
+        self.setCompleter(self.dropdown_menu.completer)
 
         # connect signals
-        self.completer.activated.connect(self._on_item_selected)
+        self.dropdown_menu.item_selected.connect(self._on_item_selected)
         self.textEdited.connect(self._on_text_changed)
         self.textChanged.connect(self._on_text_changed)
         self.returnPressed.connect(self._handle_submission)
 
     def _reset_completer(self):
         """Clear any active filter on the proxy model."""
-        self.proxy.setFilterFixedString("")
+        self.dropdown_menu.clear_filter()
 
     def _handle_submission(self):
-        """Emit either item_selected or custom_text_submitted on Enter or focus out."""
-        if self.completer.popup().isVisible():
+        """Emit either item_selected or custom_text_submitted on Enter press only."""
+        if self.dropdown_menu.completer.popup().isVisible():
             return
         text = self.text().strip()
         if not text:
@@ -84,7 +84,7 @@ class SmartLineEdit(QLineEdit):
             DebugLogger.log(f"Submitted text '{text}' is a custom entry.")
 
         self._reset_completer()
-        self.clear()
+        # Don't clear the text - keep the selection visible!
 
     def _on_item_selected(self, text: str):
         """Handle selection from the dropdown menu."""
@@ -92,17 +92,22 @@ class SmartLineEdit(QLineEdit):
         self.item_selected.emit(text)
         DebugLogger.log(f"[SIGNAL] Item selected: {text}")
         self._reset_completer()
+        # Hide the dropdown after selection
+        self.dropdown_menu.hide_popup()
+        # Move focus to next widget
         QTimer.singleShot(0, self.focusNextChild)
 
     def _on_text_changed(self, text: str):
         """Update proxy filter and emit currentTextChanged."""
-        self.proxy.setFilterFixedString(text)
+        self.dropdown_menu.set_filter(text)
         self.currentTextChanged.emit(text)
         DebugLogger.log(f"Text changed: {text}", "debug")
 
     def focusOutEvent(self, event: QEvent):
-        """Trigger submission logic when focus is lost."""
-        self._handle_submission()
+        """Handle focus out - hide popup but don't clear text."""
+        # Hide the dropdown when focus is lost
+        self.dropdown_menu.hide_popup()
+        # Don't call _handle_submission() which would clear the text
         super().focusOutEvent(event)
 
     def currentText(self) -> str:

@@ -129,9 +129,6 @@ class IngredientWidget(QWidget):
 
         self.sle_ingredient_name.currentTextChanged.connect(self._ingredient_name_changed) # connect new signal
 
-        self.cb_unit.selection_validated.connect(lambda: clear_error_styles(self.cb_unit))
-        self.cb_ingredient_category.selection_validated.connect(lambda: clear_error_styles(self.cb_ingredient_category))
-
     def _ingredient_name_changed(self, text: str):
         """
         Handles changes in the ingredient name field (SmartLineEdit).
