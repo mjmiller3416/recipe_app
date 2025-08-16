@@ -43,6 +43,9 @@ class DropdownMenu(QWidget):
     ):
         super().__init__(parent)
 
+        # Set object name for styling
+        self.setObjectName("DropdownMenu")
+
         # register for component-specific styling
         Theme.register_widget(self, Qss.DROPDOWN_MENU)
 
@@ -63,9 +66,12 @@ class DropdownMenu(QWidget):
         popup.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         popup.setObjectName("DropdownMenuPopup")
 
-        # Critical fix: Isolate popup from parent graphics effects
-        popup.setParent(None)
+        # Keep popup connected to parent for styling, but set as top-level for proper display
         popup.setWindowFlags(Qt.Popup | Qt.FramelessWindowHint)
+        
+        # Apply theme styling to the popup
+        popup.setAttribute(Qt.WA_StyledBackground, True)
+        Theme.register_widget(popup, Qss.DROPDOWN_MENU)
 
         # multi-select support
         self.allow_multi_select = allow_multi_select

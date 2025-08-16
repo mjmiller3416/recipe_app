@@ -43,8 +43,10 @@ class NavigationService:
 
     def switch_to(self, page_name: str):
         """Switch stacked widget to the given page."""
+        DebugLogger.log(f"NavigationService.switch_to called with: {page_name}", "info")
         # this is the core logic from app.py's _switch_page
         if page_name not in self.page_instances:
+            DebugLogger.log(f"Page {page_name} not found in page_instances: {list(self.page_instances.keys())}", "error")
             return
 
         next_widget = self.page_instances[page_name]

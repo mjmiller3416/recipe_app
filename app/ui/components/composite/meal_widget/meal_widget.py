@@ -76,7 +76,12 @@ class MealWidget(QWidget):
         for key, slot in self.meal_slots.items():
             slot.recipe_selected.connect(lambda rid, k=key: self.update_recipe_selection(k, rid))
             # when an empty slot's add button is clicked, request recipe selection
-            slot.add_meal_clicked.connect(lambda k=key: self.recipe_selection_requested.emit(k))
+            def make_add_meal_callback(slot_key):
+                def callback():
+                    DebugLogger.log(f"Add meal clicked for slot: {slot_key}", "info")
+                    self.recipe_selection_requested.emit(slot_key)
+                return callback
+            slot.add_meal_clicked.connect(make_add_meal_callback(key))
 
     def update_recipe_selection(self, key: str, recipe_id: int) -> None:
         """

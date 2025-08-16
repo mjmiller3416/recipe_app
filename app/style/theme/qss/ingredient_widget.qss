@@ -15,7 +15,6 @@
 }
 
 #IngredientWidget QLineEdit {border: 1px solid {outline_variant};}
-#IngredientWidget ComboBox {border: 1px solid {outline_variant};}
 
 #IngredientWidget #DeleteButton {background-color: transparent; border: none;}
 #IngredientWidget #DeleteButton:hover {border: none;}

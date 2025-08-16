@@ -108,6 +108,7 @@ class Sidebar(QWidget):
         # button attributes
         button.setObjectName("NavButton")
         button.setCheckable(is_checkable)
+        button.setContentsMargins(20,0,0,0)
         button.setFixedHeight(85)
         button.setIconSpacing(30)
         button.addLayoutStretch()

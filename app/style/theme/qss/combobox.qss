@@ -24,29 +24,7 @@
 
 #AddRecipes ComboBox {background-color: {surface}; border-radius: 6px;}
 
-#ComboBox #CBButton:hover {
-    background-color: {primary};
-}
 
-#CompleterPopup {
-    background-color: {surface_container};
-    color: {on_surface};
-    border: 1px solid {outline};
-    outline: none;
-    font: {default};
-    padding: 2px;
-}
 
-#CompleterPopup:item {
-    border: none;
-    outline: none;
-    padding: 6px 8px;
-}
 
-#CompleterPopup:item:selected {
-    background-color: {secondary}; /* Dynamic */
-    border: none;
-    border-radius: 5px;
-    outline: none;
-}
 

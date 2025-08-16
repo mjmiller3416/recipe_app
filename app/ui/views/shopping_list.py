@@ -15,6 +15,7 @@ from PySide6.QtWidgets import (QCheckBox, QComboBox, QFrame, QHBoxLayout,
 
 from app.config import MEASUREMENT_UNITS
 from app.core.services.shopping_service import ShoppingService
+from app.style import Theme, Qss
 from app.ui.components.composite.shopping_item import ShoppingItemWidget
 from dev_tools import DebugLogger
 
@@ -26,6 +27,8 @@ class ShoppingList(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("ShoppingList")
+        # register for component-specific styling
+        Theme.register_widget(self, Qss.SHOPPING_LIST)
 
         DebugLogger.log("Initializing ShoppingList page", "info")
 

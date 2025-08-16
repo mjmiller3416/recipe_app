@@ -9,7 +9,7 @@
 }
 
 #ShoppingList QWidget {
-    background-color: {BACKGROUND_RAISED};
+    background-color: {surface_container};
 }
 #ShoppingList QLabel {
     font-size: 26px;

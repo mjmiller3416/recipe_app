@@ -51,9 +51,10 @@ class IngredientContainer(Card):
         # Add button to card footer with left alignment and ADD icon
         self.addButton("Add Ingredient", icon=Name.ADD, alignment=Qt.AlignLeft)
 
-        # Connect the button's click event to add ingredient function
-        if self._footer_button:
-            self._footer_button.clicked.connect(self._add_ingredient_widget)
+        # Customize button icon size and connect click event
+        if self.button:
+            self.button.setIconSize(24, 24)  # Set custom icon size
+            self.button.clicked.connect(self._add_ingredient_widget)
 
     def _add_ingredient_widget(self):
         """Add a new ingredient widget to the container."""

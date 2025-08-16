@@ -96,9 +96,12 @@ class MealPlanner(QWidget):
         if meal_id:
             widget.load_meal(meal_id)
         # hook into slot add events to open selection page
-        widget.recipe_selection_requested.connect(
-            lambda key, w=widget: self._start_recipe_selection(w, key)
-        )
+        def make_selection_callback(meal_widget):
+            def callback(key):
+                DebugLogger.log(f"Recipe selection requested for key: {key}", "info")
+                self._start_recipe_selection(meal_widget, key)
+            return callback
+        widget.recipe_selection_requested.connect(make_selection_callback(widget))
 
         insert_index = self.meal_tabs.count() - 1
         index = self.meal_tabs.insertTab(insert_index, widget, "Custom Meal")
@@ -112,14 +115,17 @@ class MealPlanner(QWidget):
 
     def _start_recipe_selection(self, widget, slot_key: str):
         """Begin in-page recipe selection for the given meal slot."""
+        DebugLogger.log(f"Starting recipe selection for slot: {slot_key}", "info")
         # Store context for callback
         self._selection_context = (widget, slot_key)
         # Reset selection browser
         try:
+            DebugLogger.log("Loading recipes in selection page browser", "info")
             self.selection_page.browser.load_recipes()
-        except Exception:
-            pass
+        except Exception as e:
+            DebugLogger.log(f"Error loading recipes: {e}", "error")
         # Show selection page
+        DebugLogger.log("Switching to selection page (index 1)", "info")
         self.stack.setCurrentIndex(1)
 
     def _finish_recipe_selection(self, recipe_id: int):

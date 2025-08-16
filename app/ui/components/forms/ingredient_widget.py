@@ -68,21 +68,23 @@ class IngredientWidget(QWidget):
         self.drag_handle.setStateHover("tertiary")
         self.main_layout.addWidget(self.drag_handle)
 
-        # Quantity field - compact
-        self.le_quantity = QLineEdit(self)
-        self.le_quantity.setPlaceholderText("Qty")
-        self.le_quantity.setObjectName("QuantityField")
-        self.le_quantity.setFixedHeight(40)
-        self.main_layout.addWidget(self.le_quantity)
-
-        # Unit field - compact
+        # Unit field - compact (create first to get reference height)
         self.cb_unit = ComboBox(
             list_items=MEASUREMENT_UNITS,
             placeholder="Unit"
         )
         self.cb_unit.setObjectName("ComboBox UnitField")
-        self.cb_unit.setFixedHeight(40)
         self.main_layout.addWidget(self.cb_unit)
+
+        # Get the ComboBox height to use for other fields
+        combobox_height = self.cb_unit.sizeHint().height()
+
+        # Quantity field - compact
+        self.le_quantity = QLineEdit(self)
+        self.le_quantity.setPlaceholderText("Qty")
+        self.le_quantity.setObjectName("QuantityField")
+        self.le_quantity.setFixedHeight(combobox_height)
+        self.main_layout.addWidget(self.le_quantity)
 
         # Ingredient name field - expandable
         all_ingredient_names = self.ingredient_service.list_distinct_names()
@@ -91,7 +93,7 @@ class IngredientWidget(QWidget):
             placeholder="Ingredient Name"
         )
         self.sle_ingredient_name.setObjectName("NameField")
-        self.sle_ingredient_name.setFixedHeight(40)
+        self.sle_ingredient_name.setFixedHeight(combobox_height)
         self.main_layout.addWidget(self.sle_ingredient_name)
 
         # Category field - medium width
@@ -100,7 +102,6 @@ class IngredientWidget(QWidget):
             placeholder="Category"
         )
         self.cb_ingredient_category.setObjectName("ComboBox CategoryField")
-        self.cb_ingredient_category.setFixedHeight(40)
         self.main_layout.addWidget(self.cb_ingredient_category)
 
         # Delete button - replaces subtract/add buttons
@@ -113,8 +114,8 @@ class IngredientWidget(QWidget):
 
         # Set stretch factors for proper proportions
         self.main_layout.setStretchFactor(self.drag_handle, 0)
-        self.main_layout.setStretchFactor(self.le_quantity, 0)  # Fixed width
         self.main_layout.setStretchFactor(self.cb_unit, 0)  # Fixed width
+        self.main_layout.setStretchFactor(self.le_quantity, 0)  # Fixed width
         self.main_layout.setStretchFactor(self.sle_ingredient_name, 3)  # Expandable
         self.main_layout.setStretchFactor(self.cb_ingredient_category, 0)  # Fixed width
         self.main_layout.setStretchFactor(self.btn_delete, 0)

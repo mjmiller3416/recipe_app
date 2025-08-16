@@ -121,9 +121,18 @@ class RecipeCard(QFrame):
         Connect the '+ Add Meal' button inside the empty page
         to emit `empty_clicked`.
         """
-        btn: QPushButton | None = self._empty_state.findChild(QPushButton, "AddMealButton")
+        from PySide6.QtWidgets import QToolButton
+        DebugLogger.log("Attempting to wire empty button", "info")
+        btn = self._empty_state.findChild(QToolButton, "AddMealButton")
         if btn:
+            DebugLogger.log("Found AddMealButton (ToolButton), connecting signal", "info")
             btn.clicked.connect(self._handle_add_meal_click)
+        else:
+            DebugLogger.log("AddMealButton (ToolButton) not found in empty state", "error")
+            # Try to find any QToolButton as fallback
+            any_btn = self._empty_state.findChild(QToolButton)
+            if any_btn:
+                DebugLogger.log(f"Found QToolButton with objectName: {any_btn.objectName()}", "info")
 
     def _swap_recipe_state(self, new_frame: QFrame) -> None:
         """Replace the existing recipe page (index 1) with a fresh one."""
@@ -151,6 +160,7 @@ class RecipeCard(QFrame):
         """
         Handle the click event for the 'Add Meal' button in the empty state by emitting a signal.
         """
+        DebugLogger.log("Add Meal button clicked in RecipeCard", "info")
         self.add_meal_clicked.emit()
 
     def _on_recipe_selection_finished(self, result: int) -> None:
