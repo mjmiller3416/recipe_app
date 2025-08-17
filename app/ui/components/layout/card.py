@@ -12,10 +12,18 @@ from PySide6.QtWidgets import (
 )
 from typing import Optional
 
+from app.config import CARD
 from app.style import Theme, Qss
 from app.style.icon import AppIcon, Name
 from app.style.effects import Effects, Shadow
-from app.ui.components.widgets.button import Button
+from app.ui.components.widgets.button import Button, ToolButton
+from app.style.animation.animator import Animator
+from dev_tools.debug_logger import DebugLogger
+
+# ── Constants ───────────────────────────────────────────────────────────────────
+START = CARD["SETTINGS"]["EXPANDED_HEIGHT"]
+END = CARD["SETTINGS"]["COLLAPSED_HEIGHT"]
+DURATION = CARD["SETTINGS"]["DURATION"]
 
 
 class Card(QFrame):
@@ -64,6 +72,11 @@ class Card(QFrame):
         # Footer components
         self._footer_button: Button | None = None
         self._button_alignment = Qt.AlignCenter
+
+        # Collapsible functionality (sidebar pattern)
+        self._collapsible_enabled = False
+        self._is_expanded = True  # Start expanded like sidebar
+        self._collapse_button: ToolButton | None = None
 
         self._add_layout(layout, 20)
 
@@ -214,6 +227,15 @@ class Card(QFrame):
         if self._current_layout:
             self._current_layout.insertWidget(0, self._header_container)
 
+    def _create_collapse_button(self):
+        """Create the collapse/expand toggle button."""
+        from app.style.icon.config import Name, Type
+
+        self._collapse_button = ToolButton(Type.DEFAULT, Name.ANGLE_DOWN)
+        self._collapse_button.setObjectName("CollapseButton")
+        self._collapse_button.clicked.connect(self.toggle)
+        self._collapse_button.setFixedSize(24, 24)
+
     def setHeader(self, text: str, icon: Optional[object] = None):
         """Set or update the header with optional icon.
 
@@ -322,3 +344,50 @@ class Card(QFrame):
     def button(self) -> Button | None:
         """Direct access to the footer button widget."""
         return self._footer_button
+
+    # ── Collapsible Functionality ─────────────────────────────────────────────────────────────
+    @property
+    def is_expanded(self) -> bool:
+        """Check if the card is expanded (like sidebar)."""
+        return self._is_expanded
+
+    def toggle(self):
+        DebugLogger.log(
+            f"Toggling Card widget: currently {'expanded' if self._is_expanded else 'collapsed'}"
+        )
+
+        start = START if self._is_expanded else END  
+        end = END if self._is_expanded else START
+        duration = DURATION
+
+        Animator.animate_height(self, start, end, duration)
+
+        self._is_expanded = not self._is_expanded
+        self._update_collapse_button_icon()
+
+
+    def _update_collapse_button_icon(self):
+        """Update the collapse button icon based on expanded state."""
+        if not self._collapse_button:
+            return
+
+        from app.style.icon.config import Name
+        from app.ui.components.widgets.button import BaseButton
+
+        icon_name = Name.ANGLE_DOWN if self._is_expanded else Name.ANGLE_RIGHT
+        BaseButton.setIcon(self._collapse_button, icon_name)
+
+    def enableCollapsible(self, enabled: bool = True):
+        """Enable or disable collapsible functionality.
+
+        Args:
+            enabled: Whether to enable collapsible functionality.
+        """
+        DebugLogger.log(f"enableCollapsible called with enabled={enabled}", "info")
+        self._collapsible_enabled = enabled
+
+        self._ensure_header_container()
+        self._create_collapse_button()
+        self._header_row_layout.addStretch()  # Push button to the right
+        self._header_row_layout.addWidget(self._collapse_button)
+

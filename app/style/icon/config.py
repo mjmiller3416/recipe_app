@@ -24,6 +24,7 @@ class Path(Enum):
     DIET_PREF       = "diet_pref"
     DIRECTIONS      = "directions"
     ANGLE_DOWN      = "angle_down"
+    ANGLE_RIGHT     = "angle_right"
     EDIT            = "edit"
     ERROR           = "error"
     EXIT            = "exit"
@@ -139,6 +140,7 @@ class Name(Enum):
     CROSS           = IconSpec(Path.CROSS, Size.SMALL)
     DIET_PREF       = IconSpec(Path.DIET_PREF, Size.SMALL)
     ANGLE_DOWN      = IconSpec(Path.ANGLE_DOWN, Size.SMALL)
+    ANGLE_RIGHT     = IconSpec(Path.ANGLE_RIGHT, Size.SMALL)
     EDIT            = IconSpec(Path.EDIT, Size.SMALL)
     GRIP_DOTS       = IconSpec(Path.GRIP_DOTS, Size.SMALL)
     FAV             = IconSpec(Path.FAV, Size.SMALL)

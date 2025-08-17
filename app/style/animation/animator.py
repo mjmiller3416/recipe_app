@@ -6,7 +6,8 @@ Supports width animations, fade effects, cross-fading between stacked widgets, a
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QEasingCurve, QPoint, QPropertyAnimation, QTimer
-from PySide6.QtWidgets import QGraphicsOpacityEffect
+from PySide6.QtWidgets import QGraphicsOpacityEffect, QWidget
+
 
 
 # ── Animator ─────────────────────────────────────────────────────────────────────────────────
@@ -15,10 +16,12 @@ class Animator:
 
     @staticmethod
     def animate_width(
-        widget,
+        widget: QWidget,
         start: int,
         end: int,
-        duration: int):
+        duration: int
+    ) -> QPropertyAnimation:
+
         """Animate a widget's maximumWidth from start to end."""
         animation = QPropertyAnimation(widget, b"maximumWidth")
         animation.setDuration(duration)
@@ -35,6 +38,31 @@ class Animator:
 
         animation.finished.connect(cleanup)
         return animation
+
+    @staticmethod
+    def animate_height(
+        widget: QWidget,
+        start: int,
+        end: int,
+        duration: int
+    ) -> QPropertyAnimation:
+        """Animate a widget's maximumHeight from start to end."""
+        animation = QPropertyAnimation(widget, b"maximumHeight")
+        animation.setDuration(duration)
+        animation.setStartValue(start)
+        animation.setEndValue(end)
+        animation.setEasingCurve(QEasingCurve.OutExpo)
+        animation.start()
+
+        Animator.active_animations.append(animation)
+
+        def cleanup():
+            if animation in Animator.active_animations:
+                Animator.active_animations.remove(animation)
+
+        animation.finished.connect(cleanup)
+        return animation
+
 
     @staticmethod
     def animate_pos(
@@ -282,3 +310,4 @@ class Animator:
         animation.finished.connect(on_complete)
         animation.start()
         Animator.active_animations.append(animation)
+
