@@ -657,14 +657,24 @@ class StateIcon(QWidget):
             self._render_state(self._current_state)
             pixmap = self._state_pixmaps.get(self._current_state)
 
-        if pixmap:
-            self._label.setPixmap(pixmap)
-            DebugLogger.log(f"StateIcon _update_display - pixmap set successfully for {self._current_state.name}", "debug")
+        if pixmap and self._label:
+            try:
+                self._label.setPixmap(pixmap)
+                DebugLogger.log(f"StateIcon _update_display - pixmap set successfully for {self._current_state.name}", "debug")
+            except RuntimeError as e:
+                DebugLogger.log(f"StateIcon _update_display - widget deleted during setPixmap: {e}", "warning")
+        elif not self._label:
+            DebugLogger.log(f"StateIcon _update_display - label widget is None (widget may be deleted)", "warning")
         else:
             DebugLogger.log(f"StateIcon _update_display - NO PIXMAP FOUND for {self._current_state.name}", "debug")
 
     def _on_theme_refresh(self):
         """Called when theme changes - clear cache and re-render states."""
+        # Skip refresh if widget is scheduled for deletion
+        if not self._label:
+            DebugLogger.log("StateIcon _on_theme_refresh - skipping refresh on deleted widget", "debug")
+            return
+            
         # clear old pixmaps to free memory
         self._state_pixmaps.clear()
 
@@ -697,6 +707,21 @@ class StateIcon(QWidget):
             'efficiency_ratio': len(self._accessed_states) / len(State),
             'cached_pixmaps': len(self._state_pixmaps)
         }
+
+    def cleanup(self):
+        """Cleanup resources before widget deletion."""
+        try:
+            # Clear the refresh callback to prevent calls on deleted widget
+            if hasattr(self, '_themed_icon') and self._themed_icon:
+                self._themed_icon.set_refresh_callback(None)
+                DebugLogger.log("StateIcon cleanup - theme callback cleared", "debug")
+        except (AttributeError, RuntimeError, TypeError):
+            # Ignore cleanup errors during destruction
+            pass
+
+    def __del__(self):
+        """Cleanup when StateIcon is destroyed."""
+        self.cleanup()
 
     def objectName(self) -> str:
         """Return object name for IconLoader protocol."""

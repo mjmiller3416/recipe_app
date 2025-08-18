@@ -370,6 +370,8 @@ class BaseButton:
             layout = self.layout()
             if layout:
                 layout.removeWidget(self.state_icon)
+                # Clean up resources before scheduling deletion
+                self.state_icon.cleanup()
                 self.state_icon.deleteLater()
 
         # create new icon - subclass handles layout specifics
