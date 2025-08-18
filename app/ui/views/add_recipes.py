@@ -16,7 +16,7 @@ from app.core.services.recipe_service import RecipeService
 from app.style import Theme, Qss
 from app.style.icon.config import Type, Name
 from app.ui.components.dialogs import MessageDialog
-from app.ui.components.containers import IngredientContainer
+from app.ui.components.containers import IngredientsCard
 from app.ui.components.forms import IngredientWidget, RecipeForm
 from app.ui.components.images.upload_recipe_image import UploadRecipeImage
 from app.ui.components.layout.card import Card
@@ -188,7 +188,7 @@ class AddRecipes(QWidget):
 
 
         #region ── Ingredients Container ──
-        self.ingredient_container = IngredientContainer()
+        self.ingredient_container = IngredientsCard()
         self.ingredient_container.expandWidth(True)
         self.scroll_layout.addWidget(self.ingredient_container)
         #endregion

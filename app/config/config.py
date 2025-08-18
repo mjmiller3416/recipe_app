@@ -24,7 +24,7 @@ APPLICATION_WINDOW = {
 SIDEBAR = {
     "SETTINGS": {
         "EXPANDED_WIDTH": 360,
-        "COLLAPSED_WIDTH": 20,
+        "COLLAPSED_WIDTH": 40,
         "DURATION": 800,  # animation duration in milliseconds
     }
 }
@@ -32,7 +32,7 @@ SIDEBAR = {
 CARD = {
     "SETTINGS": {
         "EXPANDED_HEIGHT": 480,
-        "COLLAPSED_HEIGHT": 60,
+        "COLLAPSED_HEIGHT": 80,
         "DURATION": 800,
     }
 }

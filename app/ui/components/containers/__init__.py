@@ -3,6 +3,6 @@
 Container components for organizing related widgets.
 """
 
-from .ingredient_container import IngredientContainer
+from .ingredient_container import IngredientsCard
 
-__all__ = ["IngredientContainer"]
+__all__ = ["IngredientsCard"]

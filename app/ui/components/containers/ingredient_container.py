@@ -10,12 +10,12 @@ from PySide6.QtWidgets import QVBoxLayout, QWidget, QPushButton
 
 from app.style.icon import Name, Type
 from app.ui.components.forms.ingredient_widget import IngredientWidget
-from app.ui.components.layout.card import Card
+from app.ui.components.layout.card import ActionCard
 from app.ui.components.widgets import ToolButton
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
-class IngredientContainer(Card):
+class IngredientsCard(ActionCard):
     """
     Container for managing ingredient widgets within a Card.
     Provides add/remove functionality and data collection.
@@ -36,15 +36,6 @@ class IngredientContainer(Card):
     def _setup_ui(self):
         """Set up the container UI with initial ingredient and add button."""
 
-        # Create container widget for ingredients
-        self.ingredients_widget = QWidget()
-        self.ingredients_layout = QVBoxLayout(self.ingredients_widget)
-        self.ingredients_layout.setContentsMargins(0, 0, 0, 0)
-        self.ingredients_layout.setSpacing(8)
-
-        # Add the ingredients container to the card
-        self.addWidget(self.ingredients_widget)
-
         # Add initial ingredient widget
         self._add_ingredient_widget()
 
@@ -62,7 +53,7 @@ class IngredientContainer(Card):
         ingredient_widget.remove_ingredient_requested.connect(self._remove_ingredient_widget)
 
         self.ingredient_widgets.append(ingredient_widget)
-        self.ingredients_layout.addWidget(ingredient_widget)
+        self.addWidget(ingredient_widget)
 
         self.ingredients_changed.emit()
 
@@ -73,7 +64,7 @@ class IngredientContainer(Card):
 
         if widget in self.ingredient_widgets:
             self.ingredient_widgets.remove(widget)
-            self.ingredients_layout.removeWidget(widget)
+            self.removeWidget(widget)
             widget.deleteLater()
 
         self.ingredients_changed.emit()
@@ -94,7 +85,7 @@ class IngredientContainer(Card):
         """Clear all ingredient widgets and add one empty one."""
         # Remove all existing widgets
         for widget in self.ingredient_widgets:
-            self.ingredients_layout.removeWidget(widget)
+            self.removeWidget(widget)
             widget.deleteLater()
 
         self.ingredient_widgets.clear()

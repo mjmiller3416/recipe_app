@@ -294,9 +294,8 @@ class FullRecipe(QWidget):
         info_container.setObjectName("InfoContainer")
         info_container.setProperty("tag", "Container")
         info_container.expandWidth(True)
-        info_layout = info_container.getLayout()
-        info_layout.setContentsMargins(20, 15, 20, 15)
-        info_layout.setSpacing(40)
+        info_container.setContentsMargins(20, 10, 20, 10)
+        info_container.setSpacing(40)
 
         # Get recipe data with fallbacks
         total_time = str(getattr(self.recipe, "total_time", "")) or "2 hours 30 mins"
@@ -305,10 +304,10 @@ class FullRecipe(QWidget):
         diet_pref = getattr(self.recipe, "diet_pref", "") or "High-Protein"
 
         # Add info cards
-        info_layout.addWidget(InfoCard(Icon.TOTAL_TIME, "Total Time", total_time))
-        info_layout.addWidget(InfoCard(Icon.SERVINGS, "Servings", servings))
-        info_layout.addWidget(InfoCard(Icon.CATEGORY, "Category", category))
-        info_layout.addWidget(InfoCard(Icon.DIET_PREF, "Dietary", diet_pref))
+        info_container.addWidget(InfoCard(Icon.TOTAL_TIME, "Total Time", total_time))
+        info_container.addWidget(InfoCard(Icon.SERVINGS, "Servings", servings))
+        info_container.addWidget(InfoCard(Icon.CATEGORY, "Category", category))
+        info_container.addWidget(InfoCard(Icon.DIET_PREF, "Dietary", diet_pref))
 
         page.addWidget(info_container)
 
