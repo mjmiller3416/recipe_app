@@ -75,11 +75,16 @@ class CollapsibleCard(Card):
     def _store_content_height(self):
         """Store the current content height before animation."""
         if self._content_container and self._is_expanded:
-            # Get the natural height of the content
-            self._content_height = self._content_container.sizeHint().height()
+            # Force layout update to get accurate measurements
+            self._content_container.updateGeometry()
+            self._content_container.adjustSize()
+            
+            # Use the actual height rather than sizeHint for more accuracy
+            self._content_height = self._content_container.height()
+            
+            # Fallback to sizeHint if height is still invalid
             if self._content_height <= 0:
-                # Fallback to current height if sizeHint is invalid
-                self._content_height = self._content_container.height()
+                self._content_height = self._content_container.sizeHint().height()
 
         DebugLogger.log(f"Stored content height: {self._content_height}", "debug")
 
@@ -168,25 +173,58 @@ class CollapsibleCard(Card):
         if not self._is_expanded or self._content_height <= 0:
             self._store_content_height()
 
+        # Get header height to determine how much to collapse
+        if self._header_container:
+            self._header_container.updateGeometry()
+            header_height = self._header_container.sizeHint().height()
+            if header_height <= 0:
+                header_height = self._header_container.height()
+        else:
+            header_height = 0
+        
         # Determine animation parameters
         if self._is_expanded:
-            # Collapsing: animate from current height to 0
-            start_height = self._content_container.height()
-            end_height = 0
+            # Collapsing: animate from current height to just header height
+            start_height = self.height()
+            end_height = header_height
         else:
-            # Expanding: animate from 0 to stored height
-            start_height = 0
-            end_height = self._content_height
+            # Expanding: animate from header height to full height
+            start_height = header_height
+            end_height = header_height + self._content_height
 
-        DebugLogger.log(f"Animating height from {start_height} to {end_height}")
+        DebugLogger.log(f"Animating card height from {start_height} to {end_height}")
 
-        # Create and start the animation
+        # Store current sizes to prevent layout recalculation during animation
+        if self._header_container:
+            header_current_height = self._header_container.height()
+            self._header_container.setFixedHeight(header_current_height)
+        
+        if self._content_container:
+            content_current_height = self._content_container.height()
+            self._content_container.setFixedHeight(content_current_height)
+
+        # Create and start the animation on the card itself
         animation = Animator.animate_height(
-            widget=self._content_container,
+            widget=self,
             start=start_height,
             end=end_height,
             duration=self._animation_duration
         )
+
+        # Only restore flexible sizing when expanding, not when collapsing
+        def on_animation_finished():
+            if self._is_expanded:
+                # Only restore flexible sizing when expanded
+                if self._header_container:
+                    self._header_container.setMinimumHeight(0)
+                    self._header_container.setMaximumHeight(16777215)
+                if self._content_container:
+                    self._content_container.setMinimumHeight(0)
+                    self._content_container.setMaximumHeight(16777215)
+                self.setMaximumHeight(16777215)
+            # When collapsed, keep everything fixed - don't restore flexible sizing
+
+        animation.finished.connect(on_animation_finished)
 
         # Update state and button icon
         self._is_expanded = not self._is_expanded
