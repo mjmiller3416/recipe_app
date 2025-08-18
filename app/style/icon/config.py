@@ -16,8 +16,10 @@ class Path(Enum):
     """Enum for application icons."""
     ADD             = "add"
     ADD_RECIPES     = "add_recipes"
+    APPLE           = "apple"
     BACK            = "back"
     BATTERY         = "battery"
+    CABINET         = "cabinet"
     CATEGORY        = "category"
     CROSS           = "cross"
     DASHBOARD       = "dashboard"
@@ -26,11 +28,14 @@ class Path(Enum):
     ANGLE_DOWN      = "angle_down"
     ANGLE_RIGHT     = "angle_right"
     EDIT            = "edit"
+    EGG             = "egg"
     ERROR           = "error"
     EXIT            = "exit"
     GRIP_DOTS       = "grip_dots"
     FAV             = "fav"
     FAV_FILLED      = "fav_filled"
+    FISH            = "fish"
+    FOLDER         = "folder"
     INFO            = "info"
     INGREDIENTS     = "ingredients"
     LIGHTBULB       = "lightbulb"
@@ -134,17 +139,22 @@ class Name(Enum):
 
     # ── Small Icons ─────────────────────────────
     ADD             = IconSpec(Path.ADD, Size.SMALL)
+    APPLE           = IconSpec(Path.APPLE, Size.SMALL)
     BACK            = IconSpec(Path.BACK, Size.SMALL)
     BATTERY         = IconSpec(Path.BATTERY, Size.SMALL)
+    CABINET         = IconSpec(Path.CABINET, Size.SMALL)
     CATEGORY        = IconSpec(Path.CATEGORY, Size.SMALL)
     CROSS           = IconSpec(Path.CROSS, Size.SMALL)
     DIET_PREF       = IconSpec(Path.DIET_PREF, Size.SMALL)
+    EGG             = IconSpec(Path.EGG, Size.SMALL)
     ANGLE_DOWN      = IconSpec(Path.ANGLE_DOWN, Size.SMALL)
     ANGLE_RIGHT     = IconSpec(Path.ANGLE_RIGHT, Size.SMALL)
     EDIT            = IconSpec(Path.EDIT, Size.SMALL)
     GRIP_DOTS       = IconSpec(Path.GRIP_DOTS, Size.SMALL)
     FAV             = IconSpec(Path.FAV, Size.SMALL)
     FAV_FILLED      = IconSpec(Path.FAV_FILLED, Size.SMALL)
+    FISH            = IconSpec(Path.FISH, Size.SMALL)
+    FOLDER         = IconSpec(Path.FOLDER, Size.SMALL)
     LIGHTBULB       = IconSpec(Path.LIGHTBULB, Size.SMALL)
     MAXIMIZE        = IconSpec(Path.MAXIMIZE, Size.SMALL)
     MEAL_TYPE       = IconSpec(Path.MEAL_TYPE, Size.SMALL)
