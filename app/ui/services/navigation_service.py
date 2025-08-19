@@ -67,7 +67,7 @@ class NavigationService:
                     meal_ids = planner_svc.load_saved_meal_ids()
                     shopping_svc = ShoppingService(session)
                     recipe_ids = shopping_svc.get_recipe_ids_from_meals(meal_ids)
-                    next_widget.load_shopping_list(recipe_ids)
+                    next_widget.loadShoppingList(recipe_ids)
             except Exception as e:
                 DebugLogger.log(f"Error refreshing shopping list: {e}", "error")
 

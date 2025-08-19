@@ -53,6 +53,7 @@ class Qss(Enum):
     AVATAR_LOADER     = AppPaths.QSS_DIR / "avatar_loader.qss"
     BUTTON            = AppPaths.QSS_DIR / "button.qss"
     CARD              = AppPaths.QSS_DIR / "card.qss"
+    COLLAPSIBLE_CARD  = AppPaths.QSS_DIR / "collapsible_card.qss"
     COMBOBOX          = AppPaths.QSS_DIR / "combobox.qss"
     DIALOG_WINDOW     = AppPaths.QSS_DIR / "dialog_window.qss"
     DROPDOWN_MENU     = AppPaths.QSS_DIR / "dropdown_menu.qss"

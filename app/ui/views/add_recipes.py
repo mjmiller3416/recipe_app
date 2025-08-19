@@ -27,7 +27,7 @@ from app.ui.helpers.card_utils import add_two_column
 from dev_tools import DebugLogger
 
 
-# ── Helper Classes ──────────────────────────────────────────────────────────────
+# ── Direction & Notes Card ───────────────────────────────────────────────────────────────────
 class DirectionsNotesCard(Card):
     """Custom card with toggle between Directions and Notes content."""
 
@@ -97,7 +97,7 @@ class DirectionsNotesCard(Card):
             btn.style().polish(btn)
 
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── Add Recipes View ─────────────────────────────────────────────────────────────────────────
 class AddRecipes(QWidget):
     """AddRecipes widget for creating new recipes with ingredients and directions."""
 

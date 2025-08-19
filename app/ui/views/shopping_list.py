@@ -1,26 +1,302 @@
-"""app/ui/pages/shopping_list/shopping_list.py
+"""app/ui/views/shopping_list/shopping_list.py
 
 This module defines the ShoppingList screen, which allows users to view and manage their
 shopping list. It includes functionality to add manual items, categorize ingredients, and
 display them in a scrollable list
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from collections import defaultdict
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QCheckBox, QComboBox, QFrame, QHBoxLayout,
-                               QLabel, QLineEdit, QPushButton, QScrollArea,
-                               QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
+from PySide6.QtCore import Qt, Signal, QPropertyAnimation, QEasingCurve
+from PySide6.QtWidgets import (
+    QCheckBox, QComboBox, QFrame, QHBoxLayout,
+    QLabel, QLineEdit, QPushButton, QScrollArea,
+    QSizePolicy, QSpacerItem, QVBoxLayout, QWidget,
+    QGridLayout
+)
 
-from app.config import MEASUREMENT_UNITS
+from app.config import MEASUREMENT_UNITS, INGREDIENT_CATEGORIES
 from app.core.services.shopping_service import ShoppingService
-from app.style import Theme, Qss
-from app.ui.components.composite.shopping_item import ShoppingItemWidget
+from app.style import Theme, Qss, Icon, Type
+from app.ui.components.layout.card import ActionCard, BaseCard
+from app.ui.components.widgets import ComboBox, BaseButton, ToolButton
+from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
 from dev_tools import DebugLogger
 
+# ── Constants ────────────────────────────────────────────────────────────────────────────────
+FIXED_HEIGHT = 60  # fixed height for input fields in the recipe form
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+
+# ── Add Item Form ────────────────────────────────────────────────────────────────────────────
+class AddItemForm(QWidget):
+    """Form for manually adding new items to the shopping list."""
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.setObjectName("AddShoppingItem")
+
+        # Create Layout
+        self._layout = QGridLayout(self)
+        self._layout.setContentsMargins(10, 10, 10, 10)
+        self._layout.setSpacing(10)
+
+        # Create labels and inputs for shopping item details - labels above inputs
+        # Item Name
+        self.lbl_item_name = QLabel("Item Name")
+        self.le_item_name = QLineEdit()
+        self.le_item_name.setPlaceholderText("e.g. Olive Oil")
+        self.le_item_name.setObjectName("ItemNameLineEdit")
+
+        # Qty.
+        self.lbl_item_qty = QLabel("Qty.")
+        self.le_item_qty = QLineEdit()
+        self.le_item_qty.setPlaceholderText("e.g. 2")
+        self.le_item_qty.setObjectName("QtyLineEdit")
+
+        # Unit
+        self.lbl_item_unit = QLabel("Unit")
+        self.cb_item_unit = ComboBox(list_items=MEASUREMENT_UNITS, placeholder="e.g. bottle")
+        self.cb_item_unit.setObjectName("ComboBox")
+        self.cb_item_unit.setProperty("context", "shopping_item")
+
+        # Category
+        self.lbl_item_category = QLabel("Category")
+        self.cb_item_category = ComboBox(list_items=INGREDIENT_CATEGORIES, placeholder="Select category")
+        self.cb_item_category.setObjectName("ComboBox")
+        self.cb_item_category.setProperty("context", "shopping_item")
+
+        # add labels and widgets to the form layout - two column layout with labels above inputs
+        # Row 0: Item Name (full width)
+        self._layout.addWidget(self.lbl_item_name, 0, 0, 1, 2)
+        self._layout.addWidget(self.le_item_name, 1, 0, 1, 2)
+
+        # Row 2-3: Item Quantity (left) and Item Unit (right)
+        self._layout.addWidget(self.lbl_item_qty, 2, 0, 1, 1)
+        self._layout.addWidget(self.lbl_item_unit, 2, 1, 1, 1)
+        self._layout.addWidget(self.le_item_qty, 3, 0, 1, 1)
+        self._layout.addWidget(self.cb_item_unit, 3, 1, 1, 1)
+
+        # Row 4-5: Item Category (left) and Item Unit (right)
+        self._layout.addWidget(self.lbl_item_category, 4, 0, 1, 2)
+        self._layout.addWidget(self.cb_item_category, 4, 1, 1, 2)
+
+        set_fixed_height_for_layout_widgets(
+            layout = self._layout,
+            height = FIXED_HEIGHT,
+            skip   = (QLabel,)
+        )
+
+
+# ── Collapsible Category ─────────────────────────────────────────────────────────────────────
+class CollapsibleCategory(BaseCard):
+    """Demo version of collapsible category widget."""
+
+    # Signals
+    toggled = Signal(bool)
+    itemChecked = Signal(str, bool)
+
+    def __init__(self, category_name, parent=None, start_expanded=False):
+        super().__init__(parent)
+
+        # Set initial values
+        self._category_name = category_name
+        self._is_expanded = start_expanded
+        self._items = []
+
+        self._setup_header()
+        self._setup_content_area()
+        self._setup_animation()
+        self._update_expand_state(animate=False)
+
+    def _setup_header(self):
+        """Create the category header."""
+        self._header_widget = QWidget()
+
+        header_layout = QHBoxLayout(self._header_widget)
+        header_layout.setContentsMargins(16, 12, 16, 12)
+        header_layout.setSpacing(8)
+
+        # Category label
+        self._category_label = QLabel(self._category_name)
+
+        # Expand button
+        self._expand_button = ToolButton(Type.PRIMARY, Icon.CARET_DOWN)
+        self._expand_button.setObjectName("ExpandButton")
+        self._expand_button.clicked.connect(self.toggle)
+
+        header_layout.addWidget(self._category_label)
+        header_layout.addStretch()
+        header_layout.addWidget(self._expand_button)
+
+        # Make header clickable
+        self._header_widget.mousePressEvent = lambda e: self.toggle()
+        self._header_widget.setCursor(Qt.PointingHandCursor)
+
+        self.addWidget(self._header_widget)
+
+    def _setup_content_area(self):
+        """Create the collapsible content area."""
+        self._content_container = QWidget()
+
+        self._items_layout = QVBoxLayout(self._content_container)
+        self._items_layout.setContentsMargins(16, 8, 16, 12)
+        self._items_layout.setSpacing(8)
+
+        self.addWidget(self._content_container)
+
+    def _setup_animation(self):
+        """Setup animation for expand/collapse."""
+        self._animation = QPropertyAnimation(self._content_container, b"maximumHeight")
+        self._animation.setDuration(250)
+        self._animation.setEasingCurve(QEasingCurve.OutCubic)
+
+    def _update_expand_state(self, animate=True):
+        """Update visual state based on expansion."""
+        if self._is_expanded:
+            self._expand_content(animate)
+        else:
+            self._collapse_content(animate)
+
+        self._update_expand_button()
+
+    def _expand_content(self, animate=True):
+        """Expand the content area."""
+        if animate:
+            self._content_container.setMaximumHeight(16777215)
+            natural_height = self._content_container.sizeHint().height()
+
+            self._animation.setStartValue(0)
+            self._animation.setEndValue(natural_height)
+            self._animation.start()
+        else:
+            self._content_container.setMaximumHeight(16777215)
+
+        self._content_container.setVisible(True)
+
+    def _collapse_content(self, animate=True):
+        """Collapse the content area."""
+        if animate:
+            current_height = self._content_container.height()
+            self._animation.setStartValue(current_height)
+            self._animation.setEndValue(0)
+            self._animation.finished.connect(
+                lambda: self._content_container.setVisible(False),
+                Qt.SingleShotConnection
+            )
+            self._animation.start()
+        else:
+            self._content_container.setMaximumHeight(0)
+            self._content_container.setVisible(False)
+
+    def _update_expand_button(self):
+        """Update expand button icon."""
+        icon_name = Icon.CARET_DOWN if self._is_expanded else Icon.CARET_UP
+        # Use BaseButton's setIcon method explicitly to avoid Qt's native setIcon
+        BaseButton.setIcon(self._expand_button, icon_name)
+
+    def toggle(self):
+        """Toggle expansion state."""
+        self._is_expanded = not self._is_expanded
+        self._update_expand_state(animate=True)
+        self.toggled.emit(self._is_expanded)
+
+    def expand(self):
+        """Expand the category."""
+        if not self._is_expanded:
+            self.toggle()
+
+    def collapse(self):
+        """Collapse the category."""
+        if self._is_expanded:
+            self.toggle()
+
+    @property
+    def category_name(self):
+        return self._category_name
+
+    @property
+    def is_expanded(self):
+        return self._is_expanded
+
+
+# ── Shopping Item ────────────────────────────────────────────────────────────────────────────
+class ShoppingItem(QWidget):
+    def __init__(self, item, shopping_svc, breakdown_map, parent=None):
+        """Initialize the ShoppingItem.
+
+        Args:
+            item: The shopping item data object.
+            shopping_svc: Service to manage shopping list operations.
+            breakdown_map: Mapping of recipe ingredients for tooltips.
+            parent: Optional parent widget.
+        """
+        super().__init__(parent)
+        self.item = item
+        self.shopping_svc = shopping_svc
+        self.breakdown_map = breakdown_map
+
+        # Create widgets
+        self.checkbox = QCheckBox()
+        self.label = QLabel()
+
+        # Configure widgets
+        unit_display = f" {self.item.unit}" if self.item.unit else ""
+        self.plain_text = f"{self.item.ingredient_name}: {self.item.formatted_quantity()}{unit_display}"
+
+        self.label.setTextFormat(Qt.RichText)
+
+        self.checkbox.setChecked(self.item.have)
+        self._update_label_style() # set initial style after checkbox state is set
+        self._set_tooltip_if_needed() # set tooltip after label text is finalized
+
+        # Layout
+        layout = QHBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(self.checkbox)
+        layout.addWidget(self.label)
+        layout.addStretch()
+        self.setLayout(layout)
+
+        # Connections
+        self.checkbox.stateChanged.connect(self.on_toggled)
+
+    def on_toggled(self, state):
+        """Handle the toggle action."""
+        if self.shopping_svc:
+            self.shopping_svc.toggle_item_status(self.item.id)
+        self._update_label_style()
+
+    def _update_label_style(self):
+        """Apply or remove strike-through based on checkbox state."""
+        if self.checkbox.isChecked():
+            self.label.setText(f"<s>{self.plain_text}</s>")
+        else:
+            self.label.setText(self.plain_text)
+
+        # Always ensure tooltip is set after text change
+        self._set_tooltip_if_needed()
+
+    def _set_tooltip_if_needed(self):
+        """Sets the recipe breakdown tooltip."""
+        DebugLogger.log(f"Setting tooltip for ingredient {self.item.ingredient_name}, source: {self.item.source}, key: {self.item.key()}", "debug")
+
+        if self.item.source == "recipe":
+            parts = self.breakdown_map.get(self.item.key(), [])
+            DebugLogger.log(f"Found {len(parts)} parts in breakdown_map for ingredient", "debug")
+            if parts:
+                # Create a more readable tooltip format
+                header = f"Used in {len(parts)} recipe(s):"
+                recipe_lines = [f"• {qty} {unit} - {name}" for name, qty, unit in parts]
+                text = f"{header}\n" + "\n".join(recipe_lines)
+                DebugLogger.log(f"Setting ingredient tooltip: {text}", "debug", text=text)
+                self.label.setToolTip(text)
+            else:
+                DebugLogger.log("No recipe parts found for ingredient, skipping tooltip", "debug")
+        else:
+            DebugLogger.log("Non-recipe shopping item, no tooltip needed", "debug")
+
+
+# ── Shopping List View ───────────────────────────────────────────────────────────────────────
 class ShoppingList(QWidget):
     """Placeholder class for the ShoppingList screen."""
 
@@ -40,35 +316,21 @@ class ShoppingList(QWidget):
 
     def setup_ui(self):
         """Setup the UI components for the ShoppingList screen."""
-        main_layout = QVBoxLayout(self)
+        main_layout = QHBoxLayout(self)
         main_layout.setContentsMargins(16, 16, 16, 16)
         main_layout.setSpacing(10)
 
-        # ── Manual Entry Bar ──
-        add_bar = QHBoxLayout()
+        # Add item card
+        add_item_card = ActionCard()
+        add_item_card.setObjectName("AddItemCard")
+        add_item_card.addWidget(AddItemForm())
+        add_item_card.setHeader("Add Item")
+        add_item_card.setSubHeader("Add ingredients to your shopping list.")
+        add_item_card.addButton("Add", callback=self._on_add_manual)
 
-        self.input_qty = QLineEdit()
-        self.input_qty.setPlaceholderText("Qty")
-        self.input_qty.setFixedWidth(60)
+        main_layout.addWidget(add_item_card)  # add to main layout
 
-        self.input_unit = QComboBox()
-        self.input_unit.addItems(MEASUREMENT_UNITS)
-        self.input_unit.setFixedWidth(80)
-
-        self.input_name = QLineEdit()
-        self.input_name.setPlaceholderText("Ingredient name")
-
-        self.btn_add = QPushButton("Add")
-        self.btn_add.setFixedWidth(60)
-
-        add_bar.addWidget(self.input_qty)
-        add_bar.addWidget(self.input_unit)
-        add_bar.addWidget(self.input_name)
-        add_bar.addWidget(self.btn_add)
-
-        main_layout.addLayout(add_bar)
-
-        # ── Scrollable Area ──
+        # Scrollable Area - main content area for shopping list items
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
         scroll_area.setFrameShape(QFrame.NoFrame)
@@ -81,9 +343,7 @@ class ShoppingList(QWidget):
         scroll_area.setWidget(self.scroll_widget)
         main_layout.addWidget(scroll_area)
 
-        self.btn_add.clicked.connect(self._on_add_manual)
-
-    def load_shopping_list(self, recipe_ids: list[int]):
+    def loadShoppingList(self, recipe_ids: list[int]):
         """
         Generate and display a categorized shopping list based on provided recipe IDs.
 
@@ -91,9 +351,9 @@ class ShoppingList(QWidget):
             recipe_ids (list[int]): List of recipe IDs to generate the shopping list from.
         """
         self.active_recipe_ids = recipe_ids  # store active recipe IDs
-        DebugLogger.log(f"ShoppingList.load_shopping_list: recipe_ids={recipe_ids}", "debug")
+        DebugLogger.log(f"ShoppingList.loadShoppingList: recipe_ids={recipe_ids}", "debug")
 
-        # ── Clear Current List ──
+        # Clear current list
         while self.scroll_layout.count():
             item = self.scroll_layout.takeAt(0)
             widget = item.widget()
@@ -114,7 +374,7 @@ class ShoppingList(QWidget):
         if self._breakdown_map is None:
             self._breakdown_map = {}
 
-        # ── Group By Category ──
+        # Group ingredients by category
         grouped = defaultdict(list)
         manual_items = []
 
@@ -194,7 +454,6 @@ class ShoppingList(QWidget):
         column_layout.addWidget(right_container)
         self.scroll_layout.addLayout(column_layout)
 
-
     def _build_category_section(self, title: str, items: list) -> QVBoxLayout:
         """Creates a category header and its associated items as a vertical layout."""
         layout = QVBoxLayout()
@@ -206,7 +465,7 @@ class ShoppingList(QWidget):
         breakdown_map = getattr(self, '_breakdown_map', {})
 
         for item in items:
-            item_widget = ShoppingItemWidget(item, shopping_svc, breakdown_map)
+            item_widget = ShoppingItem(item, shopping_svc, breakdown_map)
             layout.addWidget(item_widget)
 
         return layout

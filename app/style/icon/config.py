@@ -20,6 +20,8 @@ class Path(Enum):
     BACK            = "back"
     BATTERY         = "battery"
     CABINET         = "cabinet"
+    CARET_DOWN     = "caret_down"
+    CARET_UP       = "caret_up"
     CATEGORY        = "category"
     CROSS           = "cross"
     DASHBOARD       = "dashboard"
@@ -143,6 +145,8 @@ class Name(Enum):
     BACK            = IconSpec(Path.BACK, Size.SMALL)
     BATTERY         = IconSpec(Path.BATTERY, Size.SMALL)
     CABINET         = IconSpec(Path.CABINET, Size.SMALL)
+    CARET_DOWN      = IconSpec(Path.CARET_DOWN, Size.SMALL)
+    CARET_UP        = IconSpec(Path.CARET_UP, Size.SMALL)
     CATEGORY        = IconSpec(Path.CATEGORY, Size.SMALL)
     CROSS           = IconSpec(Path.CROSS, Size.SMALL)
     DIET_PREF       = IconSpec(Path.DIET_PREF, Size.SMALL)

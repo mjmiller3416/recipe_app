@@ -1,0 +1,100 @@
+/* ------------------------------------------------------------------
+   CollapsibleCard Widget Styling
+   ------------------------------------------------------------------ */
+
+/* Base CollapsibleCard styling */
+QWidget#CollapsibleCard {
+    background-color: {surface_container};
+    border: none;
+    border-radius: 10px;
+    margin: 2px;
+}
+
+/* Header section styling */
+QWidget#CollapsibleHeader {
+    background-color: {surface_container_high};
+    border: none;
+    border-radius: 8px 8px 0px 0px;
+    min-height: 48px;
+}
+
+QWidget#CollapsibleHeader:hover {
+    background-color: {surface_container_highest};
+}
+
+/* Category label styling */
+QLabel#CategoryLabel {
+    color: {on_surface};
+    font: {header_small};
+    background: transparent;
+    border: none;
+    padding: 8px;
+}
+
+/* Expand/collapse button styling */
+QPushButton#ExpandButton {
+    background-color: transparent;
+    border: 1px solid {outline_variant};
+    border-radius: 12px;
+    color: {on_surface_variant};
+    font-weight: bold;
+    font-size: 12px;
+    min-width: 24px;
+    max-width: 24px;
+    min-height: 24px;
+    max-height: 24px;
+}
+
+QPushButton#ExpandButton:hover {
+    background-color: {surface_container_highest};
+    border-color: {outline};
+}
+
+QPushButton#ExpandButton:pressed {
+    background-color: {surface_container_high};
+    border-color: {primary};
+}
+
+/* Content area styling */
+QWidget#CollapsibleContent {
+    background-color: {surface_container};
+    border: none;
+    border-radius: 0px 0px 8px 8px;
+}
+
+/* Category item checkbox styling */
+QCheckBox#CategoryItem {
+    color: {on_surface};
+    font: {default};
+    spacing: 8px;
+    padding: 4px 8px;
+}
+
+QCheckBox#CategoryItem::indicator {
+    width: 16px;
+    height: 16px;
+    border: 2px solid {outline_variant};
+    border-radius: 3px;
+    background-color: {surface_container};
+}
+
+QCheckBox#CategoryItem::indicator:checked {
+    background-color: {primary};
+    border-color: {primary};
+    image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3'%3E%3Cpolyline points='20,6 9,17 4,12'/%3E%3C/svg%3E");
+}
+
+QCheckBox#CategoryItem::indicator:hover {
+    border-color: {outline};
+}
+
+QCheckBox#CategoryItem::indicator:checked:hover {
+    background-color: {primary_container};
+    border-color: {primary};
+}
+
+/* Hover effects for items */
+QCheckBox#CategoryItem:hover {
+    background-color: {surface_container_high};
+    border-radius: 4px;
+}

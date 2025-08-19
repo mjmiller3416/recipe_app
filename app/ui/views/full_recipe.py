@@ -290,7 +290,7 @@ class FullRecipe(QWidget):
 
         # ── Info Cards Container
         # TODO: Update to new Card API pattern (info_container.addWidget) once card styling variants are implemented
-        info_container = Card(layout="hbox")
+        info_container = Card(content_layout="hbox")
         info_container.setObjectName("InfoContainer")
         info_container.setProperty("tag", "Container")
         info_container.expandWidth(True)

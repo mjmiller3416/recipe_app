@@ -22,7 +22,7 @@ class Effects:
     def apply_shadow(
         cls,
         widget: QWidget,
-        shadow: Shadow = Shadow.ELEVATION_1,
+        shadow: Shadow = Shadow.ELEVATION_3,
     ) -> None:
         """
         Applies a QGraphicsDropShadowEffect to the given widget.

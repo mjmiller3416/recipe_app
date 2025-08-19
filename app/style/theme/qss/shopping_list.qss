@@ -23,6 +23,12 @@
     font-weight: 300;
 }
 
+#ExpandButton ToolButton {
+    background-color: transparent;
+    border: none;
+    padding: 8px;
+}
+
 QToolTip {
     /* Custom styles */
     background-color: #333;

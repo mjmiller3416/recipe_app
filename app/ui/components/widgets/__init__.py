@@ -8,7 +8,7 @@ from .dropdown_menu import DropdownMenu
 from .dropdown_menu import DropdownMenu
 from .filtered_dropdown_menu import FilteredDropdownMenu
 from .rounded_image import RoundedImage
-from .button import ToolButton
+from .button import ToolButton, Button, BaseButton
 from .toggle_switch import ToggleSwitch
 
 __all__ = [
@@ -21,4 +21,5 @@ __all__ = [
     "DropdownMenu",
     "FilteredDropdownMenu",
     "ToggleSwitch",
+    "BaseButton"
 ]

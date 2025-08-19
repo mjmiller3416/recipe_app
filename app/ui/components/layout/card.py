@@ -20,7 +20,7 @@ from typing import Optional
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QFrame, QVBoxLayout, QHBoxLayout, QGridLayout,
-    QSizePolicy, QWidget, QLabel, QLayout
+    QSizePolicy, QWidget, QLabel, QLayout, QPushButton
 )
 
 from app.style import Theme, Qss
@@ -102,18 +102,13 @@ class BaseCard(QFrame):
         self._layout: QVBoxLayout | None = None  # Always VBox for main card
         self._content_layout: QLayout | None = None  # User-configurable
         self._content_container: QWidget | None = None
-        self._elevation = Shadow.ELEVATION_6
-        self._elevation_enabled: bool = True
+
 
         # Create the main layout
         self._create_main_layout()
         self._create_content_area(content_layout)
 
-        # Add shadow elevation effects
-        if self._elevation_enabled:
-            Effects.apply_shadow(self, self._elevation)
-
-    def _create_main_layout(self, spacing: int = 20):
+    def _create_main_layout(self):
         """Create and configure the main card layout structure.
 
         Establishes the primary VBoxLayout that serves as the container for all
@@ -131,9 +126,14 @@ class BaseCard(QFrame):
             This method sets standard 20px margins on all sides and applies
             the specified spacing between child elements.
         """
+        # ── Note ─────────────────────────────────────────────────────────────────────────────
+        # Originally spacing argument was passed and defaulted to 20px
+        # Additionally, ContentMargins was also set to 20, 20, 20, 20
+        # Currently, both are set to 0 for a more compact design -- seems to fix animation issues.
+
         self._layout = QVBoxLayout(self)
-        self._layout.setContentsMargins(20, 20, 20, 20)
-        self._layout.setSpacing(spacing)
+        self._layout.setContentsMargins(0, 0, 0, 0)
+        self._layout.setSpacing(0)
         return self._layout
 
     def _create_content_area(self, layout_type: str = "vbox"):
@@ -173,7 +173,7 @@ class BaseCard(QFrame):
         layout_class = layout_map.get(layout_type.strip().lower(), QVBoxLayout)
         self._content_layout = layout_class(self._content_container)
         self._content_layout.setContentsMargins(0, 0, 0, 0)
-        self._content_layout.setSpacing(10)
+        self._content_layout.setSpacing(0) # changed from 10 to 0
 
         # Add content container to main layout
         if self._layout:
@@ -481,6 +481,15 @@ class Card(BaseCard):
 
         self._button_alignment = Qt.AlignCenter
 
+        self._content_layout.setContentsMargins(20, 20, 20, 20)
+
+        # Add shadow elevation effects
+        self._elevation = Shadow.ELEVATION_6
+        self._elevation_enabled: bool = True
+
+        if self._elevation_enabled:
+            Effects.apply_shadow(self, self._elevation)
+
     def _create_header_container(self):
         """Create and configure the header container with nested layout structure.
 
@@ -504,6 +513,7 @@ class Card(BaseCard):
 
         # Create header container
         self._header_container = QWidget(self)
+        self._header_container.setContentsMargins(25, 25, 25, 10)
         self._header_container.setAttribute(Qt.WA_StyledBackground, False)
         self._header_container.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
 
@@ -623,6 +633,14 @@ class Card(BaseCard):
         else:
             self._subheader_label.setText(text)
 
+    def setSpacing(self, spacing: int):
+        """Set the spacing for the card's content layout."""
+        self._content_layout.setSpacing(spacing)
+
+    def setHeaderMargins(self, margins: tuple[int, int, int, int]):
+        """Set the content margins for the card's header."""
+        self._header_container.setContentsMargins(*margins)
+
 class ActionCard(Card):
     """A Card widget with button support."""
     def __init__(
@@ -649,7 +667,7 @@ class ActionCard(Card):
         """Direct access to the footer button widget."""
         return self._footer_button
 
-    def addButton(self, text: str, button_type=None, icon=None, alignment=Qt.AlignCenter):
+    def addButton(self, text: str, type=None, icon=None, alignment=Qt.AlignCenter, callback=None):
         """Add a footer button to the card with alignment control.
 
         Args:
@@ -657,6 +675,7 @@ class ActionCard(Card):
             button_type: Button type from Type enum (optional)
             icon: Button icon from Name enum (optional)
             alignment: Button alignment (Qt.AlignLeft, Qt.AlignCenter, Qt.AlignRight)
+            callback: Function to connect to button's clicked signal (optional)
         """
 
         # Remove existing button if present
@@ -664,12 +683,16 @@ class ActionCard(Card):
             self.removeButton()
 
         # Create button with default type if not specified
-        if button_type is None:
-            button_type = Type.PRIMARY
+        if type is None:
+            type = Type.PRIMARY
 
-        self._footer_button = Button(text, button_type, icon)
+        self._footer_button = Button(text, type, icon)
         self._footer_button.setObjectName("ActionButton")
         self._button_alignment = alignment
+
+        # Connect callback if provided
+        if callback:
+            self._footer_button.clicked.connect(callback)
 
         # Add to layout with alignment
         if self._layout:
