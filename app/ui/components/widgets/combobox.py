@@ -151,3 +151,8 @@ class ComboBox(QWidget):
         if text not in items:
             items.append(text)
             self.model.setStringList(items)
+
+    def clearSelection(self):
+        """Clear the current selection and text."""
+        self.line_edit.clear()
+        self.selection_validated.emit(False)

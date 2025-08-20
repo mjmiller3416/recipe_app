@@ -2,15 +2,13 @@
    SHOPPING LIST STYLING
    ------------------------------------------------------------------ */
 
-#ShoppingList {
-    background-color: #3A4048;
-    border-radius: 0px;
-    padding: 15px;
+#ShoppingListContent {
+    background-color: red;
+    border: none;
 }
 
-#ShoppingList QWidget {
-    background-color: {surface_container};
-}
+#ShoppingList QScrollArea {border: none;}
+
 #ShoppingList QLabel {
     font-size: 26px;
     font-weight: 300;

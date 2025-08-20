@@ -148,7 +148,7 @@ class ShoppingListDemo(QMainWindow):
             category = CollapsibleCategory(category_name, start_expanded=False)
 
             for item in items:
-                category.add_item(item)
+                category.addItem(item)
 
             self._categories.append(category)
             self.categories_layout.addWidget(category)

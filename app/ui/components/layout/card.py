@@ -249,6 +249,23 @@ class BaseCard(QFrame):
         """
         self._content_layout.removeWidget(widget)
 
+    def clear(self):
+        """Remove all widgets from the card's content area.
+
+        Clears all widgets from the content layout and properly disposes of them.
+        This method safely removes and deletes all child widgets while maintaining
+        the card's header and structure.
+
+        Note:
+            This only clears the content area - headers, footers, and card structure
+            remain intact. All removed widgets are scheduled for deletion.
+        """
+        while self._content_layout.count():
+            item = self._content_layout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.deleteLater()
+
     def setContentMargins(self, left: int, top: int, right: int, bottom: int):
         """Configure the margins around the content area.
 

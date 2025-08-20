@@ -1,8 +1,8 @@
 /* ------------------------------------------------------------------
    ADD RECIPE STYLSHEET
    ------------------------------------------------------------------ */
-#AddRecipeContent {
-    background-color: {surface};
+QWidget#AddRecipeContent {
+    background-color: red;
     border: none;
 }
 

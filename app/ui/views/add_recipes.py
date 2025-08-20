@@ -139,7 +139,6 @@ class AddRecipes(QWidget):
         # create content widget for the scroll area
         self.scroll_content = QWidget()
         self.scroll_layout = QVBoxLayout(self.scroll_content)
-        self.scroll_layout.setContentsMargins(20, 20, 20, 20)
         self.scroll_layout.setSpacing(30)
         self.scroll_layout.setContentsMargins(140, 40, 140, 40)
         self.scroll_content.setObjectName("AddRecipeContent")
