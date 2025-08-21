@@ -27,7 +27,6 @@ from dev_tools import DebugLogger
 # ── Constants ────────────────────────────────────────────────────────────────────────────────
 FIXED_HEIGHT = 60  # fixed height for input fields in the recipe form
 
-
 # ── Add Item Form ────────────────────────────────────────────────────────────────────────────
 class AddItemForm(QWidget):
     """Form for manually adding new items to the shopping list."""
@@ -72,20 +71,19 @@ class AddItemForm(QWidget):
 
         # Row 2-3: Item Quantity (left) and Item Unit (right)
         self._layout.addWidget(self.lbl_item_qty, 2, 0, 1, 1)
-        self._layout.addWidget(self.lbl_item_unit, 2, 1, 1, 1)
         self._layout.addWidget(self.le_item_qty, 3, 0, 1, 1)
+        self._layout.addWidget(self.lbl_item_unit, 2, 1, 1, 1)
         self._layout.addWidget(self.cb_item_unit, 3, 1, 1, 1)
 
         # Row 4-5: Item Category (left) and Item Unit (right)
         self._layout.addWidget(self.lbl_item_category, 4, 0, 1, 2)
-        self._layout.addWidget(self.cb_item_category, 4, 1, 1, 2)
+        self._layout.addWidget(self.cb_item_category, 5, 0, 1, 2)
 
         set_fixed_height_for_layout_widgets(
             layout = self._layout,
             height = FIXED_HEIGHT,
             skip   = (QLabel,)
         )
-
 
 # ── Collapsible Category ─────────────────────────────────────────────────────────────────────
 class CollapsibleCategory(BaseCard):
@@ -111,6 +109,7 @@ class CollapsibleCategory(BaseCard):
     def _setup_header(self):
         """Create the category header."""
         self._header_widget = QWidget()
+        self._header_widget.setObjectName("CategoryHeader")
 
         header_layout = QHBoxLayout(self._header_widget)
         header_layout.setContentsMargins(16, 12, 16, 12)
@@ -118,9 +117,11 @@ class CollapsibleCategory(BaseCard):
 
         # Category label
         self._category_label = QLabel(self._category_name)
+        self._category_label.setObjectName("CategoryLabel")
 
         # Expand button
-        self._expand_button = ToolButton(Type.PRIMARY, Icon.CARET_DOWN)
+        self._expand_button = ToolButton(Type.PRIMARY, Icon.ANGLE_DOWN)
+        self._expand_button.setIconSize(24, 24)
         self._expand_button.setObjectName("ExpandButton")
         self._expand_button.clicked.connect(self.toggle)
 
@@ -137,6 +138,7 @@ class CollapsibleCategory(BaseCard):
     def _setup_content_area(self):
         """Create the collapsible content area."""
         self._content_container = QWidget()
+        self._content_container.setObjectName("ContentContainer")
 
         self._items_layout = QVBoxLayout(self._content_container)
         self._items_layout.setContentsMargins(16, 8, 16, 12)
@@ -161,17 +163,21 @@ class CollapsibleCategory(BaseCard):
 
     def _expand_content(self, animate=True):
         """Expand the content area."""
+        self._content_container.setVisible(True)
+
         if animate:
-            self._content_container.setMaximumHeight(16777215)
+            # Calculate natural height while still collapsed to avoid flash
             natural_height = self._content_container.sizeHint().height()
 
             self._animation.setStartValue(0)
             self._animation.setEndValue(natural_height)
+            self._animation.finished.connect(
+                lambda: self._content_container.setMaximumHeight(16777215),
+                Qt.SingleShotConnection
+            )
             self._animation.start()
         else:
             self._content_container.setMaximumHeight(16777215)
-
-        self._content_container.setVisible(True)
 
     def _collapse_content(self, animate=True):
         """Collapse the content area."""
@@ -190,9 +196,26 @@ class CollapsibleCategory(BaseCard):
 
     def _update_expand_button(self):
         """Update expand button icon."""
-        icon_name = Icon.CARET_DOWN if self._is_expanded else Icon.CARET_UP
-        # Use BaseButton's setIcon method explicitly to avoid Qt's native setIcon
+        if self._is_expanded:
+            icon_name = Icon.ANGLE_DOWN
+            self._header_widget.setProperty("is_expanded", "True")
+        else:
+            icon_name = Icon.ANGLE_RIGHT
+            self._header_widget.setProperty("is_expanded", "False")
         BaseButton.setIcon(self._expand_button, icon_name)
+
+        # Force Qt to re-evaluate the stylesheet after property change
+        self._header_widget.style().polish(self._header_widget)
+
+        self._expand_button.setStateIconSize(24, 24)
+
+    @property
+    def category_name(self):
+        return self._category_name
+
+    @property
+    def is_expanded(self):
+        return self._is_expanded
 
     def toggle(self):
         """Toggle expansion state."""
@@ -209,14 +232,6 @@ class CollapsibleCategory(BaseCard):
         """Collapse the category."""
         if self._is_expanded:
             self.toggle()
-
-    @property
-    def category_name(self):
-        return self._category_name
-
-    @property
-    def is_expanded(self):
-        return self._is_expanded
 
     def addItem(self, item_name):
         """Add a simple checkbox item to the category."""
@@ -250,7 +265,6 @@ class CollapsibleCategory(BaseCard):
                     checked_items.append(item.item.ingredient_name)
         return checked_items
 
-
 # ── Shopping Item ────────────────────────────────────────────────────────────────────────────
 class ShoppingItem(QWidget):
     itemChecked = Signal(str, bool)
@@ -272,6 +286,7 @@ class ShoppingItem(QWidget):
         # Create widgets
         self.checkbox = QCheckBox()
         self.label = QLabel()
+        self.label.setObjectName("ShoppingItem")
 
         # Configure widgets
         unit_display = f" {self.item.unit}" if self.item.unit else ""
@@ -292,16 +307,7 @@ class ShoppingItem(QWidget):
         self.setLayout(layout)
 
         # Connections
-        self.checkbox.stateChanged.connect(self.on_toggled)
-
-    def on_toggled(self, state):
-        """Handle the toggle action."""
-        if self.shopping_svc:
-            self.shopping_svc.toggle_item_status(self.item.id)
-        self._update_label_style()
-
-        # Emit signal for category management
-        self.itemChecked.emit(self.item.ingredient_name, self.checkbox.isChecked())
+        self.checkbox.stateChanged.connect(self.onToggled)
 
     def _update_label_style(self):
         """Apply or remove strike-through based on checkbox state."""
@@ -332,6 +338,14 @@ class ShoppingItem(QWidget):
         else:
             DebugLogger.log("Non-recipe shopping item, no tooltip needed", "debug")
 
+    def onToggled(self, state):
+        """Handle the toggle action."""
+        if self.shopping_svc:
+            self.shopping_svc.toggle_item_status(self.item.id)
+        self._update_label_style()
+
+        # Emit signal for category management
+        self.itemChecked.emit(self.item.ingredient_name, self.checkbox.isChecked())
 
 # ── Shopping List View ───────────────────────────────────────────────────────────────────────
 class ShoppingList(QWidget):
@@ -349,9 +363,9 @@ class ShoppingList(QWidget):
         self.shopping_svc = None  # initialize shopping service
         self._breakdown_map = {}  # initialize breakdown map
 
-        self.build_ui()
+        self._build_ui()
 
-    def build_ui(self):
+    def _build_ui(self):
         """Setup the UI components for the ShoppingList screen."""
         # Main layout for the entire widget
         self.lyt_main = QVBoxLayout(self)
@@ -366,7 +380,7 @@ class ShoppingList(QWidget):
 
         # Create content widget for the scroll area
         self.scroll_content = QWidget()
-        self.scroll_layout = QVBoxLayout(self.scroll_content)
+        self.scroll_layout = QHBoxLayout(self.scroll_content)
         self.scroll_layout.setSpacing(30)
         self.scroll_layout.setContentsMargins(140, 40, 140, 40)
         self.scroll_content.setObjectName("ShoppingListContent")
@@ -375,68 +389,28 @@ class ShoppingList(QWidget):
         self.scroll_area.setWidget(self.scroll_content)
         self.lyt_main.addWidget(self.scroll_area)
 
-        # Create 2-column layout for shopping list and add item card (inside scroll area)
-        self.lyt_columns = QHBoxLayout()
-        self.lyt_columns.setSpacing(30)
-        self.scroll_layout.addLayout(self.lyt_columns)
-
         # Shopping container card (2/3 width)
         self.shopping_container = Card()
         self.shopping_container.setObjectName("ListContainer")
         self.shopping_container.setHeader("Auto Generated Ingredients")
         self.shopping_container.setSubHeader("from this weeks meal plan")
-        self.lyt_columns.addWidget(self.shopping_container, 2)  # stretch factor of 2
+        self.shopping_container.setSpacing(10)
 
         # Add item card (1/3 width)
         add_item_card = ActionCard()
         add_item_card.setObjectName("AddItemCard")
-        add_item_card.setFixed()
+        add_item_card.expandHeight(False)  # Prevent vertical expansion to maintain natural size
+
+        # Add Item Form to action card
         self.add_item_form = AddItemForm()
         add_item_card.addWidget(self.add_item_form)
         add_item_card.setHeader("Manual Add")
-        add_item_card.setSubHeader("add to your list")
-        add_item_card.addButton("Add", callback=self._on_add_manual)
-        self.lyt_columns.addWidget(add_item_card, 1)  # stretch factor of 1
+        add_item_card.setSubHeader("Add item to your list")
+        add_item_card.addButton("Add", alignment=Qt.AlignRight, callback=self._on_add_manual)
 
-    def loadShoppingList(self, recipe_ids: list[int]):
-        """
-        Generate and display a categorized shopping list based on provided recipe IDs.
-
-        Args:
-            recipe_ids (list[int]): List of recipe IDs to generate the shopping list from.
-        """
-        self.active_recipe_ids = recipe_ids  # store active recipe IDs
-        DebugLogger.log(f"ShoppingList.loadShoppingList: recipe_ids={recipe_ids}", "debug")
-
-        # Clear current shopping container content
-        self.shopping_container.clear()
-
-        # generate/update shopping list in database
-        shopping_svc = ShoppingService()
-        self.shopping_svc = shopping_svc
-        shopping_svc.generate_shopping_list(recipe_ids)
-        # fetch all shopping items (models) for display
-        ingredients = shopping_svc.shopping_repo.get_all_shopping_items()
-        DebugLogger.log(f"ShoppingList.load_shopping_list: fetched {len(ingredients)} items", "debug")
-        # get raw breakdown mapping for tooltips
-        self._breakdown_map = shopping_svc.shopping_repo.get_ingredient_breakdown(recipe_ids)
-
-        # Initialize empty breakdown map if None
-        if self._breakdown_map is None:
-            self._breakdown_map = {}
-
-        # Group ingredients by category
-        grouped = defaultdict(list)
-        manual_items = []
-
-        for item in ingredients:
-            if item.source == "manual":
-                manual_items.append(item)
-            else:
-                category = item.category or "Other"
-                grouped[category].append(item)
-
-        self._render_category_columns(grouped, manual_items) # render the list
+        # Add widgets to horizontal layout - shopping list takes 4/7, add form takes 3/7
+        self.scroll_layout.addWidget(self.shopping_container, stretch=5)
+        self.scroll_layout.addWidget(add_item_card, stretch=3, alignment=Qt.AlignTop)
 
     def _on_add_manual(self):
         """Handle the addition of a manual item to the shopping list."""
@@ -498,3 +472,43 @@ class ShoppingList(QWidget):
             category_widget.addShoppingItem(item_widget)
 
         return category_widget
+
+    def loadShoppingList(self, recipe_ids: list[int]):
+        """
+        Generate and display a categorized shopping list based on provided recipe IDs.
+
+        Args:
+            recipe_ids (list[int]): List of recipe IDs to generate the shopping list from.
+        """
+        self.active_recipe_ids = recipe_ids  # store active recipe IDs
+        DebugLogger.log(f"ShoppingList.loadShoppingList: recipe_ids={recipe_ids}", "debug")
+
+        # Clear current shopping container content
+        self.shopping_container.clear()
+
+        # generate/update shopping list in database
+        shopping_svc = ShoppingService()
+        self.shopping_svc = shopping_svc
+        shopping_svc.generate_shopping_list(recipe_ids)
+        # fetch all shopping items (models) for display
+        ingredients = shopping_svc.shopping_repo.get_all_shopping_items()
+        DebugLogger.log(f"ShoppingList.load_shopping_list: fetched {len(ingredients)} items", "debug")
+        # get raw breakdown mapping for tooltips
+        self._breakdown_map = shopping_svc.shopping_repo.get_ingredient_breakdown(recipe_ids)
+
+        # Initialize empty breakdown map if None
+        if self._breakdown_map is None:
+            self._breakdown_map = {}
+
+        # Group ingredients by category
+        grouped = defaultdict(list)
+        manual_items = []
+
+        for item in ingredients:
+            if item.source == "manual":
+                manual_items.append(item)
+            else:
+                category = item.category or "Other"
+                grouped[category].append(item)
+
+        self._render_category_columns(grouped, manual_items) # render the list

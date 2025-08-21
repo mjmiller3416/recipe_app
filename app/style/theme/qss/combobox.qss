@@ -24,6 +24,8 @@
 
 #AddRecipes ComboBox {background-color: {surface}; border-radius: 6px;}
 
+#ShoppingList ComboBox {background-color: {surface}; border-radius: 6px;}
+
 
 
 

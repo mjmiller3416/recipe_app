@@ -1,30 +1,81 @@
 /* ------------------------------------------------------------------
    SHOPPING LIST STYLING
    ------------------------------------------------------------------ */
+[is_expanded="True"] {
+    background-color: {surface};
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+[is_expanded="False"] {
+    background-color: {surface};
+    border-radius: 10px;
+}
+
+#ShoppingList QLineEdit {
+    background-color: {surface};
+    border: none;
+    border-radius: 6px;
+}
+
+#ContentContainer {
+    background-color: {secondary_container};
+    border-left: 4px solid {surface};
+    border-right: 4px solid {surface};
+    border-bottom: 4px solid {surface};
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
 
 #ShoppingListContent {
-    background-color: red;
+    background-color: {surface};
     border: none;
 }
 
 #ShoppingList QScrollArea {border: none;}
 
-#ShoppingList QLabel {
-    font-size: 26px;
-    font-weight: 300;
-    padding-bottom: 5px;
-    padding-top: 15px;
+#ShoppingItem {
+    color: {on_secondary_container};
+    font-size: 24px;
 }
 
-#ShoppingList QCheckBox {
-    font-size: 26px;
-    font-weight: 300;
+#CategoryLabel {
+    font-size: 32px;
+    font-weight: 400;
 }
 
-#ExpandButton ToolButton {
+#ExpandButton {
     background-color: transparent;
     border: none;
-    padding: 8px;
+}
+
+QComboBox {
+    min-height: 36px;
+    padding: 6px 36px 6px 12px;                 /* room for arrow */
+    border: 1px solid {outline_variant};
+    border-radius: 10px;
+    background: {surface_container_high};
+    color: {on_surface};
+    selection-background-color: transparent;    /* no blue flash */
+}
+
+/* Hover — slightly stronger outline */
+QComboBox:hover {
+    border-color: {outline};
+}
+
+/* Focus — M3: emphasize with primary */
+QComboBox:focus {
+    border-color: {primary};
+    /* If your style engine supports it, add a focus ring shadow: */
+    /* box-shadow: 0 0 0 3px rgba({primary}, 0.28); */
+}
+
+/* Disabled */
+QComboBox:disabled {
+    color: {on_surface_variant};
+    background: {surface_container_low};
+    border-color: {outline_variant};
 }
 
 QToolTip {

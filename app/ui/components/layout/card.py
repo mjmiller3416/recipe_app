@@ -410,7 +410,7 @@ class BaseCard(QFrame):
         policy = QSizePolicy.Expanding if expand else QSizePolicy.Preferred
         self.setSizePolicy(policy, policy)
 
-    def setFixed(self):
+    def setFixedPolicy(self):
         """Configure the card to use fixed sizing based on its content.
 
         Sets both horizontal and vertical size policies to Fixed, meaning the
@@ -677,7 +677,27 @@ class ActionCard(Card):
 
         self.setObjectName("ActionCard")
 
-        self._footer_button: Button | None = None
+        self._footer_container: QWidget | None = None
+        self._footer_layout:    QHBoxLayout | None = None
+        self._footer_button:    Button | None = None
+
+    def _create_footer_container(self):
+        """Create the footer container for the card."""
+        if self._footer_container:
+            return
+
+        # Create footer container
+        self._footer_container = QWidget(self)
+        self._footer_container.setObjectName("FooterContainer")
+
+        # Create footer layout
+        self._footer_layout = QHBoxLayout(self._footer_container)
+        self._footer_layout.setContentsMargins(25, 25, 25, 25)
+        self._footer_layout.setSpacing(0)
+
+        # Add footer container to the main layout
+        if self._layout:
+            self._layout.addWidget(self._footer_container)
 
     @property
     def button(self) -> Button | None:
@@ -694,6 +714,7 @@ class ActionCard(Card):
             alignment: Button alignment (Qt.AlignLeft, Qt.AlignCenter, Qt.AlignRight)
             callback: Function to connect to button's clicked signal (optional)
         """
+        self._create_footer_container()
 
         # Remove existing button if present
         if self._footer_button:
@@ -712,12 +733,12 @@ class ActionCard(Card):
             self._footer_button.clicked.connect(callback)
 
         # Add to layout with alignment
-        if self._layout:
-            self._layout.addWidget(self._footer_button, 0, alignment)
+        if self._footer_layout:
+            self._footer_layout.addWidget(self._footer_button, 0, alignment)
 
     def removeButton(self):
         """Remove the footer button if it exists."""
-        if self._footer_button and self._layout:
-            self._layout.removeWidget(self._footer_button)
+        if self._footer_button and self._footer_layout:
+            self._footer_layout.removeWidget(self._footer_button)
             self._footer_button.deleteLater()
             self._footer_button = None
