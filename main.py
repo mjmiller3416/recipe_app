@@ -9,10 +9,9 @@ import os
 os.environ["QT_FONT_DPI"] = "96"
 import sys
 
+import qframelesswindow.utils.win32_utils
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
-
-import qframelesswindow.utils.win32_utils
 
 # Force-disable the border accent globally in the library
 qframelesswindow.utils.win32_utils.isSystemBorderAccentEnabled = lambda: False

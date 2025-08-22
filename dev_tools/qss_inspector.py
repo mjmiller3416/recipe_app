@@ -12,11 +12,13 @@ Usage:
 
 import sys
 from typing import List, Optional
-from PySide6.QtCore import QObject, QEvent, Qt
-from PySide6.QtGui import QMouseEvent, QKeyEvent
+
+from PySide6.QtCore import QEvent, QObject, Qt
+from PySide6.QtGui import QKeyEvent, QMouseEvent
 from PySide6.QtWidgets import QApplication, QWidget
 
 from dev_tools.debug_logger import DebugLogger
+
 
 class QSSInspector(QObject):
     """Simple terminal-based widget inspector"""

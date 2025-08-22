@@ -12,21 +12,10 @@ from typing import Iterable, Optional
 
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QFont
-from PySide6.QtWidgets import (
-    QApplication,
-    QComboBox,
-    QFrame,
-    QGridLayout,
-    QGroupBox,
-    QLabel,
-    QListWidget,
-    QListWidgetItem,
-    QMainWindow,
-    QSizePolicy,
-    QWidget,
-    QVBoxLayout,
-    QAbstractItemView,
-)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox,
+                               QFrame, QGridLayout, QGroupBox, QLabel,
+                               QListWidget, QListWidgetItem, QMainWindow,
+                               QSizePolicy, QVBoxLayout, QWidget)
 
 
 # ── Overlay popup implementation ──────────────────────────────────────────────
@@ -99,8 +88,8 @@ class ComboOverlayPopup(QFrame):
 
     # Keep the mask synced to size to prevent any visible square edges
     def resizeEvent(self, e):
-        from PySide6.QtGui import QPainterPath
         from PySide6.QtCore import QRectF
+        from PySide6.QtGui import QPainterPath
         super().resizeEvent(e)
         r = 10.0
         # Slight inset avoids pixel rounding artifacts on some DPIs

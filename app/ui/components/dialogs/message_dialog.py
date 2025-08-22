@@ -7,10 +7,9 @@ Custom dialog for displaying messages with dynamic button visibility.
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor
-from PySide6.QtWidgets import (
-    QDialog, QDialogButtonBox, QGraphicsDropShadowEffect,
-    QGridLayout, QLabel, QSizePolicy, QSpacerItem, QVBoxLayout
-)
+from PySide6.QtWidgets import (QDialog, QDialogButtonBox,
+                               QGraphicsDropShadowEffect, QGridLayout, QLabel,
+                               QSizePolicy, QSpacerItem, QVBoxLayout)
 
 from app.style.icon import AppIcon, Icon, Name
 from dev_tools import DebugLogger

@@ -3,29 +3,372 @@
 AddRecipes widget for creating new recipes with ingredients and directions.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
-    QHBoxLayout, QLabel, QPushButton, QScrollArea, QTextEdit,
-    QVBoxLayout, QWidget
-)
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import (QGridLayout, QHBoxLayout, QLabel, QLineEdit,
+                               QScrollArea, QTextEdit, QVBoxLayout, QWidget)
 
-from app.config.config import INT_VALIDATOR, NAME_VALIDATOR
-from app.core.dtos import RecipeCreateDTO, RecipeIngredientDTO
+from app.config import (DIETARY_PREFERENCES, FLOAT_VALIDATOR,
+                        INGREDIENT_CATEGORIES, MEAL_TYPE, MEASUREMENT_UNITS,
+                        NAME_PATTERN, RECIPE_CATEGORIES)
+from app.core.database.db import create_session
+from app.core.dtos import (IngredientSearchDTO, RecipeCreateDTO,
+                           RecipeIngredientDTO)
+from app.core.services.ingredient_service import IngredientService
 from app.core.services.recipe_service import RecipeService
-from app.style import Theme, Qss
-from app.style.icon.config import Type, Name
-from app.ui.components.dialogs import MessageDialog
-from app.ui.components.containers import IngredientsCard
-from app.ui.components.forms import IngredientWidget, RecipeForm
-from app.ui.components.images.upload_recipe_image import UploadRecipeImage
-from app.ui.components.layout.card import Card
+from app.style import Qss, Theme
+from app.style.icon.config import Name, Type
+from app.ui.components.inputs import SmartLineEdit
+from app.ui.components.layout.card import ActionCard, Card
 from app.ui.components.layout.image_card import ImageCard
+from app.ui.components.widgets import ComboBox, ToolButton
 from app.ui.components.widgets.button import Button
 from app.ui.helpers import clear_error_styles, dynamic_validation
 from app.ui.helpers.card_utils import add_two_column
+from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
 from dev_tools import DebugLogger
 
+# ── Constants ───────────────────────────────────────────────────────────────────
+FIXED_HEIGHT = 60  # fixed height for input fields in the recipe form
+
+
+# ── Recipe Form ──────────────────────────────────────────────────────────────────────────────
+class RecipeForm(QWidget):
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.setObjectName("RecipeForm")
+
+        # ── Configure layout ──
+        self._layout = QGridLayout(self)
+        self._layout.setContentsMargins(10, 10, 10, 10)
+        self._layout.setSpacing(10)
+
+        # create labels and inputs for recipe details - labels above inputs
+        # Recipe Name (full width)
+        self.lbl_recipe_name = QLabel("Recipe Name")
+        self.le_recipe_name = QLineEdit()
+        self.le_recipe_name.setPlaceholderText("e.g. Spaghetti Carbonara")
+        self.le_recipe_name.setObjectName("RecipeNameLineEdit")
+
+        # Total Time
+        self.lbl_time = QLabel("Total Time")
+        self.le_time = QLineEdit()
+        self.le_time.setPlaceholderText("e.g. 30 mins")
+        self.le_time.setObjectName("TotalTimeLineEdit")
+
+        # Servings
+        self.lbl_servings = QLabel("Servings")
+        self.le_servings = QLineEdit()
+        self.le_servings.setPlaceholderText("e.g. 4")
+        self.le_servings.setObjectName("ServingsLineEdit")
+
+        # Meal Type
+        self.lbl_meal_type = QLabel("Meal Type")
+        self.cb_meal_type = ComboBox(list_items=MEAL_TYPE, placeholder="Select meal type")
+        self.cb_meal_type.setObjectName("ComboBox")
+        self.cb_meal_type.setProperty("context", "recipe_form")
+
+        # Category
+        self.lbl_category = QLabel("Category")
+        self.cb_recipe_category = ComboBox(list_items=RECIPE_CATEGORIES, placeholder="Select category")
+        self.cb_recipe_category.setObjectName("ComboBox")
+        self.cb_recipe_category.setProperty("context", "recipe_form")
+
+        # Dietary Preference
+        self.lbl_dietary_preference = QLabel("Dietary Preference")
+        self.cb_dietary_preference = ComboBox(list_items=DIETARY_PREFERENCES, placeholder="Select dietary preference")
+        self.cb_dietary_preference.setObjectName("ComboBox")
+        self.cb_dietary_preference.setProperty("context", "recipe_form")
+
+        # add labels and widgets to the form layout - two column layout with labels above inputs
+        # Row 0: Recipe Name (full width)
+        self._layout.addWidget(self.lbl_recipe_name, 0, 0, 1, 2)
+        self._layout.addWidget(self.le_recipe_name, 1, 0, 1, 2)
+
+        # Row 2-3: Total Time (left) and Servings (right)
+        self._layout.addWidget(self.lbl_time, 2, 0, 1, 1)
+        self._layout.addWidget(self.lbl_servings, 2, 1, 1, 1)
+        self._layout.addWidget(self.le_time, 3, 0, 1, 1)
+        self._layout.addWidget(self.le_servings, 3, 1, 1, 1)
+
+        # Row 4-5: Meal Type (left) and Category (right)
+        self._layout.addWidget(self.lbl_meal_type, 4, 0, 1, 1)
+        self._layout.addWidget(self.lbl_category, 4, 1, 1, 1)
+        self._layout.addWidget(self.cb_meal_type, 5, 0, 1, 1)
+        self._layout.addWidget(self.cb_recipe_category, 5, 1, 1, 1)
+
+        # Row 6-7: Dietary Preference (left column only)
+        self._layout.addWidget(self.lbl_dietary_preference, 6, 0, 1, 1)
+        self._layout.addWidget(self.cb_dietary_preference, 7, 0, 1, 1)
+
+        set_fixed_height_for_layout_widgets(
+            layout = self._layout,
+            height = FIXED_HEIGHT,
+            skip   = (QLabel,)
+        )
+
+# ── Ingredient Form ──────────────────────────────────────────────────────────────────────────
+class IngredientForm(QWidget):
+    add_ingredient_requested = Signal(QWidget)
+    remove_ingredient_requested = Signal(QWidget)
+    ingredient_validated = Signal(dict)
+
+    def __init__(self, removable=True, parent=None):
+        """
+        Initializes the IngredientForm with a grid layout and sets up UI components.
+        The ingredient name input is an editable ComboBox populated with existing
+        ingredient names. Selecting an existing ingredient auto-populates its category.
+
+        Args:
+            removable (bool): If True, the widget will have a remove button.
+            parent (QWidget, optional): Parent widget for this ingredient widget.
+        """
+        super().__init__(parent)
+        self.setAttribute(Qt.WA_StyledBackground, True)
+
+        # Register with Theme API for Material3 styling
+        Theme.register_widget(self, Qss.INGREDIENT_WIDGET)
+
+        # Create horizontal layout for row-based design
+        self.main_layout = QHBoxLayout(self)
+        self.main_layout.setContentsMargins(18, 18, 18, 18)
+        self.main_layout.setSpacing(12)
+        self.setObjectName("IngredientForm")
+        # Initialize IngredientService with a new DB session
+        self._session = create_session()
+        self.ingredient_service = IngredientService(self._session)
+        self.exact_match = None
+        self._setup_ui()
+        self.setup_event_logic()
+
+    def _setup_ui(self):
+        """Sets up the UI components and layout for the ingredient widget."""
+
+        # Drag handle for reordering
+        self.drag_handle = ToolButton(Type.DEFAULT, Name.GRIP_DOTS)
+        self.drag_handle.setObjectName("DragHandle")
+        self.drag_handle.setIconSize(24, 24)
+        self.drag_handle.setStateDefault("on_surface")
+        self.drag_handle.setStateHover("tertiary")
+        self.main_layout.addWidget(self.drag_handle)
+
+        # Unit field - compact (create first to get reference height)
+        self.cb_unit = ComboBox(
+            list_items=MEASUREMENT_UNITS,
+            placeholder="Unit"
+        )
+        self.cb_unit.setObjectName("ComboBox UnitField")
+        self.main_layout.addWidget(self.cb_unit)
+
+        # Get the ComboBox height to use for other fields
+        combobox_height = self.cb_unit.sizeHint().height()
+
+        # Quantity field - compact
+        self.le_quantity = QLineEdit(self)
+        self.le_quantity.setPlaceholderText("Qty")
+        self.le_quantity.setObjectName("QuantityField")
+        self.le_quantity.setFixedHeight(combobox_height)
+        self.main_layout.addWidget(self.le_quantity)
+
+        # Ingredient name field - expandable
+        all_ingredient_names = self.ingredient_service.list_distinct_names()
+        self.sle_ingredient_name = SmartLineEdit(
+            list_items=all_ingredient_names,
+            placeholder="Ingredient Name"
+        )
+        self.sle_ingredient_name.setObjectName("NameField")
+        self.sle_ingredient_name.setFixedHeight(combobox_height)
+        self.main_layout.addWidget(self.sle_ingredient_name)
+
+        # Category field - medium width
+        self.cb_ingredient_category = ComboBox(
+            list_items=INGREDIENT_CATEGORIES,
+            placeholder="Category"
+        )
+        self.cb_ingredient_category.setObjectName("ComboBox CategoryField")
+        self.main_layout.addWidget(self.cb_ingredient_category)
+
+        # Delete button - replaces subtract/add buttons
+        self.btn_delete = ToolButton(Type.DEFAULT, Name.TRASH)
+        self.btn_delete.setObjectName("DeleteButton")
+        self.btn_delete.setIconSize(32, 32)
+        self.btn_delete.setStateDefault("on_surface")
+        self.btn_delete.setStateHover("tertiary")
+        self.main_layout.addWidget(self.btn_delete)
+
+        # Set stretch factors for proper proportions
+        self.main_layout.setStretchFactor(self.drag_handle, 0)
+        self.main_layout.setStretchFactor(self.cb_unit, 0)  # Fixed width
+        self.main_layout.setStretchFactor(self.le_quantity, 0)  # Fixed width
+        self.main_layout.setStretchFactor(self.sle_ingredient_name, 3)  # Expandable
+        self.main_layout.setStretchFactor(self.cb_ingredient_category, 0)  # Fixed width
+        self.main_layout.setStretchFactor(self.btn_delete, 0)
+
+    def setup_event_logic(self):
+        """Connects signals to their respective slots for handling ingredient data."""
+        self.btn_delete.clicked.connect(self.request_removal)
+        # Note: Add ingredient functionality will be handled at container level
+
+        dynamic_validation(self.le_quantity, FLOAT_VALIDATOR)
+
+        self.sle_ingredient_name.currentTextChanged.connect(self._ingredient_name_changed) # connect new signal
+
+    def _ingredient_name_changed(self, text: str):
+        """
+        Handles changes in the ingredient name field (SmartLineEdit).
+        If the entered text matches an existing ingredient (case-insensitive exact match),
+        its category is auto-populated and the category ComboBox may be disabled.
+        Otherwise, the category ComboBox is enabled for manual input.
+        """
+        current_text = text.strip()
+        self.cb_ingredient_category.setEnabled(True)
+
+        if not current_text:
+            self.cb_ingredient_category.setCurrentIndex(-1)
+            clear_error_styles(self.sle_ingredient_name)  # SmartLineEdit is now a QLineEdit
+            return
+
+        # validate the ingredient name against the NAME_PATTERN
+        if not NAME_PATTERN.match(current_text):
+            self.sle_ingredient_name.setStyleSheet("border: 1px solid red;")
+            return
+        else:
+            clear_error_styles(self.sle_ingredient_name)
+
+        search_dto = IngredientSearchDTO(search_term=current_text)
+        matching_ingredients = self.ingredient_service.find_matching_ingredients(search_dto)
+
+        exact_match = None
+        for ingredient in matching_ingredients:
+            if ingredient.ingredient_name.lower() == current_text.lower():
+                exact_match = ingredient
+                self.exact_match = exact_match
+                break
+
+        if exact_match:
+            category_index = self.cb_ingredient_category.findText(
+                exact_match.ingredient_category,
+                Qt.MatchFlag.MatchFixedString | Qt.MatchFlag.MatchCaseSensitive,
+            )
+
+            if category_index < 0:
+                category_index = self.cb_ingredient_category.findText(
+                    exact_match.ingredient_category,
+                    Qt.MatchFlag.MatchFixedString | Qt.MatchFlag.MatchContains,
+                )
+
+            if category_index >= 0:
+                self.cb_ingredient_category.setCurrentIndex(category_index)
+            else:
+                self.cb_ingredient_category.addItem(exact_match.ingredient_category)
+                self.cb_ingredient_category.setCurrentText(exact_match.ingredient_category)
+
+            clear_error_styles(self.cb_ingredient_category)
+        else:
+            self.cb_ingredient_category.setCurrentIndex(-1)
+            self.cb_ingredient_category.setEnabled(True)
+
+    def get_ingredient_data(self) -> dict:
+        """Returns the ingredient data as a dictionary for external collection."""
+        return self.to_payload()
+
+    def request_removal(self):
+        """Emits a signal to request removal of this ingredient widget."""
+        if self.parent() and len(self.parent().findChildren(IngredientForm)) > 1:
+            self.remove_ingredient_requested.emit(self)
+
+    def to_payload(self) -> dict:
+        """Returns a plain dict that matches RecipeIngredientDTO fields"""
+        return {
+        "ingredient_name": self.sle_ingredient_name.text().strip(),
+        "ingredient_category": self.cb_ingredient_category.currentText().strip(),
+        "unit": self.cb_unit.currentText().strip(),
+        "quantity": float(self.le_quantity.text().strip() or 0),
+        "existing_ingredient_id": self.exact_match.id if self.exact_match else None,
+        }
+
+# ── Ingredients Card ─────────────────────────────────────────────────────────────────────────
+class IngredientsCard(ActionCard):
+    """
+    Container for managing ingredient widgets within a Card.
+    Provides add/remove functionality and data collection.
+    """
+
+    ingredients_changed = Signal()  # Emitted when ingredients are added/removed
+
+    def __init__(self, parent=None):
+        """Initialize the ingredient container."""
+        super().__init__(card_type="Default", parent=parent)
+
+        self.setHeader("Ingredients")
+        self.setSubHeader("List all the ingredients required for this recipe.")
+
+        self.ingredient_widgets = []
+        self._setup_ui()
+
+    def _setup_ui(self):
+        """Set up the container UI with initial ingredient and add button."""
+
+        # Add initial ingredient widget
+        self._add_ingredient_widget()
+
+        # Add button to card footer with left alignment and ADD icon
+        self.addButton("Add Ingredient", icon=Name.ADD, alignment=Qt.AlignLeft)
+
+        # Customize button icon size and connect click event
+        if self.button:
+            self.button.setIconSize(24, 24)  # Set custom icon size
+            self.button.clicked.connect(self._add_ingredient_widget)
+
+    def _add_ingredient_widget(self):
+        """Add a new ingredient widget to the container."""
+        ingredient_widget = IngredientForm()
+        ingredient_widget.remove_ingredient_requested.connect(self._remove_ingredient_widget)
+
+        self.ingredient_widgets.append(ingredient_widget)
+        self.addWidget(ingredient_widget)
+
+        self.ingredients_changed.emit()
+
+    def _remove_ingredient_widget(self, widget: IngredientForm):
+        """Remove an ingredient widget from the container."""
+        if len(self.ingredient_widgets) <= 1:
+            return  # Always keep at least one ingredient widget
+
+        if widget in self.ingredient_widgets:
+            self.ingredient_widgets.remove(widget)
+            self.removeWidget(widget)
+            widget.deleteLater()
+
+        self.ingredients_changed.emit()
+
+    def get_all_ingredients_data(self) -> list[dict]:
+        """Collect data from all ingredient widgets."""
+        ingredients_data = []
+
+        for widget in self.ingredient_widgets:
+            data = widget.get_ingredient_data()
+            # Only include ingredients with at least a name
+            if data.get("ingredient_name", "").strip():
+                ingredients_data.append(data)
+
+        return ingredients_data
+
+    def clear_all_ingredients(self):
+        """Clear all ingredient widgets and add one empty one."""
+        # Remove all existing widgets
+        for widget in self.ingredient_widgets:
+            self.removeWidget(widget)
+            widget.deleteLater()
+
+        self.ingredient_widgets.clear()
+
+        # Add one fresh ingredient widget
+        self._add_ingredient_widget()
+
+    def get_ingredient_count(self) -> int:
+        """Get the number of ingredient widgets."""
+        return len(self.ingredient_widgets)
 
 # ── Direction & Notes Card ───────────────────────────────────────────────────────────────────
 class DirectionsNotesCard(Card):
@@ -95,7 +438,6 @@ class DirectionsNotesCard(Card):
         for btn in [self.btn_directions, self.btn_notes]:
             btn.style().unpolish(btn)
             btn.style().polish(btn)
-
 
 # ── Add Recipes View ─────────────────────────────────────────────────────────────────────────
 class AddRecipes(QWidget):
@@ -291,12 +633,6 @@ class AddRecipes(QWidget):
             )
         except Exception as dto_err:
             DebugLogger().log(f"[AddRecipes] RecipeCreateDTO validation failed: {dto_err}", "error")
-            MessageDialog(
-                "warning",
-                "Invalid Recipe Data",
-                "Your recipe form is missing something required or has an invalid value. Please review all fields.",
-                self
-            ).exec()
             return
 
         # ── create recipe via service (internal session management) ──

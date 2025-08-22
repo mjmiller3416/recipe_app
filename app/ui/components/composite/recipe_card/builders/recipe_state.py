@@ -13,9 +13,9 @@ from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
 from app.style import Theme
-from app.style.theme.config import Qss
 from app.style.icon import AppIcon, Icon
 from app.style.icon.config import Name, Type
+from app.style.theme.config import Qss
 from app.ui.components.layout import Separator
 from app.ui.components.widgets import RoundedImage, ToolButton
 from app.ui.helpers.ui_helpers import make_overlay
@@ -178,11 +178,117 @@ class RecipeCard:
 
         Args:
             parent (QFrame): The parent frame where the large layout will be added.
-
-        Raises:
-            NotImplementedError: Always raised since large layout is not yet implemented.
         """
-        raise NotImplementedError("Large frame layout is not yet implemented.")
+        from app.ui.components.composite.ingredients_preview import \
+            IngredientsPreview
+        from app.ui.components.composite.recipe_info_cards import \
+            RecipeInfoCards
+        from app.ui.components.composite.recipe_tags_row import RecipeTagsRow
+
+        # Main layout
+        main_layout = QVBoxLayout(parent)
+        main_layout.setContentsMargins(15, 15, 15, 15)
+        main_layout.setSpacing(12)
+        
+        # ── Recipe Title ──
+        title_label = QLabel(self.recipe.recipe_name or "Untitled Recipe")
+        title_label.setObjectName("LargeCardTitle")
+        title_label.setProperty("title_text", "true")
+        title_label.setAlignment(Qt.AlignCenter)
+        title_label.setWordWrap(True)
+        main_layout.addWidget(title_label)
+        
+        # ── Content Layout: Image (left) + Info Panel (right) ──
+        content_layout = QHBoxLayout()
+        content_layout.setSpacing(15)
+        
+        # ── Left Side: Recipe Image ──
+        img_recipe = RoundedImage(
+            image_path=self.recipe.image_path,
+            size=280,
+            radii=(10, 10, 10, 10)
+        )
+        
+        # Favorite button overlay
+        initial_icon = Name.FAV if self.recipe.is_favorite else Name.FAV_FILLED
+        btn_fav = ToolButton(Type.PRIMARY, initial_icon)
+        btn_fav.setIconSize(24, 24)
+        btn_fav.setObjectName("btn_favorite")
+        btn_fav.setCheckable(True)
+        btn_fav.setCursor(Qt.PointingHandCursor)
+        btn_fav.setChecked(bool(self.recipe.is_favorite))
+        btn_fav.toggled.connect(
+            lambda checked, rid=self.recipe.id: self._toggle_favorite_with_icon_update(btn_fav, rid)
+        )
+        
+        # Create image with overlay
+        image_overlay = make_overlay(img_recipe, btn_fav)
+        content_layout.addWidget(image_overlay)
+        
+        # ── Right Side: Info Panel ──
+        info_panel = QVBoxLayout()
+        info_panel.setSpacing(10)
+        
+        # Recipe Tags Row
+        tags_row = RecipeTagsRow()
+        tags_row.setRecipe(self.recipe)
+        tags_row.setAlignment("left")  # Left-align for the large card
+        info_panel.addWidget(tags_row)
+        
+        # Info Cards Row (compact mode for large card)
+        info_cards = RecipeInfoCards(show_cards=["time", "servings"])
+        info_cards.setRecipe(self.recipe)
+        info_cards.setCompactMode(True)
+        info_panel.addWidget(info_cards)
+        
+        # Add some spacing
+        info_panel.addSpacing(8)
+        
+        # Ingredients Preview
+        ingredients_preview = IngredientsPreview(max_preview_items=6)
+        ingredient_details = getattr(self.recipe, "get_ingredient_details", lambda: [])()
+        ingredients_preview.setIngredients(ingredient_details)
+        info_panel.addWidget(ingredients_preview)
+        
+        # Add stretch to push content to top
+        info_panel.addStretch()
+        
+        # Add info panel to content layout
+        content_layout.addLayout(info_panel, 1)  # Give it more space than the image
+        
+        # Add content to main layout
+        main_layout.addLayout(content_layout)
+        
+        # ── Bottom Info Section ──
+        bottom_layout = QHBoxLayout()
+        bottom_layout.setSpacing(15)
+        
+        # Recipe metadata using existing meta section helper
+        bottom_layout.addLayout(
+            self._create_meta_section(
+                AppIcon(Name.SERVINGS),
+                heading="Servings",
+                value=self.recipe.formatted_servings(),
+            )
+        )
+        
+        # Separator
+        bottom_layout.addWidget(Separator.vertical(50), 0, Qt.AlignVCenter)
+        
+        # Total time
+        bottom_layout.addLayout(
+            self._create_meta_section(
+                AppIcon(Name.TOTAL_TIME),
+                heading="Time",
+                value=self.recipe.formatted_time(),
+            )
+        )
+        
+        # Add stretch to center the bottom info
+        bottom_layout.insertStretch(0)
+        bottom_layout.addStretch()
+        
+        main_layout.addLayout(bottom_layout)
 
     def _create_meta_section(self, icon_widget: AppIcon, heading: str, value: str) -> QVBoxLayout:
         """Create a vertical layout section for displaying metadata with an icon, heading, and value.

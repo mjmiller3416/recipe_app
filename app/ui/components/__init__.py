@@ -10,7 +10,6 @@ from .images.image_cropper import ImageCropper
 # From inputs
 from .inputs.search_bar import SearchBar
 from .inputs.smart_line_edit import SmartLineEdit
-from .widgets.toggle_switch import ToggleSwitch
 from .layout.flow_layout import FlowLayout
 # From layout
 from .layout.separator import Separator
@@ -22,6 +21,7 @@ from .widgets.circular_image import CircularImage
 from .widgets.combobox import ComboBox
 from .widgets.dropdown_menu import DropdownMenu
 from .widgets.rounded_image import RoundedImage
+from .widgets.toggle_switch import ToggleSwitch
 
 __all__ = [
     # Dialogs

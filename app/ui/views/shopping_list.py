@@ -8,19 +8,17 @@ display them in a scrollable list
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from collections import defaultdict
 
-from PySide6.QtCore import Qt, Signal, QPropertyAnimation, QEasingCurve
-from PySide6.QtWidgets import (
-    QCheckBox, QComboBox, QFrame, QHBoxLayout,
-    QLabel, QLineEdit, QPushButton, QScrollArea,
-    QSizePolicy, QSpacerItem, QVBoxLayout, QWidget,
-    QGridLayout
-)
+from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt, Signal
+from PySide6.QtWidgets import (QCheckBox, QComboBox, QFrame, QGridLayout,
+                               QHBoxLayout, QLabel, QLineEdit, QPushButton,
+                               QScrollArea, QSizePolicy, QSpacerItem,
+                               QVBoxLayout, QWidget)
 
-from app.config import MEASUREMENT_UNITS, INGREDIENT_CATEGORIES
+from app.config import INGREDIENT_CATEGORIES, MEASUREMENT_UNITS
 from app.core.services.shopping_service import ShoppingService
-from app.style import Theme, Qss, Icon, Type
+from app.style import Icon, Qss, Theme, Type
 from app.ui.components.layout.card import ActionCard, BaseCard, Card
-from app.ui.components.widgets import ComboBox, BaseButton, ToolButton
+from app.ui.components.widgets import BaseButton, ComboBox, ToolButton
 from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
 from dev_tools import DebugLogger
 

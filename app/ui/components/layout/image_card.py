@@ -8,11 +8,12 @@ Pure display component without upload logic - handles image display only.
 from pathlib import Path
 from typing import Optional
 
-from PySide6.QtCore import Qt, Signal, QSize
+from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 from app.ui.components.layout.card import ActionCard
 from app.ui.components.widgets import RoundedImage
+
 
 # ── ImageCard ────────────────────────────────────────────────────────────────────────────────
 class ImageCard(ActionCard):

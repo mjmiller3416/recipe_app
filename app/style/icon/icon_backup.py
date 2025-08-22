@@ -7,14 +7,15 @@ to theme changes automatically.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QSize, QEvent
-from PySide6.QtWidgets import QLabel, QSizePolicy
+from PySide6.QtCore import QEvent, QSize
 from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QLabel, QSizePolicy
 
 from app.config import FALLBACK_COLOR
 from app.style.icon.config import Name, State, Type
 from app.style.icon.loader import IconLoader
 from app.style.icon.svg_loader import SVGLoader
+
 
 # ── Icon Base ────────────────────────────────────────────────────────────────────────────────
 class IconBase:

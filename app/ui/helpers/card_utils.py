@@ -5,8 +5,9 @@ All functions preserve card shadow effects by avoiding wrapper containers that c
 """
 
 from typing import List, Optional
-from PySide6.QtWidgets import QHBoxLayout, QVBoxLayout, QLayout
+
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QHBoxLayout, QLayout, QVBoxLayout
 
 from app.ui.components.layout.card import Card
 

@@ -8,15 +8,14 @@ hierarchy for theme-aware SVG icons with state management.
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt, QTimer
-from PySide6.QtWidgets import QLabel, QWidget, QSizePolicy, QVBoxLayout
 from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QLabel, QSizePolicy, QVBoxLayout, QWidget
 
 from app.config import FALLBACK_COLOR
-from app.style import Theme, Qss
+from app.style import Qss, Theme
 from app.style.icon.config import Name, State, Type
 from app.style.icon.loader import IconLoader
 from app.style.icon.svg_loader import SVGLoader
-
 from dev_tools import DebugLogger
 
 
@@ -674,7 +673,7 @@ class StateIcon(QWidget):
         if not self._label:
             DebugLogger.log("StateIcon _on_theme_refresh - skipping refresh on deleted widget", "debug")
             return
-            
+
         # clear old pixmaps to free memory
         self._state_pixmaps.clear()
 

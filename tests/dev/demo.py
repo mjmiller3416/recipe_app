@@ -1,23 +1,22 @@
 import sys
 from enum import Enum
 
-from PySide6.QtCore import (
-    QEasingCurve, QPoint, QPropertyAnimation, QRect, QSettings, QSize, Qt, QTimer, QUrl
-)
-from PySide6.QtGui import (
-    QColor, QDesktopServices, QFont, QIcon, QPainter, QPen, QPixmap, QStandardItem,
-    QStandardItemModel
-)
-from PySide6.QtWidgets import (
-    QApplication, QCheckBox, QComboBox, QFrame, QGridLayout, QHBoxLayout, QLabel,
-    QLineEdit, QMainWindow, QMessageBox, QProgressBar, QPushButton, QRadioButton,
-    QScrollArea, QSizePolicy, QSlider, QSpacerItem, QSpinBox, QStackedWidget,
-    QTabWidget, QTextEdit, QTreeView, QVBoxLayout, QWidget
-)
+from PySide6.QtCore import (QEasingCurve, QPoint, QPropertyAnimation, QRect,
+                            QSettings, QSize, Qt, QTimer, QUrl)
+from PySide6.QtGui import (QColor, QDesktopServices, QFont, QIcon, QPainter,
+                           QPen, QPixmap, QStandardItem, QStandardItemModel)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFrame,
+                               QGridLayout, QHBoxLayout, QLabel, QLineEdit,
+                               QMainWindow, QMessageBox, QProgressBar,
+                               QPushButton, QRadioButton, QScrollArea,
+                               QSizePolicy, QSlider, QSpacerItem, QSpinBox,
+                               QStackedWidget, QTabWidget, QTextEdit,
+                               QTreeView, QVBoxLayout, QWidget)
 
-from app.style.icon import Icon, Type, Name
-from app.style.theme_controller import Theme, Color, Mode
+from app.style.icon import Icon, Name, Type
+from app.style.theme_controller import Color, Mode, Theme
 from app.ui.components.widgets import Button, ToolButton
+
 
 class Name(Enum):
     """Mock Icon Names Enum."""

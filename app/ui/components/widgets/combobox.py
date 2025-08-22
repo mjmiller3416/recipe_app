@@ -11,8 +11,9 @@ from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QWidget
 
 from app.style import Qss, Theme
 from app.style.icon.config import Name
-from .dropdown_menu import DropdownMenu
+
 from .button import ToolButton
+from .dropdown_menu import DropdownMenu
 
 
 # ── ComboBox ─────────────────────────────────────────────────────────────────────────────────

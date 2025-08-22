@@ -9,9 +9,9 @@ data before rendering.
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 import re
+from collections import OrderedDict
 from pathlib import Path
 from typing import Union
-from collections import OrderedDict
 
 from PySide6.QtCore import QByteArray, QRectF, QSize, Qt
 from PySide6.QtGui import QIcon, QPainter, QPixmap

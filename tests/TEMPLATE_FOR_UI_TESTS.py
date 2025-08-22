@@ -17,26 +17,25 @@ Features:
 
 import sys
 from datetime import datetime
-from typing import Dict, Any, Optional
 from pathlib import Path
+from typing import Any, Dict, Optional
 
-from PySide6.QtCore import Qt, QTimer, Signal, QObject
-from PySide6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QScrollArea, QFrame, QLabel, QPlainTextEdit, QSizePolicy
-)
+from PySide6.QtCore import QObject, Qt, QTimer, Signal
 from PySide6.QtGui import QFont
+from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
+                               QMainWindow, QPlainTextEdit, QScrollArea,
+                               QSizePolicy, QVBoxLayout, QWidget)
 
 # Add project root to path for imports
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from app.ui.components.widgets.combobox import ComboBox
-from app.ui.components.widgets.toggle_switch import ToggleSwitch
-from app.ui.components.widgets.button import Button
+from app.style.icon.config import Name, Type
 from app.style.theme.config import Color, Mode
 from app.style.theme_controller import Theme
-from app.style.icon.config import Name, Type
+from app.ui.components.widgets.button import Button
+from app.ui.components.widgets.combobox import ComboBox
+from app.ui.components.widgets.toggle_switch import ToggleSwitch
 
 
 class ThemeManager(QObject):

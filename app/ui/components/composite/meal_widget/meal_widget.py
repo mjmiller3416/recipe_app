@@ -44,21 +44,22 @@ class MealWidget(QWidget):
         """
         Setup the UI layout for the MealWidget.
 
-        This method initializes the layout and adds RecipeViewers for main and side dishes.
+        This method initializes the layout with a large main dish card and 3 small side dishes.
+        Following the new design: large card on top, 3 small cards in a row below.
         """
         self.setObjectName("MealWidget")
-        self.main_layout = QHBoxLayout(self)
-        self.main_layout.setContentsMargins(10, 10, 10, 10)
-        self.main_layout.setSpacing(10)
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(15, 15, 15, 15)
+        self.main_layout.setSpacing(15)
 
-        # ── Main Dish ──
-        self.main_slot = RecipeCard(size=LayoutSize.MEDIUM)
+        # ── Main Dish (Large Card) ──
+        self.main_slot = RecipeCard(size=LayoutSize.LARGE)
         self.meal_slots["main"] = self.main_slot
         self.main_layout.addWidget(self.main_slot)
 
-        # ── Side Dishes ──
-        self.side_layout = QVBoxLayout()
-        self.side_layout.setSpacing(10)
+        # ── Side Dishes Row ──
+        self.side_layout = QHBoxLayout()
+        self.side_layout.setSpacing(15)
 
         for i in range(1, 4):
             side_slot = RecipeCard(size=LayoutSize.SMALL)

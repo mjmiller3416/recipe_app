@@ -15,17 +15,17 @@ theming system to provide consistent visual styling across the interface.
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
+
 from typing import Optional
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
-    QFrame, QVBoxLayout, QHBoxLayout, QGridLayout,
-    QSizePolicy, QWidget, QLabel, QLayout, QPushButton
-)
+from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
+                               QLayout, QPushButton, QSizePolicy, QVBoxLayout,
+                               QWidget)
 
-from app.style import Theme, Qss
-from app.style.icon import AppIcon, Name, Type
+from app.style import Qss, Theme
 from app.style.effects import Effects, Shadow
+from app.style.icon import AppIcon, Name, Type
 from app.ui.components.widgets.button import Button
 from dev_tools.debug_logger import DebugLogger
 

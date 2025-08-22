@@ -4,11 +4,10 @@ RecipeTag component - A pill-shaped tag with icon and text for recipe metadata.
 Used for meal types, categories, dietary preferences, etc.
 """
 
-from PySide6.QtCore import QSize
+from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel
-from PySide6.QtCore import Qt
 
-from app.style import Theme, Qss
+from app.style import Qss, Theme
 from app.style.icon import AppIcon
 from app.style.icon.config import Icon
 

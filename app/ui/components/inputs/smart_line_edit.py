@@ -9,8 +9,8 @@ from typing import Sequence
 from PySide6.QtCore import QEvent, QStringListModel, Qt, QTimer, Signal
 from PySide6.QtWidgets import QCompleter, QLineEdit
 
-from app.ui.models import IngredientProxyModel
 from app.ui.components.widgets.dropdown_menu import DropdownMenu
+from app.ui.models import IngredientProxyModel
 from dev_tools import DebugLogger
 
 # fixed height for the line edit

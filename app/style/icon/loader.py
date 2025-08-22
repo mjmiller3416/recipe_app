@@ -4,8 +4,9 @@ IconLoader is a singleton registry that stores the active theme palette
 and refreshes all registered icons when the application theme changes.
 """
 
+# Protocol for theme-aware icons
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from typing import Dict, Optional
+from typing import Dict, Optional, Protocol
 from weakref import WeakSet
 
 from PySide6.QtCore import QObject
@@ -14,8 +15,6 @@ from app.core.utils import QSingleton
 from app.style.theme_controller import Theme
 from dev_tools import DebugLogger
 
-# Protocol for theme-aware icons
-from typing import Protocol
 
 class ThemedIcon(Protocol):
     """Protocol for any theme-aware icon-like object."""

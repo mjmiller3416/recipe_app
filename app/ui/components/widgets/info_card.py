@@ -5,11 +5,11 @@ Used for recipe metadata like total time, servings, category, dietary info.
 """
 
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
+from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
+from app.style import Qss, Theme
 from app.style.icon import AppIcon
 from app.style.icon.config import Icon
-from app.style import Theme, Qss
 
 
 class InfoCard(QWidget):

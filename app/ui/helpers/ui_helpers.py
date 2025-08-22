@@ -6,13 +6,11 @@ Helper functions for creating UI components in PySide6.
 from typing import Iterable, Union
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import Qt, QObject, QTimer, QEvent
+from PySide6.QtCore import QEvent, QObject, Qt, QTimer
 from PySide6.QtGui import QGuiApplication
+from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
+                               QLayout, QSizePolicy, QVBoxLayout, QWidget)
 
-from PySide6.QtWidgets import (
-    QFrame, QGridLayout, QHBoxLayout, QLabel,
-    QLayout, QSizePolicy, QVBoxLayout, QWidget,
-)
 
 # ── Corner Anchor Util ───────────────────────────────────────────────────────────────────────
 class CornerAnchor(QObject):
@@ -140,32 +138,6 @@ def create_fixed_wrapper(
 
     return wrapper
 
-def create_hbox_with_widgets(*widgets, parent=None):
-    """
-    Creates a QHBoxLayout and adds the given widgets to it.
-
-    Args:
-        *widgets: Variable number of QWidget instances to add to the layout.
-        parent (QWidget, optional): Parent widget for the layout. Defaults to None.
-    """
-    layout = QHBoxLayout(parent)
-    for w in widgets:
-        layout.addWidget(w)
-    return layout
-
-def create_vbox_with_widgets(*widgets, parent=None):
-    """
-    Creates a QVBoxLayout and adds the given widgets to it.
-
-    Args:
-        *widgets: Variable number of QWidget instances to add to the layout.
-        parent (QWidget, optional): Parent widget for the layout. Defaults to None.
-    """
-    layout = QVBoxLayout(parent)
-    for w in widgets:
-        layout.addWidget(w)
-    return layout
-
 def make_overlay(base_widget: QWidget,
                  overlay_widget: QWidget,
                  margins: tuple[int,int,int,int] = (0, 8, 8, 0),
@@ -202,39 +174,4 @@ def make_overlay(base_widget: QWidget,
     grid.addWidget(pad, 0, 0, alignment=align)
 
     return container
-
-def create_framed_layout(
-        frame_shape:  QFrame.Shape = QFrame.Box,
-        frame_shadow: QFrame.Shadow = QFrame.Plain,
-        line_width:   int = 1,
-        size_policy:  tuple = (QSizePolicy.Expanding, QSizePolicy.Expanding),
-        margins:      tuple = (0, 0, 0, 0),
-        spacing:      int = 0,
-    ) -> tuple[QFrame, QVBoxLayout]:
-        """Create a QFrame with a QVBoxLayout inside, with standardized styling.
-
-        Args:
-            frame_shape (QFrame.Shape): Shape of the frame (Box, NoFrame, etc.)
-            frame_shadow (QFrame.Shadow): Shadow style of the frame.
-            line_width (int): Line width for the frame border.
-            size_policy (tuple): (horizontal, vertical) QSizePolicy values.
-            margins (tuple): Layout margins (left, top, right, bottom).
-            spacing (int): Spacing between layout elements.
-
-        Returns:
-            tuple[QFrame, QVBoxLayout]: The created frame and its layout.
-        """
-        # create the frame
-        frame = QFrame()
-        frame.setFrameShape(frame_shape)
-        frame.setFrameShadow(frame_shadow)
-        frame.setLineWidth(line_width)
-        frame.setSizePolicy(*size_policy)
-
-        # set up the layout
-        layout = QVBoxLayout(frame)
-        layout.setContentsMargins(*margins)
-        layout.setSpacing(spacing)
-
-        return frame, layout
 

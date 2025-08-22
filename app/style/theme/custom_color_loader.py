@@ -8,10 +8,11 @@ by the existing ThemeManager system.
 """
 
 import json
-from typing import Dict, Optional
 from pathlib import Path
+from typing import Dict, Optional
 
 from dev_tools.debug_logger import DebugLogger
+
 from .config import Mode
 
 

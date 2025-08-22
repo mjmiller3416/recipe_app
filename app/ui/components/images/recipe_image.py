@@ -5,10 +5,10 @@ Shows a styled placeholder when no image is uploaded.
 """
 
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import QFrame, QVBoxLayout, QLabel, QSizePolicy
 from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import QFrame, QLabel, QSizePolicy, QVBoxLayout
 
-from app.style import Theme, Qss
+from app.style import Qss, Theme
 from app.style.icon import AppIcon
 from app.style.icon.config import Icon
 

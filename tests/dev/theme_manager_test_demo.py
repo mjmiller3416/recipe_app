@@ -4,16 +4,16 @@ from enum import Enum, auto
 
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import (QColor, QFont, QFontDatabase, QIcon, QPainter,
-                           QPainterPath, QPixmap, QPalette)
-from PySide6.QtWidgets import (
-    QApplication, QCheckBox, QComboBox, QFrame, QHBoxLayout,
-    QLabel, QMainWindow, QPushButton, QSizePolicy, QSpacerItem,
-    QStackedWidget, QVBoxLayout, QWidget, QGraphicsDropShadowEffect,
-    QGraphicsBlurEffect, QGraphicsOpacityEffect
-)
+                           QPainterPath, QPalette, QPixmap)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFrame,
+                               QGraphicsBlurEffect, QGraphicsDropShadowEffect,
+                               QGraphicsOpacityEffect, QHBoxLayout, QLabel,
+                               QMainWindow, QPushButton, QSizePolicy,
+                               QSpacerItem, QStackedWidget, QVBoxLayout,
+                               QWidget)
 
 from app.config import ERROR_COLOR
-from app.style.icon import Icon, Type, Name
+from app.style.icon import Icon, Name, Type
 from app.style.theme_controller import Color, Mode, Theme
 from app.ui.components.widgets import Button, ToolButton
 

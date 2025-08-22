@@ -5,14 +5,13 @@ Provides complete control over card sizing, proportions, and alignment.
 """
 
 from __future__ import annotations
-from typing import List, Dict, Optional, Union
+
 from enum import Enum
+from typing import Dict, List, Optional, Union
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
-    QBoxLayout, QHBoxLayout, QVBoxLayout, QWidget, 
-    QSizePolicy, QSpacerItem
-)
+from PySide6.QtWidgets import (QBoxLayout, QHBoxLayout, QSizePolicy,
+                               QSpacerItem, QVBoxLayout, QWidget)
 
 from app.ui.components.layout.card import Card
 

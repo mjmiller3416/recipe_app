@@ -4,22 +4,21 @@ Test demo for the ToggleSwitch widget.
 Shows various toggle switches with different states and demonstrates functionality.
 """
 
+import os
 # ── Imports ─────────────────────────────────────────────────────────────────────
 import sys
-import os
 
 # Add project root to path
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, project_root)
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QLabel, QFrame, QSpacerItem, QSizePolicy, QGroupBox, QPushButton,
-    QCheckBox, QTextEdit
-)
 from PySide6.QtGui import QFont
+from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QGroupBox,
+                               QHBoxLayout, QLabel, QMainWindow, QPushButton,
+                               QSizePolicy, QSpacerItem, QTextEdit,
+                               QVBoxLayout, QWidget)
 
-from app.style.theme_controller import Theme, Mode, Color
+from app.style.theme_controller import Color, Mode, Theme
 from app.ui.components.widgets.toggle_switch import ToggleSwitch
 
 

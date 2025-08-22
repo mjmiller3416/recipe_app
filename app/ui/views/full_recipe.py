@@ -15,38 +15,26 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from PySide6.QtCore import Qt, QSize, Signal
-from PySide6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
-    QHBoxLayout,
-    QGridLayout,
-    QLabel,
-    QFrame,
-    QSizePolicy,
-    QSpacerItem,
-    QScrollArea,
-)
-
-# ── App Imports ──────────────────────────────────────────────────────────────────────────────
-# Icons
-from app.style.icon import Icon, AppIcon
-from app.style.icon.config import Name, Type
-
-# Theme hook (component registration)
-from app.style import Theme, Qss
-
-# Card container
-from app.ui.components.layout.card import Card
-
-# Custom components
-from app.ui.components.widgets.button import Button
-from app.ui.components.widgets.recipe_tag import RecipeTag
-from app.ui.components.widgets.info_card import InfoCard
-from app.ui.components.images.recipe_image import RecipeImage
+from PySide6.QtCore import QSize, Qt, Signal
+from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
+                               QScrollArea, QSizePolicy, QSpacerItem,
+                               QVBoxLayout, QWidget)
 
 # Data model
 from app.core.models import Recipe
+# Theme hook (component registration)
+from app.style import Qss, Theme
+# ── App Imports ──────────────────────────────────────────────────────────────────────────────
+# Icons
+from app.style.icon import AppIcon, Icon
+from app.style.icon.config import Name, Type
+from app.ui.components.images.recipe_image import RecipeImage
+# Card container
+from app.ui.components.layout.card import Card
+# Custom components
+from app.ui.components.widgets.button import Button
+from app.ui.components.widgets.info_card import InfoCard
+from app.ui.components.widgets.recipe_tag import RecipeTag
 
 
 # ── Helper Classes ──────────────────────────────────────────────────────────────────────────
