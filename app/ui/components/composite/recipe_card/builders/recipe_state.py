@@ -71,9 +71,10 @@ class RecipeCard:
             case _:                 raise ValueError(f"Unsupported size: {self.size}")
 
         frame.setFixedSize(LAYOUT_SIZE[self.size.value]) # apply fixed geometry
-
+        # register for component-specific styling
+        Theme.register_widget(frame, Qss.RECIPE_CARD)
         # ⚠️ temporary fix for transparency
-        frame.setStyleSheet("background-color: #1B1D23; border-radius: 10px;")
+        #frame.setStyleSheet("background-color: #1B1D23; border-radius: 10px;")
 
         return frame
 
@@ -123,7 +124,9 @@ class RecipeCard:
 
         # favorite button - choose initial icon based on favorite state
         initial_icon = Name.FAV if self.recipe.is_favorite else Name.FAV_FILLED
-        btn_fav = ToolButton(Type.DEFAULT, initial_icon)
+        btn_fav = ToolButton(Type.PRIMARY, initial_icon)
+        btn_fav.setIconSize(24, 24)
+        btn_fav.setObjectName("btn_favorite")
         btn_fav.setCheckable(True)
         btn_fav.setCursor(Qt.PointingHandCursor)
         btn_fav.setChecked(bool(self.recipe.is_favorite)) # set initial state

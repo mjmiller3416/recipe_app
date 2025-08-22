@@ -4,18 +4,16 @@ from .card_layout import CardLayout, Direction, HeightMode, AlignmentMode, Horiz
 from .flow_layout import FlowLayout
 from .flyout_widget import FlyoutWidget
 from .separator import Separator
-from .widget_frame import WidgetFrame
 
 __all__ = [
     "CardLayout",
-    "Direction", 
+    "Direction",
     "HeightMode",
-    "AlignmentMode", 
+    "AlignmentMode",
     "HorizontalCardLayout",
     "VerticalCardLayout",
     "CustomGrip",
     "Separator",
-    "WidgetFrame",
     "FlowLayout",
     "FlyoutWidget"
 ]

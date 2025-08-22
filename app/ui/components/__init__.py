@@ -14,7 +14,6 @@ from .widgets.toggle_switch import ToggleSwitch
 from .layout.flow_layout import FlowLayout
 # From layout
 from .layout.separator import Separator
-from .layout.widget_frame import WidgetFrame
 # From navigation
 from .navigation.sidebar import Sidebar
 from .navigation.titlebar import TitleBar
@@ -34,7 +33,7 @@ __all__ = [
     # Inputs
     "ComboBox", "SearchBar", "SmartLineEdit", "ToggleSwitch",
     # Layout
-    "Separator", "WidgetFrame", "FlowLayout",
+    "Separator", "FlowLayout",
     # Navigation
     "Sidebar", "TitleBar",
     # Widgets

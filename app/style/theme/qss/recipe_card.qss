@@ -1,0 +1,29 @@
+/* recipe_card.qss */
+
+#RecipeCard, #EmptyStateFrame, #ErrorStateFrame {
+    background-color: {surface_container};  /* Use theme-based background instead of transparent */
+    border-radius: 10px; /* Rounded corners */
+}
+
+#RecipeCard QLabel {
+    color: {on_surface};
+    font: {default};
+}
+
+#RecipeCard[layout_size="medium"] [title_text="true"] {
+    font: {default};
+}
+
+#RecipeCard [label_text="true"] {
+    font: {default};
+    color: {on_surface_variant};
+}
+
+#btn_favorite {
+    background: none;
+    border: none;
+}
+
+
+/* INTERACTIVE ELEMENTS */
+
