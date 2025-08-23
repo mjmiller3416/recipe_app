@@ -12,7 +12,8 @@ from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QLabel, QSizePolicy, QVBoxLayout, QWidget
 
 from app.config import FALLBACK_COLOR
-from app.style import Qss, Theme
+from app.style.theme.config import Qss
+from app.style.theme_controller import Theme
 from app.style.icon.config import Name, State, Type
 from app.style.icon.loader import IconLoader
 from app.style.icon.svg_loader import SVGLoader

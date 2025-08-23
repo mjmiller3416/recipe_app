@@ -3,22 +3,22 @@
 Contains custom proxy models for filtering and sorting data in views.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSortFilterProxyModel
 
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── Ingredient Proxy Model ───────────────────────────────────────────────────────────────────
 class IngredientProxyModel(QSortFilterProxyModel):
     """IngredientProxyModel is a custom proxy model that filters
-    ingredient items based on a plain text filter. 
-    
+    ingredient items based on a plain text filter.
+
     It checks if any word
     in the ingredient name starts with the filter text.
     """
     def __init__(self, parent=None):
         super().__init__(parent)
         self._filter_text = ""
-        
+
     def setFilterFixedString(self, pattern: str):
         """Overrides default behavior to store plain text pattern."""
         self._filter_text = pattern.strip().lower()

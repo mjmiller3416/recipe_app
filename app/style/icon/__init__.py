@@ -4,16 +4,14 @@
 from app.style.icon.config import Icon, Name, State, Type
 from app.style.icon.icon import AppIcon
 from app.style.icon.loader import IconLoader
-from app.style.icon.mixin import IconMixin
 from app.style.icon.svg_loader import SVGLoader
 
 __all__ = [
-    "IconMixin",
     "AppIcon",
     "IconLoader",
     "SVGLoader",
     "Name",
-    "State", 
+    "State",
     "Type",
     "Icon",  # Alias for Name enum
 ]

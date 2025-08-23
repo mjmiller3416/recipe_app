@@ -187,8 +187,8 @@ class RecipeCard:
 
         # Main layout
         main_layout = QVBoxLayout(parent)
-        main_layout.setContentsMargins(15, 15, 15, 15)
-        main_layout.setSpacing(12)
+        main_layout.setContentsMargins(12, 12, 12, 12)  # Reduced margins from 15 to 12
+        main_layout.setSpacing(10)  # Reduced spacing from 12 to 10
         
         # ── Recipe Title ──
         title_label = QLabel(self.recipe.recipe_name or "Untitled Recipe")
@@ -200,12 +200,12 @@ class RecipeCard:
         
         # ── Content Layout: Image (left) + Info Panel (right) ──
         content_layout = QHBoxLayout()
-        content_layout.setSpacing(15)
+        content_layout.setSpacing(12)  # Reduced spacing from 15 to 12
         
         # ── Left Side: Recipe Image ──
         img_recipe = RoundedImage(
             image_path=self.recipe.image_path,
-            size=280,
+            size=200,  # Reduced from 280 to 200 to give more space to info panel
             radii=(10, 10, 10, 10)
         )
         
@@ -223,11 +223,11 @@ class RecipeCard:
         
         # Create image with overlay
         image_overlay = make_overlay(img_recipe, btn_fav)
-        content_layout.addWidget(image_overlay)
+        content_layout.addWidget(image_overlay, 0)  # Fixed size for image
         
         # ── Right Side: Info Panel ──
         info_panel = QVBoxLayout()
-        info_panel.setSpacing(10)
+        info_panel.setSpacing(8)  # Reduced spacing to fit more content
         
         # Recipe Tags Row
         tags_row = RecipeTagsRow()
@@ -242,10 +242,10 @@ class RecipeCard:
         info_panel.addWidget(info_cards)
         
         # Add some spacing
-        info_panel.addSpacing(8)
+        info_panel.addSpacing(6)
         
         # Ingredients Preview
-        ingredients_preview = IngredientsPreview(max_preview_items=6)
+        ingredients_preview = IngredientsPreview(max_preview_items=5)  # Reduced from 6 to 5
         ingredient_details = getattr(self.recipe, "get_ingredient_details", lambda: [])()
         ingredients_preview.setIngredients(ingredient_details)
         info_panel.addWidget(ingredients_preview)
@@ -253,8 +253,8 @@ class RecipeCard:
         # Add stretch to push content to top
         info_panel.addStretch()
         
-        # Add info panel to content layout
-        content_layout.addLayout(info_panel, 1)  # Give it more space than the image
+        # Add info panel to content layout with more space
+        content_layout.addLayout(info_panel, 2)  # Give it 2x more space than the image
         
         # Add content to main layout
         main_layout.addLayout(content_layout)

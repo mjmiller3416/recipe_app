@@ -6,7 +6,7 @@ with a hover-triggered overlay displaying the complete list.
 
 from typing import Iterable, Optional
 
-from PySide6.QtCore import QEasingCurve, QPoint, QPropertyAnimation, QRect, Qt
+from PySide6.QtCore import QEasingCurve, QEvent, QPoint, QPropertyAnimation, QRect, Qt
 from PySide6.QtGui import QColor, QPainter
 from PySide6.QtWidgets import (QFrame, QGraphicsOpacityEffect, QGridLayout,
                                QHBoxLayout, QLabel, QSizePolicy, QVBoxLayout,
@@ -253,9 +253,9 @@ class IngredientsPreview(QWidget):
     def eventFilter(self, obj, event):
         """Handle hover events on the preview frame."""
         if obj == self.preview_frame:
-            if event.type() == event.Enter:
+            if event.type() == QEvent.Enter:
                 self._showOverlay()
-            elif event.type() == event.Leave:
+            elif event.type() == QEvent.Leave:
                 self._hideOverlay()
         
         return super().eventFilter(obj, event)
