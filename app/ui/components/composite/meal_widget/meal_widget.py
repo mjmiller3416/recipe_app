@@ -16,7 +16,7 @@ from app.core.models.meal_selection import MealSelection
 from app.core.services.planner_service import PlannerService
 # use RecipeService instead of direct Recipe.get()
 from app.core.services.recipe_service import RecipeService
-from app.ui.components.composite.recipe_card import LayoutSize, RecipeCard
+from app.ui.components.composite.recipe_card import LayoutSize, create_recipe_card
 from dev_tools import DebugLogger
 
 
@@ -53,7 +53,7 @@ class MealWidget(QWidget):
         self.main_layout.setSpacing(15)
 
         # ── Main Dish (Large Card) ──
-        self.main_slot = RecipeCard(size=LayoutSize.LARGE)
+        self.main_slot = create_recipe_card(LayoutSize.LARGE)
         self.meal_slots["main"] = self.main_slot
         self.main_layout.addWidget(self.main_slot)
 
@@ -62,7 +62,7 @@ class MealWidget(QWidget):
         self.side_layout.setSpacing(15)
 
         for i in range(1, 4):
-            side_slot = RecipeCard(size=LayoutSize.SMALL)
+            side_slot = create_recipe_card(LayoutSize.SMALL)
             side_slot.setEnabled(False) # initially disabled
             side_slot.setToolTip("Select a main dish first") # tooltip for disabled state
             self.side_layout.addWidget(side_slot)

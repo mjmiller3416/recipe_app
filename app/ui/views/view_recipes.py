@@ -9,7 +9,7 @@ from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QStackedWidget, QVBoxLayout, QWidget
 
 from app.ui.components.composite.recipe_browser import RecipeBrowser
-from app.ui.components.composite.recipe_card.constants import LayoutSize
+from app.ui.components.composite.recipe_card import LayoutSize
 from app.ui.views.full_recipe import FullRecipe
 from dev_tools import DebugLogger
 

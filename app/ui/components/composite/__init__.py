@@ -2,13 +2,14 @@
 
 from .meal_widget import MealWidget
 from .recipe_browser import RecipeBrowser
-from .recipe_card import RecipeCard
+from .recipe_card import create_recipe_card, LayoutSize
 from .ingredients_preview import IngredientsPreview
 from .recipe_tags_row import RecipeTagsRow
 from .recipe_info_cards import RecipeInfoCards
 
 __all__ = [
-    "RecipeCard",
+    "create_recipe_card",
+    "LayoutSize",
     "MealWidget",
     "RecipeBrowser",
     "IngredientsPreview",
