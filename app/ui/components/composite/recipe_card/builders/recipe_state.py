@@ -42,21 +42,14 @@ class RecipeCard:
             from app.ui.components.widgets.button import BaseButton
 
             service = RecipeService()
-            print(f"\\n=== TOGGLING FAVORITE ===\\nRecipe ID: {recipe_id}\\nBefore toggle - Current recipe.is_favorite: {self.recipe.is_favorite}")
-            
             updated_recipe = service.toggle_favorite(recipe_id)
             
             # CRITICAL: Update the card's recipe object with the new state
             self.recipe.is_favorite = updated_recipe.is_favorite
             
-            print(f"After toggle - updated_recipe.is_favorite: {updated_recipe.is_favorite}")
-            print(f"After toggle - self.recipe.is_favorite: {self.recipe.is_favorite}")
-            
             BaseButton.swapIcon(button, updated_recipe.is_favorite, Name.FAV_FILLED, Name.FAV)
-            print(f"Icon swapped to: {'FAV_FILLED' if updated_recipe.is_favorite else 'FAV'}\\n")
 
-        except Exception as e:
-            print(f"Error in _toggle_favorite_with_icon_update: {e}")
+        except Exception:
             pass
 
     # ── Public Methods ──────────────────────────────────────────────────────────────
@@ -66,9 +59,6 @@ class RecipeCard:
         Returns:
             QFrame: The fully constructed recipe card widget.
         """
-        # DEBUG: Track recipe state at card creation
-        print(f"\n=== BUILDING CARD ===\nRecipe: {self.recipe.recipe_name}\nSize: {self.size}\nRecipe ID: {self.recipe.id}\nis_favorite: {self.recipe.is_favorite}\n")
-        
         # ── Create Frame ──
         frame = QFrame()
         frame.setProperty("layout_size", self.size.value)
@@ -134,9 +124,7 @@ class RecipeCard:
         )
 
         # favorite button - choose initial icon based on favorite state
-        print(f"[MEDIUM CARD] Recipe '{self.recipe.recipe_name}' - is_favorite: {self.recipe.is_favorite}")
         initial_icon = Name.FAV_FILLED if self.recipe.is_favorite else Name.FAV
-        print(f"[MEDIUM CARD] Selected icon: {initial_icon}")
         btn_fav = ToolButton(Type.DEFAULT, initial_icon)
         btn_fav.setIconSize(24, 24)
         btn_fav.setObjectName("btn_favorite")
@@ -223,9 +211,7 @@ class RecipeCard:
         )
 
         # Favorite button overlay
-        print(f"[LARGE CARD] Recipe '{self.recipe.recipe_name}' - is_favorite: {self.recipe.is_favorite}")
         initial_icon = Name.FAV_FILLED if self.recipe.is_favorite else Name.FAV
-        print(f"[LARGE CARD] Selected icon: {initial_icon}")
         btn_fav = ToolButton(Type.DEFAULT, initial_icon)
         btn_fav.setIconSize(24, 24)
         btn_fav.setObjectName("btn_favorite")
