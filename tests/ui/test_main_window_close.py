@@ -46,6 +46,6 @@ def main_window(qtbot: QtBot):
 
 def test_close_saves_meal_plan(main_window: MainWindow, qtbot: QtBot):
     planner = main_window.navigation.page_instances["meal_planner"]
-    planner.save_meal_plan = MagicMock()
+    planner.saveMealPlan = MagicMock()
     main_window.close()
-    planner.save_meal_plan.assert_called_once()
+    planner.saveMealPlan.assert_called_once()

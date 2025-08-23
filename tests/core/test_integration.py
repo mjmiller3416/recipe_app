@@ -91,7 +91,7 @@ def test_full_workflow_integration(session):
     assert created_meal.meal_name == "Complete Test Meal"
 
     # Step 4: Save the meal to the meal plan
-    save_result = planner_service.save_meal_plan([created_meal.id])
+    save_result = planner_service.saveMealPlan([created_meal.id])
     assert save_result.success is True
     assert save_result.saved_count == 1
 
@@ -173,7 +173,7 @@ def test_full_workflow_integration(session):
     current_ids = [meal.id for meal in current_saved]
     current_ids.append(dessert_meal.id)
 
-    save_result = planner_service.save_meal_plan(current_ids)
+    save_result = planner_service.saveMealPlan(current_ids)
     assert save_result.success is True
     assert save_result.saved_count == 2
 

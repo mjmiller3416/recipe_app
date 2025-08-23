@@ -55,7 +55,7 @@ class NavigationService:
         # Ensure any changes in the MealPlanner are saved before loading shopping list
         planner_widget = self.page_instances.get("meal_planner")
         if isinstance(planner_widget, MealPlanner):
-            planner_widget.save_meal_plan()
+            planner_widget.saveMealPlan()
 
         # refresh ShoppingList if navigating to it
         if page_name == "shopping_list" and isinstance(next_widget, ShoppingList):

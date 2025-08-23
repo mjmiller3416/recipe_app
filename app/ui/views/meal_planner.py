@@ -10,10 +10,10 @@ from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QStackedWidget, QTabWidget, QVBoxLayout, QWidget
 
 from app.core.services.planner_service import PlannerService
-from app.style.icon import AppIcon, Icon, Name
+from app.style.icon import AppIcon, Icon
 from app.ui.components.composite import MealWidget
 from app.ui.views.recipe_selection import RecipeSelection
-from dev_tools import DebugLogger, StartupTimer
+from dev_tools import DebugLogger
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────
@@ -41,7 +41,7 @@ class MealPlanner(QWidget):
         self.meal_tabs.setIconSize(QSize(16, 16))
         self.meal_tabs.setTabsClosable(False)
         self.meal_tabs.setMovable(True)
-        self.meal_tabs.tabBarClicked.connect(self.handle_tab_click)
+        self.meal_tabs.tabBarClicked.connect(self._handle_tab_click)
         # create the in-page recipe selection view
         self.selection_page = RecipeSelection(self)
         # handle when a recipe is selected from the selection page
@@ -63,35 +63,26 @@ class MealPlanner(QWidget):
         # context for in-page recipe selection (widget, slot_key)
         self._selection_context = None
 
-        self.init_ui()
+        self._init_ui()
 
-    def init_ui(self):
+    def _init_ui(self):
         """Initialize UI by adding the '+' tab and loading saved meals."""
-        self.new_meal_tab()  # add the "+" tab (used to add new meals)
+        self._new_meal_tab()  # add the "+" tab (used to add new meals)
 
         try:
             meal_ids = self.planner_service.load_saved_meal_ids()
             DebugLogger.log(f"[MealPlanner] Restoring saved meal IDs: {meal_ids}", "info")
 
             for meal_id in meal_ids:
-                self.add_meal_tab(meal_id=meal_id)
+                self._add_meal_tab(meal_id=meal_id)
 
             if not meal_ids:
-                self.add_meal_tab()
+                self._add_meal_tab()
         except Exception as e:
             DebugLogger.log(f"[MealPlanner] Error loading saved meals: {e}", "error")
-            self.add_meal_tab()  # Fallback to empty tab
+            self._add_meal_tab()  # Fallback to empty tab
 
-    def new_meal_tab(self):
-        """Add the last "+" tab to create new custom meals."""
-        new_meal_tab = QWidget()
-        icon_asset = AppIcon(Icon.ADD)
-        icon = icon_asset.pixmap()
-
-        index = self.meal_tabs.addTab(new_meal_tab, icon, "")
-        self.meal_tabs.setTabToolTip(index, "Add Meal")
-
-    def add_meal_tab(self, meal_id: int = None):
+    def _add_meal_tab(self, meal_id: int = None):
         widget = MealWidget(self.planner_service)  # pass the service here
         if meal_id:
             widget.load_meal(meal_id)
@@ -108,10 +99,19 @@ class MealPlanner(QWidget):
         self.tab_map[index] = widget
         self.meal_tabs.setCurrentIndex(index)
 
-    def handle_tab_click(self, index: int):
+    def _new_meal_tab(self):
+        """Add the last "+" tab to create new custom meals."""
+        _new_meal_tab = QWidget()
+        icon_asset = AppIcon(Icon.ADD)
+        icon = icon_asset.pixmap()
+
+        index = self.meal_tabs.addTab(_new_meal_tab, icon, "")
+        self.meal_tabs.setTabToolTip(index, "Add Meal")
+
+    def _handle_tab_click(self, index: int):
         """Handle when the '+' tab is clicked to add a new tab."""
         if index == self.meal_tabs.count() - 1:
-            self.add_meal_tab()
+            self._add_meal_tab()
 
     def _start_recipe_selection(self, widget, slot_key: str):
         """Begin in-page recipe selection for the given meal slot."""
@@ -138,7 +138,7 @@ class MealPlanner(QWidget):
         self.stack.setCurrentIndex(0)
         self._selection_context = None
 
-    def get_active_meal_ids(self) -> list[int]:
+    def _get_active_meal_ids(self) -> list[int]:
         """
         Collect and return all valid meal IDs from current tabs.
 
@@ -151,13 +151,13 @@ class MealPlanner(QWidget):
                 ids.append(widget._meal_model.id)
         return ids
 
-    def save_meal_plan(self):
+    def saveMealPlan(self):
         """Save all meals and their corresponding tab state."""
         for widget in self.tab_map.values():
             widget.save_meal()
 
-        saved_ids = self.get_active_meal_ids()
-        result = self.planner_service.save_meal_plan(saved_ids)
+        saved_ids = self._get_active_meal_ids()
+        result = self.planner_service.saveMealPlan(saved_ids)
 
         if result.success:
             DebugLogger.log(f"[MealPlanner] {result.message}", "info")

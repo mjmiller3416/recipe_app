@@ -64,7 +64,7 @@ class PlannerService:
         except SQLAlchemyError as e:
             raise RuntimeError(f"Failed to load saved meal plan: {e}")
 
-    def save_meal_plan(self, meal_ids: List[int]) -> MealPlanSaveResultDTO:
+    def saveMealPlan(self, meal_ids: List[int]) -> MealPlanSaveResultDTO:
         """
         Save a meal plan by storing the meal IDs.
         Validates meal IDs before saving.

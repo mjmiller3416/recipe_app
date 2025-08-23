@@ -214,6 +214,6 @@ class MainWindow(FramelessWindow):
     def closeEvent(self, event):
         """Persist planner state before closing the application."""
         meal_planner = self.navigation.page_instances.get("meal_planner")
-        if meal_planner and hasattr(meal_planner, 'save_meal_plan'):
-            meal_planner.save_meal_plan()
+        if meal_planner and hasattr(meal_planner, 'saveMealPlan'):
+            meal_planner.saveMealPlan()
         super().closeEvent(event)

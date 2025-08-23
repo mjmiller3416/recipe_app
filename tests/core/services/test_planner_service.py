@@ -214,7 +214,7 @@ def test_save_meal_plan(session):
     service = PlannerService(session)
 
     # Save meal plan
-    result = service.save_meal_plan([meal1.id, meal2.id])
+    result = service.saveMealPlan([meal1.id, meal2.id])
 
     assert result.success is True
     assert result.saved_count == 2
@@ -236,7 +236,7 @@ def test_clear_meal_plan(session):
     session.commit()
 
     service = PlannerService(session)
-    service.save_meal_plan([meal.id])
+    service.saveMealPlan([meal.id])
 
     # Verify plan exists
     assert len(service.get_saved_meal_plan()) == 1
