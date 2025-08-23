@@ -423,6 +423,65 @@ class BaseButton:
         if self.state_icon:
             self.state_icon.clearAllStateOverrides()
 
+    # ── Icon Swapping Utility ────────────────────────────────────────────────────────────
+    @staticmethod
+    def swapIcon(button, condition: bool, true_icon: Name, false_icon: Name, preserve_size: bool = True):
+        """Swap button icon based on a boolean condition.
+        
+        This is a convenience method that simplifies conditional icon swapping patterns
+        commonly used throughout the application.
+        
+        Args:
+            button: Button widget (BaseButton subclass or any widget with setIcon)
+            condition (bool): Boolean condition to determine which icon to use
+            true_icon (Name): Icon to use when condition is True
+            false_icon (Name): Icon to use when condition is False
+            preserve_size (bool): Whether to preserve the current icon size (default: True)
+            
+        Example:
+            # Instead of:
+            icon_name = Icon.RESTORE if maximized else Icon.MAXIMIZE
+            BaseButton.setIcon(self.btn_ico_maximize, icon_name)
+            
+            # Use:
+            BaseButton.swapIcon(self.btn_ico_maximize, maximized, Icon.RESTORE, Icon.MAXIMIZE)
+        """
+        # Preserve current icon size if requested and available
+        current_size = None
+        if preserve_size and hasattr(button, 'state_icon') and button.state_icon:
+            current_size = button.state_icon.size()
+        
+        # Set the new icon
+        icon = true_icon if condition else false_icon
+        BaseButton.setIcon(button, icon)
+        
+        # Restore the size if it was preserved
+        if current_size and hasattr(button, 'setStateIconSize'):
+            button.setStateIconSize(current_size.width(), current_size.height())
+
+    @staticmethod
+    def getConditionalIcon(condition: bool, true_icon: Name, false_icon: Name) -> Name:
+        """Get an icon based on a boolean condition without setting it on a button.
+        
+        This is useful for initial icon setup during widget creation.
+        
+        Args:
+            condition (bool): Boolean condition to determine which icon to return
+            true_icon (Name): Icon to return when condition is True
+            false_icon (Name): Icon to return when condition is False
+            
+        Returns:
+            Name: The icon enum based on the condition
+            
+        Example:
+            # Instead of:
+            initial_icon = Name.FAV if self.recipe.is_favorite else Name.FAV_FILLED
+            
+            # Use:
+            initial_icon = BaseButton.getConditionalIcon(self.recipe.is_favorite, Name.FAV, Name.FAV_FILLED)
+        """
+        return true_icon if condition else false_icon
+
 # ── Button ───────────────────────────────────────────────────────────────────────────────────
 class Button(QPushButton, BaseButton):
     """A QPushButton with integrated StateIcon support.

@@ -99,10 +99,7 @@ class CollapsibleCard(BaseCard):
 
         from app.ui.components.widgets.button import BaseButton
 
-        icon_name = Name.ANGLE_DOWN if self._is_expanded else Name.ANGLE_RIGHT
-
-        # Use BaseButton's setIcon method explicitly (same pattern as titlebar)
-        BaseButton.setIcon(self._collapse_button, icon_name)
+        BaseButton.swapIcon(self._collapse_button, self._is_expanded, Name.ANGLE_DOWN, Name.ANGLE_RIGHT)
 
 
     # ── Public API ───────────────────────────────────────────────────────────────────────────────

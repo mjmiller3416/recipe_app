@@ -48,7 +48,7 @@ else:
 
     app = QApplication(sys.argv)
     app.setApplicationName("MealGenie")
-    DebugLogger.set_log_level("info")
+    DebugLogger.set_log_level("warning")
     DebugLogger.log("Starting MealGenie application...\n", "info")
 
 

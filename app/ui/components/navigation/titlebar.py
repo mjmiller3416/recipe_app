@@ -97,9 +97,7 @@ class TitleBar(QWidget):
         }
 
     def update_maximize_icon(self, maximized: bool):
-        icon_name = Icon.RESTORE if maximized else Icon.MAXIMIZE
-        # Use BaseButton's setIcon method explicitly to avoid Qt's native setIcon
-        BaseButton.setIcon(self.btn_ico_maximize, icon_name)
+        BaseButton.swapIcon(self.btn_ico_maximize, maximized, Icon.RESTORE, Icon.MAXIMIZE)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.LeftButton:

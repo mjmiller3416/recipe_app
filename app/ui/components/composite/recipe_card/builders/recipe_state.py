@@ -13,7 +13,7 @@ from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
 from app.style import Theme
-from app.style.icon import AppIcon, Icon
+from app.style.icon import AppIcon
 from app.style.icon.config import Name, Type
 from app.style.theme.config import Qss
 from app.ui.components.layout import Separator
@@ -39,15 +39,24 @@ class RecipeCard:
     def _toggle_favorite_with_icon_update(self, button, recipe_id: int) -> None:
         """Helper to toggle favorite status and update the button icon."""
         try:
+            from app.ui.components.widgets.button import BaseButton
+
             service = RecipeService()
+            print(f"\\n=== TOGGLING FAVORITE ===\\nRecipe ID: {recipe_id}\\nBefore toggle - Current recipe.is_favorite: {self.recipe.is_favorite}")
+            
             updated_recipe = service.toggle_favorite(recipe_id)
+            
+            # CRITICAL: Update the card's recipe object with the new state
+            self.recipe.is_favorite = updated_recipe.is_favorite
+            
+            print(f"After toggle - updated_recipe.is_favorite: {updated_recipe.is_favorite}")
+            print(f"After toggle - self.recipe.is_favorite: {self.recipe.is_favorite}")
+            
+            BaseButton.swapIcon(button, updated_recipe.is_favorite, Name.FAV_FILLED, Name.FAV)
+            print(f"Icon swapped to: {'FAV_FILLED' if updated_recipe.is_favorite else 'FAV'}\\n")
 
-            # update the button icon based on the new favorite state
-            new_icon = Name.FAV if updated_recipe.is_favorite else Name.FAV_FILLED
-
-            button.setIcon(new_icon)
-
-        except Exception:
+        except Exception as e:
+            print(f"Error in _toggle_favorite_with_icon_update: {e}")
             pass
 
     # ── Public Methods ──────────────────────────────────────────────────────────────
@@ -57,6 +66,9 @@ class RecipeCard:
         Returns:
             QFrame: The fully constructed recipe card widget.
         """
+        # DEBUG: Track recipe state at card creation
+        print(f"\n=== BUILDING CARD ===\nRecipe: {self.recipe.recipe_name}\nSize: {self.size}\nRecipe ID: {self.recipe.id}\nis_favorite: {self.recipe.is_favorite}\n")
+        
         # ── Create Frame ──
         frame = QFrame()
         frame.setProperty("layout_size", self.size.value)
@@ -71,10 +83,9 @@ class RecipeCard:
             case _:                 raise ValueError(f"Unsupported size: {self.size}")
 
         frame.setFixedSize(LAYOUT_SIZE[self.size.value]) # apply fixed geometry
-        # register for component-specific styling
-        Theme.register_widget(frame, Qss.RECIPE_CARD)
-        # ⚠️ temporary fix for transparency
-        #frame.setStyleSheet("background-color: #1B1D23; border-radius: 10px;")
+
+        Theme.register_widget(frame, Qss.RECIPE_CARD) # register for component-specific styling
+
 
         return frame
 
@@ -123,8 +134,10 @@ class RecipeCard:
         )
 
         # favorite button - choose initial icon based on favorite state
-        initial_icon = Name.FAV if self.recipe.is_favorite else Name.FAV_FILLED
-        btn_fav = ToolButton(Type.PRIMARY, initial_icon)
+        print(f"[MEDIUM CARD] Recipe '{self.recipe.recipe_name}' - is_favorite: {self.recipe.is_favorite}")
+        initial_icon = Name.FAV_FILLED if self.recipe.is_favorite else Name.FAV
+        print(f"[MEDIUM CARD] Selected icon: {initial_icon}")
+        btn_fav = ToolButton(Type.DEFAULT, initial_icon)
         btn_fav.setIconSize(24, 24)
         btn_fav.setObjectName("btn_favorite")
         btn_fav.setCheckable(True)
@@ -189,7 +202,7 @@ class RecipeCard:
         main_layout = QVBoxLayout(parent)
         main_layout.setContentsMargins(12, 12, 12, 12)  # Reduced margins from 15 to 12
         main_layout.setSpacing(10)  # Reduced spacing from 12 to 10
-        
+
         # ── Recipe Title ──
         title_label = QLabel(self.recipe.recipe_name or "Untitled Recipe")
         title_label.setObjectName("LargeCardTitle")
@@ -197,21 +210,23 @@ class RecipeCard:
         title_label.setAlignment(Qt.AlignCenter)
         title_label.setWordWrap(True)
         main_layout.addWidget(title_label)
-        
+
         # ── Content Layout: Image (left) + Info Panel (right) ──
         content_layout = QHBoxLayout()
         content_layout.setSpacing(12)  # Reduced spacing from 15 to 12
-        
+
         # ── Left Side: Recipe Image ──
         img_recipe = RoundedImage(
             image_path=self.recipe.image_path,
             size=200,  # Reduced from 280 to 200 to give more space to info panel
             radii=(10, 10, 10, 10)
         )
-        
+
         # Favorite button overlay
-        initial_icon = Name.FAV if self.recipe.is_favorite else Name.FAV_FILLED
-        btn_fav = ToolButton(Type.PRIMARY, initial_icon)
+        print(f"[LARGE CARD] Recipe '{self.recipe.recipe_name}' - is_favorite: {self.recipe.is_favorite}")
+        initial_icon = Name.FAV_FILLED if self.recipe.is_favorite else Name.FAV
+        print(f"[LARGE CARD] Selected icon: {initial_icon}")
+        btn_fav = ToolButton(Type.DEFAULT, initial_icon)
         btn_fav.setIconSize(24, 24)
         btn_fav.setObjectName("btn_favorite")
         btn_fav.setCheckable(True)
@@ -220,49 +235,49 @@ class RecipeCard:
         btn_fav.toggled.connect(
             lambda checked, rid=self.recipe.id: self._toggle_favorite_with_icon_update(btn_fav, rid)
         )
-        
+
         # Create image with overlay
         image_overlay = make_overlay(img_recipe, btn_fav)
         content_layout.addWidget(image_overlay, 0)  # Fixed size for image
-        
+
         # ── Right Side: Info Panel ──
         info_panel = QVBoxLayout()
         info_panel.setSpacing(8)  # Reduced spacing to fit more content
-        
+
         # Recipe Tags Row
         tags_row = RecipeTagsRow()
         tags_row.setRecipe(self.recipe)
         tags_row.setAlignment("left")  # Left-align for the large card
         info_panel.addWidget(tags_row)
-        
+
         # Info Cards Row (compact mode for large card)
         info_cards = RecipeInfoCards(show_cards=["time", "servings"])
         info_cards.setRecipe(self.recipe)
         info_cards.setCompactMode(True)
         info_panel.addWidget(info_cards)
-        
+
         # Add some spacing
         info_panel.addSpacing(6)
-        
+
         # Ingredients Preview
         ingredients_preview = IngredientsPreview(max_preview_items=5)  # Reduced from 6 to 5
         ingredient_details = getattr(self.recipe, "get_ingredient_details", lambda: [])()
         ingredients_preview.setIngredients(ingredient_details)
         info_panel.addWidget(ingredients_preview)
-        
+
         # Add stretch to push content to top
         info_panel.addStretch()
-        
+
         # Add info panel to content layout with more space
         content_layout.addLayout(info_panel, 2)  # Give it 2x more space than the image
-        
+
         # Add content to main layout
         main_layout.addLayout(content_layout)
-        
+
         # ── Bottom Info Section ──
         bottom_layout = QHBoxLayout()
         bottom_layout.setSpacing(15)
-        
+
         # Recipe metadata using existing meta section helper
         bottom_layout.addLayout(
             self._create_meta_section(
@@ -271,10 +286,10 @@ class RecipeCard:
                 value=self.recipe.formatted_servings(),
             )
         )
-        
+
         # Separator
         bottom_layout.addWidget(Separator.vertical(50), 0, Qt.AlignVCenter)
-        
+
         # Total time
         bottom_layout.addLayout(
             self._create_meta_section(
@@ -283,11 +298,11 @@ class RecipeCard:
                 value=self.recipe.formatted_time(),
             )
         )
-        
+
         # Add stretch to center the bottom info
         bottom_layout.insertStretch(0)
         bottom_layout.addStretch()
-        
+
         main_layout.addLayout(bottom_layout)
 
     def _create_meta_section(self, icon_widget: AppIcon, heading: str, value: str) -> QVBoxLayout:
