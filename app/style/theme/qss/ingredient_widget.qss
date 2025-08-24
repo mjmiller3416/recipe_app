@@ -4,24 +4,24 @@
    ------------------------------------------------------------------ */
 
 /* Main ingredient widget container */
-#IngredientWidget {
+#IngredientForm {
     background-color: {surface};
     border: 1px solid {outline_variant};
 }
 
 /* Hover state for entire widget */
-#IngredientWidget:hover {
+#IngredientForm:hover {
     background-color: {surface_container_high};
 }
 
-#IngredientWidget QLineEdit {border: 1px solid {outline_variant};}
-#IngredientWidget ComboBox {border: 1px solid {outline_variant};}
+#IngredientForm QLineEdit {border: 1px solid {outline_variant};}
+#IngredientForm ComboBox {border: 1px solid {outline_variant};}
 
-#IngredientWidget #DeleteButton {background-color: transparent; border: none;}
-#IngredientWidget #DeleteButton:hover {border: none;}
+#IngredientForm #DeleteButton {background-color: transparent; border: none;}
+#IngredientForm #DeleteButton:hover {border: none;}
 
 /* Drag handle styling */
-#IngredientWidget #DragHandle {
+#IngredientForm #DragHandle {
     background-color: transparent;
     border: none;
     padding: 4px;
@@ -31,24 +31,24 @@
 
 
 /* Quantity field - smaller width */
-#IngredientWidget #QuantityField {
+#IngredientForm #QuantityField {
     max-width: 80px;
     min-width: 60px;
 }
 
 /* Unit field - smaller width */
-#IngredientWidget .UnitField {
+#IngredientForm .UnitField {
     max-width: 100px;
     min-width: 80px;
 }
 
 /* Name field - expandable */
-#IngredientWidget #NameField {
+#IngredientForm #NameField {
     min-width: 200px;
 }
 
 /* Category field - medium width */
-#IngredientWidget .CategoryField {
+#IngredientForm .CategoryField {
     max-width: 150px;
     min-width: 120px;
 }

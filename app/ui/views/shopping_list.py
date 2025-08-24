@@ -102,12 +102,12 @@ class CollapsibleCategory(BaseCard):
         self._setup_header()
         self._setup_content_area()
         self._setup_animation()
-        
+
         # Force initial collapsed state to ensure proper height
         if not start_expanded:
             self._content_container.setMaximumHeight(0)
             self._content_container.setVisible(False)
-            
+
         self._update_expand_state(animate=False)
 
     def _setup_header(self):
