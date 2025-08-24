@@ -49,13 +49,13 @@ class MealWidget(QWidget):
         """
         self.setObjectName("MealWidget")
         self.main_layout = QVBoxLayout(self)
-        self.main_layout.setContentsMargins(15, 15, 15, 15)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.setSpacing(15)
 
         # ── Main Dish (Large Card) ──
         self.main_slot = create_recipe_card(LayoutSize.LARGE)
         self.meal_slots["main"] = self.main_slot
-        self.main_layout.addWidget(self.main_slot)
+        self.main_layout.addWidget(self.main_slot, 0, Qt.AlignHCenter |Qt.AlignTop)
 
         # ── Side Dishes Row ──
         self.side_layout = QHBoxLayout()

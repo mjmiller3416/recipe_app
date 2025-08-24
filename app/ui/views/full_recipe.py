@@ -16,9 +16,10 @@ from __future__ import annotations
 from typing import Iterable
 
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
-                               QScrollArea, QSizePolicy, QSpacerItem,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QFrame, QGridLayout, QHBoxLayout, QLabel,
+    QScrollArea, QSizePolicy, QSpacerItem,
+    QVBoxLayout, QWidget)
 
 # Data model
 from app.core.models import Recipe
@@ -28,12 +29,12 @@ from app.style import Qss, Theme
 # Icons
 from app.style.icon import AppIcon, Icon
 from app.style.icon.config import Name, Type
+from app.ui.components.composite.recipe_info_card import RecipeInfoCard
 from app.ui.components.images.recipe_image import RecipeImage
 # Card container
 from app.ui.components.layout.card import Card
 # Custom components
 from app.ui.components.widgets.button import Button
-from app.ui.components.widgets.info_card import InfoCard
 from app.ui.components.widgets.recipe_tag import RecipeTag
 
 
@@ -291,13 +292,11 @@ class FullRecipe(QWidget):
         category = getattr(self.recipe, "recipe_category", "") or "Main Course"
         diet_pref = getattr(self.recipe, "diet_pref", "") or "High-Protein"
 
-        # Add info cards
-        info_container.addWidget(InfoCard(Icon.TOTAL_TIME, "Total Time", total_time))
-        info_container.addWidget(InfoCard(Icon.SERVINGS, "Servings", servings))
-        info_container.addWidget(InfoCard(Icon.CATEGORY, "Category", category))
-        info_container.addWidget(InfoCard(Icon.DIET_PREF, "Dietary", diet_pref))
+        info_card = RecipeInfoCard(
+            show_cards=["time", "servings", "category", "dietary"])
+        info_card.setRecipe(self.recipe)
 
-        page.addWidget(info_container)
+        page.addWidget(info_card)
 
         # ── Content Layout: Left Column (Ingredients) + Right Column (Directions + Notes)
         content_layout = QHBoxLayout()

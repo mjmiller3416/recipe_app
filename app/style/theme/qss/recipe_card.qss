@@ -1,8 +1,26 @@
 /* recipe_card.qss */
+#IngredientsScrollArea QWidget {
+    background: {surface_container};
+    border: none; /* Ensure scroll area background is transparent */
+}
 
 #RecipeCard, #EmptyStateFrame, #ErrorStateFrame {
     background-color: {surface_container};  /* Use theme-based background instead of transparent */
     border-radius: 10px; /* Rounded corners */
+}
+
+#RecipeCard QLabel#IngredientQuantity,
+#RecipeCard QLabel#IngredientName,
+#RecipeCard QLabel#IngredientUnit {
+    color: {on_surface};
+    font-size: 26px;
+}
+
+#RecipeCard QLabel#IngredientsHeader {
+    color: {secondary};
+    font-weight: bold;
+    font-size: 32px;
+    padding-bottom: 4px;
 }
 
 #RecipeCard QLabel {
@@ -14,13 +32,24 @@
     font: {default};
 }
 
+#RecipeCard[layout_size="large"] {
+    border-top-left-radius: 0px;
+    border: 2px solid {surface};
+}
+
+#RecipeCard #LargeCardTitle {
+    font-size: 38px;
+    font-weight: bold;
+    color: {tertiary};
+}
+
 #RecipeCard [label_text="true"] {
     font: {default};
     color: {on_surface_variant};
 }
 
-#btn_favorite {
-    background: none;
+#RecipeCard ToolButton {
+    background-color: transparent;
     border: none;
 }
 
