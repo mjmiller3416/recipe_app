@@ -13,6 +13,7 @@ Styling:
 """
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Iterable
 
 from PySide6.QtCore import QSize, Qt, Signal
@@ -23,6 +24,7 @@ from PySide6.QtWidgets import (
 
 # Data model
 from app.core.models import Recipe
+from app.core.services.ai_image_generation import AppImageGenService
 # Theme hook (component registration)
 from app.style import Qss, Theme
 # ── App Imports ──────────────────────────────────────────────────────────────────────────────
@@ -194,6 +196,9 @@ class FullRecipe(QWidget):
         super().__init__(parent)
         self.recipe = recipe
 
+        # Initialize AI image generation service
+        self.ai_service = AppImageGenService()
+
         # Register this view for component-scoped QSS.
         Theme.register_widget(self, Qss.FULL_RECIPE)
 
@@ -274,8 +279,21 @@ class FullRecipe(QWidget):
         page.addWidget(tags_container)
 
         # ── Recipe Image
-        recipe_image = RecipeImage()
-        page.addWidget(recipe_image)
+        self.recipe_image = RecipeImage(mode="banner")
+        
+        # Configure with recipe data
+        if hasattr(self.recipe, 'recipe_name') and self.recipe.recipe_name:
+            self.recipe_image.set_recipe_name(self.recipe.recipe_name)
+        
+        # Connect signals for AI integration
+        self.recipe_image.generate_image_requested.connect(self._on_generate_image_requested)
+        self.recipe_image.image_clicked.connect(self._on_image_clicked)
+        
+        # Connect AI service signals for async operations
+        self.ai_service.generation_finished.connect(self._on_generation_finished)
+        self.ai_service.generation_failed.connect(self._on_generation_failed)
+        
+        page.addWidget(self.recipe_image)
 
         # ── Info Cards Container
         # TODO: Update to new Card API pattern (info_container.addWidget) once card styling variants are implemented
@@ -398,5 +416,47 @@ class FullRecipe(QWidget):
         header_layout.addStretch()
 
         return header_widget
+
+    def _on_generate_image_requested(self, recipe_name: str):
+        """Handle AI image generation request using async generation."""
+        if not self.ai_service.is_available():
+            # TODO: Show toast notification for service unavailable
+            print(f"AI Image Generation service not available")
+            self.recipe_image.reset_generate_button()
+            return
+        
+        # Start async generation - UI will not block
+        self.ai_service.generate_recipe_images_async(recipe_name)
+
+    def _on_generation_finished(self, recipe_name: str, result):
+        """Handle successful AI image generation."""
+        if result and hasattr(result, 'banner_path'):
+            # Display the generated banner image
+            banner_path = str(result.banner_path)
+            if Path(banner_path).exists():
+                self.recipe_image.set_image_path(banner_path)
+                print(f"Banner image loaded for '{recipe_name}': {result.banner_path.name}")
+            else:
+                # Reset to placeholder if file doesn't exist
+                self.recipe_image.show_placeholder_state()
+                self.recipe_image.reset_generate_button()
+                print(f"Generated banner image not found: {banner_path}")
+        else:
+            # No result or invalid result
+            self.recipe_image.show_placeholder_state()
+            self.recipe_image.reset_generate_button()
+            print(f"AI generation completed but no valid result for '{recipe_name}'")
+
+    def _on_generation_failed(self, recipe_name: str, error_message: str):
+        """Handle AI image generation failure."""
+        self.recipe_image.show_placeholder_state()
+        self.recipe_image.reset_generate_button()
+        # TODO: Show toast notification for generation failure
+        print(f"Failed to generate banner image for '{recipe_name}': {error_message}")
+
+    def _on_image_clicked(self):
+        """Handle image click for full preview."""
+        # TODO: Show full-size image preview dialog
+        print("Image clicked for full preview")
 
 

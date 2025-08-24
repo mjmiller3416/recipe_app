@@ -32,6 +32,7 @@ class Path(Enum):
     EGG             = "egg"
     ERROR           = "error"
     EXIT            = "exit"
+    EXPAND          = "expand"
     GRIP_DOTS       = "grip_dots"
     FAV             = "fav"
     FAV_FILLED      = "fav_filled"
@@ -58,6 +59,9 @@ class Path(Enum):
     SETTINGS        = "settings"
     SHOPPING_LIST   = "shopping_list"
     SIGNAL          = "signal"
+    SPARKLES        = "sparkles"
+    SPARKLES_FILLED = "sparkles_filled"
+    SPINNER         = "spinner"
     SUCCESS         = "success"
     SUBTRACT        = "subtract"
     TOTAL_TIME      = "total_time"
@@ -153,6 +157,7 @@ class Name(Enum):
     ANGLE_UP        = IconSpec(Path.ANGLE_UP, Size.SMALL)
     EDIT            = IconSpec(Path.EDIT, Size.SMALL)
     GRIP_DOTS       = IconSpec(Path.GRIP_DOTS, Size.SMALL)
+    EXPAND          = IconSpec(Path.EXPAND, Size.SMALL)
     FAV             = IconSpec(Path.FAV, Size.SMALL)
     FAV_FILLED      = IconSpec(Path.FAV_FILLED, Size.SMALL)
     FISH            = IconSpec(Path.FISH, Size.SMALL)
@@ -168,6 +173,9 @@ class Name(Enum):
     SEARCH          = IconSpec(Path.SEARCH, Size.SMALL)
     SERVINGS        = IconSpec(Path.SERVINGS, Size.SMALL)
     SIGNAL          = IconSpec(Path.SIGNAL, Size.SMALL)
+    SPARKLES        = IconSpec(Path.SPARKLES, Size.SMALL)
+    SPARKLES_FILLED = IconSpec(Path.SPARKLES_FILLED, Size.SMALL)
+    SPINNER         = IconSpec(Path.SPINNER, Size.SMALL)
     SUBTRACT        = IconSpec(Path.SUBTRACT, Size.SMALL)
     TRASH           = IconSpec(Path.TRASH, Size.SMALL)
     TOTAL_TIME      = IconSpec(Path.TOTAL_TIME, Size.SMALL)

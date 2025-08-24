@@ -16,11 +16,12 @@ from app.core.dtos import (IngredientSearchDTO, RecipeCreateDTO,
                            RecipeIngredientDTO)
 from app.core.services.ingredient_service import IngredientService
 from app.core.services.recipe_service import RecipeService
+from app.core.services.ai_image_generation import AppImageGenService
 from app.style import Qss, Theme
 from app.style.icon.config import Name, Type
 from app.ui.components.inputs import SmartLineEdit
 from app.ui.components.layout.card import ActionCard, Card
-from app.ui.components.layout.image_card import ImageCard
+from app.ui.components.images.recipe_image import RecipeImage
 from app.ui.components.widgets import ComboBox, ToolButton
 from app.ui.components.widgets.button import Button
 from app.ui.helpers import clear_error_styles, dynamic_validation
@@ -454,9 +455,12 @@ class AddRecipes(QWidget):
 
         self.stored_ingredients = []
         self.selected_image_path = None
+        
+        # Initialize AI image generation service
+        self.ai_service = AppImageGenService()
 
         self._build_ui()
-        # self._connect_signals()
+        self._connect_signals()
         self._setup_tab_order()
 
     def showEvent(self, event):
@@ -544,33 +548,67 @@ class AddRecipes(QWidget):
         self.te_notes = self.directions_notes_card.te_notes
         #endregion
 
-        #region ── Image Card ──
-        self.image_card = ImageCard()
-        self.image_card.setHeader("Recipe Image")
-        self.image_card.setSubHeader("Upload an image of your recipe.")
-        self.image_card.addButton("Upload Image")
+        #region ── Recipe Image ──
+        self.recipe_image = RecipeImage(mode="gallery", multi_generation=True)
         #endregion
 
         # Add directions and image using shadow-safe utility
         add_two_column(
             self.scroll_layout,
             self.directions_notes_card,
-            self.image_card,
+            self.recipe_image,
             left_proportion=2,
             right_proportion=1,
             match_heights=True
         )
 
-    """ def _connect_signals(self):
-        self.btn_save.clicked.connect(self.save_recipe)
-        self.btn_upload_image.image_uploaded.connect(self._update_image_path)
+    def _connect_signals(self):
+        """Connect UI signals to their handlers."""
+        # Recipe name changes should update the image component
+        self.le_recipe_name.textChanged.connect(self._on_recipe_name_changed)
+        
+        # Connect recipe image signals
+        self.recipe_image.generate_image_requested.connect(self._on_generate_images_requested)
+        self.recipe_image.image_selected.connect(self._on_image_selected)
+        
+        # Connect AI service signals for async operations
+        self.ai_service.generation_finished.connect(self._on_generation_finished)
+        self.ai_service.generation_failed.connect(self._on_generation_failed)
 
-        dynamic_validation(self.le_recipe_name, NAME_VALIDATOR)
-        dynamic_validation(self.le_servings, INT_VALIDATOR)
+    def _on_recipe_name_changed(self, recipe_name: str):
+        """Update recipe image component when recipe name changes."""
+        self.recipe_image.set_recipe_name(recipe_name.strip())
 
-        self.cb_recipe_category.selection_validated.connect(lambda: clear_error_styles(self.cb_recipe_category))
-        self.cb_meal_type.selection_validated.connect(lambda: clear_error_styles(self.cb_meal_type))
-        self.te_directions.textChanged.connect(lambda: clear_error_styles(self.te_directions)) """
+    def _on_generate_images_requested(self, recipe_name: str):
+        """Handle AI image generation request (now async)."""
+        if not self.ai_service.is_available():
+            DebugLogger().log("AI Image Generation service not available", "error")
+            self.recipe_image.reset_generate_button()
+            return
+        
+        # Start async generation (non-blocking)
+        self.ai_service.generate_recipe_images_async(recipe_name)
+        DebugLogger().log(f"Started background image generation for '{recipe_name}'", "info")
+
+    def _on_generation_finished(self, recipe_name: str, result):
+        """Handle successful image generation completion."""
+        # Reset the UI state
+        self.recipe_image.reset_generate_button()
+        
+        if result:
+            # TODO: Display generated images in the gallery
+            # For now, just log success
+            DebugLogger().log(f"Background generation completed for '{recipe_name}' - images saved", "info")
+        
+    def _on_generation_failed(self, recipe_name: str, error_msg: str):
+        """Handle image generation failure."""
+        # Reset the UI state
+        self.recipe_image.reset_generate_button()
+        DebugLogger().log(f"Background generation failed for '{recipe_name}': {error_msg}", "error")
+
+    def _on_image_selected(self, image_path: str):
+        """Handle image selection from the gallery."""
+        self.selected_image_path = image_path
 
     def _setup_tab_order(self):
         """Define a fixed tab order for keyboard navigation."""
@@ -668,7 +706,7 @@ class AddRecipes(QWidget):
             "total_time":          int(self.le_time.text().strip() or 0),
             "servings":            int(self.le_servings.text().strip() or 0),
             "directions":          self.te_directions.toPlainText().strip(),
-            "image_path":          self.selected_image_path or "",
+            "image_path":          self.recipe_image.get_selected_image_path() or "",
         }
 
     def _clear_form(self):
@@ -680,7 +718,7 @@ class AddRecipes(QWidget):
         self.le_time.clear()
         self.le_servings.clear()
         self.te_directions.clear()
-        self.btn_upload_image.clear_image()
+        self.recipe_image.clear_images()
         self.selected_image_path = None
 
         # clear stored ingredients and widgets
