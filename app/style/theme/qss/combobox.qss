@@ -26,6 +26,8 @@
 
 #ShoppingList ComboBox {background-color: {surface}; border-radius: 6px;}
 
+#ImageGenerationSettings ComboBox {background-color: {surface}; border-radius: 6px;}
+
 
 
 

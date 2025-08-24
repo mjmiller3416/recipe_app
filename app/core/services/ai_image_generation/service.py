@@ -167,18 +167,37 @@ class ImageGenService:
             
             DebugLogger().log(f"API call: {self.config.model} @ {size} - {prompt[:80]}...", "debug")
             
-            # gpt-image-1: do NOT pass response_format; it returns b64_json by default
+            # Model-specific API configuration:
+            # - gpt-image-1: returns b64_json by default (no response_format needed)
+            # - dall-e-3/dall-e-2: require response_format="b64_json" to be specified
             # retry/backoff (3 tries: 0.5s, 1.0s, 2.0s)
             delay = 0.5
             for attempt in range(3):
                 try:
-                    resp = await aclient.images.generate(
-                        model=self.config.model,
-                        prompt=prompt,
-                        size=size,
-                        n=1,
-                    )
-                    b64 = resp.data[0].b64_json
+                    # Configure API call based on model
+                    if self.config.model == "gpt-image-1":
+                        # gpt-image-1 returns b64_json by default
+                        resp = await aclient.images.generate(
+                            model=self.config.model,
+                            prompt=prompt,
+                            size=size,
+                            n=1,
+                        )
+                        b64 = resp.data[0].b64_json
+                    else:
+                        # DALL-E models (dall-e-3, dall-e-2) need response_format specified
+                        resp = await aclient.images.generate(
+                            model=self.config.model,
+                            prompt=prompt,
+                            size=size,
+                            n=1,
+                            response_format="b64_json"
+                        )
+                        b64 = resp.data[0].b64_json
+                    
+                    if b64 is None:
+                        raise ValueError(f"API returned None for b64_json with model {self.config.model}")
+                    
                     DebugLogger().log(f"Success: {self.config.model} @ {size} generated image ({len(b64)} chars base64)", "debug")
                     return base64.b64decode(b64)
                 except Exception as e:  # broad catch to keep example self-contained

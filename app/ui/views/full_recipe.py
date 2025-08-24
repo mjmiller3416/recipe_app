@@ -204,6 +204,23 @@ class FullRecipe(QWidget):
 
         self.setObjectName("FullRecipe")
         self._build_ui()
+        
+    def reload_ai_service(self):
+        """Reload AI service with updated settings."""
+        try:
+            old_model = getattr(self.ai_service.config, 'model', 'unknown') if self.ai_service.config else 'unknown'
+            self.ai_service = AppImageGenService()
+            new_model = getattr(self.ai_service.config, 'model', 'unknown') if self.ai_service.config else 'unknown'
+            
+            # Reconnect signals
+            self.ai_service.generation_finished.connect(self._on_generation_finished)
+            self.ai_service.generation_failed.connect(self._on_generation_failed)
+            
+            DebugLogger().log(f"FullRecipe AI service reloaded: {old_model} → {new_model}", "info")
+            return True
+        except Exception as e:
+            DebugLogger().log(f"Error reloading FullRecipe AI service: {e}", "error")
+            return False
 
     # ── Layout ───────────────────────────────────────────────────────────────────────────────
     def _make_back_button(self):

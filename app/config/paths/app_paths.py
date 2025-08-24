@@ -23,23 +23,22 @@ class AppPaths:
 
     # ── Asset Directories ───────────────────────────────────────────────────────
     ICONS_DIR = ASSETS_DIR / "icons"
-    IMAGES_DIR = DATA_DIR / "images"
-    TEMP_CROP_DIR = DATA_DIR / "temp_crops"
     FONT_DIR = ASSETS_DIR / "fonts"
+    
+    # ── Data Directories ─────────────────────────────────────────────────────────
+    USER_DATA_DIR = DATA_DIR  # Alias for consistency with services
+    TEMP_CROP_DIR = DATA_DIR / "temp_crops"
     RECIPE_IMAGES_DIR = DATA_DIR / "recipe_images"
-
-    # ── Theme Directories ───────────────────────────────────────────────────────
+    
+    # ── Settings & Configuration ─────────────────────────────────────────────────
     USER_SETTINGS_PATH = DATA_DIR / "user_settings.json"
     THEME_CONFIG_PATH = CONFIG_DIR / "theme_config.json"
+    
+    # ── Theme Directories ───────────────────────────────────────────────────────
     BASE_STYLE = TM_DIR / "theme" / "base_style.qss"
     QSS_DIR = TM_DIR / "theme" / "qss"
 
     # ── Path Utilities ──────────────────────────────────────────────────────────
-    @staticmethod
-    def image_path(file_name: str) -> str:
-        """Get path to general image (SVG format)."""
-        return str(AppPaths.IMAGES_DIR / f"{file_name}")
-
     @staticmethod
     def recipe_image_path(file_name: str) -> str:
         """Get path to saved recipe image (PNG format)."""

@@ -75,12 +75,33 @@ class AppImageGenService(QObject):
         else:
             DebugLogger().log(f"Found OPENAI_API_KEY (length: {len(api_key)})", "debug")
         
-        self.config = ImageGenConfig(
-            portrait_size="1024x1024",  # Square for recipe cards
-            banner_size="1536x1024",   # Banner for full recipe view
-            allow_overwrite=False,     # Don't regenerate existing images
-            quality="standard"         # Balance cost vs quality
-        )
+        # Load configuration from settings service
+        try:
+            from app.core.services.settings_service import SettingsService
+            settings_service = SettingsService()
+            self.config = settings_service.get_current_image_config()
+            
+            # Override with app-specific settings that aren't user-configurable
+            self.config.portrait_size = "1024x1024"  # Square for recipe cards
+            self.config.allow_overwrite = False     # Don't regenerate existing images
+            self.config.quality = "standard"        # Balance cost vs quality
+            
+            # Set model-appropriate banner size
+            if self.config.model == "dall-e-3":
+                self.config.banner_size = "1792x1024"  # DALL-E-3 banner size
+            elif self.config.model == "dall-e-2":
+                self.config.banner_size = "1024x1024"  # DALL-E-2 max size
+            else:  # gpt-image-1 or unknown
+                self.config.banner_size = "1536x1024"  # GPT Image 1 banner size
+            
+        except Exception as e:
+            DebugLogger().log(f"Error loading settings, using defaults: {e}", "warning")
+            # Use default config (gpt-image-1)
+            self.config = ImageGenConfig()
+            self.config.portrait_size = "1024x1024"  # Square for recipe cards
+            self.config.banner_size = "1536x1024"   # GPT Image 1 banner size
+            self.config.allow_overwrite = False     # Don't regenerate existing images
+            self.config.quality = "standard"        # Balance cost vs quality
         
         DebugLogger().log(f"Config output directory: {self.config.output_dir()}", "debug")
         
@@ -182,6 +203,38 @@ class AppImageGenService(QObject):
             DebugLogger().log(f"Error checking existing images for '{recipe_name}': {e}", "warning")
             
         return None
+    
+    def reload_config(self):
+        """Reload configuration from settings and reinitialize service."""
+        try:
+            from app.core.services.settings_service import SettingsService
+            settings_service = SettingsService()
+            new_config = settings_service.get_current_image_config()
+            
+            # Override with app-specific settings
+            new_config.portrait_size = "1024x1024"  # Square for recipe cards
+            new_config.allow_overwrite = False     # Don't regenerate existing images
+            new_config.quality = "standard"        # Balance cost vs quality
+            
+            # Set model-appropriate banner size
+            if new_config.model == "dall-e-3":
+                new_config.banner_size = "1792x1024"  # DALL-E-3 banner size
+            elif new_config.model == "dall-e-2":
+                new_config.banner_size = "1024x1024"  # DALL-E-2 max size
+            else:  # gpt-image-1 or unknown
+                new_config.banner_size = "1536x1024"  # GPT Image 1 banner size
+            
+            # Update config and reinitialize service
+            self.config = new_config
+            self.service = ImageGenService(self.config)
+            
+            DebugLogger().log(f"AI service reloaded with model: {self.config.model}", "info")
+            DebugLogger().log(f"  • Banner size: {self.config.banner_size}", "debug")
+            return True
+            
+        except Exception as e:
+            DebugLogger().log(f"Error reloading AI service config: {e}", "error")
+            return False
     
     def is_available(self) -> bool:
         """Check if the AI image generation service is available."""

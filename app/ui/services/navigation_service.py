@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QStackedWidget
 
 from app.core.services import PlannerService, ShoppingService
 from app.ui.views import (
-    AddRecipes, Dashboard, MealPlanner, ShoppingList,
+    AddRecipes, Dashboard, MealPlanner, Settings, ShoppingList,
     ViewRecipes)
 from dev_tools import DebugLogger
 
@@ -35,6 +35,7 @@ class NavigationService:
             "view_recipes": ViewRecipes,
             "shopping_list": ShoppingList,
             "add_recipe": AddRecipes,
+            "settings": Settings,
         }
         for name, page_class in page_map.items():
             instance = page_class()

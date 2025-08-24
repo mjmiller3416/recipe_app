@@ -3,5 +3,9 @@
   "start_on_last_page": true,
   "preferred_font_size": 14,
   "dev_mode": false,
-  "avatar_path": "avatar_bbd25daf5c95407aa4a78f335879b6b9.png"
+  "avatar_path": "avatar_bbd25daf5c95407aa4a78f335879b6b9.png",
+  "image_generation": {
+    "model": "dall-e-3",
+    "prompt_template": "High-quality studio food photography of {recipe_name}. Style: natural light, shallow depth-of-field, appetizing, no text, no branding, no people. Plating on a neutral surface. Composition centered and clean. White balance slightly warm. Ultra-detailed, realistic, crisp."
+  }
 }

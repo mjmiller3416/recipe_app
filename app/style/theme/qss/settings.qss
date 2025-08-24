@@ -1,0 +1,185 @@
+/**
+ * Settings View Styling
+ * Category-based settings interface with sidebar navigation
+ */
+
+/* ── Main Settings Container ──────────────────────────────────────────── */
+Settings {
+    background-color: {background};
+    border: none;
+}
+
+/* ── Category Sidebar ────────────────────────────────────────────────── */
+#CategorySidebar {
+    background-color: {surface_container};
+    border: 1px solid {outline_variant};
+    border-radius: 8px;
+}
+
+#CategorySidebar #CardHeader {
+    background-color: {primary};
+    color: {on_primary};
+    font: {title_small};
+    padding: 15px 20px;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 1px solid {outline_variant};
+}
+
+/* Category Navigation Buttons */
+#CategoryButton {
+    background-color: transparent;
+    color: {on_surface_variant};
+    font: {default};
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    text-align: left;
+    margin: 2px 0;
+}
+
+#CategoryButton:hover {
+    background-color: {primary_container};
+    color: {on_primary_container};
+}
+
+#CategoryButton:checked {
+    background-color: {primary};
+    color: {on_primary};
+    font-weight: 500;
+}
+
+/* ── Settings Content Area ──────────────────────────────────────────── */
+#SettingsContent {
+    background-color: transparent;
+}
+
+/* Settings Categories */
+#ImageGenerationSettings {
+    background-color: {surface_container};
+    border: 1px solid {outline_variant};
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+#ImageGenerationSettings #CardHeader {
+    background-color: {primary};
+    color: {on_primary};
+    font: {title_small};
+    padding: 15px 25px;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 1px solid {outline_variant};
+}
+
+/* ── Form Elements ──────────────────────────────────────────────────── */
+#SettingsLabel {
+    color: {on_surface};
+    font: {default};
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+#WarningText {
+    color: {error};
+    font-size: 12px;
+    padding: 10px 15px;
+    background-color: {error_container};
+    border: 1px solid {error};
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+#SettingsTextEdit {
+    background-color: {surface};
+    color: {on_surface};
+    font: normal 400 22px "Roboto Mono";
+    padding: 12px 15px;
+    border: 1px solid {outline};
+    border-radius: 6px;
+    selection-background-color: {primary};
+}
+
+#SettingsTextEdit:focus {
+    border-color: {primary};
+    outline: none;
+}
+
+/* ── Action Buttons ─────────────────────────────────────────────────── */
+#Settings Button[type="PRIMARY"] {
+    background-color: {primary};
+    color: {on_primary};
+    font: {default};
+    font-weight: 500;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    min-width: 140px;
+}
+
+#Settings Button[type="PRIMARY"]:hover {
+    background-color: {primary};
+    opacity: 0.8;
+}
+
+#Settings Button[type="PRIMARY"]:pressed {
+    background-color: {primary};
+    opacity: 0.6;
+}
+
+#Settings Button[type="SECONDARY"] {
+    background-color: {surface_container};
+    color: {on_surface};
+    font: {default};
+    padding: 12px 24px;
+    border: 1px solid {outline};
+    border-radius: 6px;
+    min-width: 140px;
+}
+
+#Settings Button[type="SECONDARY"]:hover {
+    background-color: {secondary_container};
+    border-color: {primary};
+}
+
+#Settings Button[type="SECONDARY"]:pressed {
+    background-color: {secondary_container};
+    opacity: 0.8;
+}
+
+/* ── Scroll Area Styling ───────────────────────────────────────────── */
+QScrollArea {
+    background-color: transparent;
+    border: none;
+}
+
+QScrollArea > QWidget > QWidget {
+    background-color: transparent;
+}
+
+QScrollBar:vertical {
+    background-color: {surface_container};
+    width: 12px;
+    border-radius: 6px;
+    margin: 2px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: {primary};
+    border-radius: 6px;
+    min-height: 20px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: {primary};
+    opacity: 0.8;
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    height: 0;
+    background: none;
+}
+
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical {
+    background: none;
+}

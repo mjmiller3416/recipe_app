@@ -6,6 +6,8 @@ from .add_recipes import AddRecipes
 from .dashboard import Dashboard
 # ── Meal Planner View ──
 from .meal_planner import MealPlanner
+# ── Settings View ──
+from .settings import Settings
 # ── Shopping List View ──
 from .shopping_list import ShoppingList
 # ── View Recipes View ──
@@ -17,4 +19,5 @@ __all__ = [
     "ViewRecipes",
     "ShoppingList",
     "AddRecipes",
+    "Settings",
 ]

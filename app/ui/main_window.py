@@ -156,6 +156,7 @@ class MainWindow(FramelessWindow):
             "btn_view_recipes": "view_recipes",
             "btn_shopping_list": "shopping_list",
             "btn_add_recipes": "add_recipe",
+            "btn_settings": "settings",
         }
         for btn_name, page_name in button_map.items():
             button = self.sidebar.buttons.get(btn_name)
@@ -186,6 +187,7 @@ class MainWindow(FramelessWindow):
             "view_recipes": "View Recipes",
             "shopping_list": "Shopping List",
             "add_recipe": "Add Recipe",
+            "settings": "Settings",
         }
         self.lbl_header.setText(mapping.get(page_name, page_name.replace("_", " ").title()))
 
