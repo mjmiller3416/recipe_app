@@ -3,12 +3,10 @@
    ------------------------------------------------------------------ */
 
 #MealPlanner QTabWidget:pane {
-    background: #525861;  /* Dark background */
+    background: {surface_container};  /* Dark background */
     border: none;  /* Subtle border */
     border-top-left-radius: 0px;
-    border-top-right-radius: 0px;
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
+    margin: 0;
 }
 
 #MealPlanner QTabBar:tab {
@@ -17,7 +15,6 @@
     border-left: 2px solid {surface};
     border-right: 2px solid {surface};
     border-top: 2px solid {surface};
-    border-bottom: none;
     padding: 12px 16px;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
@@ -30,41 +27,36 @@
 }
 
 #MealPlanner QTabBar:tab:hover {
-    background: #555F68;
-    border-color: {primary};
+    background: {secondary_container};
 }
 
 #MealPlanner QTabBar:tab:disabled {
-    color: #666;  /* Gray-out disabled tabs */
+    color: {on_surface_variant};  /* Gray-out disabled tabs */
 }
 
-QTabBar:tab:last {
-        margin: 0px;
-        width: 32px; /* Minimum width for the last tab to accommodate 32px icon */
-}
+QTabBar:tab:last {margin: 0px; width: 32px;}
 
 #MealPlanner QMenu {
-    background-color: #3A4048;  /* Dark background */
-    border: 2px solid #3B3B3B;  /* Subtle border */
+    background-color: {primary_container};  /* Dark background */
+    border: 2px solid {outline};  /* Subtle border */
     padding: 5px;
     border-radius: 6px;
 }
 
 #MealPlanner QMenu:item {
     padding: 8px 15px;
-    color: #E1E1E3;  /* Light text */
-    font: 14px 'Montserrat';
+    font: {default};
     border-radius: 4px;
 }
 
 #MealPlanner QMenu:item:selected {
     background-color: {tertiary};  /* Teal hover effect */
-    color: #353535;
+    color: {on_tertiary};
 }
 
 /* Optional: Adds a separator style */
 #MealPlanner QMenu:separator {
     height: 1px;
-    background: #525861;  /* Dark gray line */
+    background: {outline_variant};
     margin: 5px;
 }

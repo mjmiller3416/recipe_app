@@ -34,7 +34,6 @@
 
 #RecipeCard[layout_size="large"] {
     border-top-left-radius: 0px;
-    border: 2px solid {surface};
 }
 
 #RecipeCard #LargeCardTitle {

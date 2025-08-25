@@ -48,6 +48,9 @@ else:
 
     app = QApplication(sys.argv)
     app.setApplicationName("MealGenie")
+    app.setHighDpiScaleFactorRoundingPolicy(
+    Qt.HighDpiScaleFactorRoundingPolicy.RoundPreferFloor  # or RoundPreferFloor
+)
     DebugLogger.set_log_level("info")
     DebugLogger.log("Starting MealGenie application...\n", "info")
 

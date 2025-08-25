@@ -378,6 +378,7 @@ class DirectionsNotesCard(Card):
     def __init__(self, parent=None):
         super().__init__(card_type="Default")
         self.setHeader("Directions & Notes")
+        self.setMinimumHeight(600)  # set minimum height to ensure enough space for content
 
         # Create toggle buttons container
         self.toggle_container = QWidget()
@@ -455,25 +456,25 @@ class AddRecipes(QWidget):
 
         self.stored_ingredients = []
         self.selected_image_path = None
-        
+
         # Initialize AI image generation service
         self.ai_service = AppImageGenService()
 
         self._build_ui()
         self._connect_signals()
         self._setup_tab_order()
-        
+
     def reload_ai_service(self):
         """Reload AI service with updated settings."""
         try:
             old_model = getattr(self.ai_service.config, 'model', 'unknown') if self.ai_service.config else 'unknown'
             self.ai_service = AppImageGenService()
             new_model = getattr(self.ai_service.config, 'model', 'unknown') if self.ai_service.config else 'unknown'
-            
+
             # Reconnect signals
             self.ai_service.generation_finished.connect(self._on_generation_finished)
             self.ai_service.generation_failed.connect(self._on_generation_failed)
-            
+
             DebugLogger().log(f"AddRecipes AI service reloaded: {old_model} → {new_model}", "info")
             return True
         except Exception as e:
@@ -583,11 +584,11 @@ class AddRecipes(QWidget):
         """Connect UI signals to their handlers."""
         # Recipe name changes should update the image component
         self.le_recipe_name.textChanged.connect(self._on_recipe_name_changed)
-        
+
         # Connect recipe image signals
         self.recipe_image.generate_image_requested.connect(self._on_generate_images_requested)
         self.recipe_image.image_selected.connect(self._on_image_selected)
-        
+
         # Connect AI service signals for async operations
         self.ai_service.generation_finished.connect(self._on_generation_finished)
         self.ai_service.generation_failed.connect(self._on_generation_failed)
@@ -602,7 +603,7 @@ class AddRecipes(QWidget):
             DebugLogger().log("AI Image Generation service not available", "error")
             self.recipe_image.reset_generate_button()
             return
-        
+
         # Start async generation (non-blocking)
         self.ai_service.generate_recipe_images_async(recipe_name)
         DebugLogger().log(f"Started background image generation for '{recipe_name}'", "info")
@@ -611,12 +612,12 @@ class AddRecipes(QWidget):
         """Handle successful image generation completion."""
         # Reset the UI state
         self.recipe_image.reset_generate_button()
-        
+
         if result:
             # TODO: Display generated images in the gallery
             # For now, just log success
             DebugLogger().log(f"Background generation completed for '{recipe_name}' - images saved", "info")
-        
+
     def _on_generation_failed(self, recipe_name: str, error_msg: str):
         """Handle image generation failure."""
         # Reset the UI state

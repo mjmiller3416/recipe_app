@@ -16,8 +16,8 @@ FALLBACK_COLOR = "#DD0AE0"  # A bright magenta for error states
 APPLICATION_WINDOW = {
     "SETTINGS": {
         "APP_NAME": "MealGenie",
-        "WINDOW_HEIGHT": 1120,
-        "WINDOW_WIDTH":  1850,
+        "WINDOW_HEIGHT": 1300,
+        "WINDOW_WIDTH":  2010,
         "BTN_SIZE": QSize(58, 58),
     },
 }
