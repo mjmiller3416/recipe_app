@@ -43,6 +43,14 @@ class RoundedImage(QLabel):
         if key in _image_cache:
             return _image_cache[key]
 
+        # Check if image path exists and is valid
+        if not self.image_path or not Path(self.image_path).exists():
+            # Create a placeholder pixmap with a light background
+            placeholder = QPixmap(self.size, self.size)
+            placeholder.fill(Qt.lightGray)
+            _image_cache[key] = placeholder
+            return placeholder
+
         pixmap = QPixmap(self.image_path).scaled(
             self.size, self.size, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation
         )
@@ -86,7 +94,7 @@ class RoundedImage(QLabel):
         """
         Update the image path and refresh the displayed pixmap.
         """
-        self.image_path = str(image_path)
+        self.image_path = str(image_path) if image_path else ""
         self.setPixmap(self._get_cached_rounded_pixmap())
 
     def clear_image(self) -> None:

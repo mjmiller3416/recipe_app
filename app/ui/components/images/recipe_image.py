@@ -8,9 +8,10 @@ from pathlib import Path
 from typing import List, Optional
 
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel, QPushButton, 
-                               QScrollArea, QSizePolicy, QStackedWidget, QVBoxLayout, QWidget)
+
+from PySide6.QtWidgets import (
+    QFrame, QGridLayout, QHBoxLayout, QLabel, QScrollArea,
+    QSizePolicy, QStackedWidget, QVBoxLayout, QWidget)
 
 from app.style import Qss, Theme, Type
 from app.style.icon import AppIcon
@@ -21,7 +22,7 @@ from app.ui.components.widgets import Button, RoundedImage
 
 class RecipeImage(BaseCard):
     """Unified AI-powered image generation component for recipes.
-    
+
     Supports two modes:
     - banner: Single large image display (FullRecipe view)
     - gallery: Multiple thumbnail selection (AddRecipe view)
@@ -34,26 +35,26 @@ class RecipeImage(BaseCard):
 
     def __init__(self, parent=None, mode="banner", multi_generation=True):
         """Initialize RecipeImage component.
-        
+
         Args:
             parent: Parent widget
             mode: "banner" for single large image, "gallery" for thumbnail grid
             multi_generation: Generate multiple images vs single image
         """
         super().__init__(parent)
-        
+
         # Configuration
         self.mode = mode
         self.multi_generation = multi_generation
-        
+
         # Setup object names and properties
         if mode == "banner":
-            self.setObjectName("RecipeBanner") 
+            self.setObjectName("RecipeBanner")
             self.setProperty("tag", "RecipeBanner")
             Theme.register_widget(self, Qss.RECIPE_BANNER)
         else:
             self.setObjectName("RecipeGallery")
-            self.setProperty("tag", "RecipeGallery") 
+            self.setProperty("tag", "RecipeGallery")
             Theme.register_widget(self, Qss.RECIPE_BANNER)  # Use same styling for now
 
         # Configure dimensions based on mode
@@ -82,14 +83,14 @@ class RecipeImage(BaseCard):
         """Build the UI with stacked widget for different states."""
         # Stacked widget to switch between placeholder and image states
         self.stack = QStackedWidget()
-        
+
         # Use BaseCard's addWidget method instead of setting layout directly
         self.addWidget(self.stack)
 
         # Create states based on mode
         self._create_placeholder_state()
         self._create_generating_state()
-        
+
         if self.mode == "banner":
             self._create_banner_image_state()
         else:
@@ -118,7 +119,7 @@ class RecipeImage(BaseCard):
             sub_text = QLabel("AI-generated banner image")
         else:
             main_text = QLabel("No Recipe Images")
-            button_text = "Generate AI Images" 
+            button_text = "Generate AI Images"
             sub_text = QLabel("AI will generate multiple images\nClick any image to select it")
 
         main_text.setObjectName("RecipePlaceholderText")
@@ -161,7 +162,7 @@ class RecipeImage(BaseCard):
             loading_text = QLabel("Generating AI Image...")
         else:
             loading_text = QLabel("Generating AI Images...")
-            
+
         loading_text.setObjectName("GeneratingText")
         loading_text.setAlignment(Qt.AlignCenter)
 
@@ -262,7 +263,7 @@ class RecipeImage(BaseCard):
         """Set and display an image from path (banner mode only)."""
         if self.mode != "banner":
             return
-            
+
         if not Path(image_path).exists():
             return
 
@@ -281,7 +282,7 @@ class RecipeImage(BaseCard):
             )
             self.image_display.setObjectName("RecipeBannerImage")
             self.image_display.setCursor(Qt.PointingHandCursor)
-            
+
             # Make image clickable
             self.image_display.mousePressEvent = lambda e: self.image_clicked.emit()
 
@@ -295,10 +296,10 @@ class RecipeImage(BaseCard):
         """Set the list of generated image paths and display thumbnails (gallery mode only)."""
         if self.mode != "gallery":
             return
-            
+
         self.generated_images = image_paths
         self._populate_thumbnails()
-        
+
         # Switch to gallery state
         self.stack.setCurrentIndex(2)
 
@@ -327,7 +328,8 @@ class RecipeImage(BaseCard):
         container.setObjectName("ThumbnailContainer")
         container.setCursor(Qt.PointingHandCursor)
         container.setProperty("selected", "false")
-        
+        container._image_path = image_path  # Store image path for programmatic selection
+
         layout = QVBoxLayout(container)
         layout.setContentsMargins(5, 5, 5, 5)
         layout.setSpacing(5)
@@ -365,7 +367,10 @@ class RecipeImage(BaseCard):
 
         # Update selected image
         self.selected_image_path = image_path
-        
+
+        from dev_tools.debug_logger import DebugLogger
+        DebugLogger.log(f"[RecipeImage] Image selected: {image_path}", "info")
+
         # Update info label
         filename = Path(image_path).name
         self.selection_info.setText(f"Selected: {filename}")
@@ -395,30 +400,51 @@ class RecipeImage(BaseCard):
         self.current_image_path = None
         self.generated_images.clear()
         self.selected_image_path = None
-        
-        if self.image_display:
+
+        # Only clear image_display in banner mode (where it exists)
+        if self.mode == "banner" and hasattr(self, 'image_display') and self.image_display:
             self.image_display.clear_image()
-        
+
         # Reset generate button
         if hasattr(self, 'generate_button'):
             self.generate_button.setText("Generate AI Images" if self.mode == "gallery" else "Generate AI Image")
             self.generate_button.setEnabled(bool(self.recipe_name))
-            
+
         self.show_placeholder_state()
 
     def get_selected_image_path(self) -> Optional[str]:
         """Get the currently selected image path."""
         if self.mode == "banner":
-            return self.current_image_path
+            result = self.current_image_path
         else:
-            return self.selected_image_path
+            result = self.selected_image_path
+
+        from dev_tools.debug_logger import DebugLogger
+        DebugLogger.log(f"[RecipeImage] get_selected_image_path() mode={self.mode}, returning: '{result}'", "info")
+        return result
+
+    def select_image(self, image_path: str):
+        """Programmatically select an image by its path."""
+        if self.mode == "gallery":
+            # Find the container for this image path and simulate click
+            for i in range(self.thumbnails_layout.count()):
+                item = self.thumbnails_layout.itemAt(i)
+                if item and item.widget():
+                    container = item.widget()
+                    if hasattr(container, '_image_path') and container._image_path == image_path:
+                        self._on_thumbnail_clicked(image_path, container)
+                        return True
+        else:
+            # Banner mode
+            self.current_image_path = image_path
+        return False
 
     def _on_generate_clicked(self):
         """Handle generate button click."""
         if self.recipe_name:
             # Immediately show generating state BEFORE emitting signal
             self.show_generating_state()
-            
+
             # Emit the signal (this will trigger the actual generation)
             self.generate_image_requested.emit(self.recipe_name)
 

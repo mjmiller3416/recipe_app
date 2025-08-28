@@ -1,0 +1,36 @@
+/* Toast Notification Styling */
+/* Material Design 3 Toast with injection variables */
+
+QLabel#Toast {
+    border: none;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font: {default};
+    font-weight: bold;
+}
+
+/* Success Toast - uses primary colors */
+QLabel#Toast[success="true"] {
+    background-color: {primary};
+    color: {on_primary};
+}
+
+/* Error Toast - uses error colors */
+QLabel#Toast[success="false"] {
+    background-color: {error};
+    color: {on_error};
+}
+
+/* Alternative success styling using surface containers */
+QLabel#Toast[success="true"][variant="surface"] {
+    background-color: {primary_container};
+    color: {on_primary_container};
+    border: 1px solid {outline_variant};
+}
+
+/* Alternative error styling using surface containers */
+QLabel#Toast[success="false"][variant="surface"] {
+    background-color: {error_container};
+    color: {on_error_container};
+    border: 1px solid {outline_variant};
+}

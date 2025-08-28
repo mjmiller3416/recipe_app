@@ -70,6 +70,7 @@ class Qss(Enum):
     SEARCH_BAR        = AppPaths.QSS_DIR / "search_bar.qss"
     SIDEBAR           = AppPaths.QSS_DIR / "sidebar.qss"
     TITLE_BAR         = AppPaths.QSS_DIR / "title_bar.qss"
+    TOAST             = AppPaths.QSS_DIR / "toast.qss"
     TOGGLE_SWITCH     = AppPaths.QSS_DIR / "toggle_switch.qss"
     UPLOAD_IMAGE      = AppPaths.QSS_DIR / "upload_image.qss"
 

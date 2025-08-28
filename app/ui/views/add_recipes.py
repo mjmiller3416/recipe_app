@@ -455,7 +455,6 @@ class AddRecipes(QWidget):
         DebugLogger.log("Initializing Add Recipes page", "debug")
 
         self.stored_ingredients = []
-        self.selected_image_path = None
 
         # Initialize AI image generation service
         self.ai_service = AppImageGenService()
@@ -580,6 +579,15 @@ class AddRecipes(QWidget):
             match_heights=True
         )
 
+        # ── Save Button ──
+        self.btn_save = Button("Save Recipe", Type.PRIMARY, Name.SAVE)
+        self.btn_save.setObjectName("SaveRecipeButton")
+        self.btn_save.clicked.connect(self.save_recipe)
+        
+        # Add save button with some spacing
+        self.scroll_layout.addSpacing(20)
+        self.scroll_layout.addWidget(self.btn_save, 0, Qt.AlignCenter)
+
     def _connect_signals(self):
         """Connect UI signals to their handlers."""
         # Recipe name changes should update the image component
@@ -614,9 +622,24 @@ class AddRecipes(QWidget):
         self.recipe_image.reset_generate_button()
 
         if result:
-            # TODO: Display generated images in the gallery
-            # For now, just log success
             DebugLogger().log(f"Background generation completed for '{recipe_name}' - images saved", "info")
+            
+            # Display generated images in the gallery
+            image_paths = []
+            if hasattr(result, 'portrait_path') and result.portrait_path:
+                image_paths.append(str(result.portrait_path))
+            if hasattr(result, 'banner_path') and result.banner_path:
+                image_paths.append(str(result.banner_path))
+            
+            if image_paths:
+                self.recipe_image.set_generated_images(image_paths)
+                
+                # Auto-select the portrait image (1:1) for recipe cards
+                if hasattr(result, 'portrait_path') and result.portrait_path:
+                    portrait_path = str(result.portrait_path)
+                    # Programmatically select the portrait image in the component
+                    success = self.recipe_image.select_image(portrait_path)
+                    DebugLogger().log(f"Auto-selected portrait image: {portrait_path}, success: {success}", "info")
 
     def _on_generation_failed(self, recipe_name: str, error_msg: str):
         """Handle image generation failure."""
@@ -704,6 +727,19 @@ class AddRecipes(QWidget):
 
         # ── success! ──
         DebugLogger().log(f"[AddRecipes] Recipe '{new_recipe.recipe_name}' saved with ID={new_recipe.id}", "info")
+        
+        # Update recipe with selected image path if available
+        selected_image = self.recipe_image.get_selected_image_path()
+        DebugLogger().log(f"[AddRecipes] get_selected_image_path returned: '{selected_image}'", "info")
+        if selected_image:
+            try:
+                service.update_recipe_image_path(new_recipe.id, selected_image)
+                DebugLogger().log(f"[AddRecipes] Updated recipe {new_recipe.id} with image: {selected_image}", "info")
+            except Exception as img_err:
+                DebugLogger().log(f"[AddRecipes] Failed to update recipe image: {img_err}", "warning")
+        else:
+            DebugLogger().log(f"[AddRecipes] No selected image to update for recipe {new_recipe.id}", "info")
+        
         self._display_save_message(
             f"Recipe '{new_recipe.recipe_name}' saved successfully!",
             success=True
@@ -714,6 +750,27 @@ class AddRecipes(QWidget):
         self.stored_ingredients.clear()
         self.ingredient_container.clear_all_ingredients()
 
+    def _parse_servings(self, servings_text: str) -> int:
+        """Parse servings field, handling ranges like '2-4' by taking the first number."""
+        if not servings_text:
+            return 0
+        
+        # Remove any whitespace
+        servings_text = servings_text.strip()
+        
+        # Handle ranges like '2-4', '4-6' by taking the first number
+        if '-' in servings_text:
+            try:
+                return int(servings_text.split('-')[0].strip())
+            except (ValueError, IndexError):
+                return 0
+        
+        # Handle single numbers
+        try:
+            return int(servings_text)
+        except ValueError:
+            return 0
+
     def to_payload(self):
         """Collect all recipe form data and return it as a dict for API calls."""
         return {
@@ -722,7 +779,7 @@ class AddRecipes(QWidget):
             "meal_type":           self.cb_meal_type.currentText().strip(),
             "dietary_preference": self.cb_dietary_preference.currentText().strip(),
             "total_time":          int(self.le_time.text().strip() or 0),
-            "servings":            int(self.le_servings.text().strip() or 0),
+            "servings":            self._parse_servings(self.le_servings.text()),
             "directions":          self.te_directions.toPlainText().strip(),
             "image_path":          self.recipe_image.get_selected_image_path() or "",
         }
@@ -737,8 +794,12 @@ class AddRecipes(QWidget):
         self.le_servings.clear()
         self.te_directions.clear()
         self.recipe_image.clear_images()
-        self.selected_image_path = None
 
         # clear stored ingredients and widgets
         self.stored_ingredients.clear()
         self.ingredient_container.clear_all_ingredients()
+
+    def _display_save_message(self, message: str, success: bool = True):
+        """Display a toast notification for save operations."""
+        from app.ui.components.widgets import show_toast
+        show_toast(self, message, success=success, duration=3000, offset_right=50)

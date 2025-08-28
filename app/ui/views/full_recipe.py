@@ -11,10 +11,12 @@ Styling:
 - Registers for component-specific QSS with Theme.register_widget(self, Qss.FULL_RECIPE)
 - Uses material injection variables for consistent theming
 """
+
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Optional
 
 from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtWidgets import (
@@ -22,22 +24,17 @@ from PySide6.QtWidgets import (
     QScrollArea, QSizePolicy, QSpacerItem,
     QVBoxLayout, QWidget)
 
-# Data model
 from app.core.models import Recipe
 from app.core.services.ai_image_generation import AppImageGenService
-# Theme hook (component registration)
 from app.style import Qss, Theme
-# ── App Imports ──────────────────────────────────────────────────────────────────────────────
-# Icons
 from app.style.icon import AppIcon, Icon
 from app.style.icon.config import Name, Type
 from app.ui.components.composite.recipe_info_card import RecipeInfoCard
 from app.ui.components.images.recipe_image import RecipeImage
-# Card container
 from app.ui.components.layout.card import Card
-# Custom components
 from app.ui.components.widgets.button import Button
 from app.ui.components.widgets.recipe_tag import RecipeTag
+from dev_tools.debug_logger import DebugLogger
 
 
 # ── Helper Classes ──────────────────────────────────────────────────────────────────────────
@@ -204,18 +201,18 @@ class FullRecipe(QWidget):
 
         self.setObjectName("FullRecipe")
         self._build_ui()
-        
+
     def reload_ai_service(self):
         """Reload AI service with updated settings."""
         try:
             old_model = getattr(self.ai_service.config, 'model', 'unknown') if self.ai_service.config else 'unknown'
             self.ai_service = AppImageGenService()
             new_model = getattr(self.ai_service.config, 'model', 'unknown') if self.ai_service.config else 'unknown'
-            
+
             # Reconnect signals
             self.ai_service.generation_finished.connect(self._on_generation_finished)
             self.ai_service.generation_failed.connect(self._on_generation_failed)
-            
+
             DebugLogger().log(f"FullRecipe AI service reloaded: {old_model} → {new_model}", "info")
             return True
         except Exception as e:
@@ -297,19 +294,27 @@ class FullRecipe(QWidget):
 
         # ── Recipe Image
         self.recipe_image = RecipeImage(mode="banner")
-        
+
         # Configure with recipe data
         if hasattr(self.recipe, 'recipe_name') and self.recipe.recipe_name:
             self.recipe_image.set_recipe_name(self.recipe.recipe_name)
-        
+
+        # Show existing image if recipe has one
+        if hasattr(self.recipe, 'image_path') and self.recipe.image_path:
+            if Path(self.recipe.image_path).exists():
+                self.recipe_image.set_image_path(self.recipe.image_path)
+                DebugLogger().log(f"Loaded recipe image: {self.recipe.image_path}", "info")
+            else:
+                DebugLogger().log(f"Recipe image path does not exist: {self.recipe.image_path}", "warning")
+
         # Connect signals for AI integration
         self.recipe_image.generate_image_requested.connect(self._on_generate_image_requested)
         self.recipe_image.image_clicked.connect(self._on_image_clicked)
-        
+
         # Connect AI service signals for async operations
         self.ai_service.generation_finished.connect(self._on_generation_finished)
         self.ai_service.generation_failed.connect(self._on_generation_failed)
-        
+
         page.addWidget(self.recipe_image)
 
         # ── Info Cards Container
@@ -441,7 +446,7 @@ class FullRecipe(QWidget):
             print(f"AI Image Generation service not available")
             self.recipe_image.reset_generate_button()
             return
-        
+
         # Start async generation - UI will not block
         self.ai_service.generate_recipe_images_async(recipe_name)
 
@@ -452,28 +457,42 @@ class FullRecipe(QWidget):
             banner_path = str(result.banner_path)
             if Path(banner_path).exists():
                 self.recipe_image.set_image_path(banner_path)
-                print(f"Banner image loaded for '{recipe_name}': {result.banner_path.name}")
+                DebugLogger().log(f"Banner image loaded for '{recipe_name}': {result.banner_path.name}", "info")
+
+                # Save the image path to the database
+                if hasattr(self.recipe, 'id') and self.recipe.id:
+                    try:
+                        from app.core.services.recipe_service import RecipeService
+                        recipe_service = RecipeService()
+                        updated_recipe = recipe_service.update_recipe_image_path(self.recipe.id, banner_path)
+                        if updated_recipe:
+                            # Update the local recipe object
+                            self.recipe.image_path = banner_path
+                            DebugLogger().log(f"Updated recipe {self.recipe.id} with banner image path", "info")
+                    except Exception as e:
+                        DebugLogger().log(f"Failed to save banner image path to database: {e}", "error")
             else:
                 # Reset to placeholder if file doesn't exist
                 self.recipe_image.show_placeholder_state()
                 self.recipe_image.reset_generate_button()
-                print(f"Generated banner image not found: {banner_path}")
+                DebugLogger().log(f"Generated banner image not found: {banner_path}", "warning")
         else:
             # No result or invalid result
             self.recipe_image.show_placeholder_state()
             self.recipe_image.reset_generate_button()
-            print(f"AI generation completed but no valid result for '{recipe_name}'")
+            DebugLogger().log(f"AI generation completed but no valid result for '{recipe_name}'", "warning")
 
     def _on_generation_failed(self, recipe_name: str, error_message: str):
         """Handle AI image generation failure."""
         self.recipe_image.show_placeholder_state()
         self.recipe_image.reset_generate_button()
         # TODO: Show toast notification for generation failure
-        print(f"Failed to generate banner image for '{recipe_name}': {error_message}")
+        DebugLogger().log(f"Failed to generate banner image for '{recipe_name}': {error_message}", "error")
 
     def _on_image_clicked(self):
         """Handle image click for full preview."""
         # TODO: Show full-size image preview dialog
-        print("Image clicked for full preview")
+        DebugLogger().log("Recipe banner image clicked for full preview", "debug")
+
 
 
