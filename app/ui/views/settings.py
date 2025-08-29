@@ -18,7 +18,7 @@ from PySide6.QtWidgets import (
 )
 
 from app.config.paths import AppPaths
-from app.core.services.ai_gen import ImageGenConfig
+from app.core.services.ai_gen import ImageGenConfig, RecipeImageHelper
 from app.core.services.settings_service import SettingsService
 from app.style import Qss, Theme
 from app.style.icon import Icon
@@ -60,6 +60,22 @@ class ImageGenerationSettings(SettingsCategory):
 
         # Current config for reference
         self.config = ImageGenConfig()
+        # Get recipe helper for prompt template
+        from app.core.services.ai_gen.service import ImageGenService
+        try:
+            service = ImageGenService(self.config)
+            self.recipe_helper = RecipeImageHelper(service, self.config)
+            self.prompt_template = self.recipe_helper._BASE_PROMPT
+        except RuntimeError:
+            # Handle missing API key gracefully
+            self.recipe_helper = None
+            self.prompt_template = (
+                "High-quality studio food photography of {recipe_name}. "
+                "Style: natural light, shallow depth-of-field, appetizing, "
+                "no text, no branding, no people. Plating on neutral surface. "
+                "Composition clean and professional. White balance slightly warm. "
+                "Ultra-detailed, realistic, crisp."
+            )
 
         self.setHeader("AI Image Generation", Icon.SPARKLES)
         self.headerIcon.setSize(24, 24)
@@ -132,7 +148,7 @@ class ImageGenerationSettings(SettingsCategory):
         warning_label.setMaximumHeight(80)
         self.prompt_textedit = QTextEdit()
         self.prompt_textedit.setObjectName("SettingsTextEdit")
-        self.prompt_textedit.setPlainText(self.config.prompt_template)
+        self.prompt_textedit.setPlainText(self.prompt_template)
         self.prompt_textedit.setMaximumHeight(120)
 
         # Reset button for prompt
@@ -154,8 +170,14 @@ class ImageGenerationSettings(SettingsCategory):
 
     def _reset_prompt(self):
         """Reset prompt to default template."""
-        default_config = ImageGenConfig()
-        self.prompt_textedit.setPlainText(default_config.prompt_template)
+        default_prompt = (
+            "High-quality studio food photography of {recipe_name}. "
+            "Style: natural light, shallow depth-of-field, appetizing, "
+            "no text, no branding, no people. Plating on neutral surface. "
+            "Composition clean and professional. White balance slightly warm. "
+            "Ultra-detailed, realistic, crisp."
+        )
+        self.prompt_textedit.setPlainText(default_prompt)
 
     def _on_settings_changed(self):
         """Emit signal when settings change."""
@@ -439,9 +461,16 @@ class Settings(QWidget):
             for category in self.categories.values():
                 if isinstance(category, ImageGenerationSettings):
                     default_config = ImageGenConfig()
+                    default_prompt = (
+                        "High-quality studio food photography of {recipe_name}. "
+                        "Style: natural light, shallow depth-of-field, appetizing, "
+                        "no text, no branding, no people. Plating on neutral surface. "
+                        "Composition clean and professional. White balance slightly warm. "
+                        "Ultra-detailed, realistic, crisp."
+                    )
                     default_settings = {
                         "model": default_config.model,
-                        "prompt_template": default_config.prompt_template
+                        "prompt_template": default_prompt
                     }
                     category.set_settings(default_settings)
 

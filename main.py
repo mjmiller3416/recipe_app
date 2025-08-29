@@ -19,6 +19,7 @@ from app.style.theme_controller import Color, Mode, Theme
 from app.ui.main_window import MainWindow
 from app.ui.services.navigation_service import NavigationService
 from dev_tools import DebugLogger, startup_timer
+from dotenv import load_dotenv
 
 if "--reset" in sys.argv:
         pass
@@ -45,6 +46,7 @@ elif "--import-recipes" in sys.argv:
 
 # ── Application Entry Point ──
 else:
+    load_dotenv()
 
     app = QApplication(sys.argv)
     app.setApplicationName("MealGenie")
