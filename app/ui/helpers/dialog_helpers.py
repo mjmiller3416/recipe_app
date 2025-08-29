@@ -7,6 +7,8 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (QDialog, QHBoxLayout, QMessageBox, QPushButton,
                                QSizePolicy, QSpacerItem)
 
+from app.core.utils.image_utils import img_qt_load_safe
+
 # Minimum crop dimension required on the original image
 MIN_CROP_DIM_ORIGINAL = 280
 
@@ -17,7 +19,7 @@ SELECT_NEW_IMAGE_CODE = QDialog.DialogCode.Rejected + 1
 
 def load_pixmap_or_warn(path: str, parent=None) -> QPixmap:
     """Return a QPixmap from ``path`` or show a warning dialog if it fails."""
-    pixmap = QPixmap(path)
+    pixmap = img_qt_load_safe(path)
     if pixmap.isNull() and parent is not None:
         QMessageBox.warning(parent, "Image Error", f"Could not load image: {path}")
     return pixmap

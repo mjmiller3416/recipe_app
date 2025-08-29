@@ -6,14 +6,16 @@ Used in AddRecipes view for default recipe images.
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from typing import Optional
+from pathlib import Path
 
 from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtWidgets import (
     QHBoxLayout, QSizePolicy, QVBoxLayout,
     QWidget, QLabel, QStackedWidget)
 
+from app.core.utils.image_utils import img_validate_path
 from app.style import Qss, Theme, Type
-from app.style.icon.config import Icon, Name, Path
+from app.style.icon.config import Icon, Name, Path as IconPath
 from app.style.icon.icon import AppIcon
 from app.ui.components.layout.card import BaseCard
 from app.ui.components.widgets import Button, RoundedImage
@@ -176,7 +178,7 @@ class BaseImage(BaseCard):
 
     def set_image_path(self, image_path: str):
         """Set and display an image from path."""
-        if not image_path or not Path(image_path).exists():
+        if not img_validate_path(image_path):
             self.show_placeholder_state()
             return
 
@@ -228,10 +230,7 @@ class BaseImage(BaseCard):
 
     def _validate_image_path(self, image_path: str) -> bool:
         """Validate that an image path exists and is readable."""
-        if not image_path:
-            return False
-        path = Path(image_path)
-        return path.exists() and path.is_file()
+        return img_validate_path(image_path)
 
 
 # ── Recipe Banner  ───────────────────────────────────────────────────────────────────────────
@@ -289,7 +288,7 @@ class RecipeBanner(BaseImage):
 
     def _display_image(self, image_path: str):
         """Display image in banner mode."""
-        if not self._validate_image_path(image_path):
+        if not img_validate_path(image_path):
             self.show_placeholder_state()
             return
 
@@ -429,7 +428,7 @@ class RecipeImage(BaseImage):
 
     def _display_image(self, image_path: str):
         """Display image in default mode."""
-        if not self._validate_image_path(image_path):
+        if not img_validate_path(image_path):
             self.show_placeholder_state()
             return
 

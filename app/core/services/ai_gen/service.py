@@ -11,8 +11,6 @@ from __future__ import annotations
 import os
 import asyncio
 import base64
-import hashlib
-import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional
@@ -20,11 +18,8 @@ from typing import List, Optional
 from openai import OpenAI, AsyncOpenAI
 
 from .config import ImageGenConfig
+from app.core.utils.image_utils import img_ai_slugify, img_ai_get_hash
 from dev_tools import DebugLogger
-
-
-# Slug pattern for filename generation
-_SLUG_RE = re.compile(r"[^a-z0-9]+")
 
 
 @dataclass
@@ -222,17 +217,13 @@ class ImageGenService:
         Returns:
             The output path for the generated image
         """
-        slug = self._slugify(filename_base)
+        slug = img_ai_slugify(filename_base)
         # Add hash for uniqueness while keeping readable names
-        digest = hashlib.sha1(filename_base.encode("utf-8")).hexdigest()[:8]
+        digest = img_ai_get_hash(filename_base)
         filename = f"{slug}-{digest}-{size}.png"
         return self.config.output_dir() / filename
 
-    def _slugify(self, text: str) -> str:
-        """Convert text to filesystem-safe slug."""
-        slug = text.lower().strip()
-        slug = _SLUG_RE.sub("-", slug)
-        return slug.strip("-")
+    # Removed _slugify - now using img_ai_slugify from image_utils
 
     def _save_image(self, data: bytes, path: Path) -> None:
         """Save image data to file atomically.

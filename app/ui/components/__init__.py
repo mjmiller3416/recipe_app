@@ -17,10 +17,9 @@ from .layout.separator import Separator
 from .navigation.sidebar import Sidebar
 from .navigation.titlebar import TitleBar
 # From widgets
-from .widgets.circular_image import CircularImage
+from .widgets.image import CircularImage, RoundedImage
 from .widgets.combobox import ComboBox
 from .widgets.dropdown_menu import DropdownMenu
-from .widgets.rounded_image import RoundedImage
 from .widgets.toggle_switch import ToggleSwitch
 
 __all__ = [

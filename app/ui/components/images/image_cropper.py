@@ -8,6 +8,9 @@ from PySide6.QtGui import (QColor, QMouseEvent, QPainter, QPainterPath, QPen,
                            QPixmap)
 from PySide6.QtWidgets import QLabel, QSizePolicy
 
+from app.core.utils.image_utils import (
+    img_calc_scale_factor, img_crop_from_scaled_coords, img_scale_to_fit
+)
 from app.ui.helpers.dialog_helpers import MIN_CROP_DIM_ORIGINAL
 
 # ── Constants ───────────────────────────────────────────────────────────────────
@@ -55,24 +58,16 @@ class ImageCropper(QLabel):
             return
 
         widget_size = self.size()
-        self.scaled_pixmap = self.original_pixmap.scaled(
-            widget_size,
-            Qt.AspectRatioMode.KeepAspectRatio,
-            Qt.TransformationMode.SmoothTransformation
+        self.scaled_pixmap = img_scale_to_fit(
+            self.original_pixmap,
+            widget_size.width(),
+            widget_size.height()
         )
 
-        # Determine scale factor
-        if self.original_pixmap.width() * self.scaled_pixmap.height() > \
-           self.original_pixmap.height() * self.scaled_pixmap.width():
-            # Limited by widget width
-            self.scale_factor = self.scaled_pixmap.width() / self.original_pixmap.width()
-        elif self.original_pixmap.height() > 0 : # Avoid division by zero for null pixmap
-            # Limited by widget height (or perfect fit)
-            self.scale_factor = self.scaled_pixmap.height() / self.original_pixmap.height()
-        else:
+        # Calculate scale factor using utility function
+        self.scale_factor = img_calc_scale_factor(self.original_pixmap, self.scaled_pixmap)
+        if self.scale_factor == 0:
             self.scale_factor = 1.0
-        
-        if self.scale_factor == 0 : self.scale_factor = 1.0
 
 
         # Initialize crop rectangle
@@ -283,27 +278,10 @@ class ImageCropper(QLabel):
             event.accept()
 
     def get_cropped_qpixmap(self) -> QPixmap:
-        if self.original_pixmap.isNull() or self.crop_rect_on_scaled.isNull() or self.scale_factor == 0:
-            return QPixmap()
-
-        crop_x_orig = self.crop_rect_on_scaled.x() / self.scale_factor
-        crop_y_orig = self.crop_rect_on_scaled.y() / self.scale_factor
-        crop_w_orig = self.crop_rect_on_scaled.width() / self.scale_factor
-        # crop_h_orig will be same as crop_w_orig due to 1:1
-
-        # Ensure dimensions are integers for QRect for .copy()
-        rect_on_original = QRect(
-            round(crop_x_orig),
-            round(crop_y_orig),
-            round(crop_w_orig),
-            round(crop_w_orig) # Ensure square
+        """Get cropped pixmap using utility function."""
+        return img_crop_from_scaled_coords(
+            self.original_pixmap,
+            self.crop_rect_on_scaled,
+            self.scale_factor,
+            force_square=True
         )
-        
-        # Ensure the crop rect is within the original pixmap bounds
-        original_bounds = self.original_pixmap.rect()
-        rect_on_original = rect_on_original.intersected(original_bounds)
-
-        if rect_on_original.isEmpty() or rect_on_original.width() < 1 or rect_on_original.height() < 1:
-            return QPixmap() # Crop area is invalid or outside image
-
-        return self.original_pixmap.copy(rect_on_original)

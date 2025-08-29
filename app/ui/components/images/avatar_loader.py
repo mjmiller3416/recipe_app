@@ -14,6 +14,7 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QFileDialog, QToolButton, QVBoxLayout, QWidget
 
 from app.config import AppPaths
+from app.core.utils.image_utils import img_create_temp_path, img_validate_path
 from app.style import Theme
 from app.style.animation.animator import Animator
 from app.style.icon import AppIcon, Icon
@@ -23,11 +24,9 @@ from app.ui.components.widgets import Button
 from app.ui.helpers import CornerAnchor
 from data_files.user_settings import UserSettings
 
-from ..widgets.circular_image import CircularImage
+from ..widgets.image import CircularImage
 
-# ── Constants ───────────────────────────────────────────────────────────────────
-TEMP_IMAGE_DIR = Path(tempfile.gettempdir()) / "app_avatar_crops"
-TEMP_IMAGE_DIR.mkdir(parents=True, exist_ok=True)
+# Temp image handling now uses image_utils
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class AvatarLoader(QWidget):
@@ -100,11 +99,11 @@ class AvatarLoader(QWidget):
         path = str(AppPaths.ICONS_DIR / "user_placeholder.svg")
         if avatar_filename:
             avatar_path = AppPaths.USER_PROFILE_DIR / avatar_filename
-            if avatar_path.exists():
+            if img_validate_path(avatar_path):
                 path = str(avatar_path)
 
-        pix = QPixmap(path)
-        self.avatar_display.setPixmap(pix)
+        # Use the new API: set_image_path for file paths
+        self.avatar_display.set_image_path(path)
 
     @Slot()
     def _on_edit_clicked(self):
@@ -120,7 +119,7 @@ class AvatarLoader(QWidget):
         if dialog.exec():
             cropped = dialog.get_final_cropped_pixmap()
             if not cropped.isNull():
-                temp = TEMP_IMAGE_DIR / f"avatar_crop_{uuid.uuid4().hex}.png"
+                temp = img_create_temp_path("avatar_crop", ".png")
                 cropped.save(str(temp), "PNG", -1)
                 self.set_avatar_from_path(str(temp))
 
@@ -138,7 +137,7 @@ class AvatarLoader(QWidget):
         shutil.copy(temp_file_path, perm_path)
 
         self.settings.set("avatar_path", perm_filename)
-        self.avatar_display.setPixmap(QPixmap(str(perm_path)))
+        self.avatar_display.set_image_path(str(perm_path))
 
     # ── Event Handlers ─────────────────────────────────────────────────────────────
     def enterEvent(self, event: QEvent):
