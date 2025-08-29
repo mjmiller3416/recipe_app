@@ -65,19 +65,19 @@ class BaseImageWidget(QLabel):
     borderColor = Property(QColor, getBorderColor, setBorderColor)
 
     # ── Image Management ──
-    def set_image_path(self, path: Union[str, Path, None]) -> None:
+    def setImagePath(self, path: Union[str, Path, None]) -> None:
         """Set image from file path."""
         self._image_path = str(path) if path else None
         self._original_pixmap = None
         self._refresh_display()
 
-    def set_pixmap(self, pixmap: QPixmap) -> None:
+    def updatePixmap(self, pixmap: QPixmap) -> None:
         """Set image from QPixmap directly."""
         self._image_path = None
         self._original_pixmap = pixmap
         self._refresh_display()
 
-    def clear_image(self) -> None:
+    def clearImage(self) -> None:
         """Clear the current image."""
         self._image_path = None
         self._original_pixmap = None
@@ -185,9 +185,9 @@ class RoundedImage(BaseImageWidget):
 
         # Set initial image if provided
         if image_path:
-            self.set_image_path(image_path)
+            self.setImagePath(image_path)
 
-    def set_radii(self, radii: Union[int, tuple[int, int, int, int]]) -> None:
+    def setRadii(self, radii: Union[int, tuple[int, int, int, int]]) -> None:
         """Update corner radii and refresh display."""
         if isinstance(radii, int):
             self._radii = (radii, radii, radii, radii)
@@ -278,5 +278,5 @@ def create_circular_image(image_path: Union[str, Path] = None,
     """Convenience function to create a circular image."""
     widget = CircularImage(diameter)
     if image_path:
-        widget.set_image_path(image_path)
+        widget.setImagePath(image_path)
     return widget

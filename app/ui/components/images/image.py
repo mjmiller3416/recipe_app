@@ -176,7 +176,7 @@ class BaseImage(BaseCard):
         if self.generate_button:
             self.generate_button.setEnabled(bool(self.recipe_name))
 
-    def set_image_path(self, image_path: str):
+    def setImagePath(self, image_path: str):
         """Set and display an image from path."""
         if not img_validate_path(image_path):
             self.show_placeholder_state()
@@ -185,11 +185,11 @@ class BaseImage(BaseCard):
         self.current_image_path = image_path
         self._display_image(image_path)
 
-    def clear_image(self):
+    def clearImage(self):
         """Clear current image and return to placeholder state."""
         self.current_image_path = None
         if self.image_display:
-            self.image_display.clear_image()
+            self.image_display.clearImage()
         self.show_placeholder_state()
 
     def show_placeholder_state(self):
@@ -296,7 +296,7 @@ class RecipeBanner(BaseImage):
 
         # Create or update image display
         if self.image_display:
-            self.image_display.set_image_path(image_path)
+            self.image_display.setImagePath(image_path)
         else:
             # Calculate size for banner display
             target_height = 350  # Leave room for buttons
@@ -355,7 +355,7 @@ class RecipeBanner(BaseImage):
 
     def set_banner_image_path(self, image_path: str):
         """Set and display a banner image from path."""
-        self.set_image_path(image_path)  # Use base class method
+        self.setImagePath(image_path)  # Use base class method
 
     def get_banner_image_path(self) -> Optional[str]:
         """Get the currently displayed banner image path."""
@@ -363,7 +363,7 @@ class RecipeBanner(BaseImage):
 
     def clear_banner_image(self):
         """Clear banner image and return to placeholder state."""
-        self.clear_image()  # Use base class method
+        self.clearImage()  # Use base class method
 
     def reset_banner_button(self):
         """Reset banner generate button to normal state."""
@@ -436,7 +436,7 @@ class RecipeImage(BaseImage):
 
         # Create or update image display
         if self.image_display:
-            self.image_display.set_image_path(image_path)
+            self.image_display.setImagePath(image_path)
         else:
             # Calculate size for default display
             target_height = 250  # Leave room for buttons
@@ -495,7 +495,7 @@ class RecipeImage(BaseImage):
 
     def set_default_image_path(self, image_path: str):
         """Set and display a default image from path."""
-        self.set_image_path(image_path)  # Use base class method
+        self.setImagePath(image_path)  # Use base class method
 
     def get_default_image_path(self) -> Optional[str]:
         """Get the currently displayed default image path."""
@@ -507,7 +507,7 @@ class RecipeImage(BaseImage):
 
     def clear_default_image(self):
         """Clear default image and return to placeholder state."""
-        self.clear_image()  # Use base class method
+        self.clearImage()  # Use base class method
 
     def reset_default_button(self):
         """Reset default generate button to normal state."""

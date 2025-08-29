@@ -259,7 +259,7 @@ class RecipeImage(BaseCard):
         if hasattr(self, 'generate_button'):
             self.generate_button.setEnabled(bool(recipe_name))
 
-    def set_image_path(self, image_path: str):
+    def setImagePath(self, image_path: str):
         """Set and display an image from path (banner mode only)."""
         if self.mode != "banner":
             return
@@ -271,7 +271,7 @@ class RecipeImage(BaseCard):
 
         # Create or update image display for banner mode
         if self.image_display:
-            self.image_display.set_image_path(image_path)
+            self.image_display.setImagePath(image_path)
         else:
             # Calculate size for banner display
             target_height = 350  # Leave room for buttons
@@ -403,7 +403,7 @@ class RecipeImage(BaseCard):
 
         # Only clear image_display in banner mode (where it exists)
         if self.mode == "banner" and hasattr(self, 'image_display') and self.image_display:
-            self.image_display.clear_image()
+            self.image_display.clearImage()
 
         # Reset generate button
         if hasattr(self, 'generate_button'):

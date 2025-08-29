@@ -93,18 +93,6 @@ class AvatarLoader(QWidget):
         """Connect signals to slots."""
         self.edit_button.clicked.connect(self._on_edit_clicked)
 
-    def load_avatar(self):
-        """Load from settings or placeholder."""
-        avatar_filename = self.settings.get("avatar_path")
-        path = str(AppPaths.ICONS_DIR / "user_placeholder.svg")
-        if avatar_filename:
-            avatar_path = AppPaths.USER_PROFILE_DIR / avatar_filename
-            if img_validate_path(avatar_path):
-                path = str(avatar_path)
-
-        # Use the new API: set_image_path for file paths
-        self.avatar_display.set_image_path(path)
-
     @Slot()
     def _on_edit_clicked(self):
         """Handle avatar edit button click."""
@@ -123,6 +111,17 @@ class AvatarLoader(QWidget):
                 cropped.save(str(temp), "PNG", -1)
                 self.set_avatar_from_path(str(temp))
 
+    def load_avatar(self):
+        """Load from settings or placeholder."""
+        avatar_filename = self.settings.get("avatar_path")
+        path = str(AppPaths.ICONS_DIR / "user_placeholder.svg")
+        if avatar_filename:
+            avatar_path = AppPaths.USER_PROFILE_DIR / avatar_filename
+            if img_validate_path(avatar_path):
+                path = str(avatar_path)
+
+        self.avatar_display.setImagePath(path)
+
     def set_avatar_from_path(self, temp_file_path: str):
         """Persist new avatar, update display.
 
@@ -137,7 +136,7 @@ class AvatarLoader(QWidget):
         shutil.copy(temp_file_path, perm_path)
 
         self.settings.set("avatar_path", perm_filename)
-        self.avatar_display.set_image_path(str(perm_path))
+        self.avatar_display.setImagePath(str(perm_path))
 
     # ── Event Handlers ─────────────────────────────────────────────────────────────
     def enterEvent(self, event: QEvent):

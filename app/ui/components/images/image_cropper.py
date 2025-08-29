@@ -1,11 +1,10 @@
-"""app/ui/components/images/image_cropper.py
+"""app/ui/components/images/image_cropper_refactored.py
 
-Image cropping tool with interactive rectangle for selecting crop area.
+Refactored image cropping components with separation of concerns.
 """
-# ── Imports ─────────────────────────────────────────────────────────────────────
+
 from PySide6.QtCore import QPointF, QRect, QRectF, QSizeF, Qt, Signal
-from PySide6.QtGui import (QColor, QMouseEvent, QPainter, QPainterPath, QPen,
-                           QPixmap)
+from PySide6.QtGui import QColor, QMouseEvent, QPainter, QPainterPath, QPen, QPixmap
 from PySide6.QtWidgets import QLabel, QSizePolicy
 
 from app.core.utils.image_utils import (
@@ -13,93 +12,301 @@ from app.core.utils.image_utils import (
 )
 from app.ui.helpers.dialog_helpers import MIN_CROP_DIM_ORIGINAL
 
-# ── Constants ───────────────────────────────────────────────────────────────────
-HANDLE_SIZE = 10  # Visual size of resize handles
-HANDLE_INTERACTION_OFFSET = 4 # Extend interaction area for handles slightly
+# ── Constants ───────────────────────────────────────────────────────────────
+HANDLE_SIZE = 10
+HANDLE_INTERACTION_OFFSET = 4
 
+# ── Crop Rectangle State Manager ────────────────────────────────────────────
+class CropRectangle:
+    """Manages crop rectangle state and transformations."""
+
+    def __init__(self):
+        self.rect = QRectF()
+        self.handles = {}
+
+    def initialize_for_image(self, scaled_pixmap: QPixmap, scale_factor: float):
+        """Initialize crop rectangle for given image dimensions."""
+        min_dim_scaled = max(1.0, MIN_CROP_DIM_ORIGINAL * scale_factor)
+        max_dim_scaled = min(scaled_pixmap.width(), scaled_pixmap.height())
+
+        initial_dim = max(min_dim_scaled, max_dim_scaled * 0.75)
+        initial_dim = min(initial_dim, max_dim_scaled)
+
+        crop_x = (scaled_pixmap.width() - initial_dim) / 2.0
+        crop_y = (scaled_pixmap.height() - initial_dim) / 2.0
+
+        self.rect = QRectF(crop_x, crop_y, initial_dim, initial_dim)
+        self._update_handles()
+
+    def _update_handles(self):
+        """Update handle positions based on current rectangle."""
+        if self.rect.isNull():
+            self.handles = {}
+            return
+
+        r = self.rect
+        hs = HANDLE_SIZE / 2
+
+        self.handles = {
+            'tl': QRectF(r.left() - hs, r.top() - hs, HANDLE_SIZE, HANDLE_SIZE),
+            'tr': QRectF(r.right() - hs, r.top() - hs, HANDLE_SIZE, HANDLE_SIZE),
+            'bl': QRectF(r.left() - hs, r.bottom() - hs, HANDLE_SIZE, HANDLE_SIZE),
+            'br': QRectF(r.right() - hs, r.bottom() - hs, HANDLE_SIZE, HANDLE_SIZE),
+        }
+
+    def get_handle_at_pos(self, pos: QPointF) -> str:
+        """Get handle key at given position, or None."""
+        offset = HANDLE_INTERACTION_OFFSET
+        for key, handle_rect in self.handles.items():
+            interaction_rect = handle_rect.adjusted(-offset, -offset, offset, offset)
+            if interaction_rect.contains(pos):
+                return key
+        return None
+
+    def contains_point(self, pos: QPointF) -> bool:
+        """Check if position is inside crop rectangle."""
+        return self.rect.contains(pos)
+
+    def move_by_delta(self, delta: QPointF, bounds: QRectF):
+        """Move rectangle by delta, constraining within bounds."""
+        new_rect = QRectF(self.rect).translated(delta)
+
+        # Constrain within bounds
+        if new_rect.left() < bounds.left():
+            new_rect.moveLeft(bounds.left())
+        if new_rect.top() < bounds.top():
+            new_rect.moveTop(bounds.top())
+        if new_rect.right() > bounds.right():
+            new_rect.moveRight(bounds.right())
+        if new_rect.bottom() > bounds.bottom():
+            new_rect.moveBottom(bounds.bottom())
+
+        self.rect = new_rect
+        self._update_handles()
+
+    def resize_from_handle(self, handle_key: str, mouse_pos: QPointF,
+                          start_rect: QRectF, bounds: QRectF, min_size: float):
+        """Resize rectangle from handle position."""
+        if handle_key == 'br':  # Bottom-right handle
+            anchor = start_rect.topLeft()
+            desired_size = max(mouse_pos.x() - anchor.x(), mouse_pos.y() - anchor.y())
+            max_size = min(bounds.right() - anchor.x(), bounds.bottom() - anchor.y())
+            final_size = max(min_size, min(desired_size, max_size))
+            self.rect = QRectF(anchor, QSizeF(final_size, final_size))
+
+        elif handle_key == 'tl':  # Top-left handle
+            anchor = start_rect.bottomRight()
+            desired_size = max(anchor.x() - mouse_pos.x(), anchor.y() - mouse_pos.y())
+            max_size = min(anchor.x() - bounds.left(), anchor.y() - bounds.top())
+            final_size = max(min_size, min(desired_size, max_size))
+            top_left = QPointF(anchor.x() - final_size, anchor.y() - final_size)
+            self.rect = QRectF(top_left, QSizeF(final_size, final_size))
+
+        elif handle_key == 'tr':  # Top-right handle
+            anchor = start_rect.bottomLeft()
+            desired_size = max(mouse_pos.x() - anchor.x(), anchor.y() - mouse_pos.y())
+            max_size = min(bounds.right() - anchor.x(), anchor.y() - bounds.top())
+            final_size = max(min_size, min(desired_size, max_size))
+            top_left = QPointF(anchor.x(), anchor.y() - final_size)
+            self.rect = QRectF(top_left, QSizeF(final_size, final_size))
+
+        elif handle_key == 'bl':  # Bottom-left handle
+            anchor = start_rect.topRight()
+            desired_size = max(anchor.x() - mouse_pos.x(), mouse_pos.y() - anchor.y())
+            max_size = min(anchor.x() - bounds.left(), bounds.bottom() - anchor.y())
+            final_size = max(min_size, min(desired_size, max_size))
+            top_left = QPointF(anchor.x() - final_size, anchor.y())
+            self.rect = QRectF(top_left, QSizeF(final_size, final_size))
+
+        self._update_handles()
+
+
+# ── Mouse Interaction Handler ───────────────────────────────────────────────
+class CropInteractionHandler:
+    """Handles mouse interactions for cropping."""
+
+    def __init__(self, crop_rect: CropRectangle):
+        self.crop_rect = crop_rect
+        self.active_handle = None
+        self.is_dragging = False
+        self.drag_start_pos = QPointF()
+        self.drag_start_rect = QRectF()
+
+    def handle_mouse_press(self, pos_on_image: QPointF) -> bool:
+        """Handle mouse press. Returns True if interaction started."""
+        self.active_handle = self.crop_rect.get_handle_at_pos(pos_on_image)
+
+        if self.active_handle:
+            self.is_dragging = False
+        elif self.crop_rect.contains_point(pos_on_image):
+            self.is_dragging = True
+            self.active_handle = None
+        else:
+            return False  # No interaction
+
+        self.drag_start_pos = pos_on_image
+        self.drag_start_rect = QRectF(self.crop_rect.rect)
+        return True
+
+    def handle_mouse_move(self, pos_on_image: QPointF, bounds: QRectF,
+                         scale_factor: float) -> bool:
+        """Handle mouse move. Returns True if crop changed."""
+        if not (self.is_dragging or self.active_handle):
+            return False
+
+        if self.is_dragging:
+            delta = pos_on_image - self.drag_start_pos
+            self.crop_rect.move_by_delta(delta, bounds)
+            return True
+
+        elif self.active_handle:
+            min_size = max(1.0, MIN_CROP_DIM_ORIGINAL * scale_factor)
+            self.crop_rect.resize_from_handle(
+                self.active_handle, pos_on_image,
+                self.drag_start_rect, bounds, min_size
+            )
+            return True
+
+        return False
+
+    def handle_mouse_release(self):
+        """Handle mouse release."""
+        self.is_dragging = False
+        self.active_handle = None
+
+    def get_cursor_for_pos(self, pos_on_image: QPointF) -> Qt.CursorShape:
+        """Get appropriate cursor for position."""
+        if self.is_dragging or self.active_handle:
+            return Qt.CursorShape.ArrowCursor
+
+        handle = self.crop_rect.get_handle_at_pos(pos_on_image)
+        if handle in ['tl', 'br']:
+            return Qt.CursorShape.SizeFDiagCursor
+        elif handle in ['tr', 'bl']:
+            return Qt.CursorShape.SizeBDiagCursor
+        elif self.crop_rect.contains_point(pos_on_image):
+            return Qt.CursorShape.SizeAllCursor
+        else:
+            return Qt.CursorShape.ArrowCursor
+
+
+# ── Crop Renderer ───────────────────────────────────────────────────────────
+class CropRenderer:
+    """Handles rendering of crop overlay and handles."""
+
+    @staticmethod
+    def draw_crop_overlay(painter: QPainter, widget_rect: QRect,
+                         crop_visual_rect: QRectF, crop_rect: CropRectangle,
+                         pixmap_display_rect: QRect):
+        """Draw the crop overlay with darkened areas and handles."""
+        # Semi-transparent overlay outside crop area
+        overlay_path = QPainterPath()
+        overlay_path.addRect(QRectF(widget_rect))
+        overlay_path.addRect(crop_visual_rect)
+        painter.setBrush(QColor(0, 0, 0, 120))
+        painter.setPen(Qt.NoPen)
+        painter.drawPath(overlay_path)
+
+        # Crop rectangle border
+        pen = QPen(QColor(255, 255, 255, 200), 2, Qt.PenStyle.SolidLine)
+        painter.setPen(pen)
+        painter.setBrush(Qt.NoBrush)
+        painter.drawRect(crop_visual_rect)
+
+        # Draw resize handles
+        painter.setBrush(QColor(255, 255, 255, 220))
+        pen.setColor(QColor(50, 50, 50, 180))
+        pen.setWidth(1)
+        painter.setPen(pen)
+
+        for handle_rect in crop_rect.handles.values():
+            visual_handle = handle_rect.translated(pixmap_display_rect.topLeft())
+            painter.drawRect(visual_handle)
+
+
+# ── Main ImageCropper Widget ────────────────────────────────────────────────
 class ImageCropper(QLabel):
-    """
-    A QLabel subclass for displaying an image and handling interactive cropping.
-    Draws the image, a draggable and resizable crop rectangle, and handles.
-    """
-    crop_rect_updated = Signal() # Emitted when the crop rectangle changes
+    """Interactive image cropper with drag-and-resize functionality."""
+
+    crop_rect_updated = Signal()
 
     def __init__(self, original_pixmap: QPixmap, parent=None):
         super().__init__(parent)
+
+        # Image state
         self.original_pixmap = original_pixmap
         self.scaled_pixmap = QPixmap()
         self.scale_factor = 1.0
-        
-        # Crop rectangle in the coordinate system of the scaled_pixmap
-        self.crop_rect_on_scaled = QRectF()
 
-        self.handles = {}  # Stores QRectF for handle areas on scaled_pixmap
-        self.active_handle_key = None
-        self.is_dragging_rect = False
-        self.drag_start_mouse_pos = QPointF()
-        self.drag_start_crop_rect = QRectF()
+        # Components
+        self.crop_rect = CropRectangle()
+        self.interaction_handler = CropInteractionHandler(self.crop_rect)
 
+        # Widget setup
         self.setMouseTracking(True)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # Set a minimum size for the cropper area itself
         self.setMinimumSize(MIN_CROP_DIM_ORIGINAL + 40, MIN_CROP_DIM_ORIGINAL + 40)
 
+        self._update_scaled_pixmap_and_crop_rect()
 
     def set_original_pixmap(self, pixmap: QPixmap):
+        """Set new original pixmap and recalculate everything."""
         self.original_pixmap = pixmap
-        self._update_scaled_pixmap_and_crop_rect() # Recalculate everything
+        self._update_scaled_pixmap_and_crop_rect()
+
+    def get_cropped_qpixmap(self) -> QPixmap:
+        """Get cropped result using utility function."""
+        return img_crop_from_scaled_coords(
+            self.original_pixmap,
+            self.crop_rect.rect,
+            self.scale_factor,
+            force_square=True
+        )
 
     def _update_scaled_pixmap_and_crop_rect(self):
+        """Update scaled pixmap and initialize crop rectangle."""
         if self.original_pixmap.isNull():
             self.scaled_pixmap = QPixmap()
-            self.crop_rect_on_scaled = QRectF()
+            self.crop_rect.rect = QRectF()
             self.update()
             return
 
-        widget_size = self.size()
+        # Scale image to fit widget
         self.scaled_pixmap = img_scale_to_fit(
             self.original_pixmap,
-            widget_size.width(),
-            widget_size.height()
+            self.size().width(),
+            self.size().height()
         )
 
-        # Calculate scale factor using utility function
+        # Calculate scale factor
         self.scale_factor = img_calc_scale_factor(self.original_pixmap, self.scaled_pixmap)
         if self.scale_factor == 0:
             self.scale_factor = 1.0
 
-
         # Initialize crop rectangle
-        min_dim_scaled = max(1.0, MIN_CROP_DIM_ORIGINAL * self.scale_factor)
-        max_dim_scaled = min(self.scaled_pixmap.width(), self.scaled_pixmap.height())
-        
-        initial_dim = max(min_dim_scaled, max_dim_scaled * 0.75) # Start at 75% of max possible or min_dim_scaled
-        initial_dim = min(initial_dim, max_dim_scaled) # Cannot exceed max_dim_scaled
+        self.crop_rect.initialize_for_image(self.scaled_pixmap, self.scale_factor)
 
-        crop_x = (self.scaled_pixmap.width() - initial_dim) / 2.0
-        crop_y = (self.scaled_pixmap.height() - initial_dim) / 2.0
-        self.crop_rect_on_scaled = QRectF(crop_x, crop_y, initial_dim, initial_dim)
-
-        self._update_handles()
         self.update()
         self.crop_rect_updated.emit()
 
+    def _get_pixmap_display_rect(self) -> QRect:
+        """Get rectangle where scaled pixmap is displayed in widget."""
+        if self.scaled_pixmap.isNull():
+            return QRect()
+
+        x_offset = (self.width() - self.scaled_pixmap.width()) / 2
+        y_offset = (self.height() - self.scaled_pixmap.height()) / 2
+        return QRect(int(x_offset), int(y_offset),
+                    self.scaled_pixmap.width(), self.scaled_pixmap.height())
+
+    # ── Event Handlers ──
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self._update_scaled_pixmap_and_crop_rect()
 
-    def _get_pixmap_display_rect(self) -> QRect:
-        """Returns the QRect where the scaled_pixmap is actually drawn within the widget."""
-        if self.scaled_pixmap.isNull():
-            return QRect()
-        
-        x_offset = (self.width() - self.scaled_pixmap.width()) / 2
-        y_offset = (self.height() - self.scaled_pixmap.height()) / 2
-        return QRect(int(x_offset), int(y_offset), self.scaled_pixmap.width(), self.scaled_pixmap.height())
-
     def paintEvent(self, event):
-        super().paintEvent(event) # Let QLabel draw its background etc.
+        super().paintEvent(event)
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
@@ -107,181 +314,47 @@ class ImageCropper(QLabel):
             painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "No Image")
             return
 
+        # Draw image
         pixmap_display_rect = self._get_pixmap_display_rect()
         painter.drawPixmap(pixmap_display_rect.topLeft(), self.scaled_pixmap)
 
-        # Crop rect visual is in widget coordinates
-        crop_rect_visual = self.crop_rect_on_scaled.translated(pixmap_display_rect.topLeft())
+        # Draw crop overlay
+        crop_visual_rect = self.crop_rect.rect.translated(pixmap_display_rect.topLeft())
+        CropRenderer.draw_crop_overlay(
+            painter, self.rect(), crop_visual_rect,
+            self.crop_rect, pixmap_display_rect
+        )
 
-        # Draw semi-transparent overlay outside crop area
-        overlay_path = QPainterPath()
-        overlay_path.addRect(QRectF(self.rect())) # Whole widget
-        overlay_path.addRect(crop_rect_visual) # Subtract crop area
-        painter.setBrush(QColor(0, 0, 0, 120)) # Semi-transparent black
-        painter.drawPath(overlay_path)
-
-        # Draw crop rectangle border
-        pen = QPen(QColor(255, 255, 255, 200), 2, Qt.PenStyle.SolidLine)
-        painter.setPen(pen)
-        painter.setBrush(Qt.BrushStyle.NoBrush)
-        painter.drawRect(crop_rect_visual)
-
-        # Draw resize handles (visual representation)
-        painter.setBrush(QColor(255, 255, 255, 220))
-        pen.setColor(QColor(50,50,50,180))
-        pen.setWidth(1)
-        painter.setPen(pen)
-        for handle_key in self.handles:
-            handle_visual_rect = self.handles[handle_key].translated(pixmap_display_rect.topLeft())
-            painter.drawRect(handle_visual_rect)
-        
         painter.end()
 
-    def _update_handles(self):
-        if self.crop_rect_on_scaled.isNull():
-            self.handles = {}
-            return
-            
-        r = self.crop_rect_on_scaled
-        hs_v = HANDLE_SIZE # Visual size
-        
-        # Define visual rects for handles (centered on corners/edges)
-        self.handles['tl'] = QRectF(r.left() - hs_v/2, r.top() - hs_v/2, hs_v, hs_v)
-        self.handles['tr'] = QRectF(r.right() - hs_v/2, r.top() - hs_v/2, hs_v, hs_v)
-        self.handles['bl'] = QRectF(r.left() - hs_v/2, r.bottom() - hs_v/2, hs_v, hs_v)
-        self.handles['br'] = QRectF(r.right() - hs_v/2, r.bottom() - hs_v/2, hs_v, hs_v)
-        # Add side handles if desired for more complex resizing (though 1:1 makes corners primary)
-        # self.handles['t'] = QRectF(r.center().x() - hs_v/2, r.top() - hs_v/2, hs_v, hs_v)
-        # self.handles['b'] = QRectF(r.center().x() - hs_v/2, r.bottom() - hs_v/2, hs_v, hs_v)
-        # self.handles['l'] = QRectF(r.left() - hs_v/2, r.center().y() - hs_v/2, hs_v, hs_v)
-        # self.handles['r'] = QRectF(r.right() - hs_v/2, r.center().y() - hs_v/2, hs_v, hs_v)
-
-
-    def _get_handle_key_at(self, pos_in_widget: QPointF):
-        pixmap_display_rect = self._get_pixmap_display_rect()
-        pos_on_scaled_pixmap = pos_in_widget - pixmap_display_rect.topLeft()
-        
-        # Use a slightly larger interaction area for handles
-        offset = HANDLE_INTERACTION_OFFSET
-        for key, visual_rect in self.handles.items():
-            interaction_rect = visual_rect.adjusted(-offset, -offset, offset, offset)
-            if interaction_rect.contains(pos_on_scaled_pixmap):
-                return key
-        return None
-
     def mousePressEvent(self, event: QMouseEvent):
-        if event.button() == Qt.MouseButton.LeftButton:
-            self.active_handle_key = self._get_handle_key_at(event.position())
-            pixmap_display_rect = self._get_pixmap_display_rect()
-            pos_on_scaled_pixmap = event.position() - pixmap_display_rect.topLeft()
+        if event.button() != Qt.MouseButton.LeftButton:
+            return
 
-            if self.active_handle_key:
-                self.is_dragging_rect = False
-            elif self.crop_rect_on_scaled.contains(pos_on_scaled_pixmap):
-                self.is_dragging_rect = True
-            else: # Clicked outside crop rect and not on a handle
-                self.active_handle_key = None
-                self.is_dragging_rect = False
-                return # Do nothing
+        pixmap_display_rect = self._get_pixmap_display_rect()
+        pos_on_image = event.position() - pixmap_display_rect.topLeft()
 
-            self.drag_start_mouse_pos = pos_on_scaled_pixmap # Store relative to scaled pixmap
-            self.drag_start_crop_rect = QRectF(self.crop_rect_on_scaled) # Deep copy
+        if self.interaction_handler.handle_mouse_press(pos_on_image):
             event.accept()
-
 
     def mouseMoveEvent(self, event: QMouseEvent):
         pixmap_display_rect = self._get_pixmap_display_rect()
-        current_mouse_pos_on_scaled = event.position() - pixmap_display_rect.topLeft()
+        pos_on_image = event.position() - pixmap_display_rect.topLeft()
 
-        if not (self.is_dragging_rect or self.active_handle_key):
-            hover_handle_key = self._get_handle_key_at(event.position())
-            if hover_handle_key in ['tl', 'br']: self.setCursor(Qt.CursorShape.SizeFDiagCursor)
-            elif hover_handle_key in ['tr', 'bl']: self.setCursor(Qt.CursorShape.SizeBDiagCursor)
-            elif self.crop_rect_on_scaled.contains(current_mouse_pos_on_scaled): self.setCursor(Qt.CursorShape.SizeAllCursor)
-            else: self.setCursor(Qt.CursorShape.ArrowCursor)
-            return
+        # Update cursor
+        cursor = self.interaction_handler.get_cursor_for_pos(pos_on_image)
+        self.setCursor(cursor)
 
-        if not event.buttons() & Qt.MouseButton.LeftButton:
-            self.is_dragging_rect = False
-            self.active_handle_key = None
-            return
-
-        delta = current_mouse_pos_on_scaled - self.drag_start_mouse_pos
-        
-        # Get image boundaries and minimum dimension on the scaled pixmap
-        img_bounds = QRectF(0, 0, self.scaled_pixmap.width(), self.scaled_pixmap.height())
-        min_dim_on_scaled = max(1.0, MIN_CROP_DIM_ORIGINAL * self.scale_factor)
-        
-        new_rect = QRectF(self.drag_start_crop_rect) # Start with a copy
-
-        if self.is_dragging_rect:
-            new_rect.translate(delta)
-            # Constrain movement within image bounds
-            if new_rect.left() < img_bounds.left(): new_rect.moveLeft(img_bounds.left())
-            if new_rect.top() < img_bounds.top(): new_rect.moveTop(img_bounds.top())
-            if new_rect.right() > img_bounds.right(): new_rect.moveRight(img_bounds.right())
-            if new_rect.bottom() > img_bounds.bottom(): new_rect.moveBottom(img_bounds.bottom())
-        
-        elif self.active_handle_key:
-            # --- Start of Fix ---
-            # This new logic proactively calculates constraints.
-            
-            # Use a copy of the original drag-start rectangle for reference
-            start_rect = self.drag_start_crop_rect
-            mouse_pos = current_mouse_pos_on_scaled
-
-            if self.active_handle_key == 'br': # Anchor: TopLeft
-                anchor = start_rect.topLeft()
-                desired_size = max(mouse_pos.x() - anchor.x(), mouse_pos.y() - anchor.y())
-                max_allowed_size = min(img_bounds.right() - anchor.x(), img_bounds.bottom() - anchor.y())
-                final_size = max(min_dim_on_scaled, min(desired_size, max_allowed_size))
-                new_rect = QRectF(anchor, QSizeF(final_size, final_size))
-
-            elif self.active_handle_key == 'tl': # Anchor: BottomRight
-                anchor = start_rect.bottomRight()
-                desired_size = max(anchor.x() - mouse_pos.x(), anchor.y() - mouse_pos.y())
-                max_allowed_size = min(anchor.x() - img_bounds.left(), anchor.y() - img_bounds.top())
-                final_size = max(min_dim_on_scaled, min(desired_size, max_allowed_size))
-                top_left = QPointF(anchor.x() - final_size, anchor.y() - final_size)
-                new_rect = QRectF(top_left, QSizeF(final_size, final_size))
-
-            elif self.active_handle_key == 'tr': # Anchor: BottomLeft
-                anchor = start_rect.bottomLeft()
-                desired_size = max(mouse_pos.x() - anchor.x(), anchor.y() - mouse_pos.y())
-                max_allowed_size = min(img_bounds.right() - anchor.x(), anchor.y() - img_bounds.top())
-                final_size = max(min_dim_on_scaled, min(desired_size, max_allowed_size))
-                top_left = QPointF(anchor.x(), anchor.y() - final_size)
-                new_rect = QRectF(top_left, QSizeF(final_size, final_size))
-
-            elif self.active_handle_key == 'bl': # Anchor: TopRight
-                anchor = start_rect.topRight()
-                desired_size = max(anchor.x() - mouse_pos.x(), mouse_pos.y() - anchor.y())
-                max_allowed_size = min(anchor.x() - img_bounds.left(), img_bounds.bottom() - anchor.y())
-                final_size = max(min_dim_on_scaled, min(desired_size, max_allowed_size))
-                top_left = QPointF(anchor.x() - final_size, anchor.y())
-                new_rect = QRectF(top_left, QSizeF(final_size, final_size))
-            # --- End of Fix ---
-
-        # Update the cropper with the new, correctly-constrained rectangle
-        self.crop_rect_on_scaled = new_rect.normalized()
-        self._update_handles()
-        self.update()
-        self.crop_rect_updated.emit()
-        event.accept()
-
+        # Handle interaction
+        if event.buttons() & Qt.MouseButton.LeftButton:
+            bounds = QRectF(0, 0, self.scaled_pixmap.width(), self.scaled_pixmap.height())
+            if self.interaction_handler.handle_mouse_move(pos_on_image, bounds, self.scale_factor):
+                self.update()
+                self.crop_rect_updated.emit()
+                event.accept()
 
     def mouseReleaseEvent(self, event: QMouseEvent):
         if event.button() == Qt.MouseButton.LeftButton:
-            self.is_dragging_rect = False
-            self.active_handle_key = None
-            self.setCursor(Qt.CursorShape.ArrowCursor) # Reset cursor
+            self.interaction_handler.handle_mouse_release()
+            self.setCursor(Qt.CursorShape.ArrowCursor)
             event.accept()
-
-    def get_cropped_qpixmap(self) -> QPixmap:
-        """Get cropped pixmap using utility function."""
-        return img_crop_from_scaled_coords(
-            self.original_pixmap,
-            self.crop_rect_on_scaled,
-            self.scale_factor,
-            force_square=True
-        )
