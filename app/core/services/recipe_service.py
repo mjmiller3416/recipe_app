@@ -121,13 +121,13 @@ class RecipeService:
             raise
         return updated_recipe
 
-    def update_recipe_image_path(self, recipe_id: int, image_path: str) -> Recipe | None:
+    def update_recipe_default_image_path(self, recipe_id: int, image_path: str) -> Recipe | None:
         """
-        Update a recipe's image path.
+        Update a recipe's default image path.
 
         Args:
             recipe_id (int): ID of the recipe to update.
-            image_path (str): New image path to set.
+            image_path (str): New default image path to set.
 
         Returns:
             Recipe | None: The updated recipe or None if not found.
@@ -137,13 +137,38 @@ class RecipeService:
             if not recipe:
                 return None
                 
-            recipe.image_path = image_path
+            recipe.default_image_path = image_path
             self.session.commit()
-            DebugLogger.log(f"Updated recipe {recipe_id} image path to: {image_path}", "info")
+            DebugLogger.log(f"Updated recipe {recipe_id} default image path to: {image_path}", "info")
             return recipe
         except Exception as e:
             self.session.rollback()
-            DebugLogger.log(f"Failed to update recipe {recipe_id} image path: {e}", "error")
+            DebugLogger.log(f"Failed to update recipe {recipe_id} default image path: {e}", "error")
+            raise
+
+    def update_recipe_banner_image_path(self, recipe_id: int, image_path: str) -> Recipe | None:
+        """
+        Update a recipe's banner image path.
+
+        Args:
+            recipe_id (int): ID of the recipe to update.
+            image_path (str): New banner image path to set.
+
+        Returns:
+            Recipe | None: The updated recipe or None if not found.
+        """
+        try:
+            recipe = self.recipe_repo.get_by_id(recipe_id)
+            if not recipe:
+                return None
+                
+            recipe.banner_image_path = image_path
+            self.session.commit()
+            DebugLogger.log(f"Updated recipe {recipe_id} banner image path to: {image_path}", "info")
+            return recipe
+        except Exception as e:
+            self.session.rollback()
+            DebugLogger.log(f"Failed to update recipe {recipe_id} banner image path: {e}", "error")
             raise
 
     def get_recipe(self, recipe_id: int) -> Recipe | None:

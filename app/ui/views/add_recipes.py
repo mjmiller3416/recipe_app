@@ -5,23 +5,23 @@ AddRecipes widget for creating new recipes with ingredients and directions.
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import (QGridLayout, QHBoxLayout, QLabel, QLineEdit,
-                               QScrollArea, QTextEdit, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QGridLayout, QHBoxLayout, QLabel, QLineEdit,
+    QScrollArea, QTextEdit, QVBoxLayout, QWidget)
 
-from app.config import (DIETARY_PREFERENCES, FLOAT_VALIDATOR,
-                        INGREDIENT_CATEGORIES, MEAL_TYPE, MEASUREMENT_UNITS,
-                        NAME_PATTERN, RECIPE_CATEGORIES)
+from app.config import (
+    DIETARY_PREFERENCES, FLOAT_VALIDATOR,
+    INGREDIENT_CATEGORIES, MEAL_TYPE, MEASUREMENT_UNITS,
+    NAME_PATTERN, RECIPE_CATEGORIES)
 from app.core.database.db import create_session
-from app.core.dtos import (IngredientSearchDTO, RecipeCreateDTO,
-                           RecipeIngredientDTO)
+from app.core.dtos import IngredientSearchDTO, RecipeCreateDTO, RecipeIngredientDTO
 from app.core.services.ingredient_service import IngredientService
 from app.core.services.recipe_service import RecipeService
-from app.core.services.ai_image_generation import AppImageGenService
 from app.style import Qss, Theme
 from app.style.icon.config import Name, Type
 from app.ui.components.inputs import SmartLineEdit
 from app.ui.components.layout.card import ActionCard, Card
-from app.ui.components.images.recipe_image import RecipeImage
+from app.ui.components.images import RecipeImage
 from app.ui.components.widgets import ComboBox, ToolButton
 from app.ui.components.widgets.button import Button
 from app.ui.helpers import clear_error_styles, dynamic_validation
@@ -456,29 +456,9 @@ class AddRecipes(QWidget):
 
         self.stored_ingredients = []
 
-        # Initialize AI image generation service
-        self.ai_service = AppImageGenService()
-
         self._build_ui()
         self._connect_signals()
         self._setup_tab_order()
-
-    def reload_ai_service(self):
-        """Reload AI service with updated settings."""
-        try:
-            old_model = getattr(self.ai_service.config, 'model', 'unknown') if self.ai_service.config else 'unknown'
-            self.ai_service = AppImageGenService()
-            new_model = getattr(self.ai_service.config, 'model', 'unknown') if self.ai_service.config else 'unknown'
-
-            # Reconnect signals
-            self.ai_service.generation_finished.connect(self._on_generation_finished)
-            self.ai_service.generation_failed.connect(self._on_generation_failed)
-
-            DebugLogger().log(f"AddRecipes AI service reloaded: {old_model} → {new_model}", "info")
-            return True
-        except Exception as e:
-            DebugLogger().log(f"Error reloading AddRecipes AI service: {e}", "error")
-            return False
 
     def showEvent(self, event):
         """When the AddRecipes view is shown, focus the recipe name field."""
@@ -537,8 +517,8 @@ class AddRecipes(QWidget):
         # self.lyt_buttons =QVBoxLayout()  # vertical layout for buttons
         #
         # upload image button
-        # self.btn_upload_image = UploadRecipeImage()
-        # self.btn_upload_image.setObjectName("UploadRecipeImage")
+        # self.btn_upload_image = UploadImageCard()
+        # self.btn_upload_image.setObjectName("UploadImageCard")
         # self.lyt_buttons.addWidget(
         #     self.btn_upload_image)  # add upload image button to buttons layout
 
@@ -566,7 +546,7 @@ class AddRecipes(QWidget):
         #endregion
 
         #region ── Recipe Image ──
-        self.recipe_image = RecipeImage(mode="gallery", multi_generation=True)
+        self.recipe_image = RecipeImage()
         #endregion
 
         # Add directions and image using shadow-safe utility
@@ -583,7 +563,7 @@ class AddRecipes(QWidget):
         self.btn_save = Button("Save Recipe", Type.PRIMARY, Name.SAVE)
         self.btn_save.setObjectName("SaveRecipeButton")
         self.btn_save.clicked.connect(self.save_recipe)
-        
+
         # Add save button with some spacing
         self.scroll_layout.addSpacing(20)
         self.scroll_layout.addWidget(self.btn_save, 0, Qt.AlignCenter)
@@ -594,27 +574,27 @@ class AddRecipes(QWidget):
         self.le_recipe_name.textChanged.connect(self._on_recipe_name_changed)
 
         # Connect recipe image signals
-        self.recipe_image.generate_image_requested.connect(self._on_generate_images_requested)
+        self.recipe_image.generate_image_requested.connect(self._on_generate_default_image_requested)
         self.recipe_image.image_selected.connect(self._on_image_selected)
 
         # Connect AI service signals for async operations
-        self.ai_service.generation_finished.connect(self._on_generation_finished)
-        self.ai_service.generation_failed.connect(self._on_generation_failed)
+        """ self.ai_service.generation_finished.connect(self._on_generation_finished)
+        self.ai_service.generation_failed.connect(self._on_generation_failed) """
 
     def _on_recipe_name_changed(self, recipe_name: str):
         """Update recipe image component when recipe name changes."""
         self.recipe_image.set_recipe_name(recipe_name.strip())
 
-    def _on_generate_images_requested(self, recipe_name: str):
-        """Handle AI image generation request (now async)."""
+    def _on_generate_default_image_requested(self, recipe_name: str):
+        """Handle AI default image generation request (now async)."""
         if not self.ai_service.is_available():
             DebugLogger().log("AI Image Generation service not available", "error")
             self.recipe_image.reset_generate_button()
             return
 
-        # Start async generation (non-blocking)
-        self.ai_service.generate_recipe_images_async(recipe_name)
-        DebugLogger().log(f"Started background image generation for '{recipe_name}'", "info")
+        # Start async default image generation (non-blocking)
+        self.ai_service.generate_default_image_async(recipe_name)
+        DebugLogger().log(f"Started background default image generation for '{recipe_name}'", "info")
 
     def _on_generation_finished(self, recipe_name: str, result):
         """Handle successful image generation completion."""
@@ -622,24 +602,25 @@ class AddRecipes(QWidget):
         self.recipe_image.reset_generate_button()
 
         if result:
-            DebugLogger().log(f"Background generation completed for '{recipe_name}' - images saved", "info")
-            
-            # Display generated images in the gallery
-            image_paths = []
-            if hasattr(result, 'portrait_path') and result.portrait_path:
-                image_paths.append(str(result.portrait_path))
-            if hasattr(result, 'banner_path') and result.banner_path:
-                image_paths.append(str(result.banner_path))
-            
-            if image_paths:
-                self.recipe_image.set_generated_images(image_paths)
-                
-                # Auto-select the portrait image (1:1) for recipe cards
-                if hasattr(result, 'portrait_path') and result.portrait_path:
-                    portrait_path = str(result.portrait_path)
-                    # Programmatically select the portrait image in the component
-                    success = self.recipe_image.select_image(portrait_path)
-                    DebugLogger().log(f"Auto-selected portrait image: {portrait_path}, success: {success}", "info")
+            DebugLogger().log(f"Background generation completed for '{recipe_name}' - image saved", "info")
+
+            # Handle single image result (string path)
+            if isinstance(result, str):
+                image_path = result
+                DebugLogger().log(f"Single image generated: {image_path}", "info")
+                # Set the default image
+                self.recipe_image.set_default_image_path(image_path)
+                # Also update selected path for saving
+                self.selected_image_path = image_path
+
+            # Handle dual image result (ImagePairPaths) for backward compatibility
+            elif hasattr(result, 'portrait_path') and result.portrait_path:
+                portrait_path = str(result.portrait_path)
+                DebugLogger().log(f"Portrait image from pair: {portrait_path}", "info")
+                # Set the default image to the portrait
+                self.recipe_image.set_default_image_path(portrait_path)
+                # Also update selected path for saving
+                self.selected_image_path = portrait_path
 
     def _on_generation_failed(self, recipe_name: str, error_msg: str):
         """Handle image generation failure."""
@@ -727,19 +708,19 @@ class AddRecipes(QWidget):
 
         # ── success! ──
         DebugLogger().log(f"[AddRecipes] Recipe '{new_recipe.recipe_name}' saved with ID={new_recipe.id}", "info")
-        
+
         # Update recipe with selected image path if available
-        selected_image = self.recipe_image.get_selected_image_path()
-        DebugLogger().log(f"[AddRecipes] get_selected_image_path returned: '{selected_image}'", "info")
+        selected_image = self.recipe_image.get_default_image_path()
+        DebugLogger().log(f"[AddRecipes] get_default_image_path returned: '{selected_image}'", "info")
         if selected_image:
             try:
-                service.update_recipe_image_path(new_recipe.id, selected_image)
-                DebugLogger().log(f"[AddRecipes] Updated recipe {new_recipe.id} with image: {selected_image}", "info")
+                service.update_recipe_default_image_path(new_recipe.id, selected_image)
+                DebugLogger().log(f"[AddRecipes] Updated recipe {new_recipe.id} with default image: {selected_image}", "info")
             except Exception as img_err:
-                DebugLogger().log(f"[AddRecipes] Failed to update recipe image: {img_err}", "warning")
+                DebugLogger().log(f"[AddRecipes] Failed to update recipe default image: {img_err}", "warning")
         else:
             DebugLogger().log(f"[AddRecipes] No selected image to update for recipe {new_recipe.id}", "info")
-        
+
         self._display_save_message(
             f"Recipe '{new_recipe.recipe_name}' saved successfully!",
             success=True
@@ -754,17 +735,17 @@ class AddRecipes(QWidget):
         """Parse servings field, handling ranges like '2-4' by taking the first number."""
         if not servings_text:
             return 0
-        
+
         # Remove any whitespace
         servings_text = servings_text.strip()
-        
+
         # Handle ranges like '2-4', '4-6' by taking the first number
         if '-' in servings_text:
             try:
                 return int(servings_text.split('-')[0].strip())
             except (ValueError, IndexError):
                 return 0
-        
+
         # Handle single numbers
         try:
             return int(servings_text)
@@ -781,7 +762,7 @@ class AddRecipes(QWidget):
             "total_time":          int(self.le_time.text().strip() or 0),
             "servings":            self._parse_servings(self.le_servings.text()),
             "directions":          self.te_directions.toPlainText().strip(),
-            "image_path":          self.recipe_image.get_selected_image_path() or "",
+            "default_image_path":  self.recipe_image.get_default_image_path() or "",
         }
 
     def _clear_form(self):
@@ -793,7 +774,7 @@ class AddRecipes(QWidget):
         self.le_time.clear()
         self.le_servings.clear()
         self.te_directions.clear()
-        self.recipe_image.clear_images()
+        self.recipe_image.clear_default_image()
 
         # clear stored ingredients and widgets
         self.stored_ingredients.clear()

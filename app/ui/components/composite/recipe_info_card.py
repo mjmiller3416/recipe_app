@@ -98,6 +98,18 @@ class RecipeInfoCard(QWidget):
         self.icon_size = 32, 32
         self.icon_color = "tertiary"
 
+    def _applyCardStyling(self, card):
+        """Apply current styling properties to a card."""
+        card.setIconSize(self.icon_size[0])
+        card.setIconColor(self.icon_color)
+
+    def _clearCards(self):
+        """Clear all existing cards from the layout."""
+        while self.layout.count():
+            child = self.layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+
     def setRecipe(self, recipe: Recipe):
         """Set the recipe and update the info cards display."""
         # Clear existing cards
@@ -159,13 +171,6 @@ class RecipeInfoCard(QWidget):
                 self._applyCardStyling(self.dietary_card)
                 self.layout.addWidget(self.dietary_card)
 
-    def _clearCards(self):
-        """Clear all existing cards from the layout."""
-        while self.layout.count():
-            child = self.layout.takeAt(0)
-            if child.widget():
-                child.widget().deleteLater()
-
     def setCardsToShow(self, cards: list):
         """Update which cards should be displayed."""
         self.show_cards = cards
@@ -196,8 +201,3 @@ class RecipeInfoCard(QWidget):
         for card in [self.time_card, self.servings_card, self.category_card, self.dietary_card]:
             if card:
                 card.setIconColor(color)
-
-    def _applyCardStyling(self, card):
-        """Apply current styling properties to a card."""
-        card.setIconSize(self.icon_size[0])
-        card.setIconColor(self.icon_color)

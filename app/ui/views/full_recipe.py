@@ -25,12 +25,11 @@ from PySide6.QtWidgets import (
     QVBoxLayout, QWidget)
 
 from app.core.models import Recipe
-from app.core.services.ai_image_generation import AppImageGenService
 from app.style import Qss, Theme
 from app.style.icon import AppIcon, Icon
 from app.style.icon.config import Name, Type
 from app.ui.components.composite.recipe_info_card import RecipeInfoCard
-from app.ui.components.images.recipe_image import RecipeImage
+from app.ui.components.images.image import RecipeBanner
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
 from app.ui.components.widgets.recipe_tag import RecipeTag
@@ -193,31 +192,11 @@ class FullRecipe(QWidget):
         super().__init__(parent)
         self.recipe = recipe
 
-        # Initialize AI image generation service
-        self.ai_service = AppImageGenService()
-
         # Register this view for component-scoped QSS.
         Theme.register_widget(self, Qss.FULL_RECIPE)
 
         self.setObjectName("FullRecipe")
         self._build_ui()
-
-    def reload_ai_service(self):
-        """Reload AI service with updated settings."""
-        try:
-            old_model = getattr(self.ai_service.config, 'model', 'unknown') if self.ai_service.config else 'unknown'
-            self.ai_service = AppImageGenService()
-            new_model = getattr(self.ai_service.config, 'model', 'unknown') if self.ai_service.config else 'unknown'
-
-            # Reconnect signals
-            self.ai_service.generation_finished.connect(self._on_generation_finished)
-            self.ai_service.generation_failed.connect(self._on_generation_failed)
-
-            DebugLogger().log(f"FullRecipe AI service reloaded: {old_model} → {new_model}", "info")
-            return True
-        except Exception as e:
-            DebugLogger().log(f"Error reloading FullRecipe AI service: {e}", "error")
-            return False
 
     # ── Layout ───────────────────────────────────────────────────────────────────────────────
     def _make_back_button(self):
@@ -292,30 +271,30 @@ class FullRecipe(QWidget):
         tags_layout.addStretch()
         page.addWidget(tags_container)
 
-        # ── Recipe Image
-        self.recipe_image = RecipeImage(mode="banner")
+        # ── Recipe Banner
+        self.recipe_banner = RecipeBanner()
 
         # Configure with recipe data
         if hasattr(self.recipe, 'recipe_name') and self.recipe.recipe_name:
-            self.recipe_image.set_recipe_name(self.recipe.recipe_name)
+            self.recipe_banner.set_recipe_name(self.recipe.recipe_name)
 
-        # Show existing image if recipe has one
-        if hasattr(self.recipe, 'image_path') and self.recipe.image_path:
-            if Path(self.recipe.image_path).exists():
-                self.recipe_image.set_image_path(self.recipe.image_path)
-                DebugLogger().log(f"Loaded recipe image: {self.recipe.image_path}", "info")
+        # Show existing banner image if recipe has one
+        if hasattr(self.recipe, 'banner_image_path') and self.recipe.banner_image_path:
+            if Path(self.recipe.banner_image_path).exists():
+                self.recipe_banner.set_banner_image_path(self.recipe.banner_image_path)
+                DebugLogger().log(f"Loaded recipe banner: {self.recipe.banner_image_path}", "info")
             else:
-                DebugLogger().log(f"Recipe image path does not exist: {self.recipe.image_path}", "warning")
+                DebugLogger().log(f"Recipe banner path does not exist: {self.recipe.banner_image_path}", "warning")
 
         # Connect signals for AI integration
-        self.recipe_image.generate_image_requested.connect(self._on_generate_image_requested)
-        self.recipe_image.image_clicked.connect(self._on_image_clicked)
+        self.recipe_banner.generate_image_requested.connect(self._on_generate_banner_requested)
+        self.recipe_banner.image_clicked.connect(self._on_image_clicked)
 
         # Connect AI service signals for async operations
         self.ai_service.generation_finished.connect(self._on_generation_finished)
         self.ai_service.generation_failed.connect(self._on_generation_failed)
 
-        page.addWidget(self.recipe_image)
+        page.addWidget(self.recipe_banner)
 
         # ── Info Cards Container
         # TODO: Update to new Card API pattern (info_container.addWidget) once card styling variants are implemented
@@ -439,53 +418,78 @@ class FullRecipe(QWidget):
 
         return header_widget
 
-    def _on_generate_image_requested(self, recipe_name: str):
-        """Handle AI image generation request using async generation."""
+    def _on_generate_banner_requested(self, recipe_name: str):
+        """Handle AI banner generation request using async generation."""
         if not self.ai_service.is_available():
             # TODO: Show toast notification for service unavailable
             print(f"AI Image Generation service not available")
-            self.recipe_image.reset_generate_button()
+            self.recipe_banner.reset_banner_button()
             return
 
-        # Start async generation - UI will not block
-        self.ai_service.generate_recipe_images_async(recipe_name)
+        # Start async banner generation - UI will not block
+        self.ai_service.generate_banner_image_async(recipe_name)
 
     def _on_generation_finished(self, recipe_name: str, result):
-        """Handle successful AI image generation."""
-        if result and hasattr(result, 'banner_path'):
-            # Display the generated banner image
-            banner_path = str(result.banner_path)
+        """Handle successful AI banner generation."""
+        # Handle single banner image result (string path)
+        if isinstance(result, str):
+            banner_path = result
             if Path(banner_path).exists():
-                self.recipe_image.set_image_path(banner_path)
-                DebugLogger().log(f"Banner image loaded for '{recipe_name}': {result.banner_path.name}", "info")
+                self.recipe_banner.set_banner_image_path(banner_path)
+                DebugLogger().log(f"Banner image loaded for '{recipe_name}': {Path(banner_path).name}", "info")
 
-                # Save the image path to the database
+                # Save the banner image path to the database
                 if hasattr(self.recipe, 'id') and self.recipe.id:
                     try:
                         from app.core.services.recipe_service import RecipeService
                         recipe_service = RecipeService()
-                        updated_recipe = recipe_service.update_recipe_image_path(self.recipe.id, banner_path)
+                        updated_recipe = recipe_service.update_recipe_banner_image_path(self.recipe.id, banner_path)
                         if updated_recipe:
                             # Update the local recipe object
-                            self.recipe.image_path = banner_path
+                            self.recipe.banner_image_path = banner_path
                             DebugLogger().log(f"Updated recipe {self.recipe.id} with banner image path", "info")
                     except Exception as e:
                         DebugLogger().log(f"Failed to save banner image path to database: {e}", "error")
             else:
                 # Reset to placeholder if file doesn't exist
-                self.recipe_image.show_placeholder_state()
-                self.recipe_image.reset_generate_button()
+                self.recipe_banner.show_placeholder_state()
+                self.recipe_banner.reset_banner_button()
+                DebugLogger().log(f"Generated banner image not found: {banner_path}", "warning")
+
+        # Handle dual image result (ImagePairPaths) for backward compatibility
+        elif result and hasattr(result, 'banner_path'):
+            banner_path = str(result.banner_path)
+            if Path(banner_path).exists():
+                self.recipe_banner.set_banner_image_path(banner_path)
+                DebugLogger().log(f"Banner image from pair loaded for '{recipe_name}': {result.banner_path.name}", "info")
+
+                # Save the banner image path to the database
+                if hasattr(self.recipe, 'id') and self.recipe.id:
+                    try:
+                        from app.core.services.recipe_service import RecipeService
+                        recipe_service = RecipeService()
+                        updated_recipe = recipe_service.update_recipe_banner_image_path(self.recipe.id, banner_path)
+                        if updated_recipe:
+                            # Update the local recipe object
+                            self.recipe.banner_image_path = banner_path
+                            DebugLogger().log(f"Updated recipe {self.recipe.id} with banner image path", "info")
+                    except Exception as e:
+                        DebugLogger().log(f"Failed to save banner image path to database: {e}", "error")
+            else:
+                # Reset to placeholder if file doesn't exist
+                self.recipe_banner.show_placeholder_state()
+                self.recipe_banner.reset_banner_button()
                 DebugLogger().log(f"Generated banner image not found: {banner_path}", "warning")
         else:
             # No result or invalid result
-            self.recipe_image.show_placeholder_state()
-            self.recipe_image.reset_generate_button()
+            self.recipe_banner.show_placeholder_state()
+            self.recipe_banner.reset_banner_button()
             DebugLogger().log(f"AI generation completed but no valid result for '{recipe_name}'", "warning")
 
     def _on_generation_failed(self, recipe_name: str, error_message: str):
-        """Handle AI image generation failure."""
-        self.recipe_image.show_placeholder_state()
-        self.recipe_image.reset_generate_button()
+        """Handle AI banner generation failure."""
+        self.recipe_banner.show_placeholder_state()
+        self.recipe_banner.reset_banner_button()
         # TODO: Show toast notification for generation failure
         DebugLogger().log(f"Failed to generate banner image for '{recipe_name}': {error_message}", "error")
 

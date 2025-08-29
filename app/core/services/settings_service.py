@@ -10,7 +10,7 @@ import json
 from typing import Any, Dict
 
 from app.config.paths import AppPaths
-from app.core.services.ai_image_generation import ImageGenConfig
+from app.core.services.ai_gen import ImageGenConfig
 from dev_tools import DebugLogger
 
 

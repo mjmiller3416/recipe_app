@@ -352,7 +352,7 @@ class SmallRecipeCard(BaseRecipeCard):
 
         # Recipe image
         img_recipe = RoundedImage(
-            image_path=self._recipe.image_path,
+            image_path=self._recipe.default_image_path,
             size=120,
             radii=(10, 0, 0, 10)
         )
@@ -393,7 +393,7 @@ class MediumRecipeCard(BaseRecipeCard):
 
         # Recipe image
         img_recipe = RoundedImage(
-            image_path=self._recipe.image_path,
+            image_path=self._recipe.default_image_path,
             size=280,
             radii=(10, 10, 0, 0)
         )
@@ -489,7 +489,7 @@ class LargeRecipeCard(BaseRecipeCard):
 
         # Left Side: Recipe Image
         img_recipe = RoundedImage(
-            image_path=self._recipe.image_path,
+            image_path=self._recipe.default_image_path,
             size=400,
             radii=(10, 10, 10, 10)
         )

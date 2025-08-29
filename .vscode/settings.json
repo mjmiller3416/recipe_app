@@ -200,6 +200,7 @@
       "qss": "Theme",
       "appearance": "Theme",
       "effects": "Terraform",
+      "ai_gen": "images",
 
       //** Subfolders **//
       "app_helpers": "App",

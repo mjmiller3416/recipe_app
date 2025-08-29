@@ -18,7 +18,7 @@ from PySide6.QtWidgets import (
 )
 
 from app.config.paths import AppPaths
-from app.core.services.ai_image_generation import ImageGenConfig
+from app.core.services.ai_gen import ImageGenConfig
 from app.core.services.settings_service import SettingsService
 from app.style import Qss, Theme
 from app.style.icon import Icon

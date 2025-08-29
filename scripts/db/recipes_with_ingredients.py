@@ -41,7 +41,8 @@ def insert_recipes_from_csv(csv_file: str) -> None:
                 servings = int(row.get("servings", 0)) if row.get("servings") else None
                 directions = row.get("directions", "").strip()
                 notes = row.get("notes", "").strip()
-                image_path = row.get("image_path", "").strip()
+                default_image_path = row.get("default_image_path", "").strip()
+                banner_image_path = row.get("banner_image_path", "").strip()
                 ingredient_name = row["ingredient_name"].strip()
                 ingredient_category = row["ingredient_category"].strip()
                 quantity = float(row["quantity"]) if row.get("quantity") else None
@@ -61,7 +62,8 @@ def insert_recipes_from_csv(csv_file: str) -> None:
                     "servings": servings,
                     "directions": directions,
                     "notes": notes,
-                    "image_path": image_path,
+                    "default_image_path": default_image_path,
+                    "banner_image_path": banner_image_path,
                     "ingredients": []
                 }}
             recipes[key]["recipe_data"]["ingredients"].append({
@@ -91,7 +93,8 @@ def insert_recipes_from_csv(csv_file: str) -> None:
                 servings=rd.get("servings"),
                 directions=rd.get("directions"),
                 notes=rd.get("notes"),
-                image_path=rd.get("image_path"),
+                default_image_path=rd.get("default_image_path"),
+                banner_image_path=rd.get("banner_image_path"),
                 ingredients=ing_dtos
             )
             service.create_recipe_with_ingredients(create_dto)

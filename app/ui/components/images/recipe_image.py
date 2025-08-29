@@ -1,6 +1,6 @@
 """app/ui/components/images/recipe_image.py
 
-RecipeImage component - Unified AI-powered image generation for recipes.
+ImageCard component - Unified AI-powered image generation for recipes.
 Supports both banner mode (FullRecipe) and gallery mode (AddRecipe).
 """
 
@@ -34,7 +34,7 @@ class RecipeImage(BaseCard):
     image_selected = Signal(str)  # emits selected image path (gallery mode)
 
     def __init__(self, parent=None, mode="banner", multi_generation=True):
-        """Initialize RecipeImage component.
+        """Initialize ImageCard component.
 
         Args:
             parent: Parent widget
@@ -369,7 +369,7 @@ class RecipeImage(BaseCard):
         self.selected_image_path = image_path
 
         from dev_tools.debug_logger import DebugLogger
-        DebugLogger.log(f"[RecipeImage] Image selected: {image_path}", "info")
+        DebugLogger.log(f"[ImageCard] Image selected: {image_path}", "info")
 
         # Update info label
         filename = Path(image_path).name
@@ -420,7 +420,7 @@ class RecipeImage(BaseCard):
             result = self.selected_image_path
 
         from dev_tools.debug_logger import DebugLogger
-        DebugLogger.log(f"[RecipeImage] get_selected_image_path() mode={self.mode}, returning: '{result}'", "info")
+        DebugLogger.log(f"[ImageCard] get_selected_image_path() mode={self.mode}, returning: '{result}'", "info")
         return result
 
     def select_image(self, image_path: str):
