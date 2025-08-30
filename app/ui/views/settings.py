@@ -24,7 +24,7 @@ from app.style import Qss, Theme
 from app.style.icon import Icon
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets import Button, ComboBox
-from dev_tools import DebugLogger
+from _dev_tools import DebugLogger
 
 
 # ── Settings Category ────────────────────────────────────────────────────────────────────────

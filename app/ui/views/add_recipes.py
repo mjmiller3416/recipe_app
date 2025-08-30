@@ -24,10 +24,10 @@ from app.ui.components.layout.card import ActionCard, Card
 from app.ui.components.images import RecipeImage
 from app.ui.components.widgets import ComboBox, ToolButton
 from app.ui.components.widgets.button import Button
-from app.ui.helpers import clear_error_styles, dynamic_validation
-from app.ui.helpers.card_utils import add_two_column
-from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
-from dev_tools import DebugLogger
+from app.ui.utils import clear_error_styles, dynamic_validation
+from app.ui.utils.card_utils import add_two_column
+from app.ui.utils.ui_helpers import set_fixed_height_for_layout_widgets
+from _dev_tools import DebugLogger
 
 # ── Constants ───────────────────────────────────────────────────────────────────
 FIXED_HEIGHT = 60  # fixed height for input fields in the recipe form
@@ -107,6 +107,7 @@ class RecipeForm(QWidget):
             height = FIXED_HEIGHT,
             skip   = (QLabel,)
         )
+
 
 # ── Ingredient Form ──────────────────────────────────────────────────────────────────────────
 class IngredientForm(QWidget):
@@ -288,6 +289,7 @@ class IngredientForm(QWidget):
         "existing_ingredient_id": self.exact_match.id if self.exact_match else None,
         }
 
+
 # ── Ingredients Card ─────────────────────────────────────────────────────────────────────────
 class IngredientsCard(ActionCard):
     """
@@ -371,6 +373,7 @@ class IngredientsCard(ActionCard):
         """Get the number of ingredient widgets."""
         return len(self.ingredient_widgets)
 
+
 # ── Direction & Notes Card ───────────────────────────────────────────────────────────────────
 class DirectionsNotesCard(Card):
     """Custom card with toggle between Directions and Notes content."""
@@ -440,6 +443,7 @@ class DirectionsNotesCard(Card):
         for btn in [self.btn_directions, self.btn_notes]:
             btn.style().unpolish(btn)
             btn.style().polish(btn)
+
 
 # ── Add Recipes View ─────────────────────────────────────────────────────────────────────────
 class AddRecipes(QWidget):

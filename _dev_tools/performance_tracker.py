@@ -3,11 +3,12 @@
 Performance logging utilities for tracking operation timing.
 """
 
+# ── Imports ─────────────────────────────────────────────────────────────────────────────
 import time
 from contextlib import contextmanager
 from typing import Optional
 
-from dev_tools import DebugLogger
+from _dev_tools import DebugLogger
 
 
 @contextmanager

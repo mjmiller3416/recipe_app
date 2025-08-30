@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QWidget
 
 from app.config import APPLICATION_WINDOW
 from app.ui.components.navigation import TitleBar
-from app.ui.helpers.ui_helpers import center_on_screen
+from app.ui.utils.ui_helpers import center_on_screen
 
 # ── Constants ───────────────────────────────────────────────────────────────────────────
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]

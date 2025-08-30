@@ -19,7 +19,7 @@ from openai import AsyncOpenAI
 
 from .config import ImageGenConfig
 from app.core.utils.image_utils import img_ai_slugify, img_ai_get_hash
-from dev_tools import DebugLogger
+from _dev_tools import DebugLogger
 
 
 @dataclass

@@ -10,7 +10,7 @@ from app.core.services import PlannerService, ShoppingService
 from app.ui.views import (
     AddRecipes, Dashboard, MealPlanner, Settings, ShoppingList,
     ViewRecipes)
-from dev_tools import DebugLogger
+from _dev_tools import DebugLogger
 
 
 # ── Navigation Service ───────────────────────────────────────────────────────────────────────

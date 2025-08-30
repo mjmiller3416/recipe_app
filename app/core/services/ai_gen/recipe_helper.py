@@ -13,7 +13,7 @@ from typing import NamedTuple, Optional
 
 from .service import ImageGenService, ImageRequest
 from .config import ImageGenConfig
-from dev_tools import DebugLogger
+from _dev_tools import DebugLogger
 
 
 class RecipeImagePaths(NamedTuple):
@@ -120,7 +120,7 @@ class RecipeImageHelper:
 
         # Generate standard first (becomes reference)
         standard_path = await self.generate_for_recipe(recipe_name, "standard")
-        
+
         # Generate banner using standard as reference for consistency
         banner_path = await self.generate_for_recipe(recipe_name, "banner", reference_image_path=standard_path)
 

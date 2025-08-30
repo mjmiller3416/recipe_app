@@ -3,17 +3,19 @@
 Utility class for measuring and logging elapsed time during application startup.
 """
 
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 import logging
-# ── Imports ─────────────────────────────────────────────────────────────────────────────
 import time
 
-from dev_tools import DebugLogger
+from _dev_tools import DebugLogger
 
-# ── Logger Setup ─────────────────────────────────────────────────────────────────────────
+
+# ── Logger Setup ─────────────────────────────────────────────────────────────────────────────
 log = logging.getLogger(__name__)
 _startup_start_time = time.perf_counter()
 
-# ── Class Definition ─────────────────────────────────────────────────────────────────────
+
+# ── Startup Timer ────────────────────────────────────────────────────────────────────────────
 class StartupTimer:
     """Utility for measuring time taken to initialize parts of the application."""
 

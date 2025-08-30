@@ -17,10 +17,11 @@ from app.style.animation import WindowAnimator
 from app.ui.components import SearchBar
 from app.ui.components.navigation.sidebar import Sidebar
 from app.ui.components.navigation.titlebar import TitleBar
-from app.ui.helpers.ui_helpers import center_on_screen
+from app.ui.utils.ui_helpers import center_on_screen
 
 if TYPE_CHECKING:
     from app.ui.services.navigation_service import NavigationService
+
 
 # ── Constants ────────────────────────────────────────────────────────────────────────────────
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]
@@ -163,7 +164,7 @@ class MainWindow(FramelessWindow):
             if button:
                 def make_switch_callback(page):
                     def callback():
-                        from dev_tools import DebugLogger
+                        from _dev_tools import DebugLogger
                         DebugLogger.log(f"Button clicked for page: {page}", "info")
                         self._switch_page(page)
                     return callback
@@ -175,7 +176,7 @@ class MainWindow(FramelessWindow):
 
     def _switch_page(self, page_name: str):
         """Helper to switch pages and update the header text."""
-        from dev_tools import DebugLogger
+        from _dev_tools import DebugLogger
         DebugLogger.log(f"Switching to page: {page_name}", "info")
         self.navigation.switch_to(page_name)
 

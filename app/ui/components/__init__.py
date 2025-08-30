@@ -3,7 +3,6 @@
 # From dialogs
 from .dialogs.crop_dialog import CropDialog
 from .dialogs.dialog_window import DialogWindow
-from .dialogs.message_dialog import MessageDialog
 # From image
 from .images.avatar_loader import AvatarLoader
 from .images.image_cropper import ImageCropper
@@ -24,7 +23,7 @@ from .widgets.toggle_switch import ToggleSwitch
 
 __all__ = [
     # Dialogs
-    "CropDialog", "DialogWindow", "MessageDialog", "RecipeSelection",
+    "CropDialog", "DialogWindow", "RecipeSelection",
     # Forms
     "FormField", "LineEditField", "ComboBoxField",
     # Image

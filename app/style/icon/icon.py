@@ -17,7 +17,7 @@ from app.style.theme_controller import Theme
 from app.style.icon.config import Name, State, Type
 from app.style.icon.loader import IconLoader
 from app.style.icon.svg_loader import SVGLoader
-from dev_tools import DebugLogger
+from _dev_tools import DebugLogger
 
 
 # ── BaseIcon ─────────────────────────────────────────────────────────────────────────────────
@@ -620,11 +620,11 @@ class StateIcon(QWidget):
             self._render_count += 1
 
             # Debug logging for lazy loading
-            from dev_tools import DebugLogger
+            from _dev_tools import DebugLogger
             DebugLogger.log(f"StateIcon rendered {state.name} (total renders: {self._render_count})", "debug")
 
         except Exception as e:
-            from dev_tools import DebugLogger
+            from _dev_tools import DebugLogger
             DebugLogger.log(f"Failed to render state {state.name} for icon {self._themed_icon._icon_enum.name}: {e}", "warning")
 
     def _render_needed_states(self):
@@ -637,7 +637,7 @@ class StateIcon(QWidget):
             self._render_state(state)
 
         # Debug logging for lazy loading performance
-        from dev_tools import DebugLogger
+        from _dev_tools import DebugLogger
         DebugLogger.log(f"StateIcon lazy render: rendered {len(self._accessed_states)} states out of {len(State)}", "debug")
 
     def _update_display(self):

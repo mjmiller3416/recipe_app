@@ -150,6 +150,7 @@
       "**/.env": true,
       "**/qt.conf": true,
       "**/requirements.txt": true,
+      "**/.git-rewrite": true
     },
 
     "files.associations": {

@@ -13,7 +13,7 @@ from PySide6.QtCore import QObject
 
 from app.core.utils import QSingleton
 from app.style.theme_controller import Theme
-from dev_tools import DebugLogger
+from _dev_tools import DebugLogger
 
 
 class ThemedIcon(Protocol):

@@ -18,7 +18,7 @@ qframelesswindow.utils.win32_utils.isSystemBorderAccentEnabled = lambda: False
 from app.style.theme_controller import Color, Mode, Theme
 from app.ui.main_window import MainWindow
 from app.ui.services.navigation_service import NavigationService
-from dev_tools import DebugLogger, startup_timer
+from _dev_tools import DebugLogger, startup_timer
 from dotenv import load_dotenv
 
 if "--reset" in sys.argv:
@@ -30,7 +30,7 @@ elif "--test" in sys.argv:
     app = QApplication(sys.argv)
     app.setApplicationName("Test App")
 
-    from dev_tools.test_harness import TestHarness
+    from _dev_tools.test_harness import TestHarness
     TestHarness.launch_from_test_file(app)
 
     sys.exit(app.exec())
@@ -39,7 +39,7 @@ elif "--import-recipes" in sys.argv:
     DebugLogger.log("Importing recipes from CSV...\n", "info")
 
     # ── Import Recipes ──
-    from scripts.db.recipes_with_ingredients import insert_recipes_from_csv
+    from _scripts.db.recipes_with_ingredients import insert_recipes_from_csv
     insert_recipes_from_csv("database/recipes_with_ingredients.csv")
 
     DebugLogger().log("Recipe import complete.\n", "success")
@@ -78,7 +78,7 @@ else:
 
     # ── Simple QSS Inspector ──
     # Uncomment the lines below to enable the simple terminal-based QSS inspector
-    from dev_tools.qss_inspector import enable_qss_inspector
+    from _dev_tools.qss_inspector import enable_qss_inspector
     inspector = enable_qss_inspector(app, main_window)
 
     QApplication.processEvents()  # make sure all pending events are flushed

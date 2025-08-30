@@ -35,8 +35,8 @@ from app.ui.components.layout.card import BaseCard
 from app.ui.components.composite.recipe_info_card import RecipeInfoCard
 from app.ui.components.layout import Separator
 from app.ui.components.widgets import RoundedImage, ToolButton
-from app.ui.helpers.ui_helpers import make_overlay
-from dev_tools.debug_logger import DebugLogger
+from app.ui.utils.ui_helpers import make_overlay
+from _dev_tools.debug_logger import DebugLogger
 
 
 # ── Constants ────────────────────────────────────────────────────────────────────────────────

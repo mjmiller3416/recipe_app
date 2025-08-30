@@ -33,10 +33,10 @@ from app.ui.components.images.image import RecipeBanner
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
 from app.ui.components.widgets.recipe_tag import RecipeTag
-from dev_tools.debug_logger import DebugLogger
+from _dev_tools.debug_logger import DebugLogger
 
 
-# ── Helper Classes ──────────────────────────────────────────────────────────────────────────
+# ── Ingredient List ──────────────────────────────────────────────────────────────────────────
 class IngredientList(QWidget):
     """A list widget for displaying recipe ingredients with amounts and names."""
 
@@ -115,6 +115,7 @@ class IngredientList(QWidget):
         self.layout.addWidget(item_widget)
 
 
+# ── Directions List ──────────────────────────────────────────────────────────────────────────
 class DirectionsList(QWidget):
     """A numbered list widget for displaying recipe directions."""
 

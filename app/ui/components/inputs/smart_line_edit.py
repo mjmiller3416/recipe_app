@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QCompleter, QLineEdit
 
 from app.ui.components.widgets.dropdown_menu import DropdownMenu
 from app.ui.models import IngredientProxyModel
-from dev_tools import DebugLogger
+from _dev_tools import DebugLogger
 
 # fixed height for the line edit
 FIXED_HEIGHT = 45
@@ -53,7 +53,7 @@ class SmartLineEdit(QLineEdit):
         )
         self.dropdown_menu.set_proxy_model(self.proxy)
         self.dropdown_menu.set_case_sensitivity(Qt.CaseInsensitive)
-        
+
         # Set the completer for this line edit
         self.setCompleter(self.dropdown_menu.completer)
 

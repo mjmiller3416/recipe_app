@@ -31,6 +31,8 @@ Usage (minimal):
 Place this file anywhere importable (e.g., app/ui/debug/layout_debugger.py) and
 import as needed.
 """
+
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -43,7 +45,7 @@ from PySide6.QtGui import QKeySequence, QShortcut
 
 # Import DebugLogger if available, otherwise fallback to print
 try:
-    from dev_tools.debug_logger import DebugLogger  # adjust path as needed
+    from _dev_tools.debug_logger import DebugLogger  # adjust path as needed
     log = DebugLogger("LayoutDebugger")
 except Exception:
     class _FallbackLogger:

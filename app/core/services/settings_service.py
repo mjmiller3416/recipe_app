@@ -11,7 +11,7 @@ from typing import Any, Dict
 
 from app.config.paths import AppPaths
 from app.core.services.ai_gen import ImageGenConfig
-from dev_tools import DebugLogger
+from _dev_tools import DebugLogger
 
 
 # ── Settings Service ─────────────────────────────────────────────────────────────────────────

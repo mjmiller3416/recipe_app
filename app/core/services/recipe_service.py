@@ -8,11 +8,10 @@ RecipeService using SQLAlchemy repository pattern.
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from dev_tools import DebugLogger
+from _dev_tools import DebugLogger
 
 from ..dtos.ingredient_dtos import IngredientCreateDTO
-from ..dtos.recipe_dtos import (RecipeCreateDTO, RecipeFilterDTO,
-                                RecipeIngredientDTO)
+from ..dtos.recipe_dtos import RecipeCreateDTO, RecipeFilterDTO, RecipeIngredientDTO
 from ..models.ingredient import Ingredient
 from ..models.recipe import Recipe
 from ..repositories.ingredient_repo import IngredientRepo
@@ -136,7 +135,7 @@ class RecipeService:
             recipe = self.recipe_repo.get_by_id(recipe_id)
             if not recipe:
                 return None
-                
+
             recipe.reference_image_path = image_path
             self.session.commit()
             DebugLogger.log(f"Updated recipe {recipe_id} default image path to: {image_path}", "info")
@@ -161,7 +160,7 @@ class RecipeService:
             recipe = self.recipe_repo.get_by_id(recipe_id)
             if not recipe:
                 return None
-                
+
             recipe.banner_image_path = image_path
             self.session.commit()
             DebugLogger.log(f"Updated recipe {recipe_id} banner image path to: {image_path}", "info")

@@ -11,10 +11,10 @@ from PySide6.QtCore import (QAbstractItemModel, QEvent, QStringListModel, Qt,
 from PySide6.QtWidgets import QApplication, QCompleter, QWidget
 
 from app.style import Qss, Theme
-from dev_tools import DebugLogger
+from _dev_tools import DebugLogger
 
 
-# ── DropdownMenu ─────────────────────────────────────────────────────────────────────────────
+# ── Dropdown Menu ────────────────────────────────────────────────────────────────────────────
 class DropdownMenu(QWidget):
     """
     Reusable dropdown menu component for displaying filtered selectable lists.
@@ -69,7 +69,7 @@ class DropdownMenu(QWidget):
 
         # Keep popup connected to parent for styling, but set as top-level for proper display
         popup.setWindowFlags(Qt.Popup | Qt.FramelessWindowHint)
-        
+
         # Apply theme styling to the popup
         popup.setAttribute(Qt.WA_StyledBackground, True)
         Theme.register_widget(popup, Qss.DROPDOWN_MENU)
@@ -109,12 +109,12 @@ class DropdownMenu(QWidget):
     def clear_filter(self):
         """Clear any active filter."""
         self.set_filter("")
-        
+
     def set_proxy_model(self, proxy_model):
         """Set a proxy model for advanced filtering (used by SmartLineEdit)."""
         self.model = proxy_model
         self.completer.setModel(proxy_model)
-        
+
     def get_model(self):
         """Get the current model (useful for setting source models)."""
         return self.model

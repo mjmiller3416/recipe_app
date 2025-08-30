@@ -14,7 +14,7 @@ from PySide6.QtCore import QObject, Signal
 from PySide6.QtWidgets import QApplication, QWidget
 
 from app.core.utils import QSingleton
-from dev_tools import DebugLogger
+from _dev_tools import DebugLogger
 
 from .theme.config import Color, Mode, Qss, Typography
 from .theme.style_sheet import Stylesheet

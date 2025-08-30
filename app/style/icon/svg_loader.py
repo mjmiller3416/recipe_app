@@ -18,7 +18,7 @@ from PySide6.QtGui import QIcon, QPainter, QPixmap
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtWidgets import QApplication
 
-from dev_tools import DebugLogger
+from _dev_tools import DebugLogger
 
 # Fallback path for default error icon
 _ERROR_ICON_PATH = Path(__file__).parent.parent.parent / "assets" / "icons" / "error.svg"
@@ -34,81 +34,81 @@ def _replace_svg_colors(svg_data: str, source: str, new_color: str) -> str:
     replacement = r'\1="' + new_color + r'"'
     original_svg = svg_data
     svg_data = re.sub(pattern, replacement, svg_data, flags=re.IGNORECASE)
-    
+
     # Replace unquoted attributes
     pattern_no_quotes = r'(fill|stroke)=' + re.escape(source) + r'(?!\w)'
     svg_data = re.sub(pattern_no_quotes, replacement, svg_data, flags=re.IGNORECASE)
-    
+
     # If no color replacement occurred, the SVG might be missing fill attributes
     # Try multiple strategies to inject fill colors
     if svg_data == original_svg:  # No changes made
         # Strategy 1: Inject fill into the root <svg> element
         svg_pattern = r'(<svg[^>]*?)(\s*>)'
-        
+
         def inject_fill_svg(match):
             opening_tag = match.group(1)
             closing = match.group(2)
-            
+
             # Check if fill attribute already exists
             if 'fill=' in opening_tag.lower():
                 return match.group(0)  # Don't modify if fill already exists
-            
+
             # Add fill attribute before the closing >
             return f'{opening_tag} fill="{new_color}"{closing}'
-        
+
         svg_data = re.sub(svg_pattern, inject_fill_svg, svg_data, count=1, flags=re.IGNORECASE)
-        
+
         # Strategy 2: If still no change, try to inject fill into path elements
         if svg_data == original_svg:
             path_pattern = r'(<path[^>]*?)(\s*/>|\s*>)'
-            
+
             def inject_fill_path(match):
                 opening_tag = match.group(1)
                 closing = match.group(2)
-                
+
                 # Check if fill attribute already exists
                 if 'fill=' in opening_tag.lower():
                     return match.group(0)  # Don't modify if fill already exists
-                
+
                 # Add fill attribute before the closing
                 return f'{opening_tag} fill="{new_color}"{closing}'
-            
+
             svg_data = re.sub(path_pattern, inject_fill_path, svg_data, flags=re.IGNORECASE)
-        
+
         # Strategy 3: If still no change, try other common SVG elements
         if svg_data == original_svg:
             element_pattern = r'(<(?:circle|rect|ellipse|polygon|polyline)[^>]*?)(\s*/>|\s*>)'
-            
+
             def inject_fill_element(match):
                 opening_tag = match.group(1)
                 closing = match.group(2)
-                
+
                 # Check if fill attribute already exists
                 if 'fill=' in opening_tag.lower():
                     return match.group(0)  # Don't modify if fill already exists
-                
+
                 # Add fill attribute before the closing
                 return f'{opening_tag} fill="{new_color}"{closing}'
-            
+
             svg_data = re.sub(element_pattern, inject_fill_element, svg_data, flags=re.IGNORECASE)
-    
+
     return svg_data
 
 
 # ── Class Definition ─────────────────────────────────────────────────────────────────────────
 class SVGLoader:
     """Utility class for loading and recoloring SVG files with smart caching."""
-    
+
     # Smart cache with LRU eviction using OrderedDict
     _cache: OrderedDict[tuple, Union[QPixmap, QIcon]] = OrderedDict()
-    
+
     # Cache configuration
     _MAX_CACHE_SIZE = 200  # Maximum number of cached items
     _CACHE_HIGH_WATER_MARK = 150  # Start evicting when we reach this
-    
+
     # Track which icons have had fill attributes injected (for logging purposes)
     _injected_icons: set[str] = set()
-    
+
     # Performance statistics
     _cache_hits = 0
     _cache_misses = 0
@@ -148,7 +148,7 @@ class SVGLoader:
         # ── Validate Size ──
         if logical_size.width() <= 0 or logical_size.height() <= 0:
             logical_size = QSize(24, 24)
-            
+
         # ── Check Cache ──
         cache_key = (str(file_path), color, logical_size.width(), logical_size.height(), source, as_icon)
         if cache_key in SVGLoader._cache:
@@ -157,7 +157,7 @@ class SVGLoader:
             SVGLoader._cache.move_to_end(cache_key)
             SVGLoader._cache_hits += 1
             return result
-        
+
         SVGLoader._cache_misses += 1
 
         # ── Read SVG ──
@@ -176,17 +176,17 @@ class SVGLoader:
 
         try:
             svg_data = _replace_svg_colors(raw_svg, source, color)
-            
+
             # Only log injection of fill attributes once per icon (more significant event)
             # Skip logging normal color replacements to reduce noise
-            if (svg_data != raw_svg and 'fill=' not in raw_svg.lower() and 
+            if (svg_data != raw_svg and 'fill=' not in raw_svg.lower() and
                 file_path.name not in SVGLoader._injected_icons):
                 DebugLogger.log(
-                    f"svg_loader: Injected fill attribute for {file_path.name}", 
+                    f"svg_loader: Injected fill attribute for {file_path.name}",
                     "debug"
                 )
                 SVGLoader._injected_icons.add(file_path.name)
-                
+
         except re.error as e:  # catch regex errors
             DebugLogger.log(f"svg_loader: Regex error processing {file_path}: {e}", "warning")
             svg_data = raw_svg
@@ -246,12 +246,12 @@ class SVGLoader:
 
         # ── Return QIcon or QPixmap ──
         result = QIcon(pixmap) if as_icon else pixmap
-        
+
         # ── Cache Result with Smart Eviction ──
         SVGLoader._cache[cache_key] = result
         SVGLoader._manage_cache_size()
         return result
-    
+
     @classmethod
     def _manage_cache_size(cls):
         """Manage cache size using LRU eviction when high water mark is reached."""
@@ -259,13 +259,13 @@ class SVGLoader:
             # Remove oldest items until we're at a reasonable size
             target_size = cls._CACHE_HIGH_WATER_MARK - 20  # Remove some extra items
             items_to_remove = len(cls._cache) - target_size
-            
+
             for _ in range(items_to_remove):
                 if cls._cache:
                     cls._cache.popitem(last=False)  # Remove oldest item
-            
+
             DebugLogger.log(f"svg_loader: Cache evicted {items_to_remove} items (now {len(cls._cache)} items)", "debug")
-    
+
     @classmethod
     def clear_cache(cls):
         """Clear the SVG cache. Useful for memory management or theme changes."""
@@ -277,17 +277,17 @@ class SVGLoader:
         # Only log if there was actually something to clear
         if cache_size > 0:
             DebugLogger.log(f"svg_loader: Cache cleared ({cache_size} items)", "debug")
-    
+
     @classmethod
     def get_cache_stats(cls) -> dict:
         """Get cache performance statistics.
-        
+
         Returns:
             dict: Cache performance metrics
         """
         total_requests = cls._cache_hits + cls._cache_misses
         hit_rate = (cls._cache_hits / total_requests * 100) if total_requests > 0 else 0
-        
+
         return {
             'cache_size': len(cls._cache),
             'max_cache_size': cls._MAX_CACHE_SIZE,
@@ -296,17 +296,17 @@ class SVGLoader:
             'hit_rate_percent': round(hit_rate, 2),
             'injected_icons': len(cls._injected_icons)
         }
-    
+
     @classmethod
     def set_cache_limits(cls, max_size: int, high_water_mark: int = None):
         """Configure cache size limits.
-        
+
         Args:
             max_size (int): Maximum number of items to cache
             high_water_mark (int, optional): Start evicting when reaching this size
         """
         cls._MAX_CACHE_SIZE = max_size
         cls._CACHE_HIGH_WATER_MARK = high_water_mark or int(max_size * 0.75)
-        
+
         # Immediately manage cache if it's now over the new limit
         cls._manage_cache_size()

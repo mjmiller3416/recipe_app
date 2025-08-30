@@ -49,6 +49,7 @@ Image processing utilities for the application.
 
 """
 
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 import hashlib
@@ -56,11 +57,10 @@ import re
 import tempfile
 import uuid
 from pathlib import Path
-from typing import Dict, NamedTuple, Optional, Set, Tuple, Union
+from typing import Dict, NamedTuple, Optional, Tuple, Union
 
 from PySide6.QtCore import QRectF, QSize, Qt, QRect
 from PySide6.QtGui import QPainter, QPainterPath, QPixmap, QColor
-from PySide6.QtWidgets import QWidget
 
 from app.config.paths import AppPaths
 

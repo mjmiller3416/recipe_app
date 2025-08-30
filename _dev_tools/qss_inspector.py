@@ -10,6 +10,7 @@ Usage:
     Then press F11 to toggle inspection mode and click widgets to see their info.
 """
 
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 import sys
 from typing import List, Optional
 
@@ -17,7 +18,7 @@ from PySide6.QtCore import QEvent, QObject, Qt
 from PySide6.QtGui import QKeyEvent, QMouseEvent
 from PySide6.QtWidgets import QApplication, QWidget
 
-from dev_tools.debug_logger import DebugLogger
+from _dev_tools.debug_logger import DebugLogger
 
 
 class QSSInspector(QObject):
@@ -223,18 +224,18 @@ class QSSInspector(QObject):
     def _print_cascade_analysis(self, widget: QWidget):
         """Print CSS cascade analysis showing all stylesheets affecting this widget"""
         print(f"\n🔄 CSS CASCADE ANALYSIS:")
-        
+
         # Walk up the widget hierarchy and check stylesheets
         current = widget
         level = 0
-        
+
         while current and level < 10:  # Prevent infinite loops
             stylesheet = current.styleSheet()
             if stylesheet:
                 indent = "  " * level
                 name = current.objectName() or current.__class__.__name__
                 print(f"{indent}📄 {name}: {len(stylesheet)} chars of CSS")
-                
+
                 # Check if this stylesheet contains CBButton rules
                 if "#CBButton" in stylesheet or "CBButton" in stylesheet:
                     print(f"{indent}   🎯 Contains CBButton rules!")
@@ -245,10 +246,10 @@ class QSSInspector(QObject):
                         print(f"{indent}   📝 CBButton rules found:")
                         for line in cbbutton_lines[:3]:  # Show first 3 matches
                             print(f"{indent}      {line}")
-            
+
             current = current.parent()
             level += 1
-        
+
         # Check application-level stylesheet
         app = QApplication.instance()
         if app and app.styleSheet():

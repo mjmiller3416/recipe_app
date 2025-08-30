@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QStackedWidget, QVBoxLayout, QWidget
 from app.ui.components.composite.recipe_browser import RecipeBrowser
 from app.ui.components.composite.recipe_card import LayoutSize
 from app.ui.views.full_recipe import FullRecipe
-from dev_tools import DebugLogger
+from _dev_tools import DebugLogger
 
 
 # ── View Recipes ─────────────────────────────────────────────────────────────────────────────
@@ -41,7 +41,7 @@ class ViewRecipes(QWidget):
 
         # create stacked widget to switch between recipe list and full recipe
         self.stacked_widget = QStackedWidget()
-        
+
         # create recipe browser
         self.recipe_browser = RecipeBrowser(
             parent=self,
@@ -76,7 +76,7 @@ class ViewRecipes(QWidget):
         # create new full recipe view
         self.current_full_recipe_view = FullRecipe(recipe, parent=self)
         self.current_full_recipe_view.back_clicked.connect(self._show_recipe_list)
-        
+
         # add to stacked widget and show
         self.stacked_widget.addWidget(self.current_full_recipe_view)  # index 1
         self.stacked_widget.setCurrentWidget(self.current_full_recipe_view)
@@ -84,7 +84,7 @@ class ViewRecipes(QWidget):
     def _show_recipe_list(self):
         """Return to the recipe list view."""
         self.stacked_widget.setCurrentWidget(self.recipe_browser)
-        
+
         # clean up the full recipe view
         if self.current_full_recipe_view:
             self.stacked_widget.removeWidget(self.current_full_recipe_view)

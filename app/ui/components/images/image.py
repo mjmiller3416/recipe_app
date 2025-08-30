@@ -501,7 +501,7 @@ class RecipeImage(BaseImage):
         """Get the currently displayed default image path."""
         result = self.get_current_image_path()
 
-        from dev_tools.debug_logger import DebugLogger
+        from _dev_tools.debug_logger import DebugLogger
         DebugLogger.log(f"[RecipeImage] get_reference_image_path() returning: '{result}'", "info")
         return result
 

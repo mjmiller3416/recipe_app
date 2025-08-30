@@ -14,11 +14,12 @@ from app.style import Qss, Theme
 from app.style.animation.animator import Animator
 from app.style.icon import Name, Type
 from app.ui.components.widgets.button import ToolButton
-from dev_tools.debug_logger import DebugLogger
+from _dev_tools.debug_logger import DebugLogger
 
 from .card import BaseCard
 
-# ── Constants ─────────────────────────────────────────────────────────────
+
+# ── Constants ────────────────────────────────────────────────────────────────────────────────
 EXPANDED_HEIGHT = 300    # Full height when expanded
 COLLAPSED_HEIGHT = 80    # Height when collapsed (header visible) - increased for more spacing
 DURATION = 300           # Animation duration

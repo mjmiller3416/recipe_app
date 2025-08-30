@@ -1,10 +1,36 @@
 """app/core/utils/format_utils.py
 
 Formatting utilities for recipe display including quantity formatting and unit abbreviations.
+
+# ── Internal Index ──────────────────────────────────────────
+#
+# ── Quantity Formatting ─────────────────────────────────────
+# format_quantity()             -> Convert decimals to fractions
+#
+# ── Unit Abbreviations ──────────────────────────────────────
+# abbreviate_unit()             -> Convert unit names to abbreviations
+#
+# ── Combined Formatting ─────────────────────────────────────
+# format_quantity_and_unit()    -> Format both quantity and unit
+
 """
+
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+from __future__ import annotations
 
 from fractions import Fraction
 from typing import Dict
+
+__all__ = [
+    # Quantity Formatting
+    'format_quantity',
+
+    # Unit Abbreviations
+    'UNIT_ABBREVIATIONS', 'abbreviate_unit',
+
+    # Combined Formatting
+    'format_quantity_and_unit',
+]
 
 
 # ── Quantity Formatting ──────────────────────────────────────────────────────────────────────

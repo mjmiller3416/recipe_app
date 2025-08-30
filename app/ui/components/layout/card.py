@@ -19,15 +19,15 @@ from __future__ import annotations
 from typing import Optional
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
-                               QLayout, QPushButton, QSizePolicy, QVBoxLayout,
-                               QWidget)
+from PySide6.QtWidgets import (
+    QFrame, QGridLayout, QHBoxLayout, QLabel,
+    QLayout, QSizePolicy, QVBoxLayout, QWidget)
 
 from app.style import Qss, Theme
 from app.style.effects import Effects, Shadow
 from app.style.icon import AppIcon, Name, Type
 from app.ui.components.widgets.button import Button
-from dev_tools.debug_logger import DebugLogger
+from _dev_tools.debug_logger import DebugLogger
 
 
 # ── Base Card Widget ─────────────────────────────────────────────────────────────────────────

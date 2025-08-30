@@ -3,6 +3,8 @@
 Defines a FlyoutWidget that overlays content with flexible anchoring options
 and slide-in/out animations in four directions.
 """
+
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from typing import Union
 
 from PySide6.QtCore import QEvent, QPoint, QRect, Qt, QTimer
@@ -11,9 +13,10 @@ from PySide6.QtWidgets import (QApplication, QFrame, QMainWindow, QVBoxLayout,
                                QWidget)
 
 from app.style.animation.animator import Animator
-from dev_tools import DebugLogger
+from _dev_tools import DebugLogger
 
 
+# ── FlyoutWidget ─────────────────────────────────────────────────────────────────────────────
 class FlyoutWidget(QFrame):
     """Overlay widget that slides in/out with flexible anchoring options."""
     TOP = 0

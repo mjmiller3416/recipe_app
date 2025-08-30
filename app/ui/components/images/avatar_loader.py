@@ -3,7 +3,7 @@
 A widget for uploading and displaying a circular user avatar
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 import shutil
 import tempfile
 import uuid
@@ -21,14 +21,14 @@ from app.style.icon import AppIcon, Icon
 from app.style.icon.config import Name, Type
 from app.style.theme.config import Qss
 from app.ui.components.widgets import Button
-from app.ui.helpers import CornerAnchor
+from app.ui.utils import CornerAnchor
 from data_files.user_settings import UserSettings
 
 from ..widgets.image import CircularImage
 
 # Temp image handling now uses image_utils
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── Avatar Loader ────────────────────────────────────────────────────────────────────────────
 class AvatarLoader(QWidget):
     """
     A widget for uploading and displaying a circular user avatar,

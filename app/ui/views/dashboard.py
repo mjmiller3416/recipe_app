@@ -3,7 +3,7 @@
 Placeholder class for the Dashboard screen.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QSizePolicy, QVBoxLayout, QWidget
 
@@ -11,10 +11,10 @@ from app.style.icon.config import Name, Type
 from app.ui.components.inputs import SmartLineEdit
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
-from dev_tools import DebugLogger, StartupTimer
+from _dev_tools import DebugLogger, StartupTimer
 
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── Dashboard ────────────────────────────────────────────────────────────────────────────────
 class Dashboard(QWidget):
     """Placeholder class for the Dashboard screen."""
 

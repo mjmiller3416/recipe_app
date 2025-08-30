@@ -5,7 +5,7 @@ It allows users to create, edit, and save meal plans. The MealPlanner uses QTabW
 multiple meal planning tabs and integrates with the database to load and save meal data.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt, Signal, QEvent
 from PySide6.QtWidgets import (
     QMenu, QStackedWidget, QTabWidget, QVBoxLayout, QHBoxLayout,
@@ -19,7 +19,7 @@ from app.style.icon import AppIcon, Icon
 from app.style import Theme, Qss
 from app.ui.components.composite.recipe_card import LayoutSize, create_recipe_card
 from app.ui.views.recipe_selection import RecipeSelection
-from dev_tools import DebugLogger
+from _dev_tools import DebugLogger
 
 
 # ── Meal Widget ──────────────────────────────────────────────────────────────────────────────
