@@ -1,8 +1,9 @@
-"""app/ui/components/images/image_cropper_refactored.py
+"""app/ui/components/images/image_cropper.py
 
 Refactored image cropping components with separation of concerns.
 """
 
+# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QPointF, QRect, QRectF, QSizeF, Qt, Signal
 from PySide6.QtGui import QColor, QMouseEvent, QPainter, QPainterPath, QPen, QPixmap
 from PySide6.QtWidgets import QLabel, QSizePolicy
@@ -12,11 +13,13 @@ from app.core.utils.image_utils import (
 )
 from app.ui.helpers.dialog_helpers import MIN_CROP_DIM_ORIGINAL
 
-# ── Constants ───────────────────────────────────────────────────────────────
+
+# ── Constants ────────────────────────────────────────────────────────────────────────────────
 HANDLE_SIZE = 10
 HANDLE_INTERACTION_OFFSET = 4
 
-# ── Crop Rectangle State Manager ────────────────────────────────────────────
+
+# ── Crop Rectangle State Manager ─────────────────────────────────────────────────────────────
 class CropRectangle:
     """Manages crop rectangle state and transformations."""
 
@@ -121,7 +124,7 @@ class CropRectangle:
         self._update_handles()
 
 
-# ── Mouse Interaction Handler ───────────────────────────────────────────────
+# ── Mouse Interaction Handler ────────────────────────────────────────────────────────────────
 class CropInteractionHandler:
     """Handles mouse interactions for cropping."""
 
@@ -190,7 +193,7 @@ class CropInteractionHandler:
             return Qt.CursorShape.ArrowCursor
 
 
-# ── Crop Renderer ───────────────────────────────────────────────────────────
+# ── Crop Renderer ────────────────────────────────────────────────────────────────────────────
 class CropRenderer:
     """Handles rendering of crop overlay and handles."""
 
@@ -224,7 +227,7 @@ class CropRenderer:
             painter.drawRect(visual_handle)
 
 
-# ── Main ImageCropper Widget ────────────────────────────────────────────────
+# ── Main ImageCropper Widget ─────────────────────────────────────────────────────────────────
 class ImageCropper(QLabel):
     """Interactive image cropper with drag-and-resize functionality."""
 

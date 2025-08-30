@@ -20,7 +20,7 @@ from app.core.utils.image_utils import (
 
 
 # ── Base Image Widget ────────────────────────────────────────────────────────────────────────
-class BaseImageWidget(QLabel):
+class BaseImage(QLabel):
     """Base class for shaped image widgets with caching and border support."""
 
     def __init__(self, size: Union[int, QSize] = 100, parent=None):
@@ -168,7 +168,7 @@ class BaseImageWidget(QLabel):
 
 
 # ── Rounded Rectangle Image ──────────────────────────────────────────────────────────────────
-class RoundedImage(BaseImageWidget):
+class RoundedImage(BaseImage):
     """Image widget with configurable rounded corners."""
 
     def __init__(self, image_path: Union[str, Path, None] = None,
@@ -232,7 +232,7 @@ class RoundedImage(BaseImageWidget):
 
 
 # ── Circular Image ───────────────────────────────────────────────────────────────────────────
-class CircularImage(BaseImageWidget):
+class CircularImage(BaseImage):
     """Image widget with perfect circular shape and border support."""
 
     def __init__(self, diameter: int, parent=None):

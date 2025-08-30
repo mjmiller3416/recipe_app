@@ -11,7 +11,7 @@ from pathlib import Path
 
 from PySide6.QtCore import QEvent, QSize, Qt, Slot
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QFileDialog, QToolButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QFileDialog, QVBoxLayout, QWidget
 
 from app.config import AppPaths
 from app.core.utils.image_utils import img_create_temp_path, img_validate_path
