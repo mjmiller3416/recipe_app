@@ -38,7 +38,7 @@ class RecipeRepo:
             servings=recipe_dto.servings,
             directions=recipe_dto.directions,
             notes=recipe_dto.notes,
-            default_image_path=recipe_dto.default_image_path,
+            reference_image_path=recipe_dto.reference_image_path,
             banner_image_path=recipe_dto.banner_image_path
         )
         self.session.add(recipe)

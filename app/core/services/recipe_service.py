@@ -121,7 +121,7 @@ class RecipeService:
             raise
         return updated_recipe
 
-    def update_recipe_default_image_path(self, recipe_id: int, image_path: str) -> Recipe | None:
+    def update_recipe_reference_image_path(self, recipe_id: int, image_path: str) -> Recipe | None:
         """
         Update a recipe's default image path.
 
@@ -137,7 +137,7 @@ class RecipeService:
             if not recipe:
                 return None
                 
-            recipe.default_image_path = image_path
+            recipe.reference_image_path = image_path
             self.session.commit()
             DebugLogger.log(f"Updated recipe {recipe_id} default image path to: {image_path}", "info")
             return recipe

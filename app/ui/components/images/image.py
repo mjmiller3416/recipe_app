@@ -493,16 +493,16 @@ class RecipeImage(BaseImage):
         """Handle view button click."""
         self.image_clicked.emit()
 
-    def set_default_image_path(self, image_path: str):
+    def set_reference_image_path(self, image_path: str):
         """Set and display a default image from path."""
         self.setImagePath(image_path)  # Use base class method
 
-    def get_default_image_path(self) -> Optional[str]:
+    def get_reference_image_path(self) -> Optional[str]:
         """Get the currently displayed default image path."""
         result = self.get_current_image_path()
 
         from dev_tools.debug_logger import DebugLogger
-        DebugLogger.log(f"[RecipeImage] get_default_image_path() returning: '{result}'", "info")
+        DebugLogger.log(f"[RecipeImage] get_reference_image_path() returning: '{result}'", "info")
         return result
 
     def clear_default_image(self):

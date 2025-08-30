@@ -609,7 +609,7 @@ class AddRecipes(QWidget):
                 image_path = result
                 DebugLogger().log(f"Single image generated: {image_path}", "info")
                 # Set the default image
-                self.recipe_image.set_default_image_path(image_path)
+                self.recipe_image.set_reference_image_path(image_path)
                 # Also update selected path for saving
                 self.selected_image_path = image_path
 
@@ -618,7 +618,7 @@ class AddRecipes(QWidget):
                 portrait_path = str(result.portrait_path)
                 DebugLogger().log(f"Portrait image from pair: {portrait_path}", "info")
                 # Set the default image to the portrait
-                self.recipe_image.set_default_image_path(portrait_path)
+                self.recipe_image.set_reference_image_path(portrait_path)
                 # Also update selected path for saving
                 self.selected_image_path = portrait_path
 
@@ -710,11 +710,11 @@ class AddRecipes(QWidget):
         DebugLogger().log(f"[AddRecipes] Recipe '{new_recipe.recipe_name}' saved with ID={new_recipe.id}", "info")
 
         # Update recipe with selected image path if available
-        selected_image = self.recipe_image.get_default_image_path()
-        DebugLogger().log(f"[AddRecipes] get_default_image_path returned: '{selected_image}'", "info")
+        selected_image = self.recipe_image.get_reference_image_path()
+        DebugLogger().log(f"[AddRecipes] get_reference_image_path returned: '{selected_image}'", "info")
         if selected_image:
             try:
-                service.update_recipe_default_image_path(new_recipe.id, selected_image)
+                service.update_recipe_reference_image_path(new_recipe.id, selected_image)
                 DebugLogger().log(f"[AddRecipes] Updated recipe {new_recipe.id} with default image: {selected_image}", "info")
             except Exception as img_err:
                 DebugLogger().log(f"[AddRecipes] Failed to update recipe default image: {img_err}", "warning")
@@ -762,7 +762,7 @@ class AddRecipes(QWidget):
             "total_time":          int(self.le_time.text().strip() or 0),
             "servings":            self._parse_servings(self.le_servings.text()),
             "directions":          self.te_directions.toPlainText().strip(),
-            "default_image_path":  self.recipe_image.get_default_image_path() or "",
+            "reference_image_path":  self.recipe_image.get_reference_image_path() or "",
         }
 
     def _clear_form(self):

@@ -49,7 +49,7 @@ class RecipeBaseDTO(BaseModel):
     servings: Optional[int] = Field(None, ge=1)
     directions: Optional[str] = None
     notes: Optional[str] = None
-    default_image_path: Optional[str] = None
+    reference_image_path: Optional[str] = None
     banner_image_path: Optional[str] = None
 
     @field_validator("recipe_name", "recipe_category", "meal_type", mode="before")
@@ -78,7 +78,7 @@ class RecipeUpdateDTO(BaseModel):
     servings: Optional[int] = Field(None, ge=1)
     directions: Optional[str] = None
     notes: Optional[str] = None
-    default_image_path: Optional[str] = None
+    reference_image_path: Optional[str] = None
     banner_image_path: Optional[str] = None
     ingredients: Optional[List[RecipeIngredientDTO]] = None
     is_favorite: Optional[bool] = None
