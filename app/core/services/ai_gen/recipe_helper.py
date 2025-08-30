@@ -1,4 +1,4 @@
-"""app/core/services/ai_image_generation/recipe_helper.py
+"""app/core/services/ai_gen/recipe_helper.py
 
 Recipe-specific image generation helpers.
 
@@ -64,22 +64,28 @@ class RecipeImageHelper:
 
     async def generate_for_recipe(self,
                           recipe_name: str,
-                          image_type: str = "standard") -> Path:
+                          image_type: str = "standard",
+                          reference_image_path: Optional[Path] = None) -> Path:
         """Generate a single image for a recipe.
 
         Args:
             recipe_name: Name of the recipe
             image_type: Type of image ("standard" or "banner")
+            reference_image_path: Optional reference image for consistency
 
         Returns:
             Path to generated image
 
         Raises:
-            ValueError: If image_type is not supported
+            ValueError: If image_type is not supported or banner without reference
         """
         if image_type not in self._IMAGE_CONFIGS:
             available = list(self._IMAGE_CONFIGS.keys())
             raise ValueError(f"Unknown image type '{image_type}'. Available: {available}")
+
+        # Banner images always require a reference for consistency
+        if image_type == "banner" and not (reference_image_path and reference_image_path.exists()):
+            raise ValueError("Banner images require a valid reference image path")
 
         recipe_name = recipe_name.strip()
         if not recipe_name:
@@ -95,7 +101,7 @@ class RecipeImageHelper:
             "info"
         )
 
-        return await self.service.generate_image_async(prompt, filename_base, size)
+        return await self.service.generate_image_async(prompt, filename_base, size, reference_image_path)
 
     async def generate_both_for_recipe(self, recipe_name: str) -> RecipeImagePaths:
         """Generate both standard and banner images for a recipe.
@@ -110,11 +116,13 @@ class RecipeImageHelper:
         if not recipe_name:
             raise ValueError("Recipe name cannot be empty")
 
-        DebugLogger().log(f"Generating both images for '{recipe_name}'", "info")
+        DebugLogger().log(f"Generating both images for '{recipe_name}' (sequential workflow)", "info")
 
-        # Generate them individually to guarantee ordering
+        # Generate standard first (becomes reference)
         standard_path = await self.generate_for_recipe(recipe_name, "standard")
-        banner_path = await self.generate_for_recipe(recipe_name, "banner")
+        
+        # Generate banner using standard as reference for consistency
+        banner_path = await self.generate_for_recipe(recipe_name, "banner", reference_image_path=standard_path)
 
         return RecipeImagePaths(
             standard=standard_path,

@@ -1,4 +1,4 @@
-"""app/core/services/ai_image_generation/config.py
+"""app/core/services/ai_gen/config.py
 
 Configuration for AI image generation.
 """
@@ -16,8 +16,6 @@ from app.config.paths import AppPaths
 # Model capabilities mapping
 _MODEL_SIZES: Dict[str, Set[str]] = {
     "gpt-image-1": {"1024x1024", "1024x1536", "1536x1024"},
-    "dall-e-3": {"1024x1024", "1024x1792", "1792x1024"},
-    "dall-e-2": {"256x256", "512x512", "1024x1024"},
 }
 
 
@@ -32,6 +30,7 @@ class ImageGenConfig:
         output_root: Root directory for generated images
         dir_name: Subdirectory name under output_root
         allow_overwrite: Whether to regenerate existing images
+        mock_mode: If True, simulates generation without API calls (for testing)
     """
 
     model: str = "gpt-image-1"
@@ -40,13 +39,14 @@ class ImageGenConfig:
     output_root: Path = AppPaths.RECIPE_IMAGES_DIR.parent
     dir_name: str = "recipe_images"
     allow_overwrite: bool = False
+    mock_mode: bool = False
 
     def __post_init__(self):
         """Validate configuration after initialization."""
         self._validate_configuration()
 
-        # Ensure API key is available
-        if not os.getenv("OPENAI_API_KEY"):
+        # Ensure API key is available (unless in mock mode)
+        if not self.mock_mode and not os.getenv("OPENAI_API_KEY"):
             raise RuntimeError("OPENAI_API_KEY environment variable is required")
 
     def _validate_configuration(self) -> None:
