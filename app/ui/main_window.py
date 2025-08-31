@@ -17,7 +17,7 @@ from app.style.animation import WindowAnimator
 from app.ui.components import SearchBar
 from app.ui.components.navigation.sidebar import Sidebar
 from app.ui.components.navigation.titlebar import TitleBar
-from app.ui.utils.ui_helpers import center_on_screen
+from app.ui.helpers.ui_helpers import center_on_screen
 
 if TYPE_CHECKING:
     from app.ui.services.navigation_service import NavigationService

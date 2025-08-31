@@ -25,7 +25,7 @@ Text processing and string manipulation utilities.
 
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 import re
@@ -46,7 +46,7 @@ __all__ = [
 ]
 
 
-# ── String Cleaning & Sanitization ───────────────────────────────────────────────────────────
+# ── String Cleaning & Sanitization ──────────────────────────────────────────────────────────────────────────
 def sanitize_form_input(text: str) -> str:
     """
     Clean and normalize form input text.
@@ -67,7 +67,6 @@ def sanitize_form_input(text: str) -> str:
 
     # Strip whitespace and normalize internal whitespace
     return re.sub(r'\s+', ' ', text.strip())
-
 
 def sanitize_multiline_input(text: str) -> str:
     """
@@ -90,7 +89,7 @@ def sanitize_multiline_input(text: str) -> str:
     return '\n'.join(line for line in lines if line)
 
 
-# ── Case & Format Transformations ────────────────────────────────────────────────────────────
+# ── Case & Format Transformations ───────────────────────────────────────────────────────────────────────────
 def text_to_enum_key(text: str) -> str:
     """
     Convert display text to enum-style key.
@@ -114,7 +113,6 @@ def text_to_enum_key(text: str) -> str:
     enum_key = re.sub(r'[^a-zA-Z0-9]+', '_', cleaned)
     return enum_key.upper().strip('_')
 
-
 def snake_to_title_case(text: str) -> str:
     """
     Convert snake_case to Title Case.
@@ -134,7 +132,6 @@ def snake_to_title_case(text: str) -> str:
         return ""
 
     return text.replace('_', ' ').title()
-
 
 def camel_to_title_case(text: str) -> str:
     """
@@ -161,7 +158,7 @@ def camel_to_title_case(text: str) -> str:
     return spaced.title()
 
 
-# ── String Extraction & Parsing ──────────────────────────────────────────────────────────────
+# ── String Extraction & Parsing ─────────────────────────────────────────────────────────────────────────────
 def safe_split_extract(text: str, delimiter: str, index: int,
                       default: str = "") -> str:
     """
@@ -191,7 +188,6 @@ def safe_split_extract(text: str, delimiter: str, index: int,
     except (IndexError, AttributeError):
         return default
 
-
 def extract_first_number(text: str) -> Optional[int]:
     """
     Extract first number from text string.
@@ -213,7 +209,6 @@ def extract_first_number(text: str) -> Optional[int]:
 
     match = re.search(r'\d+', text)
     return int(match.group()) if match else None
-
 
 def extract_numeric_range(text: str) -> tuple[Optional[int], Optional[int]]:
     """
@@ -247,7 +242,7 @@ def extract_numeric_range(text: str) -> tuple[Optional[int], Optional[int]]:
     return (None, None)
 
 
-# ── String Validation Helpers ────────────────────────────────────────────────────────────────
+# ── String Validation Helpers ───────────────────────────────────────────────────────────────────────────────
 def is_empty_or_whitespace(text: str) -> bool:
     """
     Check if text is empty or contains only whitespace.
@@ -265,7 +260,6 @@ def is_empty_or_whitespace(text: str) -> bool:
         " hello " -> False
     """
     return not text or not text.strip()
-
 
 def truncate_with_ellipsis(text: str, max_length: int,
                           ellipsis: str = "...") -> str:
@@ -293,7 +287,6 @@ def truncate_with_ellipsis(text: str, max_length: int,
         return ellipsis[:max_length]
 
     return text[:truncate_at] + ellipsis
-
 
 def normalize_line_endings(text: str) -> str:
     """

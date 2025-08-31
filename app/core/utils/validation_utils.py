@@ -31,7 +31,7 @@ Input validation utilities for consistent data validation across the application
 """
 
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 import re
@@ -58,7 +58,7 @@ __all__ = [
 ]
 
 
-# ── Validation Result Types ──────────────────────────────────────────────────────────────────
+# ── Validation Result Types ─────────────────────────────────────────────────────────────────────────────────
 class ValidationResult:
     """Container for validation results."""
 
@@ -73,7 +73,7 @@ class ValidationResult:
         return f"ValidationResult(valid={self.is_valid}, error='{self.error_message}')"
 
 
-# ── Basic Input Validation ───────────────────────────────────────────────────────────────────
+# ── Basic Input Validation ──────────────────────────────────────────────────────────────────────────────────
 def validate_non_empty_input(value: Any, field_name: str = "Field") -> ValidationResult:
     """
     Validate that input is not empty or whitespace-only.
@@ -98,7 +98,6 @@ def validate_non_empty_input(value: Any, field_name: str = "Field") -> Validatio
         return ValidationResult(False, f"{field_name} cannot be empty")
 
     return ValidationResult(True)
-
 
 def validate_min_length(value: str, min_length: int,
                        field_name: str = "Field") -> ValidationResult:
@@ -128,7 +127,6 @@ def validate_min_length(value: str, min_length: int,
 
     return ValidationResult(True)
 
-
 def validate_max_length(value: str, max_length: int,
                        field_name: str = "Field") -> ValidationResult:
     """
@@ -154,7 +152,7 @@ def validate_max_length(value: str, max_length: int,
     return ValidationResult(True)
 
 
-# ── Pattern-Based Validation ─────────────────────────────────────────────────────────────────
+# ── Pattern-Based Validation ────────────────────────────────────────────────────────────────────────────────
 def validate_pattern_match(value: str, pattern: Union[str, Pattern],
                           field_name: str = "Field",
                           error_message: Optional[str] = None) -> ValidationResult:
@@ -188,7 +186,6 @@ def validate_pattern_match(value: str, pattern: Union[str, Pattern],
 
     return ValidationResult(True)
 
-
 def validate_alphanumeric_only(value: str, field_name: str = "Field",
                               allow_spaces: bool = True) -> ValidationResult:
     """
@@ -216,7 +213,7 @@ def validate_alphanumeric_only(value: str, field_name: str = "Field",
     )
 
 
-# ── Numeric Validation ───────────────────────────────────────────────────────────────────────
+# ── Numeric Validation ──────────────────────────────────────────────────────────────────────────────────────
 def validate_numeric_range(value: Union[str, int, float],
                           min_value: Optional[Union[int, float]] = None,
                           max_value: Optional[Union[int, float]] = None,
@@ -277,7 +274,6 @@ def validate_numeric_range(value: Union[str, int, float],
 
     return ValidationResult(True)
 
-
 def validate_positive_number(value: Union[str, int, float],
                            field_name: str = "Field",
                            allow_zero: bool = False) -> ValidationResult:
@@ -300,7 +296,7 @@ def validate_positive_number(value: Union[str, int, float],
     )
 
 
-# ── Batch Validation ─────────────────────────────────────────────────────────────────────────
+# ── Batch Validation ────────────────────────────────────────────────────────────────────────────────────────
 def batch_validate_inputs(inputs: Dict[str, Any],
                          validators: Dict[str, List[callable]]) -> Dict[str, str]:
     """
@@ -336,7 +332,6 @@ def batch_validate_inputs(inputs: Dict[str, Any],
 
     return errors
 
-
 def validate_required_fields(inputs: Dict[str, Any],
                            required_fields: List[str]) -> Dict[str, str]:
     """
@@ -371,7 +366,7 @@ def validate_required_fields(inputs: Dict[str, Any],
     return errors
 
 
-# ── Specialized Validators ───────────────────────────────────────────────────────────────────
+# ── Specialized Validators ──────────────────────────────────────────────────────────────────────────────────
 def validate_choice_selection(value: Any, valid_choices: List[Any],
                             field_name: str = "Field") -> ValidationResult:
     """
@@ -392,7 +387,6 @@ def validate_choice_selection(value: Any, valid_choices: List[Any],
         )
 
     return ValidationResult(True)
-
 
 def validate_file_extension(filename: str, allowed_extensions: List[str],
                           field_name: str = "File") -> ValidationResult:

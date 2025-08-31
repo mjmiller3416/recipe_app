@@ -17,23 +17,23 @@ class AppPaths:
     APP_DIR = ROOT_DIR / "app"
     CONFIG_DIR = APP_DIR / "config"
     ASSETS_DIR = APP_DIR / "assets"
-    DATA_DIR = ROOT_DIR / "data_files"
+    DATA_DIR = ROOT_DIR / "_data_files"
     USER_PROFILE_DIR = DATA_DIR / "user_profile"
     TM_DIR = APP_DIR / "style"
 
     # ── Asset Directories ───────────────────────────────────────────────────────
     ICONS_DIR = ASSETS_DIR / "icons"
     FONT_DIR = ASSETS_DIR / "fonts"
-    
+
     # ── Data Directories ─────────────────────────────────────────────────────────
     USER_DATA_DIR = DATA_DIR  # Alias for consistency with services
     TEMP_CROP_DIR = DATA_DIR / "temp_crops"
     RECIPE_IMAGES_DIR = DATA_DIR / "recipe_images"
-    
+
     # ── Settings & Configuration ─────────────────────────────────────────────────
     USER_SETTINGS_PATH = DATA_DIR / "user_settings.json"
     THEME_CONFIG_PATH = CONFIG_DIR / "theme_config.json"
-    
+
     # ── Theme Directories ───────────────────────────────────────────────────────
     BASE_STYLE = TM_DIR / "theme" / "base_style.qss"
     QSS_DIR = TM_DIR / "theme" / "qss"

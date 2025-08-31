@@ -6,7 +6,7 @@ Provides a mixin for creating singleton classes.
 from PySide6.QtCore import QObject
 
 
-# ── Singleton Mixin ──────────────────────────────────────────────────────────────────────────
+# ── Singleton Mixin ─────────────────────────────────────────────────────────────────────────────────────────
 class QSingleton(QObject):
     """A singleton base class for QObject-derived classes."""
     _instances = {}

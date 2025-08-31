@@ -19,7 +19,7 @@ from app.core.services.shopping_service import ShoppingService
 from app.style import Icon, Qss, Theme, Type
 from app.ui.components.layout.card import ActionCard, BaseCard, Card
 from app.ui.components.widgets import BaseButton, ComboBox, ToolButton
-from app.ui.utils.ui_helpers import set_fixed_height_for_layout_widgets
+from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
 from _dev_tools import DebugLogger
 
 

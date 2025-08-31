@@ -39,7 +39,6 @@ Image processing utilities for the application.
 # ── Qt Integration Utils ────────────────────────────────────
 # img_qt_to_pixmap()         -> Convert to QPixmap safely
 # img_qt_load_safe()         -> Load QPixmap safely from path
-# img_qt_create_placeholder()-> Create placeholder pixmap
 # img_qt_apply_round_path()  -> Apply rounded rect path
 #
 # ── Cropping Utils ─────────────────────────────────────────
@@ -49,7 +48,7 @@ Image processing utilities for the application.
 
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 import hashlib
@@ -88,14 +87,14 @@ __all__ = [
     'img_ai_generate_filename', 'img_ai_slugify', 'img_ai_get_hash',
 
     # Qt Integration Utils
-    'img_qt_to_pixmap', 'img_qt_load_safe', 'img_qt_create_placeholder', 'img_qt_apply_round_path',
+    'img_qt_to_pixmap', 'img_qt_load_safe', 'img_qt_apply_round_path',
 
     # Cropping Utils
     'img_calc_scale_factor', 'img_crop_from_scaled_coords', 'img_intersect_bounds',
 ]
 
 
-# ── Types ────────────────────────────────────────────────────────────────────────────────────
+# ── Types ───────────────────────────────────────────────────────────────────────────────────────────────────
 class ImageFormat:
     """Supported image formats."""
     PNG = "PNG"
@@ -116,14 +115,14 @@ class ImageInfo(NamedTuple):
     size_bytes: int
 
 
-# ── Constants ────────────────────────────────────────────────────────────────────────────────
+# ── Constants ───────────────────────────────────────────────────────────────────────────────────────────────
 _SLUG_RE = re.compile(r"[^a-z0-9]+")
 _IMAGE_CACHE: Dict[str, QPixmap] = {}
 _TEMP_DIR = Path(tempfile.gettempdir()) / "app_image_utils"
 _TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
 
-# ── Cache Utils ──────────────────────────────────────────────────────────────────────────────
+# ── Cache Utils ─────────────────────────────────────────────────────────────────────────────────────────────
 def img_cache_get_key(path: Union[str, Path], size: Optional[Union[int, QSize]] = None,
                      radii: Optional[Tuple[int, int, int, int]] = None) -> str:
     """Generate cache key for image with processing parameters.
@@ -188,7 +187,8 @@ def img_cache_clear(pattern: Optional[str] = None) -> int:
         del _IMAGE_CACHE[key]
     return len(keys_to_remove)
 
-# ── Processor Utils ──────────────────────────────────────────────────────────────────────────
+
+# ── Processor Utils ─────────────────────────────────────────────────────────────────────────────────────────
 def img_resize_to_size(pixmap: QPixmap, size: Union[int, QSize],
                       keep_aspect: bool = True) -> QPixmap:
     """Resize image to specific size.
@@ -331,7 +331,7 @@ def img_apply_circular_mask(pixmap: QPixmap, diameter: Optional[int] = None) -> 
     return circular
 
 
-# ── Validation Utils ─────────────────────────────────────────────────────────────────────────
+# ── Validation Utils ────────────────────────────────────────────────────────────────────────────────────────
 def img_validate_path(path: Union[str, Path]) -> bool:
     """Validate that image path exists and is readable.
 
@@ -389,7 +389,7 @@ def img_get_info(path: Union[str, Path]) -> Optional[ImageInfo]:
     )
 
 
-# ── Path & Resource Utils ────────────────────────────────────────────────────────────────────
+# ── Path & Resource Utils ───────────────────────────────────────────────────────────────────────────────────
 def img_resolve_path(relative_path: str) -> Path:
     """Resolve relative image path to absolute app path.
 
@@ -447,7 +447,7 @@ def img_create_temp_path(prefix: str = "temp_image", suffix: str = ".png") -> Pa
     return _TEMP_DIR / filename
 
 
-# ── Format & Conversion Utils ────────────────────────────────────────────────────────────────
+# ── Format & Conversion Utils ───────────────────────────────────────────────────────────────────────────────
 def img_convert_format(pixmap: QPixmap, target_format: str,
                       quality: int = -1) -> bytes:
     """Convert pixmap to specific format bytes.
@@ -498,7 +498,7 @@ def img_save_with_quality(pixmap: QPixmap, path: Union[str, Path],
     return pixmap.save(str(path_obj), format_str, quality)
 
 
-# ── AI Integration Utils ─────────────────────────────────────────────────────────────────────
+# ── AI Integration Utils ────────────────────────────────────────────────────────────────────────────────────
 def img_ai_generate_filename(base_name: str, image_type: str = "standard",
                            size: str = "1024x1024") -> str:
     """Generate filename for AI-generated image.
@@ -541,7 +541,7 @@ def img_ai_get_hash(content: str, length: int = 8) -> str:
     return hashlib.sha1(content.encode("utf-8")).hexdigest()[:length]
 
 
-# ── Qt Integration Utils ─────────────────────────────────────────────────────────────────────
+# ── Qt Integration Utils ────────────────────────────────────────────────────────────────────────────────────
 def img_qt_to_pixmap(source: Union[str, Path, QPixmap]) -> QPixmap:
     """Convert various sources to QPixmap safely.
 
@@ -569,31 +569,6 @@ def img_qt_load_safe(path: Union[str, Path]) -> QPixmap:
         QPixmap (null if failed to load)
     """
     return QPixmap(str(path))  # Returns null pixmap if loading fails
-
-def img_qt_create_placeholder(size: QSize, color: QColor = None,
-                            text: str = "") -> QPixmap:
-    """Create placeholder pixmap with optional text.
-
-    Args:
-        size: Pixmap size
-        color: Background color
-        text: Optional text to draw
-
-    Returns:
-        Placeholder QPixmap
-    """
-    placeholder_color = color if color is not None else Qt.lightGray
-
-    pixmap = QPixmap(size)
-    pixmap.fill(placeholder_color)
-
-    if text:
-        painter = QPainter(pixmap)
-        painter.setPen(Qt.black)
-        painter.drawText(pixmap.rect(), Qt.AlignCenter, text)
-        painter.end()
-
-    return pixmap
 
 def img_qt_apply_round_path(width: int, height: int,
                            radii: Tuple[int, int, int, int]) -> QPainterPath:
@@ -634,7 +609,7 @@ def img_qt_apply_round_path(width: int, height: int,
     return path
 
 
-# ── Cropping Utils ───────────────────────────────────────────────────────────────────────────────
+# ── Cropping Utils ──────────────────────────────────────────────────────────────────────────────────────────
 def img_calc_scale_factor(original_pixmap: QPixmap, scaled_pixmap: QPixmap) -> float:
     """Calculate scale factor between original and scaled pixmap.
 

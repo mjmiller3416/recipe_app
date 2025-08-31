@@ -7,12 +7,12 @@
     "editor.formatOnSave": false, // Disable format on save
     "editor.codeActionsOnSave": {}, // Disable code actions on save
     "editor.tabSize": 4, // Set tab size to 4 spaces
-    "editor.rulers": [95], // Set a ruler at 80 (PEP8)
+    "editor.rulers": [110], // Set a ruler at 100
     "editor.minimap.enabled": false, // Disable minimap
     "editor.stickyScroll.enabled": false, // Disable sticky scroll
     //"editor.scrollbar.vertical": "hidden", // Hide vertical scrollbar
     //"editor.scrollbar.horizontal": "hidden", // Hide horizontal scrollbar
-    "editor.fontSize": 14, // Set the font size to 16
+    "editor.fontSize": 14, // Set the font size to 14
     "editor.fontFamily": "JetBrains Mono", // Set the font family to JetBrains Mono
     "editor.fontLigatures": true, // Enable font ligatures
     "editor.hover.delay": 1000, // Set hover delay to 1000ms
@@ -189,7 +189,7 @@
       "inputs": "Client",
       "todo": "Tasks",
       "style_manager": "Plugin",
-      "data_files": "Other",
+      "_data_files": "Other",
       "forms": "Stack",
       "dev_tools": "Tools",
       "recipes": "Packages",
@@ -202,6 +202,8 @@
       "appearance": "Theme",
       "effects": "Terraform",
       "ai_gen": "images",
+      "temp_crops": "Images",
+      "user_profile": "Images",
 
       //** Subfolders **//
       "app_helpers": "App",

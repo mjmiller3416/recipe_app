@@ -25,7 +25,7 @@ Safe type conversion utilities for robust data processing.
 
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 import re
@@ -46,7 +46,7 @@ __all__ = [
 ]
 
 
-# ── Safe Type Conversions ────────────────────────────────────────────────────────────────────
+# ── Safe Type Conversions ───────────────────────────────────────────────────────────────────────────────────
 def safe_float_conversion(value: Any, default: float = 0.0) -> float:
     """
     Convert value to float safely with fallback.
@@ -94,7 +94,6 @@ def safe_float_conversion(value: Any, default: float = 0.0) -> float:
     except (ValueError, TypeError):
         return default
 
-
 def safe_int_conversion(value: Any, default: int = 0) -> int:
     """
     Convert value to int safely with fallback.
@@ -138,7 +137,6 @@ def safe_int_conversion(value: Any, default: int = 0) -> int:
         return int(float(value))
     except (ValueError, TypeError):
         return default
-
 
 def safe_bool_conversion(value: Any, default: bool = False) -> bool:
     """
@@ -185,7 +183,7 @@ def safe_bool_conversion(value: Any, default: bool = False) -> bool:
         return default
 
 
-# ── Numeric Range Parsing ────────────────────────────────────────────────────────────────────
+# ── Numeric Range Parsing ───────────────────────────────────────────────────────────────────────────────────
 def extract_numeric_range(text: str) -> tuple[Optional[int], Optional[int]]:
     """
     Extract numeric range from text string.
@@ -228,7 +226,6 @@ def extract_numeric_range(text: str) -> tuple[Optional[int], Optional[int]]:
 
     return (None, None)
 
-
 def parse_servings_range(servings_text: str) -> int:
     """
     Parse servings field, handling ranges by taking the minimum value.
@@ -252,7 +249,7 @@ def parse_servings_range(servings_text: str) -> int:
     return min_val if min_val is not None else 0
 
 
-# ── Data Structure Conversions ───────────────────────────────────────────────────────────────
+# ── Data Structure Conversions ──────────────────────────────────────────────────────────────────────────────
 class SimpleObject:
     """Simple object for dict-to-object conversion."""
 
@@ -296,7 +293,6 @@ def dict_to_obj(data: Dict[str, Any]) -> SimpleObject:
 
     return SimpleObject(**converted)
 
-
 def flatten_dict(data: Dict[str, Any], separator: str = '_') -> Dict[str, Any]:
     """
     Flatten nested dictionary structure.
@@ -325,7 +321,6 @@ def flatten_dict(data: Dict[str, Any], separator: str = '_') -> Dict[str, Any]:
         return dict(items)
 
     return _flatten(data)
-
 
 def normalize_dict_keys(data: Dict[str, Any], case_style: str = 'snake') -> Dict[str, Any]:
     """
@@ -375,7 +370,7 @@ def normalize_dict_keys(data: Dict[str, Any], case_style: str = 'snake') -> Dict
     return normalized
 
 
-# ── Collection Conversions ───────────────────────────────────────────────────────────────────
+# ── Collection Conversions ──────────────────────────────────────────────────────────────────────────────────
 def ensure_list(value: Any) -> List[Any]:
     """
     Ensure value is a list.
@@ -410,7 +405,6 @@ def ensure_list(value: Any) -> List[Any]:
     except TypeError:
         return [value]
 
-
 def split_and_clean(text: str, delimiter: str = ',', strip_empty: bool = True) -> List[str]:
     """
     Split string and clean resulting elements.
@@ -438,7 +432,6 @@ def split_and_clean(text: str, delimiter: str = ',', strip_empty: bool = True) -
         cleaned = [part for part in cleaned if part]
 
     return cleaned
-
 
 def deduplicate_preserve_order(items: List[Any]) -> List[Any]:
     """

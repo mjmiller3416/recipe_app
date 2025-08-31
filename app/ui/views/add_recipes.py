@@ -24,9 +24,9 @@ from app.ui.components.layout.card import ActionCard, Card
 from app.ui.components.images import RecipeImage
 from app.ui.components.widgets import ComboBox, ToolButton
 from app.ui.components.widgets.button import Button
-from app.ui.utils import clear_error_styles, dynamic_validation
-from app.ui.utils.card_utils import add_two_column
-from app.ui.utils.ui_helpers import set_fixed_height_for_layout_widgets
+from app.ui.helpers import clear_error_styles, dynamic_validation
+from app.ui.helpers.card_utils import add_two_column
+from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
 from _dev_tools import DebugLogger
 
 # ── Constants ───────────────────────────────────────────────────────────────────
@@ -657,7 +657,6 @@ class AddRecipes(QWidget):
             QWidget.setTabOrder(w.cb_ingredient_category, w.btn_delete)
             # then to directions
             QWidget.setTabOrder(w.btn_delete, self.te_directions)
-
 
     def _update_image_path(self, image_path: str):
         """Update the selected image path when an image is selected."""

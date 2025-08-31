@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QLabel, QSizePolicy
 from app.core.utils.image_utils import (
     img_calc_scale_factor, img_crop_from_scaled_coords, img_scale_to_fit
 )
-from app.ui.utils.dialog_helpers import MIN_CROP_DIM_ORIGINAL
+from app.ui.helpers.dialog_helpers import MIN_CROP_DIM_ORIGINAL
 
 
 # ── Constants ────────────────────────────────────────────────────────────────────────────────

@@ -48,7 +48,7 @@ __all__ = [
 ]
 
 
-# ── Error Types ──────────────────────────────────────────────────────────────────────────
+# ── Error Types ──────────────────────────────────────────────────────────────────────────────
 class ServiceError(Exception):
     """Base exception for service layer errors."""
 
@@ -57,7 +57,6 @@ class ServiceError(Exception):
         self.original_error = original_error
         self.context = context or {}
 
-
 class RepositoryError(Exception):
     """Base exception for repository layer errors."""
 
@@ -65,7 +64,6 @@ class RepositoryError(Exception):
         super().__init__(message)
         self.original_error = original_error
         self.context = context or {}
-
 
 class RetryableError(Exception):
     """Exception that indicates the operation should be retried."""
@@ -118,7 +116,6 @@ def log_and_handle_exception(
 
     return fallback_value
 
-
 def safe_execute_with_fallback(
     operation: Callable[..., Any],
     fallback: Any,
@@ -158,7 +155,6 @@ def safe_execute_with_fallback(
             {"args": args, "kwargs": kwargs},
             fallback
         )
-
 
 def create_error_context(
     operation: str,
@@ -212,7 +208,6 @@ def wrap_service_error(
     message = f"Service operation '{operation}' failed: {str(original_error)}"
     return ServiceError(message, original_error, context)
 
-
 def wrap_repository_error(
     operation: str,
     original_error: Exception,
@@ -237,7 +232,6 @@ def wrap_repository_error(
     """
     message = f"Repository operation '{operation}' failed: {str(original_error)}"
     return RepositoryError(message, original_error, context)
-
 
 def format_exception_details(
     exception: Exception,
@@ -338,7 +332,6 @@ def retry_on_failure(
         return wrapper
     return decorator
 
-
 def is_retryable_error(exception: Exception) -> bool:
     """
     Determine if an error should be retried.
@@ -409,7 +402,6 @@ def graceful_degradation(fallback_value: Any = None, logger_func: Optional[Calla
                 pass
 
         return fallback_value
-
 
 def error_boundary(
     fallback: Any = None,

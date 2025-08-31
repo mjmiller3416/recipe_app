@@ -15,7 +15,7 @@ Formatting utilities for recipe display including quantity formatting and unit a
 
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from fractions import Fraction
@@ -33,7 +33,7 @@ __all__ = [
 ]
 
 
-# ── Quantity Formatting ──────────────────────────────────────────────────────────────────────
+# ── Quantity Formatting ─────────────────────────────────────────────────────────────────────────────────────
 def format_quantity(decimal_value: float) -> str:
     """
     Convert decimal quantities to human-readable fractions or whole numbers.
@@ -81,7 +81,7 @@ def format_quantity(decimal_value: float) -> str:
         return f"{decimal_value:.2f}".rstrip('0').rstrip('.')
 
 
-# ── Unit Abbreviations ───────────────────────────────────────────────────────────────────────
+# ── Unit Abbreviations ──────────────────────────────────────────────────────────────────────────────────────
 UNIT_ABBREVIATIONS: Dict[str, str] = {
     # Volume measurements
     "tablespoons": "Tbs",
@@ -145,7 +145,6 @@ UNIT_ABBREVIATIONS: Dict[str, str] = {
     "jar": "jar",
 }
 
-
 def abbreviate_unit(unit: str) -> str:
     """
     Convert unit names to their abbreviated forms for display.
@@ -170,7 +169,7 @@ def abbreviate_unit(unit: str) -> str:
     return UNIT_ABBREVIATIONS.get(unit_lower, unit)
 
 
-# ── Combined Formatting ──────────────────────────────────────────────────────────────────────
+# ── Combined Formatting ─────────────────────────────────────────────────────────────────────────────────────
 def format_quantity_and_unit(quantity: float, unit: str) -> tuple[str, str]:
     """
     Format both quantity and unit for consistent display.
