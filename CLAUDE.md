@@ -124,18 +124,68 @@ If a command is not listed here, pause and request it to be added.
 Use placeholders exactly as defined (no hardcoded colors).
 
 ---
+## 5) Repository Etiquette & Branch Strategy (authoritative)
 
-## 5) Repository Etiquette
-- **Branches**
-  - `feature/<ticket-or-topic>-short-description`
-  - `bugfix/<ticket-or-topic>-short-description`
-  - `hotfix/<ticket-or-topic>-short-description`
-- **Commits**
-  - Imperative, present tense: “Add RecipeDialog”, “Fix seed option”
-  - ≤72-char subject; details in body
-- **Merging**
-  - Always via PR
-  - **Squash** for small changes; **merge** for feature branches with useful history
+### 5.1 Branch types & names
+
+- `feature/<topic-or-ticket>-short-description` — new functionality
+- `bugfix/<issue-or-ticket>-short-description` — fixes that are not production emergencies
+- `hotfix/<issue>-short-description` — production-breaking issues only
+- `refactor/<area>-short-description` — non-behavioral code reorganization
+- `chore/<task>-short-description` — tooling, config, CI, docs
+- `experiment/<spike>-short-description` — throwaway spikes (may never merge)
+
+### 5.2 Branch lifecycle rules
+
+- No direct commits to `main`
+- Keep feature branches up to date with `main` (fast-forward or rebase; be consistent within the branch)
+- Open PRs early; prefer smaller, focused diffs
+- Delete branches after merge to keep the repo tidy
+
+### 5.3 Decision logic (Claude MUST follow before any change)
+
+- Read current branch:
+
+```bash
+git rev-parse --abbrev-ref HEAD
+```
+
+- Derive task scope from the Scope Summary (see §8)
+- Decide where to commit:
+  - If the task belongs to the same topic as the current branch and stays within the change budget (§9) → use the current branch
+  - If the task is logically separate (different feature/bug/chore), or it exceeds the budget, or it touches guarded paths requiring approval (§9) → create a new branch
+  - If the task is a prod emergency → create a `hotfix/` branch off the latest `main`
+- If a branch change is needed, propose and run exact commands (see 5.4).
+
+### 5.4 Commands Claude should propose when switching/creating branches
+
+Always show details:
+
+```bash
+# Ensure clean state
+git status
+
+# Update main
+git fetch origin
+git checkout main
+git pull --ff-only origin main
+
+# Create a new branch from main
+git checkout -b feature/<topic>-<short-description>
+
+# OR, if continuing on current feature branch is valid
+git checkout feature/<topic>-<short-description>
+git pull --ff-only origin feature/<topic>-<short-description>
+
+# Link to issue (if applicable)
+# (document issue ID in PR description)
+```
+
+### 5.5 Examples
+
+- You’re on `feature/meal-planner-tabs` and asked to fix an unrelated seeding bug → create `bugfix/seed-defaults-off-by-one`
+- You’re on `feature/iconkit-refresh` and asked to tweak an icon color var (same topic, tiny diff) → keep current branch
+- Schema change found mid-task (guarded) → pause, propose `feature/recipe-schema-add-image-attrib` and request approval
 
 ---
 
