@@ -42,7 +42,7 @@ def seed_db(
     recipes: int = typer.Option(25, help="Number of mock recipes to create"),
     realistic: bool = typer.Option(True, help="Use realistic fake data (requires faker)"),
     clear_first: bool = typer.Option(False, "--clear", help="Clear existing recipes first"),
-    images: bool = typer.Option(False, "--images", help="Add random image paths from recipe_images directory")
+    images: bool = typer.Option(True, "--images/--no-images", help="Add random image paths from recipe_images directory (default: True)")
 ):
     """
     Populate database with mock recipe data for development and testing.
@@ -75,7 +75,7 @@ def seed_db(
     try:
         seed_recipes(count=recipes, realistic=realistic, use_images=images)
         new_count = get_recipe_count()
-        typer.echo(f"✅ Database now contains {new_count} recipes")
+        typer.echo(f"Database now contains {new_count} recipes")
     except Exception as e:
         typer.echo(f"Error seeding database: {e}", err=True)
         raise typer.Exit(code=1)
@@ -95,23 +95,65 @@ def reset_db(
         typer.echo(f"Error importing mock data module: {e}", err=True)
         raise typer.Exit(code=1)
 
-    current_count = get_recipe_count()
-
-    if current_count == 0:
-        typer.echo("Database is already empty.")
-        if not seed_after:
-            return
+    # Check if database has any data in any table
+    try:
+        from app.core.database.db import DatabaseSession
+        from app.core.models.recipe import Recipe
+        from app.core.models.ingredient import Ingredient
+        from app.core.models.recipe_ingredient import RecipeIngredient
+        from app.core.models.meal_selection import MealSelection
+        from app.core.models.recipe_history import RecipeHistory
+        from app.core.models.saved_meal_state import SavedMealState
+        from app.core.models.shopping_item import ShoppingItem
+        from app.core.models.shopping_state import ShoppingState
+        
+        with DatabaseSession() as session:
+            total_count = (
+                session.query(Recipe).count() +
+                session.query(Ingredient).count() +
+                session.query(RecipeIngredient).count() +
+                session.query(MealSelection).count() +
+                session.query(RecipeHistory).count() +
+                session.query(SavedMealState).count() +
+                session.query(ShoppingItem).count() +
+                session.query(ShoppingState).count()
+            )
+            current_count = session.query(Recipe).count()
+            
+        if total_count == 0:
+            typer.echo("Database is already empty.")
+            if not seed_after:
+                return
+    except Exception as e:
+        typer.echo(f"Error checking database: {e}", err=True)
+        raise typer.Exit(code=1)
 
     # Confirm destructive operation
-    if not confirm and current_count > 0:
-        proceed = typer.confirm(f"This will delete ALL {current_count} recipes. Continue?")
+    if not confirm and total_count > 0:
+        proceed = typer.confirm(f"This will delete ALL database data ({current_count} recipes, {total_count} total records). Continue?")
         if not proceed:
             typer.echo("Database reset cancelled.")
             return
 
-    # Clear the database
-    if current_count > 0:
-        clear_all_recipes()
+    # Clear the database - all tables to prevent orphaned relationships
+    if total_count > 0:
+        try:
+            with DatabaseSession() as session:
+                # Delete in order to respect foreign key constraints
+                session.query(ShoppingItem).delete()
+                session.query(ShoppingState).delete()
+                session.query(SavedMealState).delete()
+                session.query(MealSelection).delete()
+                session.query(RecipeHistory).delete()
+                session.query(RecipeIngredient).delete()
+                session.query(Recipe).delete()
+                session.query(Ingredient).delete()
+                session.commit()
+                
+            typer.echo(f"Cleared all database tables")
+        except Exception as e:
+            typer.echo(f"Error clearing database: {e}", err=True)
+            raise typer.Exit(code=1)
 
     # Optionally seed with sample data
     if seed_after:
@@ -119,9 +161,9 @@ def reset_db(
         typer.echo(f"Adding sample data{images_msg}...")
         seed_recipes(count=10, realistic=True, use_images=images)
         new_count = get_recipe_count()
-        typer.echo(f"✅ Database reset and seeded with {new_count} sample recipes")
+        typer.echo(f"Database reset and seeded with {new_count} sample recipes")
     else:
-        typer.echo("✅ Database reset completed - all recipes removed")
+        typer.echo("Database reset completed - all recipes removed")
 
 @db_app.command("status")
 def db_status():
@@ -131,7 +173,7 @@ def db_status():
     try:
         from _scripts.mock_data import get_recipe_count
         count = get_recipe_count()
-        typer.echo(f"📊 Database contains {count} recipes")
+        typer.echo(f"Database contains {count} recipes")
     except ImportError as e:
         typer.echo(f"Error checking database: {e}", err=True)
         raise typer.Exit(code=1)

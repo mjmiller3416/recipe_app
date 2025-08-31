@@ -5,19 +5,15 @@ A widget for uploading and displaying a circular user avatar
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 import shutil
-import tempfile
 import uuid
-from pathlib import Path
 
 from PySide6.QtCore import QEvent, QSize, Qt, Slot
-from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QFileDialog, QVBoxLayout, QWidget
 
 from app.config import AppPaths
 from app.core.utils.image_utils import img_create_temp_path, img_validate_path
 from app.style import Theme
 from app.style.animation.animator import Animator
-from app.style.icon import AppIcon, Icon
 from app.style.icon.config import Name, Type
 from app.style.theme.config import Qss
 from app.ui.components.widgets import Button
@@ -26,7 +22,6 @@ from _data_files.user_settings import UserSettings
 
 from ..widgets.image import CircularImage
 
-# Temp image handling now uses image_utils
 
 # ── Avatar Loader ────────────────────────────────────────────────────────────────────────────
 class AvatarLoader(QWidget):

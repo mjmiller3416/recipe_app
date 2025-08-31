@@ -1,20 +1,19 @@
-"""app/ui/components/search_bar.py
+"""app/ui/components/inputs/search_bar.py
 
 This module defines a custom search widget that includes a search icon, a text input field,
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QGridLayout, QLineEdit, QSizePolicy
 
 from app.style import Theme
-from app.style.icon import AppIcon, Icon, Name, Type
+from app.style.icon import AppIcon, Name, Type
 from app.style.theme.config import Qss
 from app.ui.components.widgets import ToolButton
 
-# ── Constants ───────────────────────────────────────────────────────────────────
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── Search Bar ──────────────────────────────────────────────────────────────────────────────────────────────
 class SearchBar(QFrame):
     """
     A custom search bar widget with a search icon, text input, and clear button.
@@ -24,7 +23,6 @@ class SearchBar(QFrame):
         - recipe_selected(str): placeholder for future recipe selection support.
     """
 
-    # ── Signals ─────────────────────────────────────────────────────────────────────
     recipe_selected = Signal(str)
     search_triggered = Signal(str)
 

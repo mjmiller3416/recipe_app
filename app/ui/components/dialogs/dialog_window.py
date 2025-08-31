@@ -5,7 +5,7 @@ A base QDialog with a frameless window and a custom title bar.
 Provides close button and dragging functionality.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QWidget
 
@@ -13,10 +13,12 @@ from app.config import APPLICATION_WINDOW
 from app.ui.components.navigation import TitleBar
 from app.ui.helpers.ui_helpers import center_on_screen
 
-# ── Constants ───────────────────────────────────────────────────────────────────────────
+
+# ── Constants ───────────────────────────────────────────────────────────────────────────────────────────────
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]
 
-# ── Application Window ──────────────────────────────────────────────────────────────────
+
+# ── Application Window ──────────────────────────────────────────────────────────────────────────────────────
 class DialogWindow(QDialog):
     """Base dialog class with frameless window and custom title bar.
 

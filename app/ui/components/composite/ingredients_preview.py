@@ -3,16 +3,16 @@
 A simple ingredients preview component with a scrollable 2-column layout.
 """
 
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from typing import Iterable
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
-    QFrame, QGridLayout, QHBoxLayout, QLabel, QVBoxLayout,
-    QWidget, QScrollArea)
+from PySide6.QtWidgets import QFrame, QGridLayout, QHBoxLayout, QLabel, QVBoxLayout, QWidget, QScrollArea
 
 from app.style import Theme, Qss
 
 
+# ── Ingredients Preview ─────────────────────────────────────────────────────────────────────────────────────
 class IngredientsPreview(QWidget):
     """Simple scrollable ingredients preview with 2-column layout."""
 

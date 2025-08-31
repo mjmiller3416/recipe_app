@@ -6,7 +6,6 @@ Used in AddRecipes view for default recipe images.
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from typing import Optional
-from pathlib import Path
 
 from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtWidgets import (
@@ -15,7 +14,7 @@ from PySide6.QtWidgets import (
 
 from app.core.utils.image_utils import img_validate_path
 from app.style import Qss, Theme, Type
-from app.style.icon.config import Icon, Name, Path as IconPath
+from app.style.icon.config import Icon, Name
 from app.style.icon.icon import AppIcon
 from app.ui.components.layout.card import BaseCard
 from app.ui.components.widgets import Button, RoundedImage

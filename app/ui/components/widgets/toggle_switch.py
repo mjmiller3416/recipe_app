@@ -3,9 +3,8 @@
 Custom toggle switch widget with smooth animations and Material Design styling.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import (Property, QEasingCurve, QPropertyAnimation, Qt,
-                            Signal)
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
+from PySide6.QtCore import Property, QEasingCurve, QPropertyAnimation, Qt, Signal
 from PySide6.QtGui import QColor, QPainter
 from PySide6.QtWidgets import QSizePolicy, QWidget
 
@@ -13,7 +12,7 @@ from app.style import Theme
 from app.style.theme.config import Qss
 
 
-# ── Class Definition ────────────────────────────────────────────────────────────
+# ── Toggle Switch ───────────────────────────────────────────────────────────────────────────────────────────
 class ToggleSwitch(QWidget):
     """
     A custom toggle switch widget with smooth animations.
@@ -22,7 +21,6 @@ class ToggleSwitch(QWidget):
         toggled(bool): When the switch state changes (True=on, False=off)
     """
 
-    # ── Signals ─────────────────────────────────────────────────────────────────
     toggled = Signal(bool)
 
     def __init__(self, parent=None, checked=False):

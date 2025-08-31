@@ -15,6 +15,13 @@ except ImportError:
     print("Warning: faker not installed. Install with: pip install faker")
 
 from app.core.models.recipe import Recipe
+from app.core.models.ingredient import Ingredient
+from app.core.models.recipe_ingredient import RecipeIngredient
+from app.core.models.meal_selection import MealSelection
+from app.core.models.recipe_history import RecipeHistory
+from app.core.models.saved_meal_state import SavedMealState
+from app.core.models.shopping_item import ShoppingItem
+from app.core.models.shopping_state import ShoppingState
 from app.core.database.db import DatabaseSession
 from app.config.paths.app_paths import AppPaths
 
@@ -79,6 +86,35 @@ SAMPLE_NOTES = [
     None  # Some recipes won't have notes
 ]
 
+# Ingredient data organized by category
+SAMPLE_INGREDIENTS = {
+    "Proteins": [
+        "chicken breast", "ground beef", "salmon", "pork chops", "turkey", "eggs", "tofu", "black beans", 
+        "chickpeas", "lentils", "shrimp", "cod", "tuna", "bacon", "ham"
+    ],
+    "Vegetables": [
+        "onions", "garlic", "carrots", "celery", "bell peppers", "tomatoes", "spinach", "broccoli", 
+        "mushrooms", "zucchini", "potatoes", "sweet potatoes", "corn", "peas", "lettuce", "cucumber", 
+        "avocado", "cauliflower", "asparagus", "green beans"
+    ],
+    "Dairy": [
+        "butter", "olive oil", "cheese", "milk", "heavy cream", "sour cream", "yogurt", "cream cheese", 
+        "parmesan cheese", "mozzarella cheese", "cheddar cheese"
+    ],
+    "Pantry": [
+        "rice", "pasta", "flour", "sugar", "salt", "black pepper", "paprika", "cumin", "oregano", 
+        "basil", "thyme", "garlic powder", "onion powder", "bay leaves", "cinnamon", "vanilla extract", 
+        "soy sauce", "olive oil", "vegetable oil", "vinegar", "lemon juice", "lime juice", "honey", 
+        "maple syrup", "tomato sauce", "chicken broth", "beef broth", "vegetable broth"
+    ],
+    "Grains": [
+        "quinoa", "brown rice", "white rice", "oats", "barley", "couscous", "bulgur", "bread", 
+        "tortillas", "crackers"
+    ]
+}
+
+INGREDIENT_UNITS = ["cups", "tbsp", "tsp", "lbs", "oz", "cloves", "pieces", "cans", "packages", "bunches", "whole"]
+
 
 # ── Mock Data Generators ─────────────────────────────────────────────────────
 
@@ -93,7 +129,7 @@ def create_realistic_recipe() -> Dict[str, Any]:
             fake.sentence(nb_words=8) for _ in range(random.randint(4, 8))
         ])
         notes = fake.text(max_nb_chars=150) if random.choice([True, False, False]) else None
-        created_at = fake.date_time_between(start_date='-6m', end_date='now')
+        created_at = fake.date_time_between(start_date='-180d', end_date='now')
     else:
         # Fallback to predefined data
         directions_text = "\n".join(random.choice(SAMPLE_DIRECTIONS))
@@ -124,7 +160,7 @@ def create_simple_recipe(index: int) -> Dict[str, Any]:
         'servings': random.randint(2, 6),
         'directions': "\n".join(random.choice(SAMPLE_DIRECTIONS)),
         'notes': random.choice(SAMPLE_NOTES),
-        'created_at': datetime.utcnow(),
+        'created_at': datetime.utcnow() - timedelta(days=random.randint(0, 180)),
         'is_favorite': False
     }
 
@@ -156,7 +192,7 @@ def get_available_recipe_images() -> tuple[list[str], list[str]]:
 
 def add_random_images_to_recipe(recipe_data: dict, reference_images: list[str], banner_images: list[str], use_images: bool = True) -> dict:
     """
-    Add random image paths to recipe data.
+    Add random image paths to recipe data. 80% of recipes get images for UI testing.
 
     Args:
         recipe_data: Base recipe data dictionary
@@ -170,22 +206,84 @@ def add_random_images_to_recipe(recipe_data: dict, reference_images: list[str], 
     if not use_images or (not reference_images and not banner_images):
         return recipe_data
 
-    # Add reference image (60% chance)
-    if reference_images and random.random() < 0.6:
-        recipe_data['reference_image_path'] = random.choice(reference_images)
+    # 80% of recipes should get at least one image (20% remain without for placeholder testing)
+    if random.random() < 0.8:
+        # Randomly assign reference image (70% chance if recipe gets images)
+        if reference_images and random.random() < 0.7:
+            recipe_data['reference_image_path'] = random.choice(reference_images)
 
-    # Add banner image (40% chance)
-    if banner_images and random.random() < 0.4:
-        recipe_data['banner_image_path'] = random.choice(banner_images)
+        # Randomly assign banner image (30% chance if recipe gets images)
+        if banner_images and random.random() < 0.3:
+            recipe_data['banner_image_path'] = random.choice(banner_images)
 
     return recipe_data
 
 
+# ── Ingredient Generation Functions ──────────────────────────────────────────
+
+def get_or_create_ingredient(session, name: str, category: str) -> Ingredient:
+    """Get existing ingredient or create new one."""
+    ingredient = session.query(Ingredient).filter_by(
+        ingredient_name=name, 
+        ingredient_category=category
+    ).first()
+    
+    if not ingredient:
+        ingredient = Ingredient(
+            ingredient_name=name,
+            ingredient_category=category
+        )
+        session.add(ingredient)
+        session.flush()  # Get the ID
+    
+    return ingredient
+
+def create_random_ingredients(session, recipe_id: int, ingredient_count: int = None) -> list[RecipeIngredient]:
+    """Create random ingredients for a recipe."""
+    if ingredient_count is None:
+        ingredient_count = random.randint(8, 20)
+    
+    recipe_ingredients = []
+    used_ingredient_ids = set()  # Avoid duplicates in same recipe by tracking IDs
+    attempts = 0
+    max_attempts = ingredient_count * 3  # Allow some retries to find unique ingredients
+    
+    while len(recipe_ingredients) < ingredient_count and attempts < max_attempts:
+        attempts += 1
+        
+        # Select random category and ingredient
+        category = random.choice(list(SAMPLE_INGREDIENTS.keys()))
+        ingredient_name = random.choice(SAMPLE_INGREDIENTS[category])
+        
+        # Get or create ingredient
+        ingredient = get_or_create_ingredient(session, ingredient_name, category)
+        
+        # Skip if we already have this ingredient for this recipe
+        if ingredient.id in used_ingredient_ids:
+            continue
+        
+        used_ingredient_ids.add(ingredient.id)
+        
+        # Create recipe-ingredient link with random quantity
+        quantity = round(random.uniform(0.25, 4.0), 2)
+        unit = random.choice(INGREDIENT_UNITS)
+        
+        recipe_ingredient = RecipeIngredient(
+            recipe_id=recipe_id,
+            ingredient_id=ingredient.id,
+            quantity=quantity,
+            unit=unit
+        )
+        recipe_ingredients.append(recipe_ingredient)
+    
+    return recipe_ingredients
+
+
 # ── Database Seeding Functions ───────────────────────────────────────────────
 
-def seed_recipes(count: int = 25, realistic: bool = True, use_images: bool = False) -> None:
+def seed_recipes(count: int = 25, realistic: bool = True, use_images: bool = True) -> None:
     """
-    Seed the database with mock recipe data.
+    Seed the database with mock recipe data including ingredients.
 
     Args:
         count: Number of recipes to create
@@ -202,41 +300,71 @@ def seed_recipes(count: int = 25, realistic: bool = True, use_images: bool = Fal
             print("No images found, proceeding without image paths")
             use_images = False
 
-    # Generate recipe data
-    if realistic and FAKER_AVAILABLE:
-        recipes_data = [create_realistic_recipe() for _ in range(count)]
-    else:
-        if realistic and not FAKER_AVAILABLE:
-            print("Faker not available, using simple mock data instead")
-        recipes_data = [create_simple_recipe(i) for i in range(count)]
-
-    # Add random images to recipes if requested
-    if use_images:
-        print(f"Adding random image paths to recipes...")
-        recipes_data = [
-            add_random_images_to_recipe(recipe, reference_images, banner_images, use_images)
-            for recipe in recipes_data
-        ]
-
-    # Insert into database using bulk insert for efficiency
     with DatabaseSession() as session:
-        session.bulk_insert_mappings(Recipe, recipes_data)
+        recipes_created = 0
+        total_ingredients_created = 0
+        
+        for i in range(count):
+            # Generate recipe data
+            if realistic and FAKER_AVAILABLE:
+                recipe_data = create_realistic_recipe()
+            else:
+                if realistic and not FAKER_AVAILABLE and i == 0:
+                    print("Faker not available, using simple mock data instead")
+                recipe_data = create_simple_recipe(i)
+
+            # Add random images if requested
+            if use_images:
+                recipe_data = add_random_images_to_recipe(recipe_data, reference_images, banner_images, use_images)
+
+            # Create Recipe object
+            recipe = Recipe(**recipe_data)
+            session.add(recipe)
+            session.flush()  # Get the recipe ID
+            
+            # Create ingredients for this recipe
+            recipe_ingredients = create_random_ingredients(session, recipe.id)
+            session.add_all(recipe_ingredients)
+            
+            recipes_created += 1
+            total_ingredients_created += len(recipe_ingredients)
+            
+            # Commit in batches for better performance
+            if i % 10 == 9:
+                session.commit()
+        
+        # Final commit
+        session.commit()
 
     images_msg = " with random image paths" if use_images else ""
-    print(f"✅ Successfully inserted {count} mock recipes{images_msg}")
+    ingredients_msg = f" and {total_ingredients_created} ingredient assignments"
+    print(f"Successfully inserted {recipes_created} mock recipes{images_msg}{ingredients_msg}")
 
 def clear_all_recipes() -> int:
     """
-    Clear all recipes from the database.
+    Clear ALL data from the database to prevent orphaned relationships.
 
     Returns:
         Number of recipes deleted
     """
     with DatabaseSession() as session:
-        deleted_count = session.query(Recipe).count()
+        # Count recipes before deletion for reporting
+        recipe_count = session.query(Recipe).count()
+        
+        # Delete in order to respect foreign key constraints
+        # Order matters - delete dependent tables first
+        session.query(ShoppingItem).delete()
+        session.query(ShoppingState).delete()
+        session.query(SavedMealState).delete()
+        session.query(MealSelection).delete()
+        session.query(RecipeHistory).delete()
+        session.query(RecipeIngredient).delete()  # This links recipes and ingredients
         session.query(Recipe).delete()
-        print(f"🗑️  Cleared {deleted_count} existing recipes")
-        return deleted_count
+        session.query(Ingredient).delete()  # Now safe to delete ingredients
+        
+        session.commit()
+        print(f"Cleared {recipe_count} existing recipes and all related data")
+        return recipe_count
 
 def get_recipe_count() -> int:
     """Get current number of recipes in database."""

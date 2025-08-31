@@ -4,6 +4,7 @@ A reusable component for displaying recipe tags (meal type, category, dietary pr
 in a horizontal row layout. Extracted from FullRecipe for use in multiple contexts.
 """
 
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtWidgets import QHBoxLayout, QWidget
 
 from app.core.models.recipe import Recipe
@@ -11,6 +12,7 @@ from app.style.icon import Icon
 from app.ui.components.widgets.recipe_tag import RecipeTag
 
 
+# ── Recipe Tags Row ─────────────────────────────────────────────────────────────────────────────────────────
 class RecipeTagsRow(QWidget):
     """A horizontal row of recipe tags showing meal type, category, and dietary preference."""
 

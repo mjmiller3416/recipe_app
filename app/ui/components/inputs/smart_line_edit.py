@@ -3,7 +3,7 @@
 Defines a SmartLineEdit with a proxy-filtered dropdown completer and custom submission.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from typing import Sequence
 
 from PySide6.QtCore import QEvent, QStringListModel, Qt, QTimer, Signal
@@ -17,7 +17,7 @@ from _dev_tools import DebugLogger
 FIXED_HEIGHT = 45
 
 
-# ── SmartLineEdit ────────────────────────────────────────────────────────────────────────────
+# ── Smart Line Edit ─────────────────────────────────────────────────────────────────────────────────────────
 class SmartLineEdit(QLineEdit):
     """Line edit with proxy-filtered completer and custom text handling."""
 

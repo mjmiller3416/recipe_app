@@ -15,16 +15,14 @@ Functions:
     create_recipe_card: Factory function for creating appropriate card size
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from enum import Enum
 from typing import Optional
 
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import (
-    QDialog, QFrame, QHBoxLayout, QLabel,
-    QStackedWidget, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import QDialog, QFrame, QHBoxLayout, QLabel, QStackedWidget, QVBoxLayout, QWidget
 
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
@@ -32,14 +30,13 @@ from app.style import Theme
 from app.style.icon import AppIcon, Name, Type
 from app.style.theme.config import Qss
 from app.ui.components.layout.card import BaseCard
-from app.ui.components.composite.recipe_info_card import RecipeInfoCard
 from app.ui.components.layout import Separator
 from app.ui.components.widgets import RoundedImage, ToolButton
 from app.ui.helpers.ui_helpers import make_overlay
 from _dev_tools.debug_logger import DebugLogger
 
 
-# ── Constants ────────────────────────────────────────────────────────────────────────────────
+# ── Constants ────────────────────────────────────────────────────────────────────────────────────────────────────
 LAYOUT_SIZE = {
     "small": QSize(300, 120),
     "medium": QSize(280, 420),
@@ -48,7 +45,7 @@ LAYOUT_SIZE = {
 ICON_COLOR = "#6ad7ca"
 
 
-# ── Enums ────────────────────────────────────────────────────────────────────────────────────
+# ── Enums ───────────────────────────────────────────────────────────────────────────────────────────────────
 class LayoutSize(Enum):
     """Enum to define the target layout size for the RecipeCard when displaying a recipe."""
     SMALL = "small"
@@ -56,7 +53,7 @@ class LayoutSize(Enum):
     LARGE = "large"
 
 
-# ── Base Recipe Card ─────────────────────────────────────────────────────────────────────────
+# ── Base Recipe Card ────────────────────────────────────────────────────────────────────────────────────────
 class BaseRecipeCard(BaseCard):
     """Base class for all recipe card variants with shared business logic.
 
@@ -326,7 +323,7 @@ class BaseRecipeCard(BaseCard):
         self.add_meal_clicked.emit()
 
 
-# ── Small Recipe Card ────────────────────────────────────────────────────────────────────────
+# ── Small Recipe Card ───────────────────────────────────────────────────────────────────────────────────────
 class SmallRecipeCard(BaseRecipeCard):
     """Small recipe card with horizontal layout: image + name.
 
@@ -367,7 +364,7 @@ class SmallRecipeCard(BaseRecipeCard):
         return frame
 
 
-# ── Medium Recipe Card ───────────────────────────────────────────────────────────────────────
+# ── Medium Recipe Card ──────────────────────────────────────────────────────────────────────────────────────
 class MediumRecipeCard(BaseRecipeCard):
     """Medium recipe card with vertical layout: image + overlay + name + metadata.
 
@@ -451,7 +448,7 @@ class MediumRecipeCard(BaseRecipeCard):
         return frame
 
 
-# ── Large Recipe Card ────────────────────────────────────────────────────────────────────────
+# ── Large Recipe Card ───────────────────────────────────────────────────────────────────────────────────────
 class LargeRecipeCard(BaseRecipeCard):
     """Large recipe card with complex layout: title + image/info panel + metadata.
 
@@ -561,7 +558,7 @@ class LargeRecipeCard(BaseRecipeCard):
         return frame
 
 
-# ── Factory Function ─────────────────────────────────────────────────────────────────────────
+# ── Factory Function ────────────────────────────────────────────────────────────────────────────────────────
 def create_recipe_card(size: LayoutSize, parent: QWidget | None = None) -> BaseRecipeCard:
     """Factory function to create appropriate recipe card size.
 

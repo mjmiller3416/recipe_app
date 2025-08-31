@@ -1,4 +1,4 @@
-"""Toast Notification Widget
+"""app/ui/components/widgets/toast.py
 
 A reusable toast notification component that displays temporary messages
 with smooth animations. Supports success/error states and customizable positioning.

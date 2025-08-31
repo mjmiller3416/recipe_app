@@ -4,7 +4,7 @@ A reusable component for displaying recipe information cards (time, servings, ca
 in a horizontal row layout. Extracted from FullRecipe for use in multiple contexts.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QLabel
 
@@ -13,7 +13,7 @@ from app.style.icon import Icon, AppIcon
 from app.style import Qss, Theme
 
 
-# ── Info Card ────────────────────────────────────────────────────────────────────────────────
+# ── Info Card ───────────────────────────────────────────────────────────────────────────────────────────────
 class InfoCard(QWidget):
     """A vertical info card with icon, title, and value for recipe metadata."""
 
@@ -72,7 +72,7 @@ class InfoCard(QWidget):
         self.icon_widget.setColor(color)
 
 
-# ── Recipe Info Card ─────────────────────────────────────────────────────────────────────────
+# ── Recipe Info Card ────────────────────────────────────────────────────────────────────────────────────────
 class RecipeInfoCard(QWidget):
     """A horizontal row of info cards showing recipe metadata."""
 

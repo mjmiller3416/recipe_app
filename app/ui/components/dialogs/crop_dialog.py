@@ -3,7 +3,7 @@
 A dialog for cropping images with a square selection area.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout
@@ -16,7 +16,7 @@ from app.ui.helpers.dialog_helpers import (
 from _dev_tools import DebugLogger
 
 
-# ── Crop Dialog ──────────────────────────────────────────────────────────────────────────────
+# ── Crop Dialog ─────────────────────────────────────────────────────────────────────────────────────────────
 class CropDialog(DialogWindow): # Inherit from your BaseDialog or QDialog
     # Emits the QPixmap of the cropped image area
     crop_finalized = Signal(QPixmap)
