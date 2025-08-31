@@ -39,7 +39,7 @@ __all__ = [
     'extract_numeric_range', 'parse_servings_range',
 
     # Data Structure Conversions
-    'dict_to_obj', 'flatten_dict', 'normalize_dict_keys',
+    'dict_to_obj', 'flatten_dict', 'normalize_dict_keys', 'serialize_form_payload',
 
     # Collection Conversions
     'ensure_list', 'split_and_clean', 'deduplicate_preserve_order',
@@ -371,6 +371,42 @@ def normalize_dict_keys(data: Dict[str, Any], case_style: str = 'snake') -> Dict
 
 
 # ── Collection Conversions ──────────────────────────────────────────────────────────────────────────────────
+def serialize_form_payload(
+    form_data: Dict[str, Any],
+    field_transformations: Optional[Dict[str, callable]] = None
+) -> Dict[str, Any]:
+    """
+    Transform form data into a serialized payload with type conversions.
+
+    Args:
+        form_data: Raw form data dictionary
+        field_transformations: Optional transformations for specific fields
+
+    Returns:
+        Dict[str, Any]: Transformed payload ready for API/service calls
+
+    Examples:
+        raw_data = {"servings": "4", "time": "30 mins"}
+        transformations = {"servings": int, "time": lambda x: int(x.split()[0])}
+        payload = serialize_form_payload(raw_data, transformations)
+        # Returns: {"servings": 4, "time": 30}
+    """
+    if field_transformations is None:
+        field_transformations = {}
+
+    payload = {}
+
+    for field_name, value in form_data.items():
+        if field_name in field_transformations:
+            try:
+                payload[field_name] = field_transformations[field_name](value)
+            except (ValueError, TypeError, AttributeError):
+                payload[field_name] = value  # Keep original on transformation error
+        else:
+            payload[field_name] = value
+
+    return payload
+
 def ensure_list(value: Any) -> List[Any]:
     """
     Ensure value is a list.
