@@ -150,7 +150,10 @@
       "**/.env": true,
       "**/qt.conf": true,
       "**/requirements.txt": true,
-      "**/.git-rewrite": true
+      "**/.git-rewrite": true,
+      "**/manage.py": true,
+      "**/CLAUDE.md": true,
+      "**/review_guide.md": true,
     },
 
     "files.associations": {

@@ -165,8 +165,6 @@ See full guide: `docs/review_guide.md`
 ---
 
 ## 9) Safety Rails (AI-optimized)
-- **Diff-only output:** Provide unified diffs
-- **Change budget:** ≤ 60 lines across ≤ 3 files per task
 - **Call-before-write:** For these paths, propose changes and wait for approval:
   - `app/style/theme_controller.py`
   - `app/style/theme/style_sheet.py`
