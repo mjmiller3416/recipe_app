@@ -14,9 +14,8 @@ Reusable helpers for **PySide6 UI construction, styling, and ergonomics**.
 - Layout helpers: `vstack`, `hstack`, `clear_layout`
 - QSS helpers: `apply_qss`, `theme_class`
 - DPI/sizing helpers: `px`, `em`, `scale_for_dpi`
-- Icon helpers: `icon`, `icon_button` (wrapping IconKit)
+- Icon helpers: `icon`, `icon_button` **(check app\style\icon\ before adding new methods)**
 - Signal helpers: `connect_safely`, `debounce_signal`
-- Animation scaffolding (generic, no business rules)
 
 ## What doesn’t belong
 
@@ -40,11 +39,9 @@ app/ui/utils/
   widgets.py
   layouts.py
   qss.py
-  icons.py
   images.py
   dpi.py
   signals.py
-  animations.py
   shortcuts.py
   README.md
 ```

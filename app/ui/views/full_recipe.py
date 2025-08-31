@@ -25,15 +25,54 @@ from PySide6.QtWidgets import (
     QVBoxLayout, QWidget)
 
 from app.core.models import Recipe
+from app.core.utils.text_utils import sanitize_multiline_input, sanitize_form_input
 from app.style import Qss, Theme
 from app.style.icon import AppIcon, Icon
 from app.style.icon.config import Name, Type
+from app.ui.utils.layout_utils import setup_main_scroll_layout, create_form_grid_layout, create_two_column_layout
+from app.ui.utils.event_utils import batch_connect_signals
+from app.ui.utils.widget_utils import apply_object_name_pattern
 from app.ui.components.composite.recipe_info_card import RecipeInfoCard
 from app.ui.components.images.image import RecipeBanner
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
 from app.ui.components.widgets.recipe_tag import RecipeTag
 from _dev_tools.debug_logger import DebugLogger
+
+
+# ── Constants ───────────────────────────────────────────────────────────────────────────────────────────────
+class LayoutConstants:
+    """Layout constants for consistent spacing and sizing throughout the Full Recipe view."""
+    
+    # Content margins and spacing
+    CONTENT_MARGINS = (130, 30, 130, 30)
+    PAGE_SPACING = 25
+    CONTENT_SECTION_SPACING = 30
+    
+    # Card configuration
+    CARD_MARGINS = (25, 25, 25, 25)
+    CARD_SPACING = 15
+    CARD_ICON_SIZE = (30, 30)
+    
+    # Tags and info sections
+    TAG_SPACING = 20
+    INFO_CONTAINER_MARGINS = (20, 10, 20, 10)
+    INFO_CONTAINER_SPACING = 40
+    
+    # Ingredient list styling
+    INGREDIENT_LIST_SPACING = 12
+    INGREDIENT_GRID_SPACING = 10
+    INGREDIENT_QTY_WIDTH = 60
+    INGREDIENT_UNIT_WIDTH = 50
+    
+    # Directions list styling
+    DIRECTIONS_LIST_SPACING = 15
+    DIRECTIONS_ITEM_SPACING = 12
+    DIRECTIONS_NUMBER_WIDTH = 30
+    
+    # Section headers
+    SECTION_HEADER_SPACING = 10
+    SECTION_ICON_SIZE = (24, 24)
 
 
 # ── Ingredient List ──────────────────────────────────────────────────────────────────────────
@@ -47,7 +86,7 @@ class IngredientList(QWidget):
         # Main layout
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
-        self.layout.setSpacing(12)
+        self.layout.setSpacing(LayoutConstants.INGREDIENT_LIST_SPACING)
 
     def setIngredients(self, ingredient_details: Iterable):
         """Set the ingredients to display."""
@@ -67,14 +106,14 @@ class IngredientList(QWidget):
 
     def _addIngredientItem(self, detail):
         """Add a single ingredient item to the list."""
-        # Create ingredient row widget
+        # Create ingredient row widget with utility
         item_widget = QWidget()
-        item_widget.setObjectName("IngredientItem")
+        apply_object_name_pattern(item_widget, "Ingredient", "Item")
 
-        # Use QGridLayout for precise alignment
-        item_layout = QGridLayout(item_widget)
-        item_layout.setContentsMargins(0, 0, 0, 0)
-        item_layout.setHorizontalSpacing(10)
+        # Create standardized grid layout
+        item_layout = create_form_grid_layout(
+            item_widget, margins=(0, 0, 0, 0), spacing=LayoutConstants.INGREDIENT_GRID_SPACING
+        )
         item_layout.setVerticalSpacing(0)
 
         # Set column stretch: quantity (fixed), unit (fixed), name (expanding)
@@ -87,24 +126,19 @@ class IngredientList(QWidget):
         abbreviated_unit = getattr(detail, 'abbreviated_unit', '')
         ingredient_name = getattr(detail, "ingredient_name", "") or ""
 
-        # Quantity label (right-aligned, fixed width)
-        qty_label = QLabel(formatted_qty)
-        qty_label.setObjectName("IngredientQuantity")
-        qty_label.setMinimumWidth(60)
-        qty_label.setMaximumWidth(60)
-        qty_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-
-        # Unit label (left-aligned, fixed width)
-        unit_label = QLabel(abbreviated_unit)
-        unit_label.setObjectName("IngredientUnit")
-        unit_label.setMinimumWidth(50)
-        unit_label.setMaximumWidth(50)
-        unit_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-
-        # Ingredient name label (left-aligned, expanding)
-        name_label = QLabel(ingredient_name)
-        name_label.setObjectName("IngredientName")
-        name_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        # Create labels with consistent patterns
+        qty_label = self._create_ingredient_label(
+            formatted_qty, "Ingredient", "Quantity", 
+            Qt.AlignRight | Qt.AlignVCenter, fixed_width=LayoutConstants.INGREDIENT_QTY_WIDTH
+        )
+        unit_label = self._create_ingredient_label(
+            abbreviated_unit, "Ingredient", "Unit",
+            Qt.AlignLeft | Qt.AlignVCenter, fixed_width=LayoutConstants.INGREDIENT_UNIT_WIDTH
+        )
+        name_label = self._create_ingredient_label(
+            ingredient_name, "Ingredient", "Name",
+            Qt.AlignLeft | Qt.AlignVCenter
+        )
 
         # Add to grid: row 0, columns 0, 1, 2
         item_layout.addWidget(qty_label, 0, 0)
@@ -113,6 +147,16 @@ class IngredientList(QWidget):
 
         # Add to main layout
         self.layout.addWidget(item_widget)
+
+    def _create_ingredient_label(self, text: str, context: str, label_type: str, 
+                               alignment: Qt.AlignmentFlag, fixed_width: int = None) -> QLabel:
+        """Create a standardized ingredient label with consistent styling."""
+        label = QLabel(text)
+        apply_object_name_pattern(label, context, label_type)
+        label.setAlignment(alignment)
+        if fixed_width:
+            label.setFixedWidth(fixed_width)
+        return label
 
 
 # ── Directions List ──────────────────────────────────────────────────────────────────────────
@@ -126,15 +170,16 @@ class DirectionsList(QWidget):
         # Main layout
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
-        self.layout.setSpacing(15)
+        self.layout.setSpacing(LayoutConstants.DIRECTIONS_LIST_SPACING)
 
     def setDirections(self, directions: str):
         """Set the directions to display."""
         # Clear existing directions
         self._clearDirections()
 
-        # Parse directions
-        steps = [s.strip() for s in directions.splitlines() if s.strip()] if directions else []
+        # Parse directions using text sanitization utility
+        sanitized_directions = sanitize_multiline_input(directions) if directions else ""
+        steps = sanitized_directions.splitlines() if sanitized_directions else []
 
         if not steps:
             empty_label = QLabel("No directions available.")
@@ -155,25 +200,23 @@ class DirectionsList(QWidget):
 
     def _addDirectionItem(self, number: int, text: str):
         """Add a single direction item to the list."""
-        # Create direction row widget
+        # Create direction row widget with utility
         item_widget = QWidget()
-        item_widget.setObjectName("DirectionItem")
+        apply_object_name_pattern(item_widget, "Direction", "Item")
 
         item_layout = QHBoxLayout(item_widget)
         item_layout.setContentsMargins(0, 0, 0, 0)
-        item_layout.setSpacing(12)
+        item_layout.setSpacing(LayoutConstants.DIRECTIONS_ITEM_SPACING)
 
-        # Number label
-        number_label = QLabel(f"{number}.")
-        number_label.setObjectName("DirectionNumber")
-        number_label.setMinimumWidth(30)
-        number_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-
-        # Text label
-        text_label = QLabel(text)
-        text_label.setObjectName("DirectionText")
-        text_label.setWordWrap(True)
-        text_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        # Create standardized labels
+        number_label = self._create_direction_label(
+            f"{number}.", "Direction", "Number", 
+            Qt.AlignLeft | Qt.AlignTop, min_width=LayoutConstants.DIRECTIONS_NUMBER_WIDTH
+        )
+        text_label = self._create_direction_label(
+            text, "Direction", "Text",
+            Qt.AlignLeft | Qt.AlignTop, word_wrap=True
+        )
 
         # Add to layout
         item_layout.addWidget(number_label)
@@ -181,6 +224,19 @@ class DirectionsList(QWidget):
 
         # Add to main layout
         self.layout.addWidget(item_widget)
+
+    def _create_direction_label(self, text: str, context: str, label_type: str,
+                              alignment: Qt.AlignmentFlag, min_width: int = None, 
+                              word_wrap: bool = False) -> QLabel:
+        """Create a standardized direction label with consistent styling."""
+        label = QLabel(text)
+        apply_object_name_pattern(label, context, label_type)
+        label.setAlignment(alignment)
+        if min_width:
+            label.setMinimumWidth(min_width)
+        if word_wrap:
+            label.setWordWrap(True)
+        return label
 
 
 # ── FullRecipe View ─────────────────────────────────────────────────────────────────────────
@@ -197,7 +253,32 @@ class FullRecipe(QWidget):
         Theme.register_widget(self, Qss.FULL_RECIPE)
 
         self.setObjectName("FullRecipe")
+        self._cached_recipe_data = None
         self._build_ui()
+
+    @property
+    def recipe_data(self) -> dict:
+        """Cache frequently accessed recipe attributes."""
+        if self._cached_recipe_data is None:
+            self._cached_recipe_data = self._extract_recipe_display_data()
+        return self._cached_recipe_data
+
+    def _extract_recipe_display_data(self) -> dict:
+        """Extract and format recipe data with consistent fallbacks and sanitization."""
+        return {
+            "title": sanitize_form_input(getattr(self.recipe, "recipe_name", "")) or "Untitled Recipe",
+            "recipe_name": sanitize_form_input(getattr(self.recipe, "recipe_name", "")),
+            "meal_type": getattr(self.recipe, "meal_type", None) or "Dinner",
+            "category": getattr(self.recipe, "recipe_category", None) or "Main Course", 
+            "diet_pref": getattr(self.recipe, "diet_pref", None) or "High-Protein",
+            "total_time": str(getattr(self.recipe, "total_time", "")) or "2 hours 30 mins",
+            "servings": str(getattr(self.recipe, "servings", "")) or "6",
+            "directions": getattr(self.recipe, "directions", "") or "",
+            "notes": getattr(self.recipe, "notes", None),
+            "banner_image_path": getattr(self.recipe, "banner_image_path", None),
+            "recipe_id": getattr(self.recipe, "id", None),
+            "ingredient_details": getattr(self.recipe, "get_ingredient_details", lambda: [])()
+        }
 
     # ── Layout ───────────────────────────────────────────────────────────────────────────────
     def _make_back_button(self):
@@ -218,196 +299,148 @@ class FullRecipe(QWidget):
 
     def _build_ui(self) -> None:
         """Build the main UI matching the mock design."""
-        # Root layout holds a single scroll area
-        root = QVBoxLayout(self)
-        root.setContentsMargins(0, 0, 0, 0)
-        root.setSpacing(0)
+        self._setup_scroll_layout()
+        self._create_header_section()
+        self._create_banner_section()
+        self._create_info_section()
+        self._create_content_sections()
+        
+        # Bottom spacer
+        self.page.addStretch()
 
-        scroll = QScrollArea(self)
-        scroll.setObjectName("FullRecipeScroll")
-        scroll.setFrameShape(QFrame.NoFrame)
-        scroll.setWidgetResizable(True)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        root.addWidget(scroll)
+    def _setup_scroll_layout(self) -> None:
+        """Setup main scroll layout with custom configuration."""
+        self.root, self.scroll, self.content, self.page = setup_main_scroll_layout(
+            self, "FullRecipeContent", margins=LayoutConstants.CONTENT_MARGINS, spacing=LayoutConstants.PAGE_SPACING
+        )
+        # Configure scroll area for full recipe view
+        self.scroll.setObjectName("FullRecipeScroll")
+        self.scroll.setFrameShape(QFrame.NoFrame)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-        # Scroll content
-        content = QWidget()
-        content.setContentsMargins(100, 0, 100, 0)
-        content.setObjectName("FullRecipeContent")
-        scroll.setWidget(content)
-
-        page = QVBoxLayout(content)
-        page.setContentsMargins(30, 30, 30, 30)
-        page.setSpacing(25)
-
-        # ── Back Button
+    def _create_header_section(self) -> None:
+        """Create back button, title, and tags section."""
+        # Back Button
         # TODO: Implement sticky back button that remains visible during scrolling
         # Requirements: Fixed position overlay, semi-transparent background, proper z-index
         back_bar = self._make_back_button()
-        page.addWidget(back_bar)
+        self.page.addWidget(back_bar)
 
-        # ── Title Section
-        title = QLabel(self.recipe.recipe_name or "Untitled Recipe")
+        # Title Section
+        title = QLabel(self.recipe_data["title"])
         title.setObjectName("RecipeTitle")
         title.setAlignment(Qt.AlignCenter)
-        page.addWidget(title)
+        self.page.addWidget(title)
 
-        # ── Recipe Tags Row
+        # Recipe Tags Row
         tags_container = QWidget()
         tags_container.setObjectName("RecipeTagsContainer")
         tags_layout = QHBoxLayout(tags_container)
         tags_layout.setContentsMargins(0, 0, 0, 0)
         tags_layout.addStretch()
 
-        # Add recipe tags with proper icons
-        meal_type = getattr(self.recipe, "meal_type", None) or "Dinner"
-        category = getattr(self.recipe, "recipe_category", None) or "Main Course"
-        diet_pref = getattr(self.recipe, "diet_pref", None) or "High-Protein"
-
-        tags_layout.addWidget(RecipeTag(Icon.MEAL_TYPE, meal_type))
-        tags_layout.addSpacing(20)
-        tags_layout.addWidget(RecipeTag(Icon.CATEGORY, category))
-        tags_layout.addSpacing(20)
-        tags_layout.addWidget(RecipeTag(Icon.DIET_PREF, diet_pref))
+        # Add recipe tags using centralized data
+        tags_layout.addWidget(RecipeTag(Icon.MEAL_TYPE, self.recipe_data["meal_type"]))
+        tags_layout.addSpacing(LayoutConstants.TAG_SPACING)
+        tags_layout.addWidget(RecipeTag(Icon.CATEGORY, self.recipe_data["category"]))
+        tags_layout.addSpacing(LayoutConstants.TAG_SPACING)
+        tags_layout.addWidget(RecipeTag(Icon.DIET_PREF, self.recipe_data["diet_pref"]))
         tags_layout.addStretch()
-        page.addWidget(tags_container)
+        self.page.addWidget(tags_container)
 
-        # ── Recipe Banner
+    def _create_banner_section(self) -> None:
+        """Create and configure recipe banner with image handling."""
         self.recipe_banner = RecipeBanner()
 
-        # Configure with recipe data
-        if hasattr(self.recipe, 'recipe_name') and self.recipe.recipe_name:
-            self.recipe_banner.set_recipe_name(self.recipe.recipe_name)
+        # Configure banner with recipe data
+        if self.recipe_data["recipe_name"]:
+            self.recipe_banner.set_recipe_name(self.recipe_data["recipe_name"])
 
         # Show existing banner image if recipe has one
-        if hasattr(self.recipe, 'banner_image_path') and self.recipe.banner_image_path:
-            if Path(self.recipe.banner_image_path).exists():
-                self.recipe_banner.set_banner_image_path(self.recipe.banner_image_path)
-                DebugLogger().log(f"Loaded recipe banner: {self.recipe.banner_image_path}", "info")
+        if self.recipe_data["banner_image_path"]:
+            if Path(self.recipe_data["banner_image_path"]).exists():
+                self.recipe_banner.set_banner_image_path(self.recipe_data["banner_image_path"])
+                DebugLogger().log(f"Loaded recipe banner: {self.recipe_data['banner_image_path']}", "info")
             else:
-                DebugLogger().log(f"Recipe banner path does not exist: {self.recipe.banner_image_path}", "warning")
+                DebugLogger().log(f"Recipe banner path does not exist: {self.recipe_data['banner_image_path']}", "warning")
 
-        # Connect signals for AI integration
-        self.recipe_banner.generate_image_requested.connect(self._on_generate_banner_requested)
-        self.recipe_banner.image_clicked.connect(self._on_image_clicked)
+        # Connect signals using batch connection utility
+        signal_connections = [
+            (self.recipe_banner.generate_image_requested, self._on_generate_banner_requested),
+            (self.recipe_banner.image_clicked, self._on_image_clicked)
+        ]
+        batch_connect_signals(signal_connections)
 
         # Connect AI service signals for async operations
         # TODO: enable after aI gen service is fixed
         #self.ai_service.generation_finished.connect(self._on_generation_finished)
         #self.ai_service.generation_failed.connect(self._on_generation_failed)
 
-        page.addWidget(self.recipe_banner)
+        self.page.addWidget(self.recipe_banner)
 
-        # ── Info Cards Container
+    def _create_info_section(self) -> None:
+        """Create recipe info cards section."""
+        # Info Cards Container
         # TODO: Update to new Card API pattern (info_container.addWidget) once card styling variants are implemented
         info_container = Card(content_layout="hbox")
         info_container.setObjectName("InfoContainer")
         info_container.setProperty("tag", "Container")
         info_container.expandWidth(True)
-        info_container.setContentsMargins(20, 10, 20, 10)
-        info_container.setSpacing(40)
+        info_container.setContentsMargins(*LayoutConstants.INFO_CONTAINER_MARGINS)
+        info_container.setSpacing(LayoutConstants.INFO_CONTAINER_SPACING)
 
-        # Get recipe data with fallbacks
-        total_time = str(getattr(self.recipe, "total_time", "")) or "2 hours 30 mins"
-        servings = str(getattr(self.recipe, "servings", "")) or "6"
-        category = getattr(self.recipe, "recipe_category", "") or "Main Course"
-        diet_pref = getattr(self.recipe, "diet_pref", "") or "High-Protein"
-
+        # Create info card using centralized recipe data
         info_card = RecipeInfoCard(
             show_cards=["time", "servings", "category", "dietary"])
         info_card.setRecipe(self.recipe)
 
-        page.addWidget(info_card)
+        self.page.addWidget(info_card)
 
-        # ── Content Layout: Left Column (Ingredients) + Right Column (Directions + Notes)
-        content_layout = QHBoxLayout()
-        content_layout.setContentsMargins(0, 0, 0, 0)
-        content_layout.setSpacing(30)
-
-        # ── Left Column: Ingredients (1/3 width)
-        ingredients_card = Card(content, card_type="Primary")
-        ingredients_card.setHeader("Ingredients", Icon.INGREDIENTS)
-        ingredients_card.headerIcon.setSize(30, 30)
-        ingredients_card.headerIcon.setColor("primary")
-        ingredients_card.setContentMargins(25, 25, 25, 25)
-        ingredients_card.setSpacing(15)
-        ingredients_card.expandWidth(True)  # Allow width expansion
-
-        # Ingredients list
+    def _create_content_sections(self) -> None:
+        """Create ingredients, directions, and notes sections using two-column layout."""
+        # Left Column: Ingredients
         ingredients_list = IngredientList()
-        ingredients_list.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
-        ingredient_details = getattr(self.recipe, "get_ingredient_details", lambda: [])()
-        ingredients_list.setIngredients(ingredient_details)
-        ingredients_card.addWidget(ingredients_list)
-
-        # Add ingredients to left column with stretch factor 1 and top alignment
-        content_layout.addWidget(ingredients_card, 1, Qt.AlignTop)
-
-        # ── Right Column: Directions + Notes (2/3 width)
-        right_column_widget = QWidget()
-        right_column_layout = QVBoxLayout(right_column_widget)
-        right_column_layout.setContentsMargins(0, 0, 0, 0)
-        right_column_layout.setSpacing(25)
-
-        # ── Directions Section
-        directions_card = Card(content, card_type="Primary")
-        directions_card.setHeader("Directions", Icon.DIRECTIONS)
-        directions_card.headerIcon.setSize(30, 30)
-        directions_card.headerIcon.setColor("primary")
-        directions_card.setContentMargins(25, 25, 25, 25)
-        directions_card.setSpacing(15)
-        directions_card.expandWidth(True)  # Allow width expansion
-
-        # Directions list
+        ingredients_list.setIngredients(self.recipe_data["ingredient_details"])
+        ingredients_card = self._create_recipe_section_card("Ingredients", Icon.INGREDIENTS, ingredients_list)
+        
+        # Right Column: Directions + Notes
         directions_list = DirectionsList()
-        directions_list.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
-        recipe_directions = getattr(self.recipe, "directions", "") or ""
-        directions_list.setDirections(recipe_directions)
-        directions_card.addWidget(directions_list)
-
-        # Add directions to right column
-        right_column_layout.addWidget(directions_card)
-
-        # TODO: Fix line spacing
-        # ── Notes Section (optional)
-        notes = getattr(self.recipe, "notes", None)
-        if notes:
-            notes_card = Card(content, card_type="Primary")
-            notes_card.setHeader("Notes", Icon.NOTES)
-            notes_card.headerIcon.setSize(30, 30)
-            notes_card.headerIcon.setColor("primary")
-            notes_card.setContentMargins(25, 25, 25, 25)
-            notes_card.setSpacing(15)
-            notes_card.expandWidth(True)  # Allow width expansion
-
-            # Notes text
-            notes_text = QLabel(notes)
+        directions_list.setDirections(self.recipe_data["directions"])
+        directions_card = self._create_recipe_section_card("Directions", Icon.DIRECTIONS, directions_list)
+        
+        right_column_widgets = [directions_card]
+        
+        # Add notes if present
+        if self.recipe_data["notes"]:
+            notes_text = QLabel(sanitize_form_input(self.recipe_data["notes"]))
             notes_text.setObjectName("NotesText")
             notes_text.setWordWrap(True)
-            notes_card.addWidget(notes_text)
+            notes_card = self._create_recipe_section_card("Notes", Icon.NOTES, notes_text)
+            right_column_widgets.append(notes_card)
 
-            # Add notes to right column
-            right_column_layout.addWidget(notes_card)
-
-        # Add right column widget to main content layout with stretch factor 2 and top alignment
-        content_layout.addWidget(right_column_widget, 2, Qt.AlignTop)
+        # Create two-column layout using utility (1/3 left, 2/3 right)
+        content_layout = create_two_column_layout(
+            left_widgets=[ingredients_card],
+            right_widgets=right_column_widgets,
+            left_weight=1,
+            right_weight=2,
+            spacing=LayoutConstants.CONTENT_SECTION_SPACING,
+            alignment=Qt.AlignTop
+        )
 
         # Add the content layout to main page layout
-        page.addLayout(content_layout)
-
-        # Bottom spacer
-        page.addStretch()
+        self.page.addLayout(content_layout)
 
     def _create_section_header(self, icon: Icon, title: str) -> QWidget:
         """Create a section header with icon and title."""
         header_widget = QWidget()
         header_layout = QHBoxLayout(header_widget)
         header_layout.setContentsMargins(0, 0, 0, 0)
-        header_layout.setSpacing(10)
+        header_layout.setSpacing(LayoutConstants.SECTION_HEADER_SPACING)
 
         # Icon
         header_icon = AppIcon(icon)
-        header_icon.setFixedSize(QSize(24, 24))
+        header_icon.setFixedSize(QSize(*LayoutConstants.SECTION_ICON_SIZE))
         header_icon.setObjectName("SectionIcon")
 
         # Title
@@ -419,6 +452,56 @@ class FullRecipe(QWidget):
         header_layout.addStretch()
 
         return header_widget
+
+    def _handle_banner_path_result(self, banner_path: str, recipe_name: str) -> bool:
+        """Handle banner path validation and database update with consistent error handling."""
+        if not banner_path:
+            return False
+            
+        if Path(banner_path).exists():
+            self.recipe_banner.set_banner_image_path(banner_path)
+            DebugLogger().log(f"Banner image loaded for '{recipe_name}': {Path(banner_path).name}", "info")
+            
+            # Save to database if recipe has ID
+            if self.recipe_data["recipe_id"]:
+                try:
+                    from app.core.services.recipe_service import RecipeService
+                    recipe_service = RecipeService()
+                    updated_recipe = recipe_service.update_recipe_banner_image_path(
+                        self.recipe_data["recipe_id"], banner_path
+                    )
+                    if updated_recipe:
+                        # Update the local recipe object
+                        self.recipe.banner_image_path = banner_path
+                        DebugLogger().log(f"Updated recipe {self.recipe_data['recipe_id']} with banner image path", "info")
+                except Exception as e:
+                    DebugLogger().log(f"Failed to save banner image path to database: {e}", "error")
+            return True
+        else:
+            DebugLogger().log(f"Generated banner image not found: {banner_path}", "warning")
+            return False
+            
+    def _reset_banner_to_placeholder(self):
+        """Reset banner to placeholder state with consistent handling."""
+        self.recipe_banner.show_placeholder_state()
+        self.recipe_banner.reset_banner_button()
+
+    def _create_recipe_section_card(self, title: str, icon: Icon, content_widget: QWidget = None) -> Card:
+        """Create standardized recipe section card with consistent configuration."""
+        card = Card(self.content, card_type="Primary")
+        card.setHeader(title, icon)
+        card.headerIcon.setSize(*LayoutConstants.CARD_ICON_SIZE)
+        card.headerIcon.setColor("primary") 
+        card.setContentMargins(*LayoutConstants.CARD_MARGINS)
+        card.setSpacing(LayoutConstants.CARD_SPACING)
+        card.expandWidth(True)
+        
+        if content_widget:
+            # Set standardized size policy for content widgets
+            content_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+            card.addWidget(content_widget)
+            
+        return card
 
     def _on_generate_banner_requested(self, recipe_name: str):
         """Handle AI banner generation request using async generation."""
@@ -433,65 +516,27 @@ class FullRecipe(QWidget):
 
     def _on_generation_finished(self, recipe_name: str, result):
         """Handle successful AI banner generation."""
-        # Handle single banner image result (string path)
+        banner_path = None
+        
+        # Extract banner path from different result formats
         if isinstance(result, str):
             banner_path = result
-            if Path(banner_path).exists():
-                self.recipe_banner.set_banner_image_path(banner_path)
-                DebugLogger().log(f"Banner image loaded for '{recipe_name}': {Path(banner_path).name}", "info")
-
-                # Save the banner image path to the database
-                if hasattr(self.recipe, 'id') and self.recipe.id:
-                    try:
-                        from app.core.services.recipe_service import RecipeService
-                        recipe_service = RecipeService()
-                        updated_recipe = recipe_service.update_recipe_banner_image_path(self.recipe.id, banner_path)
-                        if updated_recipe:
-                            # Update the local recipe object
-                            self.recipe.banner_image_path = banner_path
-                            DebugLogger().log(f"Updated recipe {self.recipe.id} with banner image path", "info")
-                    except Exception as e:
-                        DebugLogger().log(f"Failed to save banner image path to database: {e}", "error")
-            else:
-                # Reset to placeholder if file doesn't exist
-                self.recipe_banner.show_placeholder_state()
-                self.recipe_banner.reset_banner_button()
-                DebugLogger().log(f"Generated banner image not found: {banner_path}", "warning")
-
-        # Handle dual image result (ImagePairPaths) for backward compatibility
         elif result and hasattr(result, 'banner_path'):
             banner_path = str(result.banner_path)
-            if Path(banner_path).exists():
-                self.recipe_banner.set_banner_image_path(banner_path)
-                DebugLogger().log(f"Banner image from pair loaded for '{recipe_name}': {result.banner_path.name}", "info")
-
-                # Save the banner image path to the database
-                if hasattr(self.recipe, 'id') and self.recipe.id:
-                    try:
-                        from app.core.services.recipe_service import RecipeService
-                        recipe_service = RecipeService()
-                        updated_recipe = recipe_service.update_recipe_banner_image_path(self.recipe.id, banner_path)
-                        if updated_recipe:
-                            # Update the local recipe object
-                            self.recipe.banner_image_path = banner_path
-                            DebugLogger().log(f"Updated recipe {self.recipe.id} with banner image path", "info")
-                    except Exception as e:
-                        DebugLogger().log(f"Failed to save banner image path to database: {e}", "error")
-            else:
-                # Reset to placeholder if file doesn't exist
-                self.recipe_banner.show_placeholder_state()
-                self.recipe_banner.reset_banner_button()
-                DebugLogger().log(f"Generated banner image not found: {banner_path}", "warning")
+        
+        # Handle the banner path with consolidated error handling
+        if banner_path and self._handle_banner_path_result(banner_path, recipe_name):
+            # Success - banner was set successfully
+            pass
         else:
-            # No result or invalid result
-            self.recipe_banner.show_placeholder_state()
-            self.recipe_banner.reset_banner_button()
-            DebugLogger().log(f"AI generation completed but no valid result for '{recipe_name}'", "warning")
+            # Failed to load banner or no valid result
+            self._reset_banner_to_placeholder()
+            if not banner_path:
+                DebugLogger().log(f"AI generation completed but no valid result for '{recipe_name}'", "warning")
 
     def _on_generation_failed(self, recipe_name: str, error_message: str):
         """Handle AI banner generation failure."""
-        self.recipe_banner.show_placeholder_state()
-        self.recipe_banner.reset_banner_button()
+        self._reset_banner_to_placeholder()
         # TODO: Show toast notification for generation failure
         DebugLogger().log(f"Failed to generate banner image for '{recipe_name}': {error_message}", "error")
 

@@ -43,7 +43,7 @@ __all__ = [
     'create_form_grid_layout', 'create_labeled_form_grid', 'set_fixed_height_for_layout_widgets',
 
     # Advanced Layout Utils
-    'create_fixed_wrapper', 'make_overlay',
+    'create_fixed_wrapper', 'make_overlay', 'create_two_column_layout',
 
     # Position & Anchoring
     'CornerAnchor', 'center_on_screen',
@@ -411,6 +411,82 @@ def make_overlay(
     grid.addWidget(pad, 0, 0, alignment=align)
 
     return container
+
+def create_two_column_layout(
+    left_widgets: list[QWidget] = None,
+    right_widgets: list[QWidget] = None,
+    left_weight: int = 1,
+    right_weight: int = 1,
+    spacing: int = 30,
+    margins: tuple[int, int, int, int] = (0, 0, 0, 0),
+    alignment: Qt.AlignmentFlag = Qt.AlignTop
+) -> QHBoxLayout:
+    """
+    Create a standardized two-column layout with configurable weights and content.
+
+    Args:
+        left_widgets: List of widgets for the left column (creates empty column if None)
+        right_widgets: List of widgets for the right column (creates empty column if None)
+        left_weight: Stretch factor for left column (default: 1)
+        right_weight: Stretch factor for right column (default: 1)
+        spacing: Horizontal spacing between columns (default: 30)
+        margins: Layout margins (left, top, right, bottom)
+        alignment: Vertical alignment for column widgets (default: Qt.AlignTop)
+
+    Returns:
+        QHBoxLayout: Configured two-column layout with widgets added
+
+    Examples:
+        # Equal width columns
+        layout = create_two_column_layout([widget1], [widget2, widget3])
+        
+        # Left 1/3, Right 2/3 width
+        layout = create_two_column_layout([left_widget], [right1, right2], 1, 2)
+        
+        # Custom spacing and alignment
+        layout = create_two_column_layout(
+            [ingredients_card], [directions_card, notes_card], 
+            spacing=40, alignment=Qt.AlignCenter
+        )
+    """
+    # Create main horizontal layout
+    main_layout = QHBoxLayout()
+    main_layout.setContentsMargins(*margins)
+    main_layout.setSpacing(spacing)
+
+    # Create left column widget
+    left_column = QWidget()
+    left_layout = QVBoxLayout(left_column)
+    left_layout.setContentsMargins(0, 0, 0, 0)
+    left_layout.setSpacing(20)  # Vertical spacing within column
+    
+    # Add widgets to left column
+    if left_widgets:
+        for widget in left_widgets:
+            left_layout.addWidget(widget)
+    else:
+        # Add stretch if no widgets to prevent column collapse
+        left_layout.addStretch()
+
+    # Create right column widget  
+    right_column = QWidget()
+    right_layout = QVBoxLayout(right_column)
+    right_layout.setContentsMargins(0, 0, 0, 0)
+    right_layout.setSpacing(20)  # Vertical spacing within column
+    
+    # Add widgets to right column
+    if right_widgets:
+        for widget in right_widgets:
+            right_layout.addWidget(widget)
+    else:
+        # Add stretch if no widgets to prevent column collapse
+        right_layout.addStretch()
+
+    # Add columns to main layout with weights and alignment
+    main_layout.addWidget(left_column, left_weight, alignment)
+    main_layout.addWidget(right_column, right_weight, alignment)
+
+    return main_layout
 
 
 # ── Position & Anchoring ────────────────────────────────────────────────────────────────────────────────────
