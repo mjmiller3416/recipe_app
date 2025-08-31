@@ -40,7 +40,7 @@ __all__ = [
     'create_scroll_area', 'create_scroll_content_widget', 'setup_main_scroll_layout',
 
     # Grid Layout Setup
-    'create_form_grid_layout', 'set_fixed_height_for_layout_widgets',
+    'create_form_grid_layout', 'create_labeled_form_grid', 'set_fixed_height_for_layout_widgets',
 
     # Advanced Layout Utils
     'create_fixed_wrapper', 'make_overlay',
@@ -190,6 +190,110 @@ def create_form_grid_layout(
     layout.setContentsMargins(*margins)
     layout.setSpacing(spacing)
     return layout
+
+def create_labeled_form_grid(
+    parent_widget: QWidget,
+    field_configs: dict,
+    fixed_height: int = 60,
+    margins: tuple[int, int, int, int] = (10, 10, 10, 10),
+    spacing: int = 10
+) -> tuple:
+    """
+    Create a complete form grid with labels and widgets using field configuration.
+    
+    Args:
+        parent_widget: Parent widget for the layout
+        field_configs: Dict mapping field names to config dicts with keys:
+            - widget_type: "line_edit", "combo_box", "text_edit" 
+            - label: Label text
+            - placeholder: Placeholder text (optional)
+            - object_name: Object name for widget (optional)
+            - context: Context property for styling (optional)
+            - list_items: Items for combo box (if widget_type is combo_box)
+            - row: Grid row position
+            - col: Grid column position 
+            - row_span: Row span (default 1)
+            - col_span: Column span (default 1)
+        fixed_height: Fixed height for input widgets
+        margins: Layout margins
+        spacing: Layout spacing
+        
+    Returns:
+        tuple: (grid_layout, widgets_dict, labels_dict)
+        
+    Examples:
+        field_config = {
+            "recipe_name": {
+                "widget_type": "line_edit",
+                "label": "Recipe Name", 
+                "placeholder": "e.g. Spaghetti Carbonara",
+                "object_name": "RecipeNameLineEdit",
+                "row": 0, "col": 0, "col_span": 2
+            },
+            "meal_type": {
+                "widget_type": "combo_box",
+                "label": "Meal Type",
+                "placeholder": "Select meal type",
+                "list_items": ["Breakfast", "Lunch", "Dinner"],
+                "context": "recipe_form",
+                "row": 2, "col": 0
+            }
+        }
+        layout, widgets, labels = create_labeled_form_grid(self, field_config)
+    """
+    from PySide6.QtWidgets import QLineEdit, QTextEdit
+    from app.ui.components.widgets import ComboBox
+    
+    # Create base grid layout
+    layout = create_form_grid_layout(parent_widget, margins, spacing)
+    
+    widgets = {}
+    labels = {}
+    
+    for field_name, config in field_configs.items():
+        # Extract configuration
+        widget_type = config.get("widget_type", "line_edit")
+        label_text = config.get("label", field_name.replace("_", " ").title())
+        placeholder = config.get("placeholder", "")
+        object_name = config.get("object_name", f"{field_name.title().replace('_', '')}Widget")
+        context = config.get("context")
+        row = config.get("row", 0)
+        col = config.get("col", 0)
+        row_span = config.get("row_span", 1)
+        col_span = config.get("col_span", 1)
+        
+        # Create label
+        label = QLabel(label_text, parent_widget)
+        labels[field_name] = label
+        
+        # Create widget based on type
+        if widget_type == "line_edit":
+            widget = QLineEdit(parent_widget)
+            if placeholder:
+                widget.setPlaceholderText(placeholder)
+        elif widget_type == "combo_box":
+            list_items = config.get("list_items", [])
+            widget = ComboBox(list_items=list_items, placeholder=placeholder, parent=parent_widget)
+            if context:
+                widget.setProperty("context", context)
+        elif widget_type == "text_edit":
+            widget = QTextEdit(parent_widget)
+            if placeholder:
+                widget.setPlaceholderText(placeholder)
+        else:
+            raise ValueError(f"Unknown widget_type: {widget_type}")
+        
+        widget.setObjectName(object_name)
+        widgets[field_name] = widget
+        
+        # Add to grid layout - label above widget
+        layout.addWidget(label, row, col, 1, col_span)
+        layout.addWidget(widget, row + 1, col, row_span, col_span)
+    
+    # Apply fixed height to input widgets (skip labels)
+    set_fixed_height_for_layout_widgets(layout, fixed_height, skip=(QLabel,))
+    
+    return layout, widgets, labels
 
 def set_fixed_height_for_layout_widgets(
     layout: QLayout,
