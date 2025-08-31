@@ -200,32 +200,32 @@ def create_labeled_form_grid(
 ) -> tuple:
     """
     Create a complete form grid with labels and widgets using field configuration.
-    
+
     Args:
         parent_widget: Parent widget for the layout
         field_configs: Dict mapping field names to config dicts with keys:
-            - widget_type: "line_edit", "combo_box", "text_edit" 
+            - widget_type: "line_edit", "combo_box", "text_edit"
             - label: Label text
             - placeholder: Placeholder text (optional)
             - object_name: Object name for widget (optional)
             - context: Context property for styling (optional)
             - list_items: Items for combo box (if widget_type is combo_box)
             - row: Grid row position
-            - col: Grid column position 
+            - col: Grid column position
             - row_span: Row span (default 1)
             - col_span: Column span (default 1)
         fixed_height: Fixed height for input widgets
         margins: Layout margins
         spacing: Layout spacing
-        
+
     Returns:
         tuple: (grid_layout, widgets_dict, labels_dict)
-        
+
     Examples:
         field_config = {
             "recipe_name": {
                 "widget_type": "line_edit",
-                "label": "Recipe Name", 
+                "label": "Recipe Name",
                 "placeholder": "e.g. Spaghetti Carbonara",
                 "object_name": "RecipeNameLineEdit",
                 "row": 0, "col": 0, "col_span": 2
@@ -243,13 +243,13 @@ def create_labeled_form_grid(
     """
     from PySide6.QtWidgets import QLineEdit, QTextEdit
     from app.ui.components.widgets import ComboBox
-    
+
     # Create base grid layout
     layout = create_form_grid_layout(parent_widget, margins, spacing)
-    
+
     widgets = {}
     labels = {}
-    
+
     for field_name, config in field_configs.items():
         # Extract configuration
         widget_type = config.get("widget_type", "line_edit")
@@ -261,11 +261,11 @@ def create_labeled_form_grid(
         col = config.get("col", 0)
         row_span = config.get("row_span", 1)
         col_span = config.get("col_span", 1)
-        
+
         # Create label
         label = QLabel(label_text, parent_widget)
         labels[field_name] = label
-        
+
         # Create widget based on type
         if widget_type == "line_edit":
             widget = QLineEdit(parent_widget)
@@ -282,17 +282,17 @@ def create_labeled_form_grid(
                 widget.setPlaceholderText(placeholder)
         else:
             raise ValueError(f"Unknown widget_type: {widget_type}")
-        
+
         widget.setObjectName(object_name)
         widgets[field_name] = widget
-        
+
         # Add to grid layout - label above widget
         layout.addWidget(label, row, col, 1, col_span)
         layout.addWidget(widget, row + 1, col, row_span, col_span)
-    
+
     # Apply fixed height to input widgets (skip labels)
     set_fixed_height_for_layout_widgets(layout, fixed_height, skip=(QLabel,))
-    
+
     return layout, widgets, labels
 
 def set_fixed_height_for_layout_widgets(
@@ -439,13 +439,13 @@ def create_two_column_layout(
     Examples:
         # Equal width columns
         layout = create_two_column_layout([widget1], [widget2, widget3])
-        
+
         # Left 1/3, Right 2/3 width
         layout = create_two_column_layout([left_widget], [right1, right2], 1, 2)
-        
+
         # Custom spacing and alignment
         layout = create_two_column_layout(
-            [ingredients_card], [directions_card, notes_card], 
+            [ingredients_card], [directions_card, notes_card],
             spacing=40, alignment=Qt.AlignCenter
         )
     """
@@ -459,7 +459,7 @@ def create_two_column_layout(
     left_layout = QVBoxLayout(left_column)
     left_layout.setContentsMargins(0, 0, 0, 0)
     left_layout.setSpacing(20)  # Vertical spacing within column
-    
+
     # Add widgets to left column
     if left_widgets:
         for widget in left_widgets:
@@ -468,12 +468,12 @@ def create_two_column_layout(
         # Add stretch if no widgets to prevent column collapse
         left_layout.addStretch()
 
-    # Create right column widget  
+    # Create right column widget
     right_column = QWidget()
     right_layout = QVBoxLayout(right_column)
     right_layout.setContentsMargins(0, 0, 0, 0)
     right_layout.setSpacing(20)  # Vertical spacing within column
-    
+
     # Add widgets to right column
     if right_widgets:
         for widget in right_widgets:
