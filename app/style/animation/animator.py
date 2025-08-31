@@ -1,7 +1,8 @@
 """app/styyle/animation/animator.py
 
 AnimationManager provides methods for animating widgets using QPropertyAnimation.
-Supports width animations, fade effects, cross-fading between stacked widgets, and page flip animations.
+Supports width animations, fade effects, cross-fading between stacked widgets, page flip animations,
+and collapsible expand/collapse animations.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
@@ -309,3 +310,144 @@ class Animator:
         animation.finished.connect(on_complete)
         animation.start()
         Animator.active_animations.append(animation)
+
+    @staticmethod
+    def setup_collapsible_animation(
+        content_widget: QWidget,
+        duration: int = 250,
+        easing_curve: QEasingCurve.Type = QEasingCurve.OutCubic
+    ) -> QPropertyAnimation:
+        """
+        Set up animation for collapsible content widget.
+        
+        Args:
+            content_widget: Widget that will expand/collapse
+            duration: Animation duration in milliseconds
+            easing_curve: Easing curve for the animation
+            
+        Returns:
+            QPropertyAnimation: Animation object for the content widget
+        """
+        animation = QPropertyAnimation(content_widget, b"maximumHeight")
+        animation.setDuration(duration)
+        animation.setEasingCurve(easing_curve)
+        
+        # Store reference to animation on widget for easy access
+        content_widget._collapse_animation = animation
+        
+        return animation
+
+    @staticmethod
+    def animate_expand(
+        content_widget: QWidget,
+        target_height: int = None,
+        duration: int = 250,
+        on_finished: callable = None
+    ) -> QPropertyAnimation:
+        """
+        Animate expansion of a collapsible widget.
+        
+        Args:
+            content_widget: Widget to expand
+            target_height: Target height (calculates natural height if None)
+            duration: Animation duration in milliseconds
+            on_finished: Optional callback when animation finishes
+            
+        Returns:
+            QPropertyAnimation: The expansion animation
+        """
+        # Get or create animation
+        animation = getattr(content_widget, '_collapse_animation', None)
+        if not animation:
+            animation = Animator.setup_collapsible_animation(content_widget, duration)
+        else:
+            animation.setDuration(duration)
+        
+        # Make widget visible for height calculation
+        content_widget.setVisible(True)
+        
+        # Calculate target height if not provided
+        if target_height is None:
+            target_height = content_widget.sizeHint().height()
+        
+        # Set up animation
+        current_height = content_widget.height()
+        animation.setStartValue(current_height)
+        animation.setEndValue(target_height)
+        
+        # Clean up any previous connections
+        animation.finished.disconnect()
+        
+        # Set up completion callback
+        if on_finished:
+            animation.finished.connect(on_finished)
+        
+        # Remove height constraint when animation completes
+        animation.finished.connect(
+            lambda: content_widget.setMaximumHeight(16777215)
+        )
+        
+        # Add cleanup
+        def cleanup():
+            if animation in Animator.active_animations:
+                Animator.active_animations.remove(animation)
+        
+        animation.finished.connect(cleanup)
+        
+        animation.start()
+        Animator.active_animations.append(animation)
+        
+        return animation
+
+    @staticmethod
+    def animate_collapse(
+        content_widget: QWidget,
+        duration: int = 250,
+        on_finished: callable = None
+    ) -> QPropertyAnimation:
+        """
+        Animate collapse of a collapsible widget.
+        
+        Args:
+            content_widget: Widget to collapse
+            duration: Animation duration in milliseconds
+            on_finished: Optional callback when animation finishes
+            
+        Returns:
+            QPropertyAnimation: The collapse animation
+        """
+        # Get or create animation
+        animation = getattr(content_widget, '_collapse_animation', None)
+        if not animation:
+            animation = Animator.setup_collapsible_animation(content_widget, duration)
+        else:
+            animation.setDuration(duration)
+        
+        # Set up animation
+        current_height = content_widget.height()
+        animation.setStartValue(current_height)
+        animation.setEndValue(0)
+        
+        # Clean up any previous connections
+        animation.finished.disconnect()
+        
+        # Set up completion callbacks
+        if on_finished:
+            animation.finished.connect(on_finished)
+        
+        # Hide widget when animation completes
+        animation.finished.connect(
+            lambda: content_widget.setVisible(False)
+        )
+        
+        # Add cleanup
+        def cleanup():
+            if animation in Animator.active_animations:
+                Animator.active_animations.remove(animation)
+        
+        animation.finished.connect(cleanup)
+        
+        animation.start()
+        Animator.active_animations.append(animation)
+        
+        return animation
