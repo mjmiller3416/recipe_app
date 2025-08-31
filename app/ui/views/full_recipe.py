@@ -43,33 +43,33 @@ from _dev_tools.debug_logger import DebugLogger
 # ── Constants ───────────────────────────────────────────────────────────────────────────────────────────────
 class LayoutConstants:
     """Layout constants for consistent spacing and sizing throughout the Full Recipe view."""
-    
+
     # Content margins and spacing
     CONTENT_MARGINS = (130, 30, 130, 30)
     PAGE_SPACING = 25
     CONTENT_SECTION_SPACING = 30
-    
+
     # Card configuration
     CARD_MARGINS = (25, 25, 25, 25)
     CARD_SPACING = 15
     CARD_ICON_SIZE = (30, 30)
-    
+
     # Tags and info sections
     TAG_SPACING = 20
     INFO_CONTAINER_MARGINS = (20, 10, 20, 10)
     INFO_CONTAINER_SPACING = 40
-    
+
     # Ingredient list styling
     INGREDIENT_LIST_SPACING = 12
     INGREDIENT_GRID_SPACING = 10
     INGREDIENT_QTY_WIDTH = 60
     INGREDIENT_UNIT_WIDTH = 50
-    
+
     # Directions list styling
     DIRECTIONS_LIST_SPACING = 15
     DIRECTIONS_ITEM_SPACING = 12
     DIRECTIONS_NUMBER_WIDTH = 30
-    
+
     # Section headers
     SECTION_HEADER_SPACING = 10
     SECTION_ICON_SIZE = (24, 24)
@@ -128,7 +128,7 @@ class IngredientList(QWidget):
 
         # Create labels with consistent patterns
         qty_label = self._create_ingredient_label(
-            formatted_qty, "Ingredient", "Quantity", 
+            formatted_qty, "Ingredient", "Quantity",
             Qt.AlignRight | Qt.AlignVCenter, fixed_width=LayoutConstants.INGREDIENT_QTY_WIDTH
         )
         unit_label = self._create_ingredient_label(
@@ -148,7 +148,7 @@ class IngredientList(QWidget):
         # Add to main layout
         self.layout.addWidget(item_widget)
 
-    def _create_ingredient_label(self, text: str, context: str, label_type: str, 
+    def _create_ingredient_label(self, text: str, context: str, label_type: str,
                                alignment: Qt.AlignmentFlag, fixed_width: int = None) -> QLabel:
         """Create a standardized ingredient label with consistent styling."""
         label = QLabel(text)
@@ -210,7 +210,7 @@ class DirectionsList(QWidget):
 
         # Create standardized labels
         number_label = self._create_direction_label(
-            f"{number}.", "Direction", "Number", 
+            f"{number}.", "Direction", "Number",
             Qt.AlignLeft | Qt.AlignTop, min_width=LayoutConstants.DIRECTIONS_NUMBER_WIDTH
         )
         text_label = self._create_direction_label(
@@ -226,7 +226,7 @@ class DirectionsList(QWidget):
         self.layout.addWidget(item_widget)
 
     def _create_direction_label(self, text: str, context: str, label_type: str,
-                              alignment: Qt.AlignmentFlag, min_width: int = None, 
+                              alignment: Qt.AlignmentFlag, min_width: int = None,
                               word_wrap: bool = False) -> QLabel:
         """Create a standardized direction label with consistent styling."""
         label = QLabel(text)
@@ -269,7 +269,7 @@ class FullRecipe(QWidget):
             "title": sanitize_form_input(getattr(self.recipe, "recipe_name", "")) or "Untitled Recipe",
             "recipe_name": sanitize_form_input(getattr(self.recipe, "recipe_name", "")),
             "meal_type": getattr(self.recipe, "meal_type", None) or "Dinner",
-            "category": getattr(self.recipe, "recipe_category", None) or "Main Course", 
+            "category": getattr(self.recipe, "recipe_category", None) or "Main Course",
             "diet_pref": getattr(self.recipe, "diet_pref", None) or "High-Protein",
             "total_time": str(getattr(self.recipe, "total_time", "")) or "2 hours 30 mins",
             "servings": str(getattr(self.recipe, "servings", "")) or "6",
@@ -304,7 +304,7 @@ class FullRecipe(QWidget):
         self._create_banner_section()
         self._create_info_section()
         self._create_content_sections()
-        
+
         # Bottom spacer
         self.page.addStretch()
 
@@ -402,14 +402,14 @@ class FullRecipe(QWidget):
         ingredients_list = IngredientList()
         ingredients_list.setIngredients(self.recipe_data["ingredient_details"])
         ingredients_card = self._create_recipe_section_card("Ingredients", Icon.INGREDIENTS, ingredients_list)
-        
+
         # Right Column: Directions + Notes
         directions_list = DirectionsList()
         directions_list.setDirections(self.recipe_data["directions"])
         directions_card = self._create_recipe_section_card("Directions", Icon.DIRECTIONS, directions_list)
-        
+
         right_column_widgets = [directions_card]
-        
+
         # Add notes if present
         if self.recipe_data["notes"]:
             notes_text = QLabel(sanitize_form_input(self.recipe_data["notes"]))
@@ -457,11 +457,11 @@ class FullRecipe(QWidget):
         """Handle banner path validation and database update with consistent error handling."""
         if not banner_path:
             return False
-            
+
         if Path(banner_path).exists():
             self.recipe_banner.set_banner_image_path(banner_path)
             DebugLogger().log(f"Banner image loaded for '{recipe_name}': {Path(banner_path).name}", "info")
-            
+
             # Save to database if recipe has ID
             if self.recipe_data["recipe_id"]:
                 try:
@@ -480,7 +480,7 @@ class FullRecipe(QWidget):
         else:
             DebugLogger().log(f"Generated banner image not found: {banner_path}", "warning")
             return False
-            
+
     def _reset_banner_to_placeholder(self):
         """Reset banner to placeholder state with consistent handling."""
         self.recipe_banner.show_placeholder_state()
@@ -491,16 +491,16 @@ class FullRecipe(QWidget):
         card = Card(self.content, card_type="Primary")
         card.setHeader(title, icon)
         card.headerIcon.setSize(*LayoutConstants.CARD_ICON_SIZE)
-        card.headerIcon.setColor("primary") 
+        card.headerIcon.setColor("primary")
         card.setContentMargins(*LayoutConstants.CARD_MARGINS)
         card.setSpacing(LayoutConstants.CARD_SPACING)
         card.expandWidth(True)
-        
+
         if content_widget:
             # Set standardized size policy for content widgets
             content_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
             card.addWidget(content_widget)
-            
+
         return card
 
     def _on_generate_banner_requested(self, recipe_name: str):
@@ -517,13 +517,13 @@ class FullRecipe(QWidget):
     def _on_generation_finished(self, recipe_name: str, result):
         """Handle successful AI banner generation."""
         banner_path = None
-        
+
         # Extract banner path from different result formats
         if isinstance(result, str):
             banner_path = result
         elif result and hasattr(result, 'banner_path'):
             banner_path = str(result.banner_path)
-        
+
         # Handle the banner path with consolidated error handling
         if banner_path and self._handle_banner_path_result(banner_path, recipe_name):
             # Success - banner was set successfully
