@@ -147,10 +147,10 @@ class IngredientForm(QWidget):
         self._session = create_session()
         self.ingredient_service = IngredientService(self._session)
         self.exact_match = None
-        self._setup_ui()
+        self._build_ui()
         self.setup_event_logic()
 
-    def _setup_ui(self):
+    def _build_ui(self):
         """Sets up the UI components and layout for the ingredient widget."""
 
         # Drag handle for reordering
@@ -314,9 +314,9 @@ class IngredientsCard(ActionCard):
         self.setSubHeader("List all the ingredients required for this recipe.")
 
         self.ingredient_widgets = []
-        self._setup_ui()
+        self._build_ui()
 
-    def _setup_ui(self):
+    def _build_ui(self):
         """Set up the container UI with initial ingredient and add button."""
 
         # Add initial ingredient widget
@@ -615,18 +615,18 @@ class AddRecipes(QWidget):
             self.le_recipe_name, self.le_time, self.le_servings,
             self.cb_meal_type, self.cb_recipe_category, self.cb_dietary_preference
         ]
-        
+
         # Add ingredient widgets dynamically if they exist
         ingredient_widgets = self.ingredient_container.ingredient_widgets
         if ingredient_widgets:
             w = ingredient_widgets[0]
-            ingredient_chain = [w.le_quantity, w.cb_unit, w.sle_ingredient_name, 
+            ingredient_chain = [w.le_quantity, w.cb_unit, w.sle_ingredient_name,
                               w.cb_ingredient_category, w.btn_delete]
             base_widgets.extend(ingredient_chain)
-        
+
         # Add final widgets
         base_widgets.append(self.te_directions)
-        
+
         setup_tab_order_chain(base_widgets)
 
     def _update_image_path(self, image_path: str):

@@ -7,9 +7,7 @@ multiple meal planning tabs and integrates with the database to load and save me
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt, Signal, QEvent
-from PySide6.QtWidgets import (
-    QMenu, QStackedWidget, QTabWidget, QVBoxLayout, QHBoxLayout,
-    QWidget, QToolTip)
+from PySide6.QtWidgets import QMenu, QStackedWidget, QTabWidget, QVBoxLayout, QHBoxLayout,QWidget, QToolTip
 
 from app.core.dtos.planner_dtos import MealSelectionCreateDTO, MealSelectionUpdateDTO
 from app.core.models.meal_selection import MealSelection
