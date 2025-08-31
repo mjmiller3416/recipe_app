@@ -17,6 +17,8 @@ from app.core.database.db import create_session
 from app.core.dtos import IngredientSearchDTO, RecipeCreateDTO, RecipeIngredientDTO
 from app.core.services.ingredient_service import IngredientService
 from app.core.services.recipe_service import RecipeService
+from app.core.utils.conversion_utils import parse_servings_range, safe_int_conversion, safe_float_conversion
+from app.ui.utils.form_utils import clear_form_fields
 from app.style import Qss, Theme
 from app.style.icon.config import Name, Type
 from app.ui.components.inputs import SmartLineEdit
@@ -285,7 +287,7 @@ class IngredientForm(QWidget):
         "ingredient_name": self.sle_ingredient_name.text().strip(),
         "ingredient_category": self.cb_ingredient_category.currentText().strip(),
         "unit": self.cb_unit.currentText().strip(),
-        "quantity": float(self.le_quantity.text().strip() or 0),
+        "quantity": safe_float_conversion(self.le_quantity.text().strip()),
         "existing_ingredient_id": self.exact_match.id if self.exact_match else None,
         }
 
@@ -734,26 +736,6 @@ class AddRecipes(QWidget):
         self.stored_ingredients.clear()
         self.ingredient_container.clear_all_ingredients()
 
-    def _parse_servings(self, servings_text: str) -> int:
-        """Parse servings field, handling ranges like '2-4' by taking the first number."""
-        if not servings_text:
-            return 0
-
-        # Remove any whitespace
-        servings_text = servings_text.strip()
-
-        # Handle ranges like '2-4', '4-6' by taking the first number
-        if '-' in servings_text:
-            try:
-                return int(servings_text.split('-')[0].strip())
-            except (ValueError, IndexError):
-                return 0
-
-        # Handle single numbers
-        try:
-            return int(servings_text)
-        except ValueError:
-            return 0
 
     def to_payload(self):
         """Collect all recipe form data and return it as a dict for API calls."""
@@ -762,21 +744,19 @@ class AddRecipes(QWidget):
             "recipe_category":     self.cb_recipe_category.currentText().strip(),
             "meal_type":           self.cb_meal_type.currentText().strip(),
             "dietary_preference": self.cb_dietary_preference.currentText().strip(),
-            "total_time":          int(self.le_time.text().strip() or 0),
-            "servings":            self._parse_servings(self.le_servings.text()),
+            "total_time":          safe_int_conversion(self.le_time.text().strip()),
+            "servings":            parse_servings_range(self.le_servings.text()),
             "directions":          self.te_directions.toPlainText().strip(),
             "reference_image_path":  self.recipe_image.get_reference_image_path() or "",
         }
 
     def _clear_form(self):
         """Clear all form fields after successful save."""
-        self.le_recipe_name.clear()
-        self.cb_recipe_category.setCurrentIndex(-1)
-        self.cb_meal_type.setCurrentIndex(-1)
-        self.cb_dietary_preference.setCurrentIndex(-1)
-        self.le_time.clear()
-        self.le_servings.clear()
-        self.te_directions.clear()
+        form_widgets = [
+            self.le_recipe_name, self.cb_recipe_category, self.cb_meal_type,
+            self.cb_dietary_preference, self.le_time, self.le_servings, self.te_directions
+        ]
+        clear_form_fields(form_widgets)
         self.recipe_image.clear_default_image()
 
         # clear stored ingredients and widgets
