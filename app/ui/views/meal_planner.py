@@ -13,6 +13,7 @@ from app.core.dtos.planner_dtos import MealSelectionCreateDTO, MealSelectionUpda
 from app.core.models.meal_selection import MealSelection
 from app.core.services.planner_service import PlannerService
 from app.core.services.recipe_service import RecipeService
+from app.core.utils.error_utils import log_and_handle_exception, safe_execute_with_fallback, error_boundary, create_error_context
 from app.style.icon import AppIcon, Icon
 from app.style import Theme, Qss
 from app.ui.components.composite.recipe_card import LayoutSize, create_recipe_card
@@ -115,65 +116,69 @@ class MealWidget(QWidget):
             slot.set_recipe(recipe)
             slot.blockSignals(False)
 
+    @error_boundary(fallback=None, logger_func=DebugLogger.log)
     def save_meal(self):
         if not self._meal_model:
             return
 
-        try:
-            if self._meal_model.id is None:
-                create_dto = MealSelectionCreateDTO(
-                    meal_name=self._meal_model.meal_name,
-                    main_recipe_id=self._meal_model.main_recipe_id,
-                    side_recipe_1_id=self._meal_model.side_recipe_1_id,
-                    side_recipe_2_id=self._meal_model.side_recipe_2_id,
-                    side_recipe_3_id=self._meal_model.side_recipe_3_id
-                )
-                response_dto = self.planner_service.create_meal_selection(create_dto)
-                if response_dto:
-                    self._meal_model.id = response_dto.id
-            else:
-                update_dto = MealSelectionUpdateDTO(
-                    meal_name=self._meal_model.meal_name,
-                    main_recipe_id=self._meal_model.main_recipe_id,
-                    side_recipe_1_id=self._meal_model.side_recipe_1_id,
-                    side_recipe_2_id=self._meal_model.side_recipe_2_id,
-                    side_recipe_3_id=self._meal_model.side_recipe_3_id
-                )
-                self.planner_service.update_meal_selection(self._meal_model.id, update_dto)
+        if self._meal_model.id is None:
+            create_dto = MealSelectionCreateDTO(
+                meal_name=self._meal_model.meal_name,
+                main_recipe_id=self._meal_model.main_recipe_id,
+                side_recipe_1_id=self._meal_model.side_recipe_1_id,
+                side_recipe_2_id=self._meal_model.side_recipe_2_id,
+                side_recipe_3_id=self._meal_model.side_recipe_3_id
+            )
+            response_dto = self.planner_service.create_meal_selection(create_dto)
+            if response_dto:
+                self._meal_model.id = response_dto.id
+        else:
+            update_dto = MealSelectionUpdateDTO(
+                meal_name=self._meal_model.meal_name,
+                main_recipe_id=self._meal_model.main_recipe_id,
+                side_recipe_1_id=self._meal_model.side_recipe_1_id,
+                side_recipe_2_id=self._meal_model.side_recipe_2_id,
+                side_recipe_3_id=self._meal_model.side_recipe_3_id
+            )
+            self.planner_service.update_meal_selection(self._meal_model.id, update_dto)
 
-        except Exception as e:
-            DebugLogger.log(f"[MealWidget] Failed to save meal: {e}", "error")
-
+    @error_boundary(fallback=None, logger_func=DebugLogger.log)
     def load_meal(self, meal_id: int):
         """
         Load a meal by its ID and populate the RecipeViewers.
         """
-        try:
-            response_dto = self.planner_service.get_meal_selection(meal_id)
-            if not response_dto:
-                DebugLogger.log(f"[MealWidget] Failed to load meal with ID {meal_id}", "error")
-                return
-
-            self._meal_model = MealSelection(
-                id=response_dto.id,
-                meal_name=response_dto.meal_name,
-                main_recipe_id=response_dto.main_recipe_id,
-                side_recipe_1_id=response_dto.side_recipe_1_id,
-                side_recipe_2_id=response_dto.side_recipe_2_id,
-                side_recipe_3_id=response_dto.side_recipe_3_id
+        response_dto = self.planner_service.get_meal_selection(meal_id)
+        if not response_dto:
+            error_context = create_error_context(
+                "meal_load",
+                {"meal_id": meal_id},
+                {"component": "MealWidget"}
             )
+            log_and_handle_exception(
+                "meal_load_not_found",
+                ValueError(f"No meal found with ID {meal_id}"),
+                DebugLogger.log,
+                error_context
+            )
+            return
 
-            # Load Recipes
-            main = self.recipe_service.get_recipe(self._meal_model.main_recipe_id)
-            self.main_slot.set_recipe(main)
-            for idx in (1, 2, 3):
-                rid = getattr(self._meal_model, f"side_recipe_{idx}_id")
-                slot = self.meal_slots.get(f"side{idx}")
-                recipe = self.recipe_service.get_recipe(rid) if rid else None
-                slot.set_recipe(recipe)
+        self._meal_model = MealSelection(
+            id=response_dto.id,
+            meal_name=response_dto.meal_name,
+            main_recipe_id=response_dto.main_recipe_id,
+            side_recipe_1_id=response_dto.side_recipe_1_id,
+            side_recipe_2_id=response_dto.side_recipe_2_id,
+            side_recipe_3_id=response_dto.side_recipe_3_id
+        )
 
-        except Exception as e:
-            DebugLogger.log(f"[MealWidget] Error loading meal {meal_id}: {e}", "error")
+        # Load Recipes
+        main = self.recipe_service.get_recipe(self._meal_model.main_recipe_id)
+        self.main_slot.set_recipe(main)
+        for idx in (1, 2, 3):
+            rid = getattr(self._meal_model, f"side_recipe_{idx}_id")
+            slot = self.meal_slots.get(f"side{idx}")
+            recipe = self.recipe_service.get_recipe(rid) if rid else None
+            slot.set_recipe(recipe)
 
 
     def eventFilter(self, obj, event):
@@ -247,7 +252,7 @@ class MealPlanner(QWidget):
         """Initialize UI by adding the '+' tab and loading saved meals."""
         self._new_meal_tab()  # add the "+" tab (used to add new meals)
 
-        try:
+        def _load_saved_meals():
             meal_ids = self.planner_service.load_saved_meal_ids()
             DebugLogger.log(f"[MealPlanner] Restoring saved meal IDs: {meal_ids}", "info")
 
@@ -256,9 +261,14 @@ class MealPlanner(QWidget):
 
             if not meal_ids:
                 self._add_meal_tab()
-        except Exception as e:
-            DebugLogger.log(f"[MealPlanner] Error loading saved meals: {e}", "error")
-            self._add_meal_tab()  # fallback to empty tab
+
+        # Use safe_execute_with_fallback to handle errors gracefully
+        safe_execute_with_fallback(
+            _load_saved_meals,
+            fallback=lambda: self._add_meal_tab(),  # fallback to empty tab
+            error_context="meal_planner_initialization",
+            logger_func=DebugLogger.log
+        )
 
     def _add_meal_tab(self, meal_id: int = None):
         widget = MealWidget(self.planner_service)  # pass the service here
@@ -297,12 +307,24 @@ class MealPlanner(QWidget):
         DebugLogger.log(f"Starting recipe selection for slot: {slot_key}", "info")
         # Store Context
         self._selection_context = (widget, slot_key)
-        # reset selection browser
-        try:
+        
+        # Reset selection browser with error handling
+        def _load_recipes():
             DebugLogger.log("Loading recipes in selection page browser", "info")
             self.selection_page.browser.load_recipes()
-        except Exception as e:
-            DebugLogger.log(f"Error loading recipes: {e}", "error")
+
+        error_context = create_error_context(
+            "recipe_selection_init",
+            {"slot_key": slot_key},
+            {"component": "MealPlanner"}
+        )
+        safe_execute_with_fallback(
+            _load_recipes,
+            fallback=None,  # Continue even if loading fails
+            error_context="recipe_browser_load",
+            logger_func=DebugLogger.log
+        )
+        
         # Show Selection Page
         DebugLogger.log("Switching to selection page (index 1)", "info")
         self.stack.setCurrentIndex(1)
@@ -410,6 +432,7 @@ class MealPlanner(QWidget):
                 ids.append(widget._meal_model.id)
         return ids
 
+    @error_boundary(fallback=None, logger_func=DebugLogger.log)
     def saveMealPlan(self):
         """Save all meals and their corresponding tab state."""
         for widget in self.tab_map.values():
