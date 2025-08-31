@@ -1,10 +1,10 @@
-"""app/core/features/recipes/repo.py
+"""app/core/repositories/recipes/repo.py
 
 Repository layer for Recipe model. Handles all direct database interactions
 related to recipes, including related ingredients and history.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from datetime import datetime
 from typing import List, Optional
 
@@ -18,7 +18,7 @@ from ..models.recipe_ingredient import RecipeIngredient
 from ..repositories.ingredient_repo import IngredientRepo
 
 
-# ── Recipe Repository ────────────────────────────────────────────────────────────────────────
+# ── Recipe Repository ───────────────────────────────────────────────────────────────────────────────────────
 class RecipeRepo:
     """Handles direct DB queries for the Recipe model."""
 

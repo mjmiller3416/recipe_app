@@ -2,7 +2,7 @@
 
 SQLAlchemy ORM model for meal selections and their recipes.
 """
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, Optional
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from app.core.models.recipe import Recipe
 
 
-# ── MealSelection Model ──────────────────────────────────────────────────────────────────────
+# ── Meal Selection Model ────────────────────────────────────────────────────────────────────────────────────
 class MealSelection(Base):
     __tablename__ = "meal_selections"
 
@@ -45,7 +45,7 @@ class MealSelection(Base):
         nullable=True
     )
 
-    # ── Relationships ────────────────────────────────────────────────────────────────────────
+    # ── Relationships ───────────────────────────────────────────────────────────────────────────────────────
     main_recipe: Mapped["Recipe"] = relationship(
         "Recipe",
         foreign_keys=[main_recipe_id],
@@ -65,12 +65,12 @@ class MealSelection(Base):
     )
 
 
-    # ── String Representation ────────────────────────────────────────────────────────────────
+    # ── String Representation ───────────────────────────────────────────────────────────────────────────────
     def __repr__(self) -> str:
         return f"<MealSelection(id={self.id}, meal_name='{self.meal_name}'," \
                f" main_recipe_id={self.main_recipe_id})>"
 
-    # ── Helper Methods ───────────────────────────────────────────────────────────────────────
+    # ── Helper Methods ──────────────────────────────────────────────────────────────────────────────────────
     def get_side_recipes(self) -> List["Recipe"]:
         """Return any side dish Recipes for this meal."""
         sides = []

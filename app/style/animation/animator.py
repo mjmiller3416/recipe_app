@@ -1,15 +1,15 @@
-"""app/appearance/animation/animator.py
+"""app/styyle/animation/animator.py
 
 AnimationManager provides methods for animating widgets using QPropertyAnimation.
 Supports width animations, fade effects, cross-fading between stacked widgets, and page flip animations.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QEasingCurve, QPoint, QPropertyAnimation, QTimer
 from PySide6.QtWidgets import QGraphicsOpacityEffect, QWidget
 
 
-# ── Animator ─────────────────────────────────────────────────────────────────────────────────
+# ── Animator ────────────────────────────────────────────────────────────────────────────────────────────────
 class Animator:
     active_animations = []  # store animations to prevent garbage collection
 
@@ -309,4 +309,3 @@ class Animator:
         animation.finished.connect(on_complete)
         animation.start()
         Animator.active_animations.append(animation)
-

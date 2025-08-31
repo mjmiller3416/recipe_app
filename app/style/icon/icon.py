@@ -1,4 +1,4 @@
-"""app/appearance/icon/icon.py
+"""app/style/icon/icon.py
 
 Consolidated icon system providing BaseIcon, ThemedIcon, Icon, and StateIcon classes.
 
@@ -6,7 +6,7 @@ This module replaces the previous icon.py and mixin.py files, providing a cleane
 hierarchy for theme-aware SVG icons with state management.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt, QTimer
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QLabel, QSizePolicy, QVBoxLayout, QWidget
@@ -20,7 +20,7 @@ from app.style.icon.svg_loader import SVGLoader
 from _dev_tools import DebugLogger
 
 
-# ── BaseIcon ─────────────────────────────────────────────────────────────────────────────────
+# ── Base Icon ───────────────────────────────────────────────────────────────────────────────────────────────
 class BaseIcon:
     """Base class for all icon types providing core rendering logic.
 
@@ -113,7 +113,7 @@ class BaseIcon:
         pass
 
 
-# ── ThemedIcon ───────────────────────────────────────────────────────────────────────────────
+# ── Themed Icon ─────────────────────────────────────────────────────────────────────────────────────────────
 class ThemedIcon(BaseIcon):
     """Themed extension of BaseIcon with automatic palette updates.
 
@@ -243,7 +243,7 @@ class ThemedIcon(BaseIcon):
         )
 
 
-# ── AppIcon ─────────────────────────────────────────────────────────────────────────────────────
+# ── App Icon ────────────────────────────────────────────────────────────────────────────────────────────────
 class AppIcon(QLabel):
     """Standalone visual widget for themed SVG icons.
 
@@ -311,7 +311,7 @@ class AppIcon(QLabel):
         return super().objectName()
 
 
-# ── StateIcon ───────────────────────────────────────────────────────────────────────────────
+# ── State Icon ──────────────────────────────────────────────────────────────────────────────────────────────
 class StateIcon(QWidget):
     """Button-bound icon with hover, checked, disabled states.
 

@@ -4,7 +4,7 @@ Pydantic DTOs for shopping item operations and data transfer.
 Handles shopping item creation, updates, and responses.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from typing import Literal, Optional
@@ -12,7 +12,7 @@ from typing import Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
-# ── Base DTOs ──────────────────────────────────────────────────────────────
+# ── Base DTOs ───────────────────────────────────────────────────────────────────────────────────────────────
 class ShoppingItemBaseDTO(BaseModel):
     """Base DTO for shopping item operations."""
     model_config = ConfigDict(from_attributes=True)
@@ -28,7 +28,7 @@ class ShoppingItemBaseDTO(BaseModel):
             return v.strip()
         return v
 
-# ── Create DTOs ────────────────────────────────────────────────────────────
+# ── Create DTOs ─────────────────────────────────────────────────────────────────────────────────────────────
 class ShoppingItemCreateDTO(ShoppingItemBaseDTO):
     """DTO for creating a new shopping item."""
     source: Literal["recipe", "manual"] = "manual"
@@ -47,7 +47,7 @@ class ManualItemCreateDTO(BaseModel):
             return v.strip()
         return v
 
-# ── Update DTOs ────────────────────────────────────────────────────────────
+# ── Update DTOs ─────────────────────────────────────────────────────────────────────────────────────────────
 class ShoppingItemUpdateDTO(BaseModel):
     """DTO for updating a shopping item."""
     model_config = ConfigDict(from_attributes=True)
@@ -64,7 +64,7 @@ class ShoppingItemUpdateDTO(BaseModel):
             return v.strip()
         return v
 
-# ── Response DTOs ────────────────────────────────────────────────────────────
+# ── Response DTOs ───────────────────────────────────────────────────────────────────────────────────────────
 class ShoppingItemResponseDTO(ShoppingItemBaseDTO):
     """DTO for shopping item responses."""
     id: int

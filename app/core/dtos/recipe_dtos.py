@@ -4,7 +4,7 @@ Pydantic DTOs for recipe operations and data transfer.
 Handles recipe creation, updates, filtering, and responses with ingredient relationships.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, Optional
@@ -13,10 +13,9 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 if TYPE_CHECKING:
     from app.core.models.ingredient import Ingredient
-    from app.core.models.recipe import Recipe
 
 
-# ── Recipe Ingredient DTOs ───────────────────────────────────────────────────────────────────
+# ── Recipe Ingredient DTOs ──────────────────────────────────────────────────────────────────────────────────
 class RecipeIngredientDTO(BaseModel):
     """DTO describing an ingredient entry within a recipe."""
 
@@ -35,7 +34,7 @@ class RecipeIngredientDTO(BaseModel):
             return v.strip()
         return v
 
-# ── Base DTOs ─────────────────────────────────────────────────────────────────────────
+# ── Base DTOs ───────────────────────────────────────────────────────────────────────────────────────────────
 class RecipeBaseDTO(BaseModel):
     """Base DTO for recipe operations."""
 
@@ -59,12 +58,12 @@ class RecipeBaseDTO(BaseModel):
             return v.strip()
         return v
 
-# ── Create DTO ───────────────────────────────────────────────────────────────────────────────
+# ── Create DTO ──────────────────────────────────────────────────────────────────────────────────────────────
 class RecipeCreateDTO(RecipeBaseDTO):
     """DTO used to create a new recipe with ingredients."""
     ingredients: List[RecipeIngredientDTO] = []
 
-# ── Update DTO ───────────────────────────────────────────────────────────────────────────────
+# ── Update DTO ──────────────────────────────────────────────────────────────────────────────────────────────
 class RecipeUpdateDTO(BaseModel):
     """DTO used to update a recipe's core attributes and ingredient list."""
 
@@ -90,7 +89,7 @@ class RecipeUpdateDTO(BaseModel):
             return v.strip()
         return v
 
-# ── Response DTO ─────────────────────────────────────────────────────────────────────────────
+# ── Response DTO ────────────────────────────────────────────────────────────────────────────────────────────
 class RecipeResponseDTO(RecipeBaseDTO):
     """DTO for recipe responses with full ingredient information."""
 
@@ -99,7 +98,7 @@ class RecipeResponseDTO(RecipeBaseDTO):
     created_at: Optional[str] = None  # ISO format datetime string
     ingredients: List["Ingredient"] = []
 
-# ── Filter DTO ───────────────────────────────────────────────────────────────────────────────
+# ── Filter DTO ──────────────────────────────────────────────────────────────────────────────────────────────
 class RecipeFilterDTO(BaseModel):
     """DTO for filtering recipe queries."""
 

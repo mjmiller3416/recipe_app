@@ -1,16 +1,16 @@
-"""app/core/repos/shopping_repo.py
+"""app/core/repositories/shopping_repo.py
 
 Repository for shopping list and shopping state operations.
 Handles ingredient aggregation, manual items, and state persistence.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from collections import defaultdict
 from typing import Any, Dict, List, Optional, Tuple
 
-from sqlalchemy import and_, delete, or_, select
+from sqlalchemy import and_, delete, select
 from sqlalchemy.orm import Session, joinedload
 
 from ..models.recipe_ingredient import RecipeIngredient
@@ -18,7 +18,7 @@ from ..models.shopping_item import ShoppingItem
 from ..models.shopping_state import ShoppingState
 
 
-# ── Shopping Repository ──────────────────────────────────────────────────────────────────────
+# ── Shopping Repository ─────────────────────────────────────────────────────────────────────────────────────
 class ShoppingRepo:
     """Repository for shopping list operations."""
 
@@ -33,7 +33,7 @@ class ShoppingRepo:
         """Initialize the Shopping Repository with a database session."""
         self.session = session
 
-    # ── Unit Conversion ──────────────────────────────────────────────────────────────────────
+    # ── Unit Conversion ─────────────────────────────────────────────────────────────────────────────────────
     def _convert_quantity(self, name: str, qty: float, unit: str) -> Tuple[float, str]:
         """
         Convert ingredient quantity to a standard unit if applicable.
@@ -61,7 +61,7 @@ class ShoppingRepo:
             return qty_base / group.get(unit, 1.0), unit
         return qty, unit
 
-    # ── Recipe Ingredient Aggregation ────────────────────────────────────────────────────────
+    # ── Recipe Ingredient Aggregation ───────────────────────────────────────────────────────────────────────
     def get_recipe_ingredients(self, recipe_ids: List[int]) -> List[RecipeIngredient]:
         """
         Fetch all recipe ingredients for given recipe IDs.
@@ -202,7 +202,7 @@ class ShoppingRepo:
 
         return breakdown
 
-    # ── Shopping Item CRUD Operations ────────────────────────────────────────────────────────
+    # ── Shopping Item CRUD Operations ───────────────────────────────────────────────────────────────────────
     def create_shopping_item(self, shopping_item: ShoppingItem) -> ShoppingItem:
         """
         Create and persist a new shopping item.
@@ -340,7 +340,7 @@ class ShoppingRepo:
         """
         return self.clear_shopping_items(source="recipe")
 
-    # ── Shopping Item Search and Filter ──────────────────────────────────────────────────────
+    # ── Shopping Item Search and Filter ─────────────────────────────────────────────────────────────────────
     def search_shopping_items(
         self,
         search_term: Optional[str] = None,
@@ -388,7 +388,7 @@ class ShoppingRepo:
         result = self.session.execute(stmt)
         return result.scalars().all()
 
-    # ── Shopping State Operations ────────────────────────────────────────────────────────────
+    # ── Shopping State Operations ───────────────────────────────────────────────────────────────────────────
     def get_shopping_state(self, key: str) -> Optional[ShoppingState]:
         """
         Get shopping state by key.
@@ -477,7 +477,7 @@ class ShoppingRepo:
         result = self.session.execute(stmt)
         return result.rowcount
 
-    # ── Utility Methods ──────────────────────────────────────────────────────────────────────
+    # ── Utility Methods ─────────────────────────────────────────────────────────────────────────────────────
     def get_shopping_list_summary(self) -> Dict[str, Any]:
         """
         Get summary statistics for the shopping list.

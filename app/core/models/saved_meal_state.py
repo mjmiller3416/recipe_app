@@ -3,10 +3,10 @@
 SQLAlchemy ORM model for storing the state of saved meals in the database.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from app.core.models.meal_selection import MealSelection
 
 
-# ── Saved Meal State Model ───────────────────────────────────────────────────────────────────
+# ── Saved Meal State Model ──────────────────────────────────────────────────────────────────────────────────
 class SavedMealState(Base):
     __tablename__ = "saved_meal_states"
 
@@ -28,12 +28,12 @@ class SavedMealState(Base):
         nullable=False
     )
 
-    # ── Relationships ────────────────────────────────────────────────────────────────────────
+    # ── Relationships ───────────────────────────────────────────────────────────────────────────────────────
     meal_selection: Mapped["MealSelection"] = relationship(
         "MealSelection",
         foreign_keys=[meal_id]
     )
 
-    # ── String Representation ────────────────────────────────────────────────────────────────
+    # ── String Representation ───────────────────────────────────────────────────────────────────────────────
     def __repr__(self) -> str:
         return f"<SavedMealState(id={self.id}, meal_id={self.meal_id})>"

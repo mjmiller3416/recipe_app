@@ -1,16 +1,16 @@
-"""app/theme_manager/config.py
+"""app/style/theme/config.py
 
 Configuration module for theme management in the application.
 Defines color enums, theme modes, and paths to QSS files.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from enum import Enum
 
 from app.config.paths.app_paths import AppPaths
 
 
-# ── Theme Configuration ──────────────────────────────────────────────────────────────────────
+# ── Theme Configuration ─────────────────────────────────────────────────────────────────────────────────────
 class Color(Enum):
     INDIGO      = "#3F51B5"
     BLUE        = "#2196F3"

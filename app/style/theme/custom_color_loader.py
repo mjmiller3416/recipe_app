@@ -1,4 +1,4 @@
-"""app/theme_manager/custom_color_loader.py
+"""app/style/theme/custom_color_loader.py
 
 Custom Color Map Loader for Theme Manager
 
@@ -7,7 +7,7 @@ This module provides functionality to load custom color schemes from JSON files
 by the existing ThemeManager system.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 import json
 from pathlib import Path
 from typing import Dict, Optional
@@ -17,7 +17,7 @@ from _dev_tools.debug_logger import DebugLogger
 from .config import Mode
 
 
-# ── Custom Color Loader ──────────────────────────────────────────────────────────────────────
+# ── Custom Color Loader ─────────────────────────────────────────────────────────────────────────────────────
 class CustomColorLoader:
     """
     Loads custom color schemes from JSON files and converts them to

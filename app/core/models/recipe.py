@@ -1,15 +1,15 @@
-"""app/core/features/recipes/recipe.py
+"""app/core/models/recipe.py
 
 SQLAlchemy model for recipes.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from datetime import datetime
 from typing import TYPE_CHECKING, List, Optional
 
-from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.utils import utcnow
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from .meal_selection import MealSelection
 
 
-# ── Recipe Model ─────────────────────────────────────────────────────────────────────────────
+# ── Recipe Model ────────────────────────────────────────────────────────────────────────────────────────────
 class Recipe(Base):
     __tablename__ = "recipe"
 
@@ -41,7 +41,7 @@ class Recipe(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     is_favorite: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    # ── Relationships  ───────────────────────────────────────────────────────────────────────
+    # ── Relationships  ──────────────────────────────────────────────────────────────────────────────────────
     ingredients: Mapped[List[RecipeIngredient]] = relationship(
         "RecipeIngredient",
         back_populates="recipe",
@@ -60,7 +60,7 @@ class Recipe(Base):
         back_populates="main_recipe"
     )
 
-    # ── String Representation ────────────────────────────────────────────────────────────────
+    # ── String Representation ───────────────────────────────────────────────────────────────────────────────
     def __repr__(self) -> str:
         return (
             f"Recipe(id={self.id}, recipe_name={self.recipe_name}, "
@@ -69,7 +69,7 @@ class Recipe(Base):
             f"is_favorite={self.is_favorite})"
         )
 
-    # ── Helper Methods ───────────────────────────────────────────────────────────────────────
+    # ── Helper Methods ──────────────────────────────────────────────────────────────────────────────────────
     def formatted_time(self) -> str:
         """Return total_time formatted as "Xh Ym" or "Ym" if less than 1 hour."""
         if not self.total_time:
@@ -86,7 +86,7 @@ class Recipe(Base):
         if not self.directions:
             return []
         return [line.strip() for line in self.directions.splitlines() if line.strip()]
-    
+
     def get_ingredient_details(self) -> list[IngredientDetailDTO]:
         """Return list of IngredientDetailDTO for each ingredient."""
         return [ri.get_ingredient_detail() for ri in self.ingredients]

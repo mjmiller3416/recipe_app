@@ -1,17 +1,16 @@
-"""app/appearance/animation/flip_animations.py
+"""app/style/animation/flip_animations.py
 
 This module contains classes and helpers specifically for page flip animations.
 Provides FlipAnimationHelper for managing flip transformations and PageFlipContainer
 for widgets that need flip transition capabilities.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Property, QEasingCurve, QObject, Signal
-from PySide6.QtGui import QTransform
 from PySide6.QtWidgets import QFrame
 
 
-# ── Helper Classes ───────────────────────────────────────────────────────────────────────────
+# ── Flip Animation Helper ───────────────────────────────────────────────────────────────────────────────────
 class FlipAnimationHelper(QObject):
     """Helper class to provide QObject functionality for page flip animations."""
 

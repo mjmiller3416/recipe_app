@@ -3,7 +3,7 @@
 RecipeService using SQLAlchemy repository pattern.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -19,7 +19,7 @@ from ..repositories.recipe_repo import RecipeRepo
 from .session_manager import session_scope
 
 
-# ── Exceptions ───────────────────────────────────────────────────────────────────────────────
+# ── Exceptions ──────────────────────────────────────────────────────────────────────────────────────────────
 class RecipeSaveError(Exception):
     pass
 
@@ -27,7 +27,7 @@ class DuplicateRecipeError(Exception):
     pass
 
 
-# ── Recipe Service ───────────────────────────────────────────────────────────────────────────
+# ── Recipe Service ──────────────────────────────────────────────────────────────────────────────────────────
 class RecipeService:
     """Service layer for managing recipes and their ingredients."""
 

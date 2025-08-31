@@ -1,9 +1,9 @@
-"""app/theme_manager/icon/config.py
+"""app/style/icon/config.py
 
 Defines Name enum and icon specifications for all application icons.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from enum import Enum, auto
 from typing import NamedTuple
 

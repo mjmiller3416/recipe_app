@@ -1,9 +1,9 @@
-"""app/core/repos/planner_repo.py
+"""app/core/repositories/planner_repo.py
 
 Repository for managing meal planner state and meal selections.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from typing import List, Optional
@@ -16,7 +16,7 @@ from ..models.recipe import Recipe
 from ..models.saved_meal_state import SavedMealState
 
 
-# ── Planner Repository ───────────────────────────────────────────────────────────────────────
+# ── Planner Repository ──────────────────────────────────────────────────────────────────────────────────────
 class PlannerRepo:
     """Repository for meal planner operations."""
 
@@ -24,7 +24,7 @@ class PlannerRepo:
         """Initialize the Planner Repository with a database session."""
         self.session = session
 
-    # ── Saved Meal State Operations ──────────────────────────────────────────────────────────
+    # ── Saved Meal State Operations ─────────────────────────────────────────────────────────────────────────
     def get_saved_meal_ids(self) -> List[int]:
         """
         Load saved meal IDs from the database.
@@ -73,7 +73,7 @@ class PlannerRepo:
         result = self.session.execute(stmt)
         return result.scalars().all()
 
-    # ── Meal Selection Operations ────────────────────────────────────────────────────────────
+    # ── Meal Selection Operations ───────────────────────────────────────────────────────────────────────────
     def create_meal_selection(self, meal_selection: MealSelection) -> MealSelection:
         """
         Create and persist a new MealSelection to the database.
@@ -166,7 +166,7 @@ class PlannerRepo:
             return True
         return False
 
-    # ── Validation Methods ───────────────────────────────────────────────────────────────────
+    # ── Validation Methods ──────────────────────────────────────────────────────────────────────────────────
     def validate_meal_ids(self, meal_ids: List[int]) -> List[int]:
         """
         Validate the given meal IDs against the database.
@@ -201,7 +201,7 @@ class PlannerRepo:
         result = self.session.execute(stmt)
         return result.scalars().all()
 
-    # ── Query Methods ────────────────────────────────────────────────────────────────────────
+    # ── Query Methods ───────────────────────────────────────────────────────────────────────────────────────
     def get_meals_by_recipe_id(self, recipe_id: int) -> List[MealSelection]:
         """
         Get all meal selections that contain a specific recipe (main or side).
@@ -247,7 +247,7 @@ class PlannerRepo:
         result = self.session.execute(stmt)
         return result.scalars().all()
 
-    # ── Utility Methods ──────────────────────────────────────────────────────────────────────
+    # ── Utility Methods ─────────────────────────────────────────────────────────────────────────────────────
     def get_saved_meal_selections(self) -> List[MealSelection]:
         """
         Get all currently saved meal selections with their recipes.

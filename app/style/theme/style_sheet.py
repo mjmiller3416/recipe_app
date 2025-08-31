@@ -1,4 +1,4 @@
-"""app/theme_manager/style_sheet.py
+"""app/style/theme/style_sheet.py
 
 Material Design 3 Color System for Theme Manager
 
@@ -6,7 +6,7 @@ This module provides Material Design 3-compliant color generation using
 the material-color-utilities library.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from typing import Dict, Union
 
 from material_color_utilities import argb_from_hex, theme_from_argb_color

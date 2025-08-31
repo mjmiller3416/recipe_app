@@ -5,14 +5,12 @@ Helper functions for creating UI components in PySide6.
 
 from typing import Iterable, Union
 
-# ── Imports ─────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QEvent, QObject, Qt, QTimer
 from PySide6.QtGui import QGuiApplication
-from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
-                               QLayout, QSizePolicy, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import QGridLayout, QHBoxLayout, QLabel, QLayout, QVBoxLayout, QWidget
 
-
-# ── Corner Anchor Util ───────────────────────────────────────────────────────────────────────
+# ── Corner Anchor Util ──────────────────────────────────────────────────────────────────────────────────────
 class CornerAnchor(QObject):
     def __init__(self, anchor_widget, target_widget,
                  corner="bottom-left", x_offset=0, y_offset=0):
@@ -61,7 +59,7 @@ class CornerAnchor(QObject):
         return super().eventFilter(obj, event)
 
 
-# ── Helper Functions ─────────────────────────────────────────────────────────────────────────
+# ── Helper Functions ────────────────────────────────────────────────────────────────────────────────────────
 def center_on_screen(self):
         """Centers the window on the screen."""
         screen = QGuiApplication.primaryScreen()

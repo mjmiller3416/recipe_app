@@ -3,7 +3,7 @@
 Service for managing application settings and updating configurations.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 import json
@@ -14,7 +14,7 @@ from app.core.services.ai_gen import ImageGenConfig
 from _dev_tools import DebugLogger
 
 
-# ── Settings Service ─────────────────────────────────────────────────────────────────────────
+# ── Settings Service ────────────────────────────────────────────────────────────────────────────────────────
 class SettingsService:
     """Service for managing application settings."""
 

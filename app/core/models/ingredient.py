@@ -3,7 +3,7 @@
 SQLAlchemy model for the Ingredient table.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .recipe_ingredient import RecipeIngredient
 
 
-# ── Ingredient Model ─────────────────────────────────────────────────────────────────────────
+# ── Ingredient Model ────────────────────────────────────────────────────────────────────────────────────────
 class Ingredient(Base):
     """SQLAlchemy model for Ingredient."""
 
@@ -28,7 +28,7 @@ class Ingredient(Base):
     ingredient_category: Mapped[str] = mapped_column(String, nullable=False)
 
 
-    # ── Relationships ────────────────────────────────────────────────────────────────────────
+    # ── Relationships ───────────────────────────────────────────────────────────────────────────────────────
     recipe_links: Mapped[list[RecipeIngredient]] = relationship(
         "RecipeIngredient",
         back_populates="ingredient",
@@ -36,8 +36,7 @@ class Ingredient(Base):
         lazy="joined",
     )
 
-    # ── Helper Methods ───────────────────────────────────────────────────────────────────────
+    # ── Helper Methods ──────────────────────────────────────────────────────────────────────────────────────
     def display_label(self) -> str:
         """Return a human-friendly label for this ingredient."""
         return f"{self.ingredient_name} ({self.ingredient_category})"
-

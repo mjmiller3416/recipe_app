@@ -4,10 +4,10 @@ SQLAlchemy ORM model for shopping list items.
 Handles both recipe-generated and manually added shopping items.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-from typing import Literal, Optional
+from typing import Optional
 
 from sqlalchemy import Boolean, Enum, Float, String
 from sqlalchemy.orm import Mapped, mapped_column
@@ -15,7 +15,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from ..database.base import Base
 
 
-# ── Shopping Item Model ──────────────────────────────────────────────────────────────────────
+# ── Shopping Item Model ─────────────────────────────────────────────────────────────────────────────────────
 class ShoppingItem(Base):
     __tablename__ = "shopping_items"
 
@@ -36,11 +36,11 @@ class ShoppingItem(Base):
     # for recipe-generated items, store a key for state persistence
     state_key: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
-    # ── String Representation ────────────────────────────────────────────────────────────────
+    # ── String Representation ───────────────────────────────────────────────────────────────────────────────
     def __repr__(self) -> str:
         return f"<ShoppingItem(id={self.id}, name='{self.ingredient_name}', qty={self.quantity}, have={self.have})>"
 
-    # ── Helper Methods ───────────────────────────────────────────────────────────────────────
+    # ── Helper Methods ──────────────────────────────────────────────────────────────────────────────────────
     def key(self) -> str:
         """Generate a unique key for this shopping item."""
         if self.state_key:

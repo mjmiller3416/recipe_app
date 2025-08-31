@@ -1,15 +1,14 @@
-"""app/core/features/recipes/recipe_history.py
+"""app/core/models/recipe_history.py
 
 SQLAlchemy model for tracking when recipes were cooked.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.utils import utcnow
@@ -17,7 +16,7 @@ from app.core.utils import utcnow
 from ..database.base import Base
 
 
-# ── Recipe History Model ─────────────────────────────────────────────────────────────────────
+# ── Recipe History Model ────────────────────────────────────────────────────────────────────────────────────
 class RecipeHistory(Base):
     __tablename__ = "recipe_history"
 
@@ -25,10 +24,10 @@ class RecipeHistory(Base):
     recipe_id: Mapped[int] = mapped_column(ForeignKey("recipe.id"), nullable=False)
     cooked_at: Mapped[datetime] = mapped_column(default=utcnow)
 
-    # ── Relationships ────────────────────────────────────────────────────────────────────────
+    # ── Relationships ───────────────────────────────────────────────────────────────────────────────────────
     recipe = relationship("Recipe", back_populates="history")
 
-    # ── String Representation ────────────────────────────────────────────────────────────────
+    # ── String Representation ───────────────────────────────────────────────────────────────────────────────
     def __repr__(self) -> str:
         return (
             f"RecipeHistory(id={self.id}, recipe_id={self.recipe_id}, "

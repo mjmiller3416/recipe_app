@@ -1,4 +1,4 @@
-"""app/theme_manager/theme_manager.py
+"""app/style/theme_manager.py
 
 Manages dynamic Material Design 3 theming for PySide6 applications.
 
@@ -7,7 +7,7 @@ stylesheet and to individual widget-specific stylesheets. It allows for
 run-time changes of source color and light/dark modes.
 """
 import weakref
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from typing import Dict, Optional
 
 from PySide6.QtCore import QObject, Signal
@@ -20,7 +20,7 @@ from .theme.config import Color, Mode, Qss, Typography
 from .theme.style_sheet import Stylesheet
 
 
-# ── Theme Manager ────────────────────────────────────────────────────────────────────────────
+# ── Theme Manager ───────────────────────────────────────────────────────────────────────────────────────────
 class Theme(QSingleton):
     """
     A singleton manager for the application's visual theme.

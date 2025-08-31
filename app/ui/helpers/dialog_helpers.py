@@ -3,9 +3,9 @@
 Shared helpers for dialog components such as crop dialogs.
 """
 
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import (QDialog, QHBoxLayout, QMessageBox, QPushButton,
-                               QSizePolicy, QSpacerItem)
+from PySide6.QtWidgets import QDialog, QHBoxLayout, QMessageBox, QPushButton, QSizePolicy, QSpacerItem
 
 from app.core.utils.image_utils import img_qt_load_safe
 

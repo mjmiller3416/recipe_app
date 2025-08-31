@@ -4,6 +4,8 @@ app/core/services/session_manager.py
 Provides a context manager for SQLAlchemy sessions,
 ensuring commit, rollback, and closure are handled.
 """
+
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from contextlib import contextmanager
 
 from app.core.database.db import create_session

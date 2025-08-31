@@ -4,7 +4,7 @@ SQLAlchemy ORM model for shopping item state persistence.
 Tracks the 'checked' state of shopping list items from recipe sources.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from typing import Optional
@@ -15,7 +15,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from ..database.base import Base
 
 
-# ── Shopping State Model ─────────────────────────────────────────────────────────────────────
+# ── Shopping State Model ────────────────────────────────────────────────────────────────────────────────────
 class ShoppingState(Base):
     __tablename__ = "shopping_states"
 
@@ -25,11 +25,11 @@ class ShoppingState(Base):
     unit: Mapped[str] = mapped_column(String(50), nullable=False)
     checked: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
-    # ── String Representation ────────────────────────────────────────────────────────────────
+    # ── String Representation ───────────────────────────────────────────────────────────────────────────────
     def __repr__(self) -> str:
         return f"<ShoppingState(key='{self.key}', checked={self.checked})>"
 
-    # ── Helper Methods ───────────────────────────────────────────────────────────────────────
+    # ── Helper Methods ──────────────────────────────────────────────────────────────────────────────────────
     @classmethod
     def normalize_key(cls, key: str) -> str:
         """Normalize a key for consistent storage."""

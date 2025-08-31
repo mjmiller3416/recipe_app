@@ -1,16 +1,16 @@
-"""app/core/repos/ingredient_repo.py
+"""app/core/repositories/ingredient_repo.py
 
 Provides database operations for Ingredient entities.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..models.ingredient import Ingredient
 
 
-# ── Ingredient Repository ────────────────────────────────────────────────────────────────────
+# ── Ingredient Repository ───────────────────────────────────────────────────────────────────────────────────
 class IngredientRepo:
     """Handles ingredient-specific database operations."""
 
@@ -18,7 +18,7 @@ class IngredientRepo:
         """Initialize the Ingredient Repository with a database session."""
         self.session = session
 
-    # ── CRUD Operations ──────────────────────────────────────────────────────────────────────
+    # ── CRUD Operations ─────────────────────────────────────────────────────────────────────────────────────
     def get_all(self) -> list[Ingredient]:
         """
         Return all ingredients.
@@ -48,7 +48,7 @@ class IngredientRepo:
         """Add a new ingredient to the session."""
         self.session.add(ingredient)
 
-    # ── Search and Retrieval ─────────────────────────────────────────────────────────────────
+    # ── Search and Retrieval ────────────────────────────────────────────────────────────────────────────────
     def find_by_name_category(self, name: str, category: str) -> Ingredient | None:
         """
         Return a single matching ingredient by name+category (case-insensitive).

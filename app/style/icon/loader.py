@@ -1,11 +1,12 @@
-"""Module providing IconLoader for managing themed icons.
+"""app/style/icon/loader.py
+
+Module providing IconLoader for managing themed icons.
 
 IconLoader is a singleton registry that stores the active theme palette
 and refreshes all registered icons when the application theme changes.
 """
 
-# Protocol for theme-aware icons
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from typing import Dict, Optional, Protocol
 from weakref import WeakSet
 
@@ -16,13 +17,14 @@ from app.style.theme_controller import Theme
 from _dev_tools import DebugLogger
 
 
+# ── Themed Icon ─────────────────────────────────────────────────────────────────────────────────────────────
 class ThemedIcon(Protocol):
     """Protocol for any theme-aware icon-like object."""
     def refresh_theme(self, palette: dict[str, str]) -> None: ...
     def objectName(self) -> str: ...
 
 
-# ── Icon Loader ──────────────────────────────────────────────────────────────────────────────
+# ── Icon Loader ─────────────────────────────────────────────────────────────────────────────────────────────
 class IconLoader(QSingleton):
     """Singleton to manage and refresh theme-aware icons.
 
@@ -37,7 +39,7 @@ class IconLoader(QSingleton):
         self._palette: Dict = {}
         self._initialized = True
 
-    # ── Private Methods ──────────────────────────────────────────────────────────────────────
+    # ── Private Methods ─────────────────────────────────────────────────────────────────────────────────────
     def _initialize_palette(self) -> None:
         """Initialize the color palette for icons."""
         self._palette = Theme.get_current_color_map()
@@ -55,7 +57,7 @@ class IconLoader(QSingleton):
             icon.refresh_theme(new_palette)
 
 
-    # ── Public Methods ───────────────────────────────────────────────────────────────────────
+    # ── Public Methods ──────────────────────────────────────────────────────────────────────────────────────
     @classmethod
     def _get_instance(cls):
         """Get the singleton instance, creating it if necessary."""

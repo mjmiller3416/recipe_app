@@ -1,22 +1,21 @@
-"""app/core/features/ingredients/ingredient_service.py
+"""app/core/servicesingredient_service.py
 
 Provides services for ingredient management, including creation, searching, and retrieval.
 Uses SQLAlchemy repository pattern for database interactions.
 """
 
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from typing import List, Optional
 
 from sqlalchemy.exc import SQLAlchemyError
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from sqlalchemy.orm import Session
 
-from ..dtos.ingredient_dtos import (IngredientCreateDTO, IngredientSearchDTO,
-                                    IngredientUpdateDTO)
+from ..dtos.ingredient_dtos import IngredientCreateDTO, IngredientSearchDTO, IngredientUpdateDTO
 from ..models.ingredient import Ingredient
 from ..repositories.ingredient_repo import IngredientRepo
 
 
-# ── Ingredient Service ───────────────────────────────────────────────────────────────────────
+# ── Ingredient Service ──────────────────────────────────────────────────────────────────────────────────────
 class IngredientService:
     """Provides higher-level ingredient operations and DTO handling."""
 
@@ -83,7 +82,7 @@ class IngredientService:
         """
         return self.repo.get_all()
 
-    # ── Convenience Methods for Tests ─────────────────────────────────────────────────────
+    # ── Convenience Methods for Tests ───────────────────────────────────────────────────────────────────────
     def get_all_ingredients(self) -> List[Ingredient]:
         """Alias for get_all()."""
         return self.get_all()

@@ -4,7 +4,7 @@ Service layer for shopping list operations and business logic.
 Orchestrates repository operations and coordinates with meal planning.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
@@ -12,17 +12,16 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from ..dtos.shopping_dtos import (BulkOperationResultDTO, BulkStateUpdateDTO,
-                                  ManualItemCreateDTO, ShoppingItemResponseDTO,
-                                  ShoppingItemUpdateDTO, ShoppingListFilterDTO,
-                                  ShoppingListGenerationResultDTO,
-                                  ShoppingListResponseDTO)
+from ..dtos.shopping_dtos import (
+    BulkOperationResultDTO, BulkStateUpdateDTO, ManualItemCreateDTO,
+    ShoppingItemResponseDTO, ShoppingItemUpdateDTO, ShoppingListFilterDTO,
+    ShoppingListGenerationResultDTO, ShoppingListResponseDTO)
 from ..models.shopping_item import ShoppingItem
 from ..repositories.planner_repo import PlannerRepo
 from ..repositories.shopping_repo import ShoppingRepo
 
 
-# ── Shopping Service ─────────────────────────────────────────────────────────────────────────
+# ── Shopping Service ────────────────────────────────────────────────────────────────────────────────────────
 class ShoppingService:
     """Service for shopping list operations with business logic."""
 
@@ -36,7 +35,7 @@ class ShoppingService:
         self.shopping_repo = ShoppingRepo(self.session)
         self.planner_repo = PlannerRepo(self.session)
 
-    # ── Shopping List Generation ─────────────────────────────────────────────────────────────
+    # ── Shopping List Generation ────────────────────────────────────────────────────────────────────────────
     def generate_shopping_list(
             self,
             meal_ids_or_dto
@@ -166,7 +165,7 @@ class ShoppingService:
                 if meal.side_recipe_3_id:
                     recipe_ids.append(meal.side_recipe_3_id)
         return recipe_ids
-    
+
     def get_recipe_ids_from_meals(self, meal_ids: List[int]) -> List[int]:
         """
         Public alias for extracting all recipe IDs from saved meal selections.
@@ -179,7 +178,7 @@ class ShoppingService:
         """
         return self._extract_recipe_ids_from_meals(meal_ids)
 
-    # ── Shopping List Retrieval ──────────────────────────────────────────────────────────────
+    # ── Shopping List Retrieval ─────────────────────────────────────────────────────────────────────────────
     def get_shopping_list(
             self,
             filters: Optional[ShoppingListFilterDTO] = None
@@ -232,7 +231,7 @@ class ShoppingService:
                 categories=[]
             )
 
-    # ── Manual Item Management ───────────────────────────────────────────────────────────────
+    # ── Manual Item Management ──────────────────────────────────────────────────────────────────────────────
     def add_manual_item(
             self,
             create_dto: ManualItemCreateDTO
@@ -349,7 +348,7 @@ class ShoppingService:
                 errors=[str(e)]
             )
 
-    # ── Item Status Management ───────────────────────────────────────────────────────────────
+    # ── Item Status Management ──────────────────────────────────────────────────────────────────────────────
     def toggle_item_status(self, item_id: int) -> Optional[bool]:
         """
         Toggle the 'have' status of a shopping item.
@@ -448,7 +447,7 @@ class ShoppingService:
                 errors=[str(e)]
             )
 
-    # ── Analysis and Breakdown ───────────────────────────────────────────────────────────────
+    # ── Analysis and Breakdown ──────────────────────────────────────────────────────────────────────────────
     def get_ingredient_breakdown(self, recipe_ids: List[int]) -> Any:
         """
         Get detailed breakdown of ingredients by recipe, returned as an object with 'items'.
@@ -491,7 +490,7 @@ class ShoppingService:
             resp.items = []
             return resp
 
-    # ── Helper Methods ───────────────────────────────────────────────────────────────────────
+    # ── Helper Methods ──────────────────────────────────────────────────────────────────────────────────────
     def _item_to_response_dto(self, item: ShoppingItem) -> ShoppingItemResponseDTO:
         """Convert a ShoppingItem model to a response DTO."""
         return ShoppingItemResponseDTO(
@@ -505,7 +504,7 @@ class ShoppingService:
             state_key=item.state_key
         )
 
-    # ── Shopping List Management ─────────────────────────────────────────────────────────────
+    # ── Shopping List Management ────────────────────────────────────────────────────────────────────────────
     def clear_shopping_list(self) -> BulkOperationResultDTO:
         """
         Clear the entire shopping list.

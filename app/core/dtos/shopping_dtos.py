@@ -4,20 +4,20 @@ Pydantic DTOs for shopping list operations and data transfer.
 Handles shopping item creation, updates, filtering, and aggregation.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-from typing import Any, Dict, List, Literal, Optional
+from typing import Dict, List, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
-# ── Base DTOs ────────────────────────────────────────────────────────────────────────────────
+# ── Base DTOs ───────────────────────────────────────────────────────────────────────────────────────────────
 class ShoppingItemBaseDTO(BaseModel):
     """Base DTO for shopping item operations."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     ingredient_name: str = Field(..., min_length=1, max_length=255)
     quantity: float = Field(..., ge=0)
     unit: Optional[str] = Field(None, max_length=50)
@@ -30,16 +30,16 @@ class ShoppingItemBaseDTO(BaseModel):
             return v.strip()
         return v
 
-# ── Create DTOs ──────────────────────────────────────────────────────────────────────────────
+# ── Create DTOs ─────────────────────────────────────────────────────────────────────────────────────────────
 class ShoppingItemCreateDTO(ShoppingItemBaseDTO):
     """DTO for creating a new shopping item."""
     source: Literal["recipe", "manual"] = "manual"
 
 class ManualItemCreateDTO(BaseModel):
     """DTO for creating a manual shopping item."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     ingredient_name: str = Field(..., min_length=1, max_length=255)
     quantity: float = Field(..., ge=0)
     unit: Optional[str] = Field(None, max_length=50)
@@ -51,12 +51,12 @@ class ManualItemCreateDTO(BaseModel):
             return v.strip()
         return v
 
-# ── Update DTOs ──────────────────────────────────────────────────────────────────────────────
+# ── Update DTOs ─────────────────────────────────────────────────────────────────────────────────────────────
 class ShoppingItemUpdateDTO(BaseModel):
     """DTO for updating a shopping item."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     ingredient_name: Optional[str] = Field(None, min_length=1, max_length=255)
     quantity: Optional[float] = Field(None, ge=0)
     unit: Optional[str] = Field(None, max_length=50)
@@ -70,10 +70,10 @@ class ShoppingItemUpdateDTO(BaseModel):
             return v.strip()
         return v
 
-# ── Response DTOs ────────────────────────────────────────────────────────────────────────────
+# ── Response DTOs ───────────────────────────────────────────────────────────────────────────────────────────
 class ShoppingItemResponseDTO(ShoppingItemBaseDTO):
     """DTO for shopping item responses."""
-    
+
     id: int
     source: Literal["recipe", "manual"]
     have: bool = False
@@ -81,9 +81,9 @@ class ShoppingItemResponseDTO(ShoppingItemBaseDTO):
 
 class ShoppingListResponseDTO(BaseModel):
     """DTO for complete shopping list response."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     items: List[ShoppingItemResponseDTO]
     total_items: int
     checked_items: int
@@ -91,12 +91,12 @@ class ShoppingListResponseDTO(BaseModel):
     manual_items: int
     categories: List[str]
 
-# ── Filter and Search DTOs ───────────────────────────────────────────────────────────────────
+# ── Filter and Search DTOs ──────────────────────────────────────────────────────────────────────────────────
 class ShoppingListFilterDTO(BaseModel):
     """DTO for filtering shopping list items."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     source: Optional[Literal["recipe", "manual"]] = None
     category: Optional[str] = None
     have: Optional[bool] = None
@@ -104,12 +104,12 @@ class ShoppingListFilterDTO(BaseModel):
     limit: Optional[int] = Field(None, ge=1, le=100)
     offset: Optional[int] = Field(None, ge=0)
 
-# ── Aggregation DTOs ─────────────────────────────────────────────────────────────────────────
+# ── Aggregation DTOs ────────────────────────────────────────────────────────────────────────────────────────
 class IngredientAggregationDTO(BaseModel):
     """DTO for ingredient aggregation data."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     ingredient_name: str
     total_quantity: float
     unit: Optional[str]
@@ -118,55 +118,55 @@ class IngredientAggregationDTO(BaseModel):
 
 class ShoppingListGenerationDTO(BaseModel):
     """DTO for shopping list generation parameters."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     recipe_ids: List[int] = Field(...)
     include_manual_items: bool = True
     clear_existing: bool = False
 
-# ── State Management DTOs ────────────────────────────────────────────────────────────────────
+# ── State Management DTOs ───────────────────────────────────────────────────────────────────────────────────
 class ShoppingStateDTO(BaseModel):
     """DTO for shopping item state."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     key: str
     checked: bool
 
 class BulkStateUpdateDTO(BaseModel):
     """DTO for bulk state updates with mapping of item IDs to their have status."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     item_updates: Dict[int, bool]
 
-# ── Breakdown DTOs ───────────────────────────────────────────────────────────────────────────
+# ── Breakdown DTOs ──────────────────────────────────────────────────────────────────────────────────────────
 class IngredientBreakdownItemDTO(BaseModel):
     """DTO for individual ingredient breakdown item."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     recipe_name: str
     quantity: float
     unit: Optional[str]
 
 class IngredientBreakdownDTO(BaseModel):
     """DTO for ingredient breakdown by recipe."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     ingredient_name: str
     unit: str
     total_quantity: float
     recipe_contributions: List[IngredientBreakdownItemDTO]
 
-# ── Operation Result DTOs ────────────────────────────────────────────────────────────────────
+# ── Operation Result DTOs ───────────────────────────────────────────────────────────────────────────────────
 class ShoppingListGenerationResultDTO(BaseModel):
     """DTO for shopping list generation results."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     success: bool
     items_created: int
     items_updated: int
@@ -176,9 +176,9 @@ class ShoppingListGenerationResultDTO(BaseModel):
 
 class BulkOperationResultDTO(BaseModel):
     """DTO for bulk operation results."""
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     success: bool
     updated_count: int
     message: str

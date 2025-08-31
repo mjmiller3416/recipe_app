@@ -1,17 +1,13 @@
-"""app/appearance/animation/window_animator.py
+"""app/style/animation/window_animator.py
 
 This module provides the WindowAnimator class for animating window state changes.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
-import sys
-
-from PySide6.QtCore import (QEasingCurve, QObject, QParallelAnimationGroup,
-                            QPoint, QPropertyAnimation, QRect, QSize)
-from PySide6.QtGui import QGuiApplication
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
+from PySide6.QtCore import QEasingCurve, QObject, QPropertyAnimation
 
 
-# ── WindowAnimator ───────────────────────────────────────────────────────────────────────────
+# ── WindowAnimator ──────────────────────────────────────────────────────────────────────────────────────────
 class WindowAnimator(QObject):
     """Handles animations for a QDialog, like maximize, restore, and minimize.
 
@@ -49,24 +45,24 @@ class WindowAnimator(QObject):
 
     def animate_toggle_maximize(self):
         """Toggle maximize using native Qt behavior instead of custom animation.
-        
+
         FramelessWindow provides smooth native maximize/restore animations that work
         better than custom geometry animations.
         """
         self._stop_current_animation()
-        
+
         if self._is_maximized:
             self.window.showNormal()
             self._is_maximized = False
         else:
             self.window.showMaximized()
             self._is_maximized = True
-            
+
         self.window.title_bar.update_maximize_icon(self._is_maximized)
 
     def animate_minimize(self):
         """Minimize window using native Qt minimize (no custom animation).
-        
+
         Custom geometry animations can conflict with FramelessWindow's window management,
         so we use the native minimize behavior instead.
         """

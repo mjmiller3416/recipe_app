@@ -1,15 +1,15 @@
-"""app/appearance/effects/config.py
+"""app/style/effects/config.py
 
 Configuration for visual effects (shadows, glows, blurs, opacity) used in the application.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from collections import namedtuple
 from enum import Enum
 
 from PySide6.QtGui import QColor
 
-# ── Shadow Effect Enum ───────────────────────────────────────────────────────────────────────
+# ── Shadow Effect Enum ──────────────────────────────────────────────────────────────────────────────────────
 ShadowStyle = namedtuple("ShadowStyle", "color blur_radius offset_x offset_y")
 
 class Shadow(Enum):

@@ -3,7 +3,7 @@
 Connects signals to their respective slots for handling sidebar and page navigation.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtWidgets import QStackedWidget
 
 from app.core.services import PlannerService, ShoppingService
@@ -13,7 +13,7 @@ from app.ui.views import (
 from _dev_tools import DebugLogger
 
 
-# ── Navigation Service ───────────────────────────────────────────────────────────────────────
+# ── Navigation Service ──────────────────────────────────────────────────────────────────────────────────────
 class NavigationService:
     def __init__(self, stacked_widget: QStackedWidget):
         self.sw_pages = stacked_widget

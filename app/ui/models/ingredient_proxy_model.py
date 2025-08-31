@@ -1,13 +1,13 @@
-"""app/ui/tools/proxy_models.py
+"""app/ui/models/ingredient_proxy_models.py
 
 Contains custom proxy models for filtering and sorting data in views.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSortFilterProxyModel
 
 
-# ── Ingredient Proxy Model ───────────────────────────────────────────────────────────────────
+# ── Ingredient Proxy Model ──────────────────────────────────────────────────────────────────────────────────
 class IngredientProxyModel(QSortFilterProxyModel):
     """IngredientProxyModel is a custom proxy model that filters
     ingredient items based on a plain text filter.

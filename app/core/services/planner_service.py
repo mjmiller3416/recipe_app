@@ -4,7 +4,7 @@ Service layer for managing meal planner state and meal selections.
 Orchestrates repository operations and business logic.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from typing import List, Optional
@@ -22,7 +22,7 @@ from ..models.meal_selection import MealSelection
 from ..repositories.planner_repo import PlannerRepo
 
 
-# ── Planner Service ──────────────────────────────────────────────────────────────────────────
+# ── Planner Service ─────────────────────────────────────────────────────────────────────────────────────────
 class PlannerService:
     """Service for meal planner operations with business logic."""
 
@@ -37,7 +37,7 @@ class PlannerService:
         self.session = session
         self.repo = PlannerRepo(self.session)
 
-    # ── Meal Planner State Management ────────────────────────────────────────────────────────
+    # ── Meal Planner State Management ───────────────────────────────────────────────────────────────────────
     def load_saved_meal_ids(self) -> List[int]:
         """
         Load saved meal IDs from the database.
@@ -170,7 +170,7 @@ class PlannerService:
                 error=str(e)
             )
 
-    # ── Meal Selection Management ────────────────────────────────────────────────────────────
+    # ── Meal Selection Management ───────────────────────────────────────────────────────────────────────────
     def create_meal_selection(self, create_dto: MealSelectionCreateDTO) -> Optional[MealSelectionResponseDTO]:
         """
         Create a new meal selection with validation.
@@ -318,7 +318,7 @@ class PlannerService:
             self.session.rollback()
             return False
 
-    # ── Search and Query Operations ──────────────────────────────────────────────────────────
+    # ── Search and Query Operations ─────────────────────────────────────────────────────────────────────────
     def search_meals_by_recipe(self, recipe_id: int) -> List[MealSelectionResponseDTO]:
         """
         Find all meals that contain a specific recipe.
@@ -351,7 +351,7 @@ class PlannerService:
         except SQLAlchemyError:
             return []
 
-    # ── Helper Methods ───────────────────────────────────────────────────────────────────────
+    # ── Helper Methods ──────────────────────────────────────────────────────────────────────────────────────
     def _meal_to_response_dto(self, meal: MealSelection) -> MealSelectionResponseDTO:
         """
         Convert a MealSelection model to a response DTO.

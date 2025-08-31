@@ -108,7 +108,12 @@ If a command is not listed here, pause and request it to be added.
 ## 4) Code Style & Conventions (strict)
 - **Line length:** 110
 - **Public API naming:** **camelCase** (Qt convention)
-- **Internal/private Python:** `snake_case` acceptable; follow local context
+- **Internal/private Python:**
+    - Use snake_case for internal implementation details unless matching surrounding code.
+    - Prefix private methods and attributes with an underscore (_method_name).
+    - “Protected” methods intended for subclass overrides should also use a single underscore.
+    - Double underscores (__name) are not recommended unless name-mangling is required.
+    - Always default to public camelCase naming for Qt-facing APIs, signals, and slots.
 - **Imports:** stdlib → third-party → local; prefer absolute imports
 - **Docstrings:** Google-style for public classes/functions
 - **Small, explicit functions > clever abstractions**

@@ -1,4 +1,4 @@
-"""app/theme_manager/icon/svg_loader.py
+"""app/style/icon/svg_loader.py
 
 Module for loading and recoloring SVG icons.
 
@@ -7,7 +7,7 @@ with support for high-DPI screens. It replaces specified colors in the SVG
 data before rendering.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 import re
 from collections import OrderedDict
 from pathlib import Path
@@ -95,7 +95,7 @@ def _replace_svg_colors(svg_data: str, source: str, new_color: str) -> str:
     return svg_data
 
 
-# ── Class Definition ─────────────────────────────────────────────────────────────────────────
+# ── SVG Loader ──────────────────────────────────────────────────────────────────────────────────────────────
 class SVGLoader:
     """Utility class for loading and recoloring SVG files with smart caching."""
 

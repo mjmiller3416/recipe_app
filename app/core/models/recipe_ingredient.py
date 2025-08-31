@@ -1,21 +1,21 @@
-"""app/core/features/recipes/recipe_ingredient.py
+"""app/core/models/recipe_ingredient.py
 
 SQLAlchemy model for the recipe_ingredients join table.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
 from typing import Optional
 
-from sqlalchemy import Column, Float, ForeignKey, Integer, String
+from sqlalchemy import Float, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..database.base import Base
 from ..dtos.ingredient_dtos import IngredientDetailDTO
 
 
-# ── Recipe Ingredient Model ──────────────────────────────────────────────────────────────────
+# ── Recipe Ingredient Model ─────────────────────────────────────────────────────────────────────────────────
 class RecipeIngredient(Base):
     """Join table linking recipes and ingredients with quantities and units."""
     __tablename__ = "recipe_ingredients"
@@ -25,11 +25,11 @@ class RecipeIngredient(Base):
     quantity: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     unit: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
-    # ── Relationships ────────────────────────────────────────────────────────────────────────
+    # ── Relationships ───────────────────────────────────────────────────────────────────────────────────────
     ingredient = relationship("Ingredient", back_populates="recipe_links", lazy="joined")
     recipe = relationship("Recipe", back_populates="ingredients")
-    
-    # ── String Representation ────────────────────────────────────────────────────────────────
+
+    # ── String Representation ───────────────────────────────────────────────────────────────────────────────
     def __repr__(self) -> str:
         return (
             f"RecipeIngredient(recipe_id={self.recipe_id}, "
@@ -37,7 +37,7 @@ class RecipeIngredient(Base):
             f"quantity={self.quantity}, unit={self.unit})"
         )
 
-    # ── Helper Methods ───────────────────────────────────────────────────────────────────────
+    # ── Helper Methods ──────────────────────────────────────────────────────────────────────────────────────
     def get_ingredient_detail(self) -> IngredientDetailDTO:
         """
         Return enriched ingredient details (name, category, qty, unit).

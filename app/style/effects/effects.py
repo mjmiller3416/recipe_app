@@ -1,16 +1,15 @@
-"""app/appearance/effects/effects.py
+"""app/style/effects/effects.py
 
 Provides visual effects (shadows, glows, blurs, opacity) for QWidgets.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtWidgets import (QGraphicsBlurEffect, QGraphicsDropShadowEffect,
-                               QGraphicsOpacityEffect, QWidget)
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
+from PySide6.QtWidgets import QGraphicsBlurEffect, QGraphicsDropShadowEffect, QGraphicsOpacityEffect, QWidget
 
 from app.style.effects.config import Glow, Shadow
 
 
-# ── Effects ──────────────────────────────────────────────────────────────────────────────────
+# ── Effects ─────────────────────────────────────────────────────────────────────────────────────────────────
 class Effects:
     """
     A collection of QGraphicsEffect class methods to apply visual effects to QWidgets.
