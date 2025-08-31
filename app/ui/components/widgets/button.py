@@ -43,17 +43,16 @@ cache_stats = SVGLoader.get_cache_stats()
 ```
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QEvent, QSize, Qt
-from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QPushButton,
-                               QSizePolicy, QToolButton)
+from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QToolButton
 
 from app.style.icon.config import Name, Type
 from app.style.icon.icon import StateIcon
 from _dev_tools import DebugLogger
 
 
-# ── Size Manager ─────────────────────────────────────────────────────────────────────────────
+# ── Size Manager ────────────────────────────────────────────────────────────────────────────────────────────
 class SizeManager:
     """Utility class for consolidated size calculation and management."""
 
@@ -175,7 +174,7 @@ class SizeManager:
         return width, height
 
 
-# ── BaseButton Abstract Class ────────────────────────────────────────────────────────────────
+# ── BaseButton Abstract Class ───────────────────────────────────────────────────────────────────────────────
 class BaseButton:
     """Abstract base class for all button types with StateIcon integration.
 
@@ -483,7 +482,7 @@ class BaseButton:
         return true_icon if condition else false_icon
 
 
-# ── Button ───────────────────────────────────────────────────────────────────────────────────
+# ── Button ──────────────────────────────────────────────────────────────────────────────────────────────────
 class Button(QPushButton, BaseButton):
     """A QPushButton with integrated StateIcon support.
 
@@ -671,7 +670,7 @@ class Button(QPushButton, BaseButton):
             return super().sizeHint()
 
 
-# ── ToolButton ───────────────────────────────────────────────────────────────────────────────
+# ── ToolButton ──────────────────────────────────────────────────────────────────────────────────────────────
 class ToolButton(QToolButton, BaseButton):
     """A QToolButton with integrated StateIcon support.
 

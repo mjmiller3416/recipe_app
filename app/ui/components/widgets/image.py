@@ -1,15 +1,15 @@
-"""app/ui/components/widgets/image_widgets.py
+"""app/ui/components/widgets/image.py
 
 Unified image display widgets with caching, borders, and shape support.
 Consolidates RoundedImage and CircularImage functionality.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from pathlib import Path
 from typing import Optional, Union
 
 from PySide6.QtCore import Property, QRectF, QSize, Qt
-from PySide6.QtGui import QColor, QPainter, QPainterPath, QPen, QPixmap
+from PySide6.QtGui import QColor, QPainter, QPen, QPixmap
 from PySide6.QtWidgets import QLabel, QStyle, QStyleOption
 
 from app.core.utils.image_utils import (
@@ -19,7 +19,7 @@ from app.core.utils.image_utils import (
 )
 
 
-# ── Base Image Widget ────────────────────────────────────────────────────────────────────────
+# ── Base Image Widget ───────────────────────────────────────────────────────────────────────────────────────
 class BaseImage(QLabel):
     """Base class for shaped image widgets with caching and border support."""
 
@@ -167,7 +167,7 @@ class BaseImage(QLabel):
             painter.end()
 
 
-# ── Rounded Rectangle Image ──────────────────────────────────────────────────────────────────
+# ── Rounded Rectangle Image ─────────────────────────────────────────────────────────────────────────────────
 class RoundedImage(BaseImage):
     """Image widget with configurable rounded corners."""
 
@@ -231,7 +231,7 @@ class RoundedImage(BaseImage):
         painter.drawPath(border_path)
 
 
-# ── Circular Image ───────────────────────────────────────────────────────────────────────────
+# ── Circular Image ──────────────────────────────────────────────────────────────────────────────────────────
 class CircularImage(BaseImage):
     """Image widget with perfect circular shape and border support."""
 
@@ -267,7 +267,18 @@ class CircularImage(BaseImage):
         painter.drawEllipse(border_rect)
 
 
-# ── Convenience Factory Functions ────────────────────────────────────────────────────────────
+# ── Recipe Image  ───────────────────────────────────────────────────────────────────────────────────────────
+class RecipeImage(RoundedImage):
+    """Image widget for displaying recipe images with rounded corners."""
+
+    def __init__(self, image_path: Union[str, Path], size: int = 100,
+                 corner_radius: int = 8, parent=None):
+        super().__init__(image_path, size, corner_radius, parent)
+        self.setImagePath(image_path)
+        self.setRadii(corner_radius)
+
+
+# ── Convenience Factory Functions ───────────────────────────────────────────────────────────────────────────
 def create_rounded_image(image_path: Union[str, Path], size: int = 100,
                         corner_radius: int = 8) -> RoundedImage:
     """Convenience function to create a rounded image with uniform corners."""

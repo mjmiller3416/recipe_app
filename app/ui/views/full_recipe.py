@@ -292,8 +292,9 @@ class FullRecipe(QWidget):
         self.recipe_banner.image_clicked.connect(self._on_image_clicked)
 
         # Connect AI service signals for async operations
-        self.ai_service.generation_finished.connect(self._on_generation_finished)
-        self.ai_service.generation_failed.connect(self._on_generation_failed)
+        # TODO: enable after aI gen service is fixed
+        #self.ai_service.generation_finished.connect(self._on_generation_finished)
+        #self.ai_service.generation_failed.connect(self._on_generation_failed)
 
         page.addWidget(self.recipe_banner)
 

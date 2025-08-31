@@ -4,14 +4,16 @@ A reusable toast notification component that displays temporary messages
 with smooth animations. Supports success/error states and customizable positioning.
 """
 
-from PySide6.QtCore import QTimer, QPropertyAnimation, QRect, QEasingCurve, Qt
-from PySide6.QtWidgets import QLabel, QWidget, QSizePolicy
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
+from PySide6.QtCore import QTimer, QPropertyAnimation, QRect, QEasingCurve
+from PySide6.QtWidgets import QLabel, QWidget
 from PySide6.QtGui import QFont
 
 from app.style import Theme
 from app.style.theme.config import Qss
 
 
+# ── Toast Notification ──────────────────────────────────────────────────────────────────────────────────────
 class Toast(QLabel):
     """A toast notification widget that appears and disappears with animations."""
 
@@ -102,7 +104,14 @@ class Toast(QLabel):
             self.hide_animation.start()
 
 
-def show_toast(parent: QWidget, message: str, success: bool = True, duration: int = 3000, offset_right: int = 50):
+# ── Convenience Function ────────────────────────────────────────────────────────────────────────────────────
+def show_toast(
+        parent: QWidget,
+        message: str,
+        success: bool = True,
+        duration: int = 3000,
+        offset_right: int = 50
+) -> None:
     """Convenience function to show a toast notification.
 
     Args:

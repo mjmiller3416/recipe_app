@@ -3,7 +3,7 @@
 Defines a custom ComboBox with read-only selection and integrated dropdown button.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from typing import Sequence
 
 from PySide6.QtCore import QEvent, QStringListModel, Qt, Signal
@@ -16,7 +16,7 @@ from .button import ToolButton
 from .dropdown_menu import DropdownMenu
 
 
-# ── ComboBox ─────────────────────────────────────────────────────────────────────────────────
+# ── ComboBox ────────────────────────────────────────────────────────────────────────────────────────────────
 class ComboBox(QWidget):
     """Custom combo box widget with a read-only line edit and a dropdown button."""
     selection_validated = Signal(bool)

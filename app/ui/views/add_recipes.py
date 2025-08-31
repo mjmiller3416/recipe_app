@@ -3,7 +3,7 @@
 AddRecipes widget for creating new recipes with ingredients and directions.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
     QGridLayout, QHBoxLayout, QLabel, QLineEdit,
@@ -18,7 +18,10 @@ from app.core.dtos import IngredientSearchDTO, RecipeCreateDTO, RecipeIngredient
 from app.core.services.ingredient_service import IngredientService
 from app.core.services.recipe_service import RecipeService
 from app.core.utils.conversion_utils import parse_servings_range, safe_int_conversion, safe_float_conversion
-from app.ui.utils.form_utils import clear_form_fields
+from app.core.utils.text_utils import sanitize_form_input, sanitize_multiline_input
+from app.ui.utils.form_utils import clear_form_fields, collect_form_data, validate_required_fields, setup_tab_order_chain
+from app.ui.utils.layout_utils import setup_main_scroll_layout, create_labeled_form_grid
+from app.ui.utils.event_utils import connect_form_signals, batch_connect_signals
 from app.style import Qss, Theme
 from app.style.icon.config import Name, Type
 from app.ui.components.inputs import SmartLineEdit
@@ -28,90 +31,92 @@ from app.ui.components.widgets import ComboBox, ToolButton
 from app.ui.components.widgets.button import Button
 from app.ui.helpers import clear_error_styles, dynamic_validation
 from app.ui.helpers.card_utils import add_two_column
-from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
 from _dev_tools import DebugLogger
 
-# ── Constants ───────────────────────────────────────────────────────────────────
+# ── Constants ───────────────────────────────────────────────────────────────────────────────────────────────
 FIXED_HEIGHT = 60  # fixed height for input fields in the recipe form
 
 
-# ── Recipe Form ──────────────────────────────────────────────────────────────────────────────
+# ── Recipe Form ─────────────────────────────────────────────────────────────────────────────────────────────
 class RecipeForm(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setObjectName("RecipeForm")
 
-        # ── Configure layout ──
-        self._layout = QGridLayout(self)
-        self._layout.setContentsMargins(10, 10, 10, 10)
-        self._layout.setSpacing(10)
+        # ── Configure declarative form layout ──
+        field_configs = {
+            "recipe_name": {
+                "widget_type": "line_edit",
+                "label": "Recipe Name",
+                "placeholder": "e.g. Spaghetti Carbonara",
+                "object_name": "RecipeNameLineEdit",
+                "row": 0, "col": 0, "col_span": 2
+            },
+            "time": {
+                "widget_type": "line_edit",
+                "label": "Total Time",
+                "placeholder": "e.g. 30 mins",
+                "object_name": "TotalTimeLineEdit",
+                "row": 2, "col": 0
+            },
+            "servings": {
+                "widget_type": "line_edit",
+                "label": "Servings",
+                "placeholder": "e.g. 4",
+                "object_name": "ServingsLineEdit",
+                "row": 2, "col": 1
+            },
+            "meal_type": {
+                "widget_type": "combo_box",
+                "label": "Meal Type",
+                "placeholder": "Select meal type",
+                "list_items": MEAL_TYPE,
+                "object_name": "ComboBox",
+                "context": "recipe_form",
+                "row": 4, "col": 0
+            },
+            "recipe_category": {
+                "widget_type": "combo_box",
+                "label": "Category",
+                "placeholder": "Select category",
+                "list_items": RECIPE_CATEGORIES,
+                "object_name": "ComboBox",
+                "context": "recipe_form",
+                "row": 4, "col": 1
+            },
+            "dietary_preference": {
+                "widget_type": "combo_box",
+                "label": "Dietary Preference",
+                "placeholder": "Select dietary preference",
+                "list_items": DIETARY_PREFERENCES,
+                "object_name": "ComboBox",
+                "context": "recipe_form",
+                "row": 6, "col": 0
+            }
+        }
 
-        # create labels and inputs for recipe details - labels above inputs
-        # Recipe Name (full width)
-        self.lbl_recipe_name = QLabel("Recipe Name")
-        self.le_recipe_name = QLineEdit()
-        self.le_recipe_name.setPlaceholderText("e.g. Spaghetti Carbonara")
-        self.le_recipe_name.setObjectName("RecipeNameLineEdit")
-
-        # Total Time
-        self.lbl_time = QLabel("Total Time")
-        self.le_time = QLineEdit()
-        self.le_time.setPlaceholderText("e.g. 30 mins")
-        self.le_time.setObjectName("TotalTimeLineEdit")
-
-        # Servings
-        self.lbl_servings = QLabel("Servings")
-        self.le_servings = QLineEdit()
-        self.le_servings.setPlaceholderText("e.g. 4")
-        self.le_servings.setObjectName("ServingsLineEdit")
-
-        # Meal Type
-        self.lbl_meal_type = QLabel("Meal Type")
-        self.cb_meal_type = ComboBox(list_items=MEAL_TYPE, placeholder="Select meal type")
-        self.cb_meal_type.setObjectName("ComboBox")
-        self.cb_meal_type.setProperty("context", "recipe_form")
-
-        # Category
-        self.lbl_category = QLabel("Category")
-        self.cb_recipe_category = ComboBox(list_items=RECIPE_CATEGORIES, placeholder="Select category")
-        self.cb_recipe_category.setObjectName("ComboBox")
-        self.cb_recipe_category.setProperty("context", "recipe_form")
-
-        # Dietary Preference
-        self.lbl_dietary_preference = QLabel("Dietary Preference")
-        self.cb_dietary_preference = ComboBox(list_items=DIETARY_PREFERENCES, placeholder="Select dietary preference")
-        self.cb_dietary_preference.setObjectName("ComboBox")
-        self.cb_dietary_preference.setProperty("context", "recipe_form")
-
-        # add labels and widgets to the form layout - two column layout with labels above inputs
-        # Row 0: Recipe Name (full width)
-        self._layout.addWidget(self.lbl_recipe_name, 0, 0, 1, 2)
-        self._layout.addWidget(self.le_recipe_name, 1, 0, 1, 2)
-
-        # Row 2-3: Total Time (left) and Servings (right)
-        self._layout.addWidget(self.lbl_time, 2, 0, 1, 1)
-        self._layout.addWidget(self.lbl_servings, 2, 1, 1, 1)
-        self._layout.addWidget(self.le_time, 3, 0, 1, 1)
-        self._layout.addWidget(self.le_servings, 3, 1, 1, 1)
-
-        # Row 4-5: Meal Type (left) and Category (right)
-        self._layout.addWidget(self.lbl_meal_type, 4, 0, 1, 1)
-        self._layout.addWidget(self.lbl_category, 4, 1, 1, 1)
-        self._layout.addWidget(self.cb_meal_type, 5, 0, 1, 1)
-        self._layout.addWidget(self.cb_recipe_category, 5, 1, 1, 1)
-
-        # Row 6-7: Dietary Preference (left column only)
-        self._layout.addWidget(self.lbl_dietary_preference, 6, 0, 1, 1)
-        self._layout.addWidget(self.cb_dietary_preference, 7, 0, 1, 1)
-
-        set_fixed_height_for_layout_widgets(
-            layout = self._layout,
-            height = FIXED_HEIGHT,
-            skip   = (QLabel,)
+        self._layout, form_widgets, form_labels = create_labeled_form_grid(
+            self, field_configs, fixed_height=FIXED_HEIGHT
         )
 
+        # Assign widgets to self attributes for compatibility
+        self.le_recipe_name = form_widgets["recipe_name"]
+        self.le_time = form_widgets["time"]
+        self.le_servings = form_widgets["servings"]
+        self.cb_meal_type = form_widgets["meal_type"]
+        self.cb_recipe_category = form_widgets["recipe_category"]
+        self.cb_dietary_preference = form_widgets["dietary_preference"]
 
-# ── Ingredient Form ──────────────────────────────────────────────────────────────────────────
+        # Assign labels to self attributes
+        self.lbl_recipe_name = form_labels["recipe_name"]
+        self.lbl_time = form_labels["time"]
+        self.lbl_servings = form_labels["servings"]
+        self.lbl_meal_type = form_labels["meal_type"]
+        self.lbl_category = form_labels["recipe_category"]
+        self.lbl_dietary_preference = form_labels["dietary_preference"]
+
+
+# ── Ingredient Form ─────────────────────────────────────────────────────────────────────────────────────────
 class IngredientForm(QWidget):
     add_ingredient_requested = Signal(QWidget)
     remove_ingredient_requested = Signal(QWidget)
@@ -284,15 +289,15 @@ class IngredientForm(QWidget):
     def to_payload(self) -> dict:
         """Returns a plain dict that matches RecipeIngredientDTO fields"""
         return {
-        "ingredient_name": self.sle_ingredient_name.text().strip(),
-        "ingredient_category": self.cb_ingredient_category.currentText().strip(),
-        "unit": self.cb_unit.currentText().strip(),
+        "ingredient_name": sanitize_form_input(self.sle_ingredient_name.text()),
+        "ingredient_category": sanitize_form_input(self.cb_ingredient_category.currentText()),
+        "unit": sanitize_form_input(self.cb_unit.currentText()),
         "quantity": safe_float_conversion(self.le_quantity.text().strip()),
         "existing_ingredient_id": self.exact_match.id if self.exact_match else None,
         }
 
 
-# ── Ingredients Card ─────────────────────────────────────────────────────────────────────────
+# ── Ingredients Card ────────────────────────────────────────────────────────────────────────────────────────
 class IngredientsCard(ActionCard):
     """
     Container for managing ingredient widgets within a Card.
@@ -376,7 +381,7 @@ class IngredientsCard(ActionCard):
         return len(self.ingredient_widgets)
 
 
-# ── Direction & Notes Card ───────────────────────────────────────────────────────────────────
+# ── Direction & Notes Card ──────────────────────────────────────────────────────────────────────────────────
 class DirectionsNotesCard(Card):
     """Custom card with toggle between Directions and Notes content."""
 
@@ -447,7 +452,7 @@ class DirectionsNotesCard(Card):
             btn.style().polish(btn)
 
 
-# ── Add Recipes View ─────────────────────────────────────────────────────────────────────────
+# ── Add Recipes View ────────────────────────────────────────────────────────────────────────────────────────
 class AddRecipes(QWidget):
     """AddRecipes widget for creating new recipes with ingredients and directions."""
 
@@ -474,30 +479,10 @@ class AddRecipes(QWidget):
         QTimer.singleShot(0, self.le_recipe_name.setFocus)
 
     def _build_ui(self):
-        # main vertical layout for the entire widget
-        self.lyt_main = QVBoxLayout(self)
-        self.lyt_main.setContentsMargins(0, 0, 0, 0)
-        self.lyt_main.setSpacing(0)
+        self.lyt_main, self.scroll_area, self.scroll_content, self.scroll_layout = \
+            setup_main_scroll_layout(self, "AddRecipeContent")
 
-        # create scroll area
-        self.scroll_area = QScrollArea()
-        self.scroll_area.setWidgetResizable(True)
-        self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-
-        # create content widget for the scroll area
-        self.scroll_content = QWidget()
-        self.scroll_layout = QVBoxLayout(self.scroll_content)
-        self.scroll_layout.setSpacing(30)
-        self.scroll_layout.setContentsMargins(140, 40, 140, 40)
-        self.scroll_content.setObjectName("AddRecipeContent")
-
-        # set the content widget to the scroll area
-        self.scroll_area.setWidget(self.scroll_content)
-        self.lyt_main.addWidget(self.scroll_area)
-
-        #region ── Recipe Details ──
-        # recipe details form wrapped in a Card
+        # Recipe Details Card
         self.recipe_details_card = Card(card_type="Default")
         self.recipe_details_card.setHeader("Recipe Info")
         self.recipe_details_card.setSubHeader("Basic information about your recipe.")
@@ -514,34 +499,13 @@ class AddRecipes(QWidget):
         self.le_servings = self.recipe_form.le_servings
 
         self.scroll_layout.addWidget(self.recipe_details_card)  # add recipe form card to layout
-        #endregion
 
-        # ── Note ─────────────────────────────────────────────────────────────────────────────
-        # TODO: reimplement recipe upload and save button
-        # logic removed from layout -- remains in file for reference
-        # buttons
-        # self.lyt_buttons =QVBoxLayout()  # vertical layout for buttons
-        #
-        # upload image button
-        # self.btn_upload_image = UploadImageCard()
-        # self.btn_upload_image.setObjectName("UploadImageCard")
-        # self.lyt_buttons.addWidget(
-        #     self.btn_upload_image)  # add upload image button to buttons layout
-
-        # save button
-        # self.btn_save = QPushButton("Save Recipe")
-        # self.btn_save.setObjectName("SaveButton")
-        # self.btn_save.setFixedHeight(50)  # set fixed height for consistency
-        # ─────────────────────────────────────────────────────────────────────────────────────
-
-
-        #region ── Ingredients Container ──
+        # Ingredients Container
         self.ingredient_container = IngredientsCard()
         self.ingredient_container.expandWidth(True)
         self.scroll_layout.addWidget(self.ingredient_container)
-        #endregion
 
-        #region ── Directions & Notes Card ──
+        # Directions & Notes Card
         self.directions_notes_card = DirectionsNotesCard()
         self.directions_notes_card.expandBoth(True)
 
@@ -549,11 +513,9 @@ class AddRecipes(QWidget):
         # Expose text edits for convenience (for form validation, saving, etc.)
         self.te_directions = self.directions_notes_card.te_directions
         self.te_notes = self.directions_notes_card.te_notes
-        #endregion
 
-        #region ── Recipe Image ──
+        # Recipe Image
         self.recipe_image = RecipeImage()
-        #endregion
 
         # Add directions and image using shadow-safe utility
         add_two_column(
@@ -576,12 +538,21 @@ class AddRecipes(QWidget):
 
     def _connect_signals(self):
         """Connect UI signals to their handlers."""
-        # Recipe name changes should update the image component
-        self.le_recipe_name.textChanged.connect(self._on_recipe_name_changed)
+        # Connect form change handlers
+        form_change_handlers = {
+            "recipe_name": self._on_recipe_name_changed
+        }
+        form_widgets = {
+            "recipe_name": self.le_recipe_name
+        }
+        connect_form_signals(form_widgets, form_change_handlers)
 
-        # Connect recipe image signals
-        self.recipe_image.generate_image_requested.connect(self._on_generate_default_image_requested)
-        self.recipe_image.image_selected.connect(self._on_image_selected)
+        # Batch connect remaining signals
+        signal_connections = [
+            (self.recipe_image.generate_image_requested, self._on_generate_default_image_requested),
+            (self.recipe_image.image_selected, self._on_image_selected)
+        ]
+        batch_connect_signals(signal_connections)
 
         # Connect AI service signals for async operations
         """ self.ai_service.generation_finished.connect(self._on_generation_finished)
@@ -640,25 +611,23 @@ class AddRecipes(QWidget):
 
     def _setup_tab_order(self):
         """Define a fixed tab order for keyboard navigation."""
-        from PySide6.QtWidgets import QWidget
-
-        # basic recipe fields
-        QWidget.setTabOrder(self.le_recipe_name, self.le_time)
-        QWidget.setTabOrder(self.le_time, self.le_servings)
-        QWidget.setTabOrder(self.le_servings, self.cb_meal_type)
-        QWidget.setTabOrder(self.cb_meal_type, self.cb_recipe_category)
-        QWidget.setTabOrder(self.cb_recipe_category, self.cb_dietary_preference)
-        # ingredients - chain through the first ingredient widget if it exists
+        base_widgets = [
+            self.le_recipe_name, self.le_time, self.le_servings,
+            self.cb_meal_type, self.cb_recipe_category, self.cb_dietary_preference
+        ]
+        
+        # Add ingredient widgets dynamically if they exist
         ingredient_widgets = self.ingredient_container.ingredient_widgets
         if ingredient_widgets:
             w = ingredient_widgets[0]
-            QWidget.setTabOrder(self.le_servings, w.le_quantity)
-            QWidget.setTabOrder(w.le_quantity, w.cb_unit)
-            QWidget.setTabOrder(w.cb_unit, w.sle_ingredient_name)
-            QWidget.setTabOrder(w.sle_ingredient_name, w.cb_ingredient_category)
-            QWidget.setTabOrder(w.cb_ingredient_category, w.btn_delete)
-            # then to directions
-            QWidget.setTabOrder(w.btn_delete, self.te_directions)
+            ingredient_chain = [w.le_quantity, w.cb_unit, w.sle_ingredient_name, 
+                              w.cb_ingredient_category, w.btn_delete]
+            base_widgets.extend(ingredient_chain)
+        
+        # Add final widgets
+        base_widgets.append(self.te_directions)
+        
+        setup_tab_order_chain(base_widgets)
 
     def _update_image_path(self, image_path: str):
         """Update the selected image path when an image is selected."""
@@ -669,6 +638,18 @@ class AddRecipes(QWidget):
         Gathers all form data (recipe fields + ingredient widgets),
         constructs a RecipeCreateDTO, and hands it to RecipeService.
         """
+        # ── validate required fields ──
+        required_fields = {
+            "Recipe Name": self.le_recipe_name,
+            "Meal Type": self.cb_meal_type,
+            "Servings": self.le_servings
+        }
+        is_valid, validation_errors = validate_required_fields(required_fields)
+        if not is_valid:
+            error_msg = "Please fix the following errors:\n• " + "\n• ".join(validation_errors)
+            self._display_save_message(error_msg, success=False)
+            return
+
         # ── payload recipe data ──
         recipe_data = self.to_payload()
 
@@ -736,19 +717,32 @@ class AddRecipes(QWidget):
         self.stored_ingredients.clear()
         self.ingredient_container.clear_all_ingredients()
 
-
     def to_payload(self):
         """Collect all recipe form data and return it as a dict for API calls."""
-        return {
-            "recipe_name":         self.le_recipe_name.text().strip(),
-            "recipe_category":     self.cb_recipe_category.currentText().strip(),
-            "meal_type":           self.cb_meal_type.currentText().strip(),
-            "dietary_preference": self.cb_dietary_preference.currentText().strip(),
-            "total_time":          safe_int_conversion(self.le_time.text().strip()),
-            "servings":            parse_servings_range(self.le_servings.text()),
-            "directions":          self.te_directions.toPlainText().strip(),
-            "reference_image_path":  self.recipe_image.get_reference_image_path() or "",
+        form_mapping = {
+            "recipe_name": self.le_recipe_name,
+            "recipe_category": self.cb_recipe_category,
+            "meal_type": self.cb_meal_type,
+            "dietary_preference": self.cb_dietary_preference,
+            "total_time": self.le_time,
+            "servings": self.le_servings,
+            "directions": self.te_directions
         }
+        data = collect_form_data(form_mapping)
+
+        # Apply text sanitization
+        data["recipe_name"] = sanitize_form_input(data["recipe_name"])
+        data["recipe_category"] = sanitize_form_input(data["recipe_category"])
+        data["meal_type"] = sanitize_form_input(data["meal_type"])
+        data["dietary_preference"] = sanitize_form_input(data["dietary_preference"])
+        data["directions"] = sanitize_multiline_input(data["directions"])
+
+        # Apply transformations for servings/time parsing
+        data["total_time"] = safe_int_conversion(data["total_time"])
+        data["servings"] = parse_servings_range(data["servings"])
+        data["reference_image_path"] = self.recipe_image.get_reference_image_path() or ""
+
+        return data
 
     def _clear_form(self):
         """Clear all form fields after successful save."""

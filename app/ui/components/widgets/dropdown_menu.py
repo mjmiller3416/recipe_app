@@ -3,18 +3,17 @@
 Provides a reusable dropdown menu component for displaying selectable lists.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from typing import Optional, Sequence
 
-from PySide6.QtCore import (QAbstractItemModel, QEvent, QStringListModel, Qt,
-                            Signal)
-from PySide6.QtWidgets import QApplication, QCompleter, QWidget
+from PySide6.QtCore import QAbstractItemModel, QEvent, QStringListModel, Qt, Signal
+from PySide6.QtWidgets import QCompleter, QWidget
 
 from app.style import Qss, Theme
 from _dev_tools import DebugLogger
 
 
-# ── Dropdown Menu ────────────────────────────────────────────────────────────────────────────
+# ── Dropdown Menu ───────────────────────────────────────────────────────────────────────────────────────────
 class DropdownMenu(QWidget):
     """
     Reusable dropdown menu component for displaying filtered selectable lists.
