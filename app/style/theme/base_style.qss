@@ -6,6 +6,7 @@
 /* Global Styles */
 #FixedWrapper {background-color: transparent;}
 QWidget#ContentArea{background-color: {surface};}
+QWidget#ScrollContent {background-color: {surface};border: none;}
 
 [tag="Header"] {
     font: {title};

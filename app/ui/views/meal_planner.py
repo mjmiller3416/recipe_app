@@ -13,7 +13,10 @@ from app.core.dtos.planner_dtos import MealSelectionCreateDTO, MealSelectionUpda
 from app.core.models.meal_selection import MealSelection
 from app.core.services.planner_service import PlannerService
 from app.core.services.recipe_service import RecipeService
-from app.core.utils.error_utils import log_and_handle_exception, safe_execute_with_fallback, error_boundary, create_error_context
+from app.core.utils.error_utils import (
+    log_and_handle_exception, safe_execute_with_fallback,
+    error_boundary, create_error_context)
+from app.ui.utils.layout_utils import setup_main_scroll_layout
 from app.style.icon import AppIcon, Icon
 from app.style import Theme, Qss
 from app.ui.components.composite.recipe_card import LayoutSize, create_recipe_card
@@ -216,6 +219,19 @@ class MealPlanner(QWidget):
         Theme.register_widget(self, Qss.MEAL_PLANNER) # register QSS theme
         DebugLogger.log("Initializing MealPlanner page", "info")
 
+        self.tab_map = {}  # {tab_index: MealWidget}
+        # context for in-page recipe selection (widget, slot_key)
+        self._selection_context = None
+
+        self._build_ui()
+        self._init_ui()
+
+    def _build_ui(self):
+        """Build the main UI layout using consistent scroll pattern."""
+        # Use setup_main_scroll_layout for consistency with other views
+        self.lyt_main, self.scroll_area, self.scroll_content, self.scroll_layout = \
+            setup_main_scroll_layout(self)
+
         # Create Planner & Selection Widgets
         self.meal_tabs = QTabWidget()
         self.meal_tabs.setIconSize(QSize(32, 32))  # increase icon size
@@ -224,6 +240,7 @@ class MealPlanner(QWidget):
         self.meal_tabs.tabBarClicked.connect(self._handle_tab_click)
         self.meal_tabs.setContextMenuPolicy(Qt.CustomContextMenu)
         self.meal_tabs.customContextMenuRequested.connect(self._show_context_menu)
+
         # create the in-page recipe selection view
         self.selection_page = RecipeSelection(self)
         # handle when a recipe is selected from the selection page
@@ -235,18 +252,11 @@ class MealPlanner(QWidget):
         self.stack.addWidget(self.meal_tabs)
         self.stack.addWidget(self.selection_page)
 
-        # Layout
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(140, 40, 140, 40)
-        self.layout.addWidget(self.stack, 0, Qt.AlignHCenter | Qt.AlignTop)
+        # Add stack to scroll layout with center alignment
+        self.scroll_layout.addWidget(self.stack, 0, Qt.AlignHCenter | Qt.AlignTop)
+
         # show the planner view by default
         self.stack.setCurrentIndex(0)
-
-        self.tab_map = {}  # {tab_index: MealWidget}
-        # context for in-page recipe selection (widget, slot_key)
-        self._selection_context = None
-
-        self._init_ui()
 
     def _init_ui(self):
         """Initialize UI by adding the '+' tab and loading saved meals."""
@@ -307,7 +317,7 @@ class MealPlanner(QWidget):
         DebugLogger.log(f"Starting recipe selection for slot: {slot_key}", "info")
         # Store Context
         self._selection_context = (widget, slot_key)
-        
+
         # Reset selection browser with error handling
         def _load_recipes():
             DebugLogger.log("Loading recipes in selection page browser", "info")
@@ -324,7 +334,7 @@ class MealPlanner(QWidget):
             error_context="recipe_browser_load",
             logger_func=DebugLogger.log
         )
-        
+
         # Show Selection Page
         DebugLogger.log("Switching to selection page (index 1)", "info")
         self.stack.setCurrentIndex(1)

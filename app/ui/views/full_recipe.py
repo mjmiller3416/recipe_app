@@ -16,13 +16,10 @@ Styling:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Iterable, Optional
+from typing import Iterable
 
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import (
-    QFrame, QGridLayout, QHBoxLayout, QLabel,
-    QScrollArea, QSizePolicy, QSpacerItem,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QSizePolicy, QVBoxLayout, QWidget
 
 from app.core.models import Recipe
 from app.core.utils.text_utils import sanitize_multiline_input, sanitize_form_input
@@ -37,42 +34,8 @@ from app.ui.components.images.image import RecipeBanner
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
 from app.ui.components.widgets.recipe_tag import RecipeTag
+from app.ui.constants import LayoutConstants
 from _dev_tools.debug_logger import DebugLogger
-
-
-# ── Constants ───────────────────────────────────────────────────────────────────────────────────────────────
-class LayoutConstants:
-    """Layout constants for consistent spacing and sizing throughout the Full Recipe view."""
-
-    # Content margins and spacing
-    CONTENT_MARGINS = (130, 30, 130, 30)
-    PAGE_SPACING = 25
-    CONTENT_SECTION_SPACING = 30
-
-    # Card configuration
-    CARD_MARGINS = (25, 25, 25, 25)
-    CARD_SPACING = 15
-    CARD_ICON_SIZE = (30, 30)
-
-    # Tags and info sections
-    TAG_SPACING = 20
-    INFO_CONTAINER_MARGINS = (20, 10, 20, 10)
-    INFO_CONTAINER_SPACING = 40
-
-    # Ingredient list styling
-    INGREDIENT_LIST_SPACING = 12
-    INGREDIENT_GRID_SPACING = 10
-    INGREDIENT_QTY_WIDTH = 60
-    INGREDIENT_UNIT_WIDTH = 50
-
-    # Directions list styling
-    DIRECTIONS_LIST_SPACING = 15
-    DIRECTIONS_ITEM_SPACING = 12
-    DIRECTIONS_NUMBER_WIDTH = 30
-
-    # Section headers
-    SECTION_HEADER_SPACING = 10
-    SECTION_ICON_SIZE = (24, 24)
 
 
 # ── Ingredient List ──────────────────────────────────────────────────────────────────────────
@@ -299,24 +262,17 @@ class FullRecipe(QWidget):
 
     def _build_ui(self) -> None:
         """Build the main UI matching the mock design."""
-        self._setup_scroll_layout()
+
+        self.lyt_main, self.scroll_area, self.scroll_content, self.scroll_layout = \
+            setup_main_scroll_layout(self)
+
         self._create_header_section()
         self._create_banner_section()
         self._create_info_section()
         self._create_content_sections()
 
         # Bottom spacer
-        self.page.addStretch()
-
-    def _setup_scroll_layout(self) -> None:
-        """Setup main scroll layout with custom configuration."""
-        self.root, self.scroll, self.content, self.page = setup_main_scroll_layout(
-            self, "FullRecipeContent", margins=LayoutConstants.CONTENT_MARGINS, spacing=LayoutConstants.PAGE_SPACING
-        )
-        # Configure scroll area for full recipe view
-        self.scroll.setObjectName("FullRecipeScroll")
-        self.scroll.setFrameShape(QFrame.NoFrame)
-        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll_layout.addStretch()
 
     def _create_header_section(self) -> None:
         """Create back button, title, and tags section."""
@@ -324,13 +280,13 @@ class FullRecipe(QWidget):
         # TODO: Implement sticky back button that remains visible during scrolling
         # Requirements: Fixed position overlay, semi-transparent background, proper z-index
         back_bar = self._make_back_button()
-        self.page.addWidget(back_bar)
+        self.scroll_layout.addWidget(back_bar)
 
         # Title Section
         title = QLabel(self.recipe_data["title"])
         title.setObjectName("RecipeTitle")
         title.setAlignment(Qt.AlignCenter)
-        self.page.addWidget(title)
+        self.scroll_layout.addWidget(title)
 
         # Recipe Tags Row
         tags_container = QWidget()
@@ -346,7 +302,7 @@ class FullRecipe(QWidget):
         tags_layout.addSpacing(LayoutConstants.TAG_SPACING)
         tags_layout.addWidget(RecipeTag(Icon.DIET_PREF, self.recipe_data["diet_pref"]))
         tags_layout.addStretch()
-        self.page.addWidget(tags_container)
+        self.scroll_layout.addWidget(tags_container)
 
     def _create_banner_section(self) -> None:
         """Create and configure recipe banner with image handling."""
@@ -376,7 +332,7 @@ class FullRecipe(QWidget):
         #self.ai_service.generation_finished.connect(self._on_generation_finished)
         #self.ai_service.generation_failed.connect(self._on_generation_failed)
 
-        self.page.addWidget(self.recipe_banner)
+        self.scroll_layout.addWidget(self.recipe_banner)
 
     def _create_info_section(self) -> None:
         """Create recipe info cards section."""
@@ -386,15 +342,15 @@ class FullRecipe(QWidget):
         info_container.setObjectName("InfoContainer")
         info_container.setProperty("tag", "Container")
         info_container.expandWidth(True)
-        info_container.setContentsMargins(*LayoutConstants.INFO_CONTAINER_MARGINS)
-        info_container.setSpacing(LayoutConstants.INFO_CONTAINER_SPACING)
+        """ info_container.setContentsMargins(*LayoutConstants.INFO_CONTAINER_MARGINS)
+        info_container.setSpacing(LayoutConstants.INFO_CONTAINER_SPACING) """
 
         # Create info card using centralized recipe data
         info_card = RecipeInfoCard(
             show_cards=["time", "servings", "category", "dietary"])
         info_card.setRecipe(self.recipe)
 
-        self.page.addWidget(info_card)
+        self.scroll_layout.addWidget(info_card)
 
     def _create_content_sections(self) -> None:
         """Create ingredients, directions, and notes sections using two-column layout."""
@@ -429,7 +385,7 @@ class FullRecipe(QWidget):
         )
 
         # Add the content layout to main page layout
-        self.page.addLayout(content_layout)
+        self.scroll_layout.addLayout(content_layout)
 
     def _create_section_header(self, icon: Icon, title: str) -> QWidget:
         """Create a section header with icon and title."""
@@ -488,7 +444,7 @@ class FullRecipe(QWidget):
 
     def _create_recipe_section_card(self, title: str, icon: Icon, content_widget: QWidget = None) -> Card:
         """Create standardized recipe section card with consistent configuration."""
-        card = Card(self.content, card_type="Primary")
+        card = Card(self.scroll_content, card_type="Primary")
         card.setHeader(title, icon)
         card.headerIcon.setSize(*LayoutConstants.CARD_ICON_SIZE)
         card.headerIcon.setColor("primary")

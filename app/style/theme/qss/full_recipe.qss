@@ -12,10 +12,6 @@ QScrollArea#FullRecipeScroll {
     border: none;
 }
 
-QWidget#FullRecipeContent {
-    background-color: {surface};
-}
-
 QWidget#RecipeTagsContainer {
     background-color: {surface};
 }

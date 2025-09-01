@@ -43,7 +43,7 @@ __all__ = [
     'create_form_grid_layout', 'create_labeled_form_grid', 'set_fixed_height_for_layout_widgets',
 
     # Advanced Layout Utils
-    'create_fixed_wrapper', 'make_overlay', 'create_two_column_layout',
+    'create_fixed_wrapper', 'make_overlay', 'create_two_column_layout', 'create_two_row_layout',
 
     # Position & Anchoring
     'CornerAnchor', 'center_on_screen',
@@ -485,6 +485,82 @@ def create_two_column_layout(
     # Add columns to main layout with weights and alignment
     main_layout.addWidget(left_column, left_weight, alignment)
     main_layout.addWidget(right_column, right_weight, alignment)
+
+    return main_layout
+
+def create_two_row_layout(
+    top_widgets: list[QWidget] = None,
+    bottom_widgets: list[QWidget] = None,
+    top_weight: int = 1,
+    bottom_weight: int = 1,
+    spacing: int = 30,
+    margins: tuple[int, int, int, int] = (0, 0, 0, 0),
+    alignment: Qt.AlignmentFlag = Qt.AlignLeft
+) -> QVBoxLayout:
+    """
+    Create a standardized two-row layout with configurable weights and content.
+
+    Args:
+        top_widgets: List of widgets for the top row (creates empty row if None)
+        bottom_widgets: List of widgets for the bottom row (creates empty row if None)
+        top_weight: Stretch factor for top row (default: 1)
+        bottom_weight: Stretch factor for bottom row (default: 1)
+        spacing: Vertical spacing between rows (default: 30)
+        margins: Layout margins (left, top, right, bottom)
+        alignment: Horizontal alignment for row widgets (default: Qt.AlignLeft)
+
+    Returns:
+        QVBoxLayout: Configured two-row layout with widgets added
+
+    Examples:
+        # Equal height rows
+        layout = create_two_row_layout([widget1], [widget2, widget3])
+
+        # Top 1/3, Bottom 2/3 height
+        layout = create_two_row_layout([top_widget], [bottom1, bottom2], 1, 2)
+
+        # Custom spacing and alignment
+        layout = create_two_row_layout(
+            [header_card], [content_card, footer_card],
+            spacing=40, alignment=Qt.AlignCenter
+        )
+    """
+    # Create main vertical layout
+    main_layout = QVBoxLayout()
+    main_layout.setContentsMargins(*margins)
+    main_layout.setSpacing(spacing)
+
+    # Create top row widget
+    top_row = QWidget()
+    top_layout = QHBoxLayout(top_row)
+    top_layout.setContentsMargins(0, 0, 0, 0)
+    top_layout.setSpacing(20)  # Horizontal spacing within row
+
+    # Add widgets to top row
+    if top_widgets:
+        for widget in top_widgets:
+            top_layout.addWidget(widget)
+    else:
+        # Add stretch if no widgets to prevent row collapse
+        top_layout.addStretch()
+
+    # Create bottom row widget
+    bottom_row = QWidget()
+    bottom_layout = QHBoxLayout(bottom_row)
+    bottom_layout.setContentsMargins(0, 0, 0, 0)
+    bottom_layout.setSpacing(20)  # Horizontal spacing within row
+
+    # Add widgets to bottom row
+    if bottom_widgets:
+        for widget in bottom_widgets:
+            bottom_layout.addWidget(widget)
+    else:
+        # Add stretch if no widgets to prevent row collapse
+        bottom_layout.addStretch()
+
+    # Add rows to main layout with weights and alignment
+    main_layout.addWidget(top_row, top_weight, alignment)
+    main_layout.addWidget(bottom_row, bottom_weight, alignment)
 
     return main_layout
 

@@ -1,10 +1,6 @@
 /* ------------------------------------------------------------------
    ADD RECIPE STYLSHEET
    ------------------------------------------------------------------ */
-QWidget#AddRecipeContent {
-    background-color: {surface};
-    border: none;
-}
 
 #AddRecipes QScrollArea {border: none;}
 

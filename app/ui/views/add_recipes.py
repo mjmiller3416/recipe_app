@@ -5,14 +5,11 @@ AddRecipes widget for creating new recipes with ingredients and directions.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import (
-    QGridLayout, QHBoxLayout, QLabel, QLineEdit,
-    QScrollArea, QTextEdit, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import QHBoxLayout,QLineEdit, QTextEdit,QWidget
 
 from app.config import (
-    DIETARY_PREFERENCES, FLOAT_VALIDATOR,
-    INGREDIENT_CATEGORIES, MEAL_TYPE, MEASUREMENT_UNITS,
-    NAME_PATTERN, RECIPE_CATEGORIES)
+    DIETARY_PREFERENCES, FLOAT_VALIDATOR, INGREDIENT_CATEGORIES, MEAL_TYPE,
+    MEASUREMENT_UNITS, NAME_PATTERN, RECIPE_CATEGORIES)
 from app.core.database.db import create_session
 from app.core.dtos import IngredientSearchDTO, RecipeCreateDTO, RecipeIngredientDTO
 from app.core.services.ingredient_service import IngredientService
@@ -32,9 +29,6 @@ from app.ui.components.widgets.button import Button
 from app.ui.helpers import clear_error_styles, dynamic_validation
 from app.ui.helpers.card_utils import add_two_column
 from _dev_tools import DebugLogger
-
-# ── Constants ───────────────────────────────────────────────────────────────────────────────────────────────
-FIXED_HEIGHT = 60  # fixed height for input fields in the recipe form
 
 
 # ── Recipe Form ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -96,7 +90,7 @@ class RecipeForm(QWidget):
         }
 
         self._layout, form_widgets, form_labels = create_labeled_form_grid(
-            self, field_configs, fixed_height=FIXED_HEIGHT
+            self, field_configs, fixed_height=60,
         )
 
         # Assign widgets to self attributes for compatibility
@@ -480,7 +474,7 @@ class AddRecipes(QWidget):
 
     def _build_ui(self):
         self.lyt_main, self.scroll_area, self.scroll_content, self.scroll_layout = \
-            setup_main_scroll_layout(self, "AddRecipeContent")
+            setup_main_scroll_layout(self)
 
         # Recipe Details Card
         self.recipe_details_card = Card(card_type="Default")

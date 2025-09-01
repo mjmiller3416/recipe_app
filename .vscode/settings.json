@@ -272,6 +272,7 @@
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
       "tests"
-    ]
+    ],
+    "favorites.sortDirection": "DESC"
 
   }
