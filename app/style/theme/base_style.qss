@@ -27,6 +27,8 @@ QWidget {
     color: {on_surface};
 }
 
+QWidget#ToggleContainer {border: 1px solid {outline};}
+
 /* Group Boxes */
 QGroupBox {
     background-color: {surface};
@@ -87,13 +89,15 @@ QPushButton:disabled {
     border: 1px solid {outline};
 }
 
+QPushButton#ToggleButtonActive, QPushButton#ToggleButtonInactive {border: none;}
+
 /* Input Fields */
 QLineEdit, QTextEdit, QComboBox {
     background-color: {surface};
     color: {on_surface};
-    border: 1px solid {outline};
+    border: none;
     border-radius: 4px;
-    padding: 5px;
+    padding: 5px 5px 5px 12px;
 }
 QLineEdit:focus, QTextEdit:focus, QComboBox:focus {border: 2px solid {primary};}
 
@@ -101,6 +105,9 @@ QLineEdit:disabled, QTextEdit:disabled, QComboBox:disabled {
     background-color: {surface};
     color: {on_surface_variant};
 }
+
+#AddRecipes QTextEdit, #IngredientForm QLineEdit, #IngredientForm QComboBox {border: 1px solid {outline};}
+QTextEdit#DirectionsTextEdit {border-top-left-radius: 0; border-top-right-radius: 0;}
 
 /* ComboBox Dropdown */
 QComboBox::drop-down {border: none;}

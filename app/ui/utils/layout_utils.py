@@ -412,82 +412,6 @@ def make_overlay(
 
     return container
 
-def create_two_column_layout(
-    left_widgets: list[QWidget] = None,
-    right_widgets: list[QWidget] = None,
-    left_weight: int = 1,
-    right_weight: int = 1,
-    spacing: int = 30,
-    margins: tuple[int, int, int, int] = (0, 0, 0, 0),
-    alignment: Qt.AlignmentFlag = Qt.AlignTop
-) -> QHBoxLayout:
-    """
-    Create a standardized two-column layout with configurable weights and content.
-
-    Args:
-        left_widgets: List of widgets for the left column (creates empty column if None)
-        right_widgets: List of widgets for the right column (creates empty column if None)
-        left_weight: Stretch factor for left column (default: 1)
-        right_weight: Stretch factor for right column (default: 1)
-        spacing: Horizontal spacing between columns (default: 30)
-        margins: Layout margins (left, top, right, bottom)
-        alignment: Vertical alignment for column widgets (default: Qt.AlignTop)
-
-    Returns:
-        QHBoxLayout: Configured two-column layout with widgets added
-
-    Examples:
-        # Equal width columns
-        layout = create_two_column_layout([widget1], [widget2, widget3])
-
-        # Left 1/3, Right 2/3 width
-        layout = create_two_column_layout([left_widget], [right1, right2], 1, 2)
-
-        # Custom spacing and alignment
-        layout = create_two_column_layout(
-            [ingredients_card], [directions_card, notes_card],
-            spacing=40, alignment=Qt.AlignCenter
-        )
-    """
-    # Create main horizontal layout
-    main_layout = QHBoxLayout()
-    main_layout.setContentsMargins(*margins)
-    main_layout.setSpacing(spacing)
-
-    # Create left column widget
-    left_column = QWidget()
-    left_layout = QVBoxLayout(left_column)
-    left_layout.setContentsMargins(0, 0, 0, 0)
-    left_layout.setSpacing(20)  # Vertical spacing within column
-
-    # Add widgets to left column
-    if left_widgets:
-        for widget in left_widgets:
-            left_layout.addWidget(widget)
-    else:
-        # Add stretch if no widgets to prevent column collapse
-        left_layout.addStretch()
-
-    # Create right column widget
-    right_column = QWidget()
-    right_layout = QVBoxLayout(right_column)
-    right_layout.setContentsMargins(0, 0, 0, 0)
-    right_layout.setSpacing(20)  # Vertical spacing within column
-
-    # Add widgets to right column
-    if right_widgets:
-        for widget in right_widgets:
-            right_layout.addWidget(widget)
-    else:
-        # Add stretch if no widgets to prevent column collapse
-        right_layout.addStretch()
-
-    # Add columns to main layout with weights and alignment
-    main_layout.addWidget(left_column, left_weight, alignment)
-    main_layout.addWidget(right_column, right_weight, alignment)
-
-    return main_layout
-
 def create_two_row_layout(
     top_widgets: list[QWidget] = None,
     bottom_widgets: list[QWidget] = None,
@@ -563,6 +487,159 @@ def create_two_row_layout(
     main_layout.addWidget(bottom_row, bottom_weight, alignment)
 
     return main_layout
+
+def create_two_column_layout(
+    left_widgets: list[QWidget] = None,
+    right_widgets: list[QWidget] = None,
+    left_weight: int = 1,
+    right_weight: int = 1,
+    spacing: int = 30,
+    margins: tuple[int, int, int, int] = (0, 0, 0, 0),
+    alignment: Qt.AlignmentFlag = Qt.AlignTop,
+    match_heights: bool = False
+) -> QHBoxLayout:
+    """
+    Create a unified two-column layout with automatic Card elevation preservation.
+
+    This function intelligently handles both Card widgets (preserving shadow effects) and
+    regular widgets. When Card widgets are detected, they are added directly to avoid
+    shadow clipping. Regular widgets use container columns for better control.
+
+    Args:
+        left_widgets: List of widgets for the left column (creates empty column if None)
+        right_widgets: List of widgets for the right column (creates empty column if None)
+        left_weight: Stretch factor for left column (default: 1)
+        right_weight: Stretch factor for right column (default: 1)
+        spacing: Horizontal spacing between columns (default: 30)
+        margins: Layout margins (left, top, right, bottom)
+        alignment: Vertical alignment for column widgets (default: Qt.AlignTop)
+        match_heights: Whether cards should match each other's height (default: True)
+
+    Returns:
+        QHBoxLayout: Configured two-column layout with widgets added
+
+    Examples:
+        # Single Card per column (optimal - direct addition)
+        layout = create_unified_two_column_layout([card1], [card2])
+
+        # Multiple Cards per column (preserves shadows)
+        layout = create_unified_two_column_layout([card1, card2], [card3, card4])
+
+        # Mixed Cards and regular widgets
+        layout = create_unified_two_column_layout([card1], [widget1, widget2])
+
+        # Regular widgets only
+        layout = create_unified_two_column_layout([widget1], [widget2, widget3])
+
+        # Custom proportions (left 1/3, right 2/3)
+        layout = create_unified_two_column_layout([card1], [card2], 1, 2)
+    """
+    from app.ui.components.layout.card import BaseCard
+
+    # Create main horizontal layout
+    main_layout = QHBoxLayout()
+    main_layout.setContentsMargins(*margins)
+    main_layout.setSpacing(spacing)
+
+    # Check if we have any Card widgets that need special handling
+    left_has_cards = left_widgets and any(isinstance(w, BaseCard) for w in left_widgets)
+    right_has_cards = right_widgets and any(isinstance(w, BaseCard) for w in right_widgets)
+
+    # Optimal case: both sides have exactly one Card widget
+    if (left_widgets and len(left_widgets) == 1 and isinstance(left_widgets[0], BaseCard) and
+        right_widgets and len(right_widgets) == 1 and isinstance(right_widgets[0], BaseCard)):
+
+        left_card = left_widgets[0]
+        right_card = right_widgets[0]
+
+        # Configure card expansion based on weights
+        if left_weight > 0:
+            left_card.expandWidth(True)
+        if right_weight > 0:
+            right_card.expandWidth(True)
+
+        if match_heights:
+            left_card.expandHeight(True)
+            right_card.expandHeight(True)
+
+        main_layout.addWidget(left_card, left_weight, alignment)
+        main_layout.addWidget(right_card, right_weight, alignment)
+
+        return main_layout
+
+    # Handle complex cases with mixed widgets or multiple widgets per column
+    _add_column_widgets(main_layout, left_widgets, left_weight, alignment, left_has_cards, match_heights)
+    _add_column_widgets(main_layout, right_widgets, right_weight, alignment, right_has_cards, match_heights)
+
+    return main_layout
+
+def _add_column_widgets(
+    main_layout: QHBoxLayout,
+    widgets: list[QWidget],
+    weight: int,
+    alignment: Qt.AlignmentFlag,
+    has_cards: bool,
+    match_heights: bool
+):
+    """
+    Helper function to add widgets to a column, handling Cards appropriately.
+
+    Args:
+        main_layout: The main horizontal layout to add to
+        widgets: List of widgets for this column
+        weight: Stretch factor for this column
+        alignment: Vertical alignment for widgets
+        has_cards: Whether this column contains Card widgets
+        match_heights: Whether cards should expand to match heights
+    """
+    from app.ui.components.layout.card import BaseCard
+
+    if not widgets:
+        # Add stretch for empty column
+        main_layout.addStretch(weight)
+        return
+
+    if len(widgets) == 1:
+        widget = widgets[0]
+
+        # Single Card widget - add directly (preserves shadows)
+        if isinstance(widget, BaseCard):
+            if weight > 0:
+                widget.expandWidth(True)
+            if match_heights:
+                widget.expandHeight(True)
+            main_layout.addWidget(widget, weight, alignment)
+        else:
+            # Single regular widget - add directly
+            main_layout.addWidget(widget, weight, alignment)
+    else:
+        # Multiple widgets - need a layout container
+        if has_cards:
+            # Cards present - use minimal VBoxLayout (no wrapper widget to avoid shadow clipping)
+            column_layout = QVBoxLayout()
+            column_layout.setContentsMargins(0, 0, 0, 0)
+            column_layout.setSpacing(20)
+
+            for widget in widgets:
+                if isinstance(widget, BaseCard):
+                    if weight > 0:
+                        widget.expandWidth(True)
+                    if match_heights:
+                        widget.expandHeight(True)
+                column_layout.addWidget(widget)
+
+            main_layout.addLayout(column_layout, weight)
+        else:
+            # Only regular widgets - use container widget for better control
+            column = QWidget()
+            column_layout = QVBoxLayout(column)
+            column_layout.setContentsMargins(0, 0, 0, 0)
+            column_layout.setSpacing(20)
+
+            for widget in widgets:
+                column_layout.addWidget(widget)
+
+            main_layout.addWidget(column, weight, alignment)
 
 
 # ── Position & Anchoring ────────────────────────────────────────────────────────────────────────────────────

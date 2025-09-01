@@ -26,6 +26,7 @@ from app.core.utils.text_utils import sanitize_multiline_input, sanitize_form_in
 from app.style import Qss, Theme
 from app.style.icon import AppIcon, Icon
 from app.style.icon.config import Name, Type
+from app.ui.helpers.card_utils import add_two_column
 from app.ui.utils.layout_utils import setup_main_scroll_layout, create_form_grid_layout, create_two_column_layout
 from app.ui.utils.event_utils import batch_connect_signals
 from app.ui.utils.widget_utils import apply_object_name_pattern
@@ -501,7 +502,7 @@ class FullRecipe(QWidget):
         """Handle image click for full preview."""
         # TODO: Show full-size image preview dialog
         DebugLogger().log("Recipe banner image clicked for full preview", "debug")
-    
+
     def _handle_back_clicked(self):
         """Handle back button click using NavigationService or fallback to signal."""
         if self.navigation_service:

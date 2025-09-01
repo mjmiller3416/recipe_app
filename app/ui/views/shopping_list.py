@@ -1,33 +1,34 @@
-"""app/ui/views/shopping_list/shopping_list.py
+"""app/ui/views/shopping_list.py
 
 This module defines the ShoppingList screen, which allows users to view and manage their
 shopping list. It includes functionality to add manual items, categorize ingredients, and
 display them in a scrollable list
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from collections import defaultdict
 
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt, Signal
-from PySide6.QtWidgets import (QCheckBox, QComboBox, QFrame, QGridLayout,
-                               QHBoxLayout, QLabel, QLineEdit, QPushButton,
-                               QScrollArea, QSizePolicy, QSpacerItem,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QCheckBox, QGridLayout, QHBoxLayout, QLabel,
+    QLineEdit, QScrollArea, QVBoxLayout, QWidget
+)
 
 from app.config import INGREDIENT_CATEGORIES, MEASUREMENT_UNITS
 from app.core.services.shopping_service import ShoppingService
 from app.style import Icon, Qss, Theme, Type
+from app.ui.views.base import ScrollableView
 from app.ui.components.layout.card import ActionCard, BaseCard, Card
 from app.ui.components.widgets import BaseButton, ComboBox, ToolButton
-from app.ui.helpers.ui_helpers import set_fixed_height_for_layout_widgets
+from app.ui.constants import LayoutConstants
+from app.ui.utils.layout_utils import (
+    set_fixed_height_for_layout_widgets,
+    create_two_column_layout
+)
 from _dev_tools import DebugLogger
 
 
-# ── Constants ────────────────────────────────────────────────────────────────────────────────
-FIXED_HEIGHT = 60  # fixed height for input fields in the recipe form
-
-
-# ── Add Item Form ────────────────────────────────────────────────────────────────────────────
+# ── Add Item Form ───────────────────────────────────────────────────────────────────────────────────────────
 class AddItemForm(QWidget):
     """Form for manually adding new items to the shopping list."""
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -81,11 +82,12 @@ class AddItemForm(QWidget):
 
         set_fixed_height_for_layout_widgets(
             layout = self._layout,
-            height = FIXED_HEIGHT,
+            height = LayoutConstants.FIXED_INPUT_HEIGHT,
             skip   = (QLabel,)
         )
 
-# ── Collapsible Category ─────────────────────────────────────────────────────────────────────
+
+# ── Collapsible Category ────────────────────────────────────────────────────────────────────────────────────
 class CollapsibleCategory(BaseCard):
     """Demo version of collapsible category widget."""
 
@@ -271,7 +273,8 @@ class CollapsibleCategory(BaseCard):
                     checked_items.append(item.item.ingredient_name)
         return checked_items
 
-# ── Shopping Item ────────────────────────────────────────────────────────────────────────────
+
+# ── Shopping Item ───────────────────────────────────────────────────────────────────────────────────────────
 class ShoppingItem(QWidget):
     itemChecked = Signal(str, bool)
 
@@ -353,8 +356,9 @@ class ShoppingItem(QWidget):
         # Emit signal for category management
         self.itemChecked.emit(self.item.ingredient_name, self.checkbox.isChecked())
 
-# ── Shopping List View ───────────────────────────────────────────────────────────────────────
-class ShoppingList(QWidget):
+
+# ── Shopping List View ──────────────────────────────────────────────────────────────────────────────────────
+class ShoppingList(ScrollableView):
     """Placeholder class for the ShoppingList screen."""
 
     def __init__(self, parent=None):
@@ -369,54 +373,44 @@ class ShoppingList(QWidget):
         self.shopping_svc = None  # initialize shopping service
         self._breakdown_map = {}  # initialize breakdown map
 
-        self._build_ui()
+        #self._build_ui()
 
     def _build_ui(self):
-        """Setup the UI components for the ShoppingList screen."""
-        # Main layout for the entire widget
-        self.lyt_main = QVBoxLayout(self)
-        self.lyt_main.setContentsMargins(0, 0, 0, 0)
-        self.lyt_main.setSpacing(0)
+        """Setup the UI components for the ShoppingList view."""
 
-        # Create scroll area
-        self.scroll_area = QScrollArea()
-        self.scroll_area.setWidgetResizable(True)
-        self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.list_container = self._create_list_container()
+        self.entry_card = self._create_entry_card()
 
-        # Create content widget for the scroll area
-        self.scroll_content = QWidget()
-        self.scroll_layout = QHBoxLayout(self.scroll_content)
-        self.scroll_layout.setSpacing(30)
-        self.scroll_layout.setContentsMargins(140, 40, 140, 40)
-        self.scroll_content.setObjectName("ShoppingListContent")
+        column_layout = create_two_column_layout(
+            left_widgets=[self.list_container],
+            right_widgets=[self.entry_card],
+            left_weight=3,
+            right_weight=1
+        )
+        self.list_container.setMinimumHeight(self.entry_card.sizeHint().height())
+        self.scroll_layout.addLayout(column_layout)
 
-        # Set the content widget to the scroll area
-        self.scroll_area.setWidget(self.scroll_content)
-        self.lyt_main.addWidget(self.scroll_area)
+    def _create_list_container(self):
+        """Setup the UI components for the List Container."""
+        list_container = Card()
+        list_container.setObjectName("ListContainer")
+        list_container.setHeader("Auto Generated Ingredients")
+        list_container.setSubHeader("from this weeks meal plan")
+        list_container.setSpacing(10)
+        return list_container
 
-        # Shopping container card (2/3 width)
-        self.shopping_container = Card()
-        self.shopping_container.setObjectName("ListContainer")
-        self.shopping_container.setHeader("Auto Generated Ingredients")
-        self.shopping_container.setSubHeader("from this weeks meal plan")
-        self.shopping_container.setSpacing(10)
-
-        # Add item card (1/3 width)
-        add_item_card = ActionCard()
-        add_item_card.setObjectName("AddItemCard")
-        add_item_card.expandHeight(False)  # Prevent vertical expansion to maintain natural size
-
-        # Add Item Form to action card
+    def _create_entry_card(self):
+        """Setup the UI components for the Entry Card."""
         self.add_item_form = AddItemForm()
-        add_item_card.addWidget(self.add_item_form)
-        add_item_card.setHeader("Manual Add")
-        add_item_card.setSubHeader("Add item to your list")
-        add_item_card.addButton("Add", alignment=Qt.AlignRight, callback=self._on_add_manual)
+        entry_card = ActionCard()
+        entry_card.setObjectName("EntryCard")
+        entry_card.expandHeight(False)
+        entry_card.setHeader("Add Item")
+        entry_card.setSubHeader("Add item to your list")
+        entry_card.addButton("Add", alignment=Qt.AlignRight, callback=self._on_add_manual)
 
-        # Add widgets to horizontal layout - shopping list takes 4/7, add form takes 3/7
-        self.scroll_layout.addWidget(self.shopping_container, stretch=5)
-        self.scroll_layout.addWidget(add_item_card, stretch=3, alignment=Qt.AlignTop)
+        entry_card.addWidget(self.add_item_form) # add the form to the card
+        return entry_card
 
     def _on_add_manual(self):
         """Handle the addition of a manual item to the shopping list."""
@@ -461,10 +455,10 @@ class ShoppingList(QWidget):
             all_sections.append(("Manual Entries", manual_items))
 
         for category, items in all_sections:
-            category_widget = self._build_category_section(category, items)
-            self.shopping_container.addWidget(category_widget)
+            category_widget = self._create_category_section(category, items)
+            self.list_container.addWidget(category_widget)
 
-    def _build_category_section(self, title: str, items: list) -> CollapsibleCategory:
+    def _create_category_section(self, title: str, items: list) -> CollapsibleCategory:
         """Creates a CollapsibleCategory widget and populates it with ShoppingItem widgets."""
         category_widget = CollapsibleCategory(title, start_expanded=False)
 
@@ -490,7 +484,7 @@ class ShoppingList(QWidget):
         DebugLogger.log(f"ShoppingList.loadShoppingList: recipe_ids={recipe_ids}", "debug")
 
         # Clear current shopping container content
-        self.shopping_container.clear()
+        self.list_container.clear()
 
         # generate/update shopping list in database
         shopping_svc = ShoppingService()

@@ -17,7 +17,7 @@ from app.core.services.recipe_service import RecipeService
 from app.core.utils.conversion_utils import parse_servings_range, safe_int_conversion, safe_float_conversion
 from app.core.utils.text_utils import sanitize_form_input, sanitize_multiline_input
 from app.ui.utils.form_utils import clear_form_fields, collect_form_data, validate_required_fields, setup_tab_order_chain
-from app.ui.utils.layout_utils import setup_main_scroll_layout, create_labeled_form_grid
+from app.ui.utils.layout_utils import setup_main_scroll_layout, create_labeled_form_grid, create_two_column_layout
 from app.ui.utils.event_utils import connect_form_signals, batch_connect_signals
 from app.style import Qss, Theme
 from app.style.icon.config import Name, Type
@@ -386,8 +386,9 @@ class DirectionsNotesCard(Card):
 
         # Create toggle buttons container
         self.toggle_container = QWidget()
+        self.toggle_container.setObjectName("ToggleContainer")
         toggle_layout = QHBoxLayout(self.toggle_container)
-        toggle_layout.setContentsMargins(0, 0, 0, 0)
+        toggle_layout.setContentsMargins(1, 1, 1, 1)
         toggle_layout.setSpacing(0)
 
         # Create toggle buttons using custom Button class
@@ -473,6 +474,7 @@ class AddRecipes(QWidget):
         QTimer.singleShot(0, self.le_recipe_name.setFocus)
 
     def _build_ui(self):
+        """Setup the UI components for the AddRecipes view."""
         self.lyt_main, self.scroll_area, self.scroll_content, self.scroll_layout = \
             setup_main_scroll_layout(self)
 
@@ -511,7 +513,6 @@ class AddRecipes(QWidget):
         # Recipe Image
         self.recipe_image = RecipeImage()
 
-        # Add directions and image using shadow-safe utility
         add_two_column(
             self.scroll_layout,
             self.directions_notes_card,
