@@ -7,3 +7,4 @@
 #AddRecipes QLineEdit {border: none; padding-left: 12px;}
 
 #AddRecipes QLineEdit:focus {border: 4px solid {primary};}
+

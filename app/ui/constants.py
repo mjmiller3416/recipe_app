@@ -12,8 +12,6 @@ class LayoutConstants:
     """Layout constants for consistent spacing and sizing throughout the application."""
 
     # Content margins and spacing
-    CONTENT_MARGINS: Final[tuple[int, int, int, int]] = (130, 30, 130, 30)
-    PAGE_SPACING: Final[int] = 25
     CONTENT_SECTION_SPACING: Final[int] = 30
 
     # Fixed heights

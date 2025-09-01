@@ -37,7 +37,7 @@ class ViewRecipes(QWidget):
 
         # create layout
         self.main_layout = QVBoxLayout(self)
-        self.main_layout.setContentsMargins(20, 20, 20, 20)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
 
         # create stacked widget to switch between recipe list and full recipe
         self.stacked_widget = QStackedWidget()

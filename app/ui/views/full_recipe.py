@@ -208,9 +208,10 @@ class FullRecipe(QWidget):
 
     back_clicked = Signal()
 
-    def __init__(self, recipe: Recipe, parent: QWidget | None = None) -> None:
+    def __init__(self, recipe: Recipe, navigation_service=None, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.recipe = recipe
+        self.navigation_service = navigation_service
 
         # Register this view for component-scoped QSS.
         Theme.register_widget(self, Qss.FULL_RECIPE)
@@ -254,7 +255,7 @@ class FullRecipe(QWidget):
 
         btn = Button("Back", Type.SECONDARY, Name.BACK)
         btn.setObjectName("BackButton")
-        btn.clicked.connect(self.back_clicked.emit)
+        btn.clicked.connect(self._handle_back_clicked)
 
         row.addWidget(btn, 0, Qt.AlignLeft)
         row.addStretch(1)
@@ -337,20 +338,20 @@ class FullRecipe(QWidget):
     def _create_info_section(self) -> None:
         """Create recipe info cards section."""
         # Info Cards Container
-        # TODO: Update to new Card API pattern (info_container.addWidget) once card styling variants are implemented
         info_container = Card(content_layout="hbox")
         info_container.setObjectName("InfoContainer")
         info_container.setProperty("tag", "Container")
         info_container.expandWidth(True)
-        """ info_container.setContentsMargins(*LayoutConstants.INFO_CONTAINER_MARGINS)
-        info_container.setSpacing(LayoutConstants.INFO_CONTAINER_SPACING) """
+        info_container.setContentsMargins(*LayoutConstants.INFO_CONTAINER_MARGINS)
+        info_container.setSpacing(LayoutConstants.INFO_CONTAINER_SPACING)
 
         # Create info card using centralized recipe data
         info_card = RecipeInfoCard(
             show_cards=["time", "servings", "category", "dietary"])
         info_card.setRecipe(self.recipe)
+        info_container.addWidget(info_card)
 
-        self.scroll_layout.addWidget(info_card)
+        self.scroll_layout.addWidget(info_container)
 
     def _create_content_sections(self) -> None:
         """Create ingredients, directions, and notes sections using two-column layout."""
@@ -500,6 +501,17 @@ class FullRecipe(QWidget):
         """Handle image click for full preview."""
         # TODO: Show full-size image preview dialog
         DebugLogger().log("Recipe banner image clicked for full preview", "debug")
+    
+    def _handle_back_clicked(self):
+        """Handle back button click using NavigationService or fallback to signal."""
+        if self.navigation_service:
+            # Use NavigationService to go back
+            if not self.navigation_service.go_back():
+                # Fallback to view_recipes if no history
+                self.navigation_service.navigate_to("view_recipes")
+        else:
+            # Fallback to original signal-based approach
+            self.back_clicked.emit()
 
 
 
