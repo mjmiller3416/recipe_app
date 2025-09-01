@@ -1,12 +1,12 @@
-"""app/ui/pages/meal_planner/meal_planner.py
+"""app/ui/views/meal_planner.py
 
 This module defines the MealPlanner class, which provides a tabbed interface for meal planning.
 It allows users to create, edit, and save meal plans. The MealPlanner uses QTabWidget to manage
 multiple meal planning tabs and integrates with the database to load and save meal data.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QSize, Qt, Signal, QEvent
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
+from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtWidgets import QMenu, QStackedWidget, QTabWidget, QVBoxLayout, QHBoxLayout,QWidget, QToolTip
 
 from app.core.dtos.planner_dtos import MealSelectionCreateDTO, MealSelectionUpdateDTO
@@ -16,7 +16,11 @@ from app.core.services.recipe_service import RecipeService
 from app.core.utils.error_utils import (
     log_and_handle_exception, safe_execute_with_fallback,
     error_boundary, create_error_context)
+from app.ui.utils.event_utils import (
+    create_tooltip_event_filter, batch_connect_signals, setup_conditional_visibility)
 from app.ui.utils.layout_utils import setup_main_scroll_layout
+from app.ui.utils.widget_utils import register_widget_for_theme, apply_object_name_pattern
+from app.core.utils.validation_utils import validate_positive_number
 from app.style.icon import AppIcon, Icon
 from app.style import Theme, Qss
 from app.ui.components.composite.recipe_card import LayoutSize, create_recipe_card
@@ -24,7 +28,14 @@ from app.ui.views.recipe_selection import RecipeSelection
 from _dev_tools import DebugLogger
 
 
-# ── Meal Widget ──────────────────────────────────────────────────────────────────────────────
+# ── Constants ───────────────────────────────────────────────────────────────────────────────────────────────
+TAB_ICON_SIZE = QSize(32, 32)
+SIDE_SLOT_COUNT = 3
+LAYOUT_SPACING = 15
+ADD_TAB_TOOLTIP = "Add Meal"
+
+
+# ── Meal Widget ─────────────────────────────────────────────────────────────────────────────────────────────
 class MealWidget(QWidget):
     """
     A QWidget layout that organizes a main dish and side dish RecipeViewers.
@@ -39,6 +50,7 @@ class MealWidget(QWidget):
         self.recipe_service = RecipeService() # for loading recipe details
         self._meal_model: MealSelection | None = None
         self.meal_slots = {}
+        self.tooltip_filter = create_tooltip_event_filter()
 
         self._setup_ui()
         self._connect_signals()
@@ -53,7 +65,7 @@ class MealWidget(QWidget):
         self.setObjectName("MealWidget")
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
-        self.main_layout.setSpacing(15)
+        self.main_layout.setSpacing(LAYOUT_SPACING)
 
         # Main Dish (Large Card)
         self.main_slot = create_recipe_card(LayoutSize.LARGE)
@@ -62,12 +74,13 @@ class MealWidget(QWidget):
 
         # Side Dishes Row
         self.side_layout = QHBoxLayout()
-        self.side_layout.setSpacing(15)
+        self.side_layout.setSpacing(LAYOUT_SPACING)
 
-        for i in range(1, 4):
+        for i in range(1, SIDE_SLOT_COUNT + 1):
             side_slot = create_recipe_card(LayoutSize.SMALL)
             side_slot.setEnabled(False) # initially disabled
             side_slot.setToolTip("Select a main dish first") # tooltip for disabled state
+            side_slot.installEventFilter(self.tooltip_filter)
             self.side_layout.addWidget(side_slot)
             self.meal_slots[f"side{i}"] = side_slot
 
@@ -77,15 +90,19 @@ class MealWidget(QWidget):
         """
         Connect signal from RecipeViewer to the update_recipe_selection method.
         """
+        signal_connections = []
+
         for key, slot in self.meal_slots.items():
-            slot.recipe_selected.connect(lambda rid, k=key: self.update_recipe_selection(k, rid))
-            # when an empty slot's add button is clicked, request recipe selection
-            def make_add_meal_callback(slot_key):
-                def callback():
-                    DebugLogger.log(f"Add meal clicked for slot: {slot_key}", "info")
-                    self.recipe_selection_requested.emit(slot_key)
-                return callback
-            slot.add_meal_clicked.connect(make_add_meal_callback(key))
+            # Create bound methods to avoid closure issues
+            recipe_handler = self._create_recipe_selection_handler(key)
+            add_meal_handler = self._create_add_meal_handler(key)
+
+            signal_connections.extend([
+                (slot.recipe_selected, recipe_handler),
+                (slot.add_meal_clicked, add_meal_handler)
+            ])
+
+        batch_connect_signals(signal_connections)
 
     def update_recipe_selection(self, key: str, recipe_id: int) -> None:
         """
@@ -104,10 +121,7 @@ class MealWidget(QWidget):
         # Update Internal Model
         if key == "main":
             self._meal_model.main_recipe_id = recipe_id
-            # Enable Side Slots
-            for side in ("side1", "side2", "side3"):
-                self.meal_slots[side].setEnabled(True)
-                self.meal_slots[side].setToolTip("")
+            self._enable_side_slots()
         else:
             # Side Slot Update
             setattr(self._meal_model, f"side_recipe_{key[-1]}_id", recipe_id)
@@ -119,30 +133,50 @@ class MealWidget(QWidget):
             slot.set_recipe(recipe)
             slot.blockSignals(False)
 
+    def _create_recipe_selection_handler(self, key: str):
+        """Create recipe selection handler for the given slot key."""
+        def handler(recipe_id: int):
+            self.update_recipe_selection(key, recipe_id)
+        return handler
+
+    def _create_add_meal_handler(self, key: str):
+        """Create add meal handler for the given slot key."""
+        def handler():
+            DebugLogger.log(f"Add meal clicked for slot: {key}", "info")
+            self.recipe_selection_requested.emit(key)
+        return handler
+
+    def _enable_side_slots(self):
+        """Enable side dish slots when main dish is selected."""
+        for i in range(1, SIDE_SLOT_COUNT + 1):
+            slot = self.meal_slots[f"side{i}"]
+            slot.setEnabled(True)
+            slot.setToolTip("")
+
+    def _create_dto_fields(self) -> dict:
+        """Create common DTO fields from meal model."""
+        return {
+            'meal_name': self._meal_model.meal_name,
+            'main_recipe_id': self._meal_model.main_recipe_id,
+            'side_recipe_1_id': self._meal_model.side_recipe_1_id,
+            'side_recipe_2_id': self._meal_model.side_recipe_2_id,
+            'side_recipe_3_id': self._meal_model.side_recipe_3_id
+        }
+
     @error_boundary(fallback=None, logger_func=DebugLogger.log)
     def save_meal(self):
         if not self._meal_model:
             return
 
+        dto_fields = self._create_dto_fields()
+        
         if self._meal_model.id is None:
-            create_dto = MealSelectionCreateDTO(
-                meal_name=self._meal_model.meal_name,
-                main_recipe_id=self._meal_model.main_recipe_id,
-                side_recipe_1_id=self._meal_model.side_recipe_1_id,
-                side_recipe_2_id=self._meal_model.side_recipe_2_id,
-                side_recipe_3_id=self._meal_model.side_recipe_3_id
-            )
+            create_dto = MealSelectionCreateDTO(**dto_fields)
             response_dto = self.planner_service.create_meal_selection(create_dto)
             if response_dto:
                 self._meal_model.id = response_dto.id
         else:
-            update_dto = MealSelectionUpdateDTO(
-                meal_name=self._meal_model.meal_name,
-                main_recipe_id=self._meal_model.main_recipe_id,
-                side_recipe_1_id=self._meal_model.side_recipe_1_id,
-                side_recipe_2_id=self._meal_model.side_recipe_2_id,
-                side_recipe_3_id=self._meal_model.side_recipe_3_id
-            )
+            update_dto = MealSelectionUpdateDTO(**dto_fields)
             self.planner_service.update_meal_selection(self._meal_model.id, update_dto)
 
     @error_boundary(fallback=None, logger_func=DebugLogger.log)
@@ -150,6 +184,12 @@ class MealWidget(QWidget):
         """
         Load a meal by its ID and populate the RecipeViewers.
         """
+        # Validate meal ID
+        validation = validate_positive_number(meal_id, "Meal ID")
+        if not validation.is_valid:
+            DebugLogger.log(f"Invalid meal ID: {validation.error_message}", "error")
+            return
+
         response_dto = self.planner_service.get_meal_selection(meal_id)
         if not response_dto:
             error_context = create_error_context(
@@ -175,30 +215,23 @@ class MealWidget(QWidget):
         )
 
         # Load Recipes
+        self._load_main_recipe()
+        self._load_side_recipes()
+
+    def _load_main_recipe(self):
+        """Load main recipe into the main slot."""
         main = self.recipe_service.get_recipe(self._meal_model.main_recipe_id)
         self.main_slot.set_recipe(main)
-        for idx in (1, 2, 3):
+
+    def _load_side_recipes(self):
+        """Load side recipes into their respective slots."""
+        for idx in range(1, SIDE_SLOT_COUNT + 1):
             rid = getattr(self._meal_model, f"side_recipe_{idx}_id")
-            slot = self.meal_slots.get(f"side{idx}")
             recipe = self.recipe_service.get_recipe(rid) if rid else None
-            slot.set_recipe(recipe)
+            self.meal_slots[f"side{idx}"].set_recipe(recipe)
 
 
-    def eventFilter(self, obj, event):
-        """
-        Show tooltip on disabled RecipeViewers.
-
-        Args:
-            obj: The object receiving the event.
-            event: The event itself.
-        """
-        if event.type() == QEvent.ToolTip and not obj.isEnabled():
-            QToolTip.showText(event.globalPos(), obj.toolTip(), obj)
-            return True
-        return super().eventFilter(obj, event)
-
-
-# ── Meal Planner ─────────────────────────────────────────────────────────────────────────────
+# ── Meal Planner ────────────────────────────────────────────────────────────────────────────────────────────
 class MealPlanner(QWidget):
     """
     The MealPlanner class manages a tabbed interface for creating, editing,
@@ -215,8 +248,7 @@ class MealPlanner(QWidget):
         # Initialize PlannerService
         self.planner_service = PlannerService()
 
-        self.setObjectName("MealPlanner")
-        Theme.register_widget(self, Qss.MEAL_PLANNER) # register QSS theme
+        self._setup_widget_properties()
         DebugLogger.log("Initializing MealPlanner page", "info")
 
         self.tab_map = {}  # {tab_index: MealWidget}
@@ -233,13 +265,8 @@ class MealPlanner(QWidget):
             setup_main_scroll_layout(self)
 
         # Create Planner & Selection Widgets
-        self.meal_tabs = QTabWidget()
-        self.meal_tabs.setIconSize(QSize(32, 32))  # increase icon size
-        self.meal_tabs.setTabsClosable(False)
-        self.meal_tabs.setMovable(True)
-        self.meal_tabs.tabBarClicked.connect(self._handle_tab_click)
-        self.meal_tabs.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.meal_tabs.customContextMenuRequested.connect(self._show_context_menu)
+        self.meal_tabs = self._create_meal_tabs_widget()
+        self.meal_tabs.setIconSize(TAB_ICON_SIZE)
 
         # create the in-page recipe selection view
         self.selection_page = RecipeSelection(self)
@@ -257,6 +284,24 @@ class MealPlanner(QWidget):
 
         # show the planner view by default
         self.stack.setCurrentIndex(0)
+
+    def _setup_widget_properties(self):
+        """Setup widget properties and theme registration."""
+        apply_object_name_pattern(self, "MealPlanner")
+        register_widget_for_theme(self, Qss.MEAL_PLANNER)
+
+    def _create_meal_tabs_widget(self) -> QTabWidget:
+        """Create and configure the meal tabs widget."""
+        tabs = QTabWidget()
+        tabs.setTabsClosable(False)
+        tabs.setMovable(True)
+        tabs.setContextMenuPolicy(Qt.CustomContextMenu)
+
+        # Connect signals
+        tabs.tabBarClicked.connect(self._handle_tab_click)
+        tabs.customContextMenuRequested.connect(self._show_context_menu)
+
+        return tabs
 
     def _init_ui(self):
         """Initialize UI by adding the '+' tab and loading saved meals."""
@@ -281,31 +326,37 @@ class MealPlanner(QWidget):
         )
 
     def _add_meal_tab(self, meal_id: int = None):
-        widget = MealWidget(self.planner_service)  # pass the service here
+        widget = MealWidget(self.planner_service)
         if meal_id:
             widget.load_meal(meal_id)
-        # hook into slot add events to open selection page
-        def make_selection_callback(meal_widget):
-            def callback(key):
-                DebugLogger.log(f"Recipe selection requested for key: {key}", "info")
-                self._start_recipe_selection(meal_widget, key)
-            return callback
-        widget.recipe_selection_requested.connect(make_selection_callback(widget))
+
+        # Connect recipe selection signal
+        selection_handler = self._create_recipe_selection_callback(widget)
+        widget.recipe_selection_requested.connect(selection_handler)
 
         insert_index = self.meal_tabs.count() - 1
         index = self.meal_tabs.insertTab(insert_index, widget, "Custom Meal")
         self.tab_map[index] = widget
         self.meal_tabs.setCurrentIndex(index)
 
+    def _create_recipe_selection_callback(self, meal_widget):
+        """Create recipe selection callback for meal widget."""
+        def callback(key: str):
+            DebugLogger.log(f"Recipe selection requested for key: {key}", "info")
+            self._start_recipe_selection(meal_widget, key)
+        return callback
+
     def _new_meal_tab(self):
         """Add the last "+" tab to create new custom meals."""
-        _new_meal_tab = QWidget()
+        tab_widget = QWidget()
+        apply_object_name_pattern(tab_widget, "NewMealTab")
+
         icon_asset = AppIcon(Icon.ADD)
-        icon_asset.setSize(32, 32)  # set custom size before getting pixmap
+        icon_asset.setSize(TAB_ICON_SIZE.width(), TAB_ICON_SIZE.height())
         icon = icon_asset.pixmap()
 
-        index = self.meal_tabs.addTab(_new_meal_tab, icon, "")
-        self.meal_tabs.setTabToolTip(index, "Add Meal")
+        index = self.meal_tabs.addTab(tab_widget, icon, "")
+        self.meal_tabs.setTabToolTip(index, ADD_TAB_TOOLTIP)
 
     def _handle_tab_click(self, index: int):
         """Handle when the '+' tab is clicked to add a new tab."""
@@ -345,29 +396,43 @@ class MealPlanner(QWidget):
             return
         widget, slot_key = self._selection_context
         widget.update_recipe_selection(slot_key, recipe_id)
-        # return to planner view
+        self._return_to_planner_view()
+
+    def _return_to_planner_view(self):
+        """Return to planner view and clear selection context."""
         self.stack.setCurrentIndex(0)
         self._selection_context = None
 
     def _show_context_menu(self, position):
         """Show context menu for meal tabs."""
+        tab_index = self._get_valid_tab_index(position)
+        if tab_index is None:
+            return
+
+        context_menu = self._create_tab_context_menu(tab_index)
+        context_menu.exec(self.meal_tabs.mapToGlobal(position))
+
+    def _get_valid_tab_index(self, position) -> int | None:
+        """Get valid tab index for context menu operations."""
         tab_bar = self.meal_tabs.tabBar()
         tab_index = tab_bar.tabAt(position)
 
         # don't show context menu for the '+' tab (last tab) or invalid positions
         if tab_index == -1 or tab_index == self.meal_tabs.count() - 1:
-            return
+            return None
 
         # only show context menu if this tab has a meal widget
         if tab_index not in self.tab_map:
-            return
+            return None
 
+        return tab_index
+
+    def _create_tab_context_menu(self, tab_index: int) -> QMenu:
+        """Create context menu for tab operations."""
         context_menu = QMenu(self)
         delete_action = context_menu.addAction("Delete Meal")
         delete_action.triggered.connect(lambda: self._delete_meal_tab(tab_index))
-
-        # Show context menu at the cursor position
-        context_menu.exec(self.meal_tabs.mapToGlobal(position))
+        return context_menu
 
     def _delete_meal_tab(self, tab_index: int):
         """Delete a meal tab and remove the meal from the database if saved."""
@@ -376,56 +441,38 @@ class MealPlanner(QWidget):
 
         meal_widget = self.tab_map[tab_index]
 
-        # check if this is a saved meal that needs database deletion
+        # Delete from database if saved meal
         if meal_widget._meal_model and meal_widget._meal_model.id:
             meal_id = meal_widget._meal_model.id
-
-            # Delete From Database
-            success = self.planner_service.delete_meal_selection(meal_id)
-
-            if success:
-                DebugLogger.log(f"Successfully deleted saved meal with ID {meal_id}", "info")
-            else:
+            if not self.planner_service.delete_meal_selection(meal_id):
                 DebugLogger.log(f"Failed to delete meal with ID {meal_id} from database", "error")
-                return  # don't remove tab if database deletion failed
+                return
+            DebugLogger.log(f"Successfully deleted saved meal with ID {meal_id}", "info")
         else:
-            # unsaved meal - just log that we're removing the tab
             DebugLogger.log("Removing unsaved meal tab", "info")
 
-        # check if we're deleting the currently selected tab
+        # Determine new tab selection if deleting current tab
         current_tab = self.meal_tabs.currentIndex()
-        was_current_tab = (tab_index == current_tab)
-
-        # determine which tab to select after deletion
         new_selected_index = None
-        if was_current_tab:
-            # if deleting the current tab, select the tab to the left if possible
-            # otherwise select the tab to the right (which will shift left after deletion)
-            total_meal_tabs = len(self.tab_map)  # Excluding the '+' tab
-
+        if tab_index == current_tab:
+            total_meal_tabs = len(self.tab_map)
             if tab_index > 0:
-                # select the tab to the left
                 new_selected_index = tab_index - 1
             elif total_meal_tabs > 1:
-                # select the tab that will be at position 0 after deletion
                 new_selected_index = 0
-            # if only one meal tab exists, it will be deleted and '+' tab will remain
 
-        # Remove Tab From UI
+        # Remove tab and update indices
         self.meal_tabs.removeTab(tab_index)
-
-        # Update Tab Map
         new_tab_map = {}
         for idx, widget in self.tab_map.items():
             if idx < tab_index:
                 new_tab_map[idx] = widget
             elif idx > tab_index:
                 new_tab_map[idx - 1] = widget
-
         self.tab_map = new_tab_map
 
-        # set the new selected tab if needed
-        if was_current_tab and new_selected_index is not None:
+        # Select new tab if needed
+        if new_selected_index is not None:
             self.meal_tabs.setCurrentIndex(new_selected_index)
             DebugLogger.log(f"Auto-selected tab at index {new_selected_index} after deletion", "info")
 
