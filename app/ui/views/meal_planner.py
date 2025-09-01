@@ -153,30 +153,30 @@ class MealWidget(QWidget):
             slot.setEnabled(True)
             slot.setToolTip("")
 
+    def _create_dto_fields(self) -> dict:
+        """Create common DTO fields from meal model."""
+        return {
+            'meal_name': self._meal_model.meal_name,
+            'main_recipe_id': self._meal_model.main_recipe_id,
+            'side_recipe_1_id': self._meal_model.side_recipe_1_id,
+            'side_recipe_2_id': self._meal_model.side_recipe_2_id,
+            'side_recipe_3_id': self._meal_model.side_recipe_3_id
+        }
+
     @error_boundary(fallback=None, logger_func=DebugLogger.log)
     def save_meal(self):
         if not self._meal_model:
             return
 
+        dto_fields = self._create_dto_fields()
+        
         if self._meal_model.id is None:
-            create_dto = MealSelectionCreateDTO(
-                meal_name=self._meal_model.meal_name,
-                main_recipe_id=self._meal_model.main_recipe_id,
-                side_recipe_1_id=self._meal_model.side_recipe_1_id,
-                side_recipe_2_id=self._meal_model.side_recipe_2_id,
-                side_recipe_3_id=self._meal_model.side_recipe_3_id
-            )
+            create_dto = MealSelectionCreateDTO(**dto_fields)
             response_dto = self.planner_service.create_meal_selection(create_dto)
             if response_dto:
                 self._meal_model.id = response_dto.id
         else:
-            update_dto = MealSelectionUpdateDTO(
-                meal_name=self._meal_model.meal_name,
-                main_recipe_id=self._meal_model.main_recipe_id,
-                side_recipe_1_id=self._meal_model.side_recipe_1_id,
-                side_recipe_2_id=self._meal_model.side_recipe_2_id,
-                side_recipe_3_id=self._meal_model.side_recipe_3_id
-            )
+            update_dto = MealSelectionUpdateDTO(**dto_fields)
             self.planner_service.update_meal_selection(self._meal_model.id, update_dto)
 
     @error_boundary(fallback=None, logger_func=DebugLogger.log)
@@ -227,9 +227,8 @@ class MealWidget(QWidget):
         """Load side recipes into their respective slots."""
         for idx in range(1, SIDE_SLOT_COUNT + 1):
             rid = getattr(self._meal_model, f"side_recipe_{idx}_id")
-            slot = self.meal_slots.get(f"side{idx}")
             recipe = self.recipe_service.get_recipe(rid) if rid else None
-            slot.set_recipe(recipe)
+            self.meal_slots[f"side{idx}"].set_recipe(recipe)
 
 
 # ── Meal Planner ────────────────────────────────────────────────────────────────────────────────────────────
@@ -437,74 +436,43 @@ class MealPlanner(QWidget):
 
     def _delete_meal_tab(self, tab_index: int):
         """Delete a meal tab and remove the meal from the database if saved."""
-        if not self._is_valid_meal_tab(tab_index):
+        if tab_index not in self.tab_map:
             return
 
         meal_widget = self.tab_map[tab_index]
 
-        # check if this is a saved meal that needs database deletion
+        # Delete from database if saved meal
         if meal_widget._meal_model and meal_widget._meal_model.id:
             meal_id = meal_widget._meal_model.id
-
-            # Delete From Database
-            success = self.planner_service.delete_meal_selection(meal_id)
-
-            if success:
-                DebugLogger.log(f"Successfully deleted saved meal with ID {meal_id}", "info")
-            else:
+            if not self.planner_service.delete_meal_selection(meal_id):
                 DebugLogger.log(f"Failed to delete meal with ID {meal_id} from database", "error")
-                return  # don't remove tab if database deletion failed
+                return
+            DebugLogger.log(f"Successfully deleted saved meal with ID {meal_id}", "info")
         else:
-            # unsaved meal - just log that we're removing the tab
             DebugLogger.log("Removing unsaved meal tab", "info")
 
-        # check if we're deleting the currently selected tab
+        # Determine new tab selection if deleting current tab
         current_tab = self.meal_tabs.currentIndex()
-        was_current_tab = (tab_index == current_tab)
+        new_selected_index = None
+        if tab_index == current_tab:
+            total_meal_tabs = len(self.tab_map)
+            if tab_index > 0:
+                new_selected_index = tab_index - 1
+            elif total_meal_tabs > 1:
+                new_selected_index = 0
 
-        # determine which tab to select after deletion
-        new_selected_index = self._calculate_new_tab_selection(tab_index, was_current_tab)
-
-    def _calculate_new_tab_selection(self, deleted_index: int, was_current: bool) -> int | None:
-        """Calculate which tab to select after deletion."""
-        if not was_current:
-            return None
-
-        total_meal_tabs = len(self.tab_map)  # Excluding the '+' tab
-
-        if deleted_index > 0:
-            return deleted_index - 1  # select the tab to the left
-        elif total_meal_tabs > 1:
-            return 0  # select the tab that will be at position 0 after deletion
-        else:
-            return None  # only one meal tab exists, will be deleted
-
-        # Remove Tab From UI
+        # Remove tab and update indices
         self.meal_tabs.removeTab(tab_index)
-
-        # Update Tab Map
-        self._update_tab_map_after_deletion(tab_index)
-
-        # set the new selected tab if needed
-        self._handle_tab_selection_after_deletion(was_current_tab, new_selected_index)
-
-    def _is_valid_meal_tab(self, tab_index: int) -> bool:
-        """Check if tab index is valid for meal operations."""
-        return tab_index in self.tab_map
-
-    def _update_tab_map_after_deletion(self, deleted_index: int):
-        """Update tab map indices after tab deletion."""
         new_tab_map = {}
         for idx, widget in self.tab_map.items():
-            if idx < deleted_index:
+            if idx < tab_index:
                 new_tab_map[idx] = widget
-            elif idx > deleted_index:
+            elif idx > tab_index:
                 new_tab_map[idx - 1] = widget
         self.tab_map = new_tab_map
 
-    def _handle_tab_selection_after_deletion(self, was_current_tab: bool, new_selected_index: int | None):
-        """Handle tab selection after deletion."""
-        if was_current_tab and new_selected_index is not None:
+        # Select new tab if needed
+        if new_selected_index is not None:
             self.meal_tabs.setCurrentIndex(new_selected_index)
             DebugLogger.log(f"Auto-selected tab at index {new_selected_index} after deletion", "info")
 
