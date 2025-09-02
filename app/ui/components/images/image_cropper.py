@@ -6,17 +6,12 @@ Refactored image cropping components with separation of concerns.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QPointF, QRect, QRectF, QSizeF, Qt, Signal
 from PySide6.QtGui import QColor, QMouseEvent, QPainter, QPainterPath, QPen, QPixmap
-from PySide6.QtWidgets import QLabel, QSizePolicy
+from PySide6.QtWidgets import QLabel, QSizePolicy, QDialog
 
 from app.core.utils.image_utils import (
     img_calc_scale_factor, img_crop_from_scaled_coords, img_scale_to_fit
 )
-from app.ui.helpers.dialog_helpers import MIN_CROP_DIM_ORIGINAL
-
-
-# ── Constants ────────────────────────────────────────────────────────────────────────────────
-HANDLE_SIZE = 10
-HANDLE_INTERACTION_OFFSET = 4
+from app.ui.constants import ImageCropperConstants
 
 
 # ── Crop Rectangle State Manager ─────────────────────────────────────────────────────────────
@@ -29,7 +24,7 @@ class CropRectangle:
 
     def initialize_for_image(self, scaled_pixmap: QPixmap, scale_factor: float):
         """Initialize crop rectangle for given image dimensions."""
-        min_dim_scaled = max(1.0, MIN_CROP_DIM_ORIGINAL * scale_factor)
+        min_dim_scaled = max(1.0, ImageCropperConstants.MIN_CROP_DIM * scale_factor)
         max_dim_scaled = min(scaled_pixmap.width(), scaled_pixmap.height())
 
         initial_dim = max(min_dim_scaled, max_dim_scaled * 0.75)
@@ -48,18 +43,18 @@ class CropRectangle:
             return
 
         r = self.rect
-        hs = HANDLE_SIZE / 2
+        hs = ImageCropperConstants.HANDLE_SIZE / 2
 
         self.handles = {
-            'tl': QRectF(r.left() - hs, r.top() - hs, HANDLE_SIZE, HANDLE_SIZE),
-            'tr': QRectF(r.right() - hs, r.top() - hs, HANDLE_SIZE, HANDLE_SIZE),
-            'bl': QRectF(r.left() - hs, r.bottom() - hs, HANDLE_SIZE, HANDLE_SIZE),
-            'br': QRectF(r.right() - hs, r.bottom() - hs, HANDLE_SIZE, HANDLE_SIZE),
+            'tl': QRectF(r.left() - hs, r.top() - hs, ImageCropperConstants.HANDLE_SIZE, ImageCropperConstants.HANDLE_SIZE),
+            'tr': QRectF(r.right() - hs, r.top() - hs, ImageCropperConstants.HANDLE_SIZE, ImageCropperConstants.HANDLE_SIZE),
+            'bl': QRectF(r.left() - hs, r.bottom() - hs, ImageCropperConstants.HANDLE_SIZE, ImageCropperConstants.HANDLE_SIZE),
+            'br': QRectF(r.right() - hs, r.bottom() - hs, ImageCropperConstants.HANDLE_SIZE, ImageCropperConstants.HANDLE_SIZE),
         }
 
     def get_handle_at_pos(self, pos: QPointF) -> str:
         """Get handle key at given position, or None."""
-        offset = HANDLE_INTERACTION_OFFSET
+        offset = ImageCropperConstants.HANDLE_INTERACTION_OFFSET
         for key, handle_rect in self.handles.items():
             interaction_rect = handle_rect.adjusted(-offset, -offset, offset, offset)
             if interaction_rect.contains(pos):
@@ -134,6 +129,7 @@ class CropInteractionHandler:
         self.is_dragging = False
         self.drag_start_pos = QPointF()
         self.drag_start_rect = QRectF()
+        self.last_mouse_pos = QPointF()
 
     def handle_mouse_press(self, pos_on_image: QPointF) -> bool:
         """Handle mouse press. Returns True if interaction started."""
@@ -149,6 +145,7 @@ class CropInteractionHandler:
 
         self.drag_start_pos = pos_on_image
         self.drag_start_rect = QRectF(self.crop_rect.rect)
+        self.last_mouse_pos = pos_on_image
         return True
 
     def handle_mouse_move(self, pos_on_image: QPointF, bounds: QRectF,
@@ -158,12 +155,13 @@ class CropInteractionHandler:
             return False
 
         if self.is_dragging:
-            delta = pos_on_image - self.drag_start_pos
+            delta = pos_on_image - self.last_mouse_pos
             self.crop_rect.move_by_delta(delta, bounds)
+            self.last_mouse_pos = pos_on_image
             return True
 
         elif self.active_handle:
-            min_size = max(1.0, MIN_CROP_DIM_ORIGINAL * scale_factor)
+            min_size = max(1.0, ImageCropperConstants.MIN_CROP_DIM * scale_factor)
             self.crop_rect.resize_from_handle(
                 self.active_handle, pos_on_image,
                 self.drag_start_rect, bounds, min_size
@@ -249,7 +247,7 @@ class ImageCropper(QLabel):
         self.setMouseTracking(True)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.setMinimumSize(MIN_CROP_DIM_ORIGINAL + 40, MIN_CROP_DIM_ORIGINAL + 40)
+        self.setMinimumSize(ImageCropperConstants.MIN_CROP_DIM + 40, ImageCropperConstants.MIN_CROP_DIM + 40)
 
         self._update_scaled_pixmap_and_crop_rect()
 

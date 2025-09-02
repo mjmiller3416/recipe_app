@@ -32,7 +32,7 @@ from app.style.theme.config import Qss
 from app.ui.components.layout.card import BaseCard
 from app.ui.components.layout import Separator
 from app.ui.components.widgets import RoundedImage, ToolButton
-from app.ui.helpers.ui_helpers import make_overlay
+from app.ui.utils.layout_utils import make_overlay
 from _dev_tools.debug_logger import DebugLogger
 
 

@@ -42,3 +42,10 @@ class LayoutConstants:
     SECTION_HEADER_SPACING: Final[int] = 10
     SECTION_ICON_SIZE: Final[tuple[int, int]] = (24, 24)
 
+class ImageCropperConstants:
+    """Constants for the image cropper component."""
+    from PySide6.QtWidgets import QDialog
+    MIN_CROP_DIM: Final[int] = 280
+    HANDLE_SIZE: Final[int] = 10
+    HANDLE_INTERACTION_OFFSET: Final[int] = 4
+    SELECT_NEW_IMAGE_CODE: Final[int] = QDialog.DialogCode.Rejected + 1

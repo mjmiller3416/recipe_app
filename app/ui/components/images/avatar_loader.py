@@ -17,7 +17,7 @@ from app.style.animation.animator import Animator
 from app.style.icon.config import Name, Type
 from app.style.theme.config import Qss
 from app.ui.components.widgets import Button
-from app.ui.helpers import CornerAnchor
+from app.ui.utils.layout_utils import CornerAnchor
 from _data_files.user_settings import UserSettings
 
 from ..widgets.image import CircularImage

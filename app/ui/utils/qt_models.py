@@ -1,4 +1,4 @@
-"""app/ui/models/ingredient_proxy_models.py
+"""app/ui/utils/qt_models.py
 
 Contains custom proxy models for filtering and sorting data in views.
 """

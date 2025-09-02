@@ -32,9 +32,9 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional, Union
 
 from PySide6.QtWidgets import QComboBox, QLineEdit, QTextEdit, QWidget
+from PySide6.QtGui import QRegularExpressionValidator
 
 from app.ui.components.widgets import ComboBox
-from app.ui.helpers.validation import clear_error_styles
 
 __all__ = [
     # Form Validation
@@ -52,6 +52,72 @@ __all__ = [
 
 
 # ── Form Validation ─────────────────────────────────────────────────────────────────────────────────────────
+def apply_error_style(widget: QWidget, error_message: str = None):
+    """
+    Highlights the invalid field with a red border and shows a tooltip.
+
+    Args:
+        widget (QWidget): The specific UI widget that caused the error.
+        error_message (str): The validation error message to display.
+    """
+
+    widget.setStyleSheet("border: 1px solid red;")
+
+    if error_message:
+        widget.setToolTip(error_message)
+
+def clear_error_styles(widget: QLineEdit):
+    """
+    Removes error highlighting and tooltip from validated UI field.
+
+    Args:
+        widget (QLineEdit): Remove error styling effects from widget.
+    """
+    widget.setStyleSheet("")
+    widget.setToolTip("")
+
+def clear_validation_errors(widgets: Union[QWidget, List[QWidget]]) -> None:
+    """
+    Clear error styling from form widgets.
+
+    Args:
+        widgets: Single widget or list of widgets to clear errors from
+
+    Examples:
+        clear_validation_errors(name_edit)
+        clear_validation_errors([name_edit, category_combo, servings_edit])
+    """
+    if isinstance(widgets, QWidget):
+        widgets = [widgets]
+
+    for widget in widgets:
+        clear_error_styles(widget)
+
+def dynamic_validation(widget: QLineEdit, validation_rule):
+    """
+    Applies real-time validation to a QLineEdit widget based on a predefined validation type.
+
+    Args:
+        widget (QLineEdit): The input field to validate.
+        validation_type (str): The type of validation (must match a key in VALIDATION_RULES).
+        error_message (str): The error message to display when validation fails.
+    """
+
+    # Create a new validator instance for this widget
+    validator = validation_rule(widget)
+    widget.setValidator(validator)
+
+    def validate_input():
+        text = widget.text()
+        state = validator.validate(text, 0)[0]  # Get validation state
+
+        if state == QRegularExpressionValidator.Acceptable:
+            clear_error_styles(widget)
+        else:
+            apply_error_style(widget)
+
+    widget.textChanged.connect(validate_input)  # Real-time validation
+
 def validate_form_field(
     widget: QWidget,
     field_name: str,
@@ -130,24 +196,6 @@ def validate_required_fields(form_fields: Dict[str, QWidget]) -> tuple[bool, Lis
             errors.append(error_msg)
 
     return len(errors) == 0, errors
-
-def clear_validation_errors(widgets: Union[QWidget, List[QWidget]]) -> None:
-    """
-    Clear error styling from form widgets.
-
-    Args:
-        widgets: Single widget or list of widgets to clear errors from
-
-    Examples:
-        clear_validation_errors(name_edit)
-        clear_validation_errors([name_edit, category_combo, servings_edit])
-    """
-    if isinstance(widgets, QWidget):
-        widgets = [widgets]
-
-    for widget in widgets:
-        clear_error_styles(widget)
-
 
 # ── Data Collection & Serialization ─────────────────────────────────────────────────────────────────────────
 def collect_form_data(form_mapping: Dict[str, QWidget]) -> Dict[str, Any]:

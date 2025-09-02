@@ -26,12 +26,11 @@ from app.ui.components.layout.card import ActionCard, Card
 from app.ui.components.images import RecipeImage
 from app.ui.components.widgets import ComboBox, ToolButton
 from app.ui.components.widgets.button import Button
-from app.ui.helpers import clear_error_styles, dynamic_validation
-from app.ui.helpers.card_utils import add_two_column
+from app.ui.utils.form_utils import clear_error_styles, dynamic_validation
 from _dev_tools import DebugLogger
 
 
-# ── Recipe Form ─────────────────────────────────────────────────────────────────────────────────────────────
+# ── Forms ───────────────────────────────────────────────────────────────────────────────────────────────────
 class RecipeForm(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -109,8 +108,6 @@ class RecipeForm(QWidget):
         self.lbl_category = form_labels["recipe_category"]
         self.lbl_dietary_preference = form_labels["dietary_preference"]
 
-
-# ── Ingredient Form ─────────────────────────────────────────────────────────────────────────────────────────
 class IngredientForm(QWidget):
     add_ingredient_requested = Signal(QWidget)
     remove_ingredient_requested = Signal(QWidget)
@@ -291,7 +288,7 @@ class IngredientForm(QWidget):
         }
 
 
-# ── Ingredients Card ────────────────────────────────────────────────────────────────────────────────────────
+# ── Containers ──────────────────────────────────────────────────────────────────────────────────────────────
 class IngredientsCard(ActionCard):
     """
     Container for managing ingredient widgets within a Card.
@@ -374,8 +371,6 @@ class IngredientsCard(ActionCard):
         """Get the number of ingredient widgets."""
         return len(self.ingredient_widgets)
 
-
-# ── Direction & Notes Card ──────────────────────────────────────────────────────────────────────────────────
 class DirectionsNotesCard(Card):
     """Custom card with toggle between Directions and Notes content."""
 
@@ -447,7 +442,7 @@ class DirectionsNotesCard(Card):
             btn.style().polish(btn)
 
 
-# ── Add Recipes View ────────────────────────────────────────────────────────────────────────────────────────
+# ── View ────────────────────────────────────────────────────────────────────────────────────────────────────
 class AddRecipes(QWidget):
     """AddRecipes widget for creating new recipes with ingredients and directions."""
 
@@ -513,14 +508,14 @@ class AddRecipes(QWidget):
         # Recipe Image
         self.recipe_image = RecipeImage()
 
-        add_two_column(
-            self.scroll_layout,
-            self.directions_notes_card,
-            self.recipe_image,
-            left_proportion=2,
-            right_proportion=1,
+        content_layout = create_two_column_layout(
+            left_widgets=[self.directions_notes_card],
+            right_widgets=[self.recipe_image],
+            left_weight=2,
+            right_weight=1,
             match_heights=True
         )
+        self.scroll_layout.addLayout(content_layout)
 
         # ── Save Button ──
         self.btn_save = Button("Save Recipe", Type.PRIMARY, Name.SAVE)

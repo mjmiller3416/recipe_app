@@ -1,263 +1,177 @@
-# CLAUDE.md
-_Project configuration & rules for AI contributions_
+# CLAUDE.md — MealGenie (Agent Rules & Workflow)
 
-This file is the contract Claude must follow when working in the **MealGenie** repo. If a request conflicts with this file, Claude must surface the conflict and ask for approval before proceeding.
-
----
-
-## 1) Tech Stack (authoritative)
-- **Language:** Python 3.12
-- **Desktop UI:** PySide6 (Qt)
-- **ORM & Migrations:** SQLAlchemy 2.x + Alembic
-- **DB:** SQLite (dev)
-- **Styling:** QSS using Material 3 role placeholders (see §4)
-- **Tests:** pytest (when present)
-- **Editor:** VS Code (with custom QSS syntax support)
-- **CLI:** `manage.py` (see §3) — do not invent commands/flags
+> You are Claude Code working inside the **MealGenie** repo. Follow this file **exactly**. These rules **override** defaults. If something conflicts, **this file wins**.
 
 ---
 
-## 2) Project Structure (authoritative)
+## 0) Load Order & Imports
 
+- **At session start**, load this file and the docs referenced with `@` below.
+- Subdirectory `CLAUDE.md` files may add local rules. If you read files in that subtree, include the local rules.
+- If you modify any imported `@` docs during a session, reload them.
+
+**Always import:**
+- `@_docs/REFACTOR.md`  _(UI layer contracts & MVVM rules)_
+- `@_docs/REVIEW.md`  _(single‑file review policy & checklist)_
+
+Also note (path references; read on demand):
+- `/app/style/`  _(themes, QSS, icons, effects)_
+- `/app/ui/*`  _(views, models, components, services, utils)_
+- `/app/core/*`  _(models, repositories, services, dtos, database, utils)_
+
+---
+
+## 1) Mission & Architecture (one-screen summary)
+
+**Mission:** A PySide6 desktop app for recipes, planning, and shopping lists with a modern, themeable UI.
+
+**Architecture:** MVVM-ish UI over a layered Core.
+- **UI (`app/ui/`)** renders widgets and delegates logic to **UI Models**.
+- **Core (`app/core/`)** owns business rules, repositories, and DTOs.
+- **Style (`app/style/`)** centralizes theme, icons, animations, effects.
+
+**Import Matrix (must-follow):**
 ```
-recipe_app/
-├─ _data_files/
-│  ├─ recipe_images/
-│  ├─ temp_crops/
-│  ├─ user_profile/
-│  ├─ user_settings.json
-│  └─ user_settings.py
-├─ _dev_tools/
-├─ _scripts/
-├─ _test/
-├─ app/
-│  ├─ assets/
-│  ├─ config/
-│  ├─ core/
-│  │  ├─ database/
-│  │  ├─ dtos/
-│  │  ├─ models/
-│  │  ├─ repositories/
-│  │  ├─ services/
-│  │  └─ utils/
-│  ├─ style/
-│  │  ├─ animation/
-│  │  ├─ effects/
-│  │  ├─ icon/
-│  │  └─ theme/
-│  ├─ ui/
-│  │  ├─ components/
-│  │  │  ├─ composite/
-│  │  │  ├─ dialogs/
-│  │  │  ├─ images/
-│  │  │  ├─ inputs/
-│  │  │  ├─ layout/
-│  │  │  ├─ navigation/
-│  │  │  └─ widgets/
-│  │  ├─ models/
-│  │  ├─ services/
-│  │  ├─ utils/
-│  │  └─ views/
-│  └─ main_window.py
-└─ main.py
+ui/views        -> ui/models, ui/services, ui/components, ui/utils, style/*
+ui/models       -> app/core/services, app/core/dtos, ui/utils
+ui/services     -> ui/components, style/*, ui/utils
+ui/utils        -> (pure_* no Qt) or (qt_* with Qt); never import app/core
+core/*          -> never import app/ui/*
 ```
-
-### Canonical pointers
-- **DB session/engine:** `app/core/database/db.py`
-- **Models:** `app/core/models/`
-- **DTOs:** `app/core/dtos/`
-- **Repositories:** `app/core/repositories/`
-- **Services:** `app/core/services/`
-- **Core utils:** `app/core/utils/`
-- **Theme controller:** `app/style/theme_controller.py`
-- **QSS loader:** `app/style/theme/style_sheet.py`
-- **Icon system:** `app/style/icon/icon.py`
-- **UI utils:** `app/ui/utils/`
-- **App views:** `app/ui/views/`
-- **Logging:** `_dev_tools/debug_logger.py`
-
-> Reuse existing utilities before creating new ones. Search `app/core/utils/` and `app/ui/utils/` first.
+If a change violates this, refactor until it doesn’t. See @_docs/REFACTOR.md.
 
 ---
 
-## 3) Commands (do not guess)
+## 2) Golden Workflow (format → lint → test → commit)
 
+For **every** code change:
+
+1. **Implement** change in smallest sensible diff.
+2. **Format**: `ruff format .` (or `black .` if configured) and `isort .`
+3. **Lint**: `ruff check .` and fix new issues.
+4. **Test**: `pytest -q` (or targeted tests).
+5. **Commit**: conventional message; branch per Section 6.
+6. **Self-check**: run the checklists in Section 7.
+
+> Never skip steps 2–4. If tooling isn’t configured, state that fact and propose the minimal config PR instead of guessing.
+
+---
+
+## 3) Task Types & What To Do
+
+### A) UI Refactor (Views ↔ UI Models)
+- **Never** import `app.core.*` in a View. **Move** to UI Model.
+- Views: widgets/layouts/signals only. No business logic.
+- UI Models: validation, transformation, async/worker orchestration.
+- Shared dialogs/navigation/theme → **UI Services**.
+
+### B) Bug Fix
+- Minimal diff; add/adjust a **test**; avoid unrelated refactors.
+- If fix exposes missing helper, extract into `ui/utils` or `core/utils` (small, named).
+
+### C) Feature
+- Define DTOs in Core, service method(s), repo calls; expose through VM; render in View.
+- Add tests close to the change; prefer unit + thin integration.
+
+---
+
+## 4) Commands (don’t invent new ones)
+
+**Run app**
 ```bash
-python manage.py --help                 # Show help and available commands
-python manage.py db                     # Database management commands
-
-# Database subcommands
-python manage.py db migrate             # Apply database migrations using Alembic
-python manage.py db seed                # Populate with mock recipe data
-python manage.py db reset               # Reset database (drops all recipe data)
-python manage.py db status              # Show database status and recipe count
-
-# Options
-python manage.py db seed --recipes 50   # Create 50 recipes (default: 25)
-python manage.py db seed --no-realistic # Use simple data (no Faker)
-python manage.py db seed --clear        # Clear existing recipes first
-
-python manage.py db reset --confirm     # Skip confirmation prompt
-python manage.py db reset --seed        # Add sample data after reset
+python main.py
 ```
 
-If a command is not listed here, pause and request it to be added.
-
----
-
-## 4) Code Style & Conventions (strict)
-- **Line length:** 110
-- **Public API naming:** **camelCase** (Qt convention)
-- **Internal/private Python:**
-    - Use snake_case for internal implementation details unless matching surrounding code.
-    - Prefix private methods and attributes with an underscore (_method_name).
-    - “Protected” methods intended for subclass overrides should also use a single underscore.
-    - Double underscores (__name) are not recommended unless name-mangling is required.
-    - Always default to public camelCase naming for Qt-facing APIs, signals, and slots.
-- **Imports:** stdlib → third-party → local; prefer absolute imports
-- **Docstrings:** Google-style for public classes/functions
-- **Small, explicit functions > clever abstractions**
-- **Error handling:** fail fast for programmer errors; handle boundary I/O gracefully
-- **Before adding helpers:** check `app/core/utils/` and `app/ui/utils/` first
-
-### QSS placeholders (Material 3 roles)
-Use placeholders exactly as defined (no hardcoded colors).
-
----
-## 5) Repository Etiquette & Branch Strategy (authoritative)
-
-### 5.1 Branch types & names
-
-- `feature/<topic-or-ticket>-short-description` — new functionality
-- `bugfix/<issue-or-ticket>-short-description` — fixes that are not production emergencies
-- `hotfix/<issue>-short-description` — production-breaking issues only
-- `refactor/<area>-short-description` — non-behavioral code reorganization
-- `chore/<task>-short-description` — tooling, config, CI, docs
-- `experiment/<spike>-short-description` — throwaway spikes (may never merge)
-
-### 5.2 Branch lifecycle rules
-
-- No direct commits to `main`
-- Keep feature branches up to date with `main` (fast-forward or rebase; be consistent within the branch)
-- Open PRs early; prefer smaller, focused diffs
-- Delete branches after merge to keep the repo tidy
-
-### 5.3 Decision logic (Claude MUST follow before any change)
-
-- Read current branch:
-
+**Tests**
 ```bash
-git rev-parse --abbrev-ref HEAD
+pytest
+pytest tests/test_x.py::TestCase::test_y
 ```
 
-- Derive task scope from the Scope Summary (see §8)
-- Decide where to commit:
-  - If the task belongs to the same topic as the current branch and stays within the change budget (§9) → use the current branch
-  - If the task is logically separate (different feature/bug/chore), or it exceeds the budget, or it touches guarded paths requiring approval (§9) → create a new branch
-  - If the task is a prod emergency → create a `hotfix/` branch off the latest `main`
-- If a branch change is needed, propose and run exact commands (see 5.4).
-
-### 5.4 Commands Claude should propose when switching/creating branches
-
-Always show details:
-
+**Quality**
 ```bash
-# Ensure clean state
-git status
-
-# Update main
-git fetch origin
-git checkout main
-git pull --ff-only origin main
-
-# Create a new branch from main
-git checkout -b feature/<topic>-<short-description>
-
-# OR, if continuing on current feature branch is valid
-git checkout feature/<topic>-<short-description>
-git pull --ff-only origin feature/<topic>-<short-description>
-
-# Link to issue (if applicable)
-# (document issue ID in PR description)
+isort .
+ruff format . && ruff check .
+# (If black is the configured formatter, use it instead of ruff format)
 ```
 
-### 5.5 Examples
+**DB / Migrations** (if present)
+```bash
+alembic upgrade head   # do not add new migrations in UI-only tasks
+```
 
-- You’re on `feature/meal-planner-tabs` and asked to fix an unrelated seeding bug → create `bugfix/seed-defaults-off-by-one`
-- You’re on `feature/iconkit-refresh` and asked to tweak an icon color var (same topic, tiny diff) → keep current branch
-- Schema change found mid-task (guarded) → pause, propose `feature/recipe-schema-add-image-attrib` and request approval
-
----
-
-## 6) Do Not Touch (hard rules)
-- Do not modify existing Alembic migration files retroactively
-- Do not change or move canonical paths in §2 without approval
-- Do not hardcode colors; use Material 3 placeholders (§4)
-- Do not alter `.env`, secrets, API keys, or DB URLs
-- Do not rewrite working legacy components/config unless the task explicitly requests it
-- Do not duplicate helpers; extend existing ones in `app/core/utils/` or `app/ui/utils/`
-- Do not change bootstrapping in `main.py` or `app/main_window.py` unless scoped in task
+If a command is missing, **ask** or propose a minimal PR to add it.
 
 ---
 
-## 7) Review Policy (embedded summary)
-For single-file changes, prioritize:
-1) **Bugs & conflicts** → small, targeted fixes
-2) **Error handling** → fail fast internally; try/except only at I/O boundaries
-3) **Redundancy** → consolidate; prefer existing helpers/services
-4) **Optimizations** → only if clarity is maintained; avoid clever one-liners
+## 5) Style & Conventions
 
-See full guide: `docs/review_guide.md`
-
----
-
-## 8) Interaction Rules (how Claude must work)
-- Before making changes: produce a **Scope Summary** + **Todo List**
-- Patch must be **diff-only** and respect the change budget (§9)
-- Always confirm helpers don’t already exist
-- Ask clarifying questions before assuming implementation
+- **Simple > Clever**. Prefer explicit, boring code.
+- **Docstrings** on public functions/classes; type hints where reasonable.
+- **Logging** via the project’s logger; no stray prints.
+- **QSS & Icons** live in `/app/style`; don’t inline hard-coded colors.
+- Keep files short: Views ≤ 400 lines, ViewModels ≤ 500 lines; extract helpers.
 
 ---
 
-## 9) Safety Rails (AI-optimized)
-- **Call-before-write:** For these paths, propose changes and wait for approval:
-  - `app/style/theme_controller.py`
-  - `app/style/theme/style_sheet.py`
-  - `app/core/database/db.py`
-  - `app/core/models/` & `app/core/repositories/` schema changes
-  - any existing Alembic migration
-- **Reuse-first rule:** If an existing helper covers ≥70% of needs, extend it
-- **Ambiguity rule:** If command/path/flag isn’t listed, stop and ask
+## 6) Git Hygiene
+
+- Branch per task: `refactor/ui/<feature>`, `fix/<bug>`, `feat/<area>`.
+- Squash small fixups before PR. Commit messages are imperative:
+  `refactor(ui): extract AddRecipeVM and remove core import from view`
+- Do **not** push schema changes unless the task explicitly includes them.
 
 ---
 
-## 10) Testing & Verification
-- After DB changes: `python manage.py db status`
-- After data updates: run `db seed` variants for sanity checks
-- For UI/QSS: confirm theme placeholders; no hardcoded colors
-- Add/update tests in `_test/` when feasible
+## 7) Mandatory Checklists
+
+**UI Boundary Check**
+- [ ] No `app.core.*` imports in any `app/ui/views/*` file touched.
+- [ ] Core calls live in `ui/view_models/*` only.
+- [ ] Repeated dialog/notification logic → `ui/services/DialogService`.
+
+**Quality Pass**
+- [ ] `isort`, formatter, and linter run, zero new warnings.
+- [ ] Tests added/updated. No skipped tests left behind.
+
+**Style & UX**
+- [ ] QSS variables used (no hard-coded colors).
+- [ ] Signals grouped; long slots broken into helpers.
+
+If any box fails, fix or justify in the PR description.
 
 ---
 
-## 11) PR Template
-**Summary**
-What changed and why.
+## 8) Canary & Compliance (sanity check)
 
-**Scope & Constraints**
-Files touched; risks; out-of-scope.
-
-**Checklist**
-- [ ] Followed Review Policy (§7)
-- [ ] Stayed within change budget (§9)
-- [ ] Reused helpers (§2, §8)
-- [ ] Ran verification commands (§10)
-
-**Commands & Results**
-Paste exact commands and outputs.
+Once per session, respond with: **“Aye, Captain.”**
+If you didn’t, you likely didn’t load this file. Re-load and proceed.
 
 ---
 
-## 12) When to Refuse
-- If request conflicts with §6
-- If change exceeds §9 without approval
-- If ambiguity remains after one clarifying question
+## 9) Do‑Not‑Touch (unless explicitly asked)
+
+- Project-wide theme contracts under `/app/style/theme/` (update via Theme/Style PRs).
+- Any CI/CD config.
+- Database schema/migrations outside explicit DB tasks.
+
+---
+
+## 10) When Unsure
+
+- Prefer adding a tiny helper in `ui/utils` or `core/utils` over sprinkling ad‑hoc logic.
+- If crossing a boundary requires contortions, **stop** and propose a mini design note in the PR with options and trade‑offs.
+- Keep the conversation short and fresh; start a new session for a new task.
+
+---
+
+## 11) Pinned References
+
+- Architecture & MVVM rules → @_docs/REFACTOR.md
+- Review policy & single‑file flow → @_docs/REVIEW.md
+
+---
+
+## 12) Short Rationale
+
+These rules keep UI dumb, UI Models smart, and Core isolated. They make the code predictable, testable, and easier to refactor without spooky action at a distance.

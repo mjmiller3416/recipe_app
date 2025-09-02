@@ -15,7 +15,7 @@ from app.style.animation import Animator
 from app.style.icon.config import Name, Type
 from app.style.theme.config import Qss
 from app.ui.components.images import AvatarLoader
-from app.ui.helpers.ui_helpers import create_fixed_wrapper
+from app.ui.utils.layout_utils import create_fixed_wrapper
 from _dev_tools import DebugLogger
 
 from ..widgets.button import Button
