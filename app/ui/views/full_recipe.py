@@ -35,7 +35,6 @@ from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
 from app.ui.components.widgets.recipe_tag import RecipeTag
 from app.ui.constants import LayoutConstants
-from app.ui.services.navigation_service import NavigableView, RouteRegistry, ViewType
 from _dev_tools.debug_logger import DebugLogger
 
 
@@ -204,15 +203,13 @@ class DirectionsList(QWidget):
 
 
 # ── FullRecipe View ─────────────────────────────────────────────────────────────────────────
-@RouteRegistry.register("full_recipe", ViewType.SUB, cache_instance=False)
-class FullRecipe(QWidget, NavigableView):
+class FullRecipe(QWidget):
     """Full recipe detail view (visual-only, no editing/upload yet)."""
 
     back_clicked = Signal()
 
-    def __init__(self, recipe: Recipe = None, navigation_service=None, parent: QWidget | None = None) -> None:
+    def __init__(self, recipe: Recipe = None, parent: QWidget | None = None) -> None:
         QWidget.__init__(self, parent)
-        NavigableView.__init__(self, navigation_service, parent)
         self.recipe = recipe
 
         # Register this view for component-scoped QSS.
@@ -220,11 +217,11 @@ class FullRecipe(QWidget, NavigableView):
 
         self.setObjectName("FullRecipe")
         self._cached_recipe_data = None
-        
+
         # Only build UI if recipe is provided directly (legacy mode)
         if self.recipe:
             self._build_ui()
-    
+
     def on_enter(self, params: dict):
         """Handle navigation with recipe parameters."""
         recipe_id = params.get('recipe_id')
@@ -233,7 +230,7 @@ class FullRecipe(QWidget, NavigableView):
             from app.core.services.recipe_service import RecipeService
             recipe_service = RecipeService()
             self.recipe = recipe_service.get_by_id(int(recipe_id))
-            
+
             if self.recipe:
                 # Clear cached data and rebuild UI
                 self._cached_recipe_data = None
@@ -526,16 +523,6 @@ class FullRecipe(QWidget, NavigableView):
         # TODO: Show full-size image preview dialog
         DebugLogger().log("Recipe banner image clicked for full preview", "debug")
 
-    def _handle_back_clicked(self):
-        """Handle back button click using NavigationService or fallback to signal."""
-        if self.navigation_service:
-            # Use NavigationService to go back
-            if not self.navigation_service.go_back():
-                # Fallback to view_recipes if no history
-                self.navigation_service.navigate_to("view_recipes")
-        else:
-            # Fallback to original signal-based approach
-            self.back_clicked.emit()
 
 
 

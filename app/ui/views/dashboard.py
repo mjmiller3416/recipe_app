@@ -8,21 +8,17 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QSizePolicy, QVBoxLayout, QWidget
 
 from app.style.icon.config import Name, Type
-from app.ui.components.inputs import SmartLineEdit
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
-from app.ui.services.navigation_service import NavigableView, RouteRegistry, ViewType
-from _dev_tools import DebugLogger, StartupTimer
+from _dev_tools import DebugLogger
 
 
 # ── Dashboard ────────────────────────────────────────────────────────────────────────────────
-@RouteRegistry.register("dashboard", ViewType.MAIN, sidebar_visible=True)
-class Dashboard(QWidget, NavigableView):
+class Dashboard(QWidget):
     """Placeholder class for the Dashboard screen."""
 
-    def __init__(self, navigation_service=None, parent=None):
+    def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        NavigableView.__init__(self, navigation_service, parent)
 
         DebugLogger.log("Initializing Dashboard page", "info")
 

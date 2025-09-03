@@ -24,7 +24,6 @@ from app.style import Qss, Theme
 from app.style.icon import Icon
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets import Button, ComboBox
-from app.ui.services.navigation_service import NavigableView, RouteRegistry, ViewType
 from _dev_tools import DebugLogger
 
 
@@ -231,13 +230,11 @@ class ImageGenerationSettings(SettingsCategory):
 
 
 # ── Settings ─────────────────────────────────────────────────────────────────────────────────
-@RouteRegistry.register("settings", ViewType.MAIN, sidebar_visible=True)
-class Settings(QWidget, NavigableView):
+class Settings(QWidget):
     """Main Settings view with category selection and management."""
 
-    def __init__(self, navigation_service=None, parent=None):
+    def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        NavigableView.__init__(self, navigation_service, parent)
         self.setObjectName("Settings")
 
         # Register for theme management

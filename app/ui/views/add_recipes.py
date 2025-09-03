@@ -27,7 +27,6 @@ from app.ui.components.images import RecipeImage
 from app.ui.components.widgets import ComboBox, ToolButton
 from app.ui.components.widgets.button import Button
 from app.ui.utils.form_utils import clear_error_styles, dynamic_validation
-from app.ui.services.navigation_service import NavigableView, RouteRegistry, ViewType
 from _dev_tools import DebugLogger
 
 
@@ -444,13 +443,11 @@ class DirectionsNotesCard(Card):
 
 
 # ── View ────────────────────────────────────────────────────────────────────────────────────────────────────
-@RouteRegistry.register("add_recipe", ViewType.MAIN, sidebar_visible=True)
-class AddRecipes(QWidget, NavigableView):
+class AddRecipes(QWidget):
     """AddRecipes widget for creating new recipes with ingredients and directions."""
 
-    def __init__(self, navigation_service=None, parent=None):
+    def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        NavigableView.__init__(self, navigation_service, parent)
         self.setObjectName("AddRecipes")
 
         # register for component-specific styling

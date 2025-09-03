@@ -92,8 +92,8 @@ class NavigableView(QObject):
         """Restore previously saved state"""
         self._view_state = state
 
-# ============= Route Registry =============
 
+# ─ Route Registry ───────────────────────────────────────────────────────────────────────────────────────────
 class RouteRegistry:
     """Central registry for all application routes"""
 
@@ -134,8 +134,8 @@ class RouteRegistry:
     def get_all_routes(cls) -> Dict[str, Route]:
         return cls._routes.copy()
 
-# ── Navigation Service ──────────────────────────────────────────────────────────────────────────────────────
 
+# ── Navigation Service ──────────────────────────────────────────────────────────────────────────────────────
 class NavigationService(QObject):
     """Core navigation service managing all view transitions"""
 

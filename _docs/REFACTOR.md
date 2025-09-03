@@ -87,8 +87,8 @@ Lightweight **UI models** for temporary state, separate from Core models.
 
 #### **`services/`**
 UI-scoped services for **shared behaviors** across multiple views:
-- `DialogService` → Manages modal dialogs.
-- `NavigationService` → Handles view switching.
+- `DialogService` → Manages modal dialogs. *** WIP ***
+- `NavigationService` → Handles view switching. *** WIP ***
 - `ThemeService` → Applies global QSS themes.
 
 > **Rule:** UI services **never** import from `app.core`.
