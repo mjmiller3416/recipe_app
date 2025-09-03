@@ -4,33 +4,25 @@ Example of using multiple inheritance with existing base classes.
 """
 
 from app.ui.views.base import ScrollableView
-from app.ui.services.navigation_views import MainView
-from app.ui.services.navigation_registry import NavigationRegistry, ViewType, RouteConstants
+from app.ui.services.navigation_service import NavigableView, RouteRegistry, ViewType
 
 
 # Option 2A: Multiple inheritance approach
-class ScrollableNavigableView(ScrollableView, MainView):
+class ScrollableNavigableView(ScrollableView, NavigableView):
     """
     Combines ScrollableView functionality with navigation capabilities.
     
     Note: Method Resolution Order (MRO) will prioritize ScrollableView methods.
     """
     
-    def __init__(self, parent=None):
+    def __init__(self, navigation_service=None, parent=None):
         # Call both parent constructors
         ScrollableView.__init__(self, parent)
-        MainView.__init__(self, parent)
-        
-        # Set navigation view type
-        self._view_type = ViewType.MAIN
+        NavigableView.__init__(self, navigation_service, parent)
 
 
 # Example usage with multiple inheritance
-@NavigationRegistry.register(
-    path="/shopping-list-v2",
-    view_type=ViewType.MAIN,
-    title="Shopping List v2"
-)
+@RouteRegistry.register("shopping_list_v2", ViewType.MAIN, sidebar_visible=True)
 class ShoppingListV2(ScrollableNavigableView):
     """Shopping list using multiple inheritance approach."""
     
@@ -55,12 +47,12 @@ class ShoppingListV2(ScrollableNavigableView):
         return QLabel("Add Item Form")
     
     # Navigation lifecycle hooks
-    def after_navigate_to(self, path: str, params: dict):
+    def on_enter(self, params: dict):
         """Load shopping list when navigated to."""
         # Load shopping list data
-        print(f"Loading shopping list for route: {path}")
+        print(f"Loading shopping list with params: {params}")
         
-    def before_navigate_from(self, next_path: str, next_params: dict) -> bool:
+    def on_before_leave(self) -> bool:
         """Save any pending changes."""
         # Save shopping list state
         return True

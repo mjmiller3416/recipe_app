@@ -11,16 +11,18 @@ from PySide6.QtWidgets import QStackedWidget, QVBoxLayout, QWidget
 from app.ui.components.composite.recipe_browser import RecipeBrowser
 from app.ui.components.composite.recipe_card import LayoutSize
 from app.ui.views.full_recipe import FullRecipe
+from app.ui.services.navigation_service import NavigableView, RouteRegistry, ViewType
 from _dev_tools import DebugLogger
 
 
 # ── View Recipes ─────────────────────────────────────────────────────────────────────────────
-class ViewRecipes(QWidget):
+@RouteRegistry.register("view_recipes", ViewType.MAIN, sidebar_visible=True)
+class ViewRecipes(QWidget, NavigableView):
     """Displays recipes using the shared RecipeBrowser component and can switch to full recipe view."""
 
     recipe_selected = Signal(int)
 
-    def __init__(self, parent=None, meal_selection=False):
+    def __init__(self, navigation_service=None, parent=None, meal_selection=False):
         """
         Initialize ViewRecipes.
 
@@ -28,7 +30,8 @@ class ViewRecipes(QWidget):
             parent (QWidget, optional): Parent widget.
             meal_selection (bool): If True, enables recipe selection mode.
         """
-        super().__init__(parent)
+        QWidget.__init__(self, parent)
+        NavigableView.__init__(self, navigation_service, parent)
         self.setObjectName("ViewRecipes")
         self.meal_selection = meal_selection
         self.current_full_recipe_view = None
@@ -66,20 +69,25 @@ class ViewRecipes(QWidget):
         self.recipe_browser.refresh()
 
     def _show_full_recipe(self, recipe):
-        """Show the full recipe view for the given recipe."""
-        # remove current full recipe view if it exists
-        if self.current_full_recipe_view:
-            self.stacked_widget.removeWidget(self.current_full_recipe_view)
-            self.current_full_recipe_view.deleteLater()
-            self.current_full_recipe_view = None
+        """Navigate to the full recipe view using the navigation service."""
+        if self.navigation_service:
+            # Use new navigation system
+            self.navigation_service.navigate_to("full_recipe", {"recipe_id": recipe.id})
+        else:
+            # Fallback to legacy stacked widget approach
+            # remove current full recipe view if it exists
+            if self.current_full_recipe_view:
+                self.stacked_widget.removeWidget(self.current_full_recipe_view)
+                self.current_full_recipe_view.deleteLater()
+                self.current_full_recipe_view = None
 
-        # create new full recipe view
-        self.current_full_recipe_view = FullRecipe(recipe, parent=self)
-        self.current_full_recipe_view.back_clicked.connect(self._show_recipe_list)
+            # create new full recipe view
+            self.current_full_recipe_view = FullRecipe(recipe, parent=self)
+            self.current_full_recipe_view.back_clicked.connect(self._show_recipe_list)
 
-        # add to stacked widget and show
-        self.stacked_widget.addWidget(self.current_full_recipe_view)  # index 1
-        self.stacked_widget.setCurrentWidget(self.current_full_recipe_view)
+            # add to stacked widget and show
+            self.stacked_widget.addWidget(self.current_full_recipe_view)  # index 1
+            self.stacked_widget.setCurrentWidget(self.current_full_recipe_view)
 
     def _show_recipe_list(self):
         """Return to the recipe list view."""

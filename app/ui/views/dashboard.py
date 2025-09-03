@@ -11,15 +11,18 @@ from app.style.icon.config import Name, Type
 from app.ui.components.inputs import SmartLineEdit
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
+from app.ui.services.navigation_service import NavigableView, RouteRegistry, ViewType
 from _dev_tools import DebugLogger, StartupTimer
 
 
 # ── Dashboard ────────────────────────────────────────────────────────────────────────────────
-class Dashboard(QWidget):
+@RouteRegistry.register("dashboard", ViewType.MAIN, sidebar_visible=True)
+class Dashboard(QWidget, NavigableView):
     """Placeholder class for the Dashboard screen."""
 
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, navigation_service=None, parent=None):
+        QWidget.__init__(self, parent)
+        NavigableView.__init__(self, navigation_service, parent)
 
         DebugLogger.log("Initializing Dashboard page", "info")
 

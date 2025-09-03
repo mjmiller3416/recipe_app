@@ -25,6 +25,7 @@ from app.style.icon import AppIcon, Icon
 from app.style import Theme, Qss
 from app.ui.components.composite.recipe_card import LayoutSize, create_recipe_card
 from app.ui.views.recipe_selection import RecipeSelection
+from app.ui.services.navigation_service import NavigableView, RouteRegistry, ViewType
 from _dev_tools import DebugLogger
 
 
@@ -232,7 +233,8 @@ class MealWidget(QWidget):
 
 
 # ── Meal Planner ────────────────────────────────────────────────────────────────────────────────────────────
-class MealPlanner(QWidget):
+@RouteRegistry.register("meal_planner", ViewType.MAIN, sidebar_visible=True)
+class MealPlanner(QWidget, NavigableView):
     """
     The MealPlanner class manages a tabbed interface for creating, editing,
     and saving meal plans within the application.
@@ -243,8 +245,9 @@ class MealPlanner(QWidget):
         tab_map (dict): Maps tab indices to their respective MealWidget and meal_id.
     """
 
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, navigation_service=None, parent=None):
+        QWidget.__init__(self, parent)
+        NavigableView.__init__(self, navigation_service, parent)
         # Initialize PlannerService
         self.planner_service = PlannerService()
 

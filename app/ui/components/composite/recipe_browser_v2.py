@@ -12,11 +12,11 @@ from app.core.services.recipe_service import RecipeService
 from app.ui.components.composite.recipe_card import create_recipe_card, LayoutSize
 from app.ui.components.layout.flow_layout import FlowLayout
 from app.ui.components.widgets import ComboBox
-from app.ui.services.navigation_views import EmbeddedView
-from app.ui.services.navigation_registry import NavigationRegistry, ViewType
+# TODO: Update to use new NavigationService when needed
+# from app.ui.services.navigation_service import NavigableView, RouteRegistry, ViewType
 
 
-class RecipeBrowser(EmbeddedView):
+class RecipeBrowser(QWidget):
     """
     Enhanced recipe browser that can work as both embedded component and standalone view.
 

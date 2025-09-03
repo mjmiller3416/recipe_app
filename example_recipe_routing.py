@@ -4,20 +4,20 @@ This demonstrates how to replace internal QStackedWidget navigation
 with proper route-based sub-view navigation.
 """
 
-from PySide6.QtWidgets import QVBoxLayout
-from app.ui.services.navigation_views import MainView
-from app.ui.services.navigation_registry import NavigationRegistry, ViewType
+from PySide6.QtWidgets import QVBoxLayout, QWidget
+from app.ui.services.navigation_service import NavigableView, RouteRegistry, ViewType
 from app.ui.components.composite.recipe_browser import RecipeBrowser
 from _dev_tools import DebugLogger
 
 
 # ── Recipe List View ────────────────────────────────────────────────────────────
-@NavigationRegistry.register("/recipes", ViewType.MAIN, title="Recipes")
-class RecipesView(MainView):
+@RouteRegistry.register("recipes", ViewType.MAIN, sidebar_visible=True)
+class RecipesView(QWidget, NavigableView):
     """Main recipes view - shows the recipe browser."""
     
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, navigation_service=None, parent=None):
+        QWidget.__init__(self, parent)
+        NavigableView.__init__(self, navigation_service, parent)
         self.setObjectName("RecipesView")
         self._build_ui()
         
@@ -35,21 +35,22 @@ class RecipesView(MainView):
     
     def _navigate_to_recipe(self, recipe):
         """Navigate to recipe detail using route system."""
-        self.navigate_to(f"/recipes/detail/{recipe.id}")
+        self.navigation_service.navigate_to("recipe_detail", {"id": recipe.id})
     
-    def after_navigate_to(self, path: str, params: dict):
+    def on_enter(self, params: dict):
         """Load recipes when view becomes active."""
         if not self.recipe_browser.recipes_loaded:
             self.recipe_browser.load_recipes()
 
 
 # ── Recipe Detail View ─────────────────────────────────────────────────────────
-@NavigationRegistry.register("/recipes/detail/{id}", ViewType.MAIN, title="Recipe Detail")
-class RecipeDetailView(MainView):
+@RouteRegistry.register("recipe_detail", ViewType.SUB, cache_instance=False)
+class RecipeDetailView(QWidget, NavigableView):
     """Recipe detail view - shows full recipe information."""
     
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, navigation_service=None, parent=None):
+        QWidget.__init__(self, parent)
+        NavigableView.__init__(self, navigation_service, parent)
         self.setObjectName("RecipeDetailView") 
         self.current_recipe = None
         self._build_ui()
@@ -58,7 +59,7 @@ class RecipeDetailView(MainView):
         self.layout = QVBoxLayout(self)
         # Will be populated when recipe loads
         
-    def on_route_changed(self, path: str, params: dict):
+    def on_enter(self, params: dict):
         """Load recipe when route parameters change."""
         recipe_id = params.get('id')
         if recipe_id:
@@ -87,7 +88,7 @@ class RecipeDetailView(MainView):
                 
                 # Connect back navigation to use route system
                 if hasattr(self.full_recipe, 'back_clicked'):
-                    self.full_recipe.back_clicked.connect(self.go_back)
+                    self.full_recipe.back_clicked.connect(lambda: self.navigation_service.go_back())
                 
                 self.layout.addWidget(self.full_recipe)
                 self.current_recipe = recipe
@@ -101,12 +102,13 @@ class RecipeDetailView(MainView):
 
 
 # ── Recipe Categories View ─────────────────────────────────────────────────────
-@NavigationRegistry.register("/recipes/category/{category}", ViewType.MAIN, title="Recipe Category")
-class RecipeCategoryView(MainView):
+@RouteRegistry.register("recipe_category", ViewType.MAIN, sidebar_visible=False)
+class RecipeCategoryView(QWidget, NavigableView):
     """Recipe category view - shows recipes filtered by category."""
     
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, navigation_service=None, parent=None):
+        QWidget.__init__(self, parent)
+        NavigableView.__init__(self, navigation_service, parent)
         self.setObjectName("RecipeCategoryView")
         self._build_ui()
         
@@ -119,7 +121,7 @@ class RecipeCategoryView(MainView):
         
         layout.addWidget(self.recipe_browser)
     
-    def on_route_changed(self, path: str, params: dict):
+    def on_enter(self, params: dict):
         """Filter recipes by category when route changes."""
         category = params.get('category')
         if category:
@@ -130,16 +132,17 @@ class RecipeCategoryView(MainView):
     
     def _navigate_to_recipe(self, recipe):
         """Navigate to recipe detail."""
-        self.navigate_to(f"/recipes/detail/{recipe.id}")
+        self.navigation_service.navigate_to("recipe_detail", {"id": recipe.id})
 
 
 # ── Recipe Search Results ──────────────────────────────────────────────────────
-@NavigationRegistry.register("/recipes/search", ViewType.MAIN, title="Search Results")
-class RecipeSearchView(MainView):
+@RouteRegistry.register("recipe_search", ViewType.MAIN, sidebar_visible=False)
+class RecipeSearchView(QWidget, NavigableView):
     """Recipe search results view."""
     
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, navigation_service=None, parent=None):
+        QWidget.__init__(self, parent)
+        NavigableView.__init__(self, navigation_service, parent)
         self.setObjectName("RecipeSearchView")
         self._build_ui()
         
@@ -151,7 +154,7 @@ class RecipeSearchView(MainView):
         
         layout.addWidget(self.recipe_browser)
     
-    def on_route_changed(self, path: str, params: dict):
+    def on_enter(self, params: dict):
         """Handle search parameters."""
         search_term = params.get('q', '')
         if search_term:
@@ -166,26 +169,26 @@ class RecipeSearchView(MainView):
     
     def _navigate_to_recipe(self, recipe):
         """Navigate to recipe detail."""
-        self.navigate_to(f"/recipes/detail/{recipe.id}")
+        self.navigation_service.navigate_to("recipe_detail", {"id": recipe.id})
 
 
 # ── Usage Examples ─────────────────────────────────────────────────────────────
 def demonstrate_navigation():
     """Examples of how to use the route-based recipe navigation."""
-    from app.ui.services.navigation_service_v2 import navigate_to
+    # Example of how navigation would work with the new system:
     
     # Navigate to main recipes view
-    navigate_to("/recipes")
+    # navigation_service.navigate_to("recipes")
     
-    # Navigate to specific recipe
-    navigate_to("/recipes/detail/123")
+    # Navigate to specific recipe with parameters
+    # navigation_service.navigate_to("recipe_detail", {"id": 123})
     
-    # Navigate to recipe category  
-    navigate_to("/recipes/category/desserts")
+    # Navigate to recipe category with parameters
+    # navigation_service.navigate_to("recipe_category", {"category": "desserts"})
     
-    # Navigate to search results
-    navigate_to("/recipes/search", {"q": "chocolate"})
+    # Navigate to search results with parameters
+    # navigation_service.navigate_to("recipe_search", {"q": "chocolate"})
     
     # Navigation history works automatically:
-    # User can use back button to go: Search → Category → Recipe List
-    # Each view maintains its own state
+    # User can use back button: navigation_service.go_back()
+    # Each view maintains its own state through NavigableView lifecycle hooks

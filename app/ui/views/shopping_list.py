@@ -25,6 +25,7 @@ from app.ui.utils.layout_utils import (
     set_fixed_height_for_layout_widgets,
     create_two_column_layout
 )
+from app.ui.services.navigation_service import NavigableView, RouteRegistry, ViewType
 from _dev_tools import DebugLogger
 
 
@@ -357,11 +358,13 @@ class ShoppingItem(QWidget):
 
 
 # ── View ────────────────────────────────────────────────────────────────────────────────────────────────────
-class ShoppingList(ScrollableView):
+@RouteRegistry.register("shopping_list", ViewType.MAIN, sidebar_visible=True)
+class ShoppingList(ScrollableView, NavigableView):
     """Placeholder class for the ShoppingList screen."""
 
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, navigation_service=None, parent=None):
+        ScrollableView.__init__(self, parent)
+        NavigableView.__init__(self, navigation_service, parent)
         self.setObjectName("ShoppingList")
         # register for component-specific styling
         Theme.register_widget(self, Qss.SHOPPING_LIST)

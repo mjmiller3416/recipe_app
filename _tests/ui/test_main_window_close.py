@@ -28,24 +28,31 @@ def main_window(qtbot: QtBot):
     theme_controller = ThemeController()
     theme_controller.apply_full_theme = lambda: None
 
-    def factory(sw):
-        nav = NavigationService.create(sw)
-        mp = MealPlanner()
-        db = Dashboard()
-        nav.page_instances = {"dashboard": db, "meal_planner": mp}
-        sw.addWidget(db)
-        sw.addWidget(mp)
-        nav.build_and_register_pages = lambda: None
-        return nav
-
-    window = MainWindow(theme_controller=theme_controller, navigation_service_factory=factory)
+    # Create MainWindow with new NavigationService (no factory needed)
+    window = MainWindow()
+    
+    # Manually add test widgets to simulate the old behavior for testing
+    mp = MealPlanner()
+    db = Dashboard()
+    window.sw_pages.addWidget(db)
+    window.sw_pages.addWidget(mp)
+    
     qtbot.addWidget(window)
     window.show()
     return window
 
 
 def test_close_saves_meal_plan(main_window: MainWindow, qtbot: QtBot):
-    planner = main_window.navigation.page_instances["meal_planner"]
+    # Find meal planner widget from stacked widget (similar to updated closeEvent logic)
+    planner = None
+    for i in range(main_window.sw_pages.count()):
+        widget = main_window.sw_pages.widget(i)
+        if widget and (widget.__class__.__name__ == 'MealPlanner' or 
+                      widget.objectName().lower() == 'mealplanner'):
+            planner = widget
+            break
+    
+    assert planner is not None, "MealPlanner widget not found"
     planner.saveMealPlan = MagicMock()
     main_window.close()
     planner.saveMealPlan.assert_called_once()
