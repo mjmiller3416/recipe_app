@@ -1,4 +1,4 @@
-"""app/ui/services/navigation_service.py
+"""app/ui/services/navigation/service.py
 
 Route-based NavigationService with enhanced functionality.
 """
@@ -9,9 +9,9 @@ from typing import Dict, List, Optional
 from PySide6.QtCore import QObject, Signal
 from PySide6.QtWidgets import QDialog, QStackedWidget, QWidget
 
-from .navigation_registry import NavigationRegistry, RouteMatch, ViewType
-from .navigation_stack import NavigationStackManager, NavigationEntry
-from .navigation_views import EmbeddedView, NavigationLifecycle
+from .registry import NavigationRegistry, RouteMatch, ViewType
+from .stack import NavigationStackManager, NavigationEntry
+from .views import EmbeddedView, NavigationLifecycle
 
 from _dev_tools import DebugLogger
 
@@ -398,14 +398,12 @@ def navigate_to(path: str, params: Optional[Dict[str, str]] = None, **kwargs) ->
         return service.navigate_to(path, params, **kwargs)
     return False
 
-
 def go_back() -> bool:
     """Global back navigation function."""
     service = NavigationService.get_instance()
     if service:
         return service.go_back()
     return False
-
 
 def go_forward() -> bool:
     """Global forward navigation function."""

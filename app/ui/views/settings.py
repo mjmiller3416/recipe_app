@@ -14,7 +14,7 @@ from typing import Any, Dict
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
     QFrame, QHBoxLayout, QLabel, QScrollArea,
-    QSizePolicy, QTextEdit, QVBoxLayout, QWidget
+    QSizePolicy, QTextEdit, QVBoxLayout
 )
 
 from app.config.paths import AppPaths
@@ -24,6 +24,7 @@ from app.style import Qss, Theme
 from app.style.icon import Icon
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets import Button, ComboBox
+from app.ui.services.navigation.views import MainView
 from _dev_tools import DebugLogger
 
 
@@ -230,11 +231,11 @@ class ImageGenerationSettings(SettingsCategory):
 
 
 # ── Settings ─────────────────────────────────────────────────────────────────────────────────
-class Settings(QWidget):
+class Settings(MainView):
     """Main Settings view with category selection and management."""
 
     def __init__(self, parent=None):
-        QWidget.__init__(self, parent)
+        super().__init__(parent)
         self.setObjectName("Settings")
 
         # Register for theme management

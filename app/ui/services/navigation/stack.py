@@ -1,8 +1,9 @@
-"""app/ui/services/navigation_stack.py
+"""app/ui/services/stack.py
 
 Navigation history and stack management for route-based navigation.
 """
 
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from dataclasses import dataclass
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -12,6 +13,7 @@ from PySide6.QtCore import QObject, Signal
 from _dev_tools import DebugLogger
 
 
+# ── Navigation Entry ────────────────────────────────────────────────────────────────────────────────────────
 @dataclass
 class NavigationEntry:
     """Represents a single entry in the navigation history."""
@@ -34,6 +36,7 @@ class NavigationEntry:
         return result
 
 
+# ── Navigation Stack ────────────────────────────────────────────────────────────────────────────────────────
 class NavigationStack(QObject):
     """
     Manages navigation history and provides back/forward functionality.
@@ -264,7 +267,6 @@ class NavigationStack(QObject):
         self.history_changed.emit()
         self.can_go_back_changed.emit(self.can_go_back())
         self.can_go_forward_changed.emit(self.can_go_forward())
-
 
 class NavigationStackManager:
     """

@@ -1,23 +1,21 @@
-"""app/ui/services/navigation_views.py
+"""app/ui/services/views.py
 
 Base view classes for the route-based navigation system.
 """
 
-from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional, Type, TypeVar
-from enum import Enum
 
-from PySide6.QtCore import QObject, Signal, QTimer, Qt
+from PySide6.QtCore import Signal, Qt
 from PySide6.QtWidgets import QDialog, QWidget
 
-from .navigation_registry import ViewType, NavigationRegistry
-from .navigation_stack import NavigationStackManager
+from .registry import ViewType, NavigationRegistry
 from _dev_tools import DebugLogger
 
 
 T = TypeVar('T', bound='NavigableView')
 
 
+# ── Navigation Lifecycle ────────────────────────────────────────────────────────────────────────────────────
 class NavigationLifecycle:
     """Defines the navigation lifecycle hook methods."""
 
@@ -68,6 +66,34 @@ class NavigationLifecycle:
         pass
 
 
+# ── View Factory ────────────────────────────────────────────────────────────────────────────────────────────
+class ViewFactory:
+    """Factory for creating view instances with proper setup."""
+
+    @staticmethod
+    def create_view(view_class: Type[T], **kwargs) -> T:
+        """
+        Create a view instance with proper initialization.
+
+        Args:
+            view_class: The view class to instantiate
+            **kwargs: Arguments to pass to the constructor
+
+        Returns:
+            Initialized view instance
+        """
+        instance = view_class(**kwargs)
+
+        # Set up navigation connections if it's a navigable view
+        if isinstance(instance, (NavigableView, ModalView)):
+            # Connect navigation requests to the navigation service
+            # This will be handled by the NavigationService when it's created
+            pass
+
+        return instance
+
+
+# ── Base View Classes ───────────────────────────────────────────────────────────────────────────────────────
 class NavigableView(QWidget, NavigationLifecycle):
     """
     Base class for all navigable views.
@@ -163,14 +189,14 @@ class NavigableView(QWidget, NavigationLifecycle):
 
     def go_back(self):
         """Request backward navigation."""
-        from .navigation_service import NavigationService
+        from .service import NavigationService
         nav_service = NavigationService.get_instance()
         if nav_service:
             nav_service.go_back()
 
     def go_forward(self):
         """Request forward navigation."""
-        from .navigation_service import NavigationService
+        from .service import NavigationService
         nav_service = NavigationService.get_instance()
         if nav_service:
             nav_service.go_forward()
@@ -191,7 +217,6 @@ class NavigableView(QWidget, NavigationLifecycle):
         """
         pass
 
-
 class MainView(NavigableView):
     """
     Base class for main application views.
@@ -202,7 +227,6 @@ class MainView(NavigableView):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._view_type = ViewType.MAIN
-
 
 class ModalView(QDialog, NavigationLifecycle):
     """
@@ -257,7 +281,6 @@ class ModalView(QDialog, NavigationLifecycle):
         """Called when the route information changes."""
         pass
 
-
 class OverlayView(NavigableView):
     """
     Base class for overlay views.
@@ -272,7 +295,6 @@ class OverlayView(NavigableView):
         # Set overlay properties
         self.setWindowFlags(Qt.Popup | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
-
 
 class EmbeddedView(NavigableView):
     """
@@ -309,32 +331,6 @@ class EmbeddedView(NavigableView):
             standalone: New standalone mode
         """
         pass
-
-
-class ViewFactory:
-    """Factory for creating view instances with proper setup."""
-
-    @staticmethod
-    def create_view(view_class: Type[T], **kwargs) -> T:
-        """
-        Create a view instance with proper initialization.
-
-        Args:
-            view_class: The view class to instantiate
-            **kwargs: Arguments to pass to the constructor
-
-        Returns:
-            Initialized view instance
-        """
-        instance = view_class(**kwargs)
-
-        # Set up navigation connections if it's a navigable view
-        if isinstance(instance, (NavigableView, ModalView)):
-            # Connect navigation requests to the navigation service
-            # This will be handled by the NavigationService when it's created
-            pass
-
-        return instance
 
 
 # ── Helper Functions ────────────────────────────────────────────────────────────────────────────────────────

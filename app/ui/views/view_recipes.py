@@ -6,16 +6,17 @@ flow layout and can switch to a full recipe view.
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QStackedWidget, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QStackedWidget, QVBoxLayout
 
 from app.ui.components.composite.recipe_browser import RecipeBrowser
 from app.ui.components.composite.recipe_card import LayoutSize
 from app.ui.views.full_recipe import FullRecipe
+from app.ui.services.navigation.views import MainView
 from _dev_tools import DebugLogger
 
 
 # ── View Recipes ─────────────────────────────────────────────────────────────────────────────
-class ViewRecipes(QWidget):
+class ViewRecipes(MainView):
     """Displays recipes using the shared RecipeBrowser component and can switch to full recipe view."""
 
     recipe_selected = Signal(int)
@@ -28,7 +29,7 @@ class ViewRecipes(QWidget):
             parent (QWidget, optional): Parent widget.
             meal_selection (bool): If True, enables recipe selection mode.
         """
-        QWidget.__init__(self, parent)
+        super().__init__(parent)
         self.setObjectName("ViewRecipes")
         self.meal_selection = meal_selection
         self.current_full_recipe_view = None

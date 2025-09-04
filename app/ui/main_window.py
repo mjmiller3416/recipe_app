@@ -15,7 +15,7 @@ from app.style.animation import WindowAnimator
 from app.ui.components import SearchBar
 from app.ui.components.navigation.sidebar import Sidebar
 from app.ui.components.navigation.titlebar import TitleBar
-from app.ui.services.navigation.navigation_service import NavigationService
+from app.ui.services.navigation.service import NavigationService
 from app.ui.services.navigation.routes import register_main_routes, get_sidebar_route_mapping
 from app.ui.utils.layout_utils import center_on_screen
 
@@ -129,10 +129,10 @@ class MainWindow(FramelessWindow):
         """Initialize the navigation service and register routes."""
         # Register all main routes
         register_main_routes()
-        
+
         # Create navigation service instance
         self.navigation_service = NavigationService.create(self.sw_pages)
-        
+
         # Connect navigation service signals for header updates
         self.navigation_service.navigation_completed.connect(self._on_navigation_completed)
 
@@ -149,13 +149,13 @@ class MainWindow(FramelessWindow):
         # Update header based on route path
         route_to_header = {
             "/dashboard": "Dashboard",
-            "/meal-planner": "Meal Planner", 
+            "/meal-planner": "Meal Planner",
             "/recipes/browse": "View Recipes",
             "/shopping-list": "Shopping List",
             "/recipes/add": "Add Recipes",
             "/settings": "Settings"
         }
-        
+
         header_text = route_to_header.get(path, "MealGenie")
         self.lbl_header.setText(header_text)
 
@@ -180,17 +180,6 @@ class MainWindow(FramelessWindow):
         # Connect exit button
         self.sidebar.buttons["btn_exit"].clicked.connect(self.close)
 
-    def _update_header(self, page_name: str):
-        """Update header label text based on page name."""
-        mapping = {
-            "dashboard": "Dashboard",
-            "meal_planner": "Meal Planner",
-            "view_recipes": "View Recipes",
-            "shopping_list": "Shopping List",
-            "add_recipe": "Add Recipe",
-            "settings": "Settings",
-        }
-        self.lbl_header.setText(mapping.get(page_name, page_name.replace("_", " ").title()))
 
     def keyPressEvent(self, event):
         """Ignore the Escape key to prevent accidental app closure."""

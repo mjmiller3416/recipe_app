@@ -5,13 +5,12 @@ Base classes for all views in the application.
 
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtWidgets import QWidget
-
+from app.ui.services.navigation.views import MainView
 from app.ui.utils.layout_utils import setup_main_scroll_layout
 
 
 # ── Scrollable View ─────────────────────────────────────────────────────────────────────────────────────────
-class ScrollableView(QWidget):
+class ScrollableView(MainView):
     """Base class for main views with scrollable content."""
 
     def __init__(self, parent=None):

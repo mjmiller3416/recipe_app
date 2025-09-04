@@ -1,11 +1,12 @@
-"""app/ui/services/navigation_registry.py
+"""app/ui/services/registry.py
 
 Route-based navigation registry system for dynamic view registration and management.
 """
 
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 import re
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
+from typing import Callable, Dict, List, Optional, Type, TypeVar, Union
 from enum import Enum
 
 from PySide6.QtWidgets import QWidget
@@ -16,6 +17,7 @@ from _dev_tools import DebugLogger
 T = TypeVar('T', bound=QWidget)
 
 
+# ── View Types ──────────────────────────────────────────────────────────────────────────────────────────────
 class ViewType(Enum):
     """Defines the different types of navigable views."""
     MAIN = "main"           # Full-screen views in main stacked widget
@@ -24,6 +26,7 @@ class ViewType(Enum):
     EMBEDDED = "embedded"   # Components that can be embedded or standalone
 
 
+# ── Route Configuration ─────────────────────────────────────────────────────────────────────────────────────
 @dataclass
 class RouteConfig:
     """Configuration for a registered route."""
@@ -35,7 +38,6 @@ class RouteConfig:
     title: Optional[str] = None
     description: Optional[str] = None
 
-
 @dataclass
 class RouteMatch:
     """Result of route matching with extracted parameters."""
@@ -43,7 +45,26 @@ class RouteMatch:
     params: Dict[str, str]
     path: str
 
+class RouteConstants:
+    """Constants for commonly used routes."""
 
+    # Main navigation routes
+    DASHBOARD = "/dashboard"
+    MEAL_PLANNER = "/meal-planner"
+    SHOPPING_LIST = "/shopping-list"
+    SETTINGS = "/settings"
+
+    # Recipe routes
+    RECIPES_BROWSE = "/recipes/browse"
+    RECIPES_ADD = "/recipes/add"
+    RECIPES_EDIT = "/recipes/edit/{id}"
+    RECIPES_VIEW = "/recipes/view/{id}"
+
+    # Dynamic routes with parameters
+    RECIPE_BY_ID = "/recipes/{id}"
+
+
+# ── Navigation Registry ─────────────────────────────────────────────────────────────────────────────────────
 class NavigationRegistry:
     """
     Central registry for route-based navigation.
@@ -290,20 +311,4 @@ class NavigationRegistry:
         return None
 
 
-class RouteConstants:
-    """Constants for commonly used routes."""
 
-    # Main navigation routes
-    DASHBOARD = "/dashboard"
-    MEAL_PLANNER = "/meal-planner"
-    SHOPPING_LIST = "/shopping-list"
-    SETTINGS = "/settings"
-
-    # Recipe routes
-    RECIPES_BROWSE = "/recipes/browse"
-    RECIPES_ADD = "/recipes/add"
-    RECIPES_EDIT = "/recipes/edit/{id}"
-    RECIPES_VIEW = "/recipes/view/{id}"
-
-    # Dynamic routes with parameters
-    RECIPE_BY_ID = "/recipes/{id}"

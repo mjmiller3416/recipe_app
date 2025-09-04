@@ -7,7 +7,7 @@ multiple meal planning tabs and integrates with the database to load and save me
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import QMenu, QStackedWidget, QTabWidget, QVBoxLayout, QHBoxLayout,QWidget, QToolTip
+from PySide6.QtWidgets import QMenu, QStackedWidget, QTabWidget, QVBoxLayout, QHBoxLayout, QWidget, QToolTip
 
 from app.core.dtos.planner_dtos import MealSelectionCreateDTO, MealSelectionUpdateDTO
 from app.core.models.meal_selection import MealSelection
@@ -25,6 +25,7 @@ from app.style.icon import AppIcon, Icon
 from app.style import Theme, Qss
 from app.ui.components.composite.recipe_card import LayoutSize, create_recipe_card
 from app.ui.views.recipe_selection import RecipeSelection
+from app.ui.services.navigation.views import MainView
 from _dev_tools import DebugLogger
 
 
@@ -232,7 +233,7 @@ class MealWidget(QWidget):
 
 
 # ── Meal Planner View ───────────────────────────────────────────────────────────────────────────────────────
-class MealPlanner(QWidget):
+class MealPlanner(MainView):
     """
     The MealPlanner class manages a tabbed interface for creating, editing,
     and saving meal plans within the application.
@@ -244,7 +245,7 @@ class MealPlanner(QWidget):
     """
 
     def __init__(self, parent=None):
-        QWidget.__init__(self, parent)
+        super().__init__(parent)
         # Initialize PlannerService
         self.planner_service = PlannerService()
 
