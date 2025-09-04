@@ -361,7 +361,7 @@ class ShoppingList(ScrollableView):
     """Placeholder class for the ShoppingList screen."""
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        ScrollableView.__init__(self, parent)
         self.setObjectName("ShoppingList")
         # register for component-specific styling
         Theme.register_widget(self, Qss.SHOPPING_LIST)

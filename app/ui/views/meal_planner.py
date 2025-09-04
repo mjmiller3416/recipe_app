@@ -169,7 +169,7 @@ class MealWidget(QWidget):
             return
 
         dto_fields = self._create_dto_fields()
-        
+
         if self._meal_model.id is None:
             create_dto = MealSelectionCreateDTO(**dto_fields)
             response_dto = self.planner_service.create_meal_selection(create_dto)
@@ -244,7 +244,7 @@ class MealPlanner(QWidget):
     """
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        QWidget.__init__(self, parent)
         # Initialize PlannerService
         self.planner_service = PlannerService()
 

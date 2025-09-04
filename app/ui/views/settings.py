@@ -234,7 +234,7 @@ class Settings(QWidget):
     """Main Settings view with category selection and management."""
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        QWidget.__init__(self, parent)
         self.setObjectName("Settings")
 
         # Register for theme management

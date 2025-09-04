@@ -4,8 +4,6 @@ Defines the main application window, including the custom title bar and sidebar.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from typing import TYPE_CHECKING, Callable
-
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
     QHBoxLayout, QLabel, QStackedWidget,
@@ -113,8 +111,6 @@ class MainWindow(FramelessWindow):
 
         # Set initial page (after signal connections)
         self.sidebar.buttons["btn_dashboard"].setChecked(True)
-        # Explicitly update header for initial page since currentChanged may not fire
-        self._update_header("dashboard")
 
         # Resize and center the window at the end
         self.resize(int(SETTINGS["WINDOW_WIDTH"]), int(SETTINGS["WINDOW_HEIGHT"]))
