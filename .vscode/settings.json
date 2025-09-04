@@ -152,6 +152,7 @@
       "**/requirements.txt": true,
       "**/.git-rewrite": true,
       "**/manage.py": true,
+      "**/.ruff_cache": true,
     },
 
     "files.associations": {
@@ -206,6 +207,7 @@
       "temp_crops": "Images",
       "user_profile": "Images",
       "view_models": "Packages",
+      "notifications": "Astro",
 
       //** Subfolders **//
       "app_helpers": "App",
@@ -217,6 +219,7 @@
       "dtos": "Packages",
       "builders": "Tools",
       "loaders": "Download",
+      "agents": "Angular",
 
       //** Assets **//
       "assets": "Shader",

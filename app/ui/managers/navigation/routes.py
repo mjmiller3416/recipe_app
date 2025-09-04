@@ -4,7 +4,7 @@ Route registration for the navigation system.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
-from app.ui.services.navigation.registry import NavigationRegistry, ViewType
+from app.ui.managers.navigation.registry import NavigationRegistry, ViewType
 from app.ui.views import (Dashboard, MealPlanner, ViewRecipes, ShoppingList, AddRecipes, Settings)
 
 

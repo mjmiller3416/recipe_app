@@ -3,11 +3,15 @@
 Defines the main application window, including the custom title bar and sidebar.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
-    QHBoxLayout, QLabel, QStackedWidget,
-    QVBoxLayout, QWidget)
+    QHBoxLayout,
+    QLabel,
+    QStackedWidget,
+    QVBoxLayout,
+    QWidget
+)
 from qframelesswindow import FramelessWindow
 
 from app.core.utils.error_utils import log_and_handle_exception
@@ -16,12 +20,15 @@ from app.style.animation import WindowAnimator
 from app.ui.components import SearchBar
 from app.ui.components.navigation.sidebar import Sidebar
 from app.ui.components.navigation.titlebar import TitleBar
-from app.ui.services.navigation.service import NavigationService
-from app.ui.services.navigation.routes import register_main_routes, get_sidebar_route_mapping
+from app.ui.managers.navigation.service import NavigationService
+from app.ui.managers.navigation.routes import (
+    register_main_routes,
+    get_sidebar_route_mapping
+)
 from app.ui.utils.layout_utils import center_on_screen
 
 
-# ── Application Window ───────────────────────────────────────────────────────────────────────
+# ── Application Window ──────────────────────────────────────────────────────────────────────────────────────
 class MainWindow(FramelessWindow):
     """The main application window, orchestrating title bar, sidebar, and content pages.
 
@@ -36,7 +43,7 @@ class MainWindow(FramelessWindow):
         sidebar (Sidebar): The navigation sidebar widget.
         sw_pages (QStackedWidget): Widget that holds and switches between different pages.
     """
-    # ── Signals ──────────────────────────────────────────────────────────────────────────────
+
     sidebar_toggle_requested = Signal()
 
     def __init__(self):
@@ -50,17 +57,37 @@ class MainWindow(FramelessWindow):
         # ── Window Properties ──
         self.setMinimumSize(800, 360)
 
-        # ── Title Bar & Main Layout ──
+        self._build_ui()
+
+        # ── Initialize Services & Connect Signals ──
+        self.animator = WindowAnimator(self)
+        self._setup_navigation()
+        self._connect_signals()
+
+        self.sidebar.buttons["btn_dashboard"].setChecked(True) # default selected
+        self._navigate_to_route("/dashboard")
+
+        self.resize(int(AppConfig.WINDOW_WIDTH), int(AppConfig.WINDOW_HEIGHT)) # initial size
+        center_on_screen(self)
+
+    @property
+    def _is_maximized(self) -> bool:
+        return self.isMaximized()
+
+    def _build_ui(self):
+        """Builds the UI."""
+
+        # Title Bar
         self.title_bar = TitleBar(self)
         self.setTitleBar(self.title_bar)
         self._isResizeEnabled = True
 
-        # ── Main Layout ──
+        # Main Layout
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(0, self.title_bar.height(), 0, 0)
         self.main_layout.setSpacing(0)
 
-        # ── Body Layout ──
+        # Body Layout
         self.window_body = QWidget(self)
         self.body_layout = QHBoxLayout(self.window_body)
         self.body_layout.setContentsMargins(1, 0, 1, 1)
@@ -68,25 +95,21 @@ class MainWindow(FramelessWindow):
 
         self.main_layout.addWidget(self.window_body) # add body widget to the main layout
 
-        # ── Sidebar and Content Area ──
+        # Sidebar
         self.sidebar = Sidebar()
         self.body_layout.addWidget(self.sidebar)
 
-        self.content_area = QWidget()
-        self.content_area.setObjectName("ContentArea")
-        self.body_layout.addWidget(self.content_area)
+        # Content Area
+        self._create_content_area()
+        self._create_header_widgets()
+        self._create_stacked_pages()
 
-        self.content_outer_layout = QVBoxLayout(self.content_area)
-        self.content_outer_layout.setContentsMargins(0, 0, 0, 0)
-        self.content_outer_layout.setSpacing(0)
-
-        # Header Layout
-        # TODO: Add subheader - brief description specific to each view.
+    def _create_header_widgets(self):
+        """Creates header widgets."""
         self.header_layout = QHBoxLayout()
         self.header_layout.setContentsMargins(20, 30, 20, 20)
         self.content_outer_layout.addLayout(self.header_layout)
 
-        # Header Widgets
         self.lbl_header = QLabel()
         self.lbl_header.setObjectName("AppHeader")
         self.lbl_header.setProperty("tag", "Header")
@@ -96,7 +119,10 @@ class MainWindow(FramelessWindow):
         self.search_bar = SearchBar()
         self.header_layout.addWidget(self.search_bar, alignment=Qt.AlignRight)
 
-        # Stacked Pages
+        # TODO: Add subheader - brief description specific to each view.
+
+    def _create_stacked_pages(self):
+        """Creates stacked pages."""
         self.content_layout = QVBoxLayout()
         self.content_layout.setContentsMargins(0, 0, 0, 0)
         self.content_layout.setSpacing(8)
@@ -104,22 +130,15 @@ class MainWindow(FramelessWindow):
         self.sw_pages = QStackedWidget()
         self.content_layout.addWidget(self.sw_pages)
 
-        # ── Initialize Services & Connect Signals ──
-        self.animator = WindowAnimator(self)
-        self._setup_navigation()
-        self._connect_signals()
+    def _create_content_area(self):
+        """Creates the content area."""
+        self.content_area = QWidget()
+        self.content_area.setObjectName("ContentArea")
+        self.body_layout.addWidget(self.content_area)
 
-        # Set initial view (after signal connections)
-        self.sidebar.buttons["btn_dashboard"].setChecked(True)
-        self._navigate_to_route("/dashboard")
-
-        # Resize and center the window at the end
-        self.resize(int(AppConfig.WINDOW_WIDTH), int(AppConfig.WINDOW_HEIGHT))
-        center_on_screen(self)
-
-    @property
-    def _is_maximized(self) -> bool:
-        return self.isMaximized()
+        self.content_outer_layout = QVBoxLayout(self.content_area)
+        self.content_outer_layout.setContentsMargins(0, 0, 0, 0)
+        self.content_outer_layout.setSpacing(0)
 
     def _setup_navigation(self):
         """Initialize the navigation service and register routes."""

@@ -259,7 +259,7 @@ class FullRecipe(QWidget):
         return w
 
     def _build_ui(self) -> None:
-        """Build the main UI matching the mock design."""
+        """Build the main UI."""
 
         self.lyt_main, self.scroll_area, self.scroll_content, self.scroll_layout = \
             setup_main_scroll_layout(self)

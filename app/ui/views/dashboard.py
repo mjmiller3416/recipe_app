@@ -10,7 +10,7 @@ from PySide6.QtWidgets import QLabel, QSizePolicy, QVBoxLayout
 from app.style.icon.config import Name, Type
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
-from app.ui.services.navigation.views import MainView
+from app.ui.managers.navigation.views import MainView
 from _dev_tools import DebugLogger
 
 
@@ -20,10 +20,7 @@ class Dashboard(MainView):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-
         DebugLogger.log("Initializing Dashboard page", "info")
-
-        # Initialize & Setup UI
         self.setObjectName("Dashboard")
 
         self.layout = QVBoxLayout(self)

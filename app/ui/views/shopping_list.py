@@ -17,7 +17,7 @@ from PySide6.QtWidgets import (
 from app.config import INGREDIENT_CATEGORIES, MEASUREMENT_UNITS
 from app.core.services.shopping_service import ShoppingService
 from app.style import Icon, Qss, Theme, Type
-from app.ui.views.base import ScrollableView
+from app.ui.views.base import ScrollableNavView
 from app.ui.components.layout.card import ActionCard, BaseCard, Card
 from app.ui.components.widgets import BaseButton, ComboBox, ToolButton
 from app.ui.constants import LayoutConstants
@@ -357,16 +357,14 @@ class ShoppingItem(QWidget):
 
 
 # ── View ────────────────────────────────────────────────────────────────────────────────────────────────────
-class ShoppingList(ScrollableView):
+class ShoppingList(ScrollableNavView):
     """Placeholder class for the ShoppingList screen."""
 
     def __init__(self, parent=None):
-        ScrollableView.__init__(self, parent)
-        self.setObjectName("ShoppingList")
-        # register for component-specific styling
-        Theme.register_widget(self, Qss.SHOPPING_LIST)
-
+        ScrollableNavView.__init__(self, parent)
         DebugLogger.log("Initializing ShoppingList page", "info")
+        self.setObjectName("ShoppingList")
+        Theme.register_widget(self, Qss.SHOPPING_LIST)
 
         self.active_recipe_ids: list[int] = []  # store latest recipe list
         self.shopping_svc = None  # initialize shopping service

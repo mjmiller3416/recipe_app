@@ -7,25 +7,29 @@ multiple meal planning tabs and integrates with the database to load and save me
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import QMenu, QStackedWidget, QTabWidget, QVBoxLayout, QHBoxLayout, QWidget, QToolTip
+from PySide6.QtWidgets import QMenu, QStackedWidget, QTabWidget, QVBoxLayout, QHBoxLayout, QWidget
 
 from app.core.dtos.planner_dtos import MealSelectionCreateDTO, MealSelectionUpdateDTO
 from app.core.models.meal_selection import MealSelection
 from app.core.services.planner_service import PlannerService
 from app.core.services.recipe_service import RecipeService
 from app.core.utils.error_utils import (
-    log_and_handle_exception, safe_execute_with_fallback,
-    error_boundary, create_error_context)
+    log_and_handle_exception,
+    safe_execute_with_fallback,
+    error_boundary,
+    create_error_context)
 from app.ui.utils.event_utils import (
-    create_tooltip_event_filter, batch_connect_signals, setup_conditional_visibility)
-from app.ui.utils.layout_utils import setup_main_scroll_layout
-from app.ui.utils.widget_utils import register_widget_for_theme, apply_object_name_pattern
+    create_tooltip_event_filter,
+    batch_connect_signals)
+from app.ui.utils.widget_utils import (
+    register_widget_for_theme,
+    apply_object_name_pattern)
 from app.core.utils.validation_utils import validate_positive_number
 from app.style.icon import AppIcon, Icon
-from app.style import Theme, Qss
+from app.style import Qss
 from app.ui.components.composite.recipe_card import LayoutSize, create_recipe_card
+from app.ui.views.base import ScrollableNavView
 from app.ui.views.recipe_selection import RecipeSelection
-from app.ui.services.navigation.views import MainView
 from _dev_tools import DebugLogger
 
 
@@ -233,7 +237,7 @@ class MealWidget(QWidget):
 
 
 # ── Meal Planner View ───────────────────────────────────────────────────────────────────────────────────────
-class MealPlanner(MainView):
+class MealPlanner(ScrollableNavView):
     """
     The MealPlanner class manages a tabbed interface for creating, editing,
     and saving meal plans within the application.
@@ -246,24 +250,22 @@ class MealPlanner(MainView):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        DebugLogger.log("Initializing MealPlanner page", "info")
+        self.setObjectName("MealPlanner")
         # Initialize PlannerService
         self.planner_service = PlannerService()
 
         self._setup_widget_properties()
-        DebugLogger.log("Initializing MealPlanner page", "info")
+
 
         self.tab_map = {}  # {tab_index: MealWidget}
-        # context for in-page recipe selection (widget, slot_key)
-        self._selection_context = None
+        self._selection_context = None # (MealWidget, slot_key) during recipe selection
 
         self._build_ui()
         self._init_ui()
 
     def _build_ui(self):
         """Build the main UI layout using consistent scroll pattern."""
-        # Use setup_main_scroll_layout for consistency with other views
-        self.lyt_main, self.scroll_area, self.scroll_content, self.scroll_layout = \
-            setup_main_scroll_layout(self)
 
         # Create Planner & Selection Widgets
         self.meal_tabs = self._create_meal_tabs_widget()

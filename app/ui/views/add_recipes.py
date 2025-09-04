@@ -18,7 +18,7 @@ from app.core.utils.conversion_utils import parse_servings_range, safe_int_conve
 from app.core.utils.text_utils import sanitize_form_input, sanitize_multiline_input
 from app.ui.utils.form_utils import clear_form_fields, collect_form_data, validate_required_fields, setup_tab_order_chain
 from app.ui.utils.layout_utils import setup_main_scroll_layout, create_labeled_form_grid, create_two_column_layout
-from app.ui.services.navigation.views import MainView
+from app.ui.managers.navigation.views import MainView
 from app.ui.utils.event_utils import connect_form_signals, batch_connect_signals
 from app.style import Qss, Theme
 from app.style.icon.config import Name, Type
