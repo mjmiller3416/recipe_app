@@ -1,85 +1,120 @@
 [
     {
         "type": "Group",
-        "name": "Configs",
+        "name": "Config",
         "parent_id": null,
         "workspaceRoot": null,
         "workspacePath": null,
-        "id": "E1O8pMjUCdn2De6T",
-        "iconColor": "rgb(147, 112, 219)"
+        "id": "RjLC1ceNg4okhruB",
+        "iconColor": "rgb(128, 128, 0)"
+    },
+    {
+        "type": "Group",
+        "name": "Views",
+        "parent_id": null,
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "W8XdbSox9fQAwueM",
+        "iconColor": "rgb(0, 139, 139)"
     },
     {
         "type": "File",
         "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\config\\config.py",
-        "parent_id": "E1O8pMjUCdn2De6T",
+        "parent_id": "RjLC1ceNg4okhruB",
         "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\config\\config.py",
         "workspaceRoot": null,
         "workspacePath": null,
-        "id": "ZV3mgFNxlCD9b5OQ",
+        "id": "aEAB2gQSXlvKWbTs",
         "label": "Main Config"
     },
     {
         "type": "File",
         "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\icon\\config.py",
-        "parent_id": "E1O8pMjUCdn2De6T",
+        "parent_id": "RjLC1ceNg4okhruB",
         "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\icon\\config.py",
         "workspaceRoot": null,
         "workspacePath": null,
-        "id": "0stOZcuhzgNCd3m8",
+        "id": "PE2iLnQ91ktmjCrB",
         "label": "Icon Config"
     },
     {
         "type": "File",
         "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\config.py",
-        "parent_id": "E1O8pMjUCdn2De6T",
+        "parent_id": "RjLC1ceNg4okhruB",
         "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\config.py",
         "workspaceRoot": null,
         "workspacePath": null,
-        "id": "ZIYcMavnTHL57CXA",
+        "id": "3wIoErPBmlyHsx6U",
         "label": "Theme Config"
-    },
-    {
-        "type": "Group",
-        "name": "Views",
-        "parent_id": "ZIYcMavnTHL57CXA",
-        "workspaceRoot": null,
-        "workspacePath": null,
-        "id": "WYjalJBzVcSPITUZ"
-    },
-    {
-        "type": "Group",
-        "name": "Views",
-        "parent_id": "ZIYcMavnTHL57CXA",
-        "workspaceRoot": null,
-        "workspacePath": null,
-        "id": "SEraXpg7Y0yWO5Dm"
-    },
-    {
-        "type": "File",
-        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\base_style.qss",
-        "parent_id": "E1O8pMjUCdn2De6T",
-        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\base_style.qss",
-        "workspaceRoot": null,
-        "workspacePath": null,
-        "id": "JhWBybf5nwqVKucF",
-        "label": "Base-Style Config"
     },
     {
         "type": "File",
         "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\style_sheet.py",
-        "parent_id": null,
+        "parent_id": "RjLC1ceNg4okhruB",
         "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\style_sheet.py",
         "workspaceRoot": null,
         "workspacePath": null,
-        "id": "wyTop46BFi59ZvDR",
-        "label": "Injection Variables"
+        "id": "hHO2uVLfld3MUatg",
+        "label": "Material3 Roles"
     },
     {
-        "type": "Group",
-        "name": "dsadas",
-        "parent_id": "wyTop46BFi59ZvDR",
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\add_recipes.py",
+        "parent_id": "W8XdbSox9fQAwueM",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\add_recipes.py",
         "workspaceRoot": null,
         "workspacePath": null,
-        "id": "u2KyLDdBVMeN7l54"
+        "id": "FBED50Zp2dvxHzbr",
+        "label": "Add Recipes"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\dashboard.py",
+        "parent_id": "W8XdbSox9fQAwueM",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\dashboard.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "Jet9kYsVZSrhnC1E",
+        "label": "Dashboard"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\meal_planner.py",
+        "parent_id": "W8XdbSox9fQAwueM",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\meal_planner.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "fwKWm0lU1uVDxjLy",
+        "label": "Meal Planner"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\settings.py",
+        "parent_id": "W8XdbSox9fQAwueM",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\settings.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "f7rYbDoZWvlayU4N",
+        "label": "Settings"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\shopping_list.py",
+        "parent_id": "W8XdbSox9fQAwueM",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\shopping_list.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "mTLJhpEA0nUgY7Mi",
+        "label": "Shopping List"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\view_recipes.py",
+        "parent_id": "W8XdbSox9fQAwueM",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\view_recipes.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "Pg6lw3qoDedjBGrT",
+        "label": "View Recipes"
     }
 ]

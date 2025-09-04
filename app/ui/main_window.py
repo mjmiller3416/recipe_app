@@ -4,8 +4,6 @@ Defines the main application window, including the custom title bar and sidebar.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from typing import TYPE_CHECKING, Callable
-
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
     QHBoxLayout, QLabel, QStackedWidget,
@@ -17,11 +15,9 @@ from app.style.animation import WindowAnimator
 from app.ui.components import SearchBar
 from app.ui.components.navigation.sidebar import Sidebar
 from app.ui.components.navigation.titlebar import TitleBar
+from app.ui.services.navigation.navigation_service import NavigationService
+from app.ui.services.navigation.routes import register_main_routes, get_sidebar_route_mapping
 from app.ui.utils.layout_utils import center_on_screen
-
-if TYPE_CHECKING:
-    from app.ui.services.navigation_service import NavigationService
-
 
 # ── Constants ────────────────────────────────────────────────────────────────────────────────
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]
@@ -41,22 +37,15 @@ class MainWindow(FramelessWindow):
         title_bar (TitleBar): The custom title bar widget.
         sidebar (Sidebar): The navigation sidebar widget.
         sw_pages (QStackedWidget): Widget that holds and switches between different pages.
-        navigation (NavigationService): Service responsible for page management and nav.
     """
     # ── Signals ──────────────────────────────────────────────────────────────────────────────
     sidebar_toggle_requested = Signal()
 
-    def __init__(
-            self,
-            #theme_controller: 'ThemeController',
-            navigation_service_factory: Callable[[QStackedWidget], 'NavigationService']
-    ):
+    def __init__(self):
         """Initializes the MainWindow.
 
         Args:
             theme_controller (ThemeController): The controller for managing app themes.
-            navigation_service_factory (callable): A factory function that creates an
-            instance of NavigationService.
         """
         super().__init__()
 
@@ -119,17 +108,14 @@ class MainWindow(FramelessWindow):
 
         # ── Initialize Services & Connect Signals ──
         self.animator = WindowAnimator(self)
-        self.navigation: 'NavigationService' = navigation_service_factory(self.sw_pages)
-        self.navigation.build_and_register_pages()
-
+        self._setup_navigation()
         self._connect_signals()
-        self.sw_pages.currentChanged.connect(self._on_page_changed)
+
 
         # Set initial page (after signal connections)
-        self.navigation.switch_to("dashboard")
         self.sidebar.buttons["btn_dashboard"].setChecked(True)
-        # Explicitly update header for initial page since currentChanged may not fire
-        self._update_header("dashboard")
+        # Navigate to dashboard as initial route
+        self._navigate_to_route("/dashboard")
 
         # Resize and center the window at the end
         self.resize(int(SETTINGS["WINDOW_WIDTH"]), int(SETTINGS["WINDOW_HEIGHT"]))
@@ -138,6 +124,40 @@ class MainWindow(FramelessWindow):
     @property
     def _is_maximized(self) -> bool:
         return self.isMaximized()
+
+    def _setup_navigation(self):
+        """Initialize the navigation service and register routes."""
+        # Register all main routes
+        register_main_routes()
+        
+        # Create navigation service instance
+        self.navigation_service = NavigationService.create(self.sw_pages)
+        
+        # Connect navigation service signals for header updates
+        self.navigation_service.navigation_completed.connect(self._on_navigation_completed)
+
+    def _navigate_to_route(self, route_path: str):
+        """Navigate to a specific route using the navigation service."""
+        if hasattr(self, 'navigation_service'):
+            success = self.navigation_service.navigate_to(route_path)
+            if not success:
+                from _dev_tools import DebugLogger
+                DebugLogger.log(f"Failed to navigate to route: {route_path}", "error")
+
+    def _on_navigation_completed(self, path: str, params: dict):
+        """Handle navigation completion to update UI state."""
+        # Update header based on route path
+        route_to_header = {
+            "/dashboard": "Dashboard",
+            "/meal-planner": "Meal Planner", 
+            "/recipes/browse": "View Recipes",
+            "/shopping-list": "Shopping List",
+            "/recipes/add": "Add Recipes",
+            "/settings": "Settings"
+        }
+        
+        header_text = route_to_header.get(path, "MealGenie")
+        self.lbl_header.setText(header_text)
 
     def _connect_signals(self):
         """Connect all UI signals to their respective slots."""
@@ -150,35 +170,15 @@ class MainWindow(FramelessWindow):
         # Sidebar
         self.sidebar_toggle_requested.connect(self.sidebar.toggle)
 
-        # Navigation
-        button_map = {
-            "btn_dashboard": "dashboard",
-            "btn_meal_planner": "meal_planner",
-            "btn_view_recipes": "view_recipes",
-            "btn_shopping_list": "shopping_list",
-            "btn_add_recipes": "add_recipe",
-            "btn_settings": "settings",
-        }
-        for btn_name, page_name in button_map.items():
-            button = self.sidebar.buttons.get(btn_name)
+        # Connect sidebar buttons to navigation service
+        route_mapping = get_sidebar_route_mapping()
+        for button_name, route_path in route_mapping.items():
+            button = self.sidebar.buttons.get(button_name)
             if button:
-                def make_switch_callback(page):
-                    def callback():
-                        from _dev_tools import DebugLogger
-                        DebugLogger.log(f"Button clicked for page: {page}", "info")
-                        self._switch_page(page)
-                    return callback
-                button.clicked.connect(make_switch_callback(page_name))
-        # Exit button should close the application and trigger save via closeEvent
-        exit_btn = self.sidebar.buttons.get("btn_exit")
-        if exit_btn:
-            exit_btn.clicked.connect(self.close)
+                button.clicked.connect(lambda checked, path=route_path: self._navigate_to_route(path))
 
-    def _switch_page(self, page_name: str):
-        """Helper to switch pages and update the header text."""
-        from _dev_tools import DebugLogger
-        DebugLogger.log(f"Switching to page: {page_name}", "info")
-        self.navigation.switch_to(page_name)
+        # Connect exit button
+        self.sidebar.buttons["btn_exit"].clicked.connect(self.close)
 
     def _update_header(self, page_name: str):
         """Update header label text based on page name."""
@@ -192,21 +192,6 @@ class MainWindow(FramelessWindow):
         }
         self.lbl_header.setText(mapping.get(page_name, page_name.replace("_", " ").title()))
 
-    def _on_page_changed(self, index: int):
-        """Update header when stacked widget page changes."""
-        widget = self.sw_pages.widget(index)
-        if not widget:
-            return
-
-        for name, w_instance in self.navigation.page_instances.items():
-            if w_instance is widget:
-                self._update_header(name)
-                # auto-focus the recipe name field when AddRecipes page is shown
-                if name == "add_recipe" and hasattr(w_instance, 'le_recipe_name'):
-                    from PySide6.QtCore import QTimer
-                    QTimer.singleShot(0, w_instance.le_recipe_name.setFocus)
-                break
-
     def keyPressEvent(self, event):
         """Ignore the Escape key to prevent accidental app closure."""
         if event.key() == Qt.Key_Escape:
@@ -215,8 +200,5 @@ class MainWindow(FramelessWindow):
         super().keyPressEvent(event)
 
     def closeEvent(self, event):
-        """Persist planner state before closing the application."""
-        meal_planner = self.navigation.page_instances.get("meal_planner")
-        if meal_planner and hasattr(meal_planner, 'saveMealPlan'):
-            meal_planner.saveMealPlan()
+        """Handle window close event to save geometry and settings."""
         super().closeEvent(event)

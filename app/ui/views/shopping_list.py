@@ -28,7 +28,8 @@ from app.ui.utils.layout_utils import (
 from _dev_tools import DebugLogger
 
 
-# ── Add Item Form ───────────────────────────────────────────────────────────────────────────────────────────
+
+# ── Forms ───────────────────────────────────────────────────────────────────────────────────────────────────
 class AddItemForm(QWidget):
     """Form for manually adding new items to the shopping list."""
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -87,7 +88,7 @@ class AddItemForm(QWidget):
         )
 
 
-# ── Collapsible Category ────────────────────────────────────────────────────────────────────────────────────
+# ── Containers ──────────────────────────────────────────────────────────────────────────────────────────────
 class CollapsibleCategory(BaseCard):
     """Demo version of collapsible category widget."""
 
@@ -273,8 +274,6 @@ class CollapsibleCategory(BaseCard):
                     checked_items.append(item.item.ingredient_name)
         return checked_items
 
-
-# ── Shopping Item ───────────────────────────────────────────────────────────────────────────────────────────
 class ShoppingItem(QWidget):
     itemChecked = Signal(str, bool)
 
@@ -357,12 +356,12 @@ class ShoppingItem(QWidget):
         self.itemChecked.emit(self.item.ingredient_name, self.checkbox.isChecked())
 
 
-# ── Shopping List View ──────────────────────────────────────────────────────────────────────────────────────
+# ── View ────────────────────────────────────────────────────────────────────────────────────────────────────
 class ShoppingList(ScrollableView):
     """Placeholder class for the ShoppingList screen."""
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        ScrollableView.__init__(self, parent)
         self.setObjectName("ShoppingList")
         # register for component-specific styling
         Theme.register_widget(self, Qss.SHOPPING_LIST)

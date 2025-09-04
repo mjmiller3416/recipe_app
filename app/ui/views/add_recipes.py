@@ -447,7 +447,7 @@ class AddRecipes(QWidget):
     """AddRecipes widget for creating new recipes with ingredients and directions."""
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        QWidget.__init__(self, parent)
         self.setObjectName("AddRecipes")
 
         # register for component-specific styling

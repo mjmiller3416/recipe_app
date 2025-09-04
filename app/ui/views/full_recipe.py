@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Iterable
 
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QSizePolicy, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QSizePolicy, QVBoxLayout, QWidget
 
 from app.core.models import Recipe
 from app.core.utils.text_utils import sanitize_multiline_input, sanitize_form_input
@@ -38,7 +38,7 @@ from app.ui.constants import LayoutConstants
 from _dev_tools.debug_logger import DebugLogger
 
 
-# ── Ingredient List ──────────────────────────────────────────────────────────────────────────
+# ── Ingredient and Directions Lists ─────────────────────────────────────────────────────────────────────────
 class IngredientList(QWidget):
     """A list widget for displaying recipe ingredients with amounts and names."""
 
@@ -121,8 +121,6 @@ class IngredientList(QWidget):
             label.setFixedWidth(fixed_width)
         return label
 
-
-# ── Directions List ──────────────────────────────────────────────────────────────────────────
 class DirectionsList(QWidget):
     """A numbered list widget for displaying recipe directions."""
 
@@ -202,16 +200,15 @@ class DirectionsList(QWidget):
         return label
 
 
-# ── FullRecipe View ─────────────────────────────────────────────────────────────────────────
+# ── Full Recipe View ────────────────────────────────────────────────────────────────────────────────────────
 class FullRecipe(QWidget):
     """Full recipe detail view (visual-only, no editing/upload yet)."""
 
     back_clicked = Signal()
 
-    def __init__(self, recipe: Recipe, navigation_service=None, parent: QWidget | None = None) -> None:
+    def __init__(self, recipe: Recipe, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.recipe = recipe
-        self.navigation_service = navigation_service
 
         # Register this view for component-scoped QSS.
         Theme.register_widget(self, Qss.FULL_RECIPE)
@@ -502,16 +499,6 @@ class FullRecipe(QWidget):
         # TODO: Show full-size image preview dialog
         DebugLogger().log("Recipe banner image clicked for full preview", "debug")
 
-    def _handle_back_clicked(self):
-        """Handle back button click using NavigationService or fallback to signal."""
-        if self.navigation_service:
-            # Use NavigationService to go back
-            if not self.navigation_service.go_back():
-                # Fallback to view_recipes if no history
-                self.navigation_service.navigate_to("view_recipes")
-        else:
-            # Fallback to original signal-based approach
-            self.back_clicked.emit()
 
 
 

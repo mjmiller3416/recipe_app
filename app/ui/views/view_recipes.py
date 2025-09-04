@@ -28,7 +28,7 @@ class ViewRecipes(QWidget):
             parent (QWidget, optional): Parent widget.
             meal_selection (bool): If True, enables recipe selection mode.
         """
-        super().__init__(parent)
+        QWidget.__init__(self, parent)
         self.setObjectName("ViewRecipes")
         self.meal_selection = meal_selection
         self.current_full_recipe_view = None
@@ -66,20 +66,9 @@ class ViewRecipes(QWidget):
         self.recipe_browser.refresh()
 
     def _show_full_recipe(self, recipe):
-        """Show the full recipe view for the given recipe."""
-        # remove current full recipe view if it exists
-        if self.current_full_recipe_view:
-            self.stacked_widget.removeWidget(self.current_full_recipe_view)
-            self.current_full_recipe_view.deleteLater()
-            self.current_full_recipe_view = None
-
-        # create new full recipe view
-        self.current_full_recipe_view = FullRecipe(recipe, parent=self)
-        self.current_full_recipe_view.back_clicked.connect(self._show_recipe_list)
-
-        # add to stacked widget and show
-        self.stacked_widget.addWidget(self.current_full_recipe_view)  # index 1
-        self.stacked_widget.setCurrentWidget(self.current_full_recipe_view)
+        """Navigate to the full recipe view using the navigation service."""
+        # TODO
+        # connect to navigation service and navigate to full recipe view
 
     def _show_recipe_list(self):
         """Return to the recipe list view."""

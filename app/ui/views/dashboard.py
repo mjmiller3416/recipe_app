@@ -8,10 +8,9 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QSizePolicy, QVBoxLayout, QWidget
 
 from app.style.icon.config import Name, Type
-from app.ui.components.inputs import SmartLineEdit
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
-from _dev_tools import DebugLogger, StartupTimer
+from _dev_tools import DebugLogger
 
 
 # ── Dashboard ────────────────────────────────────────────────────────────────────────────────
@@ -19,7 +18,7 @@ class Dashboard(QWidget):
     """Placeholder class for the Dashboard screen."""
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        QWidget.__init__(self, parent)
 
         DebugLogger.log("Initializing Dashboard page", "info")
 
