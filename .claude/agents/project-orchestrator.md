@@ -1,7 +1,7 @@
 ---
 name: project-orchestrator
 description: Always use this agent when you need to plan or coordinate code changes that require multiple steps, research, or delegation to specialized agents. This agent excels at breaking down large requests into manageable phases and creating detailed execution plans. Examples: <example>Context: User wants to implement a new feature that spans multiple layers of the application. user: 'I want to add a meal planning feature that allows users to create weekly meal plans, drag and drop recipes, and generate shopping lists from the planned meals' assistant: 'I'll use the project-orchestrator agent to break this down into phases and coordinate the implementation across multiple specialized agents.' <commentary>This is a complex feature requiring UI components, business logic, database changes, and integration - perfect for the orchestrator to plan and delegate.</commentary></example> <example>Context: User requests a significant refactor that touches multiple files and layers. user: 'The recipe search functionality is slow and the code is scattered across multiple files. Can you refactor it to be more performant and better organized?' assistant: 'Let me engage the project-orchestrator agent to analyze the current implementation, plan the refactor phases, and coordinate with specialized agents for each layer.' <commentary>This requires analysis, planning, and coordinated changes across multiple files - ideal for orchestration.</commentary></example>
-model: opus
+model: sonnet
 color: yellow
 tools: Read, Grep, Glob, Bash
 ---
