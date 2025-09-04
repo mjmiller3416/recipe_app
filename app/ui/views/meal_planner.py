@@ -231,7 +231,7 @@ class MealWidget(QWidget):
             self.meal_slots[f"side{idx}"].set_recipe(recipe)
 
 
-# ── Meal Planner ────────────────────────────────────────────────────────────────────────────────────────────
+# ── Meal Planner View ───────────────────────────────────────────────────────────────────────────────────────
 class MealPlanner(QWidget):
     """
     The MealPlanner class manages a tabbed interface for creating, editing,

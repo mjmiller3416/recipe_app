@@ -15,6 +15,8 @@ from app.style.animation import WindowAnimator
 from app.ui.components import SearchBar
 from app.ui.components.navigation.sidebar import Sidebar
 from app.ui.components.navigation.titlebar import TitleBar
+from app.ui.services.navigation.navigation_service import NavigationService
+from app.ui.services.navigation.routes import register_main_routes, get_sidebar_route_mapping
 from app.ui.utils.layout_utils import center_on_screen
 
 # ── Constants ────────────────────────────────────────────────────────────────────────────────
@@ -106,11 +108,14 @@ class MainWindow(FramelessWindow):
 
         # ── Initialize Services & Connect Signals ──
         self.animator = WindowAnimator(self)
+        self._setup_navigation()
         self._connect_signals()
 
 
         # Set initial page (after signal connections)
         self.sidebar.buttons["btn_dashboard"].setChecked(True)
+        # Navigate to dashboard as initial route
+        self._navigate_to_route("/dashboard")
 
         # Resize and center the window at the end
         self.resize(int(SETTINGS["WINDOW_WIDTH"]), int(SETTINGS["WINDOW_HEIGHT"]))
@@ -119,6 +124,40 @@ class MainWindow(FramelessWindow):
     @property
     def _is_maximized(self) -> bool:
         return self.isMaximized()
+
+    def _setup_navigation(self):
+        """Initialize the navigation service and register routes."""
+        # Register all main routes
+        register_main_routes()
+        
+        # Create navigation service instance
+        self.navigation_service = NavigationService.create(self.sw_pages)
+        
+        # Connect navigation service signals for header updates
+        self.navigation_service.navigation_completed.connect(self._on_navigation_completed)
+
+    def _navigate_to_route(self, route_path: str):
+        """Navigate to a specific route using the navigation service."""
+        if hasattr(self, 'navigation_service'):
+            success = self.navigation_service.navigate_to(route_path)
+            if not success:
+                from _dev_tools import DebugLogger
+                DebugLogger.log(f"Failed to navigate to route: {route_path}", "error")
+
+    def _on_navigation_completed(self, path: str, params: dict):
+        """Handle navigation completion to update UI state."""
+        # Update header based on route path
+        route_to_header = {
+            "/dashboard": "Dashboard",
+            "/meal-planner": "Meal Planner", 
+            "/recipes/browse": "View Recipes",
+            "/shopping-list": "Shopping List",
+            "/recipes/add": "Add Recipes",
+            "/settings": "Settings"
+        }
+        
+        header_text = route_to_header.get(path, "MealGenie")
+        self.lbl_header.setText(header_text)
 
     def _connect_signals(self):
         """Connect all UI signals to their respective slots."""
@@ -131,15 +170,15 @@ class MainWindow(FramelessWindow):
         # Sidebar
         self.sidebar_toggle_requested.connect(self.sidebar.toggle)
 
-        button_map = {
-            "btn_dashboard": "dashboard",
-            "btn_meal_planner": "meal_planner",
-            "btn_view_recipes": "view_recipes",
-            "btn_shopping_list": "shopping_list",
-            "btn_add_recipes": "add_recipe",
-            "btn_settings": "settings",
-        }
-        #TODO - Connect Sidebar Buttons to Navigation Service
+        # Connect sidebar buttons to navigation service
+        route_mapping = get_sidebar_route_mapping()
+        for button_name, route_path in route_mapping.items():
+            button = self.sidebar.buttons.get(button_name)
+            if button:
+                button.clicked.connect(lambda checked, path=route_path: self._navigate_to_route(path))
+
+        # Connect exit button
+        self.sidebar.buttons["btn_exit"].clicked.connect(self.close)
 
     def _update_header(self, page_name: str):
         """Update header label text based on page name."""

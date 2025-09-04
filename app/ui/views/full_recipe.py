@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Iterable
 
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QSizePolicy, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QSizePolicy, QVBoxLayout, QWidget
 
 from app.core.models import Recipe
 from app.core.utils.text_utils import sanitize_multiline_input, sanitize_form_input
@@ -38,7 +38,7 @@ from app.ui.constants import LayoutConstants
 from _dev_tools.debug_logger import DebugLogger
 
 
-# ── Ingredient List ──────────────────────────────────────────────────────────────────────────
+# ── Ingredient and Directions Lists ─────────────────────────────────────────────────────────────────────────
 class IngredientList(QWidget):
     """A list widget for displaying recipe ingredients with amounts and names."""
 
@@ -121,8 +121,6 @@ class IngredientList(QWidget):
             label.setFixedWidth(fixed_width)
         return label
 
-
-# ── Directions List ──────────────────────────────────────────────────────────────────────────
 class DirectionsList(QWidget):
     """A numbered list widget for displaying recipe directions."""
 
@@ -202,7 +200,7 @@ class DirectionsList(QWidget):
         return label
 
 
-# ── FullRecipe View ─────────────────────────────────────────────────────────────────────────
+# ── Full Recipe View ────────────────────────────────────────────────────────────────────────────────────────
 class FullRecipe(QWidget):
     """Full recipe detail view (visual-only, no editing/upload yet)."""
 
