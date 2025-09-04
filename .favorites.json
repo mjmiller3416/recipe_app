@@ -1,0 +1,120 @@
+[
+    {
+        "type": "Group",
+        "name": "Config",
+        "parent_id": null,
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "RjLC1ceNg4okhruB",
+        "iconColor": "rgb(128, 128, 0)"
+    },
+    {
+        "type": "Group",
+        "name": "Views",
+        "parent_id": null,
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "W8XdbSox9fQAwueM",
+        "iconColor": "rgb(0, 139, 139)"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\config\\config.py",
+        "parent_id": "RjLC1ceNg4okhruB",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\config\\config.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "aEAB2gQSXlvKWbTs",
+        "label": "Main Config"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\icon\\config.py",
+        "parent_id": "RjLC1ceNg4okhruB",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\icon\\config.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "PE2iLnQ91ktmjCrB",
+        "label": "Icon Config"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\config.py",
+        "parent_id": "RjLC1ceNg4okhruB",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\config.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "3wIoErPBmlyHsx6U",
+        "label": "Theme Config"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\style_sheet.py",
+        "parent_id": "RjLC1ceNg4okhruB",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\style_sheet.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "hHO2uVLfld3MUatg",
+        "label": "Material3 Roles"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\add_recipes.py",
+        "parent_id": "W8XdbSox9fQAwueM",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\add_recipes.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "FBED50Zp2dvxHzbr",
+        "label": "Add Recipes"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\dashboard.py",
+        "parent_id": "W8XdbSox9fQAwueM",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\dashboard.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "Jet9kYsVZSrhnC1E",
+        "label": "Dashboard"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\meal_planner.py",
+        "parent_id": "W8XdbSox9fQAwueM",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\meal_planner.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "fwKWm0lU1uVDxjLy",
+        "label": "Meal Planner"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\settings.py",
+        "parent_id": "W8XdbSox9fQAwueM",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\settings.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "f7rYbDoZWvlayU4N",
+        "label": "Settings"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\shopping_list.py",
+        "parent_id": "W8XdbSox9fQAwueM",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\shopping_list.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "mTLJhpEA0nUgY7Mi",
+        "label": "Shopping List"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\view_recipes.py",
+        "parent_id": "W8XdbSox9fQAwueM",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\view_recipes.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "Pg6lw3qoDedjBGrT",
+        "label": "View Recipes"
+    }
+]
