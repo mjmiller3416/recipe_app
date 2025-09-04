@@ -5,6 +5,10 @@
 __pycache__/
 *.py[cod]
 app/core/database/app_data.db
+
+# Claude Code personal files
+.favorites.json
+.claude/settings.local.json
 # Exclude temporary and user-specific data
 data_files/temp_crops/
 data_files/user_profile/
