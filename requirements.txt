@@ -29,6 +29,8 @@ PySide6_Essentials==6.9.0
 PySideSix-Frameless-Window==0.7.3
 pytest==8.3.5
 pytest-qt==4.4.0
+factory-boy==3.3.1
+faker==33.0.0
 python-dotenv==1.1.1
 pywin32==310
 requests==2.32.4
