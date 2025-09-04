@@ -2,25 +2,29 @@
 
     This module contains configuration settings for the application.
 """
+
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 import re
-# ── Imports ─────────────────────────────────────────────────────────────────────
-from pathlib import Path
+from dataclasses import dataclass
 
 from PySide6.QtCore import QRegularExpression, QSize
 from PySide6.QtGui import QRegularExpressionValidator
 
-# ── Icon Defaults ──
-ICON_SIZE  = QSize(20, 20)
+
+# ── Application Configurations ──────────────────────────────────────────────────────────────────────────────
+
+@dataclass
+class AppConfig:
+    """Configuration settings for the application."""
+    # ── Window Settings ──
+    WINDOW_WIDTH: int = 2010
+    WINDOW_HEIGHT: int = 1300
+    APP_NAME: str = "MealGenie"
+
+# ── Icon Defaults ───────────────────────────────────────────────────────────────────────────────────────────
 FALLBACK_COLOR = "#DD0AE0"  # A bright magenta for error states
 
-APPLICATION_WINDOW = {
-    "SETTINGS": {
-        "APP_NAME": "MealGenie",
-        "WINDOW_HEIGHT": 1300,
-        "WINDOW_WIDTH":  2010,
-        "BTN_SIZE": QSize(58, 58),
-    },
-}
+
 SIDEBAR = {
     "SETTINGS": {
         "EXPANDED_WIDTH": 360,

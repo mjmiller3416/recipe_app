@@ -107,12 +107,8 @@ def log_and_handle_exception(
     if logger_func:
         logger_func(error_message, "error")
     else:
-        try:
-            from _dev_tools import DebugLogger
-            DebugLogger().log(error_message, "error")
-        except ImportError:
-            # Fallback to print if no logger available
-            print(f"ERROR: {error_message}")
+        from _dev_tools import DebugLogger
+        DebugLogger().log(error_message, "error")
 
     return fallback_value
 

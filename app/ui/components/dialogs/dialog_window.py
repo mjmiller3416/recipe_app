@@ -9,13 +9,8 @@ Provides close button and dragging functionality.
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QWidget
 
-from app.config import APPLICATION_WINDOW
 from app.ui.components.navigation import TitleBar
 from app.ui.utils.layout_utils import center_on_screen
-
-
-# ── Constants ───────────────────────────────────────────────────────────────────────────────────────────────
-SETTINGS = APPLICATION_WINDOW["SETTINGS"]
 
 
 # ── Application Window ──────────────────────────────────────────────────────────────────────────────────────

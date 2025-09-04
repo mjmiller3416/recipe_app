@@ -10,7 +10,8 @@ from PySide6.QtWidgets import (
     QVBoxLayout, QWidget)
 from qframelesswindow import FramelessWindow
 
-from ..config import APPLICATION_WINDOW
+from app.core.utils.error_utils import log_and_handle_exception
+from app.config import AppConfig
 from app.style.animation import WindowAnimator
 from app.ui.components import SearchBar
 from app.ui.components.navigation.sidebar import Sidebar
@@ -18,9 +19,6 @@ from app.ui.components.navigation.titlebar import TitleBar
 from app.ui.services.navigation.service import NavigationService
 from app.ui.services.navigation.routes import register_main_routes, get_sidebar_route_mapping
 from app.ui.utils.layout_utils import center_on_screen
-
-# ── Constants ────────────────────────────────────────────────────────────────────────────────
-SETTINGS = APPLICATION_WINDOW["SETTINGS"]
 
 
 # ── Application Window ───────────────────────────────────────────────────────────────────────
@@ -111,14 +109,12 @@ class MainWindow(FramelessWindow):
         self._setup_navigation()
         self._connect_signals()
 
-
-        # Set initial page (after signal connections)
+        # Set initial view (after signal connections)
         self.sidebar.buttons["btn_dashboard"].setChecked(True)
-        # Navigate to dashboard as initial route
         self._navigate_to_route("/dashboard")
 
         # Resize and center the window at the end
-        self.resize(int(SETTINGS["WINDOW_WIDTH"]), int(SETTINGS["WINDOW_HEIGHT"]))
+        self.resize(int(AppConfig.WINDOW_WIDTH), int(AppConfig.WINDOW_HEIGHT))
         center_on_screen(self)
 
     @property
@@ -141,8 +137,10 @@ class MainWindow(FramelessWindow):
         if hasattr(self, 'navigation_service'):
             success = self.navigation_service.navigate_to(route_path)
             if not success:
-                from _dev_tools import DebugLogger
-                DebugLogger.log(f"Failed to navigate to route: {route_path}", "error")
+                log_and_handle_exception(
+                    "navigation",
+                    Exception(f"Failed to navigate to route: {route_path}")
+                )
 
     def _on_navigation_completed(self, path: str, params: dict):
         """Handle navigation completion to update UI state."""
@@ -181,6 +179,7 @@ class MainWindow(FramelessWindow):
         self.sidebar.buttons["btn_exit"].clicked.connect(self.close)
 
 
+# ── Event Handlers ──────────────────────────────────────────────────────────────────────────────────────────
     def keyPressEvent(self, event):
         """Ignore the Escape key to prevent accidental app closure."""
         if event.key() == Qt.Key_Escape:

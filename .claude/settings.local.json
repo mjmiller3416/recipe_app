@@ -1,17 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Read(/C:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views/**)",
-      "Read(/C:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views/**)",
-      "Read(/C:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views/**)",
-      "Read(/C:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views/**)",
-      "Read(/C:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\components\\composite/**)",
-      "Read(/C:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\components\\composite/**)",
-      "Read(/C:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\services\\navigation/**)",
-      "Read(/C:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\components\\navigation/**)",
-      "Read(/C:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui/**)",
-      "Read(/C:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views/**)",
-      "Read(/C:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views/**)"
+      "Read(**)",
+      "Read(/**/.*)",
+      "Read(./**)"
     ],
     "deny": [],
     "ask": []

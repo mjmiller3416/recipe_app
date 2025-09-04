@@ -4,19 +4,19 @@ Title bar component for the main application window.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QPoint, Qt, Signal
+from PySide6.QtCore import QPoint, Qt, Signal, QSize
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
 from qframelesswindow.utils.win32_utils import WindowsMoveResize as MoveResize
 
-from app.config import APPLICATION_WINDOW
+from app.config import AppConfig
 from app.style import Qss, Theme
 from app.style.icon import AppIcon, Icon, Name, Type
 
 from ..widgets.button import BaseButton, ToolButton
 
 # ── Constants ────────────────────────────────────────────────────────────────────────────────
-SETTINGS = APPLICATION_WINDOW["SETTINGS"]
+BTN_SIZE = QSize(58, 58)
 
 
 class TitleBar(QWidget):
@@ -44,27 +44,27 @@ class TitleBar(QWidget):
         self.logo = AppIcon(Name.LOGO)
         self.logo.setSize(32,32)
         self.logo.setObjectName("AppLogo")
-        self.title = QLabel(SETTINGS["APP_NAME"])
+        self.title = QLabel(AppConfig.APP_NAME)
         self.title.setObjectName("AppTitle")
 
         # ── Sidebar Toggle Button ──
         self.btn_ico_toggle_sidebar = ToolButton(Type.SECONDARY, Icon.MENU)
         self.btn_ico_toggle_sidebar.setCheckable(True)
 
-        self.btn_ico_toggle_sidebar.setFixedSize(SETTINGS["BTN_SIZE"])
+        self.btn_ico_toggle_sidebar.setFixedSize(BTN_SIZE)
         self.btn_ico_toggle_sidebar.setObjectName("BtnToggleSidebar")
 
         # ── Minimize Button ──
         self.btn_ico_minimize = ToolButton(Type.TITLEBAR, Icon.MINIMIZE)
-        self.btn_ico_minimize.setFixedSize(SETTINGS["BTN_SIZE"])
+        self.btn_ico_minimize.setFixedSize(BTN_SIZE)
 
         # ── Maximize/Restore Button ──
         self.btn_ico_maximize = ToolButton(Type.TITLEBAR, Icon.MAXIMIZE)
-        self.btn_ico_maximize.setFixedSize(SETTINGS["BTN_SIZE"])
+        self.btn_ico_maximize.setFixedSize(BTN_SIZE)
 
         # ── Close Button ──
         self.btn_ico_close = ToolButton(Type.TITLEBAR, Icon.CROSS)
-        self.btn_ico_close.setFixedSize(SETTINGS["BTN_SIZE"])
+        self.btn_ico_close.setFixedSize(BTN_SIZE)
         self.btn_ico_close.setObjectName("BtnClose")
 
         self._build_layout()
