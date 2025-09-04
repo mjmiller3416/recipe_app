@@ -31,9 +31,8 @@ from typing import Iterable, Union
 
 from PySide6.QtCore import QEvent, QObject, Qt, QTimer
 from PySide6.QtGui import QGuiApplication
-from PySide6.QtWidgets import (
-    QFrame, QGridLayout, QHBoxLayout, QLabel,
-    QLayout, QScrollArea, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
+                               QLayout, QScrollArea, QVBoxLayout, QWidget)
 
 __all__ = [
     # Scroll Area Setup
@@ -242,6 +241,7 @@ def create_labeled_form_grid(
         layout, widgets, labels = create_labeled_form_grid(self, field_config)
     """
     from PySide6.QtWidgets import QLineEdit, QTextEdit
+
     from app.ui.components.widgets import ComboBox
 
     # Create base grid layout

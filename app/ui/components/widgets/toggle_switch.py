@@ -4,7 +4,8 @@ Custom toggle switch widget with smooth animations and Material Design styling.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import Property, QEasingCurve, QPropertyAnimation, Qt, Signal
+from PySide6.QtCore import (Property, QEasingCurve, QPropertyAnimation, Qt,
+                            Signal)
 from PySide6.QtGui import QColor, QPainter
 from PySide6.QtWidgets import QSizePolicy, QWidget
 

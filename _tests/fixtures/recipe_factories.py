@@ -5,17 +5,17 @@ Provides factories for all MealGenie models using factory-boy and faker
 to generate realistic test data with proper relationships and constraints.
 """
 
-import factory
-import factory.fuzzy
-from faker import Faker
 from datetime import datetime, timedelta
 from typing import Any, Dict, List
 
-from app.core.models import (
-    Recipe, Ingredient, RecipeIngredient, MealSelection,
-    ShoppingItem, SavedMealState, ShoppingState, RecipeHistory
-)
+import factory
+import factory.fuzzy
+from faker import Faker
+
 from app.core.database.base import Base
+from app.core.models import (Ingredient, MealSelection, Recipe, RecipeHistory,
+                             RecipeIngredient, SavedMealState, ShoppingItem,
+                             ShoppingState)
 
 fake = Faker()
 

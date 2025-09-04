@@ -11,20 +11,20 @@ Provides global test configuration including:
 """
 
 import os
+import shutil
 import sys
 import tempfile
-import shutil
 from pathlib import Path
-from typing import Generator, Any
-from unittest.mock import Mock, MagicMock, patch
+from typing import Any, Generator
+from unittest.mock import MagicMock, Mock, patch
 
-import pytest
 import factory
+import pytest
 from faker import Faker
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
-from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QTimer
+from PySide6.QtWidgets import QApplication
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
 
 # Add project root to Python path
 project_root = Path(__file__).parent.parent

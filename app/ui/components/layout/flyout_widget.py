@@ -12,8 +12,8 @@ from PySide6.QtGui import QScreen
 from PySide6.QtWidgets import (QApplication, QFrame, QMainWindow, QVBoxLayout,
                                QWidget)
 
-from app.style.animation.animator import Animator
 from _dev_tools import DebugLogger
+from app.style.animation.animator import Animator
 
 
 # ── FlyoutWidget ─────────────────────────────────────────────────────────────────────────────

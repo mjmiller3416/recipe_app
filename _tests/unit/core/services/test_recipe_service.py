@@ -9,16 +9,18 @@ Tests the recipe business logic service including:
 - Service layer coordination with repositories
 """
 
+from unittest.mock import MagicMock, Mock, call, patch
+
 import pytest
-from unittest.mock import Mock, MagicMock, patch, call
 from faker import Faker
 
-from app.core.services.recipe_service import RecipeService
-from app.core.repositories.recipe_repo import RecipeRepository
+from _tests.fixtures.recipe_factories import IngredientFactory, RecipeFactory
+from app.core.dtos.recipe_dtos import (RecipeCreateDTO, RecipeResponseDTO,
+                                       RecipeUpdateDTO)
+from app.core.models import Ingredient, Recipe, RecipeIngredient
 from app.core.repositories.ingredient_repo import IngredientRepository
-from app.core.models import Recipe, Ingredient, RecipeIngredient
-from app.core.dtos.recipe_dtos import RecipeCreateDTO, RecipeUpdateDTO, RecipeResponseDTO
-from _tests.fixtures.recipe_factories import RecipeFactory, IngredientFactory
+from app.core.repositories.recipe_repo import RecipeRepository
+from app.core.services.recipe_service import RecipeService
 
 fake = Faker()
 

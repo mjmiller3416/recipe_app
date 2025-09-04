@@ -15,10 +15,10 @@ from .layout.separator import Separator
 # From navigation
 from .navigation.sidebar import Sidebar
 from .navigation.titlebar import TitleBar
-# From widgets
-from .widgets.image import CircularImage, RoundedImage
 from .widgets.combobox import ComboBox
 from .widgets.dropdown_menu import DropdownMenu
+# From widgets
+from .widgets.image import CircularImage, RoundedImage
 from .widgets.toggle_switch import ToggleSwitch
 
 __all__ = [

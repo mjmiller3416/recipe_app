@@ -10,6 +10,7 @@ import uuid
 from PySide6.QtCore import QEvent, QSize, Qt, Slot
 from PySide6.QtWidgets import QFileDialog, QVBoxLayout, QWidget
 
+from _data_files.user_settings import UserSettings
 from app.config import AppPaths
 from app.core.utils.image_utils import img_create_temp_path, img_validate_path
 from app.style import Theme
@@ -18,7 +19,6 @@ from app.style.icon.config import Name, Type
 from app.style.theme.config import Qss
 from app.ui.components.widgets import Button
 from app.ui.utils.layout_utils import CornerAnchor
-from _data_files.user_settings import UserSettings
 
 from ..widgets.image import CircularImage
 

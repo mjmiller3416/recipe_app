@@ -25,13 +25,13 @@ Consolidates common widget setup patterns and theme registration logic.
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-from typing import Optional, Union, List
+from typing import List, Optional, Union
 
 from PySide6.QtWidgets import QLabel, QLineEdit, QTextEdit, QWidget
 
 from app.style import Qss, Theme
 from app.style.icon.config import Name, Type
-from app.ui.components.widgets import ComboBox, Button
+from app.ui.components.widgets import Button, ComboBox
 
 __all__ = [
     # Widget Creation & Setup

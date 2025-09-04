@@ -10,7 +10,6 @@ from dataclasses import dataclass
 from PySide6.QtCore import QRegularExpression, QSize
 from PySide6.QtGui import QRegularExpressionValidator
 
-
 # ── Application Configurations ──────────────────────────────────────────────────────────────────────────────
 
 @dataclass

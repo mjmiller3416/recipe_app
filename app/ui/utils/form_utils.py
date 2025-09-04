@@ -31,8 +31,8 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Union
 
-from PySide6.QtWidgets import QComboBox, QLineEdit, QTextEdit, QWidget
 from PySide6.QtGui import QRegularExpressionValidator
+from PySide6.QtWidgets import QComboBox, QLineEdit, QTextEdit, QWidget
 
 from app.ui.components.widgets import ComboBox
 

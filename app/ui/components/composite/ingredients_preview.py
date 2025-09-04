@@ -7,9 +7,10 @@ A simple ingredients preview component with a scrollable 2-column layout.
 from typing import Iterable
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QFrame, QGridLayout, QHBoxLayout, QLabel, QVBoxLayout, QWidget, QScrollArea
+from PySide6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
+                               QScrollArea, QVBoxLayout, QWidget)
 
-from app.style import Theme, Qss
+from app.style import Qss, Theme
 
 
 # ── Ingredients Preview ─────────────────────────────────────────────────────────────────────────────────────

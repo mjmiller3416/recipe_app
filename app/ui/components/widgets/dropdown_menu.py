@@ -6,11 +6,12 @@ Provides a reusable dropdown menu component for displaying selectable lists.
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from typing import Optional, Sequence
 
-from PySide6.QtCore import QAbstractItemModel, QEvent, QStringListModel, Qt, Signal
+from PySide6.QtCore import (QAbstractItemModel, QEvent, QStringListModel, Qt,
+                            Signal)
 from PySide6.QtWidgets import QCompleter, QWidget
 
-from app.style import Qss, Theme
 from _dev_tools import DebugLogger
+from app.style import Qss, Theme
 
 
 # ── Dropdown Menu ───────────────────────────────────────────────────────────────────────────────────────────

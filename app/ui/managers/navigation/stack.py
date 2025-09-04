@@ -5,8 +5,8 @@ Navigation history and stack management for route-based navigation.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from dataclasses import dataclass
-from typing import List, Optional, Dict, Any
 from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 from PySide6.QtCore import QObject, Signal
 

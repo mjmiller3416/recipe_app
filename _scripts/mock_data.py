@@ -5,7 +5,7 @@ This module provides functions to generate realistic test data for the recipe ap
 
 import random
 from datetime import datetime, timedelta
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 try:
     from faker import Faker
@@ -14,16 +14,16 @@ except ImportError:
     FAKER_AVAILABLE = False
     print("Warning: faker not installed. Install with: pip install faker")
 
-from app.core.models.recipe import Recipe
+from app.config.paths.app_paths import AppPaths
+from app.core.database.db import DatabaseSession
 from app.core.models.ingredient import Ingredient
-from app.core.models.recipe_ingredient import RecipeIngredient
 from app.core.models.meal_selection import MealSelection
+from app.core.models.recipe import Recipe
 from app.core.models.recipe_history import RecipeHistory
+from app.core.models.recipe_ingredient import RecipeIngredient
 from app.core.models.saved_meal_state import SavedMealState
 from app.core.models.shopping_item import ShoppingItem
 from app.core.models.shopping_state import ShoppingState
-from app.core.database.db import DatabaseSession
-from app.config.paths.app_paths import AppPaths
 
 # Initialize Faker if available
 fake = Faker() if FAKER_AVAILABLE else None

@@ -2,11 +2,11 @@
 
 from .button import BaseButton, Button, ToolButton
 from .checkbox import CheckBox
-from .image import CircularImage, RoundedImage
 from .combobox import ComboBox
 from .dropdown_menu import DropdownMenu
-from .toggle_switch import ToggleSwitch
+from .image import CircularImage, RoundedImage
 from .toast import Toast, show_toast
+from .toggle_switch import ToggleSwitch
 
 __all__ = [
     "Button",

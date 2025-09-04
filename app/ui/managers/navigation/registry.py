@@ -6,13 +6,12 @@ Route-based navigation registry system for dynamic view registration and managem
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 import re
 from dataclasses import dataclass
-from typing import Callable, Dict, List, Optional, Type, TypeVar, Union
 from enum import Enum
+from typing import Callable, Dict, List, Optional, Type, TypeVar, Union
 
 from PySide6.QtWidgets import QWidget
 
 from _dev_tools import DebugLogger
-
 
 T = TypeVar('T', bound=QWidget)
 

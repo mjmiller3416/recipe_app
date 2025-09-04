@@ -1,10 +1,8 @@
 # app.ui.components.image package
 
 from .avatar_loader import AvatarLoader
+from .image import BaseImage, RecipeBanner, RecipeImage
 from .image_cropper import ImageCropper
-from .image import BaseImage
-from .image import RecipeImage
-from .image import RecipeImage, RecipeBanner
 
 __all__ = [
     "AvatarLoader",

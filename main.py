@@ -15,10 +15,11 @@ from PySide6.QtWidgets import QApplication
 
 # Force-disable the border accent globally in the library
 qframelesswindow.utils.win32_utils.isSystemBorderAccentEnabled = lambda: False
+from dotenv import load_dotenv
+
+from _dev_tools import DebugLogger, startup_timer
 from app.style.theme_controller import Mode, Theme
 from app.ui.main_window import MainWindow
-from _dev_tools import DebugLogger, startup_timer
-from dotenv import load_dotenv
 
 if "--reset" in sys.argv:
         pass

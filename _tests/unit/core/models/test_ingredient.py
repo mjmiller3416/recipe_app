@@ -9,14 +9,13 @@ Tests the Ingredient SQLAlchemy model including:
 """
 
 import pytest
-from sqlalchemy.exc import IntegrityError
 from faker import Faker
+from sqlalchemy.exc import IntegrityError
 
+from _tests.fixtures.recipe_factories import (IngredientFactory,
+                                              IngredientTraits, RecipeFactory,
+                                              RecipeIngredientFactory)
 from app.core.models import Ingredient, Recipe, RecipeIngredient
-from _tests.fixtures.recipe_factories import (
-    IngredientFactory, RecipeFactory, RecipeIngredientFactory,
-    IngredientTraits
-)
 
 fake = Faker()
 

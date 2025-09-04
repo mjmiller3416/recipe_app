@@ -5,12 +5,12 @@ Base view classes for the route-based navigation system.
 
 from typing import Any, Dict, Optional, Type, TypeVar
 
-from PySide6.QtCore import Signal, Qt
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QDialog, QWidget
 
-from .registry import ViewType, NavigationRegistry
 from _dev_tools import DebugLogger
 
+from .registry import NavigationRegistry, ViewType
 
 T = TypeVar('T', bound='NavigableView')
 

@@ -4,7 +4,8 @@ Provides visual effects (shadows, glows, blurs, opacity) for QWidgets.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtWidgets import QGraphicsBlurEffect, QGraphicsDropShadowEffect, QGraphicsOpacityEffect, QWidget
+from PySide6.QtWidgets import (QGraphicsBlurEffect, QGraphicsDropShadowEffect,
+                               QGraphicsOpacityEffect, QWidget)
 
 from app.style.effects.config import Glow, Shadow
 

@@ -8,19 +8,23 @@ Tests the full integration between all layers:
 - Performance and scalability integration
 """
 
-import pytest
 from datetime import date, timedelta
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
 from faker import Faker
 
+from _tests.fixtures.recipe_factories import (IngredientFactory,
+                                              MealSelectionFactory,
+                                              RecipeFactory,
+                                              RecipeWithIngredientsFactory,
+                                              create_sample_database)
 from app.core.database.db import DatabaseManager
-from app.core.repositories import RecipeRepository, IngredientRepository, PlannerRepository, ShoppingRepository
-from app.core.services import RecipeService, IngredientService, PlannerService, ShoppingService
-from app.core.models import Recipe, Ingredient, MealSelection, ShoppingItem
-from _tests.fixtures.recipe_factories import (
-    RecipeFactory, IngredientFactory, MealSelectionFactory,
-    create_sample_database, RecipeWithIngredientsFactory
-)
+from app.core.models import Ingredient, MealSelection, Recipe, ShoppingItem
+from app.core.repositories import (IngredientRepository, PlannerRepository,
+                                   RecipeRepository, ShoppingRepository)
+from app.core.services import (IngredientService, PlannerService,
+                               RecipeService, ShoppingService)
 
 fake = Faker()
 

@@ -58,8 +58,8 @@ import uuid
 from pathlib import Path
 from typing import Dict, NamedTuple, Optional, Tuple, Union
 
-from PySide6.QtCore import QRectF, QSize, Qt, QRect
-from PySide6.QtGui import QPainter, QPainterPath, QPixmap, QColor
+from PySide6.QtCore import QRect, QRectF, QSize, Qt
+from PySide6.QtGui import QColor, QPainter, QPainterPath, QPixmap
 
 from app.config.paths import AppPaths
 

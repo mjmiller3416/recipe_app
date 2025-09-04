@@ -22,19 +22,19 @@ from enum import Enum
 from typing import Optional
 
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import QDialog, QFrame, QHBoxLayout, QLabel, QStackedWidget, QVBoxLayout, QWidget
+from PySide6.QtWidgets import (QDialog, QFrame, QHBoxLayout, QLabel,
+                               QStackedWidget, QVBoxLayout, QWidget)
 
+from _dev_tools.debug_logger import DebugLogger
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
 from app.style import Theme
 from app.style.icon import AppIcon, Name, Type
 from app.style.theme.config import Qss
-from app.ui.components.layout.card import BaseCard
 from app.ui.components.layout import Separator
+from app.ui.components.layout.card import BaseCard
 from app.ui.components.widgets import RoundedImage, ToolButton
 from app.ui.utils.layout_utils import make_overlay
-from _dev_tools.debug_logger import DebugLogger
-
 
 # ── Constants ────────────────────────────────────────────────────────────────────────────────────────────────────
 LAYOUT_SIZE = {
@@ -468,7 +468,8 @@ class LargeRecipeCard(BaseRecipeCard):
         frame.setAttribute(Qt.WA_StyledBackground, True)
         frame.setObjectName("RecipeCard")
 
-        from app.ui.components.composite.ingredients_preview import IngredientsPreview
+        from app.ui.components.composite.ingredients_preview import \
+            IngredientsPreview
         from app.ui.components.composite.recipe_info_card import RecipeInfoCard
         from app.ui.components.composite.recipe_tags_row import RecipeTagsRow
 

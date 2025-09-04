@@ -8,11 +8,11 @@ flow layout and can switch to a full recipe view.
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QStackedWidget, QVBoxLayout
 
+from _dev_tools import DebugLogger
 from app.ui.components.composite.recipe_browser import RecipeBrowser
 from app.ui.components.composite.recipe_card import LayoutSize
-from app.ui.views.full_recipe import FullRecipe
 from app.ui.managers.navigation.views import MainView
-from _dev_tools import DebugLogger
+from app.ui.views.full_recipe import FullRecipe
 
 
 # ── View Recipes ─────────────────────────────────────────────────────────────────────────────

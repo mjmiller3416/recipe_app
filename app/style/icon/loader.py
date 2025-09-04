@@ -12,9 +12,9 @@ from weakref import WeakSet
 
 from PySide6.QtCore import QObject
 
+from _dev_tools import DebugLogger
 from app.core.utils import QSingleton
 from app.style.theme_controller import Theme
-from _dev_tools import DebugLogger
 
 
 # ── Themed Icon ─────────────────────────────────────────────────────────────────────────────────────────────

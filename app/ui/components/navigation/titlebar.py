@@ -4,7 +4,7 @@ Title bar component for the main application window.
 """
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QPoint, Qt, Signal, QSize
+from PySide6.QtCore import QPoint, QSize, Qt, Signal
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
 from qframelesswindow.utils.win32_utils import WindowsMoveResize as MoveResize

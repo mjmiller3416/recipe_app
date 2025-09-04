@@ -8,18 +8,19 @@ Handles OpenAI API calls, file management, and error handling.
 
 from __future__ import annotations
 
-import os
 import asyncio
 import base64
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional
 
 from openai import AsyncOpenAI
 
-from .config import ImageGenConfig
-from app.core.utils.image_utils import img_ai_slugify, img_ai_get_hash
 from _dev_tools import DebugLogger
+from app.core.utils.image_utils import img_ai_get_hash, img_ai_slugify
+
+from .config import ImageGenConfig
 
 
 @dataclass
@@ -228,8 +229,9 @@ class ImageGenService:
         await asyncio.sleep(0.5 + (width * height / 1000000))  # Larger images take longer
 
         # Create a simple colored PNG image
-        from PIL import Image, ImageDraw, ImageFont
         import io
+
+        from PIL import Image, ImageDraw, ImageFont
 
         # Create image with a colored background
         color = (70 + hash(prompt) % 180, 100 + hash(prompt) % 100, 150 + hash(prompt) % 100)

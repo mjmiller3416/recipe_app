@@ -8,16 +8,17 @@ Tests meal planning models including:
 - Meal plan generation logic
 """
 
-import pytest
 from datetime import date, datetime, timedelta
-from sqlalchemy.exc import IntegrityError
-from faker import Faker
 
+import pytest
+from faker import Faker
+from sqlalchemy.exc import IntegrityError
+
+from _tests.fixtures.recipe_factories import (MealSelectionFactory,
+                                              RecipeFactory,
+                                              SavedMealStateFactory,
+                                              WeeklyMealPlanFactory)
 from app.core.models import MealSelection, Recipe, SavedMealState
-from _tests.fixtures.recipe_factories import (
-    MealSelectionFactory, RecipeFactory, SavedMealStateFactory,
-    WeeklyMealPlanFactory
-)
 
 fake = Faker()
 

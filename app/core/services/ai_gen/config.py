@@ -12,7 +12,6 @@ from typing import Dict, Set
 
 from app.config.paths import AppPaths
 
-
 # Model capabilities mapping
 _MODEL_SIZES: Dict[str, Set[str]] = {
     "gpt-image-1": {"1024x1024", "1024x1536", "1536x1024"},

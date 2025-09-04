@@ -7,11 +7,11 @@ Placeholder class for the Dashboard screen.
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QSizePolicy, QVBoxLayout
 
+from _dev_tools import DebugLogger
 from app.style.icon.config import Name, Type
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
 from app.ui.managers.navigation.views import MainView
-from _dev_tools import DebugLogger
 
 
 # ── Dashboard ────────────────────────────────────────────────────────────────────────────────

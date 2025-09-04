@@ -19,23 +19,27 @@ from pathlib import Path
 from typing import Iterable
 
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import QHBoxLayout, QLabel, QSizePolicy, QVBoxLayout, QWidget
+from PySide6.QtWidgets import (QHBoxLayout, QLabel, QSizePolicy, QVBoxLayout,
+                               QWidget)
 
+from _dev_tools.debug_logger import DebugLogger
 from app.core.models import Recipe
-from app.core.utils.text_utils import sanitize_multiline_input, sanitize_form_input
+from app.core.utils.text_utils import (sanitize_form_input,
+                                       sanitize_multiline_input)
 from app.style import Qss, Theme
 from app.style.icon import AppIcon, Icon
 from app.style.icon.config import Name, Type
-from app.ui.utils.layout_utils import setup_main_scroll_layout, create_form_grid_layout, create_two_column_layout
-from app.ui.utils.event_utils import batch_connect_signals
-from app.ui.utils.widget_utils import apply_object_name_pattern
 from app.ui.components.composite.recipe_info_card import RecipeInfoCard
 from app.ui.components.images.image import RecipeBanner
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
 from app.ui.components.widgets.recipe_tag import RecipeTag
 from app.ui.constants import LayoutConstants
-from _dev_tools.debug_logger import DebugLogger
+from app.ui.utils.event_utils import batch_connect_signals
+from app.ui.utils.layout_utils import (create_form_grid_layout,
+                                       create_two_column_layout,
+                                       setup_main_scroll_layout)
+from app.ui.utils.widget_utils import apply_object_name_pattern
 
 
 # ── Ingredient and Directions Lists ─────────────────────────────────────────────────────────────────────────

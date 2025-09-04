@@ -15,21 +15,16 @@ from .dtos import (  # Recipe DTOs; Ingredient DTOs; Planner DTOs; Shopping DTOs
     RecipeUpdateDTO, ShoppingItemBaseDTO, ShoppingItemCreateDTO,
     ShoppingItemResponseDTO, ShoppingItemUpdateDTO, ShoppingListFilterDTO,
     ShoppingListGenerationDTO, ShoppingListGenerationResultDTO,
-    ShoppingListResponseDTO, ShoppingStateDTO
-)
+    ShoppingListResponseDTO, ShoppingStateDTO)
 # Models
-from .models import (
-    Ingredient, MealSelection, Recipe, RecipeHistory,
-    RecipeIngredient, SavedMealState, ShoppingItem,
-    ShoppingState
-)
+from .models import (Ingredient, MealSelection, Recipe, RecipeHistory,
+                     RecipeIngredient, SavedMealState, ShoppingItem,
+                     ShoppingState)
 # Repositories
 from .repositories import IngredientRepo, PlannerRepo, RecipeRepo, ShoppingRepo
 # Services
-from .services import (
-    DuplicateRecipeError, IngredientService, PlannerService,
-    RecipeSaveError, RecipeService, ShoppingService
-)
+from .services import (DuplicateRecipeError, IngredientService, PlannerService,
+                       RecipeSaveError, RecipeService, ShoppingService)
 # Utilities
 from .utils import QSingleton, utcnow
 
