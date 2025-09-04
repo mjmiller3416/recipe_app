@@ -19,10 +19,6 @@ from app.ui.components.navigation.sidebar import Sidebar
 from app.ui.components.navigation.titlebar import TitleBar
 from app.ui.utils.layout_utils import center_on_screen
 
-if TYPE_CHECKING:
-    from app.ui.services.navigation_service import NavigationService
-
-
 # ── Constants ────────────────────────────────────────────────────────────────────────────────
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]
 
@@ -41,22 +37,15 @@ class MainWindow(FramelessWindow):
         title_bar (TitleBar): The custom title bar widget.
         sidebar (Sidebar): The navigation sidebar widget.
         sw_pages (QStackedWidget): Widget that holds and switches between different pages.
-        navigation (NavigationService): Service responsible for page management and nav.
     """
     # ── Signals ──────────────────────────────────────────────────────────────────────────────
     sidebar_toggle_requested = Signal()
 
-    def __init__(
-            self,
-            #theme_controller: 'ThemeController',
-            navigation_service_factory: Callable[[QStackedWidget], 'NavigationService']
-    ):
+    def __init__(self):
         """Initializes the MainWindow.
 
         Args:
             theme_controller (ThemeController): The controller for managing app themes.
-            navigation_service_factory (callable): A factory function that creates an
-            instance of NavigationService.
         """
         super().__init__()
 
@@ -119,14 +108,10 @@ class MainWindow(FramelessWindow):
 
         # ── Initialize Services & Connect Signals ──
         self.animator = WindowAnimator(self)
-        self.navigation: 'NavigationService' = navigation_service_factory(self.sw_pages)
-        self.navigation.build_and_register_pages()
-
         self._connect_signals()
-        self.sw_pages.currentChanged.connect(self._on_page_changed)
+
 
         # Set initial page (after signal connections)
-        self.navigation.switch_to("dashboard")
         self.sidebar.buttons["btn_dashboard"].setChecked(True)
         # Explicitly update header for initial page since currentChanged may not fire
         self._update_header("dashboard")
@@ -150,7 +135,6 @@ class MainWindow(FramelessWindow):
         # Sidebar
         self.sidebar_toggle_requested.connect(self.sidebar.toggle)
 
-        # Navigation
         button_map = {
             "btn_dashboard": "dashboard",
             "btn_meal_planner": "meal_planner",
@@ -159,26 +143,7 @@ class MainWindow(FramelessWindow):
             "btn_add_recipes": "add_recipe",
             "btn_settings": "settings",
         }
-        for btn_name, page_name in button_map.items():
-            button = self.sidebar.buttons.get(btn_name)
-            if button:
-                def make_switch_callback(page):
-                    def callback():
-                        from _dev_tools import DebugLogger
-                        DebugLogger.log(f"Button clicked for page: {page}", "info")
-                        self._switch_page(page)
-                    return callback
-                button.clicked.connect(make_switch_callback(page_name))
-        # Exit button should close the application and trigger save via closeEvent
-        exit_btn = self.sidebar.buttons.get("btn_exit")
-        if exit_btn:
-            exit_btn.clicked.connect(self.close)
-
-    def _switch_page(self, page_name: str):
-        """Helper to switch pages and update the header text."""
-        from _dev_tools import DebugLogger
-        DebugLogger.log(f"Switching to page: {page_name}", "info")
-        self.navigation.switch_to(page_name)
+        #TODO - Connect Sidebar Buttons to Navigation Service
 
     def _update_header(self, page_name: str):
         """Update header label text based on page name."""
@@ -192,21 +157,6 @@ class MainWindow(FramelessWindow):
         }
         self.lbl_header.setText(mapping.get(page_name, page_name.replace("_", " ").title()))
 
-    def _on_page_changed(self, index: int):
-        """Update header when stacked widget page changes."""
-        widget = self.sw_pages.widget(index)
-        if not widget:
-            return
-
-        for name, w_instance in self.navigation.page_instances.items():
-            if w_instance is widget:
-                self._update_header(name)
-                # auto-focus the recipe name field when AddRecipes page is shown
-                if name == "add_recipe" and hasattr(w_instance, 'le_recipe_name'):
-                    from PySide6.QtCore import QTimer
-                    QTimer.singleShot(0, w_instance.le_recipe_name.setFocus)
-                break
-
     def keyPressEvent(self, event):
         """Ignore the Escape key to prevent accidental app closure."""
         if event.key() == Qt.Key_Escape:
@@ -215,8 +165,5 @@ class MainWindow(FramelessWindow):
         super().keyPressEvent(event)
 
     def closeEvent(self, event):
-        """Persist planner state before closing the application."""
-        meal_planner = self.navigation.page_instances.get("meal_planner")
-        if meal_planner and hasattr(meal_planner, 'saveMealPlan'):
-            meal_planner.saveMealPlan()
+        """Handle window close event to save geometry and settings."""
         super().closeEvent(event)

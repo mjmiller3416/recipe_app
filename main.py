@@ -17,7 +17,6 @@ from PySide6.QtWidgets import QApplication
 qframelesswindow.utils.win32_utils.isSystemBorderAccentEnabled = lambda: False
 from app.style.theme_controller import Mode, Theme
 from app.ui.main_window import MainWindow
-from app.ui.services.navigation_service import NavigationService
 from _dev_tools import DebugLogger, startup_timer
 from dotenv import load_dotenv
 
@@ -61,13 +60,9 @@ else:
     #Theme.setTheme(Color.TEAL, Mode.DARK)
 
     # ── Custom Color Map ──
-    Theme.setCustomColorMap("material-theme.json", Mode.DARK)
+    Theme.setCustomColorMap("app/style/theme/material-theme.json", Mode.DARK)
 
-    navigation_service_factory = NavigationService.create
-
-    main_window = MainWindow(
-        navigation_service_factory=navigation_service_factory
-    )
+    main_window = MainWindow()
     # Show the window in normal size first to establish restore geometry
     main_window.show()
     # Then immediately maximize to get the desired startup appearance

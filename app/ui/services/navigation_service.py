@@ -1,309 +1,415 @@
 """app/ui/services/navigation_service.py
 
-Navigation service for managing view navigation and routing.
+Route-based NavigationService with enhanced functionality.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
-from enum import Enum, auto
-from typing import Dict, Any, Optional, Callable, List
-from dataclasses import dataclass, field
+from typing import Dict, List, Optional
 
 from PySide6.QtCore import QObject, Signal
-from PySide6.QtWidgets import QStackedWidget
+from PySide6.QtWidgets import QDialog, QStackedWidget, QWidget
+
+from .navigation_registry import NavigationRegistry, RouteMatch, ViewType
+from .navigation_stack import NavigationStackManager, NavigationEntry
+from .navigation_views import EmbeddedView, NavigationLifecycle
+
+from _dev_tools import DebugLogger
 
 
-# ── Navigation Types & Models ───────────────────────────────────────────────────────────────────────────────
-class ViewType(Enum):
-    """Types of views in the application"""
-    MAIN = auto()      # Sidebar-accessible views
-    SUB = auto()       # Child views (FullRecipe, etc.)
-    DIALOG = auto()    # Modal dialogs
-    TEMP = auto()      # Temporary instances (edit forms)
+# ── Errors ──────────────────────────────────────────────────────────────────────────────────────────────────
+class NavigationError(Exception):
+    """Base exception for navigation errors."""
+    pass
 
-class NavigationMode(Enum):
-    """How the navigation should behave"""
-    PUSH = auto()      # Add to stack
-    REPLACE = auto()   # Replace current
-    MODAL = auto()     # Open as modal
-    EMBEDDED = auto()  # Embedded within parent
+class RouteNotFoundError(NavigationError):
+    """Raised when a route cannot be found."""
+    pass
 
-@dataclass
-class Route:
-    """Definition of a navigable route"""
-    name: str
-    view_class: type
-    view_type: ViewType
-    sidebar_visible: bool = False
-    requires_auth: bool = False
-    cache_instance: bool = True
-    metadata: Dict[str, Any] = field(default_factory=dict)
+class NavigationCanceledError(NavigationError):
+    """Raised when navigation is canceled by lifecycle hooks."""
+    pass
 
-@dataclass
+
+# ── Navigation Service ─────────────────────────────────────────────────────────────────────────────────────
 class NavigationContext:
-    """Context passed during navigation"""
-    from_route: Optional[str] = None
-    to_route: str = None
-    params: Dict[str, Any] = field(default_factory=dict)
-    mode: NavigationMode = NavigationMode.PUSH
-    caller: Optional[str] = None  # Track who called this view
+    """Represents a navigation context with its own stack and container."""
 
-
-# ── Base Navigable View ─────────────────────────────────────────────────────────────────────────────────────
-class NavigableView(QObject):
-    """Base class for all navigable views"""
-
-    # Lifecycle signals
-    before_enter = Signal(dict)  # Params dict
-    after_enter = Signal()
-    before_leave = Signal()
-    after_leave = Signal()
-
-    def __init__(self, navigation_service=None, parent=None):
-        super().__init__(parent)
-        self.navigation_service = navigation_service
-        self._view_state = {}
-
-    # Lifecycle hooks (override in subclasses)
-    def on_before_enter(self, params: Dict[str, Any]) -> bool:
-        """Called before view is shown. Return False to cancel navigation."""
-        return True
-
-    def on_enter(self, params: Dict[str, Any]):
-        """Called when view is entered with navigation params"""
-        pass
-
-    def on_before_leave(self) -> bool:
-        """Called before leaving view. Return False to cancel (e.g., unsaved changes)."""
-        return True
-
-    def on_leave(self):
-        """Called when view is being left"""
-        pass
-
-    def on_resume(self):
-        """Called when returning to this view from another"""
-        pass
-
-    def save_state(self) -> Dict[str, Any]:
-        """Save view state for restoration"""
-        return self._view_state
-
-    def restore_state(self, state: Dict[str, Any]):
-        """Restore previously saved state"""
-        self._view_state = state
-
-# ============= Route Registry =============
-
-class RouteRegistry:
-    """Central registry for all application routes"""
-
-    _routes: Dict[str, Route] = {}
-
-    @classmethod
-    def register(cls,
-                 name: str,
-                 view_type: ViewType = ViewType.MAIN,
-                 sidebar_visible: bool = False,
-                 cache_instance: bool = True,
-                 **metadata):
-        """Decorator to register a view class as a route"""
-        def decorator(view_class):
-            route = Route(
-                name=name,
-                view_class=view_class,
-                view_type=view_type,
-                sidebar_visible=sidebar_visible,
-                cache_instance=cache_instance,
-                metadata=metadata
-            )
-            cls._routes[name] = route
-            view_class.route_name = name  # Add route name to class
-            return view_class
-        return decorator
-
-    @classmethod
-    def get_route(cls, name: str) -> Optional[Route]:
-        return cls._routes.get(name)
-
-    @classmethod
-    def get_sidebar_routes(cls) -> List[Route]:
-        """Get all routes that should appear in sidebar"""
-        return [r for r in cls._routes.values() if r.sidebar_visible]
-
-    @classmethod
-    def get_all_routes(cls) -> Dict[str, Route]:
-        return cls._routes.copy()
-
-# ── Navigation Service ──────────────────────────────────────────────────────────────────────────────────────
+    def __init__(self, name: str, container: Optional[QWidget] = None):
+        self.name = name
+        self.container = container
+        self.stack = NavigationStackManager.get_stack(name)
+        self.current_view: Optional[QWidget] = None
 
 class NavigationService(QObject):
-    """Core navigation service managing all view transitions"""
+    """
+    Enhanced navigation service with route-based navigation.
 
-    # Navigation events
-    navigation_started = Signal(NavigationContext)
-    navigation_completed = Signal(NavigationContext)
-    navigation_failed = Signal(str)  # Error message
+    Signals:
+        navigation_started: Emitted when navigation begins
+        navigation_completed: Emitted when navigation completes successfully
+        navigation_failed: Emitted when navigation fails
+        route_changed: Emitted when the current route changes
+    """
 
-    def __init__(self, stack_widget: QStackedWidget, parent=None):
-        super().__init__(parent)
-        self.stack_widget = stack_widget
-        self.history: List[NavigationContext] = []
-        self.view_instances: Dict[str, NavigableView] = {}
-        self.current_route: Optional[str] = None
+    # Signals
+    navigation_started = Signal(str, dict)  # path, params
+    navigation_completed = Signal(str, dict)  # path, params
+    navigation_failed = Signal(str, str)  # path, error_message
+    route_changed = Signal(str, dict)  # path, params
 
-        # Service coordinators
-        self.interceptors: List[Callable] = []
-        self.service_handlers: Dict[str, Callable] = {}
+    _instance: Optional['NavigationService'] = None
 
-    def navigate_to(self,
-                   route_name: str,
-                   params: Optional[Dict[str, Any]] = None,
-                   mode: NavigationMode = NavigationMode.PUSH,
-                   caller: Optional[str] = None) -> bool:
-        """Navigate to a route with optional parameters"""
+    def __init__(self):
+        super().__init__()
+        self._contexts: Dict[str, NavigationContext] = {}
+        self._modal_views: List[QDialog] = []
+        self._overlay_views: List[QWidget] = []
 
-        route = RouteRegistry.get_route(route_name)
-        if not route:
-            self.navigation_failed.emit(f"Route '{route_name}' not found")
+        # Create main context by default
+        self._contexts["main"] = NavigationContext("main")
+
+    @classmethod
+    def create(cls, main_container: QStackedWidget) -> 'NavigationService':
+        """
+        Factory method to create the navigation service.
+
+        Args:
+            main_container: Main stacked widget for primary navigation
+
+        Returns:
+            NavigationService instance
+        """
+        instance = cls()
+        instance.set_main_container(main_container)
+        cls._instance = instance
+        return instance
+
+    @classmethod
+    def get_instance(cls) -> Optional['NavigationService']:
+        """Get the current navigation service instance."""
+        return cls._instance
+
+    def set_main_container(self, container: QStackedWidget):
+        """
+        Set the main container for primary navigation.
+
+        Args:
+            container: Main stacked widget
+        """
+        self._contexts["main"].container = container
+        DebugLogger.log("Main navigation container set", "info")
+
+    def add_context(self, name: str, container: Optional[QWidget] = None):
+        """
+        Add a new navigation context.
+
+        Args:
+            name: Context name
+            container: Optional container widget for this context
+        """
+        if name not in self._contexts:
+            self._contexts[name] = NavigationContext(name, container)
+            DebugLogger.log(f"Added navigation context: {name}", "info")
+
+    def navigate_to(
+        self,
+        path: str,
+        params: Optional[Dict[str, str]] = None,
+        context: str = "main",
+        replace_current: bool = False,
+        **kwargs
+    ) -> bool:
+        """
+        Navigate to a route.
+
+        Args:
+            path: Route path to navigate to
+            params: Route parameters
+            context: Navigation context to use
+            replace_current: Whether to replace current history entry
+            **kwargs: Additional options passed to view
+
+        Returns:
+            True if navigation succeeded, False otherwise
+        """
+        if params is None:
+            params = {}
+
+        try:
+            # Emit navigation started
+            self.navigation_started.emit(path, params)
+            DebugLogger.log(f"Navigation started: {path} (context: {context})", "info")
+
+            # Find matching route
+            route_match = NavigationRegistry.match_route(path)
+            if not route_match:
+                raise RouteNotFoundError(f"No route found for path: {path}")
+
+            # Get navigation context
+            if context not in self._contexts:
+                self.add_context(context)
+            nav_context = self._contexts[context]
+
+            # Handle navigation based on view type
+            success = self._handle_navigation(
+                route_match, nav_context, params, replace_current, **kwargs
+            )
+
+            if success:
+                # Add to navigation stack
+                nav_context.stack.push(
+                    path=path,
+                    params=params,
+                    replace_current=replace_current
+                )
+
+                # Emit completion signals
+                self.navigation_completed.emit(path, params)
+                self.route_changed.emit(path, params)
+                DebugLogger.log(f"Navigation completed: {path}", "info")
+
+            return success
+
+        except Exception as e:
+            error_msg = str(e)
+            DebugLogger.log(f"Navigation failed: {path} - {error_msg}", "error")
+            self.navigation_failed.emit(path, error_msg)
             return False
 
-        # Create navigation context
-        context = NavigationContext(
-            from_route=self.current_route,
-            to_route=route_name,
-            params=params or {},
-            mode=mode,
-            caller=caller or self.current_route
-        )
+    def go_back(self, context: str = "main") -> bool:
+        """
+        Navigate backward in history.
 
-        # Run interceptors (e.g., check unsaved changes)
-        if not self._run_interceptors(context):
+        Args:
+            context: Navigation context
+
+        Returns:
+            True if backward navigation succeeded
+        """
+        if context not in self._contexts:
             return False
 
-        # Handle current view exit
-        if self.current_route:
-            if not self._handle_view_exit(self.current_route):
-                return False
+        nav_context = self._contexts[context]
+        prev_entry = nav_context.stack.go_back()
 
-        # Get or create view instance
-        view = self._get_or_create_view(route)
+        if prev_entry:
+            return self.navigate_to(
+                prev_entry.path,
+                prev_entry.params,
+                context,
+                replace_current=True  # Don't add to history again
+            )
 
-        # Handle view entry
-        if not self._handle_view_entry(view, context):
+        return False
+
+    def go_forward(self, context: str = "main") -> bool:
+        """
+        Navigate forward in history.
+
+        Args:
+            context: Navigation context
+
+        Returns:
+            True if forward navigation succeeded
+        """
+        if context not in self._contexts:
             return False
 
-        # Update stack widget
-        self._update_stack(view, mode)
+        nav_context = self._contexts[context]
+        next_entry = nav_context.stack.go_forward()
 
-        # Update state
-        self.current_route = route_name
-        if mode == NavigationMode.PUSH:
-            self.history.append(context)
-        elif mode == NavigationMode.REPLACE and self.history:
-            self.history[-1] = context
+        if next_entry:
+            return self.navigate_to(
+                next_entry.path,
+                next_entry.params,
+                context,
+                replace_current=True  # Don't add to history again
+            )
 
-        # Trigger any registered service handlers
-        self._trigger_services(context)
+        return False
 
-        self.navigation_completed.emit(context)
+    def can_go_back(self, context: str = "main") -> bool:
+        """Check if backward navigation is possible."""
+        if context not in self._contexts:
+            return False
+        return self._contexts[context].stack.can_go_back()
+
+    def can_go_forward(self, context: str = "main") -> bool:
+        """Check if forward navigation is possible."""
+        if context not in self._contexts:
+            return False
+        return self._contexts[context].stack.can_go_forward()
+
+    def get_current_route(self, context: str = "main") -> Optional[NavigationEntry]:
+        """
+        Get the current navigation entry for a context.
+
+        Args:
+            context: Navigation context
+
+        Returns:
+            Current navigation entry or None
+        """
+        if context not in self._contexts:
+            return None
+        return self._contexts[context].stack.current()
+
+    def get_current_view(self, context: str = "main") -> Optional[QWidget]:
+        """
+        Get the current view widget for a context.
+
+        Args:
+            context: Navigation context
+
+        Returns:
+            Current view widget or None
+        """
+        if context not in self._contexts:
+            return None
+        return self._contexts[context].current_view
+
+    def close_modals(self):
+        """Close all open modal views."""
+        for modal in self._modal_views[:]:  # Copy list to avoid modification during iteration
+            if modal and not modal.isHidden():
+                modal.close()
+        self._modal_views.clear()
+
+    def close_overlays(self):
+        """Close all open overlay views."""
+        for overlay in self._overlay_views[:]:  # Copy list
+            if overlay and not overlay.isHidden():
+                overlay.close()
+        self._overlay_views.clear()
+
+    def _handle_navigation(
+        self,
+        route_match: RouteMatch,
+        nav_context: NavigationContext,
+        params: Dict[str, str],
+        replace_current: bool,
+        **kwargs
+    ) -> bool:
+        """Handle navigation for different view types."""
+        config = route_match.config
+        view_type = config.view_type
+
+        # Call before navigation hooks on current view
+        if nav_context.current_view and isinstance(nav_context.current_view, NavigationLifecycle):
+            if not nav_context.current_view.before_navigate_from(route_match.path, params):
+                raise NavigationCanceledError("Navigation canceled by current view")
+
+        # Create new view instance
+        view_instance = NavigationRegistry.get_instance(route_match, **kwargs)
+
+        # Call before navigation hooks on new view
+        if isinstance(view_instance, NavigationLifecycle):
+            if not view_instance.before_navigate_to(route_match.path, params):
+                raise NavigationCanceledError("Navigation canceled by target view")
+
+        # Handle based on view type
+        if view_type == ViewType.MAIN:
+            success = self._handle_main_view(view_instance, nav_context)
+        elif view_type == ViewType.MODAL:
+            success = self._handle_modal_view(view_instance)
+        elif view_type == ViewType.OVERLAY:
+            success = self._handle_overlay_view(view_instance)
+        elif view_type == ViewType.EMBEDDED:
+            success = self._handle_embedded_view(view_instance, nav_context)
+        else:
+            DebugLogger.log(f"Unknown view type: {view_type}", "error")
+            return False
+
+        if success:
+            # Call after navigation hooks
+            if nav_context.current_view and isinstance(nav_context.current_view, NavigationLifecycle):
+                nav_context.current_view.after_navigate_from(route_match.path, params)
+
+            if isinstance(view_instance, NavigationLifecycle):
+                view_instance.after_navigate_to(route_match.path, params)
+
+            # Connect view navigation signals
+            self._connect_view_signals(view_instance)
+
+        return success
+
+    def _handle_main_view(self, view: QWidget, nav_context: NavigationContext) -> bool:
+        """Handle navigation for main views."""
+        if not nav_context.container:
+            DebugLogger.log("No container set for main navigation context", "error")
+            return False
+
+        if isinstance(nav_context.container, QStackedWidget):
+            # Add to stacked widget if not already present
+            if nav_context.container.indexOf(view) == -1:
+                nav_context.container.addWidget(view)
+            nav_context.container.setCurrentWidget(view)
+        else:
+            DebugLogger.log("Main navigation container is not a QStackedWidget", "error")
+            return False
+
+        nav_context.current_view = view
         return True
 
-    def go_back(self) -> bool:
-        """Navigate to previous view in history"""
-        if len(self.history) <= 1:
-            return False
-
-        # Remove current from history
-        self.history.pop()
-
-        # Get previous context
-        prev_context = self.history[-1]
-
-        # Navigate to it (without adding to history again)
-        return self.navigate_to(
-            prev_context.to_route,
-            prev_context.params,
-            NavigationMode.REPLACE
-        )
-
-    def register_interceptor(self, interceptor: Callable[[NavigationContext], bool]):
-        """Register a navigation interceptor (e.g., unsaved changes check)"""
-        self.interceptors.append(interceptor)
-
-    def register_service_handler(self, route_name: str, handler: Callable):
-        """Register a service to be triggered on navigation to a route"""
-        self.service_handlers[route_name] = handler
-
-    # ============= Private Methods =============
-
-    def _get_or_create_view(self, route: Route) -> NavigableView:
-        """Get existing or create new view instance"""
-        if route.cache_instance and route.name in self.view_instances:
-            return self.view_instances[route.name]
-
-        # Create new instance
-        view = route.view_class(navigation_service=self)
-
-        if route.cache_instance:
-            self.view_instances[route.name] = view
-
-        return view
-
-    def _handle_view_exit(self, route_name: str) -> bool:
-        """Handle view exit lifecycle"""
-        if route_name not in self.view_instances:
+    def _handle_modal_view(self, view: QWidget) -> bool:
+        """Handle navigation for modal views."""
+        if isinstance(view, QDialog):
+            self._modal_views.append(view)
+            # Connect close signal to remove from list
+            view.finished.connect(lambda: self._modal_views.remove(view) if view in self._modal_views else None)
+            view.show()
             return True
-
-        view = self.view_instances[route_name]
-
-        # Check if view allows exit
-        if not view.on_before_leave():
+        else:
+            DebugLogger.log(f"Modal view {view.__class__.__name__} is not a QDialog", "error")
             return False
 
-        view.before_leave.emit()
-        view.on_leave()
-        view.after_leave.emit()
-
-        # Save state if needed
-        route = RouteRegistry.get_route(route_name)
-        if route and route.cache_instance:
-            view.save_state()
-
+    def _handle_overlay_view(self, view: QWidget) -> bool:
+        """Handle navigation for overlay views."""
+        self._overlay_views.append(view)
+        # Connect close signal to remove from list
+        view.destroyed.connect(lambda: self._overlay_views.remove(view) if view in self._overlay_views else None)
+        view.show()
         return True
 
-    def _handle_view_entry(self, view: NavigableView, context: NavigationContext) -> bool:
-        """Handle view entry lifecycle"""
-        # Check if view allows entry
-        if not view.on_before_enter(context.params):
-            return False
+    def _handle_embedded_view(self, view: QWidget, nav_context: NavigationContext) -> bool:
+        """Handle navigation for embedded views."""
+        # For embedded views used standalone, treat like main views
+        if isinstance(view, EmbeddedView):
+            view.set_standalone_mode(True)
 
-        view.before_enter.emit(context.params)
-        view.on_enter(context.params)
-        view.after_enter.emit()
+        return self._handle_main_view(view, nav_context)
 
-        return True
+    def _connect_view_signals(self, view: QWidget):
+        """Connect view navigation signals to the service."""
+        if hasattr(view, 'navigation_requested'):
+            view.navigation_requested.connect(
+                lambda path, params: self.navigate_to(path, params)
+            )
 
-    def _update_stack(self, view: NavigableView, mode: NavigationMode):
-        """Update the stack widget based on navigation mode"""
-        if mode in [NavigationMode.PUSH, NavigationMode.REPLACE]:
-            # Check if view is already in stack
-            index = self.stack_widget.indexOf(view)
-            if index == -1:
-                # Add to stack
-                index = self.stack_widget.addWidget(view)
+        if hasattr(view, 'close_requested'):
+            view.close_requested.connect(view.close)
 
-            # Set as current
-            self.stack_widget.setCurrentIndex(index)
 
-    def _run_interceptors(self, context: NavigationContext) -> bool:
-        """Run all registered interceptors"""
-        for interceptor in self.interceptors:
-            if not interceptor(context):
-                return False
-        return True
+# ── Helper Functions ────────────────────────────────────────────────────────────────────────────────────────
+def navigate_to(path: str, params: Optional[Dict[str, str]] = None, **kwargs) -> bool:
+    """Global navigation function."""
+    service = NavigationService.get_instance()
+    if service:
+        return service.navigate_to(path, params, **kwargs)
+    return False
 
-    def _trigger_services(self, context: NavigationContext):
-        """Trigger any registered service handlers"""
-        if context.to_route in self.service_handlers:
-            handler = self.service_handlers[context.to_route]
-            handler(context)
+
+def go_back() -> bool:
+    """Global back navigation function."""
+    service = NavigationService.get_instance()
+    if service:
+        return service.go_back()
+    return False
+
+
+def go_forward() -> bool:
+    """Global forward navigation function."""
+    service = NavigationService.get_instance()
+    if service:
+        return service.go_forward()
+    return False

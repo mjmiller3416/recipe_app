@@ -208,10 +208,9 @@ class FullRecipe(QWidget):
 
     back_clicked = Signal()
 
-    def __init__(self, recipe: Recipe, navigation_service=None, parent: QWidget | None = None) -> None:
+    def __init__(self, recipe: Recipe, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.recipe = recipe
-        self.navigation_service = navigation_service
 
         # Register this view for component-scoped QSS.
         Theme.register_widget(self, Qss.FULL_RECIPE)
@@ -502,16 +501,6 @@ class FullRecipe(QWidget):
         # TODO: Show full-size image preview dialog
         DebugLogger().log("Recipe banner image clicked for full preview", "debug")
 
-    def _handle_back_clicked(self):
-        """Handle back button click using NavigationService or fallback to signal."""
-        if self.navigation_service:
-            # Use NavigationService to go back
-            if not self.navigation_service.go_back():
-                # Fallback to view_recipes if no history
-                self.navigation_service.navigate_to("view_recipes")
-        else:
-            # Fallback to original signal-based approach
-            self.back_clicked.emit()
 
 
 
