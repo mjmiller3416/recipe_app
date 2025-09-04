@@ -220,6 +220,7 @@
       "builders": "Tools",
       "loaders": "Download",
       "agents": "Angular",
+      "unit": "Constant",
 
       //** Assets **//
       "assets": "Shader",
