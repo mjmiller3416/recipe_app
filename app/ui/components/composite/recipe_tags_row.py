@@ -11,7 +11,6 @@ from app.core.models.recipe import Recipe
 from app.style.icon import Icon
 from app.ui.components.widgets.recipe_tag import RecipeTag
 
-
 # ── Recipe Tags Row ─────────────────────────────────────────────────────────────────────────────────────────
 class RecipeTagsRow(QWidget):
     """A horizontal row of recipe tags showing meal type, category, and dietary preference."""

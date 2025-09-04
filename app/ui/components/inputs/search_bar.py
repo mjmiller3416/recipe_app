@@ -12,7 +12,6 @@ from app.style.icon import AppIcon, Name, Type
 from app.style.theme.config import Qss
 from app.ui.components.widgets import ToolButton
 
-
 # ── Search Bar ──────────────────────────────────────────────────────────────────────────────────────────────
 class SearchBar(QFrame):
     """

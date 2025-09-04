@@ -7,27 +7,35 @@ multiple meal planning tabs and integrates with the database to load and save me
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import (QHBoxLayout, QMenu, QStackedWidget, QTabWidget,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QHBoxLayout,
+    QMenu,
+    QStackedWidget,
+    QTabWidget,
+    QVBoxLayout,
+    QWidget,
+)
 
 from _dev_tools import DebugLogger
-from app.core.dtos.planner_dtos import (MealSelectionCreateDTO,
-                                        MealSelectionUpdateDTO)
+from app.core.dtos.planner_dtos import MealSelectionCreateDTO, MealSelectionUpdateDTO
 from app.core.models.meal_selection import MealSelection
 from app.core.services.planner_service import PlannerService
 from app.core.services.recipe_service import RecipeService
-from app.core.utils.error_utils import (create_error_context, error_boundary,
-                                        log_and_handle_exception,
-                                        safe_execute_with_fallback)
+from app.core.utils.error_utils import (
+    create_error_context,
+    error_boundary,
+    log_and_handle_exception,
+    safe_execute_with_fallback,
+)
 from app.core.utils.validation_utils import validate_positive_number
 from app.style import Qss
 from app.style.icon import AppIcon, Icon
-from app.ui.components.composite.recipe_card import (LayoutSize,
-                                                     create_recipe_card)
-from app.ui.utils.event_utils import (batch_connect_signals,
-                                      create_tooltip_event_filter)
-from app.ui.utils.widget_utils import (apply_object_name_pattern,
-                                       register_widget_for_theme)
+from app.ui.components.composite.recipe_card import LayoutSize, create_recipe_card
+from app.ui.utils.event_utils import batch_connect_signals, create_tooltip_event_filter
+from app.ui.utils.widget_utils import (
+    apply_object_name_pattern,
+    register_widget_for_theme,
+)
 from app.ui.views.base import ScrollableNavView
 from app.ui.views.recipe_selection import RecipeSelection
 

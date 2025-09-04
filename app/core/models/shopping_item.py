@@ -14,7 +14,6 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from ..database.base import Base
 
-
 # ── Shopping Item Model ─────────────────────────────────────────────────────────────────────────────────────
 class ShoppingItem(Base):
     __tablename__ = "shopping_items"

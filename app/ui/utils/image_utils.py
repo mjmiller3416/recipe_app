@@ -6,7 +6,6 @@
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QColor, QPainter, QPixmap
 
-
 def img_qt_create_placeholder(size: QSize, color: QColor = None,
                             text: str = "") -> QPixmap:
     """Create placeholder pixmap with optional text.

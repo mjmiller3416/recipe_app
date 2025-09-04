@@ -9,7 +9,6 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QDialog, QWidget
 
 from _dev_tools import DebugLogger
-
 from .registry import NavigationRegistry, ViewType
 
 T = TypeVar('T', bound='NavigableView')

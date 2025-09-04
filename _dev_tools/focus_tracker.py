@@ -9,7 +9,6 @@ from PySide6.QtWidgets import QApplication, QWidget
 
 from _dev_tools import DebugLogger
 
-
 # ── Focus Tracker ────────────────────────────────────────────────────────────────────────────
 class FocusTracker(QObject):
     """Tracks and logs focus changes using the application's event system."""

@@ -9,8 +9,16 @@ display them in a scrollable list
 from collections import defaultdict
 
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt, Signal
-from PySide6.QtWidgets import (QCheckBox, QGridLayout, QHBoxLayout, QLabel,
-                               QLineEdit, QScrollArea, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
+)
 
 from _dev_tools import DebugLogger
 from app.config import INGREDIENT_CATEGORIES, MEASUREMENT_UNITS
@@ -19,10 +27,11 @@ from app.style import Icon, Qss, Theme, Type
 from app.ui.components.layout.card import ActionCard, BaseCard, Card
 from app.ui.components.widgets import BaseButton, ComboBox, ToolButton
 from app.ui.constants import LayoutConstants
-from app.ui.utils.layout_utils import (create_two_column_layout,
-                                       set_fixed_height_for_layout_widgets)
+from app.ui.utils.layout_utils import (
+    create_two_column_layout,
+    set_fixed_height_for_layout_widgets,
+)
 from app.ui.views.base import ScrollableNavView
-
 
 # ── Forms ───────────────────────────────────────────────────────────────────────────────────────────────────
 class AddItemForm(QWidget):

@@ -13,9 +13,16 @@ import factory.fuzzy
 from faker import Faker
 
 from app.core.database.base import Base
-from app.core.models import (Ingredient, MealSelection, Recipe, RecipeHistory,
-                             RecipeIngredient, SavedMealState, ShoppingItem,
-                             ShoppingState)
+from app.core.models import (
+    Ingredient,
+    MealSelection,
+    Recipe,
+    RecipeHistory,
+    RecipeIngredient,
+    SavedMealState,
+    ShoppingItem,
+    ShoppingState,
+)
 
 fake = Faker()
 

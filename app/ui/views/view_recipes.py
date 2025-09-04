@@ -14,7 +14,6 @@ from app.ui.components.composite.recipe_card import LayoutSize
 from app.ui.managers.navigation.views import MainView
 from app.ui.views.full_recipe import FullRecipe
 
-
 # ── View Recipes ─────────────────────────────────────────────────────────────────────────────
 class ViewRecipes(MainView):
     """Displays recipes using the shared RecipeBrowser component and can switch to full recipe view."""

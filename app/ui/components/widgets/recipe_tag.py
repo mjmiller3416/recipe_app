@@ -12,7 +12,6 @@ from app.style import Qss, Theme
 from app.style.icon import AppIcon
 from app.style.icon.config import Icon
 
-
 # ── Recipe Tag ──────────────────────────────────────────────────────────────────────────────────────────────
 class RecipeTag(QFrame):
     """A pill-shaped tag widget with icon and text for recipe metadata."""

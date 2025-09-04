@@ -19,7 +19,6 @@ from app.style.icon.svg_loader import SVGLoader
 from app.style.theme.config import Qss
 from app.style.theme_controller import Theme
 
-
 # ── Base Icon ───────────────────────────────────────────────────────────────────────────────────────────────
 class BaseIcon:
     """Base class for all icon types providing core rendering logic.

@@ -10,8 +10,8 @@ from __future__ import annotations
 
 import asyncio
 import base64
-import os
 from dataclasses import dataclass
+import os
 from pathlib import Path
 from typing import List, Optional
 
@@ -19,9 +19,7 @@ from openai import AsyncOpenAI
 
 from _dev_tools import DebugLogger
 from app.core.utils.image_utils import img_ai_get_hash, img_ai_slugify
-
 from .config import ImageGenConfig
-
 
 @dataclass
 class ImageRequest:

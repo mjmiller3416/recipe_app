@@ -27,10 +27,10 @@ Standardized error handling utilities for consistent error management.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
+from contextlib import contextmanager
 import functools
 import time
 import traceback
-from contextlib import contextmanager
 from typing import Any, Callable, Dict, Optional
 
 __all__ = [

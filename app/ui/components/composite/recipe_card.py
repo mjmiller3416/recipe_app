@@ -22,8 +22,15 @@ from enum import Enum
 from typing import Optional
 
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import (QDialog, QFrame, QHBoxLayout, QLabel,
-                               QStackedWidget, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QDialog,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QStackedWidget,
+    QVBoxLayout,
+    QWidget,
+)
 
 from _dev_tools.debug_logger import DebugLogger
 from app.core.models.recipe import Recipe
@@ -468,8 +475,7 @@ class LargeRecipeCard(BaseRecipeCard):
         frame.setAttribute(Qt.WA_StyledBackground, True)
         frame.setObjectName("RecipeCard")
 
-        from app.ui.components.composite.ingredients_preview import \
-            IngredientsPreview
+        from app.ui.components.composite.ingredients_preview import IngredientsPreview
         from app.ui.components.composite.recipe_info_card import RecipeInfoCard
         from app.ui.components.composite.recipe_tags_row import RecipeTagsRow
 

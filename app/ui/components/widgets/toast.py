@@ -12,7 +12,6 @@ from PySide6.QtWidgets import QLabel, QWidget
 from app.style import Theme
 from app.style.theme.config import Qss
 
-
 # ── Toast Notification ──────────────────────────────────────────────────────────────────────────────────────
 class Toast(QLabel):
     """A toast notification widget that appears and disappears with animations."""

@@ -7,7 +7,6 @@ import os
 
 from _dev_tools import DebugLogger
 
-
 class LoggingConfig:
     """Manages logging configuration for different environments."""
 

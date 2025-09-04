@@ -11,11 +11,11 @@ Tests the RecipeCard UI component including:
 
 from unittest.mock import MagicMock, Mock, patch
 
-import pytest
-from faker import Faker
 from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication, QLabel, QPushButton
+from faker import Faker
+import pytest
 
 from _tests.fixtures.recipe_factories import RecipeFactory
 from app.core.models import Recipe

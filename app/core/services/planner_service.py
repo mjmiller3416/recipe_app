@@ -13,14 +13,16 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from _dev_tools import DebugLogger
-
-from ..dtos.planner_dtos import (MealPlanSaveResultDTO, MealPlanSummaryDTO,
-                                 MealPlanValidationDTO, MealSelectionCreateDTO,
-                                 MealSelectionResponseDTO,
-                                 MealSelectionUpdateDTO)
+from ..dtos.planner_dtos import (
+    MealPlanSaveResultDTO,
+    MealPlanSummaryDTO,
+    MealPlanValidationDTO,
+    MealSelectionCreateDTO,
+    MealSelectionResponseDTO,
+    MealSelectionUpdateDTO,
+)
 from ..models.meal_selection import MealSelection
 from ..repositories.planner_repo import PlannerRepo
-
 
 # ── Planner Service ─────────────────────────────────────────────────────────────────────────────────────────
 class PlannerService:

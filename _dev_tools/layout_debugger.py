@@ -35,9 +35,9 @@ import as needed.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
+from dataclasses import dataclass
 import sys
 import time
-from dataclasses import dataclass
 from typing import Callable, List, Optional, Tuple
 
 from PySide6 import QtCore, QtGui, QtWidgets

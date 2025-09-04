@@ -12,15 +12,19 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from ..dtos.shopping_dtos import (BulkOperationResultDTO, BulkStateUpdateDTO,
-                                  ManualItemCreateDTO, ShoppingItemResponseDTO,
-                                  ShoppingItemUpdateDTO, ShoppingListFilterDTO,
-                                  ShoppingListGenerationResultDTO,
-                                  ShoppingListResponseDTO)
+from ..dtos.shopping_dtos import (
+    BulkOperationResultDTO,
+    BulkStateUpdateDTO,
+    ManualItemCreateDTO,
+    ShoppingItemResponseDTO,
+    ShoppingItemUpdateDTO,
+    ShoppingListFilterDTO,
+    ShoppingListGenerationResultDTO,
+    ShoppingListResponseDTO,
+)
 from ..models.shopping_item import ShoppingItem
 from ..repositories.planner_repo import PlannerRepo
 from ..repositories.shopping_repo import ShoppingRepo
-
 
 # ── Shopping Service ────────────────────────────────────────────────────────────────────────────────────────
 class ShoppingService:

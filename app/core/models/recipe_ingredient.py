@@ -14,7 +14,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from ..database.base import Base
 from ..dtos.ingredient_dtos import IngredientDetailDTO
 
-
 # ── Recipe Ingredient Model ─────────────────────────────────────────────────────────────────────────────────
 class RecipeIngredient(Base):
     """Join table linking recipes and ingredients with quantities and units."""

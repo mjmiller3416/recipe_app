@@ -3,8 +3,8 @@
 This module provides functions to generate realistic test data for the recipe application.
 """
 
-import random
 from datetime import datetime, timedelta
+import random
 from typing import Any, Dict, List
 
 try:

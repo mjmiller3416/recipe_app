@@ -9,7 +9,6 @@ from enum import Enum
 
 from app.config.paths.app_paths import AppPaths
 
-
 # ── Theme Configuration ─────────────────────────────────────────────────────────────────────────────────────
 class Color(Enum):
     INDIGO      = "#3F51B5"

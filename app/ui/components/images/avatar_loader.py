@@ -19,9 +19,7 @@ from app.style.icon.config import Name, Type
 from app.style.theme.config import Qss
 from app.ui.components.widgets import Button
 from app.ui.utils.layout_utils import CornerAnchor
-
 from ..widgets.image import CircularImage
-
 
 # ── Avatar Loader ────────────────────────────────────────────────────────────────────────────
 class AvatarLoader(QWidget):

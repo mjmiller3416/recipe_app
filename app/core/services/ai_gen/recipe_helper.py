@@ -12,10 +12,8 @@ from pathlib import Path
 from typing import NamedTuple, Optional
 
 from _dev_tools import DebugLogger
-
 from .config import ImageGenConfig
 from .service import ImageGenService, ImageRequest
-
 
 class RecipeImagePaths(NamedTuple):
     """Paths to generated recipe images."""

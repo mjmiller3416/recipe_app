@@ -4,9 +4,9 @@ Defines the Separator class, a reusable vertical or horizontal line widget with 
 """
 
 from PySide6.QtCore import QSize
+
 # ── Imports ─────────────────────────────────────────────────────────────────────
 from PySide6.QtWidgets import QFrame
-
 
 # ── Class Definition ────────────────────────────────────────────────────────────
 class Separator(QFrame):

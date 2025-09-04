@@ -9,7 +9,6 @@ for widgets that need flip transition capabilities.
 from PySide6.QtCore import Property, QEasingCurve, QObject, Signal
 from PySide6.QtWidgets import QFrame
 
-
 # ── Flip Animation Helper ───────────────────────────────────────────────────────────────────────────────────
 class FlipAnimationHelper(QObject):
     """Helper class to provide QObject functionality for page flip animations."""

@@ -10,7 +10,6 @@ from PySide6.QtWidgets import QVBoxLayout, QWidget
 from app.ui.components.composite.recipe_browser import RecipeBrowser
 from app.ui.components.composite.recipe_card import LayoutSize
 
-
 # ── Recipe Selection View ───────────────────────────────────────────────────────────────────────────────────
 class RecipeSelection(QWidget):
     """Page displaying recipes in medium-sized cards for selection."""

@@ -28,8 +28,7 @@ from __future__ import annotations
 from typing import Any, Callable, Dict, List, Optional
 
 from PySide6.QtCore import QEvent, QObject, Qt, Signal
-from PySide6.QtWidgets import (QLineEdit, QPushButton, QTextEdit, QToolTip,
-                               QWidget)
+from PySide6.QtWidgets import QLineEdit, QPushButton, QTextEdit, QToolTip, QWidget
 
 from app.ui.components.widgets import Button, ComboBox
 

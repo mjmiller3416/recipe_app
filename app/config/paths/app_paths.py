@@ -4,7 +4,6 @@ This module defines a class that centralizes the static paths used in the MealGe
 """
 from pathlib import Path
 
-
 # ── Class Definition ────────────────────────────────────────────────────────────
 class AppPaths:
     """

@@ -9,7 +9,6 @@ and collapsible expand/collapse animations.
 from PySide6.QtCore import QEasingCurve, QPoint, QPropertyAnimation, QTimer
 from PySide6.QtWidgets import QGraphicsOpacityEffect, QWidget
 
-
 # ── Animator ────────────────────────────────────────────────────────────────────────────────────────────────
 class Animator:
     active_animations = []  # store animations to prevent garbage collection

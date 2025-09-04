@@ -8,8 +8,14 @@ Used in AddRecipes view for default recipe images.
 from typing import Optional
 
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import (QHBoxLayout, QLabel, QSizePolicy,
-                               QStackedWidget, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QHBoxLayout,
+    QLabel,
+    QSizePolicy,
+    QStackedWidget,
+    QVBoxLayout,
+    QWidget,
+)
 
 from app.core.utils.image_utils import img_validate_path
 from app.style import Qss, Theme, Type
@@ -17,7 +23,6 @@ from app.style.icon.config import Icon, Name
 from app.style.icon.icon import AppIcon
 from app.ui.components.layout.card import BaseCard
 from app.ui.components.widgets import Button, RoundedImage
-
 
 # ── Base Image ───────────────────────────────────────────────────────────────────────────────
 class BaseImage(BaseCard):

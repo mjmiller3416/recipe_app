@@ -10,11 +10,9 @@ from PySide6.QtCore import QObject, Signal
 from PySide6.QtWidgets import QDialog, QStackedWidget, QWidget
 
 from _dev_tools import DebugLogger
-
 from .registry import NavigationRegistry, RouteMatch, ViewType
 from .stack import NavigationEntry, NavigationStackManager
 from .views import EmbeddedView, NavigationLifecycle
-
 
 # ── Errors ──────────────────────────────────────────────────────────────────────────────────────────────────
 class NavigationError(Exception):

@@ -9,7 +9,6 @@ from sqlalchemy.orm import Session
 
 from ..models.ingredient import Ingredient
 
-
 # ── Ingredient Repository ───────────────────────────────────────────────────────────────────────────────────
 class IngredientRepo:
     """Handles ingredient-specific database operations."""

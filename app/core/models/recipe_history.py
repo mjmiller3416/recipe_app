@@ -12,9 +12,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.utils import utcnow
-
 from ..database.base import Base
-
 
 # ── Recipe History Model ────────────────────────────────────────────────────────────────────────────────────
 class RecipeHistory(Base):

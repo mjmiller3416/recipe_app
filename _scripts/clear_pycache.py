@@ -2,7 +2,6 @@
 import os
 import shutil
 
-
 def delete_pycache(start_path='.'):
     """
     Recursively deletes all __pycache__ folders and .pyc files starting from `start_path`.

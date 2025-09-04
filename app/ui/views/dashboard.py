@@ -13,7 +13,6 @@ from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
 from app.ui.managers.navigation.views import MainView
 
-
 # ── Dashboard ────────────────────────────────────────────────────────────────────────────────
 class Dashboard(MainView):
     """Placeholder class for the Dashboard screen."""

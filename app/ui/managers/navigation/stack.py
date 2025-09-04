@@ -12,7 +12,6 @@ from PySide6.QtCore import QObject, Signal
 
 from _dev_tools import DebugLogger
 
-
 # ── Navigation Entry ────────────────────────────────────────────────────────────────────────────────────────
 @dataclass
 class NavigationEntry:

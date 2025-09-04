@@ -6,7 +6,6 @@ Configuration constants for the application.
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from typing_extensions import Final
 
-
 # ── Layout Constants ────────────────────────────────────────────────────────────────────────────────────────
 class LayoutConstants:
     """Layout constants for consistent spacing and sizing throughout the application."""

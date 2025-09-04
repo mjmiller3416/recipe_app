@@ -5,9 +5,14 @@ Route registration for the navigation system.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from app.ui.managers.navigation.registry import NavigationRegistry, ViewType
-from app.ui.views import (AddRecipes, Dashboard, MealPlanner, Settings,
-                          ShoppingList, ViewRecipes)
-
+from app.ui.views import (
+    AddRecipes,
+    Dashboard,
+    MealPlanner,
+    Settings,
+    ShoppingList,
+    ViewRecipes,
+)
 
 # ── Route Registration ──────────────────────────────────────────────────────────────────────────────────────
 def register_main_routes():

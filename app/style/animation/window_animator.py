@@ -6,7 +6,6 @@ This module provides the WindowAnimator class for animating window state changes
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QEasingCurve, QObject, QPropertyAnimation
 
-
 # ── WindowAnimator ──────────────────────────────────────────────────────────────────────────────────────────
 class WindowAnimator(QObject):
     """Handles animations for a QDialog, like maximize, restore, and minimize.

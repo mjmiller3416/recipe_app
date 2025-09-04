@@ -5,8 +5,8 @@ Configuration for AI image generation.
 
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
+import os
 from pathlib import Path
 from typing import Dict, Set
 

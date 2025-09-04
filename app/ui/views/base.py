@@ -8,7 +8,6 @@ Base classes for all views in the application.
 from app.ui.managers.navigation.views import MainView
 from app.ui.utils.layout_utils import setup_main_scroll_layout
 
-
 # ── Scrollable Navigation View ──────────────────────────────────────────────────────────────────────────────
 class ScrollableNavView(MainView):
     """Base class for main views with scrollable content."""

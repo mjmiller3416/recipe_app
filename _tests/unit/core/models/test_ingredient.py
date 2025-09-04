@@ -8,13 +8,16 @@ Tests the Ingredient SQLAlchemy model including:
 - Data integrity constraints
 """
 
-import pytest
 from faker import Faker
+import pytest
 from sqlalchemy.exc import IntegrityError
 
-from _tests.fixtures.recipe_factories import (IngredientFactory,
-                                              IngredientTraits, RecipeFactory,
-                                              RecipeIngredientFactory)
+from _tests.fixtures.recipe_factories import (
+    IngredientFactory,
+    IngredientTraits,
+    RecipeFactory,
+    RecipeIngredientFactory,
+)
 from app.core.models import Ingredient, Recipe, RecipeIngredient
 
 fake = Faker()

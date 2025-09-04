@@ -11,12 +11,15 @@ Tests the recipe business logic service including:
 
 from unittest.mock import MagicMock, Mock, call, patch
 
-import pytest
 from faker import Faker
+import pytest
 
 from _tests.fixtures.recipe_factories import IngredientFactory, RecipeFactory
-from app.core.dtos.recipe_dtos import (RecipeCreateDTO, RecipeResponseDTO,
-                                       RecipeUpdateDTO)
+from app.core.dtos.recipe_dtos import (
+    RecipeCreateDTO,
+    RecipeResponseDTO,
+    RecipeUpdateDTO,
+)
 from app.core.models import Ingredient, Recipe, RecipeIngredient
 from app.core.repositories.ingredient_repo import IngredientRepository
 from app.core.repositories.recipe_repo import RecipeRepository

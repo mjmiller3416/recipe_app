@@ -11,20 +11,30 @@ Tests the full integration between all layers:
 from datetime import date, timedelta
 from unittest.mock import MagicMock, patch
 
-import pytest
 from faker import Faker
+import pytest
 
-from _tests.fixtures.recipe_factories import (IngredientFactory,
-                                              MealSelectionFactory,
-                                              RecipeFactory,
-                                              RecipeWithIngredientsFactory,
-                                              create_sample_database)
+from _tests.fixtures.recipe_factories import (
+    IngredientFactory,
+    MealSelectionFactory,
+    RecipeFactory,
+    RecipeWithIngredientsFactory,
+    create_sample_database,
+)
 from app.core.database.db import DatabaseManager
 from app.core.models import Ingredient, MealSelection, Recipe, ShoppingItem
-from app.core.repositories import (IngredientRepository, PlannerRepository,
-                                   RecipeRepository, ShoppingRepository)
-from app.core.services import (IngredientService, PlannerService,
-                               RecipeService, ShoppingService)
+from app.core.repositories import (
+    IngredientRepository,
+    PlannerRepository,
+    RecipeRepository,
+    ShoppingRepository,
+)
+from app.core.services import (
+    IngredientService,
+    PlannerService,
+    RecipeService,
+    ShoppingService,
+)
 
 fake = Faker()
 

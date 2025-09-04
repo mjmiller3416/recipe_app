@@ -11,7 +11,6 @@ from PySide6.QtCore import QSize
 
 from app.config.paths import AppPaths
 
-
 class Path(Enum):
     """Enum for application icons."""
     ADD             = "add"

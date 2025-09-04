@@ -8,19 +8,25 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QTextEdit, QWidget
 
 from _dev_tools import DebugLogger
-from app.config import (DIETARY_PREFERENCES, FLOAT_VALIDATOR,
-                        INGREDIENT_CATEGORIES, MEAL_TYPE, MEASUREMENT_UNITS,
-                        NAME_PATTERN, RECIPE_CATEGORIES)
+from app.config import (
+    DIETARY_PREFERENCES,
+    FLOAT_VALIDATOR,
+    INGREDIENT_CATEGORIES,
+    MEAL_TYPE,
+    MEASUREMENT_UNITS,
+    NAME_PATTERN,
+    RECIPE_CATEGORIES,
+)
 from app.core.database.db import create_session
-from app.core.dtos import (IngredientSearchDTO, RecipeCreateDTO,
-                           RecipeIngredientDTO)
+from app.core.dtos import IngredientSearchDTO, RecipeCreateDTO, RecipeIngredientDTO
 from app.core.services.ingredient_service import IngredientService
 from app.core.services.recipe_service import RecipeService
-from app.core.utils.conversion_utils import (parse_servings_range,
-                                             safe_float_conversion,
-                                             safe_int_conversion)
-from app.core.utils.text_utils import (sanitize_form_input,
-                                       sanitize_multiline_input)
+from app.core.utils.conversion_utils import (
+    parse_servings_range,
+    safe_float_conversion,
+    safe_int_conversion,
+)
+from app.core.utils.text_utils import sanitize_form_input, sanitize_multiline_input
 from app.style import Qss, Theme
 from app.style.icon.config import Name, Type
 from app.ui.components.images import RecipeImage
@@ -29,16 +35,20 @@ from app.ui.components.layout.card import ActionCard, Card
 from app.ui.components.widgets import ComboBox, ToolButton
 from app.ui.components.widgets.button import Button
 from app.ui.managers.navigation.views import MainView
-from app.ui.utils.event_utils import (batch_connect_signals,
-                                      connect_form_signals)
-from app.ui.utils.form_utils import (clear_error_styles, clear_form_fields,
-                                     collect_form_data, dynamic_validation,
-                                     setup_tab_order_chain,
-                                     validate_required_fields)
-from app.ui.utils.layout_utils import (create_labeled_form_grid,
-                                       create_two_column_layout,
-                                       setup_main_scroll_layout)
-
+from app.ui.utils.event_utils import batch_connect_signals, connect_form_signals
+from app.ui.utils.form_utils import (
+    clear_error_styles,
+    clear_form_fields,
+    collect_form_data,
+    dynamic_validation,
+    setup_tab_order_chain,
+    validate_required_fields,
+)
+from app.ui.utils.layout_utils import (
+    create_labeled_form_grid,
+    create_two_column_layout,
+    setup_main_scroll_layout,
+)
 
 # ── Forms ───────────────────────────────────────────────────────────────────────────────────────────────────
 class RecipeForm(QWidget):

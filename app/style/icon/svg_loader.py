@@ -7,10 +7,11 @@ with support for high-DPI screens. It replaces specified colors in the SVG
 data before rendering.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
-import re
 from collections import OrderedDict
 from pathlib import Path
+
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
+import re
 from typing import Union
 
 from PySide6.QtCore import QByteArray, QRectF, QSize, Qt

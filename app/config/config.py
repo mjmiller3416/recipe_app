@@ -3,9 +3,10 @@
     This module contains configuration settings for the application.
 """
 
+from dataclasses import dataclass
+
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 import re
-from dataclasses import dataclass
 
 from PySide6.QtCore import QRegularExpression, QSize
 from PySide6.QtGui import QRegularExpressionValidator

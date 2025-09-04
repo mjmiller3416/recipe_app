@@ -12,7 +12,6 @@ from app.core.models.recipe import Recipe
 from app.style import Qss, Theme
 from app.style.icon import AppIcon, Icon
 
-
 # ── Info Card ───────────────────────────────────────────────────────────────────────────────────────────────
 class InfoCard(QWidget):
     """A vertical info card with icon, title, and value for recipe metadata."""

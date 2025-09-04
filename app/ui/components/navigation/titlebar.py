@@ -12,7 +12,6 @@ from qframelesswindow.utils.win32_utils import WindowsMoveResize as MoveResize
 from app.config import AppConfig
 from app.style import Qss, Theme
 from app.style.icon import AppIcon, Icon, Name, Type
-
 from ..widgets.button import BaseButton, ToolButton
 
 # ── Constants ────────────────────────────────────────────────────────────────────────────────

@@ -16,7 +16,6 @@ from _dev_tools import DebugLogger
 from app.core.utils import QSingleton
 from app.style.theme_controller import Theme
 
-
 # ── Themed Icon ─────────────────────────────────────────────────────────────────────────────────────────────
 class ThemedIcon(Protocol):
     """Protocol for any theme-aware icon-like object."""

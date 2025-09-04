@@ -4,7 +4,6 @@ from .config import ImageGenConfig
 from .recipe_helper import RecipeImageHelper
 from .service import ImageGenService, ImageRequest
 
-
 def create_recipe_service(*, mock_mode: bool = False) -> RecipeImageHelper:
     """Convenience factory for recipe image generation.
     

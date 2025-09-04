@@ -17,7 +17,6 @@ from ..models.recipe_history import RecipeHistory
 from ..models.recipe_ingredient import RecipeIngredient
 from ..repositories.ingredient_repo import IngredientRepo
 
-
 # ── Recipe Repository ───────────────────────────────────────────────────────────────────────────────────────
 class RecipeRepo:
     """Handles direct DB queries for the Recipe model."""

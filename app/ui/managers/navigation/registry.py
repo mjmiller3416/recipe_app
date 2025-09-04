@@ -3,10 +3,11 @@
 Route-based navigation registry system for dynamic view registration and management.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
-import re
 from dataclasses import dataclass
 from enum import Enum
+
+# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
+import re
 from typing import Callable, Dict, List, Optional, Type, TypeVar, Union
 
 from PySide6.QtWidgets import QWidget

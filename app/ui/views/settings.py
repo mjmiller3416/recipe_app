@@ -10,8 +10,16 @@ from __future__ import annotations
 from typing import Any, Dict
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QScrollArea,
-                               QSizePolicy, QTextEdit, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QScrollArea,
+    QSizePolicy,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
+)
 
 from _dev_tools import DebugLogger
 from app.core.services.ai_gen import ImageGenConfig, RecipeImageHelper
@@ -21,7 +29,6 @@ from app.style.icon import Icon
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets import Button, ComboBox
 from app.ui.managers.navigation.views import MainView
-
 
 # ── Settings Category ────────────────────────────────────────────────────────────────────────
 class SettingsCategory(Card):

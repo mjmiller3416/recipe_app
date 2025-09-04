@@ -5,8 +5,7 @@ Defines the main application window, including the custom title bar and sidebar.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import (QHBoxLayout, QLabel, QStackedWidget,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QStackedWidget, QVBoxLayout, QWidget
 from qframelesswindow import FramelessWindow
 
 from app.config import AppConfig
@@ -15,11 +14,12 @@ from app.style.animation import WindowAnimator
 from app.ui.components import SearchBar
 from app.ui.components.navigation.sidebar import Sidebar
 from app.ui.components.navigation.titlebar import TitleBar
-from app.ui.managers.navigation.routes import (get_sidebar_route_mapping,
-                                               register_main_routes)
+from app.ui.managers.navigation.routes import (
+    get_sidebar_route_mapping,
+    register_main_routes,
+)
 from app.ui.managers.navigation.service import NavigationService
 from app.ui.utils.layout_utils import center_on_screen
-
 
 # ── Application Window ──────────────────────────────────────────────────────────────────────────────────────
 class MainWindow(FramelessWindow):

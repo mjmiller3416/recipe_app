@@ -11,7 +11,6 @@ from contextlib import contextmanager
 from _dev_tools import DebugLogger
 from app.core.database.db import create_session
 
-
 @contextmanager
 def session_scope():
     """

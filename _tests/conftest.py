@@ -11,18 +11,18 @@ Provides global test configuration including:
 """
 
 import os
+from pathlib import Path
 import shutil
 import sys
 import tempfile
-from pathlib import Path
 from typing import Any, Generator
 from unittest.mock import MagicMock, Mock, patch
 
-import factory
-import pytest
-from faker import Faker
 from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QApplication
+import factory
+from faker import Faker
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -35,7 +35,6 @@ from app.core.database.db import DatabaseManager
 from app.core.models import *
 from app.core.repositories import *
 from app.core.services import *
-
 
 @pytest.fixture(scope="session")
 def faker_instance() -> Faker:

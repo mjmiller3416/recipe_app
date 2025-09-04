@@ -13,9 +13,7 @@ from pathlib import Path
 from typing import Dict, Optional
 
 from _dev_tools.debug_logger import DebugLogger
-
 from .config import Mode
-
 
 # ── Custom Color Loader ─────────────────────────────────────────────────────────────────────────────────────
 class CustomColorLoader:

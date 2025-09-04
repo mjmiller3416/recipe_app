@@ -7,7 +7,6 @@ Basic checkbox widget for use in dropdown menus and forms.
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QCheckBox
 
-
 # ── CheckBox ────────────────────────────────────────────────────────────────────────────────────────────────
 class CheckBox(QCheckBox):
     """Custom checkbox widget with enhanced styling support."""

@@ -20,7 +20,6 @@ from PySide6.QtWidgets import QApplication, QWidget
 
 from _dev_tools.debug_logger import DebugLogger
 
-
 class QSSInspector(QObject):
     """Simple terminal-based widget inspector"""
 

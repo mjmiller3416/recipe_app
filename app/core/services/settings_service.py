@@ -13,7 +13,6 @@ from _dev_tools import DebugLogger
 from app.config.paths import AppPaths
 from app.core.services.ai_gen import ImageGenConfig
 
-
 # ── Settings Service ────────────────────────────────────────────────────────────────────────────────────────
 class SettingsService:
     """Service for managing application settings."""

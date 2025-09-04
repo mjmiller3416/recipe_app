@@ -15,7 +15,6 @@ from ..models.meal_selection import MealSelection
 from ..models.recipe import Recipe
 from ..models.saved_meal_state import SavedMealState
 
-
 # ── Planner Repository ──────────────────────────────────────────────────────────────────────────────────────
 class PlannerRepo:
     """Repository for meal planner operations."""

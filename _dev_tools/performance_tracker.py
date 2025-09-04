@@ -3,13 +3,13 @@
 Performance logging utilities for tracking operation timing.
 """
 
+from contextlib import contextmanager
+
 # ── Imports ─────────────────────────────────────────────────────────────────────────────
 import time
-from contextlib import contextmanager
 from typing import Optional
 
 from _dev_tools import DebugLogger
-
 
 @contextmanager
 def log_performance(operation_name: str, log_level: str = "info", threshold_ms: Optional[float] = None):

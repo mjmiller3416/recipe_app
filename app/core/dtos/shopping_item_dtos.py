@@ -11,7 +11,6 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-
 # ── Base DTOs ───────────────────────────────────────────────────────────────────────────────────────────────
 class ShoppingItemBaseDTO(BaseModel):
     """Base DTO for shopping item operations."""

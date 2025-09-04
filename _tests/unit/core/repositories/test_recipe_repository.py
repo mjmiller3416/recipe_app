@@ -11,14 +11,17 @@ Tests the recipe repository data access layer including:
 
 from unittest.mock import Mock, patch
 
-import pytest
 from faker import Faker
+import pytest
 from sqlalchemy.exc import IntegrityError
 
-from _tests.fixtures.recipe_factories import (IngredientFactory, RecipeFactory,
-                                              RecipeIngredientFactory,
-                                              RecipeWithIngredientsFactory,
-                                              create_sample_database)
+from _tests.fixtures.recipe_factories import (
+    IngredientFactory,
+    RecipeFactory,
+    RecipeIngredientFactory,
+    RecipeWithIngredientsFactory,
+    create_sample_database,
+)
 from app.core.models import Ingredient, Recipe, RecipeIngredient
 from app.core.repositories.recipe_repo import RecipeRepository
 

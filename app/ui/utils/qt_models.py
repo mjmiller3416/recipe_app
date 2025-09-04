@@ -6,7 +6,6 @@ Contains custom proxy models for filtering and sorting data in views.
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSortFilterProxyModel
 
-
 # ── Ingredient Proxy Model ──────────────────────────────────────────────────────────────────────────────────
 class IngredientProxyModel(QSortFilterProxyModel):
     """IngredientProxyModel is a custom proxy model that filters

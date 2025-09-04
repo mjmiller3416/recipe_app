@@ -17,7 +17,6 @@ from ..models.recipe_ingredient import RecipeIngredient
 from ..models.shopping_item import ShoppingItem
 from ..models.shopping_state import ShoppingState
 
-
 # ── Shopping Repository ─────────────────────────────────────────────────────────────────────────────────────
 class ShoppingRepo:
     """Repository for shopping list operations."""

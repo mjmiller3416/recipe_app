@@ -17,11 +17,11 @@ Usage:
 This script is automatically invoked by Alembic when running migration commands.
 """
 
-import os
-import sys
 # ── Imports ─────────────────────────────────────────────────────────────────────────────
 from logging.config import fileConfig
+import os
 from pathlib import Path
+import sys
 
 from alembic import context
 from dotenv import load_dotenv
@@ -45,6 +45,7 @@ if database_url:
 # ── Import metadata ─────────────────────────────────────────────────────────────────────
 from app.core.database.base import Base
 from app.core.models.ingredient import Ingredient
+
 # import all models to register them with metadata
 from app.core.models.recipe import Recipe
 from app.core.models.recipe_history import RecipeHistory

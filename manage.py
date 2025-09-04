@@ -2,9 +2,9 @@
 """
 Management script for MealGenie.
 """
+from pathlib import Path
 import subprocess
 import sys
-from pathlib import Path
 
 try:
     import typer
@@ -48,8 +48,7 @@ def seed_db(
     Populate database with mock recipe data for development and testing.
     """
     try:
-        from _scripts.mock_data import (clear_all_recipes, get_recipe_count,
-                                        seed_recipes)
+        from _scripts.mock_data import clear_all_recipes, get_recipe_count, seed_recipes
     except ImportError as e:
         typer.echo(f"Error importing mock data module: {e}", err=True)
         typer.echo("Make sure all dependencies are installed and the database is configured.", err=True)
@@ -91,8 +90,7 @@ def reset_db(
     Reset database to clean state (drops all recipe data).
     """
     try:
-        from _scripts.mock_data import (clear_all_recipes, get_recipe_count,
-                                        seed_recipes)
+        from _scripts.mock_data import clear_all_recipes, get_recipe_count, seed_recipes
     except ImportError as e:
         typer.echo(f"Error importing mock data module: {e}", err=True)
         raise typer.Exit(code=1)
