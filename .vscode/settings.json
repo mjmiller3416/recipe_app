@@ -153,6 +153,7 @@
       "**/.git-rewrite": true,
       "**/manage.py": true,
       "**/.ruff_cache": true,
+      "**/.isort.cfg": true
     },
 
     "files.associations": {

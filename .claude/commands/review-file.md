@@ -4,7 +4,7 @@ argument-hint: @<file-path>
 ---
 
 # Code Review for $ARGUMENTS
-
+**Read @_docs\ARCHITECTURE.md for architecture context.**
 Please perform a comprehensive review of the file $ARGUMENTS with focus on the following areas:
 
 ## 1. Critical Bug Detection
@@ -43,3 +43,8 @@ Please perform a comprehensive review of the file $ARGUMENTS with focus on the f
 - Provide specific, actionable recommendations with code examples
 - Explain the reasoning behind each suggestion
 - Prioritize suggestions by impact (critical bugs first, then architectural issues, then improvements)
+
+## Response Format
+- **Review summary should be exported to .claude\reviews\review-$FILENAME.md**
+- Use markdown formatting with code blocks for examples
+- Structure the review into sections corresponding to the focus areas above
