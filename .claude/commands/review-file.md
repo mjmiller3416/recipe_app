@@ -5,7 +5,6 @@ argument-hint: @<file-path>
 
 # Code Review for $FILE_PATH
 **Read @_docs/ARCHITECTURE.md for MealGenie architecture context.**
-**Launch architecture-reviewer agent to analyze codebase.**
 
 Please perform a comprehensive review of the file $FILE_PATH with focus on the following areas:
 

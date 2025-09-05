@@ -38,11 +38,12 @@ Please analyze $ARGUMENTS for proper architectural layer separation:
 - Core should not know about UI implementation details
 - Events/notifications should flow properly between layers
 
-## Output Format
-Provide:
-1. **Violations found**: Specific issues with file/line references
-2. **Recommended fixes**: Where to move misplaced code
-3. **Architecture score**: Overall adherence to layer separation
-4. **Suggestions**: Improvements for better layer separation
+## Response Format
+- **Review summary should be exported to .claude/reviews/review-$FILENAME.md**
+1. **Use markdown formatting with code blocks for examples**
+2. **Violations found**: Specific issues with file/line references
+3. **Recommended fixes**: Where to move misplaced code
+4. **Architecture score**: Overall adherence to layer separation
+5. **Suggestions**: Improvements for better layer separation
 
 ---

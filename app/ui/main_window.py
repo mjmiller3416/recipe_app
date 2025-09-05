@@ -14,6 +14,7 @@ from app.style.animation import WindowAnimator
 from app.ui.components import SearchBar
 from app.ui.components.navigation.sidebar import Sidebar
 from app.ui.components.navigation.titlebar import TitleBar
+from app.ui.managers.navigation.registry import NavigationRegistry
 from app.ui.managers.navigation.routes import (
     get_sidebar_route_mapping,
     register_main_routes,
@@ -156,17 +157,13 @@ class MainWindow(FramelessWindow):
 
     def _on_navigation_completed(self, path: str, params: dict):
         """Handle navigation completion to update UI state."""
-        # Update header based on route path
-        route_to_header = {
-            "/dashboard": "Dashboard",
-            "/meal-planner": "Meal Planner",
-            "/recipes/browse": "View Recipes",
-            "/shopping-list": "Shopping List",
-            "/recipes/add": "Add Recipes",
-            "/settings": "Settings"
-        }
+        # Get header text from route registry to maintain single source of truth
+        route_match = NavigationRegistry.match_route(path)
+        header_text = "MealGenie"  # default
 
-        header_text = route_to_header.get(path, "MealGenie")
+        if route_match and route_match.config.title:
+            header_text = route_match.config.title
+
         self.lbl_header.setText(header_text)
 
     def _connect_signals(self):
