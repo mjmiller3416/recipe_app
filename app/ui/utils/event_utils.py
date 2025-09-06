@@ -10,6 +10,9 @@ Consolidates common event patterns used across Recipe App views.
 # connect_button_actions()     -> Connect button click handlers
 # batch_connect_signals()      -> Connect multiple signals at once
 #
+# ── Signal Management ────────────────────────────────────────
+# signal_blocker()             -> Context manager for safe signal blocking
+#
 # ── Event Filtering & Handling ──────────────────────────────
 # create_tooltip_event_filter() -> Event filter for tooltip handling
 # create_focus_event_filter()  -> Event filter for focus events
@@ -25,6 +28,7 @@ Consolidates common event patterns used across Recipe App views.
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
+from contextlib import contextmanager
 from typing import Any, Callable, Dict, List, Optional
 
 from PySide6.QtCore import QEvent, QObject, Qt, Signal
@@ -35,6 +39,9 @@ from app.ui.components.widgets import Button, ComboBox
 __all__ = [
     # Signal Connection Patterns
     'connect_form_signals', 'connect_button_actions', 'batch_connect_signals',
+
+    # Signal Management
+    'signal_blocker',
 
     # Event Filtering & Handling
     'create_tooltip_event_filter', 'create_focus_event_filter', 'install_event_handlers',
@@ -124,6 +131,38 @@ def batch_connect_signals(signal_connections: List[tuple]) -> None:
     """
     for signal, slot in signal_connections:
         signal.connect(slot)
+
+
+# ── Signal Management ───────────────────────────────────────────────────────────────────────────────────────────
+@contextmanager
+def signal_blocker(widget: QWidget):
+    """
+    Context manager for safely blocking and unblocking widget signals.
+    
+    Ensures signals are always unblocked even if exceptions occur during 
+    the signal-blocked operations.
+    
+    Args:
+        widget: The Qt widget whose signals should be temporarily blocked
+        
+    Examples:
+        with signal_blocker(recipe_slot):
+            recipe_slot.set_recipe(recipe_dto)
+            recipe_slot.update_display()
+            
+        # Multiple widgets can be blocked using nested context managers
+        with signal_blocker(widget1):
+            with signal_blocker(widget2):
+                # Both widgets have signals blocked
+                widget1.setValue(value1)
+                widget2.setValue(value2)
+    """
+    was_blocked = widget.signalsBlocked()
+    try:
+        widget.blockSignals(True)
+        yield widget
+    finally:
+        widget.blockSignals(was_blocked)
 
 
 # ── Event Filtering & Handling ──────────────────────────────────────────────────────────────────────────────

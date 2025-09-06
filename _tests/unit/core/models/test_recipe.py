@@ -35,14 +35,13 @@ class TestRecipeModel:
     def test_recipe_creation(self, db_session):
         """Test basic recipe creation."""
         recipe_data = {
-            "name": "Test Pasta",
-            "description": "A simple pasta dish",
-            "prep_time": 15,
-            "cook_time": 30,
+            "recipe_name": "Test Pasta",
+            "recipe_category": "Italian", 
+            "meal_type": "Dinner",
+            "total_time": 45,
             "servings": 4,
-            "difficulty": "Easy",
-            "instructions": ["Boil water", "Cook pasta", "Add sauce"],
-            "tags": ["italian", "pasta", "quick"]
+            "directions": "Boil water\nCook pasta\nAdd sauce",
+            "notes": "A simple pasta dish"
         }
         
         recipe = Recipe(**recipe_data)
@@ -50,13 +49,13 @@ class TestRecipeModel:
         db_session.commit()
         
         assert recipe.id is not None
-        assert recipe.name == "Test Pasta"
-        assert recipe.prep_time == 15
-        assert recipe.cook_time == 30
+        assert recipe.recipe_name == "Test Pasta"
+        assert recipe.recipe_category == "Italian"
+        assert recipe.meal_type == "Dinner"
+        assert recipe.total_time == 45
         assert recipe.servings == 4
-        assert recipe.difficulty == "Easy"
-        assert len(recipe.instructions) == 3
-        assert "italian" in recipe.tags
+        assert "Boil water" in recipe.directions
+        assert "simple pasta" in recipe.notes
         
     def test_recipe_factory(self, db_session):
         """Test recipe creation using factory."""

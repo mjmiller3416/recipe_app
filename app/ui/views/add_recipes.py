@@ -560,10 +560,10 @@ class DirectionsNotesCard(Card):
         self.te_notes.hide()
 
         # Connect signals
-        self.btn_directions.clicked.connect(self.show_directions)
-        self.btn_notes.clicked.connect(self.show_notes)
+        self.btn_directions.clicked.connect(self._show_directions)
+        self.btn_notes.clicked.connect(self._show_notes)
 
-    def show_directions(self):
+    def _show_directions(self):
         """Show directions content and update button states."""
         self.te_directions.show()
         self.te_notes.hide()
@@ -571,7 +571,7 @@ class DirectionsNotesCard(Card):
         self.btn_notes.setObjectName("ToggleButtonInactive")
         self._refresh_button_styles()
 
-    def show_notes(self):
+    def _show_notes(self):
         """Show notes content and update button states."""
         self.te_directions.hide()
         self.te_notes.show()

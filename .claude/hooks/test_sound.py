@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-import subprocess
-import platform
 from pathlib import Path
+import platform
+import subprocess
 
 # Detect OS once
 OS_NAME = platform.system()

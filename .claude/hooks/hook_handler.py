@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-import sys
-import json
-import subprocess
-import platform
-from pathlib import Path
 from datetime import datetime
+import json
+from pathlib import Path
+import platform
+import subprocess
+import sys
 
 # Detect OS once
 OS_NAME = platform.system()

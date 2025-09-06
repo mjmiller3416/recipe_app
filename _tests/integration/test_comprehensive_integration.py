@@ -21,7 +21,7 @@ from _tests.fixtures.recipe_factories import (
     RecipeWithIngredientsFactory,
     create_sample_database,
 )
-from app.core.database.db import DatabaseSession
+from app.core.database.db import create_session
 from app.core.models import Ingredient, MealSelection, Recipe, ShoppingItem
 from app.core.repositories import (
     IngredientRepo,
@@ -44,9 +44,9 @@ class TestComprehensiveIntegration:
     """Comprehensive integration tests for the entire application stack."""
     
     @pytest.fixture
-    def database_manager(self, test_db_engine):
-        """Database manager for integration tests."""
-        return DatabaseManager(connection_string="sqlite:///:memory:")
+    def database_session(self, db_session):
+        """Database session for integration tests."""
+        return db_session
     
     @pytest.fixture
     def repositories(self, db_session):

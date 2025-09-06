@@ -85,14 +85,20 @@ def qapp():
     app.setApplicationName("MealGenie Test")
     app.setOrganizationName("Test")
     
+    # Disable debug logging during tests to prevent Qt cleanup errors
+    import os
+    os.environ['QT_LOGGING_RULES'] = '*.debug=false'
+    
     yield app
     
-    # Clean up any remaining widgets
-    app.closeAllWindows()
-    
-    # Process events to ensure cleanup
-    QTimer.singleShot(0, app.quit)
-    app.processEvents()
+    # Safer cleanup process
+    try:
+        app.closeAllWindows()
+        app.processEvents()
+        # Don't call quit in tests as it can cause terminal issues
+    except Exception:
+        # Ignore cleanup errors
+        pass
 
 
 @pytest.fixture

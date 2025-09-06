@@ -2,9 +2,9 @@
 """
 Comparison test: Old PowerShell method vs New optimized method
 """
-import time
-import subprocess
 from pathlib import Path
+import subprocess
+import time
 import winsound
 
 def test_old_powershell_method(sound_path):

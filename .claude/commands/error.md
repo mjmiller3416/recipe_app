@@ -1,4 +1,3 @@
-# error.md
 ---
 description: Investigate and resolve runtime errors by analyzing error messages and finding root causes
 argument-hint: "<error-text-or-logs>"

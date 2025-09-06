@@ -6,6 +6,10 @@ multiple meal planning tabs and integrates with the database to load and save me
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
+from __future__ import annotations
+
+from typing import Any, Dict, List, Optional, Tuple
+
 from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtWidgets import (
     QHBoxLayout,
@@ -17,56 +21,54 @@ from PySide6.QtWidgets import (
 )
 
 from _dev_tools import DebugLogger
-from app.core.dtos.planner_dtos import MealSelectionCreateDTO, MealSelectionUpdateDTO
-from app.core.models.meal_selection import MealSelection
 from app.core.services.planner_service import PlannerService
 from app.core.services.recipe_service import RecipeService
 from app.core.utils.error_utils import (
     create_error_context,
     error_boundary,
-    log_and_handle_exception,
     safe_execute_with_fallback,
 )
-from app.core.utils.validation_utils import validate_positive_number
 from app.style import Qss
 from app.style.icon import AppIcon, Icon
 from app.ui.components.composite.recipe_card import LayoutSize, create_recipe_card
-from app.ui.utils.event_utils import batch_connect_signals, create_tooltip_event_filter
+from app.ui.utils.event_utils import (
+    batch_connect_signals, create_tooltip_event_filter, signal_blocker,
+)
+from app.ui.utils.meal_planner_config import MealPlannerConfig
 from app.ui.utils.widget_utils import (
     apply_object_name_pattern,
     register_widget_for_theme,
 )
+from app.ui.view_models.meal_planner_view_model import MealPlannerViewModel
+from app.ui.view_models.meal_widget_view_model import MealWidgetViewModel
 from app.ui.views.base import ScrollableNavView
 from app.ui.views.recipe_selection import RecipeSelection
 
 # ── Constants ───────────────────────────────────────────────────────────────────────────────────────────────
-TAB_ICON_SIZE = QSize(32, 32)
-SIDE_SLOT_COUNT = 3
-LAYOUT_SPACING = 15
-ADD_TAB_TOOLTIP = "Add Meal"
+# Note: Configuration constants moved to MealPlannerConfig class for centralized management
 
 
 # ── Meal Widget ─────────────────────────────────────────────────────────────────────────────────────────────
 class MealWidget(QWidget):
     """
     A QWidget layout that organizes a main dish and side dish RecipeViewers.
-    Handles layout creation, user interaction, and internal meal state tracking.
+    Handles layout creation, user interaction, and delegates business logic to ViewModel.
     """
 
     # signal emitted when a recipe slot requests selection; passes the slot key (e.g., 'main', 'side1')
     recipe_selection_requested = Signal(str)
-    def __init__(self, planner_service: PlannerService, parent=None):
+    
+    def __init__(self, meal_view_model: MealWidgetViewModel, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
-        self.planner_service = planner_service
-        self.recipe_service = RecipeService() # for loading recipe details
-        self._meal_model: MealSelection | None = None
-        self.meal_slots = {}
+        self.view_model = meal_view_model
+        self.meal_slots: Dict[str, QWidget] = {}
         self.tooltip_filter = create_tooltip_event_filter()
 
         self._setup_ui()
         self._connect_signals()
+        self._connect_view_model_signals()
 
-    def _setup_ui(self):
+    def _setup_ui(self) -> None:
         """
         Setup the UI layout for the MealWidget.
 
@@ -76,7 +78,7 @@ class MealWidget(QWidget):
         self.setObjectName("MealWidget")
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
-        self.main_layout.setSpacing(LAYOUT_SPACING)
+        self.main_layout.setSpacing(MealPlannerConfig.LAYOUT_SPACING)
 
         # Main Dish (Large Card)
         self.main_slot = create_recipe_card(LayoutSize.LARGE)
@@ -85,19 +87,19 @@ class MealWidget(QWidget):
 
         # Side Dishes Row
         self.side_layout = QHBoxLayout()
-        self.side_layout.setSpacing(LAYOUT_SPACING)
+        self.side_layout.setSpacing(MealPlannerConfig.LAYOUT_SPACING)
 
-        for i in range(1, SIDE_SLOT_COUNT + 1):
+        for i in range(1, MealPlannerConfig.SIDE_SLOT_COUNT + 1):
             side_slot = create_recipe_card(LayoutSize.SMALL)
             side_slot.setEnabled(False) # initially disabled
-            side_slot.setToolTip("Select a main dish first") # tooltip for disabled state
+            side_slot.setToolTip(MealPlannerConfig.DISABLED_SIDE_SLOT_TOOLTIP) # tooltip for disabled state
             side_slot.installEventFilter(self.tooltip_filter)
             self.side_layout.addWidget(side_slot)
             self.meal_slots[f"side{i}"] = side_slot
 
         self.main_layout.addLayout(self.side_layout)
 
-    def _connect_signals(self):
+    def _connect_signals(self) -> None:
         """
         Connect signal from RecipeViewer to the update_recipe_selection method.
         """
@@ -115,131 +117,91 @@ class MealWidget(QWidget):
 
         batch_connect_signals(signal_connections)
 
+    def _connect_view_model_signals(self) -> None:
+        """Connect ViewModel signals to UI updates."""
+        # Recipe slot updates
+        self.view_model.recipe_slot_updated.connect(self._on_recipe_slot_updated)
+        
+        # Side slots enabled/disabled
+        self.view_model.side_slots_enabled_changed.connect(self._on_side_slots_enabled_changed)
+        
+        # Meal data changes
+        self.view_model.meal_data_changed.connect(self._on_meal_data_changed)
+        
+        # Recipe selection requests (forward to parent)
+        self.view_model.recipe_selection_requested.connect(self.recipe_selection_requested.emit)
+
     def update_recipe_selection(self, key: str, recipe_id: int) -> None:
         """
-        Update the meal model with the selected recipe ID.
+        Update recipe selection using ViewModel.
 
         Args:
             key (str): The key representing the recipe slot (main, side1, side2, side3).
             recipe_id (int): The ID of the selected recipe.
         """
-        if not self._meal_model:
-            self._meal_model = MealSelection(
-                meal_name="Custom Meal",  # or dynamic name later
-                main_recipe_id=recipe_id if key == "main" else 0
-            )
+        self.view_model.update_recipe_selection(key, recipe_id)
 
-        # Update Internal Model
-        if key == "main":
-            self._meal_model.main_recipe_id = recipe_id
+    def _on_recipe_slot_updated(self, slot_key: str, recipe_dto) -> None:
+        """Handle recipe slot update from ViewModel."""
+        slot = self.meal_slots.get(slot_key)
+        if slot is not None:
+            with signal_blocker(slot):
+                slot.set_recipe(recipe_dto)
+
+    def _on_side_slots_enabled_changed(self) -> None:
+        """Handle side slots enabled state change from ViewModel."""
+        if self.view_model.side_slots_enabled:
             self._enable_side_slots()
         else:
-            # Side Slot Update
-            setattr(self._meal_model, f"side_recipe_{key[-1]}_id", recipe_id)
-        # fetch recipe and update the slot UI, but block signals to avoid recursion
-        slot = self.meal_slots.get(key)
-        if slot is not None:
-            recipe = self.recipe_service.get_recipe(recipe_id)
-            slot.blockSignals(True)
-            slot.set_recipe(recipe)
-            slot.blockSignals(False)
+            self._disable_side_slots()
 
-    def _create_recipe_selection_handler(self, key: str):
+    def _on_meal_data_changed(self, meal_summary_dto) -> None:
+        """Handle meal data changes from ViewModel."""
+        # Update UI if needed based on meal data changes
+        pass  # UI updates are handled by slot updates
+
+    def _create_recipe_selection_handler(self, key: str) -> callable:
         """Create recipe selection handler for the given slot key."""
-        def handler(recipe_id: int):
+        def handler(recipe_id: int) -> None:
             self.update_recipe_selection(key, recipe_id)
         return handler
 
-    def _create_add_meal_handler(self, key: str):
+    def _create_add_meal_handler(self, key: str) -> callable:
         """Create add meal handler for the given slot key."""
-        def handler():
+        def handler() -> None:
             DebugLogger.log(f"Add meal clicked for slot: {key}", "info")
-            self.recipe_selection_requested.emit(key)
+            self.view_model.request_recipe_selection(key)
         return handler
 
-    def _enable_side_slots(self):
+    def _enable_side_slots(self) -> None:
         """Enable side dish slots when main dish is selected."""
-        for i in range(1, SIDE_SLOT_COUNT + 1):
+        for i in range(1, MealPlannerConfig.SIDE_SLOT_COUNT + 1):
             slot = self.meal_slots[f"side{i}"]
             slot.setEnabled(True)
             slot.setToolTip("")
 
-    def _create_dto_fields(self) -> dict:
-        """Create common DTO fields from meal model."""
-        return {
-            'meal_name': self._meal_model.meal_name,
-            'main_recipe_id': self._meal_model.main_recipe_id,
-            'side_recipe_1_id': self._meal_model.side_recipe_1_id,
-            'side_recipe_2_id': self._meal_model.side_recipe_2_id,
-            'side_recipe_3_id': self._meal_model.side_recipe_3_id
-        }
+    def _disable_side_slots(self) -> None:
+        """Disable side dish slots and reset their tooltips."""
+        for i in range(1, MealPlannerConfig.SIDE_SLOT_COUNT + 1):
+            slot = self.meal_slots[f"side{i}"]
+            slot.setEnabled(False)
+            slot.setToolTip(MealPlannerConfig.DISABLED_SIDE_SLOT_TOOLTIP)
 
-    @error_boundary(fallback=None, logger_func=DebugLogger.log)
-    def save_meal(self):
-        if not self._meal_model:
-            return
+    def save_meal(self) -> bool:
+        """Save the meal using ViewModel."""
+        return self.view_model.save_meal()
 
-        dto_fields = self._create_dto_fields()
+    def load_meal(self, meal_id: int) -> bool:
+        """Load a meal using ViewModel."""
+        return self.view_model.load_meal(meal_id)
 
-        if self._meal_model.id is None:
-            create_dto = MealSelectionCreateDTO(**dto_fields)
-            response_dto = self.planner_service.create_meal_selection(create_dto)
-            if response_dto:
-                self._meal_model.id = response_dto.id
-        else:
-            update_dto = MealSelectionUpdateDTO(**dto_fields)
-            self.planner_service.update_meal_selection(self._meal_model.id, update_dto)
+    def get_meal_id(self) -> int | None:
+        """Get the current meal ID from ViewModel."""
+        return self.view_model.meal_id
 
-    @error_boundary(fallback=None, logger_func=DebugLogger.log)
-    def load_meal(self, meal_id: int):
-        """
-        Load a meal by its ID and populate the RecipeViewers.
-        """
-        # Validate meal ID
-        validation = validate_positive_number(meal_id, "Meal ID")
-        if not validation.is_valid:
-            DebugLogger.log(f"Invalid meal ID: {validation.error_message}", "error")
-            return
-
-        response_dto = self.planner_service.get_meal_selection(meal_id)
-        if not response_dto:
-            error_context = create_error_context(
-                "meal_load",
-                {"meal_id": meal_id},
-                {"component": "MealWidget"}
-            )
-            log_and_handle_exception(
-                "meal_load_not_found",
-                ValueError(f"No meal found with ID {meal_id}"),
-                DebugLogger.log,
-                error_context
-            )
-            return
-
-        self._meal_model = MealSelection(
-            id=response_dto.id,
-            meal_name=response_dto.meal_name,
-            main_recipe_id=response_dto.main_recipe_id,
-            side_recipe_1_id=response_dto.side_recipe_1_id,
-            side_recipe_2_id=response_dto.side_recipe_2_id,
-            side_recipe_3_id=response_dto.side_recipe_3_id
-        )
-
-        # Load Recipes
-        self._load_main_recipe()
-        self._load_side_recipes()
-
-    def _load_main_recipe(self):
-        """Load main recipe into the main slot."""
-        main = self.recipe_service.get_recipe(self._meal_model.main_recipe_id)
-        self.main_slot.set_recipe(main)
-
-    def _load_side_recipes(self):
-        """Load side recipes into their respective slots."""
-        for idx in range(1, SIDE_SLOT_COUNT + 1):
-            rid = getattr(self._meal_model, f"side_recipe_{idx}_id")
-            recipe = self.recipe_service.get_recipe(rid) if rid else None
-            self.meal_slots[f"side{idx}"].set_recipe(recipe)
+    def has_changes(self) -> bool:
+        """Check if meal has unsaved changes."""
+        return self.view_model.has_changes
 
 
 # ── Meal Planner View ───────────────────────────────────────────────────────────────────────────────────────
@@ -248,34 +210,40 @@ class MealPlanner(ScrollableNavView):
     The MealPlanner class manages a tabbed interface for creating, editing,
     and saving meal plans within the application.
 
-    Atributes:
+    Attributes:
         meal_tabs (QTabWidget): The tab widget to manage meal planning tabs.
         layout (QVBoxLayout): The main layout for the MealPlanner widget.
         tab_map (dict): Maps tab indices to their respective MealWidget and meal_id.
     """
 
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, parent: Optional[QWidget] = None) -> None:
         DebugLogger.log("Initializing MealPlanner page", "info")
-        self.setObjectName("MealPlanner")
-        # Initialize PlannerService
+        
+        # Create services and ViewModel FIRST, before calling super().__init__
+        # because parent class will call _connect_view_model_signals()
         self.planner_service = PlannerService()
+        self.recipe_service = RecipeService()
+        self.planner_view_model = MealPlannerViewModel(self.planner_service, self.recipe_service)
+        
+        # Initialize state variables
+        self.tab_map: Dict[int, QWidget] = {}  # {tab_index: MealWidget}
+        self._selection_context: Optional[Tuple[QWidget, str]] = None # (MealWidget, slot_key) during recipe selection
 
+        # Now call parent constructor (which will call _build_ui and _connect_view_model_signals)
+        super().__init__(parent)
+        
+        self.setObjectName("MealPlanner")
         self._setup_widget_properties()
-
-
-        self.tab_map = {}  # {tab_index: MealWidget}
-        self._selection_context = None # (MealWidget, slot_key) during recipe selection
-
-        self._build_ui()
+        
+        # Initialize UI with saved meals
         self._init_ui()
 
-    def _build_ui(self):
+    def _build_ui(self) -> None:
         """Build the main UI layout using consistent scroll pattern."""
 
         # Create Planner & Selection Widgets
         self.meal_tabs = self._create_meal_tabs_widget()
-        self.meal_tabs.setIconSize(TAB_ICON_SIZE)
+        self.meal_tabs.setIconSize(MealPlannerConfig.TAB_ICON_SIZE)
 
         # create the in-page recipe selection view
         self.selection_page = RecipeSelection(self)
@@ -294,7 +262,7 @@ class MealPlanner(ScrollableNavView):
         # show the planner view by default
         self.stack.setCurrentIndex(0)
 
-    def _setup_widget_properties(self):
+    def _setup_widget_properties(self) -> None:
         """Setup widget properties and theme registration."""
         apply_object_name_pattern(self, "MealPlanner")
         register_widget_for_theme(self, Qss.MEAL_PLANNER)
@@ -312,12 +280,27 @@ class MealPlanner(ScrollableNavView):
 
         return tabs
 
+    def _connect_view_model_signals(self) -> None:
+        """Connect MealPlannerViewModel signals to UI updates."""
+        # Meal loaded signal
+        self.planner_view_model.meal_loaded.connect(self._on_meal_loaded)
+        
+        # Meal saved signal
+        self.planner_view_model.meal_saved.connect(self._on_meal_saved)
+        
+        # Recipe selection workflow signals
+        self.planner_view_model.recipe_selection_started.connect(self._on_recipe_selection_started)
+        self.planner_view_model.recipe_selection_finished.connect(self._on_recipe_selection_finished)
+        
+        # Tab state changes
+        self.planner_view_model.tab_state_changed.connect(self._on_tab_state_changed)
+
     def _init_ui(self):
         """Initialize UI by adding the '+' tab and loading saved meals."""
         self._new_meal_tab()  # add the "+" tab (used to add new meals)
 
         def _load_saved_meals():
-            meal_ids = self.planner_service.load_saved_meal_ids()
+            meal_ids = self.planner_view_model.load_saved_meal_ids()
             DebugLogger.log(f"[MealPlanner] Restoring saved meal IDs: {meal_ids}", "info")
 
             for meal_id in meal_ids:
@@ -334,8 +317,12 @@ class MealPlanner(ScrollableNavView):
             logger_func=DebugLogger.log
         )
 
-    def _add_meal_tab(self, meal_id: int = None):
-        widget = MealWidget(self.planner_service)
+    def _add_meal_tab(self, meal_id: Optional[int] = None) -> None:
+        """Add a new meal tab to the planner."""
+        # Create MealWidgetViewModel with injected services
+        meal_widget_vm = MealWidgetViewModel(self.planner_service, self.recipe_service)
+        widget = MealWidget(meal_widget_vm)
+        
         if meal_id:
             widget.load_meal(meal_id)
 
@@ -343,36 +330,36 @@ class MealPlanner(ScrollableNavView):
         selection_handler = self._create_recipe_selection_callback(widget)
         widget.recipe_selection_requested.connect(selection_handler)
 
-        insert_index = self.meal_tabs.count() - 1
-        index = self.meal_tabs.insertTab(insert_index, widget, "Custom Meal")
+        insert_index = self.meal_tabs.count() - MealPlannerConfig.ADD_TAB_INDEX_OFFSET
+        index = self.meal_tabs.insertTab(insert_index, widget, MealPlannerConfig.NEW_MEAL_TAB_TITLE)
         self.tab_map[index] = widget
         self.meal_tabs.setCurrentIndex(index)
 
-    def _create_recipe_selection_callback(self, meal_widget):
+    def _create_recipe_selection_callback(self, meal_widget: MealWidget) -> callable:
         """Create recipe selection callback for meal widget."""
-        def callback(key: str):
+        def callback(key: str) -> None:
             DebugLogger.log(f"Recipe selection requested for key: {key}", "info")
             self._start_recipe_selection(meal_widget, key)
         return callback
 
-    def _new_meal_tab(self):
+    def _new_meal_tab(self) -> None:
         """Add the last "+" tab to create new custom meals."""
         tab_widget = QWidget()
         apply_object_name_pattern(tab_widget, "NewMealTab")
 
         icon_asset = AppIcon(Icon.ADD)
-        icon_asset.setSize(TAB_ICON_SIZE.width(), TAB_ICON_SIZE.height())
+        icon_asset.setSize(MealPlannerConfig.TAB_ICON_SIZE.width(), MealPlannerConfig.TAB_ICON_SIZE.height())
         icon = icon_asset.pixmap()
 
         index = self.meal_tabs.addTab(tab_widget, icon, "")
-        self.meal_tabs.setTabToolTip(index, ADD_TAB_TOOLTIP)
+        self.meal_tabs.setTabToolTip(index, MealPlannerConfig.ADD_TAB_TOOLTIP)
 
-    def _handle_tab_click(self, index: int):
+    def _handle_tab_click(self, index: int) -> None:
         """Handle when the '+' tab is clicked to add a new tab."""
-        if index == self.meal_tabs.count() - 1:
+        if index == self.meal_tabs.count() - MealPlannerConfig.ADD_TAB_INDEX_OFFSET:
             self._add_meal_tab()
 
-    def _start_recipe_selection(self, widget, slot_key: str):
+    def _start_recipe_selection(self, widget: MealWidget, slot_key: str) -> None:
         """Begin in-page recipe selection for the given meal slot."""
         DebugLogger.log(f"Starting recipe selection for slot: {slot_key}", "info")
         # Store Context
@@ -399,7 +386,7 @@ class MealPlanner(ScrollableNavView):
         DebugLogger.log("Switching to selection page (index 1)", "info")
         self.stack.setCurrentIndex(1)
 
-    def _finish_recipe_selection(self, recipe_id: int):
+    def _finish_recipe_selection(self, recipe_id: int) -> None:
         """Handle recipe selected from the selection page."""
         if not self._selection_context:
             return
@@ -407,12 +394,12 @@ class MealPlanner(ScrollableNavView):
         widget.update_recipe_selection(slot_key, recipe_id)
         self._return_to_planner_view()
 
-    def _return_to_planner_view(self):
+    def _return_to_planner_view(self) -> None:
         """Return to planner view and clear selection context."""
         self.stack.setCurrentIndex(0)
         self._selection_context = None
 
-    def _show_context_menu(self, position):
+    def _show_context_menu(self, position) -> None:
         """Show context menu for meal tabs."""
         tab_index = self._get_valid_tab_index(position)
         if tab_index is None:
@@ -427,7 +414,7 @@ class MealPlanner(ScrollableNavView):
         tab_index = tab_bar.tabAt(position)
 
         # don't show context menu for the '+' tab (last tab) or invalid positions
-        if tab_index == -1 or tab_index == self.meal_tabs.count() - 1:
+        if tab_index == -1 or tab_index == self.meal_tabs.count() - MealPlannerConfig.ADD_TAB_INDEX_OFFSET:
             return None
 
         # only show context menu if this tab has a meal widget
@@ -443,7 +430,7 @@ class MealPlanner(ScrollableNavView):
         delete_action.triggered.connect(lambda: self._delete_meal_tab(tab_index))
         return context_menu
 
-    def _delete_meal_tab(self, tab_index: int):
+    def _delete_meal_tab(self, tab_index: int) -> None:
         """Delete a meal tab and remove the meal from the database if saved."""
         if tab_index not in self.tab_map:
             return
@@ -451,9 +438,9 @@ class MealPlanner(ScrollableNavView):
         meal_widget = self.tab_map[tab_index]
 
         # Delete from database if saved meal
-        if meal_widget._meal_model and meal_widget._meal_model.id:
-            meal_id = meal_widget._meal_model.id
-            if not self.planner_service.delete_meal_selection(meal_id):
+        meal_id = meal_widget.get_meal_id()
+        if meal_id:
+            if not self.planner_view_model.delete_meal_selection(meal_id):
                 DebugLogger.log(f"Failed to delete meal with ID {meal_id} from database", "error")
                 return
             DebugLogger.log(f"Successfully deleted saved meal with ID {meal_id}", "info")
@@ -494,23 +481,48 @@ class MealPlanner(ScrollableNavView):
         """
         ids = []
         for widget in self.tab_map.values():
-            if widget._meal_model and widget._meal_model.id:
-                ids.append(widget._meal_model.id)
+            meal_id = widget.get_meal_id()
+            if meal_id:
+                ids.append(meal_id)
         return ids
 
     @error_boundary(fallback=None, logger_func=DebugLogger.log)
-    def saveMealPlan(self):
-        """Save all meals and their corresponding tab state."""
+    def save_meal_plan(self) -> None:
+        """Save all meals and their corresponding tab state using ViewModel."""
+        # First save all individual meals
         for widget in self.tab_map.values():
             widget.save_meal()
 
+        # Then save the meal plan with collected IDs
         saved_ids = self._get_active_meal_ids()
-        result = self.planner_service.saveMealPlan(saved_ids)
+        success = self.planner_view_model.save_meal_plan(saved_ids)
 
-        if result.success:
-            DebugLogger.log(f"[MealPlanner] {result.message}", "info")
+        if success:
+            DebugLogger.log("[MealPlanner] Meal plan saved successfully", "info")
         else:
-            DebugLogger.log(f"[MealPlanner] Failed to save: {result.message}", "error")
+            DebugLogger.log("[MealPlanner] Failed to save meal plan", "error")
+
+    # ── ViewModel Signal Handlers ───────────────────────────────────────────────────────────────────────────────────
+
+    def _on_meal_loaded(self, meal_dto) -> None:
+        """Handle meal loaded signal from ViewModel."""
+        DebugLogger.log(f"Meal loaded: {meal_dto.meal_name}", "info")
+
+    def _on_meal_saved(self, message: str) -> None:
+        """Handle meal saved signal from ViewModel."""
+        DebugLogger.log(f"Meal saved: {message}", "info")
+
+    def _on_recipe_selection_started(self, meal_widget_id: str, slot_key: str) -> None:
+        """Handle recipe selection started signal from ViewModel."""
+        DebugLogger.log(f"Recipe selection started for {meal_widget_id}.{slot_key}", "debug")
+
+    def _on_recipe_selection_finished(self, recipe_id: int) -> None:
+        """Handle recipe selection finished signal from ViewModel."""
+        DebugLogger.log(f"Recipe selection finished with recipe {recipe_id}", "debug")
+
+    def _on_tab_state_changed(self, tab_state_data: Dict[str, Any]) -> None:
+        """Handle tab state changes from ViewModel."""
+        DebugLogger.log(f"Tab state changed: {tab_state_data.get('total_tabs', 0)} tabs active", "debug")
 
     def closeEvent(self, event):
         # persist planner state before closing

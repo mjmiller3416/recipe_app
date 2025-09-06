@@ -2,9 +2,9 @@
 """Quick test to verify notification sound timing"""
 
 import json
+from pathlib import Path
 import sys
 import time
-from pathlib import Path
 
 def test_notification():
     """Send a notification event to the hook handler"""

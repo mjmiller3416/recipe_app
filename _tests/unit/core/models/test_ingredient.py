@@ -31,8 +31,8 @@ class TestIngredientModel:
     def test_ingredient_creation(self, db_session):
         """Test basic ingredient creation."""
         ingredient_data = {
-            "name": "Tomato",
-            "category": "Vegetables"
+            "ingredient_name": "Tomato",
+            "ingredient_category": "Vegetables"
         }
         
         ingredient = Ingredient(**ingredient_data)
@@ -40,8 +40,8 @@ class TestIngredientModel:
         db_session.commit()
         
         assert ingredient.id is not None
-        assert ingredient.name == "Tomato"
-        assert ingredient.category == "Vegetables"
+        assert ingredient.ingredient_name == "Tomato"
+        assert ingredient.ingredient_category == "Vegetables"
         
     def test_ingredient_factory(self, db_session):
         """Test ingredient creation using factory."""

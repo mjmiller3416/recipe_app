@@ -3,14 +3,16 @@
 Performance test script for optimized hook handler sound system.
 Tests latency and measures response times.
 """
-import time
 import json
 from pathlib import Path
 import sys
+import time
 
 # Import the optimized hook handler functions
 sys.path.insert(0, str(Path(__file__).parent))
-from hook_handler import initialize_sound_cache, handle_event, SOUND_CACHE, WINSOUND_AVAILABLE, OS_NAME
+from hook_handler import (
+    OS_NAME, SOUND_CACHE, WINSOUND_AVAILABLE, handle_event, initialize_sound_cache,
+)
 
 def test_sound_latency():
     """Test sound trigger latency with the optimized system."""
