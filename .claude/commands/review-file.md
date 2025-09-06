@@ -25,10 +25,8 @@ Please perform a comprehensive review of the file $FILE_PATH with focus on the f
 - Avoid over-engineering - sometimes a slightly longer function is more readable than multiple tiny ones
 
 ## 4. Architectural Concerns & Layer Violations
-- Check for logic that doesn't belong in the current file/directory based on this structure:
-  - **Core layer** (`app/core/`): Business logic, data models, repositories, services
-  - **UI layer** (`app/ui/`): Presentation logic, components, view models, views
-  - **Style layer** (`app/style/`): Styling, theming, animations
+- **EXCEPTION**: `app/core/utils/` imports are ALLOWED from any layer (shared utilities)
+- **UI Utils Rule**: `app/ui/utils/` should ONLY be imported by UI layer components
 - Flag any core business logic that has leaked into UI components
 - Identify UI-specific code that might be in core modules
 - **MealGenie-specific concerns:**
@@ -36,7 +34,7 @@ Please perform a comprehensive review of the file $FILE_PATH with focus on the f
   - Nutrition calculations belong in core, not view models
   - Database queries should be in repositories, not views
   - Meal planning logic should be centralized in services
-- Suggest proper layer placement for misplaced code
+  - **Core utils are shared utilities** - importing them from UI is acceptable
 
 ## 5. Logic Simplification
 - Look for overly complex implementations that could be simplified

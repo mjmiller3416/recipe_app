@@ -20,14 +20,9 @@ Please perform a comprehensive package-level architectural review of the specifi
 ### 2. Dependency Mapping
 ```bash
 # Example discovery commands to use:
-grep -r "import.*add_recipe" app/ui/view_models
+grep -r "import.*add_recipe" app/ui/view_models/
 grep -r "AddRecipe" app/core/services/
 find app/ -name "*recipe*" -type f
-
-# Configuration analysis commands
-find $(dirname $FILE_PATH) -name "config.py" -type f
-grep -r "from.*config import\|import.*config" $PACKAGE_PATH
-grep -rE "[^a-zA-Z_][0-9]{2,}[^a-zA-Z_]" $PACKAGE_PATH --include="*.py" | grep -v config.py
 ```
 
 ### 3. Architecture Flow Analysis
@@ -53,9 +48,6 @@ Analyze the discovered files for:
 - Integration completeness
 - Data flow correctness
 - Architecture pattern consistency
-- Configuration consistency across package components
-- Proper config.py structure and usage patterns
-- Hardcoded values that belong in centralized configuration
 
 ### Step 3: Component-Level Review (Use architecture-reviewer agent)
 For each major component, verify:
@@ -126,3 +118,18 @@ This command should coordinate multiple agents:
 3. **architecture-reviewer**: For component-level validation
 4. **pyside6-frontend-architect**: For UI-specific concerns
 5. **python-backend-architect**: For Core layer analysis
+
+## Usage Examples
+
+```bash
+# Review entire add_recipes package
+/review-package app/ui/views/add_recipes
+
+# Review with explicit additional components
+/review-package app/ui/views/meal_planner app/ui/view_models/meal_planner_view_model.py
+
+# Review core service package
+/review-package app/core/services/recipe_service.py
+```
+
+The command will automatically discover related components and provide a comprehensive architectural assessment of how the entire feature works together.
