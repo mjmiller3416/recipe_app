@@ -1,7 +1,7 @@
 ---
 name: architecture-reviewer
 description: Must use proactively when implementing features across multiple files, after refactoring, or when suspecting layer boundary violations in the MealGenie app. Essential for maintaining MVVM integrity and proper import hierarchies.
-model: sonnet
+model: opus
 color: pink
 tools: Read, Write, Edit, Grep, Glob, Bash
 ---

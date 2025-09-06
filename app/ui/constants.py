@@ -28,6 +28,10 @@ class LayoutConstants:
 
     # Ingredient list styling
     INGREDIENT_LIST_SPACING: Final[int] = 12
+    
+    # Animation constants
+    EXPAND_COLLAPSE_DURATION: Final[int] = 250  # milliseconds
+    MAX_WIDGET_HEIGHT: Final[int] = 16777215  # Qt maximum height constant
     INGREDIENT_GRID_SPACING: Final[int] = 10
     INGREDIENT_QTY_WIDTH: Final[int] = 60
     INGREDIENT_UNIT_WIDTH: Final[int] = 50

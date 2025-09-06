@@ -1,7 +1,7 @@
 ---
 name: python-backend-architect
 description: Use this agent when you need to implement core data/business logic in Python backend systems using layered clean architecture. This includes creating or modifying database models, DTOs, repositories, services, and implementing business rules with SQLAlchemy and Pydantic. Examples: <example>Context: User needs to add a new recipe rating feature to the MealGenie app. user: 'I need to add a rating system where users can rate recipes from 1-5 stars and leave optional comments' assistant: 'I'll use the python-backend-architect agent to implement the core business logic for the recipe rating system' <commentary>Since this involves creating new database models, DTOs, repositories, and services for a core business feature, use the python-backend-architect agent.</commentary></example> <example>Context: User discovers a bug in the recipe search functionality. user: 'The recipe search is returning duplicate results when filtering by multiple ingredients' assistant: 'Let me use the python-backend-architect agent to fix the repository query logic' <commentary>This involves fixing core data access logic in the repository layer, which is perfect for the python-backend-architect agent.</commentary></example>
-model: sonnet
+model: opus
 color: cyan
 tools: Read, Write, Edit, Grep, Glob, Bash
 ---

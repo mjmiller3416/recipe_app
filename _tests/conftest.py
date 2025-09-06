@@ -31,7 +31,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from app.core.database.base import Base
-from app.core.database.db import create_session, SessionLocal
+from app.core.database.db import SessionLocal, create_session
 from app.core.models import *
 from app.core.repositories import *
 from app.core.services import *

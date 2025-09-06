@@ -24,7 +24,8 @@ from app.core.services.ingredient_service import IngredientService
 from app.core.services.recipe_service import DuplicateRecipeError, RecipeService
 from app.ui.view_models.add_recipe_view_model import AddRecipeViewModel, RecipeFormData
 from app.ui.view_models.ingredient_view_model import (
-    IngredientFormData, IngredientViewModel,
+    IngredientFormData,
+    IngredientViewModel,
 )
 
 @pytest.fixture

@@ -17,7 +17,9 @@ import pytest
 from app.core.dtos.ingredient_dtos import IngredientCreateDTO, IngredientSearchDTO
 from app.core.models.ingredient import Ingredient
 from app.ui.view_models.ingredient_view_model import (
-    IngredientFormData, IngredientMatchResult, IngredientValidationResult,
+    IngredientFormData,
+    IngredientMatchResult,
+    IngredientValidationResult,
     IngredientViewModel,
 )
 

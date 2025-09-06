@@ -21,15 +21,16 @@ from PySide6.QtWidgets import (
 
 from _dev_tools import DebugLogger
 from app.config import INGREDIENT_CATEGORIES, MEASUREMENT_UNITS
-from app.core.services.shopping_service import ShoppingService
 from app.style import Icon, Qss, Theme, Type
 from app.ui.components.layout.card import ActionCard, BaseCard, Card
 from app.ui.components.widgets import BaseButton, ComboBox, ToolButton
+from app.ui.components.widgets.toast import Toast
 from app.ui.constants import LayoutConstants
 from app.ui.utils.layout_utils import (
     create_two_column_layout,
     set_fixed_height_for_layout_widgets,
 )
+from app.ui.view_models.shopping_list_view_model import ShoppingListViewModel
 from app.ui.views.base import ScrollableNavView
 
 # ── Forms ───────────────────────────────────────────────────────────────────────────────────────────────────
@@ -49,24 +50,24 @@ class AddItemForm(QWidget):
         self.lbl_item_name = QLabel("Item Name")
         self.le_item_name = QLineEdit()
         self.le_item_name.setPlaceholderText("e.g. Olive Oil")
-        self.le_item_name.setObjectName("ItemNameLineEdit")
+        self.le_item_name.setObjectName("item_name_line_edit")
 
         # Qty.
         self.lbl_item_qty = QLabel("Qty.")
         self.le_item_qty = QLineEdit()
         self.le_item_qty.setPlaceholderText("e.g. 2")
-        self.le_item_qty.setObjectName("QtyLineEdit")
+        self.le_item_qty.setObjectName("quantity_line_edit")
 
         # Unit
         self.lbl_item_unit = QLabel("Unit")
         self.cb_item_unit = ComboBox(list_items=MEASUREMENT_UNITS, placeholder="e.g. bottle")
-        self.cb_item_unit.setObjectName("ComboBox")
+        self.cb_item_unit.setObjectName("unit_combo_box")
         self.cb_item_unit.setProperty("context", "shopping_item")
 
         # Category
         self.lbl_item_category = QLabel("Category")
         self.cb_item_category = ComboBox(list_items=INGREDIENT_CATEGORIES, placeholder="Select category")
-        self.cb_item_category.setObjectName("ComboBox")
+        self.cb_item_category.setObjectName("category_combo_box")
         self.cb_item_category.setProperty("context", "shopping_item")
 
         # add labels and widgets to the form layout - two column layout with labels above inputs
@@ -161,7 +162,7 @@ class CollapsibleCategory(BaseCard):
     def _setup_animation(self):
         """Setup animation for expand/collapse."""
         self._animation = QPropertyAnimation(self._content_container, b"maximumHeight")
-        self._animation.setDuration(250)
+        self._animation.setDuration(LayoutConstants.EXPAND_COLLAPSE_DURATION)
         self._animation.setEasingCurve(QEasingCurve.OutCubic)
 
     def _update_expand_state(self, animate=True):
@@ -184,12 +185,12 @@ class CollapsibleCategory(BaseCard):
             self._animation.setStartValue(0)
             self._animation.setEndValue(natural_height)
             self._animation.finished.connect(
-                lambda: self._content_container.setMaximumHeight(16777215),
+                lambda: self._content_container.setMaximumHeight(LayoutConstants.MAX_WIDGET_HEIGHT),
                 Qt.SingleShotConnection
             )
             self._animation.start()
         else:
-            self._content_container.setMaximumHeight(16777215)
+            self._content_container.setMaximumHeight(LayoutConstants.MAX_WIDGET_HEIGHT)
 
     def _collapse_content(self, animate=True):
         """Collapse the content area."""
@@ -277,21 +278,28 @@ class CollapsibleCategory(BaseCard):
                     checked_items.append(item.item.ingredient_name)
         return checked_items
 
+    def cleanup(self):
+        """Clean up all item widgets to prevent memory leaks."""
+        for item in self._items:
+            if hasattr(item, 'cleanup'):
+                item.cleanup()
+        self._items.clear()
+
 class ShoppingItem(QWidget):
     itemChecked = Signal(str, bool)
 
-    def __init__(self, item, shopping_svc, breakdown_map, parent=None):
+    def __init__(self, item, view_model, breakdown_map, parent=None):
         """Initialize the ShoppingItem.
 
         Args:
             item: The shopping item data object.
-            shopping_svc: Service to manage shopping list operations.
+            view_model: ViewModel to handle shopping operations.
             breakdown_map: Mapping of recipe ingredients for tooltips.
             parent: Optional parent widget.
         """
         super().__init__(parent)
         self.item = item
-        self.shopping_svc = shopping_svc
+        self.view_model = view_model
         self.breakdown_map = breakdown_map
 
         # Create widgets
@@ -320,6 +328,20 @@ class ShoppingItem(QWidget):
         # Connections
         self.checkbox.stateChanged.connect(self.onToggled)
 
+        # Track signal connections for cleanup
+        self._signal_connections = [
+            (self.checkbox.stateChanged, self.onToggled)
+        ]
+
+    def cleanup(self):
+        """Clean up signal connections to prevent memory leaks."""
+        for signal, slot in self._signal_connections:
+            try:
+                signal.disconnect(slot)
+            except (RuntimeError, TypeError):
+                pass  # Signal already disconnected or object deleted
+        self._signal_connections.clear()
+
     def _update_label_style(self):
         """Apply or remove strike-through based on checkbox state."""
         if self.checkbox.isChecked():
@@ -332,27 +354,19 @@ class ShoppingItem(QWidget):
 
     def _set_tooltip_if_needed(self):
         """Sets the recipe breakdown tooltip."""
-        DebugLogger.log(f"Setting tooltip for ingredient {self.item.ingredient_name}, source: {self.item.source}, key: {self.item.key()}", "debug")
-
         if self.item.source == "recipe":
             parts = self.breakdown_map.get(self.item.key(), [])
-            DebugLogger.log(f"Found {len(parts)} parts in breakdown_map for ingredient", "debug")
             if parts:
                 # Create a more readable tooltip format
                 header = f"Used in {len(parts)} recipe(s):"
                 recipe_lines = [f"• {qty} {unit} - {name}" for name, qty, unit in parts]
                 text = f"{header}\n" + "\n".join(recipe_lines)
-                DebugLogger.log(f"Setting ingredient tooltip: {text}", "debug", text=text)
                 self.label.setToolTip(text)
-            else:
-                DebugLogger.log("No recipe parts found for ingredient, skipping tooltip", "debug")
-        else:
-            DebugLogger.log("Non-recipe shopping item, no tooltip needed", "debug")
 
     def onToggled(self, state):
         """Handle the toggle action."""
-        if self.shopping_svc:
-            self.shopping_svc.toggle_item_status(self.item.id)
+        if self.view_model:
+            self.view_model.toggle_item_status(self.item.id)
         self._update_label_style()
 
         # Emit signal for category management
@@ -369,11 +383,23 @@ class ShoppingList(ScrollableNavView):
         self.setObjectName("ShoppingList")
         Theme.register_widget(self, Qss.SHOPPING_LIST)
 
-        self.active_recipe_ids: list[int] = []  # store latest recipe list
-        self.shopping_svc = None  # initialize shopping service
-        self._breakdown_map = {}  # initialize breakdown map
+        # Initialize ViewModel
+        self.view_model = ShoppingListViewModel()
 
-        #self._build_ui()
+        # Connect ViewModel signals
+        self._connect_view_model_signals()
+
+        # State tracking
+        self.active_recipe_ids: list[int] = []
+
+    def _connect_view_model_signals(self):
+        """Connect ViewModel signals to UI update methods."""
+        self.view_model.list_updated.connect(self._on_list_updated)
+        self.view_model.manual_item_added.connect(self._on_manual_item_added)
+        self.view_model.error_occurred.connect(self._on_error_occurred)
+        self.view_model.validation_failed.connect(self._on_validation_failed)
+        self.view_model.processing_state_changed.connect(self._on_processing_state_changed)
+        self.view_model.loading_state_changed.connect(self._on_loading_state_changed)
 
     def _build_ui(self):
         """Setup the UI components for the ShoppingList view."""
@@ -414,33 +440,20 @@ class ShoppingList(ScrollableNavView):
 
     def _on_add_manual(self):
         """Handle the addition of a manual item to the shopping list."""
-        try:
-            name = self.add_item_form.le_item_name.text().strip()
-            qty = float(self.add_item_form.le_item_qty.text().strip())
-            unit = self.add_item_form.cb_item_unit.currentText()
-            category = self.add_item_form.cb_item_category.currentText()
+        name = self.add_item_form.le_item_name.text()
+        qty = self.add_item_form.le_item_qty.text()
+        unit = self.add_item_form.cb_item_unit.currentText()
+        category = self.add_item_form.cb_item_category.currentText()
 
-            if not name:
-                return  # optionally show error
+        # Add manual item via ViewModel
+        success = self.view_model.add_manual_item(name, qty, unit, category)
 
-            # add manual item via service with DTO
-            from app.core.dtos.shopping_dtos import ManualItemCreateDTO
-            svc = ShoppingService()
-            dto = ManualItemCreateDTO(
-                ingredient_name=name,
-                quantity=qty,
-                unit=unit,
-                category=category
-            )
-            svc.add_manual_item(dto)
+        if success:
+            # Clear form on successful addition
             self.add_item_form.le_item_name.clear()
             self.add_item_form.le_item_qty.clear()
             self.add_item_form.cb_item_unit.clearSelection()
             self.add_item_form.cb_item_category.clearSelection()
-            self.loadShoppingList(self.active_recipe_ids)  # refresh list
-
-        except ValueError:
-            pass  # optionally show "Invalid quantity" feedback
 
     def _render_category_columns(self, grouped: dict, manual_items: list) -> None:
         """
@@ -462,13 +475,11 @@ class ShoppingList(ScrollableNavView):
         """Creates a CollapsibleCategory widget and populates it with ShoppingItem widgets."""
         category_widget = CollapsibleCategory(title, start_expanded=False)
 
-        # Ensure we have a shopping service
-        shopping_svc = getattr(self, 'shopping_svc', None)
-        # Ensure we have a breakdown map
-        breakdown_map = getattr(self, '_breakdown_map', {})
+        # Get breakdown map from ViewModel
+        breakdown_map = self.view_model.get_breakdown_map()
 
         for item in items:
-            item_widget = ShoppingItem(item, shopping_svc, breakdown_map)
+            item_widget = ShoppingItem(item, self.view_model, breakdown_map)
             category_widget.addShoppingItem(item_widget)
 
         return category_widget
@@ -480,35 +491,82 @@ class ShoppingList(ScrollableNavView):
         Args:
             recipe_ids (list[int]): List of recipe IDs to generate the shopping list from.
         """
-        self.active_recipe_ids = recipe_ids  # store active recipe IDs
+        self.active_recipe_ids = recipe_ids
         DebugLogger.log(f"ShoppingList.loadShoppingList: recipe_ids={recipe_ids}", "debug")
 
-        # Clear current shopping container content
+        self._prepare_ui_for_refresh()
+        self._refresh_shopping_data(recipe_ids)
+
+    def _prepare_ui_for_refresh(self):
+        """Prepare UI for shopping list refresh by clearing current content."""
+        # Clean up existing widgets to prevent memory leaks
+        self._cleanup_existing_widgets()
         self.list_container.clear()
 
-        # generate/update shopping list in database
-        shopping_svc = ShoppingService()
-        self.shopping_svc = shopping_svc
-        shopping_svc.generate_shopping_list(recipe_ids)
-        # fetch all shopping items (models) for display
-        ingredients = shopping_svc.shopping_repo.get_all_shopping_items()
-        DebugLogger.log(f"ShoppingList.load_shopping_list: fetched {len(ingredients)} items", "debug")
-        # get raw breakdown mapping for tooltips
-        self._breakdown_map = shopping_svc.shopping_repo.get_ingredient_breakdown(recipe_ids)
+    def _cleanup_existing_widgets(self):
+        """Clean up existing shopping item widgets to prevent memory leaks."""
+        # Find all CollapsibleCategory widgets and clean them up
+        for i in range(self.list_container.layout().count()):
+            item = self.list_container.layout().itemAt(i)
+            if item and item.widget() and hasattr(item.widget(), 'cleanup'):
+                item.widget().cleanup()
 
-        # Initialize empty breakdown map if None
-        if self._breakdown_map is None:
-            self._breakdown_map = {}
+    def _refresh_shopping_data(self, recipe_ids: list[int]):
+        """Refresh shopping data using the ViewModel."""
+        self.view_model.generate_shopping_list(recipe_ids)
 
-        # Group ingredients by category
-        grouped = defaultdict(list)
-        manual_items = []
+    # ── ViewModel Signal Handlers ──────────────────────────────────────────────────────────────────────────
 
-        for item in ingredients:
-            if item.source == "manual":
-                manual_items.append(item)
-            else:
-                category = item.category or "Other"
-                grouped[category].append(item)
+    def _on_list_updated(self, grouped_items: dict, manual_items: list):
+        """Handle shopping list update from ViewModel."""
+        DebugLogger.log("Shopping list updated by ViewModel", "debug")
+        self._render_category_columns(grouped_items, manual_items)
 
-        self._render_category_columns(grouped, manual_items) # render the list
+    def _on_manual_item_added(self, message: str):
+        """Handle successful manual item addition."""
+        DebugLogger.log(f"Manual item added: {message}", "info")
+        self.show_success_message(message)
+
+    def _on_error_occurred(self, error_type: str, error_message: str):
+        """Handle error from ViewModel."""
+        DebugLogger.log(f"ViewModel error [{error_type}]: {error_message}", "error")
+        self.show_error_message(error_message)
+
+    def _on_validation_failed(self, errors: list):
+        """Handle validation errors from ViewModel."""
+        error_message = "; ".join(errors)
+        DebugLogger.log(f"Validation failed: {error_message}", "warning")
+        self.show_validation_error(error_message)
+
+    def _on_processing_state_changed(self, is_processing: bool):
+        """Handle processing state change from ViewModel."""
+        if is_processing:
+            DebugLogger.log("ViewModel processing started", "debug")
+            # Optionally disable UI during processing
+        else:
+            DebugLogger.log("ViewModel processing completed", "debug")
+
+    def _on_loading_state_changed(self, is_loading: bool, operation: str):
+        """Handle loading state change from ViewModel."""
+        if is_loading:
+            DebugLogger.log(f"ViewModel loading: {operation}", "debug")
+            # Optionally show loading indicator
+        else:
+            DebugLogger.log("ViewModel loading completed", "debug")
+
+    # ── User Feedback Methods ───────────────────────────────────────────────────────────────────────────────────
+
+    def show_success_message(self, message: str):
+        """Show success message using Toast notification."""
+        toast = Toast(message, self, success=True)
+        toast.show_toast()
+
+    def show_error_message(self, message: str):
+        """Show error message using Toast notification."""
+        toast = Toast(message, self, success=False)
+        toast.show_toast()
+
+    def show_validation_error(self, message: str):
+        """Show validation error message using Toast notification."""
+        toast = Toast(f"Validation Error: {message}", self, success=False)
+        toast.show_toast()
