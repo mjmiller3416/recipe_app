@@ -34,8 +34,7 @@ from app.ui.components.inputs import SmartLineEdit
 from app.ui.components.layout.card import ActionCard, Card
 from app.ui.components.widgets import ComboBox, ToolButton
 from app.ui.components.widgets.button import Button
-from app.ui.managers.navigation.views import MainView
-from app.ui.utils.event_utils import batch_connect_signals, connect_form_signals
+from app.ui.utils.event_utils import connect_form_signals
 from app.ui.utils.form_utils import (
     clear_error_styles,
     clear_form_fields,
@@ -47,8 +46,8 @@ from app.ui.utils.form_utils import (
 from app.ui.utils.layout_utils import (
     create_labeled_form_grid,
     create_two_column_layout,
-    setup_main_scroll_layout,
 )
+from app.ui.views.base import ScrollableNavView
 
 # ── Forms ───────────────────────────────────────────────────────────────────────────────────────────────────
 class RecipeForm(QWidget):
@@ -290,14 +289,14 @@ class IngredientForm(QWidget):
 
     def get_ingredient_data(self) -> dict:
         """Returns the ingredient data as a dictionary for external collection."""
-        return self.to_payload()
+        return self._to_payload()
 
     def request_removal(self):
         """Emits a signal to request removal of this ingredient widget."""
         if self.parent() and len(self.parent().findChildren(IngredientForm)) > 1:
             self.remove_ingredient_requested.emit(self)
 
-    def to_payload(self) -> dict:
+    def _to_payload(self) -> dict:
         """Returns a plain dict that matches RecipeIngredientDTO fields"""
         return {
         "ingredient_name": sanitize_form_input(self.sle_ingredient_name.text()),
@@ -463,22 +462,19 @@ class DirectionsNotesCard(Card):
 
 
 # ── View ────────────────────────────────────────────────────────────────────────────────────────────────────
-class AddRecipes(MainView):
+class AddRecipes(ScrollableNavView):
     """AddRecipes widget for creating new recipes with ingredients and directions."""
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("AddRecipes")
 
-        # register for component-specific styling
+        # register for component-specific stylin
         Theme.register_widget(self, Qss.ADD_RECIPE)
 
         DebugLogger.log("Initializing Add Recipes page", "debug")
 
         self.stored_ingredients = []
-
-        self._build_ui()
-        self._connect_signals()
         self._setup_tab_order()
 
     def showEvent(self, event):
@@ -490,9 +486,17 @@ class AddRecipes(MainView):
 
     def _build_ui(self):
         """Setup the UI components for the AddRecipes view."""
-        self.lyt_main, self.scroll_area, self.scroll_content, self.scroll_layout = \
-            setup_main_scroll_layout(self)
+        self._create_recipe_details()
+        self._create_ingredient_container()
+        self._create_directions_notes_card()
+        self._create_recipe_image()
+        self._create_save_button()
+        self._setup_layout()
 
+
+# ── UI Components ───────────────────────────────────────────────────────────────────────────────────────────
+    def _create_recipe_details(self):
+        """Create the recipe details card with form fields."""
         # Recipe Details Card
         self.recipe_details_card = Card(card_type="Default")
         self.recipe_details_card.setHeader("Recipe Info")
@@ -509,115 +513,57 @@ class AddRecipes(MainView):
         self.cb_dietary_preference = self.recipe_form.cb_dietary_preference
         self.le_servings = self.recipe_form.le_servings
 
-        self.scroll_layout.addWidget(self.recipe_details_card)  # add recipe form card to layout
-
-        # Ingredients Container
+    def _create_ingredient_container(self):
+        """Create the ingredient container card."""
         self.ingredient_container = IngredientsCard()
         self.ingredient_container.expandWidth(True)
-        self.scroll_layout.addWidget(self.ingredient_container)
 
-        # Directions & Notes Card
+    def _create_directions_notes_card(self):
+        """Create the directions and notes card."""
         self.directions_notes_card = DirectionsNotesCard()
         self.directions_notes_card.expandBoth(True)
 
-
-        # Expose text edits for convenience (for form validation, saving, etc.)
         self.te_directions = self.directions_notes_card.te_directions
         self.te_notes = self.directions_notes_card.te_notes
 
-        # Recipe Image
+    def _create_recipe_image(self):
+        """Create the recipe image component."""
         self.recipe_image = RecipeImage()
 
-        content_layout = create_two_column_layout(
+    def _create_save_button(self):
+        """Create the save button."""
+        self.btn_save = Button("Save Recipe", Type.PRIMARY, Name.SAVE)
+        self.btn_save.setObjectName("SaveRecipeButton")
+        self.btn_save.clicked.connect(self._save_recipe)
+
+    def _setup_layout(self):
+        """Arrange all components in the scrollable layout."""
+        self.content_layout.addWidget(self.recipe_details_card) # Recipe details at top
+        self.content_layout.addWidget(self.ingredient_container) # Ingredients below details
+
+        # Create directions/notes and image side by side
+        column_layout = create_two_column_layout(
             left_widgets=[self.directions_notes_card],
             right_widgets=[self.recipe_image],
             left_weight=2,
             right_weight=1,
             match_heights=True
         )
-        self.scroll_layout.addLayout(content_layout)
-
-        # ── Save Button ──
-        self.btn_save = Button("Save Recipe", Type.PRIMARY, Name.SAVE)
-        self.btn_save.setObjectName("SaveRecipeButton")
-        self.btn_save.clicked.connect(self.save_recipe)
+        self.content_layout.addLayout(column_layout)
 
         # Add save button with some spacing
-        self.scroll_layout.addSpacing(20)
-        self.scroll_layout.addWidget(self.btn_save, 0, Qt.AlignCenter)
+        self.content_layout.addSpacing(20)
+        self.content_layout.addWidget(self.btn_save, 0, Qt.AlignCenter)
 
+
+# ── Event Handlers ──────────────────────────────────────────────────────────────────────────────────────────
     def _connect_signals(self):
         """Connect UI signals to their handlers."""
         # Connect form change handlers
-        form_change_handlers = {
-            "recipe_name": self._on_recipe_name_changed
-        }
         form_widgets = {
             "recipe_name": self.le_recipe_name
         }
-        connect_form_signals(form_widgets, form_change_handlers)
-
-        # Batch connect remaining signals
-        signal_connections = [
-            (self.recipe_image.generate_image_requested, self._on_generate_default_image_requested),
-            (self.recipe_image.image_selected, self._on_image_selected)
-        ]
-        batch_connect_signals(signal_connections)
-
-        # Connect AI service signals for async operations
-        """ self.ai_service.generation_finished.connect(self._on_generation_finished)
-        self.ai_service.generation_failed.connect(self._on_generation_failed) """
-
-    def _on_recipe_name_changed(self, recipe_name: str):
-        """Update recipe image component when recipe name changes."""
-        self.recipe_image.set_recipe_name(recipe_name.strip())
-
-    def _on_generate_default_image_requested(self, recipe_name: str):
-        """Handle AI default image generation request (now async)."""
-        if not self.ai_service.is_available():
-            DebugLogger().log("AI Image Generation service not available", "error")
-            self.recipe_image.reset_generate_button()
-            return
-
-        # Start async default image generation (non-blocking)
-        self.ai_service.generate_default_image_async(recipe_name)
-        DebugLogger().log(f"Started background default image generation for '{recipe_name}'", "info")
-
-    def _on_generation_finished(self, recipe_name: str, result):
-        """Handle successful image generation completion."""
-        # Reset the UI state
-        self.recipe_image.reset_generate_button()
-
-        if result:
-            DebugLogger().log(f"Background generation completed for '{recipe_name}' - image saved", "info")
-
-            # Handle single image result (string path)
-            if isinstance(result, str):
-                image_path = result
-                DebugLogger().log(f"Single image generated: {image_path}", "info")
-                # Set the default image
-                self.recipe_image.set_reference_image_path(image_path)
-                # Also update selected path for saving
-                self.selected_image_path = image_path
-
-            # Handle dual image result (ImagePairPaths) for backward compatibility
-            elif hasattr(result, 'portrait_path') and result.portrait_path:
-                portrait_path = str(result.portrait_path)
-                DebugLogger().log(f"Portrait image from pair: {portrait_path}", "info")
-                # Set the default image to the portrait
-                self.recipe_image.set_reference_image_path(portrait_path)
-                # Also update selected path for saving
-                self.selected_image_path = portrait_path
-
-    def _on_generation_failed(self, recipe_name: str, error_msg: str):
-        """Handle image generation failure."""
-        # Reset the UI state
-        self.recipe_image.reset_generate_button()
-        DebugLogger().log(f"Background generation failed for '{recipe_name}': {error_msg}", "error")
-
-    def _on_image_selected(self, image_path: str):
-        """Handle image selection from the gallery."""
-        self.selected_image_path = image_path
+        connect_form_signals(form_widgets)
 
     def _setup_tab_order(self):
         """Define a fixed tab order for keyboard navigation."""
@@ -639,11 +585,9 @@ class AddRecipes(MainView):
 
         setup_tab_order_chain(base_widgets)
 
-    def _update_image_path(self, image_path: str):
-        """Update the selected image path when an image is selected."""
-        self.selected_image_path = image_path if image_path else None
 
-    def save_recipe(self):
+# ── Business Logic ──────────────────────────────────────────────────────────────────────────────────────────
+    def _save_recipe(self):
         """
         Gathers all form data (recipe fields + ingredient widgets),
         constructs a RecipeCreateDTO, and hands it to RecipeService.
@@ -661,7 +605,7 @@ class AddRecipes(MainView):
             return
 
         # ── payload recipe data ──
-        recipe_data = self.to_payload()
+        recipe_data = self._to_payload()
 
         # ── payload raw ingredients ──
         raw_ingredients = self.ingredient_container.get_all_ingredients_data()
@@ -696,7 +640,7 @@ class AddRecipes(MainView):
         try:
             new_recipe = service.create_recipe_with_ingredients(recipe_dto)
         except Exception as svc_err:
-            DebugLogger().log(f"[AddRecipes.save_recipe] Error saving recipe: {svc_err}", "error")
+            DebugLogger().log(f"[AddRecipes._save_recipe] Error saving recipe: {svc_err}", "error")
             self._display_save_message(
                 f"Failed to save recipe: {svc_err}", success=False
             )
@@ -727,7 +671,7 @@ class AddRecipes(MainView):
         self.stored_ingredients.clear()
         self.ingredient_container.clear_all_ingredients()
 
-    def to_payload(self):
+    def _to_payload(self):
         """Collect all recipe form data and return it as a dict for API calls."""
         form_mapping = {
             "recipe_name": self.le_recipe_name,
@@ -767,6 +711,8 @@ class AddRecipes(MainView):
         self.stored_ingredients.clear()
         self.ingredient_container.clear_all_ingredients()
 
+
+# ── Utility Methods ─────────────────────────────────────────────────────────────────────────────────────────
     def _display_save_message(self, message: str, success: bool = True):
         """Display a toast notification for save operations."""
         from app.ui.components.widgets import show_toast
