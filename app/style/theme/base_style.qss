@@ -65,6 +65,8 @@ ToolButton:disabled {
 
 }
 
+#TitleBar ToolButton#BtnMaximize {background-color: red}
+
 /* Labels */
 QLabel {background-color: transparent;}
 

@@ -60,6 +60,7 @@ class TitleBar(QWidget):
         # ── Maximize/Restore Button ──
         self.btn_ico_maximize = ToolButton(Type.TITLEBAR, Icon.MAXIMIZE)
         self.btn_ico_maximize.setFixedSize(BTN_SIZE)
+        self.btn_ico_maximize.setObjectName("BtnMaximize")
 
         # ── Close Button ──
         self.btn_ico_close = ToolButton(Type.TITLEBAR, Icon.CROSS)
@@ -97,6 +98,7 @@ class TitleBar(QWidget):
 
     def update_maximize_icon(self, maximized: bool):
         BaseButton.swapIcon(self.btn_ico_maximize, maximized, Icon.RESTORE, Icon.MAXIMIZE)
+        self.btn_ico_maximize.setFixedSize(BTN_SIZE)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.LeftButton:

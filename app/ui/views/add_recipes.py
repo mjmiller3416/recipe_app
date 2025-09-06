@@ -24,20 +24,18 @@ from app.ui.components.inputs import SmartLineEdit
 from app.ui.components.layout.card import ActionCard, Card
 from app.ui.components.widgets import ComboBox, ToolButton
 from app.ui.components.widgets.button import Button
-from app.ui.utils.event_utils import connect_form_signals
 from app.ui.utils.form_utils import (
     clear_error_styles,
     clear_form_fields,
     collect_form_data,
     dynamic_validation,
     setup_tab_order_chain,
-    validate_required_fields,
 )
 from app.ui.utils.layout_utils import (
     create_labeled_form_grid,
     create_two_column_layout,
 )
-from app.ui.view_models.add_recipe_view_model import AddRecipeViewModel, RecipeFormData
+from app.ui.view_models.add_recipe_view_model import AddRecipeViewModel
 from app.ui.view_models.ingredient_view_model import IngredientViewModel
 from app.ui.views.base import ScrollableNavView
 
@@ -147,7 +145,7 @@ class IngredientForm(QWidget):
         self.main_layout.setContentsMargins(18, 18, 18, 18)
         self.main_layout.setSpacing(12)
         self.setObjectName("IngredientForm")
-        
+
         # Store ViewModel reference - no direct Core service access
         self.ingredient_view_model = ingredient_view_model
         self.exact_match = None
@@ -189,7 +187,7 @@ class IngredientForm(QWidget):
             list_items=[],  # Start empty for faster initialization
             placeholder="Ingredient Name"
         )
-        
+
         # Set up lazy loading for autocomplete data
         self._autocomplete_loaded = False
         self.sle_ingredient_name.setObjectName("NameField")
@@ -242,7 +240,7 @@ class IngredientForm(QWidget):
             self.le_quantity.textChanged.connect(
                 lambda text: self.ingredient_view_model.validate_ingredient_quantity_real_time(text)
             )
-            
+
             # Connect ViewModel validation signals to UI updates
             self.ingredient_view_model.ingredient_name_validation_changed.connect(self._on_name_validation_changed)
             self.ingredient_view_model.ingredient_category_validation_changed.connect(self._on_category_validation_changed)
@@ -277,29 +275,29 @@ class IngredientForm(QWidget):
         # Use ViewModel for ingredient matching if available
         if self.ingredient_view_model:
             match_result = self.ingredient_view_model.find_ingredient_matches(current_text)
-            
+
             if match_result.exact_match:
                 self.exact_match = match_result.exact_match
                 category = match_result.exact_match.ingredient_category
-                
+
                 # Find and set category in ComboBox
                 category_index = self.cb_ingredient_category.findText(
                     category,
                     Qt.MatchFlag.MatchFixedString | Qt.MatchFlag.MatchCaseSensitive,
                 )
-                
+
                 if category_index < 0:
                     category_index = self.cb_ingredient_category.findText(
                         category,
                         Qt.MatchFlag.MatchFixedString | Qt.MatchFlag.MatchContains,
                     )
-                
+
                 if category_index >= 0:
                     self.cb_ingredient_category.setCurrentIndex(category_index)
                 else:
                     self.cb_ingredient_category.addItem(category)
                     self.cb_ingredient_category.setCurrentText(category)
-                
+
                 clear_error_styles(self.cb_ingredient_category)
             else:
                 self.exact_match = None
@@ -313,14 +311,14 @@ class IngredientForm(QWidget):
                         self.cb_ingredient_category.setCurrentIndex(category_index)
                 else:
                     self.cb_ingredient_category.setCurrentIndex(-1)
-                
+
                 self.cb_ingredient_category.setEnabled(True)
         else:
             # Fallback when no ViewModel is available
             self.exact_match = None
             self.cb_ingredient_category.setCurrentIndex(-1)
             self.cb_ingredient_category.setEnabled(True)
-        
+
         # Emit signal to notify parent of data changes
         self.ingredient_data_changed.emit()
 
@@ -332,17 +330,17 @@ class IngredientForm(QWidget):
                 # Load autocomplete cache if not already loaded
                 if not self.ingredient_view_model._cache_loaded:
                     self.ingredient_view_model._load_autocomplete_cache()
-                
+
                 # Update SmartLineEdit with autocomplete data
                 ingredient_names = self.ingredient_view_model._autocomplete_cache
                 if ingredient_names:
                     self.sle_ingredient_name.source.setStringList(ingredient_names)
                     self._autocomplete_loaded = True
                     DebugLogger.log(f"Loaded {len(ingredient_names)} ingredient names for autocomplete", "debug")
-                
+
             except Exception as e:
                 DebugLogger.log(f"Failed to lazy load ingredient names: {e}", "warning")
-        
+
         # Call original focus in event
         from PySide6.QtWidgets import QLineEdit
         QLineEdit.focusInEvent(self.sle_ingredient_name, event)
@@ -361,7 +359,7 @@ class IngredientForm(QWidget):
         # Import here to avoid circular imports
         from app.core.utils.conversion_utils import safe_float_conversion
         from app.core.utils.text_utils import sanitize_form_input
-        
+
         return {
             "ingredient_name": sanitize_form_input(self.sle_ingredient_name.text()),
             "ingredient_category": sanitize_form_input(self.cb_ingredient_category.currentText()),
@@ -369,9 +367,9 @@ class IngredientForm(QWidget):
             "quantity": safe_float_conversion(self.le_quantity.text().strip()),
             "existing_ingredient_id": self.exact_match.id if self.exact_match else None,
         }
-    
+
     # ── Validation Event Handlers ───────────────────────────────────────────────────────────────────────────────
-    
+
     def _on_name_validation_changed(self, is_valid: bool, error_message: str):
         """Handle ingredient name validation changes."""
         if is_valid:
@@ -380,7 +378,7 @@ class IngredientForm(QWidget):
         else:
             self.sle_ingredient_name.setStyleSheet("border: 2px solid #f44336;")
             self.sle_ingredient_name.setToolTip(error_message)
-    
+
     def _on_category_validation_changed(self, is_valid: bool, error_message: str):
         """Handle ingredient category validation changes."""
         if is_valid:
@@ -389,7 +387,7 @@ class IngredientForm(QWidget):
         else:
             self.cb_ingredient_category.setStyleSheet("border: 2px solid #f44336;")
             self.cb_ingredient_category.setToolTip(error_message)
-    
+
     def _on_quantity_validation_changed(self, is_valid: bool, error_message: str):
         """Handle ingredient quantity validation changes."""
         if is_valid:
@@ -398,7 +396,7 @@ class IngredientForm(QWidget):
         else:
             self.le_quantity.setStyleSheet("border: 2px solid #f44336;")
             self.le_quantity.setToolTip(error_message)
-    
+
     def cleanup(self):
         """Clean up resources to prevent memory leaks."""
         try:
@@ -407,17 +405,17 @@ class IngredientForm(QWidget):
                 self.ingredient_view_model.ingredient_name_validation_changed.disconnect()
                 self.ingredient_view_model.ingredient_category_validation_changed.disconnect()
                 self.ingredient_view_model.ingredient_quantity_validation_changed.disconnect()
-            
+
             # Clear autocomplete data to free memory
             if hasattr(self, 'sle_ingredient_name') and self.sle_ingredient_name.source:
                 self.sle_ingredient_name.source.setStringList([])
-            
+
             # Clear references
             self.ingredient_view_model = None
             self.exact_match = None
-            
+
             DebugLogger.log("IngredientForm cleaned up successfully", "debug")
-            
+
         except Exception as e:
             DebugLogger.log(f"Error during IngredientForm cleanup: {e}", "warning")
 
@@ -474,7 +472,7 @@ class IngredientsCard(ActionCard):
         if widget in self.ingredient_widgets:
             self.ingredient_widgets.remove(widget)
             self.removeWidget(widget)
-            
+
             # Performance optimization: cleanup resources before deletion
             widget.cleanup()
             widget.deleteLater()
@@ -586,6 +584,11 @@ class AddRecipes(ScrollableNavView):
     """AddRecipes widget for creating new recipes with ingredients and directions."""
 
     def __init__(self, parent=None):
+        # Initialize ViewModels BEFORE calling super().__init__ to avoid initialization order issues
+        # This is critical because ScrollableNavView.__init__ calls _build_ui() which needs these attributes
+        self.add_recipe_view_model = AddRecipeViewModel()
+        self.ingredient_view_model = IngredientViewModel()
+
         super().__init__(parent)
         self.setObjectName("AddRecipes")
 
@@ -594,16 +597,9 @@ class AddRecipes(ScrollableNavView):
 
         DebugLogger.log("Initializing Add Recipes page", "debug")
 
-        # Initialize ViewModels - proper MVVM architecture
-        self.add_recipe_view_model = AddRecipeViewModel()
-        self.ingredient_view_model = IngredientViewModel()
-        
         # Connect ViewModel signals
         self._connect_view_model_signals()
-        
-        # Connect UI signals for bidirectional binding
-        self._connect_signals()
-        
+
         self.stored_ingredients = []
         self._setup_tab_order()
 
@@ -624,7 +620,7 @@ class AddRecipes(ScrollableNavView):
         self._setup_layout()
 
 
-# ── UI Components ───────────────────────────────────────────────────────────────────────────────────────────
+    # ── UI Components ───────────────────────────────────────────────────────────────────────────────────────────
     def _create_recipe_details(self):
         """Create the recipe details card with form fields."""
         # Recipe Details Card
@@ -692,7 +688,7 @@ class AddRecipes(ScrollableNavView):
         self.add_recipe_view_model.recipe_save_failed.connect(self._on_recipe_save_failed)
         self.add_recipe_view_model.validation_failed.connect(self._on_validation_failed)
         self.add_recipe_view_model.form_cleared.connect(self._on_form_cleared)
-        
+
         # Enhanced data binding signals
         self.add_recipe_view_model.processing_state_changed.connect(self._on_processing_state_changed)
         self.add_recipe_view_model.form_validation_state_changed.connect(self._on_form_validation_state_changed)
@@ -700,13 +696,14 @@ class AddRecipes(ScrollableNavView):
         self.add_recipe_view_model.field_validation_cleared.connect(self._on_field_validation_cleared)
         self.add_recipe_view_model.recipe_name_validated.connect(self._on_recipe_name_validated)
         self.add_recipe_view_model.loading_state_changed.connect(self._on_loading_state_changed)
-        
+
         # IngredientViewModel signals
         self.ingredient_view_model.ingredient_name_validation_changed.connect(self._on_ingredient_name_validation_changed)
         self.ingredient_view_model.ingredient_category_validation_changed.connect(self._on_ingredient_category_validation_changed)
         self.ingredient_view_model.ingredient_quantity_validation_changed.connect(self._on_ingredient_quantity_validation_changed)
 
-# ── Event Handlers ──────────────────────────────────────────────────────────────────────────────────────────
+
+    # ── Event Handlers ──────────────────────────────────────────────────────────────────────────────────────
     def _connect_signals(self):
         """Connect UI signals to their handlers."""
         # Connect form change handlers for real-time validation
@@ -714,7 +711,7 @@ class AddRecipes(ScrollableNavView):
         self.le_servings.textChanged.connect(lambda text: self.add_recipe_view_model.validate_field_real_time("servings", text))
         self.le_time.textChanged.connect(lambda text: self.add_recipe_view_model.validate_field_real_time("total_time", text))
         self.cb_meal_type.currentTextChanged.connect(lambda text: self.add_recipe_view_model.validate_field_real_time("meal_type", text))
-        
+
         # Connect recipe name and category for uniqueness checking
         self.le_recipe_name.editingFinished.connect(self._check_recipe_name_uniqueness)
         self.cb_recipe_category.currentTextChanged.connect(self._check_recipe_name_uniqueness)
@@ -739,37 +736,38 @@ class AddRecipes(ScrollableNavView):
 
         setup_tab_order_chain(base_widgets)
 
-    # ── ViewModel Event Handlers ────────────────────────────────────────────────────────────────────────────────
+
+    # ── ViewModel Event Handlers ────────────────────────────────────────────────────────────────────────────
     def _on_recipe_saved_successfully(self, recipe_name: str):
         """Handle successful recipe save from ViewModel."""
         message = f"Recipe '{recipe_name}' saved successfully!"
         self._display_save_message(message, success=True)
-        
+
         # Clear form and reset state
         self._clear_form()
         self.stored_ingredients.clear()
         self.ingredient_container.clear_all_ingredients()
-        
+
         DebugLogger.log(f"Recipe '{recipe_name}' saved successfully and form cleared", "info")
-    
+
     def _on_recipe_save_failed(self, error_message: str):
         """Handle recipe save failure from ViewModel."""
         self._display_save_message(error_message, success=False)
         DebugLogger.log(f"Recipe save failed: {error_message}", "error")
-    
+
     def _on_validation_failed(self, error_messages: list[str]):
         """Handle validation failure from ViewModel."""
         error_msg = "Please fix the following errors:\n• " + "\n• ".join(error_messages)
         self._display_save_message(error_msg, success=False)
         DebugLogger.log(f"Recipe validation failed: {error_messages}", "warning")
-    
+
     def _on_form_cleared(self):
         """Handle form cleared signal from ViewModel."""
         self._clear_form()
         DebugLogger.log("Form cleared via ViewModel signal", "debug")
-    
-    # ── Enhanced Data Binding Event Handlers ────────────────────────────────────────────────────────────────────
-    
+
+
+    # ── Enhanced Data Binding Event Handlers ────────────────────────────────────────────────────────────────
     def _on_processing_state_changed(self, is_processing: bool):
         """Handle processing state changes from ViewModel."""
         self.btn_save.setEnabled(not is_processing)
@@ -777,25 +775,25 @@ class AddRecipes(ScrollableNavView):
             self.btn_save.setText("Saving...")
         else:
             self.btn_save.setText("Save Recipe")
-        
+
         DebugLogger.log(f"Processing state changed: {is_processing}", "debug")
-    
+
     def _on_form_validation_state_changed(self, is_valid: bool):
         """Handle overall form validation state changes."""
         # Could be used to enable/disable save button based on validation
         # Currently handled by processing state, but available for future enhancements
         DebugLogger.log(f"Form validation state changed: {is_valid}", "debug")
-    
+
     def _on_field_validation_error(self, field_name: str, error_message: str):
         """Handle field-specific validation errors."""
         self._apply_field_error_style(field_name, error_message)
         DebugLogger.log(f"Field validation error for {field_name}: {error_message}", "debug")
-    
+
     def _on_field_validation_cleared(self, field_name: str):
         """Handle clearing of field validation errors."""
         self._clear_field_error_style(field_name)
         DebugLogger.log(f"Field validation cleared for {field_name}", "debug")
-    
+
     def _on_recipe_name_validated(self, is_unique: bool, message: str):
         """Handle recipe name uniqueness validation results."""
         if not is_unique:
@@ -803,7 +801,7 @@ class AddRecipes(ScrollableNavView):
         else:
             self._clear_field_error_style("recipe_name")
         DebugLogger.log(f"Recipe name validation: unique={is_unique}, message={message}", "debug")
-    
+
     def _on_loading_state_changed(self, is_loading: bool, operation_description: str):
         """Handle loading state changes with operation descriptions."""
         if is_loading and operation_description:
@@ -811,47 +809,48 @@ class AddRecipes(ScrollableNavView):
             DebugLogger.log(f"Loading: {operation_description}", "debug")
         elif not is_loading:
             DebugLogger.log("Loading completed", "debug")
-    
+
     def _on_ingredient_name_validation_changed(self, is_valid: bool, error_message: str):
         """Handle ingredient name validation changes - delegated to ingredient forms."""
         # This will be connected to specific ingredient forms when they're created
         pass
-    
+
     def _on_ingredient_category_validation_changed(self, is_valid: bool, error_message: str):
         """Handle ingredient category validation changes - delegated to ingredient forms."""
         # This will be connected to specific ingredient forms when they're created
         pass
-    
+
     def _on_ingredient_quantity_validation_changed(self, is_valid: bool, error_message: str):
         """Handle ingredient quantity validation changes - delegated to ingredient forms."""
         # This will be connected to specific ingredient forms when they're created
         pass
-    
+
     def _check_recipe_name_uniqueness(self):
         """Check recipe name uniqueness when name or category changes."""
         recipe_name = self.le_recipe_name.text().strip()
         category = self.cb_recipe_category.currentText().strip()
-        
+
         if recipe_name and category:
             self.add_recipe_view_model.validate_recipe_name(recipe_name, category)
 
-# ── Business Logic ──────────────────────────────────────────────────────────────────────────────────────────
+
+    # ── Business Logic ──────────────────────────────────────────────────────────────────────────────────────
     def _save_recipe(self):
         """
         Collect form data and delegate recipe creation to AddRecipeViewModel.
         Implements proper MVVM pattern by delegating all business logic to ViewModel.
         """
         DebugLogger.log("Starting recipe save process via ViewModel", "debug")
-        
+
         # Collect raw form data
         raw_form_data = self._collect_form_data()
-        
+
         # Transform to structured form data using ViewModel
         form_data = self.add_recipe_view_model.preprocess_form_data(raw_form_data)
-        
+
         # Delegate recipe creation to ViewModel
         self.add_recipe_view_model.create_recipe(form_data)
-    
+
     def _collect_form_data(self) -> dict:
         """Collect all form data from UI components for ViewModel processing."""
         # Collect recipe form data
@@ -865,17 +864,17 @@ class AddRecipes(ScrollableNavView):
             "directions": self.te_directions
         }
         recipe_data = collect_form_data(form_mapping)
-        
+
         # Add notes from notes text edit
         recipe_data["notes"] = self.te_notes.toPlainText()
-        
+
         # Add image paths
         recipe_data["reference_image_path"] = self.recipe_image.get_reference_image_path() or ""
         recipe_data["banner_image_path"] = ""  # Not currently used in UI
-        
+
         # Collect ingredient data
         recipe_data["ingredients"] = self.ingredient_container.get_all_ingredients_data()
-        
+
         return recipe_data
 
     def _to_payload(self):
@@ -897,26 +896,26 @@ class AddRecipes(ScrollableNavView):
         self.ingredient_container.clear_all_ingredients()
 
 
-# ── Utility Methods ─────────────────────────────────────────────────────────────────────────────────────────
+    # ── Utility Methods ─────────────────────────────────────────────────────────────────────────────────────
     def _display_save_message(self, message: str, success: bool = True):
         """Display a toast notification for save operations."""
         from app.ui.components.widgets import show_toast
         show_toast(self, message, success=success, duration=3000, offset_right=50)
-    
+
     def _apply_field_error_style(self, field_name: str, error_message: str):
         """Apply error styling to a specific field and show tooltip."""
         field_widget = self._get_field_widget(field_name)
         if field_widget:
             field_widget.setStyleSheet("border: 2px solid #f44336;")  # Material Design error red
             field_widget.setToolTip(error_message)
-    
+
     def _clear_field_error_style(self, field_name: str):
         """Clear error styling from a specific field."""
         field_widget = self._get_field_widget(field_name)
         if field_widget:
             field_widget.setStyleSheet("")  # Reset to default styling
             field_widget.setToolTip("")
-    
+
     def _get_field_widget(self, field_name: str):
         """Get the widget reference for a given field name."""
         field_mapping = {
