@@ -59,16 +59,6 @@
     },
     {
         "type": "File",
-        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\add_recipes.py",
-        "parent_id": "W8XdbSox9fQAwueM",
-        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\add_recipes.py",
-        "workspaceRoot": null,
-        "workspacePath": null,
-        "id": "FBED50Zp2dvxHzbr",
-        "label": "Add Recipes"
-    },
-    {
-        "type": "File",
         "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\dashboard.py",
         "parent_id": "W8XdbSox9fQAwueM",
         "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\dashboard.py",
@@ -76,16 +66,6 @@
         "workspacePath": null,
         "id": "Jet9kYsVZSrhnC1E",
         "label": "Dashboard"
-    },
-    {
-        "type": "File",
-        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\meal_planner.py",
-        "parent_id": "W8XdbSox9fQAwueM",
-        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\meal_planner.py",
-        "workspaceRoot": null,
-        "workspacePath": null,
-        "id": "fwKWm0lU1uVDxjLy",
-        "label": "Meal Planner"
     },
     {
         "type": "File",
@@ -116,5 +96,25 @@
         "workspacePath": null,
         "id": "Pg6lw3qoDedjBGrT",
         "label": "View Recipes"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\meal_planner\\meal_planner.py",
+        "parent_id": "W8XdbSox9fQAwueM",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\meal_planner\\meal_planner.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "aG9C0KeipRPy1Xc8",
+        "label": "Meal Planner"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\add_recipes\\add_recipes.py",
+        "parent_id": "W8XdbSox9fQAwueM",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\add_recipes\\add_recipes.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "QTCngSyaKexJ1VpH",
+        "label": "Add Recipes"
     }
 ]

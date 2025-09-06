@@ -11,7 +11,11 @@ import time
 # Import the optimized hook handler functions
 sys.path.insert(0, str(Path(__file__).parent))
 from hook_handler import (
-    OS_NAME, SOUND_CACHE, WINSOUND_AVAILABLE, handle_event, initialize_sound_cache,
+    OS_NAME,
+    SOUND_CACHE,
+    WINSOUND_AVAILABLE,
+    handle_event,
+    initialize_sound_cache,
 )
 
 def test_sound_latency():

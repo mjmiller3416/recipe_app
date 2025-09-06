@@ -209,6 +209,7 @@
       "user_profile": "Images",
       "view_models": "Packages",
       "notifications": "Astro",
+      "view_components": "Element",
 
       //** Subfolders **//
       "app_helpers": "App",

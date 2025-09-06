@@ -22,9 +22,15 @@ from .qt_models import *
 
 # Widget utilities
 from .widget_utils import (
-    apply_object_name_pattern, create_button, create_combo_box, create_line_edit,
-    create_text_edit, register_widget_for_theme, setup_form_field,
-    setup_placeholder_text, setup_validation,
+    apply_object_name_pattern,
+    create_button,
+    create_combo_box,
+    create_line_edit,
+    create_text_edit,
+    register_widget_for_theme,
+    setup_form_field,
+    setup_placeholder_text,
+    setup_validation,
 )
 
 __all__ = [

@@ -2,17 +2,17 @@
 
 # ── Dashboard View ──
 # ── Add Recipes View ──
-from .add_recipes import AddRecipes
+from .add_recipes.add_recipes import AddRecipes
 from .dashboard import Dashboard
 
 # ── Meal Planner View ──
-from .meal_planner import MealPlanner
+from .meal_planner.meal_planner import MealPlanner
 
 # ── Settings View ──
 from .settings import Settings
 
 # ── Shopping List View ──
-from .shopping_list import ShoppingList
+from .shopping_list.shopping_list import ShoppingList
 
 # ── View Recipes View ──
 from .view_recipes import ViewRecipes
