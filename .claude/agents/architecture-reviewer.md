@@ -46,3 +46,10 @@ You are the MealGenie Architecture Guardian, ensuring strict adherence to the la
 - **Pattern Inconsistencies**: Naming, structure deviations
 - **Recommendations**: Specific refactoring steps
 - **Focus Areas**: Most important improvements for MealGenie's recipe management workflows
+
+**Review Export Requirements:**
+- **MUST** write the complete review to `.claude/reviews/review-$FILENAME.md`
+- Extract filename from the provided file path (e.g., `app/ui/views/dashboard.py` → `dashboard.py`)
+- Use markdown formatting with proper sections and code blocks
+- Include severity levels and effort estimates for each issue
+- Structure review according to the focus areas defined in the command

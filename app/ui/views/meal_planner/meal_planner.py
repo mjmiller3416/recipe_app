@@ -38,6 +38,7 @@ from app.ui.views.base import ScrollableNavView
 from app.ui.views.recipe_selection import RecipeSelection
 from ..meal_planner.meal_widget import MealWidget
 
+
 # ── Meal Planner View ───────────────────────────────────────────────────────────────────────────────────────
 class MealPlanner(ScrollableNavView):
     """
@@ -338,7 +339,6 @@ class MealPlanner(ScrollableNavView):
             DebugLogger.log("[MealPlanner] Failed to save meal plan", "error")
 
     # ── ViewModel Signal Handlers ───────────────────────────────────────────────────────────────────────────────────
-
     def _on_meal_loaded(self, meal_dto) -> None:
         """Handle meal loaded signal from ViewModel."""
         DebugLogger.log(f"Meal loaded: {meal_dto.meal_name}", "info")

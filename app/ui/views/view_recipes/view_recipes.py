@@ -11,11 +11,11 @@ from PySide6.QtWidgets import QStackedWidget, QVBoxLayout
 from _dev_tools import DebugLogger
 from app.ui.components.composite.recipe_browser import RecipeBrowser
 from app.ui.components.composite.recipe_card import LayoutSize
-from app.ui.views.base import ScrollableNavView
+from app.ui.managers.navigation.views import MainView
 from app.ui.views.full_recipe import FullRecipe
 
-
-class ViewRecipes(ScrollableNavView):
+# ── View Recipes ─────────────────────────────────────────────────────────────────────────────
+class ViewRecipes(MainView):
     """Displays recipes using the shared RecipeBrowser component and can switch to full recipe view."""
 
     recipe_selected = Signal(int)
@@ -35,6 +35,13 @@ class ViewRecipes(ScrollableNavView):
 
         DebugLogger.log("Initializing ViewRecipes page", "info")
 
+        # create layout
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
+
+        # create stacked widget to switch between recipe list and full recipe
+        self.stacked_widget = QStackedWidget()
+
         # create recipe browser
         self.recipe_browser = RecipeBrowser(
             parent=self,
@@ -50,8 +57,9 @@ class ViewRecipes(ScrollableNavView):
             # normal mode - connect to show full recipe view instead of dialog
             self.recipe_browser.recipe_card_clicked.connect(self._show_full_recipe)
 
-        # add recipe browser to content layout
-        self.content_layout.addWidget(self.recipe_browser)  # index 0
+        # add recipe browser to stacked widget
+        self.stacked_widget.addWidget(self.recipe_browser)  # index 0
+        self.main_layout.addWidget(self.stacked_widget)
 
     def refresh(self):
         """Refresh the recipe display."""
