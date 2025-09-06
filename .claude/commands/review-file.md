@@ -51,6 +51,28 @@ Please perform a comprehensive review of the file $FILE_PATH with focus on the f
 - Flag blocking operations that should be moved to background threads
 - Identify excessive signal/slot connections that could impact performance
 
+## 7. Configuration Management
+- Verify config.py exists in the package directory
+- Check that configuration constants are properly imported and used
+- Identify hardcoded values that should be moved to config
+- Validate configuration naming conventions (ALL_CAPS for constants)
+- Ensure configuration is accessible but not directly modified by UI components
+
+## Configuration Analysis Commands
+```bash
+# Check if config exists
+find $(dirname $FILE_PATH) -name "config.py" -type f
+
+# Find hardcoded constants that should be in config
+grep -r "= [0-9]\+\|= '[^']*'\|= \"[^\"]*\"" $PACKAGE_PATH --include="*.py" | grep -v config.py
+
+# Check config imports
+grep -r "from.*config import\|import.*config" $PACKAGE_PATH
+
+# Find magic numbers/strings
+grep -rE "[^a-zA-Z_][0-9]{2,}[^a-zA-Z_]|'[A-Z_]{3,}'|\"[A-Z_]{3,}\"" $PACKAGE_PATH --include="*.py"
+```
+
 ## Review Guidelines
 - Focus exclusively on the provided file unless cross-file context is essential
 - Provide specific, actionable recommendations with code examples
@@ -62,8 +84,8 @@ Please perform a comprehensive review of the file $FILE_PATH with focus on the f
 - Use markdown formatting with code blocks for examples
 - Structure the review into sections corresponding to the focus areas above
 - **Include severity levels for each issue:**
-  - 🔴 **Critical**: Bugs, security issues, data integrity problems
-  - 🟡 **Major**: Architecture violations, significant performance issues
-  - 🔵 **Minor**: Code quality improvements, minor optimizations
+  - **Critical**: Bugs, security issues, data integrity problems
+  - **Major**: Architecture violations, significant performance issues
+  - **Minor**: Code quality improvements, minor optimizations
 - **Add estimated effort:** Small (< 1 hour), Medium (1-4 hours), Large (> 4 hours)
 - **Note dependencies:** Issues that must be fixed before others can be addressed

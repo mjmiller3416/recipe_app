@@ -12,11 +12,11 @@ from PySide6.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 from _dev_tools.debug_logger import DebugLogger
 from app.ui.components.composite.recipe_card import LayoutSize, create_recipe_card
 from app.ui.utils.event_utils import (
-    batch_connect_signals, create_tooltip_event_filter, signal_blocker,
+    batch_connect_signals,
+    create_tooltip_event_filter,
+    signal_blocker,
 )
 from app.ui.view_models.meal_widget_view_model import MealWidgetViewModel
-from .config import MealPlannerConfig
-
 
 class MealWidget(QWidget):
     """
@@ -47,7 +47,7 @@ class MealWidget(QWidget):
         self.setObjectName("MealWidget")
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
-        self.main_layout.setSpacing(MealPlannerConfig.LAYOUT_SPACING)
+        self.main_layout.setSpacing(15)
 
         # Main Dish (Large Card)
         self.main_slot = create_recipe_card(LayoutSize.LARGE)
@@ -56,12 +56,12 @@ class MealWidget(QWidget):
 
         # Side Dishes Row
         self.side_layout = QHBoxLayout()
-        self.side_layout.setSpacing(MealPlannerConfig.LAYOUT_SPACING)
+        self.side_layout.setSpacing(15)
 
-        for i in range(1, MealPlannerConfig.SIDE_SLOT_COUNT + 1):
+        for i in range(1, 3 + 1):
             side_slot = create_recipe_card(LayoutSize.SMALL)
             side_slot.setEnabled(False) # initially disabled
-            side_slot.setToolTip(MealPlannerConfig.DISABLED_SIDE_SLOT_TOOLTIP) # tooltip for disabled state
+            side_slot.setToolTip("Select a main dish first") # tooltip for disabled state
             side_slot.installEventFilter(self.tooltip_filter)
             self.side_layout.addWidget(side_slot)
             self.meal_slots[f"side{i}"] = side_slot
@@ -144,17 +144,17 @@ class MealWidget(QWidget):
 
     def _enable_side_slots(self) -> None:
         """Enable side dish slots when main dish is selected."""
-        for i in range(1, MealPlannerConfig.SIDE_SLOT_COUNT + 1):
+        for i in range(1, 3 + 1):
             slot = self.meal_slots[f"side{i}"]
             slot.setEnabled(True)
             slot.setToolTip("")
 
     def _disable_side_slots(self) -> None:
         """Disable side dish slots and reset their tooltips."""
-        for i in range(1, MealPlannerConfig.SIDE_SLOT_COUNT + 1):
+        for i in range(1, 3 + 1):
             slot = self.meal_slots[f"side{i}"]
             slot.setEnabled(False)
-            slot.setToolTip(MealPlannerConfig.DISABLED_SIDE_SLOT_TOOLTIP)
+            slot.setToolTip("Select a main dish first")
 
     def save_meal(self) -> bool:
         """Save the meal using ViewModel."""

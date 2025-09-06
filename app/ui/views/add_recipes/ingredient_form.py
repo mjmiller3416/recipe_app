@@ -9,15 +9,19 @@ from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QWidget
 
 from _dev_tools import DebugLogger
 from app.config import (
-    FLOAT_VALIDATOR, INGREDIENT_CATEGORIES, MEASUREMENT_UNITS, NAME_PATTERN,
+    FLOAT_VALIDATOR,
+    INGREDIENT_CATEGORIES,
+    MEASUREMENT_UNITS,
+    NAME_PATTERN,
 )
 from app.style import Name, Qss, Theme
 from app.ui.components.inputs.smart_line_edit import SmartLineEdit
 from app.ui.components.widgets.button import ToolButton, Type
 from app.ui.components.widgets.combobox import ComboBox
 from app.ui.utils.form_utils import clear_error_styles, dynamic_validation
-
 class IngredientForm(QWidget):
+    
+    # ── Signals ──────────────────────────────────────────────────────────────────────────────────────────────
     add_ingredient_requested = Signal(QWidget)
     remove_ingredient_requested = Signal(QWidget)
     ingredient_validated = Signal(dict)
@@ -68,7 +72,7 @@ class IngredientForm(QWidget):
             list_items=MEASUREMENT_UNITS,
             placeholder="Unit"
         )
-        self.cb_unit.setObjectName("ComboBox UnitField")
+        self.cb_unit.setObjectName("UnitField")
         self.main_layout.addWidget(self.cb_unit)
 
         # Get the ComboBox height to use for other fields
@@ -99,7 +103,7 @@ class IngredientForm(QWidget):
             list_items=INGREDIENT_CATEGORIES,
             placeholder="Category"
         )
-        self.cb_ingredient_category.setObjectName("ComboBox CategoryField")
+        self.cb_ingredient_category.setObjectName("CategoryField")
         self.main_layout.addWidget(self.cb_ingredient_category)
 
         # Delete button - replaces subtract/add buttons
@@ -166,7 +170,7 @@ class IngredientForm(QWidget):
 
         # validate the ingredient name against the NAME_PATTERN
         if not NAME_PATTERN.match(current_text):
-            self.sle_ingredient_name.setStyleSheet("border: 1px solid red;")
+            self.sle_ingredient_name.setStyleSheet("border: 2px solid #f44336;")
             self.exact_match = None
             self.ingredient_data_changed.emit()
             return

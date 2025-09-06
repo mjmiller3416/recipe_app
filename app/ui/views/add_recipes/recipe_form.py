@@ -11,6 +11,7 @@ from app.config import DIETARY_PREFERENCES, MEAL_TYPE, RECIPE_CATEGORIES
 from app.ui.utils.layout_utils import create_labeled_form_grid
 
 class RecipeForm(QWidget):
+    
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setObjectName("RecipeForm")

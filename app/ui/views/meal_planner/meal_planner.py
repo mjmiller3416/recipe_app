@@ -35,7 +35,6 @@ from app.ui.utils.widget_utils import (
 from app.ui.view_models.meal_planner_view_model import MealPlannerViewModel
 from app.ui.view_models.meal_widget_view_model import MealWidgetViewModel
 from app.ui.views.base import ScrollableNavView
-from app.ui.views.meal_planner.config import MealPlannerConfig
 from app.ui.views.recipe_selection import RecipeSelection
 from ..meal_planner.meal_widget import MealWidget
 
@@ -78,7 +77,8 @@ class MealPlanner(ScrollableNavView):
 
         # Create Planner & Selection Widgets
         self.meal_tabs = self._create_meal_tabs_widget()
-        self.meal_tabs.setIconSize(MealPlannerConfig.TAB_ICON_SIZE)
+        from PySide6.QtCore import QSize
+        self.meal_tabs.setIconSize(QSize(32, 32))
 
         # create the in-page recipe selection view
         self.selection_page = RecipeSelection(self)
@@ -165,8 +165,8 @@ class MealPlanner(ScrollableNavView):
         selection_handler = self._create_recipe_selection_callback(widget)
         widget.recipe_selection_requested.connect(selection_handler)
 
-        insert_index = self.meal_tabs.count() - MealPlannerConfig.ADD_TAB_INDEX_OFFSET
-        index = self.meal_tabs.insertTab(insert_index, widget, MealPlannerConfig.NEW_MEAL_TAB_TITLE)
+        insert_index = self.meal_tabs.count() - 1
+        index = self.meal_tabs.insertTab(insert_index, widget, "Custom Meal")
         self.tab_map[index] = widget
         self.meal_tabs.setCurrentIndex(index)
 
@@ -183,15 +183,15 @@ class MealPlanner(ScrollableNavView):
         apply_object_name_pattern(tab_widget, "NewMealTab")
 
         icon_asset = AppIcon(Icon.ADD)
-        icon_asset.setSize(MealPlannerConfig.TAB_ICON_SIZE.width(), MealPlannerConfig.TAB_ICON_SIZE.height())
+        icon_asset.setSize(32, 32)
         icon = icon_asset.pixmap()
 
         index = self.meal_tabs.addTab(tab_widget, icon, "")
-        self.meal_tabs.setTabToolTip(index, MealPlannerConfig.ADD_TAB_TOOLTIP)
+        self.meal_tabs.setTabToolTip(index, "Add Meal")
 
     def _handle_tab_click(self, index: int) -> None:
         """Handle when the '+' tab is clicked to add a new tab."""
-        if index == self.meal_tabs.count() - MealPlannerConfig.ADD_TAB_INDEX_OFFSET:
+        if index == self.meal_tabs.count() - 1:
             self._add_meal_tab()
 
     def _start_recipe_selection(self, widget: MealWidget, slot_key: str) -> None:
@@ -249,7 +249,7 @@ class MealPlanner(ScrollableNavView):
         tab_index = tab_bar.tabAt(position)
 
         # don't show context menu for the '+' tab (last tab) or invalid positions
-        if tab_index == -1 or tab_index == self.meal_tabs.count() - MealPlannerConfig.ADD_TAB_INDEX_OFFSET:
+        if tab_index == -1 or tab_index == self.meal_tabs.count() - 1:
             return None
 
         # only show context menu if this tab has a meal widget

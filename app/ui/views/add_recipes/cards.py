@@ -17,6 +17,7 @@ class IngredientsCard(ActionCard):
     Container for managing ingredient widgets within a Card.
     Provides add/remove functionality and data collection.
     """
+    
 
     ingredients_changed = Signal()  # Emitted when ingredients are added/removed
 
@@ -101,6 +102,7 @@ class IngredientsCard(ActionCard):
 
 class DirectionsNotesCard(Card):
     """Custom card with toggle between Directions and Notes content."""
+    
 
     def __init__(self, parent=None):
         super().__init__(card_type="Default")

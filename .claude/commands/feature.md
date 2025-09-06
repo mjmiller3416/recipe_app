@@ -78,6 +78,37 @@ app/core/repositories/
 - Respect import boundaries (UI never imports app.core directly except through ViewModels)
 - Use existing base classes where appropriate (ScrollableNavView, Card, etc.)
 
+**Auto-Generated Config Structure:**
+```python
+# config.py template for new features
+"""Configuration constants for [Feature Name].
+
+Contains all configurable values and constants used throughout the feature.
+Organized by concern: UI defaults, business rules, technical constants.
+"""
+
+# UI Configuration
+UI_DEFAULTS = {
+    'WINDOW_SIZE': (800, 600),
+    'ANIMATION_DURATION': 300,
+    'ICON_SIZE': 24,
+}
+
+# Business Rules
+BUSINESS_RULES = {
+    'MAX_ITEMS': 100,
+    'MIN_ITEMS': 1,
+    'VALIDATION_TIMEOUT': 5000,
+}
+
+# Technical Constants
+TECHNICAL_CONFIG = {
+    'CACHE_SIZE': 1000,
+    'RETRY_ATTEMPTS': 3,
+    'DEFAULT_ENCODING': 'utf-8',
+}
+```
+
 **Standard Imports Structure:**
 ```python
 # ── Imports ────────────────────────────────────────────────────────────────────────────────────────────────────────────────

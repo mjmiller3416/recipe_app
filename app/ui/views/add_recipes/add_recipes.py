@@ -43,6 +43,8 @@ class AddRecipes(ScrollableNavView):
 
     Follows MVVM pattern with AddRecipeViewModel and IngredientViewModel handling business logic.
     """
+    
+    
     # ── Initialization ──────────────────────────────────────────────────────────────────────────────────────
     def __init__(self, parent=None):
         """Initialize the add recipes view.
@@ -379,7 +381,7 @@ class AddRecipes(ScrollableNavView):
         """
         field_widget = self._get_field_widget(field_name)
         if field_widget:
-            field_widget.setStyleSheet("border: 2px solid #f44336;")  # Material Design error red
+            field_widget.setStyleSheet("border: 2px solid #f44336;")
             field_widget.setToolTip(error_message)
 
     def _clear_field_error_style(self, field_name: str):
