@@ -48,6 +48,10 @@ __all__ = [
 
     # Tab Order & Navigation
     'setup_tab_order_chain', 'create_tab_order_from_list',
+    
+    # ViewModel Form Integration
+    'create_dto_field_mapping', 'create_validation_rules', 'extract_form_validation_data',
+    'apply_viewmodel_error_styling', 'clear_viewmodel_error_styling', 'setup_viewmodel_field_validation_connections',
 ]
 
 
@@ -392,3 +396,176 @@ def create_tab_order_from_list(
             widgets.append(widget_mapping[name])
 
     setup_tab_order_chain(widgets)
+
+
+# ── ViewModel Form Integration ──────────────────────────────────────────────────────────────────────────────
+def create_dto_field_mapping(field_configs: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    """
+    Create DTO field mapping configuration for BaseViewModel._build_dto_data().
+    
+    Args:
+        field_configs: Configuration for each field
+            Format: {
+                form_field_name: {
+                    'dto_field': 'dto_field_name',  # Optional, defaults to form_field_name
+                    'required': True/False,         # Optional, defaults to False
+                    'default': default_value,       # Optional, defaults to None
+                    'transform': callable           # Optional transformation function
+                }
+            }
+    
+    Returns:
+        Dict[str, Dict[str, Any]]: Processed field mapping for DTO construction
+    
+    Examples:
+        config = {
+            'recipe_name': {'required': True, 'max_length': 200},
+            'servings': {'transform': lambda x: int(x) if x else 1, 'default': 1},
+            'dietary_preference': {'dto_field': 'diet_pref', 'default': None}
+        }
+        mapping = create_dto_field_mapping(config)
+    """
+    processed_mapping = {}
+    
+    for form_field, config in field_configs.items():
+        processed_config = {
+            'dto_field': config.get('dto_field', form_field),
+            'required': config.get('required', False),
+            'default': config.get('default', None),
+            'transform': config.get('transform', None)
+        }
+        processed_mapping[form_field] = processed_config
+    
+    return processed_mapping
+
+def create_validation_rules(field_configs: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    """
+    Create validation rules configuration from field configs.
+    
+    Args:
+        field_configs: Field configuration dictionary
+            Format: {
+                field_name: {
+                    'required': True/False,
+                    'min_length': int,
+                    'max_length': int,
+                    'numeric': True/False,
+                    'min_value': float,
+                    'max_value': float
+                }
+            }
+    
+    Returns:
+        Dict[str, Dict[str, Any]]: Validation rules for batch validation
+    
+    Examples:
+        config = {
+            'recipe_name': {'required': True, 'max_length': 200},
+            'servings': {'required': True, 'numeric': True, 'min_value': 1}
+        }
+        rules = create_validation_rules(config)
+    """
+    validation_rules = {}
+    
+    for field_name, config in field_configs.items():
+        rules = {}
+        
+        # Copy validation-related keys
+        validation_keys = [
+            'required', 'min_length', 'max_length', 
+            'numeric', 'min_value', 'max_value'
+        ]
+        
+        for key in validation_keys:
+            if key in config:
+                rules[key] = config[key]
+        
+        validation_rules[field_name] = rules
+    
+    return validation_rules
+
+def extract_form_validation_data(form_mapping: Dict[str, QWidget], 
+                               field_configs: Dict[str, Dict[str, Any]]) -> List[tuple]:
+    """
+    Extract validation data tuples for BaseViewModel._batch_validate_fields().
+    
+    Args:
+        form_mapping: Dictionary mapping field names to widgets
+        field_configs: Field configuration with validation rules
+    
+    Returns:
+        List[tuple]: List of (field_value, field_name, display_name, validation_rules) tuples
+    
+    Examples:
+        form_data = collect_form_data(form_mapping)
+        validation_data = extract_form_validation_data(form_mapping, field_configs)
+        result = view_model._batch_validate_fields(validation_data)
+    """
+    validation_data = []
+    form_data = collect_form_data(form_mapping)
+    
+    for field_name, widget in form_mapping.items():
+        if field_name in field_configs:
+            field_value = form_data.get(field_name, "")
+            display_name = field_configs[field_name].get('display_name', field_name.replace('_', ' ').title())
+            validation_rules = create_validation_rules({field_name: field_configs[field_name]})[field_name]
+            
+            validation_data.append((field_value, field_name, display_name, validation_rules))
+    
+    return validation_data
+
+def apply_viewmodel_error_styling(field_name: str, error_message: str, form_mapping: Dict[str, QWidget]) -> None:
+    """
+    Apply error styling to a form field based on ViewModel field validation signals.
+    
+    Args:
+        field_name: Name of the field that failed validation
+        error_message: Error message to display
+        form_mapping: Dictionary mapping field names to widgets
+    
+    Examples:
+        # Connect to ViewModel signal
+        view_model.field_validation_error.connect(
+            lambda field, msg: apply_viewmodel_error_styling(field, msg, form_widgets)
+        )
+    """
+    widget = form_mapping.get(field_name)
+    if widget:
+        apply_error_style(widget, error_message)
+
+def clear_viewmodel_error_styling(field_name: str, form_mapping: Dict[str, QWidget]) -> None:
+    """
+    Clear error styling from a form field based on ViewModel field validation signals.
+    
+    Args:
+        field_name: Name of the field to clear errors from
+        form_mapping: Dictionary mapping field names to widgets
+    
+    Examples:
+        # Connect to ViewModel signal
+        view_model.field_validation_cleared.connect(
+            lambda field: clear_viewmodel_error_styling(field, form_widgets)
+        )
+    """
+    widget = form_mapping.get(field_name)
+    if widget:
+        clear_error_styles(widget)
+
+def setup_viewmodel_field_validation_connections(view_model, form_mapping: Dict[str, QWidget]) -> None:
+    """
+    Set up connections between ViewModel field validation signals and UI error styling.
+    
+    Args:
+        view_model: ViewModel instance with field validation signals
+        form_mapping: Dictionary mapping field names to widgets
+    
+    Examples:
+        setup_viewmodel_field_validation_connections(self.recipe_view_model, form_widgets)
+    """
+    # Connect error and clear signals
+    view_model.field_validation_error.connect(
+        lambda field, msg: apply_viewmodel_error_styling(field, msg, form_mapping)
+    )
+    view_model.field_validation_cleared.connect(
+        lambda field: clear_viewmodel_error_styling(field, form_mapping)
+    )

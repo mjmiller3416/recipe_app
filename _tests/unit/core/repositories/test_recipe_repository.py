@@ -1,5 +1,5 @@
 """
-Unit tests for RecipeRepository.
+Unit tests for RecipeRepo.
 
 Tests the recipe repository data access layer including:
 - CRUD operations for recipes
@@ -23,24 +23,24 @@ from _tests.fixtures.recipe_factories import (
     create_sample_database,
 )
 from app.core.models import Ingredient, Recipe, RecipeIngredient
-from app.core.repositories.recipe_repo import RecipeRepository
+from app.core.repositories.recipe_repo import RecipeRepo
 
 fake = Faker()
 
 
 @pytest.mark.repositories
 @pytest.mark.unit
-class TestRecipeRepository:
-    """Test cases for RecipeRepository functionality."""
+class TestRecipeRepo:
+    """Test cases for RecipeRepo functionality."""
     
     def test_repository_initialization(self, db_session):
         """Test repository initialization."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         assert repo.session == db_session
         
     def test_create_recipe(self, db_session):
         """Test creating a new recipe."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         recipe_data = {
             "name": "Test Pasta",
             "description": "A delicious pasta dish",
@@ -65,7 +65,7 @@ class TestRecipeRepository:
         
     def test_get_recipe_by_id(self, db_session):
         """Test retrieving recipe by ID."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         recipe = RecipeFactory()
         db_session.add(recipe)
         db_session.commit()
@@ -78,14 +78,14 @@ class TestRecipeRepository:
         
     def test_get_nonexistent_recipe(self, db_session):
         """Test retrieving non-existent recipe."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         
         result = repo.get_by_id(99999)
         assert result is None
         
     def test_get_all_recipes(self, db_session):
         """Test retrieving all recipes."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         recipes = RecipeFactory.create_batch(5)
         db_session.add_all(recipes)
         db_session.commit()
@@ -99,7 +99,7 @@ class TestRecipeRepository:
         
     def test_update_recipe(self, db_session):
         """Test updating an existing recipe."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         recipe = RecipeFactory()
         db_session.add(recipe)
         db_session.commit()
@@ -118,14 +118,14 @@ class TestRecipeRepository:
         
     def test_update_nonexistent_recipe(self, db_session):
         """Test updating non-existent recipe."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         
         result = repo.update(99999, {"name": "Won't work"})
         assert result is None
         
     def test_delete_recipe(self, db_session):
         """Test deleting a recipe."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         recipe = RecipeFactory()
         db_session.add(recipe)
         db_session.commit()
@@ -138,14 +138,14 @@ class TestRecipeRepository:
         
     def test_delete_nonexistent_recipe(self, db_session):
         """Test deleting non-existent recipe."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         
         result = repo.delete(99999)
         assert result is False
         
     def test_search_recipes_by_name(self, db_session):
         """Test searching recipes by name."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         recipes = [
             RecipeFactory(name="Spaghetti Carbonara"),
             RecipeFactory(name="Chicken Pasta"),
@@ -166,7 +166,7 @@ class TestRecipeRepository:
         
     def test_search_recipes_case_insensitive(self, db_session):
         """Test case-insensitive recipe search."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         recipe = RecipeFactory(name="UPPERCASE Recipe")
         db_session.add(recipe)
         db_session.commit()
@@ -178,7 +178,7 @@ class TestRecipeRepository:
         
     def test_filter_by_difficulty(self, db_session):
         """Test filtering recipes by difficulty."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         recipes = [
             RecipeFactory(difficulty="Easy"),
             RecipeFactory(difficulty="Medium"),
@@ -196,7 +196,7 @@ class TestRecipeRepository:
             
     def test_filter_by_prep_time(self, db_session):
         """Test filtering recipes by preparation time."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         recipes = [
             RecipeFactory(prep_time=10),
             RecipeFactory(prep_time=25),
@@ -214,7 +214,7 @@ class TestRecipeRepository:
             
     def test_filter_by_servings(self, db_session):
         """Test filtering recipes by servings."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         recipes = [
             RecipeFactory(servings=2),
             RecipeFactory(servings=4),
@@ -232,7 +232,7 @@ class TestRecipeRepository:
             
     def test_filter_by_tags(self, db_session):
         """Test filtering recipes by tags."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         recipes = [
             RecipeFactory(tags=["vegetarian", "healthy"]),
             RecipeFactory(tags=["meat", "comfort-food"]),
@@ -250,7 +250,7 @@ class TestRecipeRepository:
             
     def test_get_recipes_with_ingredients(self, db_session):
         """Test retrieving recipes with their ingredients."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         
         # Create recipe with ingredients using factory
         recipe = RecipeWithIngredientsFactory()
@@ -267,7 +267,7 @@ class TestRecipeRepository:
             
     def test_get_popular_recipes(self, db_session):
         """Test retrieving popular recipes (most used in meal plans)."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         
         # This test assumes there's a method to get popular recipes
         # Implementation would depend on meal selection tracking
@@ -282,7 +282,7 @@ class TestRecipeRepository:
         
     def test_get_recent_recipes(self, db_session):
         """Test retrieving recently created recipes."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         
         recipes = RecipeFactory.create_batch(10)
         db_session.add_all(recipes)
@@ -297,7 +297,7 @@ class TestRecipeRepository:
             
     def test_count_recipes(self, db_session):
         """Test counting total recipes."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         
         initial_count = repo.count()
         
@@ -310,7 +310,7 @@ class TestRecipeRepository:
         
     def test_recipe_exists(self, db_session):
         """Test checking if recipe exists."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         recipe = RecipeFactory()
         db_session.add(recipe)
         db_session.commit()
@@ -320,7 +320,7 @@ class TestRecipeRepository:
         
     def test_bulk_create_recipes(self, db_session):
         """Test bulk creating multiple recipes."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         
         recipe_data_list = [
             {
@@ -345,7 +345,7 @@ class TestRecipeRepository:
             
     def test_advanced_search_combinations(self, db_session):
         """Test advanced search with multiple criteria."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         
         recipes = [
             RecipeFactory(
@@ -387,7 +387,7 @@ class TestRecipeRepository:
             
     def test_pagination(self, db_session):
         """Test recipe pagination."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         
         recipes = RecipeFactory.create_batch(20)
         db_session.add_all(recipes)
@@ -408,7 +408,7 @@ class TestRecipeRepository:
         
     def test_repository_error_handling(self, db_session):
         """Test repository error handling."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         
         # Test with invalid data that might cause database errors
         try:
@@ -430,7 +430,7 @@ class TestRecipeRepository:
                 
     def test_repository_with_database_constraints(self, db_session):
         """Test repository behavior with database constraints."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         
         # Test unique constraint (if name is unique)
         recipe_data = {
@@ -454,7 +454,7 @@ class TestRecipeRepository:
             
     def test_recipe_ingredient_relationships_via_repository(self, db_session):
         """Test accessing recipe-ingredient relationships through repository."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         
         # Create recipe with ingredients
         recipe = RecipeFactory()
@@ -487,7 +487,7 @@ class TestRecipeRepository:
     @pytest.mark.slow
     def test_repository_performance_large_dataset(self, db_session):
         """Test repository performance with large datasets."""
-        repo = RecipeRepository(db_session)
+        repo = RecipeRepo(db_session)
         
         # Create large dataset
         sample_data = create_sample_database(db_session, num_recipes=1000, num_ingredients=100)

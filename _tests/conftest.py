@@ -31,7 +31,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from app.core.database.base import Base
-from app.core.database.db import DatabaseManager
+from app.core.database.db import create_session, SessionLocal
 from app.core.models import *
 from app.core.repositories import *
 from app.core.services import *
@@ -71,10 +71,7 @@ def db_session(test_db_engine) -> Generator[Session, None, None]:
     connection.close()
 
 
-@pytest.fixture
-def db_manager(test_db_engine) -> DatabaseManager:
-    """Create a test database manager instance."""
-    return DatabaseManager(connection_string="sqlite:///:memory:")
+# DatabaseManager fixture removed - not needed for current database setup
 
 
 @pytest.fixture(scope="session")
@@ -145,10 +142,10 @@ def sample_ingredient_data(faker_instance) -> dict[str, Any]:
 def repositories(db_session):
     """Create repository instances with test database session."""
     return {
-        "recipe": RecipeRepository(db_session),
-        "ingredient": IngredientRepository(db_session),
-        "shopping": ShoppingRepository(db_session),
-        "planner": PlannerRepository(db_session),
+        "recipe": RecipeRepo(db_session),
+        "ingredient": IngredientRepo(db_session),
+        "shopping": ShoppingRepo(db_session),
+        "planner": PlannerRepo(db_session),
     }
 
 
@@ -194,12 +191,14 @@ factory.Faker._DEFAULT_LOCALE = 'en_US'
 def create_test_recipe(session: Session, **overrides) -> Recipe:
     """Create a test recipe with optional overrides."""
     from _tests.fixtures.recipe_factories import RecipeFactory
+    RecipeFactory._meta.sqlalchemy_session = session
     return RecipeFactory.create(**overrides)
 
 
 def create_test_ingredient(session: Session, **overrides) -> Ingredient:
     """Create a test ingredient with optional overrides."""
     from _tests.fixtures.recipe_factories import IngredientFactory
+    IngredientFactory._meta.sqlalchemy_session = session
     return IngredientFactory.create(**overrides)
 
 

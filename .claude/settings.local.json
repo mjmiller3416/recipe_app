@@ -7,5 +7,39 @@
     ],
     "deny": [],
     "ask": []
+  },
+
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python C:/Users/mjmil/Documents/recipe_app/.claude/hooks/hook_handler.py"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python C:/Users/mjmil/Documents/recipe_app/.claude/hooks/hook_handler.py"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python C:/Users/mjmil/Documents/recipe_app/.claude/hooks/hook_handler.py"
+          }
+        ]
+      }
+    ]
   }
 }

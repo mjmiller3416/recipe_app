@@ -21,8 +21,8 @@ from app.core.dtos.recipe_dtos import (
     RecipeUpdateDTO,
 )
 from app.core.models import Ingredient, Recipe, RecipeIngredient
-from app.core.repositories.ingredient_repo import IngredientRepository
-from app.core.repositories.recipe_repo import RecipeRepository
+from app.core.repositories.ingredient_repo import IngredientRepo
+from app.core.repositories.recipe_repo import RecipeRepo
 from app.core.services.recipe_service import RecipeService
 
 fake = Faker()
@@ -36,12 +36,12 @@ class TestRecipeService:
     @pytest.fixture
     def mock_recipe_repo(self):
         """Mock recipe repository."""
-        return Mock(spec=RecipeRepository)
+        return Mock(spec=RecipeRepo)
     
     @pytest.fixture
     def mock_ingredient_repo(self):
         """Mock ingredient repository."""
-        return Mock(spec=IngredientRepository)
+        return Mock(spec=IngredientRepo)
     
     @pytest.fixture
     def recipe_service(self, mock_recipe_repo, mock_ingredient_repo):

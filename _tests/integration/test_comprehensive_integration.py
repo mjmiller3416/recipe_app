@@ -21,13 +21,13 @@ from _tests.fixtures.recipe_factories import (
     RecipeWithIngredientsFactory,
     create_sample_database,
 )
-from app.core.database.db import DatabaseManager
+from app.core.database.db import DatabaseSession
 from app.core.models import Ingredient, MealSelection, Recipe, ShoppingItem
 from app.core.repositories import (
-    IngredientRepository,
-    PlannerRepository,
-    RecipeRepository,
-    ShoppingRepository,
+    IngredientRepo,
+    PlannerRepo,
+    RecipeRepo,
+    ShoppingRepo,
 )
 from app.core.services import (
     IngredientService,
@@ -52,10 +52,10 @@ class TestComprehensiveIntegration:
     def repositories(self, db_session):
         """All repository instances with shared database session."""
         return {
-            "recipe": RecipeRepository(db_session),
-            "ingredient": IngredientRepository(db_session),
-            "planner": PlannerRepository(db_session),
-            "shopping": ShoppingRepository(db_session),
+            "recipe": RecipeRepo(db_session),
+            "ingredient": IngredientRepo(db_session),
+            "planner": PlannerRepo(db_session),
+            "shopping": ShoppingRepo(db_session),
         }
     
     @pytest.fixture

@@ -19,7 +19,7 @@ import pytest
 
 from _tests.fixtures.recipe_factories import RecipeFactory
 from app.core.models import Recipe
-from app.ui.components.composite.recipe_card import RecipeCard
+from app.ui.components.composite.recipe_card import BaseRecipeCard as RecipeCard
 
 fake = Faker()
 
