@@ -1,7 +1,7 @@
 ---
 name: pyside6-ui-specialist
 description: Must use for complex PySide6 widget implementations, custom components, dialog management, or when dealing with Qt-specific UI challenges like threading, signals/slots, or responsive layouts.
-model: sonnet
+model: opus
 color: blue
 tools: Read, Write, Edit, Grep, Glob, Bash
 ---

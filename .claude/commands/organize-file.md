@@ -1,4 +1,3 @@
-# organize-file.md
 ---
 description: Reorganize Python files with proper header comments, logical grouping, docstrings, and code documentation
 argument-hint: @<file-path>

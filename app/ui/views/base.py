@@ -16,6 +16,7 @@ class ScrollableNavView(MainView):
         super().__init__(parent)
         self._setup_scroll_layout()
         self._build_ui()
+        self._connect_view_model_signals()
         self._connect_signals()
 
     def _setup_scroll_layout(self):
@@ -26,6 +27,10 @@ class ScrollableNavView(MainView):
     def _build_ui(self):
         """Override in subclasses to build view-specific content."""
         raise NotImplementedError("Subclasses must implement _build_content")
+
+    def _connect_view_model_signals(self):
+        """Override in subclasses if ViewModel signal connections are needed."""
+        pass
 
     def _connect_signals(self):
         """Override in subclasses if signal connections are needed."""

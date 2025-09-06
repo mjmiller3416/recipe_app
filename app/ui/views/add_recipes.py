@@ -1,6 +1,12 @@
-"""app/ui/pages/add_recipes/add_recipes.py
+"""app/ui/views/add_recipes.py
 
-AddRecipes widget for creating new recipes with ingredients and directions.
+This module defines the AddRecipes screen, which allows users to create new recipes
+with ingredients, directions, and notes. It includes functionality for recipe image
+management, dynamic ingredient forms, and comprehensive form validation.
+
+The view follows the MVVM pattern with clear separation between UI presentation (View)
+and business logic (ViewModel). Recipe creation is handled through coordinated ViewModels
+for enhanced data validation and processing.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
@@ -582,56 +588,86 @@ class DirectionsNotesCard(Card):
 
 # ── View ────────────────────────────────────────────────────────────────────────────────────────────────────
 class AddRecipes(ScrollableNavView):
-    """AddRecipes widget for creating new recipes with ingredients and directions."""
+    """Main add recipes view for creating new recipes with ingredients and directions.
+
+    Allows users to create comprehensive recipes with:
+    - Basic recipe information (name, category, time, servings)
+    - Dynamic ingredient management with autocomplete
+    - Directions and notes with toggleable interface
+    - Recipe image upload and management
+
+    Follows MVVM pattern with AddRecipeViewModel and IngredientViewModel handling business logic.
+    """
 
     def __init__(self, parent=None):
+        """Initialize the add recipes view.
+
+        Args:
+            parent: Optional parent widget.
+        """
         # Initialize ViewModels BEFORE super() - required by _build_ui()
         self.add_recipe_view_model = AddRecipeViewModel()
         self.ingredient_view_model = IngredientViewModel()
 
         super().__init__(parent)
+        DebugLogger.log("Initializing AddRecipes page", "info")
         self.setObjectName("AddRecipes")
-
-        # register for component-specific styling
         Theme.register_widget(self, Qss.ADD_RECIPE)
 
-        DebugLogger.log("Initializing Add Recipes page", "debug")
-
-        # Connect ViewModel signals
-        self._connect_view_model_signals()
-
+        # Track stored ingredients for form state management
         self.stored_ingredients = []
-        self._setup_tab_order()
 
-    def showEvent(self, event):
-        """When the AddRecipes view is shown, focus the recipe name field."""
-        super().showEvent(event)
-        # defer to ensure widget is active
-        from PySide6.QtCore import QTimer
-        QTimer.singleShot(0, self.le_recipe_name.setFocus)
+    # ── Initialization ──────────────────────────────────────────────────────────────────────────────────────
+    def _connect_view_model_signals(self) -> None:
+        """Connect ViewModel signals to UI update methods.
 
-    def _build_ui(self):
-        """Setup the UI components for the AddRecipes view."""
+        Establishes communication between ViewModels and View for
+        data updates, errors, validation, and state changes.
+        """
+        # AddRecipeViewModel signals
+        self.add_recipe_view_model.recipe_saved_successfully.connect(self._on_recipe_saved_successfully)
+        self.add_recipe_view_model.recipe_save_failed.connect(self._on_recipe_save_failed)
+        self.add_recipe_view_model.validation_failed.connect(self._on_validation_failed)
+        self.add_recipe_view_model.form_cleared.connect(self._on_form_cleared)
+
+        # Enhanced data binding signals
+        self.add_recipe_view_model.processing_state_changed.connect(self._on_processing_state_changed)
+        self.add_recipe_view_model.form_validation_state_changed.connect(self._on_form_validation_state_changed)
+        self.add_recipe_view_model.field_validation_error.connect(self._on_field_validation_error)
+        self.add_recipe_view_model.field_validation_cleared.connect(self._on_field_validation_cleared)
+        self.add_recipe_view_model.recipe_name_validated.connect(self._on_recipe_name_validated)
+        self.add_recipe_view_model.loading_state_changed.connect(self._on_loading_state_changed)
+
+        # IngredientViewModel signals
+        self.ingredient_view_model.ingredient_name_validation_changed.connect(self._on_ingredient_name_validation_changed)
+        self.ingredient_view_model.ingredient_category_validation_changed.connect(self._on_ingredient_category_validation_changed)
+        self.ingredient_view_model.ingredient_quantity_validation_changed.connect(self._on_ingredient_quantity_validation_changed)
+
+    # ── UI Setup ────────────────────────────────────────────────────────────────────────────────────────────
+    def _build_ui(self) -> None:
+        """Setup the UI components for the AddRecipes view.
+
+        Creates comprehensive recipe creation form with sections for:
+        recipe details, ingredients, directions/notes, and image upload.
+        """
         self._create_recipe_details()
         self._create_ingredient_container()
         self._create_directions_notes_card()
         self._create_recipe_image()
         self._create_save_button()
         self._setup_layout()
+        self._setup_tab_order()
 
-
-    # ── UI Components ───────────────────────────────────────────────────────────────────────────────────────────
     def _create_recipe_details(self):
         """Create the recipe details card with form fields."""
-        # Recipe Details Card
         self.recipe_details_card = Card(card_type="Default")
         self.recipe_details_card.setHeader("Recipe Info")
         self.recipe_details_card.setSubHeader("Basic information about your recipe.")
         self.recipe_details_card.expandWidth(True)
-        self.recipe_form = RecipeForm()  # custom form for recipe details
+        self.recipe_form = RecipeForm()
         self.recipe_details_card.addWidget(self.recipe_form)
 
-        # expose form fields for convenience
+        # Expose form fields for direct access
         self.le_recipe_name = self.recipe_form.le_recipe_name
         self.cb_recipe_category = self.recipe_form.cb_recipe_category
         self.le_time = self.recipe_form.le_time
@@ -664,8 +700,8 @@ class AddRecipes(ScrollableNavView):
 
     def _setup_layout(self):
         """Arrange all components in the scrollable layout."""
-        self.content_layout.addWidget(self.recipe_details_card) # Recipe details at top
-        self.content_layout.addWidget(self.ingredient_container) # Ingredients below details
+        self.content_layout.addWidget(self.recipe_details_card)
+        self.content_layout.addWidget(self.ingredient_container)
 
         # Create directions/notes and image side by side
         column_layout = create_two_column_layout(
@@ -677,35 +713,30 @@ class AddRecipes(ScrollableNavView):
         )
         self.content_layout.addLayout(column_layout)
 
-        # Add save button with some spacing
+        # Add save button with spacing
         self.content_layout.addSpacing(20)
         self.content_layout.addWidget(self.btn_save, 0, Qt.AlignCenter)
 
-    def _connect_view_model_signals(self):
-        """Connect ViewModel signals to UI handlers."""
-        # AddRecipeViewModel signals
-        self.add_recipe_view_model.recipe_saved_successfully.connect(self._on_recipe_saved_successfully)
-        self.add_recipe_view_model.recipe_save_failed.connect(self._on_recipe_save_failed)
-        self.add_recipe_view_model.validation_failed.connect(self._on_validation_failed)
-        self.add_recipe_view_model.form_cleared.connect(self._on_form_cleared)
-
-        # Enhanced data binding signals
-        self.add_recipe_view_model.processing_state_changed.connect(self._on_processing_state_changed)
-        self.add_recipe_view_model.form_validation_state_changed.connect(self._on_form_validation_state_changed)
-        self.add_recipe_view_model.field_validation_error.connect(self._on_field_validation_error)
-        self.add_recipe_view_model.field_validation_cleared.connect(self._on_field_validation_cleared)
-        self.add_recipe_view_model.recipe_name_validated.connect(self._on_recipe_name_validated)
-        self.add_recipe_view_model.loading_state_changed.connect(self._on_loading_state_changed)
-
-        # IngredientViewModel signals
-        self.ingredient_view_model.ingredient_name_validation_changed.connect(self._on_ingredient_name_validation_changed)
-        self.ingredient_view_model.ingredient_category_validation_changed.connect(self._on_ingredient_category_validation_changed)
-        self.ingredient_view_model.ingredient_quantity_validation_changed.connect(self._on_ingredient_quantity_validation_changed)
-
-
     # ── Event Handlers ──────────────────────────────────────────────────────────────────────────────────────
+    def _save_recipe(self):
+        """Handle recipe save button click.
+
+        Collects form data and delegates recipe creation to AddRecipeViewModel.
+        Implements proper MVVM pattern by delegating all business logic to ViewModel.
+        """
+        DebugLogger.log("Starting recipe save process via ViewModel", "debug")
+
+        # Collect raw form data
+        raw_form_data = self._collect_form_data()
+
+        # Transform to structured form data using ViewModel
+        form_data = self.add_recipe_view_model.preprocess_form_data(raw_form_data)
+
+        # Delegate recipe creation to ViewModel
+        self.add_recipe_view_model.create_recipe(form_data)
+
     def _connect_signals(self):
-        """Connect UI signals to their handlers."""
+        """Connect UI signals to their handlers for real-time validation."""
         # Connect form change handlers for real-time validation
         self.le_recipe_name.textChanged.connect(lambda text: self.add_recipe_view_model.validate_field_real_time("recipe_name", text))
         self.le_servings.textChanged.connect(lambda text: self.add_recipe_view_model.validate_field_real_time("servings", text))
@@ -716,6 +747,62 @@ class AddRecipes(ScrollableNavView):
         # Connect recipe name and category for uniqueness checking
         self.le_recipe_name.editingFinished.connect(self._check_recipe_name_uniqueness)
         self.cb_recipe_category.currentTextChanged.connect(self._check_recipe_name_uniqueness)
+
+    def _check_recipe_name_uniqueness(self):
+        """Check recipe name uniqueness when name or category changes."""
+        recipe_name = self.le_recipe_name.text().strip()
+        category = self.cb_recipe_category.currentText().strip()
+
+        if recipe_name and category:
+            self.add_recipe_view_model.validate_recipe_name(recipe_name, category)
+
+    # ── Public Interface ────────────────────────────────────────────────────────────────────────────────────
+    def showEvent(self, event):
+        """When the AddRecipes view is shown, focus the recipe name field."""
+        super().showEvent(event)
+        # Defer to ensure widget is active
+        from PySide6.QtCore import QTimer
+        QTimer.singleShot(0, self.le_recipe_name.setFocus)
+
+    # ── Private Helper Methods ──────────────────────────────────────────────────────────────────────────────
+    def _collect_form_data(self) -> dict:
+        """Collect all form data from UI components for ViewModel processing."""
+        # Collect recipe form data
+        form_mapping = {
+            "recipe_name": self.le_recipe_name,
+            "recipe_category": self.cb_recipe_category,
+            "meal_type": self.cb_meal_type,
+            "dietary_preference": self.cb_dietary_preference,
+            "total_time": self.le_time,
+            "servings": self.le_servings,
+            "directions": self.te_directions
+        }
+        recipe_data = collect_form_data(form_mapping)
+
+        # Add notes from notes text edit
+        recipe_data["notes"] = self.te_notes.toPlainText()
+
+        # Add image paths
+        recipe_data["reference_image_path"] = self.recipe_image.get_reference_image_path() or ""
+        recipe_data["banner_image_path"] = ""  # Not currently used in UI
+
+        # Collect ingredient data
+        recipe_data["ingredients"] = self.ingredient_container.get_all_ingredients_data()
+
+        return recipe_data
+
+    def _clear_form(self):
+        """Clear all form fields after successful save."""
+        form_widgets = [
+            self.le_recipe_name, self.cb_recipe_category, self.cb_meal_type,
+            self.cb_dietary_preference, self.le_time, self.le_servings, self.te_directions
+        ]
+        clear_form_fields(form_widgets)
+        self.recipe_image.clear_default_image()
+
+        # Clear stored ingredients and widgets
+        self.stored_ingredients.clear()
+        self.ingredient_container.clear_all_ingredients()
 
     def _setup_tab_order(self):
         """Define a fixed tab order for keyboard navigation."""
@@ -737,8 +824,12 @@ class AddRecipes(ScrollableNavView):
 
         setup_tab_order_chain(base_widgets)
 
+    def _to_payload(self):
+        """Legacy method - now replaced by _collect_form_data and ViewModel processing."""
+        DebugLogger.log("_to_payload called - consider using ViewModel pattern instead", "warning")
+        return self._collect_form_data()
 
-    # ── ViewModel Event Handlers ────────────────────────────────────────────────────────────────────────────
+    # ── ViewModel Signal Handlers ───────────────────────────────────────────────────────────────────────────
     def _on_recipe_saved_successfully(self, recipe_name: str):
         """Handle successful recipe save from ViewModel."""
         message = f"Recipe '{recipe_name}' saved successfully!"
@@ -767,8 +858,6 @@ class AddRecipes(ScrollableNavView):
         self._clear_form()
         DebugLogger.log("Form cleared via ViewModel signal", "debug")
 
-
-    # ── Enhanced Data Binding Event Handlers ────────────────────────────────────────────────────────────────
     def _on_processing_state_changed(self, is_processing: bool):
         """Handle processing state changes from ViewModel."""
         self.btn_save.setEnabled(not is_processing)
@@ -826,99 +915,49 @@ class AddRecipes(ScrollableNavView):
         # This will be connected to specific ingredient forms when they're created
         pass
 
-    def _check_recipe_name_uniqueness(self):
-        """Check recipe name uniqueness when name or category changes."""
-        recipe_name = self.le_recipe_name.text().strip()
-        category = self.cb_recipe_category.currentText().strip()
-
-        if recipe_name and category:
-            self.add_recipe_view_model.validate_recipe_name(recipe_name, category)
-
-
-    # ── Business Logic ──────────────────────────────────────────────────────────────────────────────────────
-    def _save_recipe(self):
-        """
-        Collect form data and delegate recipe creation to AddRecipeViewModel.
-        Implements proper MVVM pattern by delegating all business logic to ViewModel.
-        """
-        DebugLogger.log("Starting recipe save process via ViewModel", "debug")
-
-        # Collect raw form data
-        raw_form_data = self._collect_form_data()
-
-        # Transform to structured form data using ViewModel
-        form_data = self.add_recipe_view_model.preprocess_form_data(raw_form_data)
-
-        # Delegate recipe creation to ViewModel
-        self.add_recipe_view_model.create_recipe(form_data)
-
-    def _collect_form_data(self) -> dict:
-        """Collect all form data from UI components for ViewModel processing."""
-        # Collect recipe form data
-        form_mapping = {
-            "recipe_name": self.le_recipe_name,
-            "recipe_category": self.cb_recipe_category,
-            "meal_type": self.cb_meal_type,
-            "dietary_preference": self.cb_dietary_preference,
-            "total_time": self.le_time,
-            "servings": self.le_servings,
-            "directions": self.te_directions
-        }
-        recipe_data = collect_form_data(form_mapping)
-
-        # Add notes from notes text edit
-        recipe_data["notes"] = self.te_notes.toPlainText()
-
-        # Add image paths
-        recipe_data["reference_image_path"] = self.recipe_image.get_reference_image_path() or ""
-        recipe_data["banner_image_path"] = ""  # Not currently used in UI
-
-        # Collect ingredient data
-        recipe_data["ingredients"] = self.ingredient_container.get_all_ingredients_data()
-
-        return recipe_data
-
-    def _to_payload(self):
-        """Legacy method - now replaced by _collect_form_data and ViewModel processing."""
-        DebugLogger.log("_to_payload called - consider using ViewModel pattern instead", "warning")
-        return self._collect_form_data()
-
-    def _clear_form(self):
-        """Clear all form fields after successful save."""
-        form_widgets = [
-            self.le_recipe_name, self.cb_recipe_category, self.cb_meal_type,
-            self.cb_dietary_preference, self.le_time, self.le_servings, self.te_directions
-        ]
-        clear_form_fields(form_widgets)
-        self.recipe_image.clear_default_image()
-
-        # clear stored ingredients and widgets
-        self.stored_ingredients.clear()
-        self.ingredient_container.clear_all_ingredients()
-
-
-    # ── Utility Methods ─────────────────────────────────────────────────────────────────────────────────────
+    # ── User Feedback Methods ───────────────────────────────────────────────────────────────────────────────
     def _display_save_message(self, message: str, success: bool = True):
-        """Display a toast notification for save operations."""
+        """Display a toast notification for save operations.
+
+        Args:
+            message: The message to display.
+            success: Whether this is a success or error message.
+        """
         from app.ui.components.widgets import show_toast
         show_toast(self, message, success=success, duration=3000, offset_right=50)
 
     def _apply_field_error_style(self, field_name: str, error_message: str):
-        """Apply error styling to a specific field and show tooltip."""
+        """Apply error styling to a specific field and show tooltip.
+
+        Args:
+            field_name: The name of the field to apply error styling to.
+            error_message: The error message to show in tooltip.
+        """
         field_widget = self._get_field_widget(field_name)
         if field_widget:
             field_widget.setStyleSheet("border: 2px solid #f44336;")  # Material Design error red
             field_widget.setToolTip(error_message)
 
     def _clear_field_error_style(self, field_name: str):
-        """Clear error styling from a specific field."""
+        """Clear error styling from a specific field.
+
+        Args:
+            field_name: The name of the field to clear error styling from.
+        """
         field_widget = self._get_field_widget(field_name)
         if field_widget:
             field_widget.setStyleSheet("")  # Reset to default styling
             field_widget.setToolTip("")
 
     def _get_field_widget(self, field_name: str):
-        """Get the widget reference for a given field name."""
+        """Get the widget reference for a given field name.
+
+        Args:
+            field_name: The name of the field to get widget for.
+
+        Returns:
+            The widget associated with the field name, or None if not found.
+        """
         field_mapping = {
             "recipe_name": self.le_recipe_name,
             "servings": self.le_servings,
