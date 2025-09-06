@@ -585,8 +585,7 @@ class AddRecipes(ScrollableNavView):
     """AddRecipes widget for creating new recipes with ingredients and directions."""
 
     def __init__(self, parent=None):
-        # Initialize ViewModels BEFORE calling super().__init__ to avoid initialization order issues
-        # This is critical because ScrollableNavView.__init__ calls _build_ui() which needs these attributes
+        # Initialize ViewModels BEFORE super() - required by _build_ui()
         self.add_recipe_view_model = AddRecipeViewModel()
         self.ingredient_view_model = IngredientViewModel()
 
