@@ -234,9 +234,10 @@ class IngredientForm(QWidget):
             self.sle_ingredient_name.textChanged.connect(
                 lambda text: self.ingredient_view_model.validate_ingredient_name_real_time(text)
             )
-            self.cb_ingredient_category.currentTextChanged.connect(
-                lambda text: self.ingredient_view_model.validate_ingredient_category_real_time(text)
-            )
+            # TODO: Fix validation styling conflicts - validation applies inline styles that override QSS theme styling
+            # self.cb_ingredient_category.currentTextChanged.connect(
+            #     lambda text: self.ingredient_view_model.validate_ingredient_category_real_time(text)
+            # )
             self.le_quantity.textChanged.connect(
                 lambda text: self.ingredient_view_model.validate_ingredient_quantity_real_time(text)
             )
@@ -710,7 +711,8 @@ class AddRecipes(ScrollableNavView):
         self.le_recipe_name.textChanged.connect(lambda text: self.add_recipe_view_model.validate_field_real_time("recipe_name", text))
         self.le_servings.textChanged.connect(lambda text: self.add_recipe_view_model.validate_field_real_time("servings", text))
         self.le_time.textChanged.connect(lambda text: self.add_recipe_view_model.validate_field_real_time("total_time", text))
-        self.cb_meal_type.currentTextChanged.connect(lambda text: self.add_recipe_view_model.validate_field_real_time("meal_type", text))
+        # TODO: Fix validation styling conflicts - validation applies inline styles that override QSS theme styling
+        # self.cb_meal_type.currentTextChanged.connect(lambda text: self.add_recipe_view_model.validate_field_real_time("meal_type", text))
 
         # Connect recipe name and category for uniqueness checking
         self.le_recipe_name.editingFinished.connect(self._check_recipe_name_uniqueness)
