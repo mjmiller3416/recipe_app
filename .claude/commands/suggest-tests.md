@@ -1,11 +1,14 @@
 ---
-description: Generate comprehensive test cases for a file
+description: Generate comprehensive MealGenie test cases focusing on recipe domain workflows and MVVM architectural boundaries
 argument-hint: @<file-path>
+allowed-tools: Read, Write, Edit, Task
 ---
 
-# Suggest Tests: $ARGUMENTS
+# Suggest MealGenie Tests: $ARGUMENTS
 
-Please analyze $ARGUMENTS and suggest comprehensive test cases:
+**AGENT COORDINATION**: Use **test-recipe-specialist** for comprehensive recipe domain test coverage and **architecture-reviewer** for MVVM boundary validation tests.
+
+Please analyze $ARGUMENTS and suggest comprehensive test cases optimized for MealGenie's recipe management workflows:
 
 ## Test Categories to Cover
 
@@ -15,22 +18,26 @@ Please analyze $ARGUMENTS and suggest comprehensive test cases:
 - Test edge cases and boundary conditions
 - Test invalid inputs and error handling
 
-### 2. Integration Points
-- Test interactions between classes/modules
-- Test database operations (if applicable)
-- Test external dependencies (mocked appropriately)
+### 2. Recipe Domain Integration Tests
+- Test interactions between RecipeService and IngredientService
+- Test recipe database operations and ingredient relationship handling
+- Test meal planning service coordination with recipe services
+- Test shopping list generation from recipe data
 
-### 3. Edge Cases & Error Conditions
-- Empty inputs, null values, zero values
-- Maximum/minimum boundary values
-- Invalid data types
-- Network failures or timeouts (if applicable)
-- Permission/access errors
+### 3. MealGenie Edge Cases & Error Conditions  
+- Empty recipe ingredient lists, zero serving sizes
+- Invalid recipe scaling factors (negative, zero, extremely large)
+- Malformed ingredient parsing inputs
+- Recipe image loading failures and missing image paths
+- Meal planning constraint violations and dietary restriction conflicts
+- Shopping list generation with no recipes selected
 
-### 4. Business Logic Tests
-- Verify core business rules are enforced
-- Test complex workflows end-to-end
-- Validate data transformations
+### 4. Recipe Business Logic Tests
+- Verify recipe scaling mathematics preserve ingredient ratios
+- Test meal planning algorithms respect dietary restrictions
+- Validate nutrition calculation accuracy across recipe modifications
+- Test ingredient parsing from natural language input
+- Verify shopping list consolidation logic and quantity calculations
 
 ## Output Format
 Provide:

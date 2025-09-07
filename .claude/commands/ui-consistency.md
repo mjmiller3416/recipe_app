@@ -1,11 +1,14 @@
 ---
-description: Check UI component patterns and consistency
+description: Check MealGenie UI component patterns, recipe interface consistency, and MVVM compliance
 argument-hint: @<file-path>
+allowed-tools: Read, Write, Edit, Task
 ---
 
-# UI Consistency Check: $ARGUMENTS
+# MealGenie UI Consistency Check: $ARGUMENTS
 
-Please analyze $ARGUMENTS for UI consistency and best practices:
+**AGENT COORDINATION**: Use **pyside6-frontend-architect** for UI architecture analysis and **architecture-reviewer** for MVVM boundary validation.
+
+Please analyze $ARGUMENTS for MealGenie UI consistency, recipe interface patterns, and MVVM best practices:
 
 ## UI Component Structure Analysis
 
@@ -15,23 +18,23 @@ Please analyze $ARGUMENTS for UI consistency and best practices:
 - Appropriate component size and complexity
 - Clear component responsibilities
 
-### 2. State Management
-- Proper use of view models vs direct state manipulation
-- Consistent patterns for handling user input
-- Appropriate separation between UI state and business data
-- Error state handling consistency
+### 2. Recipe Domain State Management
+- Proper use of recipe ViewModels vs direct recipe data manipulation
+- Consistent patterns for handling recipe form input and ingredient parsing
+- Appropriate separation between UI state and recipe business data
+- Error state handling consistency for recipe validation and meal planning failures
 
-### 3. Styling Consistency
-- Consistent use of theme system
-- Proper separation of styling concerns
-- Reuse of common styling patterns
-- Appropriate use of style constants vs hardcoded values
+### 3. MealGenie Styling Consistency  
+- Consistent use of Material3 theme system across recipe cards and meal widgets
+- Proper separation of styling concerns in recipe browsing and meal planning interfaces
+- Reuse of common styling patterns for ingredient lists, nutrition displays, and dietary tags
+- Appropriate use of MealGenie style constants vs hardcoded values in recipe components
 
-### 4. Common UI Patterns
-- Consistent error message display
-- Uniform loading states and indicators
-- Standardized user feedback patterns
-- Consistent navigation patterns
+### 4. Recipe UI Patterns
+- Consistent recipe error message display across forms and validation
+- Uniform loading states for recipe browsing, image loading, and meal plan generation
+- Standardized user feedback patterns for recipe creation, editing, and meal planning
+- Consistent navigation patterns between recipe views, meal planning, and shopping lists
 
 ### 5. Component Reusability
 - Opportunities for component abstraction

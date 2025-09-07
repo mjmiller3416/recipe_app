@@ -1,12 +1,14 @@
 ---
-description: Investigate and resolve runtime errors by analyzing error messages and finding root causes
-argument-hint: "<error-text-or-logs>"
-allowed-tools: Read, Grep, Glob, Edit, Bash
+description: Investigate and resolve MealGenie runtime errors with focus on recipe domain and MVVM architectural issues
+argument-hint: "<error-text-or-logs>"  
+allowed-tools: Read, Grep, Glob, Edit, Bash, Task
 ---
 
-# Error Investigation: $ARGUMENTS
+# MealGenie Error Investigation: $ARGUMENTS
 
-Please investigate and resolve the following error(s):
+**AGENT STRATEGY**: Use **architecture-reviewer** for MVVM boundary violations and **recipe-domain-expert** for recipe-specific business logic errors.
+
+Please investigate and resolve the following MealGenie error(s):
 
 ```
 $ARGUMENTS
@@ -83,25 +85,36 @@ Based on the MealGenie architecture:
 - Verify no new errors are introduced
 - Check that the solution follows project conventions
 
-## Common Error Patterns for MealGenie
+## Common MealGenie Error Patterns
 
-### Missing ViewModel Attributes
+### Recipe Data & MVVM Boundary Violations
 Often caused by:
-- Incomplete ViewModel initialization in View constructors
-- Missing dependency injection setup
-- Incorrect import statements
+- Views importing from `app.core.services.*` instead of using ViewModels
+- Recipe business logic in UI components instead of `RecipeService`
+- Missing DTO transformations between layers
+- Incomplete ViewModel initialization in recipe Views
 
-### Navigation Failures
+### Recipe Domain Specific Errors
 Usually due to:
-- Views not properly initialized before navigation
-- Missing route registrations
-- Circular import issues between UI components
+- Recipe ingredient parsing failures in forms
+- Recipe scaling calculation errors in services
+- Meal planning constraint violations
+- Recipe image loading and path resolution issues
+- Nutrition calculation errors in recipe displays
 
-### Qt Object Lifecycle Issues
+### Navigation & UI Component Failures  
 Typically from:
-- Widgets being deleted while background operations are running
-- Improper signal/slot cleanup
-- Threading issues with UI updates
+- Recipe views not properly registered in navigation system
+- Missing route definitions for recipe/meal planning views
+- Circular import issues between recipe UI components
+- RecipeCard or MealWidget lifecycle management problems
+
+### Qt Object Lifecycle Issues in Recipe Context
+Common in:
+- Recipe card widgets being deleted during background recipe loading
+- Improper signal/slot cleanup in meal planning calendar widgets
+- Threading issues with recipe image loading and UI updates
+- Memory leaks in recipe browser progressive loading
 
 ## Output Format
 

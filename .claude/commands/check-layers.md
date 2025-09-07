@@ -1,11 +1,14 @@
 ---
-description: Validate architectural boundaries and layer separation
+description: Validate MealGenie MVVM architectural boundaries and recipe domain layer separation  
 argument-hint: @<file-path>
+allowed-tools: Read, Write, Edit, Task
 ---
 
-# Check Architectural Layers: $ARGUMENTS
+# Check MealGenie Architectural Layers: $ARGUMENTS
 
-Please analyze $ARGUMENTS for proper architectural layer separation:
+**AGENT COORDINATION**: Use **architecture-reviewer** for comprehensive MVVM boundary analysis and **recipe-domain-expert** for recipe business logic placement validation.
+
+Please analyze $ARGUMENTS for proper MealGenie MVVM architectural layer separation with focus on recipe domain boundaries:
 
 ## Layer Definitions
 - **Core layer** (`app/core/`): Business logic, data models, repositories, services, utilities
@@ -14,24 +17,26 @@ Please analyze $ARGUMENTS for proper architectural layer separation:
 
 ## Validation Checks
 
-### 1. Import Analysis
-- Core modules should NOT import from UI or Style layers
-- UI modules can import from Core but should minimize direct dependencies
-- Style modules should be independent of business logic
-- Check for circular dependencies between layers
+### 1. MealGenie MVVM Import Analysis
+- **CRITICAL**: Views must NEVER import from `app.core.services.*` or `app.core.repositories.*`
+- **UI Layer Rules**: UI modules can ONLY import `app.core.utils.*` (shared utilities) from Core, all other Core access through ViewModels
+- **Core Layer Rules**: Core modules should NEVER import from UI or Style layers
+- **Style Layer Rules**: Style modules must be independent of recipe business logic
+- Check for circular dependencies between MealGenie architectural layers
 
-### 2. Responsibility Validation
-- Business logic should be in Core layer (models, services, repositories)
-- UI-specific logic should be in UI layer (view models, component logic)
-- Presentation concerns should be in UI layer, not Core
-- Database/API logic should be in Core services/repositories
+### 2. Recipe Domain Responsibility Validation
+- **Recipe Business Logic**: Must be in Core layer (`RecipeService`, `IngredientService`, `PlannerService`)
+- **Recipe UI Logic**: Should be in UI layer (recipe ViewModels, recipe component logic)
+- **Presentation Concerns**: Recipe displays, forms, and widgets in UI layer, not Core
+- **Recipe Data Access**: Database/API logic in Core repositories (`RecipeRepository`, `IngredientRepository`)
+- **Meal Planning Logic**: Meal planning algorithms in `PlannerService`, not UI components
 
-### 3. Common Violations to Flag
-- Database queries in UI components
-- Business validation in UI layer
-- UI components in Core modules
-- Direct model manipulation in UI (should go through services)
-- Hardcoded styling in business logic
+### 3. MealGenie-Specific Violations to Flag
+- Recipe database queries in UI components (Views, recipe forms, meal widgets)
+- Recipe business validation in UI layer (ingredient parsing in forms vs services)
+- UI components in Core modules (recipe card logic in services)
+- Direct recipe model manipulation in UI (should go through DTOs and services)
+- Hardcoded recipe styling and theming in business logic
 
 ### 4. Data Flow Validation
 - UI should communicate with Core through well-defined interfaces

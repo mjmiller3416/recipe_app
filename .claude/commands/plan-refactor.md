@@ -1,17 +1,26 @@
 ---
-description: Create a detailed refactoring plan based on code review feedback
+description: Create a detailed MealGenie refactoring plan coordinating specialized agents based on architectural review feedback
 argument-hint: @<review-file-path>
-allowed-tools: Read, Write
+allowed-tools: Read, Write, Task
 ---
 
-# Plan Refactor: $ARGUMENTS
+# MealGenie Refactor Plan: $ARGUMENTS
 
-## Agent Usage Strategy
-Please use the **project-orchestrator** agent to create comprehensive refactoring plans that coordinate between specialized agents:
-- **python-backend-architect** for core/, models/, repositories/, services/ changes
-- **pyside6-frontend-architect** for ui/, view_models/, components/ changes  
-- **architecture-reviewer** for validation of layer boundaries
-- **test-recipe-specialist** for test-related changes
+## Agent Orchestration Strategy
+**PRIMARY AGENT**: Use **project-orchestrator** agent to create comprehensive refactoring plans that coordinate between MealGenie specialized agents:
+
+**Core Layer Changes:**
+- **python-backend-architect** for `app/core/` changes: models/, repositories/, services/, dtos/
+- **recipe-domain-expert** for recipe business logic, meal planning, nutrition calculations
+
+**UI Layer Changes:**  
+- **pyside6-frontend-architect** for `app/ui/` changes: views/, view_models/, components/
+- **pyside6-ui-specialist** for complex PySide6 widget implementations and custom components
+
+**Quality Assurance:**
+- **architecture-reviewer** for MVVM layer boundary validation
+- **test-recipe-specialist** for recipe domain test creation and validation
+- **code-refactor-simplifier** for complex nested recipe logic simplification
 
 Please read @_docs/ARCHITECTURE.md to understand the project's architectural principles and structure.
 Please read the code review file $ARGUMENTS and create a comprehensive refactoring plan based on the suggestions and feedback provided.
@@ -24,11 +33,14 @@ Please read the code review file $ARGUMENTS and create a comprehensive refactori
 - Identify dependencies between different refactoring tasks
 - Note any architectural patterns that need to be followed
 
-### 2. Task Breakdown
-- Break down complex refactoring items into discrete, actionable tasks
-- Sequence tasks to handle dependencies properly (e.g., fix critical bugs before architectural changes)
-- Estimate complexity/effort for each task
-- Identify which files will be affected by each change
+### 2. MealGenie-Specific Task Breakdown
+- Break down recipe management refactoring items into discrete, actionable tasks
+- Sequence tasks to handle dependencies properly:
+  - Fix critical MVVM boundary violations first
+  - Address recipe data integrity issues before UI changes  
+  - Complete Core layer changes before UI layer modifications
+- Estimate complexity/effort for each task considering MealGenie's recipe domain complexity
+- Identify which MealGenie files will be affected by each change (recipe services, meal planning components, ingredient forms)
 
 ### 3. Implementation Strategy
 - Group related changes that can be done together

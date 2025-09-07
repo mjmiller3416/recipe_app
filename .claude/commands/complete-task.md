@@ -1,18 +1,26 @@
 ---
-description: Execute refactoring tasks outlined in a task markdown file
+description: Execute MealGenie refactoring tasks with specialized agent coordination
 argument-hint: @<task-file-path>
-allowed-tools: Read, Write, Edit, Bash
+allowed-tools: Read, Write, Edit, Bash, Task
 ---
 
-# Complete Task: $ARGUMENTS
+# Complete MealGenie Task: $ARGUMENTS
 
-## Agent Delegation Strategy
-Based on the tasks in the plan, delegate to appropriate specialists:
-- **python-backend-architect**: For core/, models/, repositories/, services/ changes
-- **pyside6-frontend-architect**: For ui/, view_models/, components/ changes
-- **test-recipe-specialist**: For test creation and validation
-- **code-refactor-simplifier**: For complex refactoring patterns
-- **architecture-reviewer**: Final validation of changes
+## MealGenie Agent Delegation Strategy
+Based on the tasks in the plan, delegate to appropriate MealGenie specialists:
+
+**Core Layer Implementation:**
+- **python-backend-architect**: For `app/core/` changes: models/, repositories/, services/, dtos/
+- **recipe-domain-expert**: For recipe business logic, meal planning algorithms, nutrition calculations
+
+**UI Layer Implementation:**
+- **pyside6-frontend-architect**: For `app/ui/` changes: views/, view_models/, components/, managers/
+- **pyside6-ui-specialist**: For complex PySide6 recipe card widgets, custom meal planning components
+
+**Quality & Testing:**
+- **test-recipe-specialist**: For recipe domain test creation and meal planning workflow validation
+- **code-refactor-simplifier**: For complex nested recipe logic and ingredient parsing patterns
+- **architecture-reviewer**: Final MVVM boundary validation and MealGenie pattern compliance
 
 Please read the task file $ARGUMENTS and execute all the refactoring tasks outlined in the plan.
 
@@ -37,13 +45,15 @@ Please read the task file $ARGUMENTS and execute all the refactoring tasks outli
 - Make code changes following the project's architectural patterns
 - Ensure proper import statements and file organization
 
-### 4. Quality Assurance
+### 4. MealGenie Quality Assurance
 - Run import sorting: `isort .`
-- Run tests: `pytest`
-- Use **architecture-reviewer** agent to validate layer boundaries
-- Verify that changes follow the MealGenie architectural guidelines
-- Check that all critical bugs identified in the original review are resolved
-- Ensure code formatting and style consistency
+- Run tests: `pytest` with special attention to recipe domain tests
+- Use **architecture-reviewer** agent to validate MVVM layer boundaries  
+- Use **test-recipe-specialist** agent to validate recipe workflow completeness
+- Verify that changes follow the MealGenie architectural guidelines (MVVM, no UI→Core imports)
+- Check that all critical recipe domain bugs identified in the original review are resolved
+- Ensure code formatting and MealGenie naming conventions (snake_case files, PascalCase classes)
+- Validate recipe data flow: Models → DTOs → ViewModels → Views
 
 ### 5. Progress Tracking
 - Mark completed tasks in the task file as you complete them

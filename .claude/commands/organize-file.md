@@ -1,23 +1,26 @@
 ---
-description: Reorganize Python files with proper header comments, logical grouping, docstrings, and code documentation
+description: Reorganize MealGenie Python files with recipe domain structure, MVVM-compliant grouping, and comprehensive documentation
 argument-hint: @<file-path>
-allowed-tools: Read, Edit
+allowed-tools: Read, Edit, Task
 ---
 
-# Organize File: $ARGUMENTS
+# Organize MealGenie File: $ARGUMENTS
 
-Please reorganize and improve the Python file $ARGUMENTS by applying consistent structure, header comments, docstrings, and inline documentation.
+**AGENT COORDINATION**: Use **code-refactor-simplifier** for complex recipe logic organization and **recipe-domain-expert** for recipe business logic documentation.
+
+Please reorganize and improve the MealGenie Python file $ARGUMENTS by applying consistent structure, header comments, docstrings optimized for recipe domain workflows, and inline documentation.
 
 ## Organization Strategy
 
 ### 1. File Structure Analysis
 - Read and understand the current file structure and purpose
 - Identify the main classes, functions, and logical groupings
-- Determine the appropriate organization pattern based on file type:
-  - **Views/UI Components**: Imports → Form Classes → Container Classes → Main View → Event Handlers → Utility Methods
-  - **ViewModels**: Imports → Class Definition → Initialization → Public Methods → Private Methods → Event Handlers
-  - **Services**: Imports → Class Definition → Public Interface → Private Implementation → Utility Methods
-  - **Models**: Imports → Class Definition → Properties → Methods → Validation → Serialization
+- Determine the appropriate MealGenie organization pattern based on file type:
+  - **Recipe Views/UI Components**: Imports → Recipe Form Classes → Ingredient Container Classes → Main Recipe View → Recipe Event Handlers → Recipe Utility Methods
+  - **Recipe ViewModels**: Imports → Class Definition → Recipe Initialization → Recipe Public Methods → Recipe Private Methods → Recipe Event Handlers
+  - **Recipe Services**: Imports → Class Definition → Recipe Public Interface → Recipe Business Logic → Recipe Validation → Private Implementation
+  - **Recipe Models**: Imports → Class Definition → Recipe Properties → Recipe Relationships → Recipe Methods → Recipe Validation → Serialization
+  - **Meal Planning Components**: Imports → Meal Plan Classes → Calendar Components → Planning Logic → Event Handlers
 
 ### 2. Header Comment Style
 Apply consistent header comments using the style from add_recipes.py:

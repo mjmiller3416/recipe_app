@@ -1,12 +1,14 @@
 ---
-description: Create new features following MealGenie MVVM architecture with proper file structure, naming conventions, and integration patterns
+description: Create new MealGenie recipe/meal features with domain-specific MVVM architecture, proper agent coordination, and recipe workflow integration
 argument-hint: <feature-name> - <feature-description>
-allowed-tools: Read, Write, Edit, Bash, Grep, Glob
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob, Task
 ---
 
-# Create Feature: $ARGUMENTS
+# Create MealGenie Feature: $ARGUMENTS
 
-Please create a new feature for the MealGenie application following the established MVVM architecture patterns and project conventions.
+**AGENT COORDINATION**: Use **project-orchestrator** for planning, **recipe-domain-expert** for recipe business logic, **python-backend-architect** for Core layer, **pyside6-frontend-architect** for UI layer, and **test-recipe-specialist** for testing.
+
+Please create a new feature for the MealGenie recipe management application following the established MVVM architecture patterns and MealGenie-specific domain conventions.
 
 ## Feature Analysis
 
@@ -14,12 +16,13 @@ Please create a new feature for the MealGenie application following the establis
 Extract from the command arguments:
 - **Feature Name**: The main identifier (e.g., "Notification Manager")
 - **Feature Description**: Purpose and scope (e.g., "manage toast notifications across various views")
-- **Feature Type**: Determine the category:
-  - **UI Component**: Reusable UI elements (components, widgets, dialogs)
-  - **Manager/Service**: Cross-cutting concerns (notifications, navigation, data)
-  - **View Feature**: New views or major view enhancements
-  - **Core Business Logic**: Models, repositories, services for business rules
-  - **Utility**: Helper functions and utilities
+- **MealGenie Feature Type**: Determine the category:
+  - **Recipe Management**: Recipe CRUD, ingredient parsing, recipe scaling, nutrition calculations
+  - **Meal Planning**: Weekly planning, calendar integration, meal scheduling, dietary constraints
+  - **Shopping Features**: Shopping list generation, ingredient consolidation, grocery management
+  - **UI Component**: Reusable recipe cards, meal widgets, ingredient forms, dietary filter components
+  - **Manager/Service**: Recipe notifications, meal planning navigation, recipe data management
+  - **Core Business Logic**: Recipe models, meal planning algorithms, nutrition services, shopping services
 
 ### 2. Architecture Planning
 Based on the MealGenie structure, plan file locations:

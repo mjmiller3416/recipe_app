@@ -45,6 +45,82 @@ app/
 - **Service Layer**: Business logic is centralized in service classes
 - **Factory Pattern**: Use factory-boy for test data generation
 
+## Import Guidelines
+
+### Prohibited Imports
+- UI components MUST NOT import from `app.core.services.*` directly
+- Use ViewModels to mediate between UI and core services
+- Views should only import: components, view_models, utils, and Qt modules
+
+### Allowed Import Patterns
+- ViewModels → Services (✓)
+- Views → ViewModels (✓)  
+- Views → Components (✓)
+- Services → Repositories (✓)
+- Any layer → `app.core.utils.*` (✓) - Global utilities available to all layers
+- UI components → `app.ui.utils.*` (✓) - UI-specific utilities
+
+### Utility Layer Guidelines
+- **`app/core/utils/`**: Global utilities available to all application layers (UI, Core, etc.)
+- **`app/ui/utils/`**: UI-specific utilities, only for use within the presentation layer
+- UI components CAN import from `app/core/utils/` as these are general-purpose utilities
+- Core components should NOT import from `app/ui/utils/` as these are UI-specific
+
+## ViewModel Patterns
+
+All ViewModels should:
+- Inherit from `BaseViewModel` in `app/ui/view_models/base_view_model.py`
+- Handle service interactions and emit signals for UI updates
+- Implement business logic validation before calling services
+- Use dependency injection pattern for service dependencies
+
+Example structure:
+```python
+class ExampleViewModel(BaseViewModel):
+    def __init__(self, service: ExampleService):
+        super().__init__()
+        self._service = service
+```
+
+## Navigation Patterns
+
+### Route Usage
+- Routes defined in `app/ui/managers/navigation/routes.py`
+- Use NavigationService for programmatic navigation
+- Route patterns: `/dashboard`, `/recipes/browse`, `/recipes/browse/selection`
+
+### View Registration
+- All views registered in `app/ui/managers/navigation/registry.py`
+- Complex views have dedicated directories under `app/ui/views/`
+
+## Common Pitfalls to Avoid
+
+1. **Direct Service Imports in UI**: Never import services directly in views
+2. **Missing ViewModel Mediation**: Always use ViewModels between Views and Services  
+3. **Incorrect Route Patterns**: Use exact route strings from routes.py
+4. **Test Marker Misuse**: Use appropriate pytest markers for each layer
+5. **Database Direct Access**: Always use Repository pattern, never direct ORM calls in services
+
+## Debugging Tools
+
+### UI Debugging
+```bash
+# Keep Qt widgets open for inspection
+pytest --qt-keep-widgets-open
+
+# Debug specific UI components
+python main.py --test
+```
+
+### Performance Profiling
+```bash
+# Run performance tests
+pytest -m slow
+
+# Database query analysis
+python manage.py db status
+```
+
 ## Common Development Commands
 
 ### Running the Application

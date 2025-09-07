@@ -17,7 +17,7 @@ sound_map = {
     "Notification": "sounds/notification.wav",
     "Stop": "sounds/stop.wav",
     "SubagentStop": "sounds/subagent_stop.wav",
-    #"PreToolUse": "sounds/pre_tool_use.wav",
+    "PreToolUse": "sounds/pre_tool_use.wav",
     "PostToolUse": "sounds/post_tool_use.wav",
     "Error": "sounds/error.wav",
 }

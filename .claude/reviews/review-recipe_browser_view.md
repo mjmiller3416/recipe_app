@@ -140,16 +140,26 @@ Recipe-specific filtering and rendering logic mixed with reusable patterns:
 
 **Impact:** Prevents reuse of generic patterns in other views.
 
-**Solution:** Separate concerns:
+**Solution:** Separate concerns by scope:
+
 ```python
-# Keep recipe-specific:
-class FilterManager:  # recipe_browser/managers/
+# Generic patterns (reusable across views):
+class PerformanceManager:  # ui/managers/performance/
+    def enable_object_pooling(self, pool_factory):
+        # Generic widget pooling pattern
+
+class EventCoordinator:  # ui/managers/events/
+    def setup_debounced_handler(self, signal, delay_ms):
+        # Generic event debouncing pattern
+
+# Recipe-specific logic (domain knowledge):
+class FilterCoordinator:  # ui/views/recipe_browser/
     def apply_category_filter(self, recipes: List, categories: List):
         # Recipe domain knowledge
 
-class RenderingManager:  # recipe_browser/managers/
+class RenderingCoordinator:  # ui/views/recipe_browser/
     def create_recipe_card(self, recipe: RecipeDTO) -> RecipeCardWidget:
-        # Recipe-specific rendering
+        # Recipe-specific rendering logic  # Recipe-specific rendering
 ```
 
 ---
@@ -195,9 +205,13 @@ Monolithic structure makes unit testing nearly impossible.
 **Reuse Potential:** All complex UI components
 **Extract to:** `app/ui/managers/events/`
 
-### PE-3: Filter Management Pattern
-**Domain-Specific:** Recipe categories, search terms, sorting
-**Keep in:** `app/ui/views/recipe_browser/managers/`
+### PE-3: Recipe Filter Coordination
+**Domain-Specific:** Recipe categories, search terms, sorting logic
+**Keep in:** `app/ui/views/recipe_browser/filter_coordinator.py`
+
+### PE-4: Recipe Rendering Coordination
+**Domain-Specific:** Recipe card creation, layout management, selection modes
+**Keep in:** `app/ui/views/recipe_browser/rendering_coordinator.py`
 
 ---
 
@@ -225,15 +239,17 @@ Monolithic structure makes unit testing nearly impossible.
    - Handle state management
    - Coordinate with services
 
-### Phase 4: Specific Manager Extraction (Priority P1)
-5. **Extract FilterManager** (2-3h)
+### Phase 4: Domain-Specific Coordinator Extraction (Priority P1)
+5. **Extract FilterCoordinator** (2-3h)
    - Recipe-specific filtering logic
    - Search and sorting functionality
+   - Location: `app/ui/views/recipe_browser/filter_coordinator.py`
 
-6. **Extract RenderingManager** (2-3h)
+6. **Extract RenderingCoordinator** (2-3h)
    - Recipe card creation
    - Layout management
    - Visual state handling
+   - Location: `app/ui/views/recipe_browser/rendering_coordinator.py`
 
 ### Phase 5: Interface Refinement (Priority P2)
 7. **Refine Manager Interfaces** (2-3h)
@@ -249,8 +265,8 @@ Monolithic structure makes unit testing nearly impossible.
 - [ ] **Critical:** Extract EventCoordinator to ui/managers/events/
 - [ ] **Critical:** Create RecipeBrowserViewModel
 - [ ] **Critical:** Remove business logic from view
-- [ ] **Major:** Extract FilterManager to local managers
-- [ ] **Major:** Extract RenderingManager to local managers
+- [ ] **Major:** Extract FilterCoordinator to recipe_browser/
+- [ ] **Major:** Extract RenderingCoordinator to recipe_browser/
 - [ ] **Minor:** Create centralized configuration
 - [ ] **Minor:** Add comprehensive unit tests
 
@@ -292,12 +308,12 @@ Monolithic structure makes unit testing nearly impossible.
 
 ### Keep Recipe-Specific:
 
-**FilterManager** → `ui/views/recipe_browser/managers/`
+**FilterCoordinator** → `ui/views/recipe_browser/`
 - Recipe category knowledge
 - Favorite filtering logic
 - Recipe-specific search
 
-**RenderingManager** → `ui/views/recipe_browser/managers/`
+**RenderingCoordinator** → `ui/views/recipe_browser/`
 - Recipe card layouts
 - Recipe-specific data binding
 - Recipe presentation logic
@@ -308,7 +324,7 @@ Monolithic structure makes unit testing nearly impossible.
 
 ### Maintainability Improvements:
 - Main view class reduced from 800+ lines to ~150 lines
-- Single responsibility per manager
+- Single responsibility per coordinator/manager
 - Independent testing capabilities
 
 ### Reusability Gains:
@@ -329,12 +345,14 @@ Monolithic structure makes unit testing nearly impossible.
 2. **Create** `app/ui/managers/performance/performance_manager.py`
 3. **Create** `app/ui/managers/events/event_coordinator.py`
 4. **Create** `app/ui/view_models/recipe_browser_view_model.py`
-5. **Extract** configuration to centralized class
-6. **Add** architecture compliance tests
+5. **Create** `app/ui/views/recipe_browser/filter_coordinator.py`
+6. **Create** `app/ui/views/recipe_browser/rendering_coordinator.py`
+7. **Extract** configuration to centralized class
+8. **Add** architecture compliance tests
 
 ---
 
-**Estimated Total Refactoring Effort:** 25-35 hours
+**Estimated Total Refactoring Effort:** 40-50 hours
 **Risk Level:** High (core functionality affected)
 **Architecture Compliance:** Currently Non-Compliant
 **Post-Refactoring Goal:** Fully Compliant with MVVM and Clean Architecture

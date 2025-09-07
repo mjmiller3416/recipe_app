@@ -1,12 +1,14 @@
 ---
-description: Comprehensive package-level review analyzing entire features across MVVM layers with integration validation
+description: Comprehensive MealGenie package review analyzing recipe/meal features across MVVM layers with domain-specific validation
 argument-hint: <package-path> [additional-paths...]
-allowed-tools: Read, Grep, Glob, Write
+allowed-tools: Read, Grep, Glob, Write, Task
 ---
 
-# Package Review: $ARGUMENTS
+# MealGenie Package Review: $ARGUMENTS
 
-Please perform a comprehensive package-level architectural review of the specified feature package and its associated components across the MealGenie MVVM architecture.
+**AGENT COORDINATION**: Use **package-architecture-reviewer** for holistic analysis, **recipe-domain-expert** for recipe business logic validation, and **architecture-reviewer** for final MVVM compliance.
+
+Please perform a comprehensive package-level architectural review of the specified MealGenie feature package and its associated components across the MVVM architecture with focus on recipe management workflows.
 
 ## Analysis Strategy
 

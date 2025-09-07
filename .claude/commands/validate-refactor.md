@@ -1,17 +1,20 @@
 ---
-description: Final validation of completed refactoring tasks
+description: Final validation of completed MealGenie refactoring tasks with recipe domain verification and MVVM compliance
 argument-hint: @<completed-task-file-path>
 allowed-tools: Read, Bash, Task
 ---
 
-# Validate Refactor: $ARGUMENTS
+# Validate MealGenie Refactor: $ARGUMENTS
 
-## Validation Overview
-This command performs comprehensive validation of completed refactoring tasks to ensure:
-- All original review issues are resolved
-- Code quality standards are met
-- Architectural integrity is maintained
-- Tests pass and coverage is maintained
+**AGENT COORDINATION**: Use **architecture-reviewer** for MVVM boundary validation, **test-recipe-specialist** for recipe workflow testing, and **recipe-domain-expert** for business logic verification.
+
+## MealGenie Validation Overview
+This command performs comprehensive validation of completed MealGenie refactoring tasks to ensure:
+- All original recipe domain review issues are resolved  
+- MealGenie MVVM architectural boundaries are maintained
+- Recipe business logic integrity is preserved
+- Tests pass with focus on recipe workflows and meal planning features
+- Code quality standards meet MealGenie conventions
 
 Please read the completed task file $ARGUMENTS and perform thorough validation of all implemented changes.
 
