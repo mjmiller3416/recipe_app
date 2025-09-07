@@ -100,6 +100,11 @@ class RecipeBrowser(ScrollableNavView):
                 recipe_card.card_clicked.connect(
                     lambda r=recipe: self._view_model.handle_recipe_selection(r)
                 )
+            else:
+                # Normal mode: navigate to full recipe view
+                recipe_card.card_clicked.connect(
+                    lambda r=recipe: self._navigate_to_recipe(r)
+                )
 
             # Add to the flow container
             self._flow_container.addWidget(recipe_card)
@@ -107,3 +112,12 @@ class RecipeBrowser(ScrollableNavView):
     def _clear_recipe_cards(self):
         """Clear all existing recipe cards from the flow layout."""
         self._flow_container.takeAllWidgets()
+
+    def _navigate_to_recipe(self, recipe):
+        """Navigate to the full recipe view."""
+        # Navigate to FullRecipe view with recipe ID in params
+        from app.ui.managers.navigation.registry import RouteConstants
+        self.navigate_to(
+            RouteConstants.RECIPES_VIEW.replace('{id}', str(recipe.id)),
+            params={'id': str(recipe.id)}
+        )

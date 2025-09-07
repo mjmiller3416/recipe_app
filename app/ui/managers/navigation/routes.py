@@ -160,6 +160,7 @@ from app.ui.views import (
     RecipeBrowser,
     Settings,
     ShoppingList,
+    ViewRecipe,
 )
 
 # ── Route Wrapper Classes ───────────────────────────────────────────────────────────────────────────────────
@@ -307,6 +308,14 @@ def register_main_routes():
         view_type=ViewType.MAIN,
         title="Settings",
         description="Application settings and preferences"
+    )
+
+    NavigationRegistry.register_route(
+        path=RouteConstants.RECIPES_VIEW,
+        view_class=ViewRecipe,
+        view_type=ViewType.MAIN,
+        title="View Recipe",
+        description="View detailed recipe information"
     )
 
 def get_sidebar_route_mapping():

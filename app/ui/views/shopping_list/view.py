@@ -52,6 +52,10 @@ class ShoppingList(ScrollableNavView):
 
         # Track currently loaded recipes for refresh operations
         self.active_recipe_ids: list[int] = []
+        
+        # Load existing shopping items from database on initialization
+        self.view_model.load_existing_shopping_items()
+
 
     # ── Initialization ──────────────────────────────────────────────────────────────────────────────────────
     def _connect_view_model_signals(self) -> None:

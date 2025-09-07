@@ -154,11 +154,14 @@ class NavigationService(QObject):
             )
 
             if success:
+                # Check if we should replace current entry or add new one
+                should_replace = replace_current or self._should_replace_current_entry(path, nav_context)
+                
                 # Add to navigation stack
                 nav_context.stack.push(
                     path=path,
                     params=params,
-                    replace_current=replace_current
+                    replace_current=should_replace
                 )
 
                 # Emit completion signals
@@ -191,12 +194,31 @@ class NavigationService(QObject):
         prev_entry = nav_context.stack.go_back()
 
         if prev_entry:
-            return self.navigate_to(
-                prev_entry.path,
-                prev_entry.params,
-                context,
-                replace_current=True  # Don't add to history again
-            )
+            # Find the route match for the previous entry
+            route_match = NavigationRegistry.match_route(prev_entry.path)
+            if not route_match:
+                DebugLogger.log(f"No route found for back navigation to: {prev_entry.path}", "error")
+                return False
+            
+            # Directly handle navigation without calling navigate_to to avoid stack manipulation
+            try:
+                success = self._handle_navigation(
+                    route_match, nav_context, prev_entry.params, False
+                )
+                
+                if success:
+                    # Emit signals for back navigation
+                    self.navigation_completed.emit(prev_entry.path, prev_entry.params)
+                    self.route_changed.emit(prev_entry.path, prev_entry.params)
+                    DebugLogger.log(f"Back navigation completed: {prev_entry.path}", "info")
+                
+                return success
+                
+            except Exception as e:
+                error_msg = str(e)
+                DebugLogger.log(f"Back navigation failed: {prev_entry.path} - {error_msg}", "error")
+                self.navigation_failed.emit(prev_entry.path, error_msg)
+                return False
 
         return False
 
@@ -217,12 +239,31 @@ class NavigationService(QObject):
         next_entry = nav_context.stack.go_forward()
 
         if next_entry:
-            return self.navigate_to(
-                next_entry.path,
-                next_entry.params,
-                context,
-                replace_current=True  # Don't add to history again
-            )
+            # Find the route match for the next entry
+            route_match = NavigationRegistry.match_route(next_entry.path)
+            if not route_match:
+                DebugLogger.log(f"No route found for forward navigation to: {next_entry.path}", "error")
+                return False
+            
+            # Directly handle navigation without calling navigate_to to avoid stack manipulation
+            try:
+                success = self._handle_navigation(
+                    route_match, nav_context, next_entry.params, False
+                )
+                
+                if success:
+                    # Emit signals for forward navigation
+                    self.navigation_completed.emit(next_entry.path, next_entry.params)
+                    self.route_changed.emit(next_entry.path, next_entry.params)
+                    DebugLogger.log(f"Forward navigation completed: {next_entry.path}", "info")
+                
+                return success
+                
+            except Exception as e:
+                error_msg = str(e)
+                DebugLogger.log(f"Forward navigation failed: {next_entry.path} - {error_msg}", "error")
+                self.navigation_failed.emit(next_entry.path, error_msg)
+                return False
 
         return False
 
@@ -279,6 +320,41 @@ class NavigationService(QObject):
             if overlay and not overlay.isHidden():
                 overlay.close()
         self._overlay_views.clear()
+
+    def _should_replace_current_entry(self, new_path: str, nav_context: NavigationContext) -> bool:
+        """
+        Determine if the new navigation should replace the current stack entry.
+        
+        This helps prevent stack buildup when navigating between similar views
+        (e.g., from one recipe view to another recipe view).
+        
+        Args:
+            new_path: The path being navigated to
+            nav_context: The navigation context
+            
+        Returns:
+            True if the current entry should be replaced
+        """
+        current_entry = nav_context.stack.current()
+        if not current_entry:
+            return False
+            
+        # Extract base paths by removing parameters
+        def get_base_path(path: str) -> str:
+            # Convert /recipes/view/123 to /recipes/view/{id}
+            if '/recipes/view/' in path:
+                return '/recipes/view/{id}'
+            return path
+            
+        current_base = get_base_path(current_entry.path)
+        new_base = get_base_path(new_path)
+        
+        # If we're navigating from one recipe view to another recipe view, replace
+        if current_base == '/recipes/view/{id}' and new_base == '/recipes/view/{id}':
+            DebugLogger.log(f"Replacing current recipe view entry: {current_entry.path} -> {new_path}", "info")
+            return True
+            
+        return False
 
     def _handle_navigation(
         self,

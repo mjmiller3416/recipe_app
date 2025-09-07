@@ -40,6 +40,7 @@ from app.ui.utils.layout_utils import (
     setup_main_scroll_layout,
 )
 from app.ui.utils.widget_utils import apply_object_name_pattern
+from app.ui.managers.navigation.views import MainView
 
 # ── Ingredient and Directions Lists ─────────────────────────────────────────────────────────────────────────
 class IngredientList(QWidget):
@@ -204,12 +205,12 @@ class DirectionsList(QWidget):
 
 
 # ── Full Recipe View ────────────────────────────────────────────────────────────────────────────────────────
-class FullRecipe(QWidget):
+class ViewRecipe(MainView):
     """Full recipe detail view (visual-only, no editing/upload yet)."""
 
     back_clicked = Signal()
 
-    def __init__(self, recipe: Recipe, parent: QWidget | None = None) -> None:
+    def __init__(self, recipe: Recipe = None, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.recipe = recipe
 
@@ -218,7 +219,10 @@ class FullRecipe(QWidget):
 
         self.setObjectName("FullRecipe")
         self._cached_recipe_data = None
-        self._build_ui()
+
+        # Only build UI if recipe is provided
+        if self.recipe:
+            self._build_ui()
 
     @property
     def recipe_data(self) -> dict:
@@ -260,6 +264,10 @@ class FullRecipe(QWidget):
         row.addWidget(btn, 0, Qt.AlignLeft)
         row.addStretch(1)
         return w
+
+    def _handle_back_clicked(self):
+        """Handle back button click using navigation system."""
+        self.go_back()
 
     def _build_ui(self) -> None:
         """Build the main UI."""
@@ -501,6 +509,31 @@ class FullRecipe(QWidget):
         """Handle image click for full preview."""
         # TODO: Show full-size image preview dialog
         DebugLogger().log("Recipe banner image clicked for full preview", "debug")
+
+    def after_navigate_to(self, path: str, params: dict):
+        """Handle navigation to this view - load recipe by ID from params."""
+        # Load recipe by ID from params
+        if 'id' in params:
+            try:
+                from app.core.services.recipe_service import RecipeService
+                recipe_service = RecipeService()
+                recipe_id = int(params['id'])
+                recipe = recipe_service.get_recipe(recipe_id)
+            except Exception as e:
+                DebugLogger().log(f"Failed to load recipe with ID {params.get('id')}: {e}", "error")
+                return
+        else:
+            DebugLogger().log("No recipe ID provided to FullRecipe view", "error")
+            return
+
+        if recipe:
+            self.recipe = recipe
+            self._cached_recipe_data = None
+            # Since this view is not cached, we get a fresh instance each time
+            # so we can just build the UI without clearing
+            self._build_ui()
+        else:
+            DebugLogger().log("No recipe provided to FullRecipe view", "warning")
 
 
 

@@ -289,6 +289,46 @@ class ShoppingListViewModel(BaseViewModel):
             return False
 
         return self.generate_shopping_list(self._active_recipe_ids)
+    
+    def load_existing_shopping_items(self) -> bool:
+        """
+        Load existing shopping items from database without requiring recipe IDs.
+        
+        Used during view initialization to display any existing shopping items.
+        
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not self._ensure_shopping_service():
+            return False
+            
+        try:
+            self._set_loading_state(True, "Loading existing shopping items")
+            
+            # Fetch all existing shopping items
+            ingredients = self._shopping_service.shopping_repo.get_all_shopping_items()
+            DebugLogger.log(f"Loaded {len(ingredients)} existing shopping items", "debug")
+            
+            # Get breakdown mapping (may be empty if no active recipes)
+            self._breakdown_map = self._shopping_service.shopping_repo.get_ingredient_breakdown(self._active_recipe_ids)
+            if self._breakdown_map is None:
+                self._breakdown_map = {}
+            
+            # Organize items by category
+            self._organize_items(ingredients)
+            
+            # Emit updated data to UI
+            self.list_updated.emit(self._grouped_items, self._manual_items)
+            self.categories_changed.emit(self._get_category_counts())
+            
+            self._set_loading_state(False)
+            DebugLogger.log("Existing shopping items loaded successfully", "info")
+            return True
+            
+        except Exception as e:
+            self._set_loading_state(False)
+            self._handle_error(e, "Failed to load existing shopping items", "load_existing")
+            return False
 
     def clear_shopping_list(self) -> bool:
         """Clear all items from the current shopping list."""

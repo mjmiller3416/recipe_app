@@ -9,7 +9,7 @@ from .dashboard import Dashboard
 from .settings import Settings
 
 # ── Sub Views ──
-from .full_recipe import FullRecipe
+from .view_recipe import ViewRecipe
 
 __all__ = [
     "Dashboard",
@@ -18,5 +18,5 @@ __all__ = [
     "ShoppingList",
     "AddRecipes",
     "Settings",
-    "FullRecipe",
+    "ViewRecipe",
 ]
