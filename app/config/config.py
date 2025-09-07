@@ -61,7 +61,9 @@ DIETARY_PREFERENCES = [
     "None", "Vegetarian", "Vegan", "Gluten-Free", "Keto", "Paleo", "Low-Carb",
 ]
 SORT_OPTIONS = [
-    "A-Z", "Z-A"
+    "A-Z", "Z-A", "Newest", "Oldest", "Recently Updated",
+    "Shortest Time", "Longest Time",
+    "Most Servings", "Fewest Servings", "Favorites First"
 ]
 
 # ── Validation Rules ──

@@ -155,3 +155,13 @@ class ComboBox(QWidget):
         """Clear the current selection and text."""
         self.line_edit.clear()
         self.selection_validated.emit(False)
+
+    def count(self) -> int:
+        """Get the number of items in the combo box."""
+        return self.model.rowCount()
+
+    def itemText(self, index: int) -> str:
+        """Get the text of the item at the given index."""
+        if 0 <= index < self.model.rowCount():
+            return self.model.data(self.model.index(index, 0), Qt.DisplayRole) or ""
+        return ""

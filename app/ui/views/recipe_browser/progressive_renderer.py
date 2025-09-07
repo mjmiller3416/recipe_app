@@ -3,9 +3,10 @@
 Progressive rendering of recipe cards to enhance perceived performance.
 """
 
+from typing import List
+
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 import weakref
-from typing import List
 
 from PySide6.QtCore import QTimer
 

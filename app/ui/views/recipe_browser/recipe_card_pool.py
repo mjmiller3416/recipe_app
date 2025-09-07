@@ -7,12 +7,10 @@ Manages a pool of recipe card widgets to optimize performance by reusing them.
 from collections import deque
 from typing import Deque, List
 
-from app.ui.components.composite.recipe_card import LayoutSize
-from app.ui.components.composite.recipe_card import create_recipe_card
-from _dev_tools.debug_logger import DebugLogger
-
 from PySide6.QtWidgets import QWidget
 
+from _dev_tools.debug_logger import DebugLogger
+from app.ui.components.composite.recipe_card import LayoutSize, create_recipe_card
 
 class RecipeCardPool:
     """Object pool for recipe cards to reduce creation/destruction overhead."""
@@ -74,6 +72,34 @@ class RecipeCardPool:
         for card in cards_to_return:
             self.return_card(card)
 
+    def resize_pool(self, new_max_size: int):
+        """Resize the pool capacity.
+        
+        Args:
+            new_max_size: New maximum pool size
+        """
+        old_size = self.max_pool_size
+        self.max_pool_size = new_max_size
+        
+        # Create new deque with new maxlen
+        old_cards = list(self.available_cards)
+        self.available_cards = deque(maxlen=new_max_size)
+        
+        # If shrinking pool, remove excess cards
+        if new_max_size < len(old_cards):
+            # Keep cards up to new size
+            for i, card in enumerate(old_cards):
+                if i < new_max_size:
+                    self.available_cards.append(card)
+                else:
+                    card.deleteLater()
+            DebugLogger.log(f"Pool resized from {old_size} to {new_max_size}, removed {len(old_cards) - new_max_size} cards", "debug")
+        else:
+            # Just transfer all cards to new deque
+            for card in old_cards:
+                self.available_cards.append(card)
+            DebugLogger.log(f"Pool resized from {old_size} to {new_max_size}", "debug")
+    
     def clear_pool(self):
         """Clear all cards from pool."""
         # Delete available cards

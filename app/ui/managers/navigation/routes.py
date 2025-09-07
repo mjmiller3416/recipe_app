@@ -151,7 +151,9 @@ See Also:
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from app.ui.managers.navigation.registry import (
-    NavigationRegistry, RouteConstants, ViewType,
+    NavigationRegistry,
+    RouteConstants,
+    ViewType,
 )
 from app.ui.views import (
     AddRecipes,
