@@ -1,4 +1,4 @@
-"""app/ui/views/recipe_browser_view.py
+"""app/ui/views/recipe_browser/recipe_browser_view.py
 
 Refactored RecipeBrowser view using coordinator architecture.
 
@@ -238,9 +238,14 @@ class RecipeBrowser(ScrollableNavView):
     # ── Event Handlers ──────────────────────────────────────────────────────────────────────────────────────
     def _on_recipes_loaded(self, recipes: List[Recipe]):
         """Handle recipes loaded from ViewModel via RenderingCoordinator."""
+        print(f"DEBUG: View received {len(recipes)} recipes from ViewModel")
+
         if self._rendering_coordinator:
+            print(f"DEBUG: Calling RenderingCoordinator.render_recipes with {len(recipes)} recipes")
             self._rendering_coordinator.render_recipes(recipes, self._selection_mode)
             self._recipes_loaded = True
+        else:
+            print("DEBUG: No RenderingCoordinator available!")
 
     def _on_recipes_cleared(self):
         """Handle recipes cleared from ViewModel."""
@@ -287,17 +292,7 @@ class RecipeBrowser(ScrollableNavView):
         if new_selection_mode != self._selection_mode:
             self.set_selection_mode(new_selection_mode)
 
-    # ── Public Interface Methods (for backward compatibility) ───────────────────────────────────────────────
-    def refresh_recipes(self):
-        """Refresh recipes through ViewModel."""
-        if self._view_model:
-            self._view_model.refresh_recipes()
-
-    def clear_recipes(self):
-        """Clear recipes through ViewModel."""
-        if self._view_model:
-            self._view_model.clear_recipes()
-
+    # ── Public Interface Methods  ───────────────────────────────────────────────────────────────────────────
     def set_selection_mode(self, enabled: bool):
         """Set selection mode through coordinators."""
         self._selection_mode = enabled
@@ -306,29 +301,11 @@ class RecipeBrowser(ScrollableNavView):
         if self._rendering_coordinator:
             self._rendering_coordinator.update_selection_mode(enabled)
 
-    def search_recipes(self, search_term: str):
-        """Search recipes through FilterCoordinator."""
-        if self._filter_coordinator:
-            self._filter_coordinator.apply_search_filter(search_term)
-
-    def clear_search(self):
-        """Clear search through FilterCoordinator."""
-        if self._filter_coordinator:
-            self._filter_coordinator.apply_search_filter("")
-
     def get_current_recipe_count(self) -> int:
         """Get current recipe count from ViewModel."""
         if self._view_model:
             return self._view_model.recipe_count
         return 0
-
-    def is_selection_mode(self) -> bool:
-        """Check if in selection mode."""
-        return self._selection_mode
-
-    def is_recipes_loaded(self) -> bool:
-        """Check if recipes are loaded."""
-        return self._recipes_loaded
 
     # ── Cleanup ─────────────────────────────────────────────────────────────────────────────────────────────
     def cleanup(self):

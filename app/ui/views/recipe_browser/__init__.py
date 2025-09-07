@@ -1,14 +1,15 @@
 """RecipeBrowser Package
 
 This package contains the RecipeBrowser view components including the main view,
-configuration management, performance optimization utilities, and supporting classes.
+configuration management, and supporting classes.
 
 Components:
     RecipeBrowser: Main recipe browser view class
     RecipeBrowserConfig: Centralized configuration management
-    RecipeCardPool: Object pooling for recipe cards
-    ProgressiveRenderer: Progressive rendering for large datasets
     RenderingCoordinator: Recipe-specific rendering coordination
+    
+Note: Object pooling and progressive rendering are now handled by the centralized
+PerformanceManager in app.ui.managers.performance.
     
 Configuration presets:
     create_default_config: Standard configuration
@@ -24,9 +25,7 @@ from .config import (
     create_performance_config,
     create_quality_config,
 )
-from .progressive_renderer import ProgressiveRenderer
 from .recipe_browser_view import RecipeBrowser
-from .recipe_card_pool import RecipeCardPool
 from .rendering_coordinator import (
     CardInteractionType, RecipeRenderState, RenderingCoordinator,
 )
@@ -44,8 +43,6 @@ __all__ = [
     "RenderingMode",
     
     # Supporting classes
-    "RecipeCardPool",
-    "ProgressiveRenderer",
     "RenderingCoordinator",
     "CardInteractionType",
     "RecipeRenderState",

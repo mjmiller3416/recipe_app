@@ -1,4 +1,4 @@
-"""Recipe-specific rendering coordination for RecipeBrowser view.
+"""app/ui/views/recipe_browser/rendering_coordinator.py
 
 This module provides specialized rendering coordination for recipe cards within the
 RecipeBrowser view, handling the complex interactions between recipe data, visual
@@ -47,7 +47,6 @@ class CardInteractionType(Enum):
     FAVORITE_TOGGLED = "favorite_toggled"
     CONTEXT_MENU = "context_menu"
     RECIPE_OPENED = "recipe_opened"
-
 
 class RecipeRenderState(Enum):
     """States of recipe rendering process."""
@@ -362,10 +361,20 @@ class RenderingCoordinator(QObject):
         Returns:
             bool: True if rendering started successfully, False otherwise
         """
+
+        print(f"DEBUG: render_recipes ENTRY - recipes: {len(recipes)}, state: {self._render_state.value}")
+
+        # Recovery mechanism: if stuck in RENDERING state, force reset
+        if self._render_state == RecipeRenderState.RENDERING:
+            print(f"WARNING: Stuck in RENDERING state, forcing reset to IDLE")
+            DebugLogger.log("WARNING: Rendering state was stuck, forcing reset", "warning")
+            self._render_state = RecipeRenderState.IDLE
+            
         if self._render_state not in (RecipeRenderState.IDLE, RecipeRenderState.COMPLETE, RecipeRenderState.ERROR):
+            print(f"DEBUG: EARLY EXIT - invalid state: {self._render_state.value}")
             DebugLogger.log("Cannot start rendering: already in progress", "warning")
             return False
-
+        print(f"DEBUG: State check passed, proceeding...")
         try:
             # Update state
             self._render_state = RecipeRenderState.RENDERING
@@ -373,8 +382,10 @@ class RenderingCoordinator(QObject):
             self._selection_mode = selection_mode
             self._last_render_start_time = perf_counter()
 
-            # Clear existing cards
-            self.clear_rendering()
+            # Clear existing cards while preserving the RENDERING state
+            self.clear_rendering(preserve_state=True)
+            
+            print(f"DEBUG: After clear_rendering, state is: {self._render_state.value}")
 
             # Emit rendering started
             self.rendering_started.emit(len(recipes))
@@ -385,15 +396,26 @@ class RenderingCoordinator(QObject):
                 len(recipes) > self._config.performance.batch_size and
                 hasattr(self, '_progressive_renderer')
             )
+            
+            print(f"DEBUG: should_use_progressive={should_use_progressive}, batch_size={self._config.performance.batch_size}, recipe_count={len(recipes)}")
 
             if should_use_progressive:
-                return self._start_progressive_rendering(recipes)
+                print(f"DEBUG: Calling _start_progressive_rendering")
+                result = self._start_progressive_rendering(recipes)
+                print(f"DEBUG: _start_progressive_rendering returned: {result}")
+                return result
             else:
-                return self._start_immediate_rendering(recipes)
+                print(f"DEBUG: Calling _start_immediate_rendering")
+                result = self._start_immediate_rendering(recipes)
+                print(f"DEBUG: _start_immediate_rendering returned: {result}")
+                return result
 
         except Exception as e:
             self._render_state = RecipeRenderState.ERROR
             error_msg = f"Failed to start recipe rendering: {e}"
+            print(f"DEBUG: Exception in render_recipes: {e}")
+            import traceback
+            print(f"DEBUG: Traceback:\n{traceback.format_exc()}")
             DebugLogger.log(error_msg, "error")
             self.error_occurred.emit("render_start_error", error_msg)
             return False
@@ -434,45 +456,65 @@ class RenderingCoordinator(QObject):
     def _start_immediate_rendering(self, recipes: List[Recipe]) -> bool:
         """Start immediate rendering for small recipe sets."""
         try:
+            print(f"DEBUG: _start_immediate_rendering called with {len(recipes)} recipes")
+            print(f"DEBUG: Current render state: {self._render_state.value}")
+            
             with self._performance_manager.performance_context("recipe_rendering"):
+                print(f"DEBUG: About to call _render_recipe_batch")
                 self._render_recipe_batch(recipes, 0, 1)
+                print(f"DEBUG: _render_recipe_batch completed, calling _complete_rendering")
                 self._complete_rendering()
 
             DebugLogger.log(f"Immediate rendering completed for {len(recipes)} recipes", "debug")
+            print(f"DEBUG: Immediate rendering completed successfully")
             return True
 
         except Exception as e:
             self._render_state = RecipeRenderState.ERROR
             error_msg = f"Failed in immediate rendering: {e}"
+            print(f"DEBUG: ERROR in immediate rendering: {e}")
+            import traceback
+            print(f"DEBUG: Traceback:\n{traceback.format_exc()}")
             DebugLogger.log(error_msg, "error")
             self.error_occurred.emit("immediate_render_error", error_msg)
             return False
 
     def _render_recipe_batch(self, recipes: List[Recipe], batch_index: int, total_batches: int):
         """Render a batch of recipes with performance monitoring."""
+        print(f"DEBUG: _render_recipe_batch called with {len(recipes)} recipes, state={self._render_state}")
+        
         if self._render_state == RecipeRenderState.CANCELLED:
+            print(f"DEBUG: Rendering cancelled, returning early")
             return
 
         try:
             batch_start_time = perf_counter()
             cards_rendered = 0
+            print(f"DEBUG: Starting to render batch of {len(recipes)} recipes")
 
             for recipe in recipes:
                 if self._render_state == RecipeRenderState.CANCELLED:
                     break
 
                 # Get card from pool
+                print(f"DEBUG: Getting card from pool for recipe: {recipe.recipe_name}")
                 card = self._get_card_from_pool()
                 if card is None:
+                    print(f"DEBUG: Failed to get card from pool for recipe {recipe.recipe_name}")
                     DebugLogger.log("Failed to get card from pool", "warning")
                     continue
+
+                print(f"DEBUG: Got card from pool, configuring for recipe {recipe.recipe_name}")
 
                 # Configure card with recipe data
                 self.configure_recipe_card(card, recipe, self._selection_mode)
 
                 # Add to layout
                 if self._flow_layout:
+                    print(f"DEBUG: Adding card to flow layout")
                     self._flow_layout.addWidget(card)
+                else:
+                    print(f"DEBUG: No flow layout available!")
 
                 # Track rendered card
                 recipe_id = getattr(recipe, 'id', getattr(recipe, 'recipe_id', None))
@@ -486,7 +528,11 @@ class RenderingCoordinator(QObject):
 
             # Calculate progress
             total_rendered = sum(1 for cards in self._rendered_cards.values())
-            progress_percent = (total_rendered / len(self._current_recipes)) * 100
+            # Prevent division by zero - check both existence and length
+            if self._current_recipes and len(self._current_recipes) > 0:
+                progress_percent = (total_rendered / len(self._current_recipes)) * 100
+            else:
+                progress_percent = 0
 
             # Emit progress signals
             self.rendering_progress.emit(total_rendered, len(self._current_recipes), progress_percent)
@@ -494,13 +540,22 @@ class RenderingCoordinator(QObject):
 
             # Performance metrics
             batch_time = (perf_counter() - batch_start_time) * 1000
-            if self._config.features.enable_render_timing and cards_rendered > 0:
-                cards_per_second = cards_rendered / (batch_time / 1000)
-                DebugLogger.log(
-                    f"Batch {batch_index + 1}/{total_batches} rendered: {cards_rendered} cards "
-                    f"in {batch_time:.1f}ms ({cards_per_second:.1f} cards/sec)",
-                    "debug"
-                )
+            if self._config.features.enable_render_timing and cards_rendered > 0 and batch_time > 0:
+                # Prevent division by zero
+                batch_time_seconds = batch_time / 1000
+                if batch_time_seconds > 0:
+                    cards_per_second = cards_rendered / batch_time_seconds
+                    DebugLogger.log(
+                        f"Batch {batch_index + 1}/{total_batches} rendered: {cards_rendered} cards "
+                        f"in {batch_time:.1f}ms ({cards_per_second:.1f} cards/sec)",
+                        "debug"
+                    )
+                else:
+                    DebugLogger.log(
+                        f"Batch {batch_index + 1}/{total_batches} rendered: {cards_rendered} cards "
+                        f"in {batch_time:.1f}ms (instant)",
+                        "debug"
+                    )
 
             # Update layout geometry after batch
             self.update_layout_geometry()
@@ -516,17 +571,24 @@ class RenderingCoordinator(QObject):
 
     def _complete_rendering(self):
         """Complete the rendering process and emit completion signals."""
+        print(f"DEBUG: _complete_rendering called, current state: {self._render_state.value}")
         if self._last_render_start_time:
             total_time = (perf_counter() - self._last_render_start_time) * 1000
 
             # Update performance metrics
             self._render_metrics['total_renders'] += 1
             self._render_metrics['total_render_time_ms'] += total_time
-            self._render_metrics['average_render_time_ms'] = (
-                self._render_metrics['total_render_time_ms'] / self._render_metrics['total_renders']
-            )
+            # Prevent division by zero
+            if self._render_metrics['total_renders'] > 0:
+                self._render_metrics['average_render_time_ms'] = (
+                    self._render_metrics['total_render_time_ms'] / self._render_metrics['total_renders']
+                )
+
             if total_time > 0:
-                self._render_metrics['cards_per_second'] = len(self._rendered_cards) / (total_time / 1000)
+                # Prevent division by zero
+                total_time_seconds = total_time / 1000
+                if total_time_seconds > 0:
+                    self._render_metrics['cards_per_second'] = len(self._rendered_cards) / total_time_seconds
 
             # Emit completion signal
             self.rendering_completed.emit(len(self._rendered_cards), total_time)
@@ -546,6 +608,7 @@ class RenderingCoordinator(QObject):
                 )
 
         self._render_state = RecipeRenderState.COMPLETE
+        print(f"DEBUG: Rendering state set to COMPLETE")
 
     # ── Recipe Card Configuration ──────────────────────────────────────────────────────────────────────────────
     def configure_recipe_card(self, card: BaseRecipeCard, recipe: Recipe, selection_mode: bool):
@@ -612,15 +675,23 @@ class RenderingCoordinator(QObject):
     # ── Card Pool Management ───────────────────────────────────────────────────────────────────────────────────
     def _get_card_from_pool(self) -> Optional[BaseRecipeCard]:
         """Get a recipe card from the object pool."""
+        print(f"DEBUG: _get_card_from_pool called, card_pool exists: {self._card_pool is not None}")
         if not self._card_pool:
+            print(f"DEBUG: No card pool available")
             return None
 
         try:
             card = self._card_pool.get_widget()
+            print(f"DEBUG: Card pool returned: {card is not None}")
             if card and self._layout_container:
+                print(f"DEBUG: Setting card parent to layout container")
                 card.setParent(self._layout_container)
+            else:
+                print(f"DEBUG: Card: {card is not None}, Layout container: {self._layout_container is not None}")
             return card
+
         except Exception as e:
+            print(f"DEBUG: Exception in _get_card_from_pool: {e}")
             DebugLogger.log(f"Error getting card from pool: {e}", "error")
             return None
 
@@ -637,7 +708,7 @@ class RenderingCoordinator(QObject):
             card.setParent(None)
 
             # Return to pool
-            self._card_pool.return_widget(card)
+            self._card_pool.return_object(card)
 
         except Exception as e:
             DebugLogger.log(f"Error returning card to pool: {e}", "error")
@@ -741,12 +812,22 @@ class RenderingCoordinator(QObject):
             DebugLogger.log(f"Error updating selection mode: {e}", "error")
 
     # ── Cleanup and State Management ───────────────────────────────────────────────────────────────────────────
-    def clear_rendering(self):
-        """Clear all rendered cards and reset state."""
+    def clear_rendering(self, preserve_state=False):
+        """Clear all rendered cards and optionally reset state.
+        
+        Args:
+            preserve_state: If True, maintains the current render state (used during active renders)
+        """
         try:
-            # Reset state immediately to allow new renders
+            # Store current state
             old_state = self._render_state
-            self._render_state = RecipeRenderState.IDLE
+            
+            # Only reset state to IDLE if not preserving and not actively rendering
+            if not preserve_state and old_state != RecipeRenderState.RENDERING:
+                self._render_state = RecipeRenderState.IDLE
+                
+            print(f"DEBUG: clear_rendering called with preserve_state={preserve_state}, old_state={old_state.value}, new_state={self._render_state.value}")
+            
             # Return all cards to pool
             for card in self._rendered_cards.values():
                 if card:
@@ -777,7 +858,7 @@ class RenderingCoordinator(QObject):
             self._current_batch = 0
             self._total_batches = 0
 
-            DebugLogger.log("Recipe rendering cleared successfully", "debug")
+            DebugLogger.log(f"Recipe rendering cleared successfully (state preserved: {preserve_state})", "debug")
 
         except Exception as e:
             DebugLogger.log(f"Error clearing rendering: {e}", "error")

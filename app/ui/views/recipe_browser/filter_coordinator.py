@@ -1,4 +1,4 @@
-"""FilterCoordinator for RecipeBrowser - Recipe Domain Expert
+"""app/ui/views/recipe_browser/filter_coordinator.py
 
 Specialized coordinator for handling recipe-specific filtering logic and state management
 in the RecipeBrowser view. This class extracts filtering concerns from the view layer
@@ -772,6 +772,18 @@ class FilterCoordinator(QObject):
         Returns:
             bool: True if successfully applied, False otherwise
         """
+
+        print(f"DEBUG: Applying filter state - current: {self._current_state}, new: {new_state}")
+        print(f"DEBUG: States equal? {self._current_state == new_state}")
+
+        # Store previous state for undo
+        if self._current_state != new_state:
+            print("DEBUG: States differ, proceeding with update")
+            self._previous_state = self._current_state
+        else:
+            print("DEBUG: States are equal, should still proceed...")
+            # Continue anyway - this might be the issue
+
         try:
             # Store previous state for undo
             if self._current_state != new_state:
@@ -788,10 +800,12 @@ class FilterCoordinator(QObject):
 
             # Convert to DTO and delegate to ViewModel
             filter_dto = new_state.to_filter_dto()
+            print(f"DEBUG: Created DTO - category: {filter_dto.recipe_category}, sort_by: {filter_dto.sort_by}")
 
             if self.view_model:
                 # Use ViewModel's optimized filtering
                 success = self.view_model.load_filtered_sorted_recipes(filter_dto)
+                print(f"DEBUG: ViewModel.load_filtered_sorted_recipes returned: {success}")
 
                 if success:
                     # Emit coordination signals
