@@ -1,4 +1,4 @@
-"""app/ui/views/add_recipes/add_recipes.py
+"""app/ui/views/add_recipes/view.py
 
 This module defines the AddRecipes screen, which allows users to create new recipes
 with ingredients, directions, and notes. It includes functionality for recipe image
@@ -14,23 +14,24 @@ from PySide6.QtCore import Qt
 
 from _dev_tools import DebugLogger
 from app.style import Qss, Theme
+
 from app.style.icon.config import Name, Type
-from app.ui.components.images import RecipeImage
-from app.ui.components.layout.card import Card
-from app.ui.components.widgets.button import Button
-from app.ui.utils.form_utils import (
+from ...components.images import RecipeImage
+from ...components.layout.card import Card
+from ...components.widgets import Button
+from ...utils.form_utils import (
     clear_form_fields,
     collect_form_data,
     setup_tab_order_chain,
 )
-from app.ui.utils.layout_utils import (
+from ...utils.layout_utils import (
     create_two_column_layout,
 )
-from app.ui.view_models.add_recipe_view_model import AddRecipeViewModel
-from app.ui.view_models.ingredient_view_model import IngredientViewModel
-from app.ui.views.base import ScrollableNavView
-from .cards import DirectionsNotesCard, IngredientsCard
-from .recipe_form import RecipeForm
+from ...view_models import AddRecipesViewModel
+from ...view_models import IngredientViewModel
+from ...views.base import ScrollableNavView
+from ._cards import DirectionsNotesCard, IngredientsCard
+from ._forms import RecipeForm
 
 class AddRecipes(ScrollableNavView):
     """Main add recipes view for creating new recipes with ingredients and directions.
@@ -53,7 +54,7 @@ class AddRecipes(ScrollableNavView):
             parent: Optional parent widget.
         """
         # Initialize ViewModels BEFORE super() - required by _build_ui()
-        self.add_recipe_view_model = AddRecipeViewModel()
+        self.add_recipe_view_model = AddRecipesViewModel()
         self.ingredient_view_model = IngredientViewModel()
 
         super().__init__(parent)

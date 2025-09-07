@@ -1,4 +1,4 @@
-"""app/ui/views/recipe_browser_view.py
+"""app/ui/views/view.py
 
 Performance-optimized RecipeBrowserView with enhanced rendering and widget management.
 
@@ -19,15 +19,16 @@ from PySide6.QtWidgets import QCheckBox, QHBoxLayout, QWidget
 
 from _dev_tools import DebugLogger
 from app.config import RECIPE_CATEGORIES, SORT_OPTIONS
-from app.core.dtos.recipe_dtos import RecipeFilterDTO
-from app.core.models.recipe import Recipe
-from app.ui.components.composite.recipe_card import LayoutSize
-from app.ui.components.layout.flow_layout import FlowLayout
-from app.ui.components.widgets import ComboBox
-from app.ui.view_models.recipe_browser_view_model import RecipeBrowserViewModel
-from app.ui.views.base import ScrollableNavView
-from .recipe_card_pool import RecipeCardPool
-from .progressive_renderer import ProgressiveRenderer
+from app.core.dtos import RecipeFilterDTO
+from app.core.models import Recipe
+
+from ...components.composite.recipe_card import LayoutSize
+from ...components.layout import FlowLayout
+from ...components.widgets import ComboBox
+from ...view_models import RecipeBrowserViewModel
+from ...views.base import ScrollableNavView
+from ._recipe_card_pool import RecipeCardPool
+from ._progressive_renderer import ProgressiveRenderer
 
 
 class RecipeBrowser(ScrollableNavView):

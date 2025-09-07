@@ -19,9 +19,9 @@ from PySide6.QtWidgets import QApplication
 import pytest
 import pytestqt
 
-from app.ui.view_models.add_recipe_view_model import AddRecipeViewModel
-from app.ui.view_models.ingredient_view_model import IngredientViewModel
-from app.ui.views.add_recipes.add_recipes_view import (
+from app.ui.view_models.add_recipe_vm import AddRecipeViewModel
+from app.ui.view_models.ingredient_vm import IngredientViewModel
+from app.ui.views.add_recipes.view import (
     AddRecipes,
     IngredientForm,
     IngredientsCard,
@@ -306,7 +306,7 @@ class TestIngredientFormComponent:
         form = ingredient_form
 
         # Mock ingredient matching result
-        from app.ui.view_models.ingredient_view_model import IngredientMatchResult
+        from app.ui.view_models.ingredient_vm import IngredientMatchResult
         mock_ingredient = Mock()
         mock_ingredient.ingredient_category = "Vegetables"
         mock_result = IngredientMatchResult(exact_match=mock_ingredient)

@@ -15,7 +15,7 @@ from PySide6.QtWidgets import QApplication
 from app.core.database.db import create_session
 from app.ui.view_models.recipe_browser_view_model import RecipeBrowserViewModel
 from app.ui.view_models.recipe_browser_view_model_optimized import RecipeBrowserViewModelOptimized
-from app.ui.views.recipe_browser.recipe_browser_view import RecipeBrowserView
+from app.ui.views.recipe_browser.view import RecipeBrowserView
 from app.ui.views.recipe_browser_view_optimized import RecipeBrowserViewOptimized
 
 

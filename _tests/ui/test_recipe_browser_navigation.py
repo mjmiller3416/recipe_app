@@ -17,8 +17,8 @@ from PySide6.QtTest import QTest
 from app.core.models.recipe import Recipe
 from app.core.dtos.recipe_dtos import RecipeFilterDTO
 from app.ui.main_window import MainWindow
-from app.ui.views.recipe_browser.recipe_browser_view import RecipeBrowserView
-from app.ui.views.meal_planner.meal_planner_view import MealPlanner
+from app.ui.views.recipe_browser.view import RecipeBrowserView
+from app.ui.views.meal_planner.view import MealPlanner
 from app.ui.managers.navigation.service import NavigationService
 from app.ui.managers.navigation.registry import NavigationRegistry, RouteConstants
 from app.ui.components.composite.recipe_card import LayoutSize

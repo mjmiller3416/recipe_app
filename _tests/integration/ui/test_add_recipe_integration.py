@@ -22,10 +22,10 @@ from app.core.repositories.ingredient_repo import IngredientRepo
 from app.core.repositories.recipe_repo import RecipeRepo
 from app.core.services.ingredient_service import IngredientService
 from app.core.services.recipe_service import DuplicateRecipeError, RecipeService
-from app.ui.view_models.add_recipe_view_model import AddRecipeViewModel, RecipeFormData
-from app.ui.view_models.ingredient_view_model import (
+from app.ui.view_models.add_recipe_vm import AddRecipesVM, RecipeFormData
+from app.ui.view_models.ingredient_vm import (
     IngredientFormData,
-    IngredientViewModel,
+    IngredientVM,
 )
 
 @pytest.fixture
@@ -54,8 +54,8 @@ def ingredient_service(db_session):
 
 @pytest.fixture
 def add_recipe_vm(db_session, recipe_service, ingredient_service):
-    """Create AddRecipeViewModel with real services."""
-    vm = AddRecipeViewModel(db_session)
+    """Create AddRecipesViewModel with real services."""
+    vm = AddRecipesVM(db_session)
     vm.recipe_service = recipe_service
     vm.ingredient_service = ingredient_service
     return vm
@@ -63,8 +63,8 @@ def add_recipe_vm(db_session, recipe_service, ingredient_service):
 
 @pytest.fixture
 def ingredient_vm(db_session, ingredient_service):
-    """Create IngredientViewModel with real services."""
-    vm = IngredientViewModel(db_session)
+    """Create IngredientVM with real services."""
+    vm = IngredientVM(db_session)
     vm.ingredient_service = ingredient_service
     return vm
 
@@ -111,21 +111,21 @@ class TestRecipeCreationWorkflow:
         recipe_saved_spy = Mock()
         validation_failed_spy = Mock()
         processing_changed_spy = Mock()
-        
+
         add_recipe_vm.recipe_saved_successfully.connect(recipe_saved_spy)
         add_recipe_vm.validation_failed.connect(validation_failed_spy)
         add_recipe_vm.processing_state_changed.connect(processing_changed_spy)
-        
+
         # Execute recipe creation
         add_recipe_vm.create_recipe(sample_recipe_form_data)
-        
+
         # Verify success signals
         recipe_saved_spy.assert_called_once_with("Integration Test Recipe")
         validation_failed_spy.assert_not_called()
-        
+
         # Verify processing state changes
         assert processing_changed_spy.call_count >= 2  # Should be called for start and end
-        
+
         # Verify recipe was created in database
         created_recipe = recipe_repository.find_by_name("Integration Test Recipe")
         assert created_recipe is not None
@@ -134,7 +134,7 @@ class TestRecipeCreationWorkflow:
         assert created_recipe.meal_type == "dinner"
         assert created_recipe.servings == 6
         assert created_recipe.total_time == 45
-        
+
         # Verify ingredients were created
         assert len(created_recipe.recipe_ingredients) == 2
         ingredient_names = [ri.ingredient.ingredient_name for ri in created_recipe.recipe_ingredients]
@@ -147,20 +147,20 @@ class TestRecipeCreationWorkflow:
         # Pre-create an ingredient
         existing_ingredient = ingredient_service.get_or_create_from_name_category("tomato", "Vegetables")
         assert existing_ingredient.id is not None
-        
+
         # Update form data to reference existing ingredient
         sample_recipe_form_data.ingredients[0]["existing_ingredient_id"] = existing_ingredient.id
-        
+
         # Connect signal spy
         recipe_saved_spy = Mock()
         add_recipe_vm.recipe_saved_successfully.connect(recipe_saved_spy)
-        
+
         # Execute recipe creation
         add_recipe_vm.create_recipe(sample_recipe_form_data)
-        
+
         # Verify success
         recipe_saved_spy.assert_called_once()
-        
+
         # Verify existing ingredient was reused
         created_recipe = add_recipe_vm.recipe_service.recipe_repo.find_by_name("Integration Test Recipe")
         tomato_recipe_ingredient = next(
@@ -177,23 +177,23 @@ class TestRecipeCreationWorkflow:
         sample_recipe_form_data.recipe_name = ""  # Required field
         sample_recipe_form_data.meal_type = ""    # Required field
         sample_recipe_form_data.servings = "invalid"  # Invalid format
-        
+
         # Connect signal spies
         recipe_saved_spy = Mock()
         validation_failed_spy = Mock()
         form_validation_spy = Mock()
-        
+
         add_recipe_vm.recipe_saved_successfully.connect(recipe_saved_spy)
         add_recipe_vm.validation_failed.connect(validation_failed_spy)
         add_recipe_vm.form_validation_state_changed.connect(form_validation_spy)
-        
+
         # Execute recipe creation
         add_recipe_vm.create_recipe(sample_recipe_form_data)
-        
+
         # Verify failure signals
         recipe_saved_spy.assert_not_called()
         form_validation_spy.assert_called_with(False)
-        
+
         # Verify no recipe was created
         assert add_recipe_vm.recipe_service.recipe_repo.find_by_name("") is None
 
@@ -202,14 +202,14 @@ class TestRecipeCreationWorkflow:
         """Test recipe creation with duplicate recipe error."""
         # Create initial recipe
         add_recipe_vm.create_recipe(sample_recipe_form_data)
-        
+
         # Connect signal spy for second attempt
         save_failed_spy = Mock()
         add_recipe_vm.recipe_save_failed.connect(save_failed_spy)
-        
+
         # Try to create duplicate recipe
         add_recipe_vm.create_recipe(sample_recipe_form_data)
-        
+
         # Verify duplicate error handling
         save_failed_spy.assert_called_once()
         error_message = save_failed_spy.call_args[0][0]
@@ -221,19 +221,19 @@ class TestRecipeCreationWorkflow:
         # Create a mock image file
         image_path = temp_dir / "test_image.jpg"
         image_path.write_bytes(b"fake_image_data")
-        
+
         sample_recipe_form_data.reference_image_path = str(image_path)
-        
+
         # Connect signal spy
         recipe_saved_spy = Mock()
         add_recipe_vm.recipe_saved_successfully.connect(recipe_saved_spy)
-        
+
         # Execute recipe creation
         add_recipe_vm.create_recipe(sample_recipe_form_data)
-        
+
         # Verify success
         recipe_saved_spy.assert_called_once()
-        
+
         # Verify image path was stored
         created_recipe = add_recipe_vm.recipe_service.recipe_repo.find_by_name("Integration Test Recipe")
         assert created_recipe.reference_image_path == str(image_path)
@@ -251,11 +251,11 @@ class TestIngredientViewModelIntegration:
             ingredient_service.get_or_create_from_name_category("cherry tomato", "Vegetables"),
             ingredient_service.get_or_create_from_name_category("tomato sauce", "Condiments")
         ]
-        
+
         # Test search functionality
         search_results = ingredient_vm.search_ingredients("tomato")
         assert len(search_results) == 3
-        
+
         # Test exact matching
         match_result = ingredient_vm.find_ingredient_matches("tomato")
         assert match_result.exact_match is not None
@@ -272,17 +272,17 @@ class TestIngredientViewModelIntegration:
         valid_data.ingredient_category = "Vegetables"
         valid_data.quantity = "2.5"
         valid_data.unit = "cups"
-        
+
         result = ingredient_vm.validate_ingredient_data(valid_data)
         assert result.is_valid is True
         assert len(result.errors) == 0
-        
+
         # Test ingredient with warnings
         warning_data = IngredientFormData()
         warning_data.ingredient_name = "exotic spice"
         warning_data.ingredient_category = "Custom Spices"  # Non-standard category
         warning_data.quantity = "15000"  # Unusually large quantity
-        
+
         result = ingredient_vm.validate_ingredient_data(warning_data)
         assert result.is_valid is True
         assert len(result.warnings) >= 1
@@ -310,7 +310,7 @@ class TestIngredientViewModelIntegration:
                 "unit": "cup"
             }
         ]
-        
+
         result = ingredient_vm.validate_ingredient_collection(ingredients_data)
         assert result.is_valid is True
         assert len(result.warnings) >= 1  # Should warn about duplicate
@@ -325,12 +325,12 @@ class TestIngredientViewModelIntegration:
         ]
         for name in ingredients:
             ingredient_service.get_or_create_from_name_category(name, "Vegetables")
-        
+
         # Test autocomplete suggestions
         suggestions = ingredient_vm.get_autocomplete_suggestions("to", limit=3)
         assert len(suggestions) <= 3
         assert all("to" in suggestion.lower() for suggestion in suggestions)
-        
+
         # Verify cache was loaded
         assert ingredient_vm.cache_loaded is True
         assert ingredient_vm.autocomplete_count >= len(ingredients)
@@ -341,10 +341,10 @@ class TestIngredientViewModelIntegration:
         # Add ingredients with custom categories
         ingredient_service.get_or_create_from_name_category("quinoa", "Ancient Grains")
         ingredient_service.get_or_create_from_name_category("coconut oil", "Healthy Oils")
-        
+
         # Get all categories
         categories = ingredient_vm.get_available_categories()
-        
+
         # Should include both standard and custom categories
         assert "Vegetables" in categories  # Standard category
         assert "Ancient Grains" in categories  # Custom category
@@ -360,15 +360,15 @@ class TestViewModelDataBinding:
         # Connect validation signal spies
         recipe_validation_spy = Mock()
         ingredient_validation_spy = Mock()
-        
+
         add_recipe_vm.field_validation_error.connect(recipe_validation_spy)
         ingredient_vm.ingredient_name_validation_changed.connect(ingredient_validation_spy)
-        
+
         # Test recipe field validation
         add_recipe_vm.validate_field_real_time("recipe_name", "")
         recipe_validation_spy.assert_called_once()
-        
-        # Test ingredient field validation  
+
+        # Test ingredient field validation
         ingredient_vm.validate_ingredient_name_real_time("")
         ingredient_validation_spy.assert_called_once_with(False, "Ingredient name is required")
 
@@ -390,15 +390,15 @@ class TestViewModelDataBinding:
                 }
             ]
         }
-        
+
         recipe_form_data = add_recipe_vm.preprocess_form_data(raw_recipe_data)
         assert recipe_form_data.recipe_name == "Test Recipe"  # Trimmed
         assert len(recipe_form_data.ingredients) == 1
-        
+
         # Test ingredient data transformation
         ingredient_data = ingredient_vm.parse_form_data(raw_recipe_data["ingredients"][0])
         dto_data = ingredient_vm.transform_to_ingredient_dto(ingredient_data)
-        
+
         assert dto_data["ingredient_name"] == "tomato"
         assert dto_data["quantity"] == 2.5
         assert dto_data["unit"] == "cups"
@@ -409,11 +409,11 @@ class TestViewModelDataBinding:
         # Mock service to raise specific error
         add_recipe_vm.recipe_service.create_recipe_with_ingredients.side_effect = \
             Exception("Database connection failed")
-        
+
         # Connect error signal spy
         save_failed_spy = Mock()
         add_recipe_vm.recipe_save_failed.connect(save_failed_spy)
-        
+
         # Create form data that would normally be valid
         form_data = RecipeFormData()
         form_data.recipe_name = "Test Recipe"
@@ -422,10 +422,10 @@ class TestViewModelDataBinding:
         form_data.ingredients = [
             {"ingredient_name": "test", "ingredient_category": "Vegetables"}
         ]
-        
+
         # Execute and verify error handling
         add_recipe_vm.create_recipe(form_data)
-        
+
         save_failed_spy.assert_called_once()
         error_message = save_failed_spy.call_args[0][0]
         assert "unexpected error" in error_message.lower()
@@ -445,21 +445,21 @@ class TestTransactionIntegration:
         form_data.ingredients = [
             {"ingredient_name": "test ingredient", "ingredient_category": "Vegetables"}
         ]
-        
+
         # Mock a failure during ingredient processing
         with patch.object(add_recipe_vm.recipe_service, 'create_recipe_with_ingredients') as mock_create:
             mock_create.side_effect = Exception("Simulated failure")
-            
+
             # Connect error signal spy
             save_failed_spy = Mock()
             add_recipe_vm.recipe_save_failed.connect(save_failed_spy)
-            
+
             # Attempt recipe creation
             add_recipe_vm.create_recipe(form_data)
-            
+
             # Verify error was handled
             save_failed_spy.assert_called_once()
-        
+
         # Verify no partial data was committed
         assert add_recipe_vm.recipe_service.recipe_repo.find_by_name("Rollback Test Recipe") is None
 
@@ -467,49 +467,49 @@ class TestTransactionIntegration:
     def test_concurrent_recipe_creation(self, db_session):
         """Test handling of concurrent recipe creation attempts."""
         # This test simulates race conditions that might occur in real usage
-        vm1 = AddRecipeViewModel(db_session)
-        vm2 = AddRecipeViewModel(db_session)
+        vm1 = AddRecipesVM(db_session)
+        vm2 = AddRecipesVM(db_session)
         vm1.recipe_service = RecipeService(db_session)
         vm2.recipe_service = RecipeService(db_session)
         vm1.ingredient_service = IngredientService(db_session)
         vm2.ingredient_service = IngredientService(db_session)
-        
+
         # Create identical recipe data
         form_data1 = RecipeFormData()
         form_data1.recipe_name = "Concurrent Recipe"
         form_data1.meal_type = "dinner"
         form_data1.servings = "4"
         form_data1.ingredients = [{"ingredient_name": "test", "ingredient_category": "Vegetables"}]
-        
+
         form_data2 = RecipeFormData()
         form_data2.recipe_name = "Concurrent Recipe"  # Same name
         form_data2.recipe_category = "Main Course"  # Same category (or default)
         form_data2.meal_type = "dinner"
         form_data2.servings = "4"
         form_data2.ingredients = [{"ingredient_name": "test", "ingredient_category": "Vegetables"}]
-        
+
         # Connect signal spies
         success_spy1 = Mock()
         success_spy2 = Mock()
         failed_spy1 = Mock()
         failed_spy2 = Mock()
-        
+
         vm1.recipe_saved_successfully.connect(success_spy1)
         vm1.recipe_save_failed.connect(failed_spy1)
         vm2.recipe_saved_successfully.connect(success_spy2)
         vm2.recipe_save_failed.connect(failed_spy2)
-        
+
         # Create recipes concurrently (simulate)
         vm1.create_recipe(form_data1)
         vm2.create_recipe(form_data2)
-        
+
         # One should succeed, one should fail with duplicate error
         total_successes = success_spy1.call_count + success_spy2.call_count
         total_failures = failed_spy1.call_count + failed_spy2.call_count
-        
+
         assert total_successes == 1
         assert total_failures == 1
-        
+
         # Verify only one recipe exists in database
         created_recipes = db_session.query(Recipe).filter(Recipe.recipe_name == "Concurrent Recipe").all()
         assert len(created_recipes) == 1
@@ -523,41 +523,41 @@ class TestViewModelDataBindingIntegration:
         """Test complete MVVM data flow from user input to persistence."""
         # Step 1: User starts typing ingredient name
         ingredient_vm.validate_ingredient_name_real_time("tomat")
-        
+
         # Step 2: System finds matches and suggests category
         mock_matches = [Mock(ingredient_name="tomato", ingredient_category="Vegetables")]
         ingredient_vm.ingredient_service.search.return_value = mock_matches
-        
+
         match_result = ingredient_vm.find_ingredient_matches("tomato")
         assert match_result.exact_match.ingredient_category == "Vegetables"
-        
+
         # Step 3: User completes ingredient form
         ingredient_data = IngredientFormData()
         ingredient_data.ingredient_name = "tomato"
         ingredient_data.ingredient_category = "Vegetables"
         ingredient_data.quantity = "3"
         ingredient_data.unit = "pieces"
-        
+
         validation_result = ingredient_vm.validate_ingredient_data(ingredient_data)
         assert validation_result.is_valid
-        
+
         # Step 4: Ingredient data is transformed for recipe
         dto_data = ingredient_vm.transform_to_ingredient_dto(ingredient_data)
-        
+
         # Step 5: Recipe form is populated and validated
         recipe_form = RecipeFormData()
         recipe_form.recipe_name = "Test Integration Recipe"
         recipe_form.meal_type = "dinner"
         recipe_form.servings = "4"
         recipe_form.ingredients = [dto_data]
-        
+
         # Connect success spy
         recipe_saved_spy = Mock()
         add_recipe_vm.recipe_saved_successfully.connect(recipe_saved_spy)
-        
+
         # Step 6: Recipe is created
         add_recipe_vm.create_recipe(recipe_form)
-        
+
         # Verify complete flow worked
         recipe_saved_spy.assert_called_once_with("Test Integration Recipe")
 
@@ -569,25 +569,25 @@ class TestViewModelDataBindingIntegration:
             {"ingredient_name": "", "ingredient_category": "Vegetables"},  # Invalid
             {"ingredient_name": "valid", "ingredient_category": "Vegetables"}  # Valid
         ]
-        
+
         # Validate collection through ingredient ViewModel
         collection_result = ingredient_vm.validate_ingredient_collection(invalid_ingredients_data)
         assert not collection_result.is_valid
-        
+
         # Create recipe form with invalid ingredients
         form_data = RecipeFormData()
         form_data.recipe_name = "Test Recipe"
         form_data.meal_type = "dinner"
         form_data.servings = "4"
         form_data.ingredients = invalid_ingredients_data
-        
+
         # Connect validation spy
         validation_failed_spy = Mock()
         add_recipe_vm.validation_failed.connect(validation_failed_spy)
-        
+
         # Recipe creation should fail due to ingredient validation
         add_recipe_vm.create_recipe(form_data)
-        
+
         # Should have validation errors
         assert validation_failed_spy.call_count >= 0  # May emit validation failures
 
@@ -597,14 +597,14 @@ class TestViewModelDataBindingIntegration:
         # Connect signal spies for both ViewModels
         recipe_field_spy = Mock()
         ingredient_field_spy = Mock()
-        
+
         add_recipe_vm.field_validation_error.connect(recipe_field_spy)
         ingredient_vm.ingredient_name_validation_changed.connect(ingredient_field_spy)
-        
+
         # Test recipe field validation
         add_recipe_vm.validate_field_real_time("recipe_name", "")
         recipe_field_spy.assert_called_once()
-        
+
         # Test ingredient field validation
         ingredient_vm.validate_ingredient_name_real_time("")
         ingredient_field_spy.assert_called_once_with(False, "Ingredient name is required")
@@ -615,26 +615,26 @@ class TestViewModelDataBindingIntegration:
         # Connect processing state spies
         recipe_processing_spy = Mock()
         ingredient_processing_spy = Mock()
-        
+
         add_recipe_vm.processing_state_changed.connect(recipe_processing_spy)
         # Note: IngredientViewModel doesn't have processing_state_changed in current implementation
-        
+
         # Start recipe creation (should set processing state)
         form_data = RecipeFormData()
         form_data.recipe_name = "Test Recipe"
         form_data.meal_type = "dinner"
         form_data.servings = "4"
         form_data.ingredients = [{"ingredient_name": "tomato", "ingredient_category": "Vegetables"}]
-        
+
         # Mock successful creation
         mock_recipe = Mock()
         mock_recipe.id = 1
         mock_recipe.recipe_name = "Test Recipe"
         add_recipe_vm.recipe_service.create_recipe_with_ingredients.return_value = mock_recipe
         add_recipe_vm._validate_recipe_form = Mock(return_value=BaseValidationResult(is_valid=True))
-        
+
         add_recipe_vm.create_recipe(form_data)
-        
+
         # Should have processing state changes
         assert recipe_processing_spy.call_count >= 2  # Start and end
 
@@ -648,21 +648,21 @@ class TestErrorHandlingIntegration:
         # Mock service to throw different error types
         add_recipe_vm.recipe_service.create_recipe_with_ingredients.side_effect = DuplicateRecipeError("Recipe exists")
         add_recipe_vm._validate_recipe_form = Mock(return_value=BaseValidationResult(is_valid=True))
-        
+
         # Connect error signal spy
         save_failed_spy = Mock()
         add_recipe_vm.recipe_save_failed.connect(save_failed_spy)
-        
+
         # Create recipe form
         form_data = RecipeFormData()
         form_data.recipe_name = "Duplicate Recipe"
         form_data.meal_type = "dinner"
         form_data.servings = "4"
         form_data.ingredients = [{"ingredient_name": "tomato", "ingredient_category": "Vegetables"}]
-        
+
         # Execute
         add_recipe_vm.create_recipe(form_data)
-        
+
         # Verify error was handled and propagated
         save_failed_spy.assert_called_once_with("Recipe exists")
 
@@ -674,19 +674,19 @@ class TestErrorHandlingIntegration:
             {"ingredient_name": "", "ingredient_category": ""},  # Multiple errors
             {"ingredient_name": "valid", "ingredient_category": "Vegetables"}
         ]
-        
+
         # Validate collection
         result = ingredient_vm.validate_ingredient_collection(invalid_ingredients)
         assert not result.is_valid
         assert len(result.errors) >= 2
-        
+
         # Create recipe with invalid ingredients
         form_data = RecipeFormData()
         form_data.recipe_name = "Recipe With Invalid Ingredients"
         form_data.meal_type = "dinner"
         form_data.servings = "4"
         form_data.ingredients = invalid_ingredients
-        
+
         # Recipe validation should catch ingredient errors
         recipe_validation = add_recipe_vm._validate_recipe_form(form_data)
         assert not recipe_validation.is_valid
@@ -697,39 +697,39 @@ class TestErrorHandlingIntegration:
         # Create ViewModels with real services
         from app.core.services.ingredient_service import IngredientService
         from app.core.services.recipe_service import RecipeService
-        
+
         recipe_service = RecipeService(db_session)
         ingredient_service = IngredientService(db_session)
-        
+
         vm = AddRecipeViewModel(db_session)
         vm.recipe_service = recipe_service
         vm.ingredient_service = ingredient_service
-        
+
         # Create form data that should succeed initially
         form_data = RecipeFormData()
         form_data.recipe_name = "Rollback Test Recipe"
         form_data.meal_type = "dinner"
         form_data.servings = "4"
         form_data.ingredients = [{"ingredient_name": "test ingredient", "ingredient_category": "Vegetables"}]
-        
+
         # Mock the service to fail after some processing
         original_create = recipe_service.create_recipe_with_ingredients
         def failing_create(dto):
             # Simulate partial work then failure
             raise Exception("Simulated failure after partial processing")
-        
+
         recipe_service.create_recipe_with_ingredients = failing_create
-        
+
         # Connect error spy
         save_failed_spy = Mock()
         vm.recipe_save_failed.connect(save_failed_spy)
-        
+
         # Execute - should fail gracefully
         vm.create_recipe(form_data)
-        
+
         # Verify error was handled
         save_failed_spy.assert_called_once()
-        
+
         # Verify no partial data exists (transaction rolled back)
         assert recipe_service.recipe_repo.find_by_name("Rollback Test Recipe") is None
 
@@ -764,10 +764,10 @@ class TestDataTransformationIntegration:
                 "unit": "tablespoons"
             }
         ]
-        
+
         # Transform to DTO
         recipe_dto = add_recipe_vm._transform_to_recipe_dto(form_data)
-        
+
         # Verify DTO transformation
         assert recipe_dto.recipe_name == "Transformation Test Recipe"
         assert recipe_dto.recipe_category == "Main Course"
@@ -775,26 +775,26 @@ class TestDataTransformationIntegration:
         assert recipe_dto.servings == 6
         assert len(recipe_dto.ingredients) == 2
         assert recipe_dto.ingredients[0].quantity == 3.0
-        
+
         # Create real services for database persistence
         from app.core.repositories.recipe_repo import RecipeRepo
         from app.core.services.recipe_service import RecipeService
-        
+
         recipe_service = RecipeService(db_session)
         recipe_repo = RecipeRepo(db_session)
-        
+
         add_recipe_vm.recipe_service = recipe_service
-        
+
         # Connect success spy
         recipe_saved_spy = Mock()
         add_recipe_vm.recipe_saved_successfully.connect(recipe_saved_spy)
-        
+
         # Execute creation
         add_recipe_vm.create_recipe(form_data)
-        
+
         # Verify persistence
         recipe_saved_spy.assert_called_once_with("Transformation Test Recipe")
-        
+
         # Verify database model
         created_recipe = recipe_repo.find_by_name("Transformation Test Recipe")
         assert created_recipe is not None
@@ -808,20 +808,20 @@ class TestDataTransformationIntegration:
         """Test ingredient transformation with database matching."""
         # Create real service
         from app.core.services.ingredient_service import IngredientService
-        
+
         ingredient_service = IngredientService(db_session)
         ingredient_vm.ingredient_service = ingredient_service
-        
+
         # Pre-create an ingredient in database
         existing_ingredient = ingredient_service.get_or_create_from_name_category("tomato", "Vegetables")
         assert existing_ingredient.id is not None
-        
+
         # Test matching
         match_result = ingredient_vm.find_ingredient_matches("tomato")
         assert match_result.exact_match is not None
         assert match_result.exact_match.id == existing_ingredient.id
         assert match_result.suggested_category == "Vegetables"
-        
+
         # Test transformation with existing ingredient
         form_data = IngredientFormData()
         form_data.ingredient_name = "tomato"
@@ -829,7 +829,7 @@ class TestDataTransformationIntegration:
         form_data.quantity = "2"
         form_data.unit = "cups"
         form_data.existing_ingredient_id = existing_ingredient.id
-        
+
         dto_data = ingredient_vm.transform_to_ingredient_dto(form_data)
         assert dto_data["existing_ingredient_id"] == existing_ingredient.id
 
@@ -842,30 +842,30 @@ class TestPerformanceIntegration:
         """Test performance with bulk ingredient operations."""
         # Create a large number of ingredients
         ingredient_names = [f"ingredient_{i}" for i in range(100)]
-        
+
         # Bulk create ingredients
         for name in ingredient_names:
             ingredient_service.get_or_create_from_name_category(name, "Test Category")
-        
+
         # Test search performance
         import time
         start_time = time.time()
-        
+
         search_results = ingredient_vm.search_ingredients("ingredient")
-        
+
         end_time = time.time()
         search_duration = end_time - start_time
-        
+
         # Verify results and performance
         assert len(search_results) >= 100
         assert search_duration < 1.0  # Should complete within 1 second
-        
+
         # Test autocomplete performance
         start_time = time.time()
         suggestions = ingredient_vm.get_autocomplete_suggestions("ingredient", limit=10)
         end_time = time.time()
         autocomplete_duration = end_time - start_time
-        
+
         assert len(suggestions) == 10  # Should respect limit
         assert autocomplete_duration < 0.5  # Should be very fast
 
@@ -878,7 +878,7 @@ class TestPerformanceIntegration:
         form_data.meal_type = "dinner"
         form_data.servings = "8"
         form_data.directions = "Very long directions..." * 100  # Large text
-        
+
         # Add many ingredients
         form_data.ingredients = []
         for i in range(50):
@@ -888,24 +888,24 @@ class TestPerformanceIntegration:
                 "quantity": str(i + 1),
                 "unit": "cups"
             })
-        
+
         # Connect signal spy
         success_spy = Mock()
         add_recipe_vm.recipe_saved_successfully.connect(success_spy)
-        
+
         # Measure creation time
         import time
         start_time = time.time()
-        
+
         add_recipe_vm.create_recipe(form_data)
-        
+
         end_time = time.time()
         creation_duration = end_time - start_time
-        
+
         # Verify success and performance
         success_spy.assert_called_once()
         assert creation_duration < 5.0  # Should complete within 5 seconds
-        
+
         # Verify all data was saved correctly
         created_recipe = add_recipe_vm.recipe_service.recipe_repo.find_by_name("Complex Recipe")
         assert created_recipe is not None
@@ -919,39 +919,39 @@ class TestSignalIntegrationAdvanced:
     def test_signal_chain_integration(self, add_recipe_vm, ingredient_vm):
         """Test signal chains across ViewModels."""
         signal_chain = []
-        
+
         def track_ingredient_validation(is_valid, message):
             signal_chain.append(f"ingredient_validation:{is_valid}:{message[:20]}")
-        
+
         def track_recipe_processing(is_processing):
             signal_chain.append(f"recipe_processing:{is_processing}")
-        
+
         def track_recipe_saved(name):
             signal_chain.append(f"recipe_saved:{name}")
-        
+
         # Connect signal trackers
         ingredient_vm.ingredient_name_validation_changed.connect(track_ingredient_validation)
         add_recipe_vm.processing_state_changed.connect(track_recipe_processing)
         add_recipe_vm.recipe_saved_successfully.connect(track_recipe_saved)
-        
+
         # Execute workflow
         ingredient_vm.validate_ingredient_name_real_time("tomato")
-        
+
         form_data = RecipeFormData()
         form_data.recipe_name = "Signal Chain Recipe"
         form_data.meal_type = "dinner"
         form_data.servings = "4"
         form_data.ingredients = [{"ingredient_name": "tomato", "ingredient_category": "Vegetables"}]
-        
+
         # Mock successful creation
         mock_recipe = Mock()
         mock_recipe.id = 1
         mock_recipe.recipe_name = "Signal Chain Recipe"
         add_recipe_vm.recipe_service.create_recipe_with_ingredients.return_value = mock_recipe
         add_recipe_vm._validate_recipe_form = Mock(return_value=BaseValidationResult(is_valid=True))
-        
+
         add_recipe_vm.create_recipe(form_data)
-        
+
         # Verify signal chain
         assert len(signal_chain) >= 3
         assert any("ingredient_validation:True" in signal for signal in signal_chain)
@@ -964,7 +964,7 @@ class TestSignalIntegrationAdvanced:
         # Create multiple ViewModel instances
         vm1 = AddRecipeViewModel(db_session)
         vm2 = AddRecipeViewModel(db_session)
-        
+
         from app.core.services.ingredient_service import IngredientService
         from app.core.services.recipe_service import RecipeService
 
@@ -973,34 +973,34 @@ class TestSignalIntegrationAdvanced:
         vm1.ingredient_service = IngredientService(db_session)
         vm2.recipe_service = RecipeService(db_session)
         vm2.ingredient_service = IngredientService(db_session)
-        
+
         # Create different recipes simultaneously
         form_data1 = RecipeFormData()
         form_data1.recipe_name = "Concurrent Recipe 1"
         form_data1.meal_type = "dinner"
         form_data1.servings = "4"
         form_data1.ingredients = [{"ingredient_name": "ingredient1", "ingredient_category": "Vegetables"}]
-        
+
         form_data2 = RecipeFormData()
         form_data2.recipe_name = "Concurrent Recipe 2"
         form_data2.meal_type = "lunch"
         form_data2.servings = "2"
         form_data2.ingredients = [{"ingredient_name": "ingredient2", "ingredient_category": "Vegetables"}]
-        
+
         # Connect signal spies
         success_spy1 = Mock()
         success_spy2 = Mock()
         vm1.recipe_saved_successfully.connect(success_spy1)
         vm2.recipe_saved_successfully.connect(success_spy2)
-        
+
         # Execute concurrently (simulated)
         vm1.create_recipe(form_data1)
         vm2.create_recipe(form_data2)
-        
+
         # Both should succeed
         success_spy1.assert_called_once_with("Concurrent Recipe 1")
         success_spy2.assert_called_once_with("Concurrent Recipe 2")
-        
+
         # Verify both recipes exist
         assert vm1.recipe_service.recipe_repo.find_by_name("Concurrent Recipe 1") is not None
         assert vm2.recipe_service.recipe_repo.find_by_name("Concurrent Recipe 2") is not None

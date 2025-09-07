@@ -1,4 +1,4 @@
-"""app/ui/views/shopping_list/1shopping_list.py
+"""app/ui/views/shopping_list/view.py
 
 This module defines the ShoppingList screen, which allows users to view and manage their
 shopping list. It includes functionality to add manual items, categorize ingredients, and
@@ -14,14 +14,15 @@ from PySide6.QtCore import Qt
 
 from _dev_tools import DebugLogger
 from app.style import Qss, Theme
-from app.ui.components.layout.card import ActionCard, Card
-from app.ui.components.widgets.toast import Toast
-from app.ui.utils.layout_utils import create_two_column_layout
-from app.ui.view_models.shopping_list_view_model import ShoppingListViewModel
-from app.ui.views.base import ScrollableNavView
-from .add_item_form import AddItemForm
-from .collapsible_category import CollapsibleCategory
-from .shopping_item import ShoppingItem
+
+from ...components.layout.card import ActionCard, Card
+from ...components.widgets import Toast
+from ...utils.layout_utils import create_two_column_layout
+from ...view_models import ShoppingListViewModel
+from ...views.base import ScrollableNavView
+from ._add_item_form import AddItemForm
+from ._collapsible_category import CollapsibleCategory
+from ._shopping_item import ShoppingItem
 
 class ShoppingList(ScrollableNavView):
     """Main shopping list view for managing shopping items.

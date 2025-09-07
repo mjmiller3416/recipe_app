@@ -4,21 +4,22 @@ View Model layer for MVVM architecture implementation.
 Contains data binding, presentation logic, and UI-Core service coordination.
 """
 
-from .add_recipe_view_model import AddRecipeViewModel, RecipeFormData
+from .add_recipe_vm import AddRecipesViewModel, RecipeFormData
 from .base_view_model import BaseValidationResult, BaseViewModel
-from .ingredient_view_model import (
+from .ingredient_vm import (
     IngredientFormData,
     IngredientMatchResult,
     IngredientValidationResult,
     IngredientViewModel,
 )
-from .meal_planner_view_model import MealPlannerViewModel
-from .meal_widget_view_model import MealSummaryDTO, MealWidgetViewModel
-from .recipe_browser_view_model import RecipeBrowserViewModel
+from .meal_planner_vm import MealPlannerViewModel
+from .meal_widget_vm import MealSummaryDTO, MealWidgetViewModel
+from .recipe_browser_vm import RecipeBrowserViewModel
+from .shopping_list_vm import ShoppingListViewModel
 
 __all__ = [
-    "AddRecipeViewModel",
-    "RecipeFormData", 
+    "AddRecipesViewModel",
+    "RecipeFormData",
     "IngredientViewModel",
     "IngredientFormData",
     "IngredientMatchResult",
@@ -28,5 +29,6 @@ __all__ = [
     "MealSummaryDTO",
     "RecipeBrowserViewModel",
     "BaseViewModel",
-    "BaseValidationResult"
+    "BaseValidationResult",
+    "ShoppingListViewModel"
 ]

@@ -16,7 +16,7 @@ from app.ui.utils.event_utils import (
     create_tooltip_event_filter,
     signal_blocker,
 )
-from app.ui.view_models.meal_widget_view_model import MealWidgetViewModel
+from app.ui.view_models.meal_widget_vm import MealWidgetViewModel
 
 class MealWidget(QWidget):
     """

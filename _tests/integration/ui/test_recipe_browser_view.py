@@ -23,8 +23,8 @@ from app.core.dtos.recipe_dtos import RecipeFilterDTO
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
 from app.ui.components.composite.recipe_card import LayoutSize
-from app.ui.view_models.recipe_browser_view_model import RecipeBrowserViewModel
-from app.ui.views.recipe_browser.recipe_browser_view import RecipeBrowserView
+from app.ui.view_models.recipe_browser_vm import RecipeBrowserViewModel
+from app.ui.views.recipe_browser.view import RecipeBrowserView
 
 
 # ── Test Data Factories ─────────────────────────────────────────────────────────────────────────────

@@ -1,4 +1,4 @@
-"""app/ui/views/meal_planner/meal_planner.py
+"""app/ui/views/meal_planner/view.py
 
 This module defines the MealPlanner class, which provides a tabbed interface for meal planning.
 It allows users to create, edit, and save meal plans. The MealPlanner uses QTabWidget to manage
@@ -18,24 +18,25 @@ from PySide6.QtWidgets import (
 )
 
 from _dev_tools import DebugLogger
-from app.core.services.planner_service import PlannerService
-from app.core.services.recipe_service import RecipeService
+from app.core.services import PlannerService
+from app.core.services import RecipeService
 from app.core.utils.error_utils import (
     error_boundary,
     safe_execute_with_fallback,
 )
 from app.style import Qss
 from app.style.icon import AppIcon, Icon
-from app.ui.managers.navigation.registry import RouteConstants
-from app.ui.managers.navigation.service import NavigationService
-from app.ui.utils.widget_utils import (
+
+from ...managers.navigation import RouteConstants
+from ...managers.navigation import NavigationService
+from ...utils.widget_utils import (
     apply_object_name_pattern,
     register_widget_for_theme,
 )
-from app.ui.view_models.meal_planner_view_model import MealPlannerViewModel
-from app.ui.view_models.meal_widget_view_model import MealWidgetViewModel
-from app.ui.views.base import ScrollableNavView
-from .meal_widget import MealWidget
+from ...view_models import MealPlannerViewModel
+from ...view_models import MealWidgetViewModel
+from ...views.base import ScrollableNavView
+from ._meal_widget import MealWidget
 
 # ── Meal Planner View ───────────────────────────────────────────────────────────────────────────────────────
 class MealPlanner(ScrollableNavView):
