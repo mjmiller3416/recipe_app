@@ -348,10 +348,12 @@ class RecipeBrowserViewModel(BaseViewModel):
 
     # ── Filter Management ──────────────────────────────────────────────────────────────────
     def update_category_filter(self, category: str) -> bool:
-        """Update category filter with debouncing and cache invalidation."""
-        # Normalize category filter
+        """Update category filter with enhanced validation and cache management."""
         if category in ("All", "Filter", "") or not category:
             category = None
+        elif category not in RECIPE_CATEGORIES:
+            DebugLogger.log(f"Invalid recipe category: {category}", "warning")
+            return False
 
         if self._category_filter == category:
             return True  # No change needed

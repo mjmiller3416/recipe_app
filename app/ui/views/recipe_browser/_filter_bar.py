@@ -1,9 +1,13 @@
+"""app/ui/views/recipe_browser/_filter_bar.py
+
+Filter bar component for recipe browsing with category, sorting, and favorites options.
+"""
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QComboBox
+from PySide6.QtWidgets import QWidget, QHBoxLayout
 
-from app.config.config import RECIPE_CATEGORIES, SORT_OPTIONS
+from app.config import RECIPE_CATEGORIES, SORT_OPTIONS
 
 from ...components.widgets import ComboBox, CheckBox
 

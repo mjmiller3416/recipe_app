@@ -1,6 +1,6 @@
 # app.ui.components.layout.__init__.py
 
-from .flow_layout import FlowLayout
+from .flow_layout import FlowLayout, create_flow_container, FlowLayoutContainer
 from .flyout_widget import FlyoutWidget
 from .separator import Separator
 
@@ -14,5 +14,7 @@ __all__ = [
     "CustomGrip",
     "Separator",
     "FlowLayout",
-    "FlyoutWidget"
+    "FlyoutWidget",
+    "create_flow_container",
+    "FlowLayoutContainer",
 ]

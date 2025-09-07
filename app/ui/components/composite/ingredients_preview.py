@@ -50,6 +50,7 @@ class IngredientsPreview(QWidget):
 
         # Content widget inside scroll area - use horizontal layout with two columns
         self.content_widget = QWidget()
+        self.content_widget.setAttribute(Qt.WA_StyledBackground, True)
         main_content_layout = QHBoxLayout(self.content_widget)
         main_content_layout.setContentsMargins(8, 8, 8, 8)
         main_content_layout.setSpacing(12)

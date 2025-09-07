@@ -7,6 +7,8 @@
 #FixedWrapper {background-color: transparent;}
 QWidget#ContentArea{background-color: {surface};}
 QWidget#ScrollContent {background-color: {surface};border: none;}
+#BaseView #qt_scrollarea_viewport QWidget {background: transparent; border: none;}
+
 
 [tag="Header"] {
     font: {title};
@@ -28,6 +30,7 @@ QWidget {
 }
 
 QWidget#ToggleContainer {border: 1px solid {outline};}
+#IngredientsScrollArea QWidget {background: {surface_container};border: none;}
 
 
 /* Group Boxes */
@@ -222,4 +225,158 @@ QScrollBar::add-line, QScrollBar::sub-line {
 
 QStackedWidget {
     background-color: {surface};
+}
+
+
+/* ------------------------------------------------------------------
+   COMPONENT-SPECIFIC STYLES
+   ------------------------------------------------------------------ */
+
+#RecipeCard, #EmptyStateFrame, #ErrorStateFrame {
+    background-color: {surface_container};  /* Use theme-based background instead of transparent */
+    border-radius: 10px; /* Rounded corners */
+}
+
+#RecipeCard QLabel#IngredientQuantity,
+#RecipeCard QLabel#IngredientName,
+#RecipeCard QLabel#IngredientUnit {
+    color: {on_surface};
+    font-size: 26px;
+}
+
+#RecipeCard QLabel#IngredientsHeader {
+    color: {secondary};
+    font-weight: bold;
+    font-size: 32px;
+    padding-bottom: 4px;
+}
+
+#RecipeCard QLabel {
+    color: {on_surface};
+    font: {default};
+}
+
+#RecipeCard[layout_size="medium"] [title_text="true"] {
+    font: {default};
+}
+
+#RecipeCard[layout_size="large"] {
+    border-top-left-radius: 0px;
+}
+
+#RecipeCard #LargeCardTitle {
+    font-size: 38px;
+    font-weight: bold;
+    color: {tertiary};
+}
+
+#RecipeCard [label_text="true"] {
+    font: {default};
+    color: {on_surface_variant};
+}
+
+#RecipeCard ToolButton {
+    background-color: transparent;
+    border: none;
+}
+
+
+/* ------------------------------------------------------------------
+   ICON WIDGET STYLING
+   ------------------------------------------------------------------ */
+AppIcon {background-color: transparent;}
+
+#ContentArea AppIcon {background-color: transparent;}
+
+/* Force transparent background for header icons */
+  AppIcon#HeaderIcon {
+      background-color: transparent !important;
+  }
+
+  /* Also try targeting by class and object name */
+  [card="Default"] AppIcon#HeaderIcon {
+      background-color: transparent !important;
+  }
+
+
+/* ------------------------------------------------------------------
+   Default card varian
+   ------------------------------------------------------------------ */
+[card="Default"] {
+    background-color: {surface_container};
+    border: none;
+    border-radius: 10px;
+}
+
+/* Card content styling */
+[card="Default"] QLabel#Card {
+    background-color: purple;
+    color: {on_surface_variant};
+    font: {default};
+}
+
+/* Header styling */
+[card="Default"] QLabel#Header {
+    font: {header_small};
+}
+
+/* Subheader styling */
+[card="Default"] QLabel#SubHeader {
+    font: {default};
+    color: {outline};
+}
+
+/* -----------------------------------------------------------------
+Primary card variant
+-------------------------------------------------------------------- */
+[card="Primary"] {
+    background-color: {surface_container};
+    border: none;
+    border-radius: 10px;
+}
+
+/* Card content styling */
+[card="Primary"] QLabel {
+    background-color: {surface_container};
+    color: {on_surface_variant};
+    font: {default};
+}
+
+/* Header styling */
+[card="Primary"] QLabel#Header {
+    font: {header_small};
+    color: {secondary};
+}
+
+/* Subheader styling */
+[card="Primary"] QLabel#SubHeader {
+    font: {default};
+    color: {outline};
+}
+
+/* -----------------------------------------------------------------
+Secondary card variant
+-------------------------------------------------------------------- */
+[card="Secondary"] {
+    background-color: {secondary_container};
+    border: none;
+    border-radius: 10px;
+}
+
+/* Card content styling */
+[card="Secondary"] QLabel {
+    background-color: {secondary_container};
+    color: {on_secondary_container};
+}
+
+/* Header styling */
+[card="Secondary"] QLabel#Header {
+    font: {header_small};
+    color: {on_secondary_container};
+}
+
+/* Subheader styling */
+[card="Secondary"] QLabel#SubHeader {
+    font: {default};
+    color: {outline};
 }

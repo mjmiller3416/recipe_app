@@ -118,8 +118,6 @@ class BaseRecipeCard(BaseCard):
         # Setup states
         self._setup_stacked_widget()
 
-        # Register for theming
-        Theme.register_widget(self, Qss.RECIPE_CARD)
 
     # ── Public Methods ───────────────────────────────────────────────────────────────────────
     def set_recipe(self, recipe: Recipe | None) -> None:

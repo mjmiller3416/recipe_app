@@ -79,22 +79,69 @@
     },
     {
         "type": "File",
-        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\shopping_list.py",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\add_recipes\\view.py",
         "parent_id": "W8XdbSox9fQAwueM",
-        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\shopping_list.py",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\add_recipes\\view.py",
         "workspaceRoot": null,
         "workspacePath": null,
-        "id": "mTLJhpEA0nUgY7Mi",
-        "label": "Shopping List"
+        "id": "mc1HMfkyw57DzqvY",
+        "label": "Add Recipes"
     },
     {
         "type": "File",
-        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\view_recipes.py",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\meal_planner\\view.py",
         "parent_id": "W8XdbSox9fQAwueM",
-        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\view_recipes.py",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\meal_planner\\view.py",
         "workspaceRoot": null,
         "workspacePath": null,
-        "id": "Pg6lw3qoDedjBGrT",
-        "label": "View Recipes"
+        "id": "Ro7BEMSCv6dQqL23",
+        "label": "Meal Planner"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\recipe_browser\\view.py",
+        "parent_id": "W8XdbSox9fQAwueM",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\recipe_browser\\view.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "yPt5ec9XMDqELYOQ",
+        "label": "Recipe Browser"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\shopping_list\\view.py",
+        "parent_id": "W8XdbSox9fQAwueM",
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\ui\\views\\shopping_list\\view.py",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "k1JCjt8nFq5MYNvb",
+        "label": "Shopping List"
+    },
+    {
+        "type": "Group",
+        "name": "QSS",
+        "parent_id": "mc1HMfkyw57DzqvY",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "7ve9bGsNiPR6a0VX"
+    },
+    {
+        "type": "Directory",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\qss",
+        "parent_id": null,
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\qss",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "vLmywTkPeI0xpKYC",
+        "label": "QSS"
+    },
+    {
+        "type": "File",
+        "name": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\base_style.qss",
+        "parent_id": null,
+        "fsPath": "c:\\Users\\mjmil\\Documents\\recipe_app\\app\\style\\theme\\base_style.qss",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "nwr2uVBSUA7zgTWM"
     }
 ]
