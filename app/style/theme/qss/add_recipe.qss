@@ -4,5 +4,4 @@
 
 #AddRecipes QScrollArea {border: none;}
 
-#AddRecipes QLineEdit:focus {border: 4px solid {primary};}
 
