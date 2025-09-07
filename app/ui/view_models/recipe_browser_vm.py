@@ -214,8 +214,7 @@ class RecipeBrowserViewModel(BaseViewModel):
 
         DebugLogger.log("RecipeBrowserViewModel initialized with caching", "debug")
 
-    # ── Enhanced Service Management ─────────────────────────────────────────────────────────────────────────────────
-
+    # ── Service Management ─────────────────────────────────────────────────────────────────────────────────
     def _ensure_recipe_service(self) -> bool:
         """Lazy service initialization with enhanced error handling."""
         if self._recipe_service is not None:
@@ -232,8 +231,7 @@ class RecipeBrowserViewModel(BaseViewModel):
             self._handle_error(e, "Failed to initialize optimized recipe service", "service_init")
             return False
 
-    # ── Enhanced Properties with Performance Metrics ────────────────────────────────────────────────────────────────
-
+    # ── Properties with Performance Metrics ────────────────────────────────────────────────────────────────
     @property
     def selection_mode(self) -> bool:
         """Get current selection mode state."""
@@ -272,8 +270,7 @@ class RecipeBrowserViewModel(BaseViewModel):
         """Get current cache entry count."""
         return len(self._cache_manager.cache)
 
-    # ── Optimized Sort Option Mapping ───────────────────────────────────────────────────────────────────────────────
-
+    # ── Sort Option Mapping ───────────────────────────────────────────────────────────────────────────────
     @lru_cache(maxsize=32)
     def _parse_sort_option_cached(self, sort_option: str) -> Tuple[str, str]:
         """
@@ -300,7 +297,6 @@ class RecipeBrowserViewModel(BaseViewModel):
         return result
 
     # ── Core Recipe Loading ─────────────────────────────────────────────────────────────────────────────────────────
-
     def load_recipes(self) -> bool:
         """
         Load recipes with default filter settings.
@@ -350,8 +346,7 @@ class RecipeBrowserViewModel(BaseViewModel):
         self.recipes_cleared.emit()
         DebugLogger.log("Recipes cleared from ViewModel", "debug")
 
-    # ── Enhanced Filter Management with Debouncing ──────────────────────────────────────────────────────────────────
-
+    # ── Filter Management ──────────────────────────────────────────────────────────────────
     def update_category_filter(self, category: str) -> bool:
         """Update category filter with debouncing and cache invalidation."""
         # Normalize category filter
@@ -450,8 +445,7 @@ class RecipeBrowserViewModel(BaseViewModel):
 
         self._fetch_and_emit_recipes_cached(filter_dto)
 
-    # ── Enhanced Core Data Operations with Caching ─────────────────────────────────────────────────────────────────
-
+    # ── Core Data  ─────────────────────────────────────────────────────────────────
     def _fetch_and_emit_recipes_cached(self, filter_dto: RecipeFilterDTO) -> bool:
         """
         Optimized recipe fetching with intelligent caching.
@@ -546,8 +540,7 @@ class RecipeBrowserViewModel(BaseViewModel):
         self._recipes_loaded = False
         return self._fetch_and_emit_recipes_cached(self._current_filter)
 
-    # ── Selection Mode Management ───────────────────────────────────────────────────────────────────────────────────
-
+    # ── Selection Mode  ───────────────────────────────────────────────────────────────────────────────────
     def set_selection_mode(self, enabled: bool) -> None:
         """
         Set selection mode state and emit signal.
@@ -578,8 +571,7 @@ class RecipeBrowserViewModel(BaseViewModel):
         self.recipe_selected.emit(recipe.id, recipe)
         DebugLogger.log(f"Recipe selected: {recipe.recipe_name} (ID: {recipe.id})", "debug")
 
-    # ── Enhanced Search Operations ──────────────────────────────────────────────────────────────────────────────────
-
+    # ── Search Operations ──────────────────────────────────────────────────────────────────────────────────
     def search_recipes(self, search_term: str, apply_current_filters: bool = True) -> bool:
         """
         Optimized search with intelligent caching and debouncing.
@@ -623,8 +615,7 @@ class RecipeBrowserViewModel(BaseViewModel):
         self._search_term = None
         return self._schedule_debounced_filter_update()
 
-    # ── Enhanced Recipe Actions with Cache Management ───────────────────────────────────────────────────────────────
-
+    # ── Recipe Actions  ───────────────────────────────────────────────────────────────
     def toggle_recipe_favorite(self, recipe_id: int) -> bool:
         """
         Toggle favorite status with intelligent cache invalidation.
@@ -687,8 +678,7 @@ class RecipeBrowserViewModel(BaseViewModel):
                 return recipe
         return None
 
-    # ── Performance Monitoring and Diagnostics ──────────────────────────────────────────────────────────────────────
-
+    # ── Monitoring and Diagnostics ──────────────────────────────────────────────────────────────────────
     def get_performance_metrics(self) -> Dict[str, any]:
         """Get current performance metrics for monitoring."""
         return {
@@ -708,8 +698,7 @@ class RecipeBrowserViewModel(BaseViewModel):
         self._last_filter_time = None
         DebugLogger.log("Performance counters reset", "debug")
 
-    # ── Enhanced State Management ───────────────────────────────────────────────────────────────────────────────────
-
+    # ── State Management ───────────────────────────────────────────────────────────────────────────────────
     def reset_browser_state(self) -> None:
         """Reset browser state with cache cleanup and performance counter reset."""
         # Clear recipes and state
@@ -741,8 +730,7 @@ class RecipeBrowserViewModel(BaseViewModel):
 
         DebugLogger.log("RecipeBrowserViewModel state reset with cache cleanup", "debug")
 
-    # ── Utility Methods ─────────────────────────────────────────────────────────────────────────────────────────────
-
+    # ── UtilityMethods ─────────────────────────────────────────────────────────────────────────────────────────────
     def get_available_categories(self) -> List[str]:
         """Get available recipe categories from configuration."""
         return RECIPE_CATEGORIES.copy()
@@ -770,7 +758,6 @@ class RecipeBrowserViewModel(BaseViewModel):
             return False
 
     # ── Memory Management and Cleanup ───────────────────────────────────────────────────────────────────────────────
-
     def __del__(self):
         """Enhanced cleanup with timer management."""
         try:
