@@ -23,6 +23,7 @@ from sqlalchemy.orm import Session
 from _dev_tools import DebugLogger
 from app.config import RECIPE_CATEGORIES, SORT_OPTIONS
 from app.core.dtos.recipe_dtos import RecipeFilterDTO
+from app.core.events import get_recipe_event_manager
 from app.core.models.recipe import Recipe
 from app.core.services.recipe_service import RecipeService
 from app.ui.view_models.base_view_model import BaseViewModel
@@ -212,7 +213,47 @@ class RecipeBrowserViewModel(BaseViewModel):
         self._cache_hit_count: int = 0
         self._cache_miss_count: int = 0
 
-        DebugLogger.log("RecipeBrowserViewModel initialized with caching", "debug")
+        # Connect to global recipe events for live updates
+        self._connect_recipe_events()
+
+        DebugLogger.log("RecipeBrowserViewModel initialized with caching and live updates", "debug")
+
+    def _connect_recipe_events(self):
+        """Connect to global recipe events for live updates."""
+        event_manager = get_recipe_event_manager()
+        
+        # Connect to recipe lifecycle events
+        event_manager.recipe_created.connect(self._on_recipe_created)
+        event_manager.recipe_updated.connect(self._on_recipe_updated)
+        event_manager.recipe_deleted.connect(self._on_recipe_deleted)
+        event_manager.recipes_batch_updated.connect(self._on_recipes_batch_updated)
+        
+        DebugLogger.log("RecipeBrowserViewModel connected to global recipe events", "debug")
+
+    # ── Recipe Event Handlers ───────────────────────────────────────────────────────────────────────────────
+    def _on_recipe_created(self, recipe: Recipe):
+        """Handle new recipe created - refresh view to include it."""
+        DebugLogger.log(f"New recipe created: {recipe.recipe_name}, refreshing browser view", "info")
+        # Clear cache and reload to include new recipe
+        self.refresh_recipes_with_cache_clear()
+
+    def _on_recipe_updated(self, recipe: Recipe):
+        """Handle recipe updated - refresh view to show changes."""
+        DebugLogger.log(f"Recipe updated: {recipe.recipe_name}, refreshing browser view", "info")
+        # Clear cache and reload to show updates
+        self.refresh_recipes_with_cache_clear()
+
+    def _on_recipe_deleted(self, recipe_id: int):
+        """Handle recipe deleted - refresh view to remove it."""
+        DebugLogger.log(f"Recipe deleted: ID {recipe_id}, refreshing browser view", "info")
+        # Clear cache and reload to remove deleted recipe
+        self.refresh_recipes_with_cache_clear()
+
+    def _on_recipes_batch_updated(self):
+        """Handle batch recipe updates - full refresh."""
+        DebugLogger.log("Batch recipe updates detected, refreshing browser view", "info")
+        # Clear cache and reload for batch changes
+        self.refresh_recipes_with_cache_clear()
 
     # ── Service Management ─────────────────────────────────────────────────────────────────────────────────
     def _ensure_recipe_service(self) -> bool:

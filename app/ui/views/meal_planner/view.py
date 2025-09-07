@@ -18,6 +18,7 @@ from PySide6.QtWidgets import (
 )
 
 from _dev_tools import DebugLogger
+from app.core.events import notify_meal_plan_updated
 from app.core.services import PlannerService
 from app.core.services import RecipeService
 from app.core.utils.error_utils import (
@@ -124,6 +125,10 @@ class MealPlanner(ScrollableNavView):
         if self._navigation_service:
             self._navigation_service.navigation_completed.connect(self._on_navigation_completed)
             self._navigation_service.route_changed.connect(self._on_route_changed)
+            DebugLogger.log("MealPlanner: Connected to navigation service signals", "info")
+        else:
+            DebugLogger.log("MealPlanner: No navigation service available to connect to", "warning")
+
 
     def _init_ui(self):
         """Initialize UI by adding the '+' tab and loading saved meals."""
@@ -209,6 +214,22 @@ class MealPlanner(ScrollableNavView):
             )
             if success:
                 DebugLogger.log("Successfully navigated to recipe selection view", "info")
+                
+                # Try to connect immediately after navigation
+                current_view = self._navigation_service.get_current_view()
+                if current_view and hasattr(current_view, 'recipe_selected'):
+                    DebugLogger.log(f"MealPlanner: Immediate connection attempt to {type(current_view).__name__}", "info")
+                    # Disconnect any previous connections to avoid duplicates
+                    try:
+                        current_view.recipe_selected.disconnect(self._finish_recipe_selection)
+                    except TypeError:
+                        pass  # No existing connection
+                    
+                    current_view.recipe_selected.connect(self._finish_recipe_selection)
+                    self._current_selection_view = current_view
+                    DebugLogger.log("MealPlanner: Successfully connected immediately after navigation", "info")
+                else:
+                    DebugLogger.log(f"MealPlanner: Cannot connect immediately - view: {current_view}, has signal: {hasattr(current_view, 'recipe_selected') if current_view else 'N/A'}", "warning")
             else:
                 DebugLogger.log("Failed to navigate to recipe selection view", "error")
                 self._selection_context = None  # Clear context on failure
@@ -216,14 +237,21 @@ class MealPlanner(ScrollableNavView):
             DebugLogger.log("Navigation service not available", "error")
             self._selection_context = None
 
-    def _finish_recipe_selection(self, recipe_id: int) -> None:
+    def _finish_recipe_selection(self, recipe_id: int, recipe_obj=None) -> None:
         """Handle recipe selected from navigation-based selection."""
+        DebugLogger.log(f"MealPlanner: _finish_recipe_selection called with recipe_id: {recipe_id}", "info")
+        
         if not self._selection_context:
             DebugLogger.log("No selection context available for recipe selection", "warning")
             return
 
         widget, slot_key = self._selection_context
+        DebugLogger.log(f"MealPlanner: Updating widget {widget} slot {slot_key} with recipe {recipe_id}", "info")
         widget.update_recipe_selection(slot_key, recipe_id)
+        
+        # Save meal plan immediately after adding a recipe
+        DebugLogger.log("MealPlanner: Saving meal plan after recipe selection", "info")
+        self.save_meal_plan()
 
         # Navigate back to meal planner
         self._return_to_planner_view()
@@ -323,6 +351,10 @@ class MealPlanner(ScrollableNavView):
             self.meal_tabs.setCurrentIndex(new_selected_index)
             DebugLogger.log(f"Auto-selected tab at index {new_selected_index} after deletion", "info")
 
+        # Save meal plan immediately after deleting a meal
+        DebugLogger.log("MealPlanner: Saving meal plan after meal deletion", "info")
+        self.save_meal_plan()
+
     def _get_active_meal_ids(self) -> list[int]:
         """
         Collect and return all valid meal IDs from current tabs.
@@ -350,6 +382,8 @@ class MealPlanner(ScrollableNavView):
 
         if success:
             DebugLogger.log("[MealPlanner] Meal plan saved successfully", "info")
+            # Notify other components (like ShoppingList) that meal plan changed
+            notify_meal_plan_updated(saved_ids)
         else:
             DebugLogger.log("[MealPlanner] Failed to save meal plan", "error")
 
@@ -376,24 +410,8 @@ class MealPlanner(ScrollableNavView):
 
     def _on_navigation_completed(self, path: str, params: Dict[str, str]) -> None:
         """Handle navigation completion from NavigationService."""
-        DebugLogger.log(f"Navigation completed: {path}", "debug")
-
-        # If we navigated to recipe selection, connect to the selection signals
-        if path == RouteConstants.RECIPES_BROWSE_SELECTION and self._navigation_service:
-            current_view = self._navigation_service.get_current_view()
-            if current_view and hasattr(current_view, 'recipe_selected'):
-                # Disconnect any previous connections to avoid duplicates
-                try:
-                    current_view.recipe_selected.disconnect(self._finish_recipe_selection)
-                except TypeError:
-                    pass  # No existing connection
-
-                # Connect to recipe selection signal
-                current_view.recipe_selected.connect(self._finish_recipe_selection)
-                DebugLogger.log("Connected to recipe selection signals from navigation view", "info")
-
-                # Store reference to current selection view for cleanup
-                self._current_selection_view = current_view
+        DebugLogger.log(f"MealPlanner: Navigation completed: {path}", "debug")
+        # Note: Direct connection in _start_recipe_selection works better than relying on this signal
 
     def _on_route_changed(self, path: str, params: Dict[str, str]) -> None:
         """Handle route changes from NavigationService."""
@@ -404,6 +422,5 @@ class MealPlanner(ScrollableNavView):
             DebugLogger.log("Returned to meal planner, clearing any remaining selection context", "debug")
 
     def closeEvent(self, event):
-        # persist planner state before closing
         super().closeEvent(event)
 

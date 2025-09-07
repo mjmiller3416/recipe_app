@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from _dev_tools import DebugLogger
 from ..dtos.ingredient_dtos import IngredientCreateDTO
 from ..dtos.recipe_dtos import RecipeCreateDTO, RecipeFilterDTO, RecipeIngredientDTO
+from ..events import notify_recipe_created, notify_recipe_updated
 from ..models.ingredient import Ingredient
 from ..models.recipe import Recipe
 from ..repositories.ingredient_repo import IngredientRepo
@@ -55,6 +56,8 @@ class RecipeService:
         try:
             recipe = self.recipe_repo.persist_recipe_and_links(recipe_dto)
             self.session.commit()
+            # Notify listeners that a new recipe was created
+            notify_recipe_created(recipe)
             return recipe
         except SQLAlchemyError as err:
             self.session.rollback()
@@ -112,6 +115,8 @@ class RecipeService:
         # persist the change
         try:
             self.session.commit()
+            # Notify listeners that recipe was updated (favorite status changed)
+            notify_recipe_updated(updated_recipe)
         except Exception as e:
             self.session.rollback()
             DebugLogger.log("Failed to toggle recipe {recipe_id} favorite status, rolling back: {e}", "error")
@@ -136,6 +141,8 @@ class RecipeService:
 
             recipe.reference_image_path = image_path
             self.session.commit()
+            # Notify listeners that recipe was updated
+            notify_recipe_updated(recipe)
             DebugLogger.log(f"Updated recipe {recipe_id} default image path to: {image_path}", "info")
             return recipe
         except Exception as e:
@@ -161,6 +168,8 @@ class RecipeService:
 
             recipe.banner_image_path = image_path
             self.session.commit()
+            # Notify listeners that recipe was updated
+            notify_recipe_updated(recipe)
             DebugLogger.log(f"Updated recipe {recipe_id} banner image path to: {image_path}", "info")
             return recipe
         except Exception as e:

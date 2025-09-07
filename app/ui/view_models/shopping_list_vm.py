@@ -47,6 +47,7 @@ class ShoppingListViewModel(BaseViewModel):
         self._shopping_service: Optional[ShoppingService] = None
 
         # Shopping list state
+        self._active_meal_ids: List[int] = []
         self._active_recipe_ids: List[int] = []
         self._grouped_items: Dict[str, List] = {}
         self._manual_items: List = []
@@ -74,31 +75,33 @@ class ShoppingListViewModel(BaseViewModel):
 
     # ── Shopping List Operations ────────────────────────────────────────────────────────────────────────────────
 
-    def generate_shopping_list(self, recipe_ids: List[int]) -> bool:
+    def generate_shopping_list(self, meal_ids: List[int]) -> bool:
         """
-        Generate shopping list from recipe IDs.
+        Generate shopping list from meal IDs.
 
         Args:
-            recipe_ids: List of recipe IDs to generate shopping list from
+            meal_ids: List of meal IDs to generate shopping list from
 
         Returns:
             bool: True if successful, False otherwise
         """
-        if not recipe_ids:
-            self._emit_validation_errors(["Recipe IDs are required to generate shopping list"])
-            return False
+        if not meal_ids:
+            DebugLogger.log("No meal IDs provided, clearing shopping list", "info")
+            return self.clear_shopping_list()
 
         if not self._ensure_shopping_service():
             return False
 
         try:
-            self._set_loading_state(True, "Generating shopping list")
+            self._set_loading_state(True, "Generating shopping list from meals")
 
-            # Store active recipe IDs
-            self._active_recipe_ids = recipe_ids.copy()
+            # Store active meal IDs and get recipe IDs for breakdown
+            self._active_meal_ids = meal_ids.copy()
+            recipe_ids = self._shopping_service.get_recipe_ids_from_meals(meal_ids)
+            self._active_recipe_ids = recipe_ids
 
-            # Generate shopping list via service
-            self._shopping_service.generate_shopping_list(recipe_ids)
+            # Generate shopping list via service (pass meal IDs)
+            self._shopping_service.generate_shopping_list(meal_ids)
 
             # Fetch updated shopping items
             ingredients = self._shopping_service.shopping_repo.get_all_shopping_items()
@@ -165,8 +168,8 @@ class ShoppingListViewModel(BaseViewModel):
             self._shopping_service.add_manual_item(dto)
 
             # Refresh shopping list to show new item
-            if self._active_recipe_ids:
-                self.generate_shopping_list(self._active_recipe_ids)
+            if self._active_meal_ids:
+                self.generate_shopping_list(self._active_meal_ids)
 
             self._set_processing_state(False)
             self.manual_item_added.emit(f"Added {name} to shopping list")
@@ -283,12 +286,12 @@ class ShoppingListViewModel(BaseViewModel):
     # ── State Management ────────────────────────────────────────────────────────────────────────────────────────
 
     def refresh_current_list(self) -> bool:
-        """Refresh the current shopping list using active recipe IDs."""
-        if not self._active_recipe_ids:
-            self._emit_validation_errors(["No active recipes to refresh from"])
+        """Refresh the current shopping list using active meal IDs."""
+        if not self._active_meal_ids:
+            self._emit_validation_errors(["No active meals to refresh from"])
             return False
 
-        return self.generate_shopping_list(self._active_recipe_ids)
+        return self.generate_shopping_list(self._active_meal_ids)
     
     def load_existing_shopping_items(self) -> bool:
         """
@@ -299,7 +302,9 @@ class ShoppingListViewModel(BaseViewModel):
         Returns:
             bool: True if successful, False otherwise
         """
+        DebugLogger.log("load_existing_shopping_items: Starting to load existing shopping items", "info")
         if not self._ensure_shopping_service():
+            DebugLogger.log("load_existing_shopping_items: Failed to ensure shopping service", "error")
             return False
             
         try:
@@ -307,7 +312,7 @@ class ShoppingListViewModel(BaseViewModel):
             
             # Fetch all existing shopping items
             ingredients = self._shopping_service.shopping_repo.get_all_shopping_items()
-            DebugLogger.log(f"Loaded {len(ingredients)} existing shopping items", "debug")
+            DebugLogger.log(f"Loaded {len(ingredients)} existing shopping items", "info")
             
             # Get breakdown mapping (may be empty if no active recipes)
             self._breakdown_map = self._shopping_service.shopping_repo.get_ingredient_breakdown(self._active_recipe_ids)
@@ -317,7 +322,10 @@ class ShoppingListViewModel(BaseViewModel):
             # Organize items by category
             self._organize_items(ingredients)
             
+            DebugLogger.log(f"After organizing: {len(self._grouped_items)} categories, {len(self._manual_items)} manual items", "info")
+            
             # Emit updated data to UI
+            DebugLogger.log("Emitting list_updated signal to UI", "info")
             self.list_updated.emit(self._grouped_items, self._manual_items)
             self.categories_changed.emit(self._get_category_counts())
             
@@ -343,6 +351,7 @@ class ShoppingListViewModel(BaseViewModel):
             self._grouped_items.clear()
             self._manual_items.clear()
             self._breakdown_map.clear()
+            self._active_meal_ids.clear()
             self._active_recipe_ids.clear()
 
             # Emit cleared state

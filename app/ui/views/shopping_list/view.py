@@ -13,6 +13,7 @@ sections for improved user experience.
 from PySide6.QtCore import Qt
 
 from _dev_tools import DebugLogger
+from app.core.events import get_recipe_event_manager
 from app.style import Qss, Theme
 
 from ...components.layout.card import ActionCard, Card
@@ -36,6 +37,7 @@ class ShoppingList(ScrollableNavView):
     Follows MVVM pattern with ShoppingListViewModel handling business logic.
     """
 
+
     def __init__(self, parent=None):
         """Initialize the shopping list view.
 
@@ -50,9 +52,17 @@ class ShoppingList(ScrollableNavView):
         self.setObjectName("ShoppingList")
         Theme.register_widget(self, Qss.SHOPPING_LIST)
 
-        # Track currently loaded recipes for refresh operations
-        self.active_recipe_ids: list[int] = []
-        
+        # Track currently loaded meals for refresh operations
+        self.active_meal_ids: list[int] = []
+
+        # CRITICAL: Connect ViewModel signals to view handlers
+        self._connect_view_model_signals()
+
+        # Connect to meal plan updates
+        event_manager = get_recipe_event_manager()
+        event_manager.meal_plan_updated.connect(self._on_meal_plan_updated)
+        DebugLogger.log("ShoppingList: Connected to meal plan update events", "info")
+
         # Load existing shopping items from database on initialization
         self.view_model.load_existing_shopping_items()
 
@@ -150,11 +160,16 @@ class ShoppingList(ScrollableNavView):
             grouped: Dict mapping category names to lists of ShoppingItems.
             manual_items: List of manually added ShoppingItems.
         """
+        DebugLogger.log(f"_render_category_columns called with grouped={list(grouped.keys())}, manual_items={len(manual_items)}", "info")
+
         all_sections = list(grouped.items())
         if manual_items:
             all_sections.append(("Manual Entries", manual_items))
 
+        DebugLogger.log(f"Total sections to render: {len(all_sections)}", "info")
+
         for category, items in all_sections:
+            DebugLogger.log(f"Rendering category '{category}' with {len(items)} items", "info")
             category_widget = self._create_category_section(category, items)
             self.list_container.addWidget(category_widget)
 
@@ -180,17 +195,17 @@ class ShoppingList(ScrollableNavView):
         return category_widget
 
     # ── Public Interface ────────────────────────────────────────────────────────────────────────────────────
-    def loadShoppingList(self, recipe_ids: list[int]) -> None:
-        """Generate and display a categorized shopping list from recipes.
+    def loadShoppingList(self, meal_ids: list[int]) -> None:
+        """Generate and display a categorized shopping list from meals.
 
         Args:
-            recipe_ids: List of recipe IDs to generate the shopping list from.
+            meal_ids: List of meal IDs to generate the shopping list from.
         """
-        self.active_recipe_ids = recipe_ids
-        DebugLogger.log(f"ShoppingList.loadShoppingList: recipe_ids={recipe_ids}", "debug")
+        self.active_meal_ids = meal_ids
+        DebugLogger.log(f"ShoppingList.loadShoppingList: meal_ids={meal_ids}", "debug")
 
         self._prepare_ui_for_refresh()
-        self._refresh_shopping_data(recipe_ids)
+        self._refresh_shopping_data(meal_ids)
 
     # ── Private Helper Methods ──────────────────────────────────────────────────────────────────────────────
     def _prepare_ui_for_refresh(self) -> None:
@@ -212,13 +227,13 @@ class ShoppingList(ScrollableNavView):
             if item and item.widget() and hasattr(item.widget(), 'cleanup'):
                 item.widget().cleanup()
 
-    def _refresh_shopping_data(self, recipe_ids: list[int]) -> None:
+    def _refresh_shopping_data(self, meal_ids: list[int]) -> None:
         """Refresh shopping data using the ViewModel.
 
         Args:
-            recipe_ids: Recipe IDs to generate shopping list from.
+            meal_ids: Meal IDs to generate shopping list from.
         """
-        self.view_model.generate_shopping_list(recipe_ids)
+        self.view_model.generate_shopping_list(meal_ids)
 
     # ── ViewModel Signal Handlers ───────────────────────────────────────────────────────────────────────────
     def _on_list_updated(self, grouped_items: dict, manual_items: list) -> None:
@@ -228,7 +243,7 @@ class ShoppingList(ScrollableNavView):
             grouped_items: Items grouped by category.
             manual_items: Manually added items.
         """
-        DebugLogger.log("Shopping list updated by ViewModel", "debug")
+        DebugLogger.log(f"Shopping list updated by ViewModel: {len(grouped_items)} categories, {len(manual_items)} manual items", "info")
         self._render_category_columns(grouped_items, manual_items)
 
     def _on_manual_item_added(self, message: str) -> None:
@@ -238,7 +253,7 @@ class ShoppingList(ScrollableNavView):
             message: Success message to display.
         """
         DebugLogger.log(f"Manual item added: {message}", "info")
-        self.show_success_message(message)
+        self._show_success_message(message)
 
     def _on_error_occurred(self, error_type: str, error_message: str) -> None:
         """Handle error from ViewModel.
@@ -248,7 +263,7 @@ class ShoppingList(ScrollableNavView):
             error_message: User-friendly error description.
         """
         DebugLogger.log(f"ViewModel error [{error_type}]: {error_message}", "error")
-        self.show_error_message(error_message)
+        self._show_error_message(error_message)
 
     def _on_validation_failed(self, errors: list) -> None:
         """Handle validation errors from ViewModel.
@@ -258,7 +273,7 @@ class ShoppingList(ScrollableNavView):
         """
         error_message = "; ".join(errors)
         DebugLogger.log(f"Validation failed: {error_message}", "warning")
-        self.show_validation_error(error_message)
+        self._show_validation_error(error_message)
 
     def _on_processing_state_changed(self, is_processing: bool) -> None:
         """Handle processing state change from ViewModel.
@@ -312,3 +327,16 @@ class ShoppingList(ScrollableNavView):
         """
         toast = Toast(f"Validation Error: {message}", self, success=False)
         toast.show_toast()
+
+    def _on_meal_plan_updated(self, meal_ids: list[int]) -> None:
+        """Handle meal plan update event from MealPlanner.
+
+        Args:
+            meal_ids: List of meal IDs in the updated meal plan.
+        """
+        DebugLogger.log(f"ShoppingList: Received meal plan update with {len(meal_ids)} meals", "info")
+        if meal_ids:
+            self.loadShoppingList(meal_ids)
+        else:
+            # Empty meal plan - clear shopping list
+            self.view_model.clear_shopping_list()

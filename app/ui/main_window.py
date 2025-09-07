@@ -144,6 +144,39 @@ class MainWindow(FramelessWindow):
 
         # Connect navigation service signals for header updates
         self.navigation_service.navigation_completed.connect(self._on_navigation_completed)
+        
+        # Preload critical views for better performance
+        self._preload_critical_views()
+
+    def _preload_critical_views(self):
+        """Preload frequently accessed views to eliminate loading delays."""
+        from _dev_tools import DebugLogger
+        from app.ui.managers.navigation.registry import RouteConstants
+        
+        # List of routes to preload
+        critical_routes = [
+            RouteConstants.RECIPES_BROWSE,           # Normal recipe browsing
+            RouteConstants.RECIPES_BROWSE_SELECTION, # Recipe selection for meal planning
+            RouteConstants.MEAL_PLANNER,             # Meal planning view
+            RouteConstants.SHOPPING_LIST,            # Shopping list view
+        ]
+        
+        DebugLogger.log("Preloading critical views for better performance...", "info")
+        
+        for route in critical_routes:
+            try:
+                # Trigger view creation by navigating to it (but don't show it)
+                route_match = NavigationRegistry.match_route(route)
+                if route_match:
+                    # This will create and cache the view instance
+                    view_instance = NavigationRegistry.get_instance(route_match)
+                    DebugLogger.log(f"Preloaded view: {route} ({type(view_instance).__name__})", "info")
+                else:
+                    DebugLogger.log(f"Failed to match route for preloading: {route}", "warning")
+            except Exception as e:
+                DebugLogger.log(f"Failed to preload view {route}: {e}", "error")
+        
+        DebugLogger.log("View preloading completed", "info")
 
     def _navigate_to_route(self, route_path: str):
         """Navigate to a specific route using the navigation service."""

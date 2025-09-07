@@ -12,7 +12,7 @@ This optimized version addresses the major UI performance bottlenecks identified
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 
 from _dev_tools import DebugLogger
 
@@ -24,6 +24,9 @@ from ._filter_bar import FilterBar
 
 
 class RecipeBrowser(ScrollableNavView):
+    
+    # ── Signals ─────────────────────────────────────────────────────────────────────────────────
+    recipe_selected = Signal(int, object)  # recipe_id, recipe_object
 
     def __init__(
         self,
@@ -66,8 +69,14 @@ class RecipeBrowser(ScrollableNavView):
 
     def _populate_recipe_cards(self):
         """Populate view with recipe cards."""
-        # Load recipes using the ViewModel
-        self._view_model.load_recipes()
+        # Only load recipes if not already loaded (performance optimization)
+        if not self._view_model.recipes_loaded_state:
+            DebugLogger.log("RecipeBrowser: Loading recipes from ViewModel", "info")
+            self._view_model.load_recipes()
+        else:
+            DebugLogger.log("RecipeBrowser: Recipes already loaded, skipping database call", "info")
+            # Trigger display of existing recipes
+            self._on_recipes_loaded(self._view_model.current_recipes)
 
     def _connect_view_model_signals(self):
         """Connect ViewModel signals."""
@@ -77,6 +86,9 @@ class RecipeBrowser(ScrollableNavView):
         # Connect recipe selection if in selection mode
         if self._selection_mode:
             self._view_model.set_selection_mode(True)
+            # Forward ViewModel's recipe_selected signal to view's recipe_selected signal
+            self._view_model.recipe_selected.connect(self._on_recipe_selected)
+            DebugLogger.log(f"RecipeBrowser: Connected ViewModel recipe_selected signal in selection mode", "info")
 
     def _connect_signals(self):
         """Connect UI signals."""
@@ -112,6 +124,11 @@ class RecipeBrowser(ScrollableNavView):
     def _clear_recipe_cards(self):
         """Clear all existing recipe cards from the flow layout."""
         self._flow_container.takeAllWidgets()
+
+    def _on_recipe_selected(self, recipe_id: int, recipe: object):
+        """Handle recipe selection from ViewModel and forward to view signal."""
+        DebugLogger.log(f"RecipeBrowser: Recipe selected - ID: {recipe_id}, Name: {recipe.recipe_name}", "info")
+        self.recipe_selected.emit(recipe_id, recipe)
 
     def _navigate_to_recipe(self, recipe):
         """Navigate to the full recipe view."""
