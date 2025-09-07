@@ -29,8 +29,8 @@ from app.ui.utils.layout_utils import (
 from app.ui.view_models.add_recipe_view_model import AddRecipeViewModel
 from app.ui.view_models.ingredient_view_model import IngredientViewModel
 from app.ui.views.base import ScrollableNavView
-from ..add_recipes.cards import DirectionsNotesCard, IngredientsCard
-from ..add_recipes.recipe_form import RecipeForm
+from .cards import DirectionsNotesCard, IngredientsCard
+from .recipe_form import RecipeForm
 
 class AddRecipes(ScrollableNavView):
     """Main add recipes view for creating new recipes with ingredients and directions.
@@ -43,8 +43,8 @@ class AddRecipes(ScrollableNavView):
 
     Follows MVVM pattern with AddRecipeViewModel and IngredientViewModel handling business logic.
     """
-    
-    
+
+
     # ── Initialization ──────────────────────────────────────────────────────────────────────────────────────
     def __init__(self, parent=None):
         """Initialize the add recipes view.

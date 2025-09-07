@@ -14,6 +14,7 @@ from .ingredient_view_model import (
 )
 from .meal_planner_view_model import MealPlannerViewModel
 from .meal_widget_view_model import MealSummaryDTO, MealWidgetViewModel
+from .recipe_browser_view_model import RecipeBrowserViewModel
 
 __all__ = [
     "AddRecipeViewModel",
@@ -25,6 +26,7 @@ __all__ = [
     "MealPlannerViewModel",
     "MealWidgetViewModel",
     "MealSummaryDTO",
+    "RecipeBrowserViewModel",
     "BaseViewModel",
     "BaseValidationResult"
 ]

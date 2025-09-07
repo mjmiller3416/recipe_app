@@ -1,6 +1,68 @@
 """app/ui/components/composite/recipe_browser.py
 
-Shared recipe browser component for displaying recipes in a grid layout.
+RecipeBrowser - Reusable recipe browser component for embedded recipe display.
+
+This component provides recipe browsing functionality for embedding within other views
+or dialogs. It offers basic filtering, sorting, and recipe display capabilities with
+a simpler architecture compared to the full RecipeBrowserView.
+
+## Architecture Relationship
+
+- **RecipeBrowserView**: Full MainView with MVVM pattern, navigation integration
+- **RecipeBrowser (this component)**: Embeddable component with direct service access
+
+Both serve similar purposes but with different architectural approaches:
+
+### RecipeBrowserView (MainView)
+- Full MVVM architecture with ViewModel layer
+- Navigation system integration and lifecycle management
+- Advanced signal architecture and state management
+- Designed for full-screen navigation experiences
+- Route-based initialization and configuration
+
+### RecipeBrowser (Component)
+- Direct RecipeService access for simpler integration
+- Embeddable within other views and dialogs
+- Lightweight with essential features only
+- Event-based signal patterns
+- Constructor-based configuration only
+
+## When to Use Each
+
+**Use RecipeBrowserView when:**
+- Building full-screen recipe browsing experiences
+- Navigation integration is required
+- Complex state management needed
+- MVVM pattern compliance is important
+- Route-based configuration is beneficial
+
+**Use RecipeBrowser (this component) when:**
+- Embedding recipe browsing in dialogs or other views
+- Simple recipe selection workflows
+- Lighter weight integration is preferred
+- Direct control over initialization is needed
+- MVVM overhead is not justified
+
+## Migration Path
+
+Components using RecipeBrowser can be migrated to RecipeBrowserView:
+
+```python
+# Old approach with RecipeBrowser component
+browser = RecipeBrowser(selection_mode=True, card_size=LayoutSize.LARGE)
+browser.recipe_selected.connect(handle_selection)
+
+# New approach with RecipeBrowserView
+browser = RecipeBrowserView(selection_mode=True, card_size=LayoutSize.LARGE)
+browser.recipe_selected.connect(handle_selection)
+```
+
+The APIs are designed to be similar for easier migration.
+
+See Also:
+- `RecipeBrowserView`: Full MainView implementation with MVVM pattern
+- `RecipeBrowserViewModel`: ViewModel for advanced recipe browsing
+- Navigation system documentation
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
@@ -16,7 +78,43 @@ from app.ui.components.widgets import ComboBox
 
 # ── Recipe Browser ──────────────────────────────────────────────────────────────────────────────────────────
 class RecipeBrowser(QWidget):
-    """Reusable recipe browser component with filtering and sorting."""
+    """
+    Lightweight recipe browser component for embedded use cases.
+    
+    This component provides basic recipe browsing functionality with filtering
+    and sorting capabilities. Designed for embedding within other views, dialogs,
+    or components where full MVVM architecture is not required.
+    
+    Key Features:
+    - Category and favorites filtering
+    - Multiple sorting options (A-Z, date, time, servings)
+    - Selection mode for recipe picking workflows
+    - Direct RecipeService integration for simplicity
+    - Configurable card sizing and layout
+    
+    Architecture:
+    - Direct service access (no ViewModel layer)
+    - Simple signal-based communication
+    - Lightweight initialization and lifecycle
+    - Constructor-based configuration only
+    
+    Signals:
+        recipe_card_clicked(Recipe): Recipe card clicked in browse mode
+        recipe_selected(int): Recipe selected in selection mode (recipe ID)
+        
+    Comparison with RecipeBrowserView:
+        RecipeBrowser: Embeddable component, direct service access, lighter weight
+        RecipeBrowserView: Full MainView, MVVM pattern, navigation integration
+        
+    Usage:
+        # Basic browsing
+        browser = RecipeBrowser()
+        browser.recipe_card_clicked.connect(handle_recipe_open)
+        
+        # Selection mode for dialogs
+        browser = RecipeBrowser(selection_mode=True)
+        browser.recipe_selected.connect(handle_recipe_selection)
+    """
 
     recipe_card_clicked = Signal(object)  # recipe object
     recipe_selected = Signal(int)  # recipe ID

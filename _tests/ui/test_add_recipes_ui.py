@@ -21,8 +21,10 @@ import pytestqt
 
 from app.ui.view_models.add_recipe_view_model import AddRecipeViewModel
 from app.ui.view_models.ingredient_view_model import IngredientViewModel
-from app.ui.views.add_recipes.add_recipes import (
-    AddRecipes, IngredientForm, IngredientsCard,
+from app.ui.views.add_recipes.add_recipes_view import (
+    AddRecipes,
+    IngredientForm,
+    IngredientsCard,
 )
 
 @pytest.fixture

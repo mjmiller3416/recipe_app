@@ -210,6 +210,7 @@
       "view_models": "Packages",
       "notifications": "Astro",
       "view_components": "Element",
+      "recipe_browser": "Python",
 
       //** Subfolders **//
       "app_helpers": "App",

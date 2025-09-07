@@ -5,17 +5,16 @@ Form widget for manually adding new items to the shopping list.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtWidgets import (
-    QWidget,
     QGridLayout,
     QLabel,
     QLineEdit,
+    QWidget,
 )
 
-from app.config import MEASUREMENT_UNITS, INGREDIENT_CATEGORIES
-from app.ui.constants import LayoutConstants
+from app.config import INGREDIENT_CATEGORIES, MEASUREMENT_UNITS
 from app.ui.components.widgets.combobox import ComboBox
+from app.ui.constants import LayoutConstants
 from app.ui.utils import set_fixed_height_for_layout_widgets
-
 
 class AddItemForm(QWidget):
     """Form widget for manually adding new items to the shopping list.

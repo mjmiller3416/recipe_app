@@ -23,7 +23,6 @@ from .add_item_form import AddItemForm
 from .collapsible_category import CollapsibleCategory
 from .shopping_item import ShoppingItem
 
-
 class ShoppingList(ScrollableNavView):
     """Main shopping list view for managing shopping items.
 

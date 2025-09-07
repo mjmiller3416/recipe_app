@@ -28,7 +28,7 @@ from .widgets.toggle_switch import ToggleSwitch
 
 __all__ = [
     # Dialogs
-    "CropDialog", "DialogWindow", "RecipeSelection",
+    "CropDialog", "DialogWindow",
     # Forms
     "FormField", "LineEditField", "ComboBoxField",
     # Image

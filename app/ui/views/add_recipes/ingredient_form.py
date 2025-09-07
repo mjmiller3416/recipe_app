@@ -19,6 +19,7 @@ from app.ui.components.inputs.smart_line_edit import SmartLineEdit
 from app.ui.components.widgets.button import ToolButton, Type
 from app.ui.components.widgets.combobox import ComboBox
 from app.ui.utils.form_utils import clear_error_styles, dynamic_validation
+
 class IngredientForm(QWidget):
     
     # ── Signals ──────────────────────────────────────────────────────────────────────────────────────────────

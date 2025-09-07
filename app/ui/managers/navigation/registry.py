@@ -56,6 +56,7 @@ class RouteConstants:
 
     # Recipe routes
     RECIPES_BROWSE = "/recipes/browse"
+    RECIPES_BROWSE_SELECTION = "/recipes/browse/selection"
     RECIPES_ADD = "/recipes/add"
     RECIPES_EDIT = "/recipes/edit/{id}"
     RECIPES_VIEW = "/recipes/view/{id}"

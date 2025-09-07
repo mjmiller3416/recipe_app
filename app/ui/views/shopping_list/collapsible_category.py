@@ -13,11 +13,10 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from app.style.icon.config import Icon
 from app.ui.components.layout.card import BaseCard
 from app.ui.components.widgets.button import BaseButton, ToolButton, Type
 from app.ui.constants import LayoutConstants
-from app.style.icon.config import Icon
-
 
 class CollapsibleCategory(BaseCard):
     """Collapsible category widget for organizing shopping items.
