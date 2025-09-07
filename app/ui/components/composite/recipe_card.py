@@ -119,7 +119,7 @@ class BaseRecipeCard(BaseCard):
         self._setup_stacked_widget()
 
         # Register for theming
-        Theme.register_widget(self, Qss.RECIPE_CARD)
+        # Theme.register_widget(self, Qss.RECIPE_CARD)  # Temporarily commented out for performance testing
 
     # ── Public Methods ───────────────────────────────────────────────────────────────────────
     def set_recipe(self, recipe: Recipe | None) -> None:

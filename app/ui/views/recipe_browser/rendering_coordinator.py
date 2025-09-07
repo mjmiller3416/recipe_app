@@ -196,8 +196,9 @@ class RenderingCoordinator(QObject):
 
     def _setup_card_pool(self):
         """Setup recipe card object pool."""
-        def create_recipe_card() -> BaseRecipeCard:
+        def create_recipe_card_for_pool() -> BaseRecipeCard:
             """Factory function for creating recipe cards."""
+            from app.ui.components.composite.recipe_card import create_recipe_card
             card = create_recipe_card(self._config.display.default_card_size)
             # Connect card signals
             card.card_clicked.connect(self._handle_card_clicked)
@@ -224,7 +225,7 @@ class RenderingCoordinator(QObject):
         # Create widget pool through performance manager
         self._card_pool = self._performance_manager.create_widget_pool(
             name=self._card_pool_name,
-            widget_factory=create_recipe_card,
+            widget_factory=create_recipe_card_for_pool,
             parent_widget=None,  # Will be set when layout container is setup
             max_pool_size=self._config.performance.card_pool_size
         )
@@ -361,7 +362,7 @@ class RenderingCoordinator(QObject):
         Returns:
             bool: True if rendering started successfully, False otherwise
         """
-        if self._render_state != RecipeRenderState.IDLE:
+        if self._render_state not in (RecipeRenderState.IDLE, RecipeRenderState.COMPLETE, RecipeRenderState.ERROR):
             DebugLogger.log("Cannot start rendering: already in progress", "warning")
             return False
 
@@ -743,6 +744,9 @@ class RenderingCoordinator(QObject):
     def clear_rendering(self):
         """Clear all rendered cards and reset state."""
         try:
+            # Reset state immediately to allow new renders
+            old_state = self._render_state
+            self._render_state = RecipeRenderState.IDLE
             # Return all cards to pool
             for card in self._rendered_cards.values():
                 if card:
@@ -769,8 +773,7 @@ class RenderingCoordinator(QObject):
             # Update layout
             self.update_layout_geometry()
 
-            # Reset state
-            self._render_state = RecipeRenderState.IDLE
+            # Reset batch tracking
             self._current_batch = 0
             self._total_batches = 0
 

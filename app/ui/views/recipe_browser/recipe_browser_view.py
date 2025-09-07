@@ -180,10 +180,10 @@ class RecipeBrowser(ScrollableNavView):
                 parent=self
             )
 
-            # Setup rendering layout
+            # Setup rendering layout - create container for FlowLayout and add to content_layout
             container_widget = QWidget()
             self._flow_layout = self._rendering_coordinator.setup_layout_container(container_widget)
-            self.scroll_layout.addWidget(container_widget)
+            self.content_layout.addWidget(container_widget)
 
             DebugLogger.log("All coordinators initialized successfully", "debug")
 
