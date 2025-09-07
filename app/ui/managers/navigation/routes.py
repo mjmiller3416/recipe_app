@@ -77,7 +77,7 @@ def get_sidebar_route_mapping():
     return {
         "btn_dashboard": "/dashboard",
         "btn_meal_planner": "/meal-planner",
-        "btn_view_recipes": "/recipes/browse",        # Normal mode
+        "btn_browse_recipes": "/recipes/browse",        # Normal mode
         "btn_shopping_list": "/shopping-list",
         "btn_add_recipes": "/recipes/add",
         "btn_settings": "/settings"
@@ -320,7 +320,7 @@ def get_sidebar_route_mapping():
     Sidebar Navigation:
         btn_dashboard -> /dashboard (Dashboard view)
         btn_meal_planner -> /meal-planner (Meal Planner view)
-        btn_view_recipes -> /recipes/browse (Recipe Browser in normal mode)
+        btn_browse_recipes -> /recipes/browse (Recipe Browser in normal mode)
         btn_shopping_list -> /shopping-list (Shopping List view)
         btn_add_recipes -> /recipes/add (Add Recipes view)
         btn_settings -> /settings (Settings view)
@@ -347,7 +347,7 @@ def get_sidebar_route_mapping():
     return {
         "btn_dashboard": RouteConstants.DASHBOARD,
         "btn_meal_planner": RouteConstants.MEAL_PLANNER,
-        "btn_view_recipes": RouteConstants.RECIPES_BROWSE,
+        "btn_browse_recipes": RouteConstants.RECIPES_BROWSE,
         "btn_shopping_list": RouteConstants.SHOPPING_LIST,
         "btn_add_recipes": RouteConstants.RECIPES_ADD,
         "btn_settings": RouteConstants.SETTINGS

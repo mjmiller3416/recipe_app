@@ -363,8 +363,8 @@ class RecipeBrowser(ScrollableNavView):
             self._scroll_area.updateGeometry()
 
         # Optimized event processing - batch updates
-        from PySide6.QtCore import QCoreApplication
-        QCoreApplication.processEvents(QCoreApplication.ProcessEventsFlag.ExcludeUserInputEvents)
+        from PySide6.QtCore import QCoreApplication, QEventLoop
+        QCoreApplication.processEvents(QEventLoop.ProcessEventsFlag.ExcludeUserInputEvents)
 
     # ── Event Handlers with Debouncing ──────────────────────────────────────────────────────────────────────
     def _on_category_filter_changed_debounced(self, category: str):
