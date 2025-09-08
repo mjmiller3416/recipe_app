@@ -3,6 +3,7 @@
 from .sidebar import Sidebar
 from .titlebar import TitleBar
 
+
 __all__ = [
     "Sidebar",
     "TitleBar"

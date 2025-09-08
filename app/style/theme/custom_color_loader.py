@@ -12,9 +12,8 @@ import json
 from pathlib import Path
 from typing import Dict, Optional
 
-from _dev_tools.debug_logger import DebugLogger
-
 from .config import Mode
+from _dev_tools.debug_logger import DebugLogger
 
 
 # ── Custom Color Loader ─────────────────────────────────────────────────────────────────────────────────────

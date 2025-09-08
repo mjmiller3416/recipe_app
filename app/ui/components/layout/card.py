@@ -20,9 +20,15 @@ from typing import Optional
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
-    QFrame, QGridLayout, QHBoxLayout, QLabel,
-    QLayout, QSizePolicy, QVBoxLayout, QWidget)
-
+    QFrame,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLayout,
+    QSizePolicy,
+    QVBoxLayout,
+    QWidget,
+)
 from app.style import Qss, Theme
 from app.style.effects import Effects, Shadow
 from app.style.icon import AppIcon, Name, Type

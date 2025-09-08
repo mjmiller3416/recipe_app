@@ -9,6 +9,7 @@ from enum import Enum
 
 from PySide6.QtGui import QColor
 
+
 # ── Shadow Effect Enum ──────────────────────────────────────────────────────────────────────────────────────
 ShadowStyle = namedtuple("ShadowStyle", "color blur_radius offset_x offset_y")
 

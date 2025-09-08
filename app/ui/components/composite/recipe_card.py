@@ -15,34 +15,49 @@ Functions:
     create_recipe_card: Factory function for creating appropriate card size
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
+# ── Imports ──
 from __future__ import annotations
 
 from enum import Enum
 from typing import Optional
 
-from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import QDialog, QFrame, QHBoxLayout, QLabel, QStackedWidget, QVBoxLayout, QWidget
+from PySide6.QtCore import (
+    QSize,
+    Qt,
+    Signal)
+from PySide6.QtWidgets import (
+    QDialog,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QStackedWidget,
+    QVBoxLayout,
+    QWidget)
 
-from app.core.models.recipe import Recipe
-from app.core.services.recipe_service import RecipeService
-from app.style import Theme
-from app.style.icon import AppIcon, Name, Type
-from app.style.theme.config import Qss
-from app.ui.components.layout.card import BaseCard
+from _dev_tools import DebugLogger
+from app.core.models import Recipe
+from app.core.services import RecipeService
+from app.style import (
+    Theme,
+    Qss)
+from app.style.icon import (
+    AppIcon,
+    Name,
+    Type)
 from app.ui.components.layout import Separator
-from app.ui.components.widgets import RoundedImage, ToolButton
-from app.ui.helpers.ui_helpers import make_overlay
-from _dev_tools.debug_logger import DebugLogger
+from app.ui.components.layout.card import BaseCard
+from app.ui.components.widgets import (
+    RoundedImage,
+    ToolButton)
+from app.ui.utils import make_overlay
 
 
-# ── Constants ────────────────────────────────────────────────────────────────────────────────────────────────────
+# ── Constants ──
 LAYOUT_SIZE = {
     "small": QSize(300, 120),
     "medium": QSize(280, 420),
     "large": QSize(1200, 600),
 }
-ICON_COLOR = "#6ad7ca"
 
 
 # ── Enums ───────────────────────────────────────────────────────────────────────────────────────────────────

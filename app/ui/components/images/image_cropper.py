@@ -7,11 +7,12 @@ Refactored image cropping components with separation of concerns.
 from PySide6.QtCore import QPointF, QRect, QRectF, QSizeF, Qt, Signal
 from PySide6.QtGui import QColor, QMouseEvent, QPainter, QPainterPath, QPen, QPixmap
 from PySide6.QtWidgets import QLabel, QSizePolicy
-
 from app.core.utils.image_utils import (
-    img_calc_scale_factor, img_crop_from_scaled_coords, img_scale_to_fit
+    img_calc_scale_factor,
+    img_crop_from_scaled_coords,
+    img_scale_to_fit,
 )
-from app.ui.helpers.dialog_helpers import MIN_CROP_DIM_ORIGINAL
+from app.config import AppConfig
 
 
 # ── Constants ────────────────────────────────────────────────────────────────────────────────
@@ -29,7 +30,7 @@ class CropRectangle:
 
     def initialize_for_image(self, scaled_pixmap: QPixmap, scale_factor: float):
         """Initialize crop rectangle for given image dimensions."""
-        min_dim_scaled = max(1.0, MIN_CROP_DIM_ORIGINAL * scale_factor)
+        min_dim_scaled = max(1.0, AppConfig.MIN_CROP_DIM_ORIGINAL * scale_factor)
         max_dim_scaled = min(scaled_pixmap.width(), scaled_pixmap.height())
 
         initial_dim = max(min_dim_scaled, max_dim_scaled * 0.75)
@@ -163,7 +164,7 @@ class CropInteractionHandler:
             return True
 
         elif self.active_handle:
-            min_size = max(1.0, MIN_CROP_DIM_ORIGINAL * scale_factor)
+            min_size = max(1.0, AppConfig.MIN_CROP_DIM_ORIGINAL * scale_factor)
             self.crop_rect.resize_from_handle(
                 self.active_handle, pos_on_image,
                 self.drag_start_rect, bounds, min_size
@@ -249,7 +250,7 @@ class ImageCropper(QLabel):
         self.setMouseTracking(True)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.setMinimumSize(MIN_CROP_DIM_ORIGINAL + 40, MIN_CROP_DIM_ORIGINAL + 40)
+        self.setMinimumSize(AppConfig.MIN_CROP_DIM_ORIGINAL + 40, AppConfig.MIN_CROP_DIM_ORIGINAL + 40)
 
         self._update_scaled_pixmap_and_crop_rect()
 

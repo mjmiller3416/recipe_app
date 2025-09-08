@@ -1,6 +1,7 @@
 import os
 import subprocess
 
+
 # Define paths
 ROOT_DIR = "dev_sandbox/qt"  # The root directory to search for .ui files
 RESOURCE_FILE = "resources/icons.qrc"  # Path to .qrc file

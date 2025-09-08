@@ -6,6 +6,7 @@ from app.style.icon.icon import AppIcon
 from app.style.icon.loader import IconLoader
 from app.style.icon.svg_loader import SVGLoader
 
+
 __all__ = [
     "AppIcon",
     "IconLoader",

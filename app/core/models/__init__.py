@@ -9,6 +9,7 @@ from .saved_meal_state import SavedMealState
 from .shopping_item import ShoppingItem
 from .shopping_state import ShoppingState
 
+
 __all__ = [
     "Recipe", 
     "RecipeIngredient", 

@@ -6,9 +6,8 @@ get, set, and toggle settings.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────
 import json
-from pathlib import Path
 
-from app.config.paths.app_paths import AppPaths
+from app.config import AppPaths
 
 
 # ── Class Definition ────────────────────────────────────────────────────────────

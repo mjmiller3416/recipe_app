@@ -5,7 +5,8 @@ This module provides functions to generate realistic test data for the recipe ap
 
 import random
 from datetime import datetime, timedelta
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 
 try:
     from faker import Faker
@@ -14,16 +15,17 @@ except ImportError:
     FAKER_AVAILABLE = False
     print("Warning: faker not installed. Install with: pip install faker")
 
-from app.core.models.recipe import Recipe
+from app.config.app_paths import AppPaths
+from app.core.database.db import DatabaseSession
 from app.core.models.ingredient import Ingredient
-from app.core.models.recipe_ingredient import RecipeIngredient
 from app.core.models.meal_selection import MealSelection
+from app.core.models.recipe import Recipe
 from app.core.models.recipe_history import RecipeHistory
+from app.core.models.recipe_ingredient import RecipeIngredient
 from app.core.models.saved_meal_state import SavedMealState
 from app.core.models.shopping_item import ShoppingItem
 from app.core.models.shopping_state import ShoppingState
-from app.core.database.db import DatabaseSession
-from app.config.paths.app_paths import AppPaths
+
 
 # Initialize Faker if available
 fake = Faker() if FAKER_AVAILABLE else None
@@ -89,26 +91,26 @@ SAMPLE_NOTES = [
 # Ingredient data organized by category
 SAMPLE_INGREDIENTS = {
     "Proteins": [
-        "chicken breast", "ground beef", "salmon", "pork chops", "turkey", "eggs", "tofu", "black beans", 
+        "chicken breast", "ground beef", "salmon", "pork chops", "turkey", "eggs", "tofu", "black beans",
         "chickpeas", "lentils", "shrimp", "cod", "tuna", "bacon", "ham"
     ],
     "Vegetables": [
-        "onions", "garlic", "carrots", "celery", "bell peppers", "tomatoes", "spinach", "broccoli", 
-        "mushrooms", "zucchini", "potatoes", "sweet potatoes", "corn", "peas", "lettuce", "cucumber", 
+        "onions", "garlic", "carrots", "celery", "bell peppers", "tomatoes", "spinach", "broccoli",
+        "mushrooms", "zucchini", "potatoes", "sweet potatoes", "corn", "peas", "lettuce", "cucumber",
         "avocado", "cauliflower", "asparagus", "green beans"
     ],
     "Dairy": [
-        "butter", "olive oil", "cheese", "milk", "heavy cream", "sour cream", "yogurt", "cream cheese", 
+        "butter", "olive oil", "cheese", "milk", "heavy cream", "sour cream", "yogurt", "cream cheese",
         "parmesan cheese", "mozzarella cheese", "cheddar cheese"
     ],
     "Pantry": [
-        "rice", "pasta", "flour", "sugar", "salt", "black pepper", "paprika", "cumin", "oregano", 
-        "basil", "thyme", "garlic powder", "onion powder", "bay leaves", "cinnamon", "vanilla extract", 
-        "soy sauce", "olive oil", "vegetable oil", "vinegar", "lemon juice", "lime juice", "honey", 
+        "rice", "pasta", "flour", "sugar", "salt", "black pepper", "paprika", "cumin", "oregano",
+        "basil", "thyme", "garlic powder", "onion powder", "bay leaves", "cinnamon", "vanilla extract",
+        "soy sauce", "olive oil", "vegetable oil", "vinegar", "lemon juice", "lime juice", "honey",
         "maple syrup", "tomato sauce", "chicken broth", "beef broth", "vegetable broth"
     ],
     "Grains": [
-        "quinoa", "brown rice", "white rice", "oats", "barley", "couscous", "bulgur", "bread", 
+        "quinoa", "brown rice", "white rice", "oats", "barley", "couscous", "bulgur", "bread",
         "tortillas", "crackers"
     ]
 }
@@ -224,10 +226,10 @@ def add_random_images_to_recipe(recipe_data: dict, reference_images: list[str], 
 def get_or_create_ingredient(session, name: str, category: str) -> Ingredient:
     """Get existing ingredient or create new one."""
     ingredient = session.query(Ingredient).filter_by(
-        ingredient_name=name, 
+        ingredient_name=name,
         ingredient_category=category
     ).first()
-    
+
     if not ingredient:
         ingredient = Ingredient(
             ingredient_name=name,
@@ -235,39 +237,39 @@ def get_or_create_ingredient(session, name: str, category: str) -> Ingredient:
         )
         session.add(ingredient)
         session.flush()  # Get the ID
-    
+
     return ingredient
 
 def create_random_ingredients(session, recipe_id: int, ingredient_count: int = None) -> list[RecipeIngredient]:
     """Create random ingredients for a recipe."""
     if ingredient_count is None:
         ingredient_count = random.randint(8, 20)
-    
+
     recipe_ingredients = []
     used_ingredient_ids = set()  # Avoid duplicates in same recipe by tracking IDs
     attempts = 0
     max_attempts = ingredient_count * 3  # Allow some retries to find unique ingredients
-    
+
     while len(recipe_ingredients) < ingredient_count and attempts < max_attempts:
         attempts += 1
-        
+
         # Select random category and ingredient
         category = random.choice(list(SAMPLE_INGREDIENTS.keys()))
         ingredient_name = random.choice(SAMPLE_INGREDIENTS[category])
-        
+
         # Get or create ingredient
         ingredient = get_or_create_ingredient(session, ingredient_name, category)
-        
+
         # Skip if we already have this ingredient for this recipe
         if ingredient.id in used_ingredient_ids:
             continue
-        
+
         used_ingredient_ids.add(ingredient.id)
-        
+
         # Create recipe-ingredient link with random quantity
         quantity = round(random.uniform(0.25, 4.0), 2)
         unit = random.choice(INGREDIENT_UNITS)
-        
+
         recipe_ingredient = RecipeIngredient(
             recipe_id=recipe_id,
             ingredient_id=ingredient.id,
@@ -275,7 +277,7 @@ def create_random_ingredients(session, recipe_id: int, ingredient_count: int = N
             unit=unit
         )
         recipe_ingredients.append(recipe_ingredient)
-    
+
     return recipe_ingredients
 
 
@@ -303,7 +305,7 @@ def seed_recipes(count: int = 25, realistic: bool = True, use_images: bool = Tru
     with DatabaseSession() as session:
         recipes_created = 0
         total_ingredients_created = 0
-        
+
         for i in range(count):
             # Generate recipe data
             if realistic and FAKER_AVAILABLE:
@@ -321,18 +323,18 @@ def seed_recipes(count: int = 25, realistic: bool = True, use_images: bool = Tru
             recipe = Recipe(**recipe_data)
             session.add(recipe)
             session.flush()  # Get the recipe ID
-            
+
             # Create ingredients for this recipe
             recipe_ingredients = create_random_ingredients(session, recipe.id)
             session.add_all(recipe_ingredients)
-            
+
             recipes_created += 1
             total_ingredients_created += len(recipe_ingredients)
-            
+
             # Commit in batches for better performance
             if i % 10 == 9:
                 session.commit()
-        
+
         # Final commit
         session.commit()
 
@@ -350,7 +352,7 @@ def clear_all_recipes() -> int:
     with DatabaseSession() as session:
         # Count recipes before deletion for reporting
         recipe_count = session.query(Recipe).count()
-        
+
         # Delete in order to respect foreign key constraints
         # Order matters - delete dependent tables first
         session.query(ShoppingItem).delete()
@@ -361,7 +363,7 @@ def clear_all_recipes() -> int:
         session.query(RecipeIngredient).delete()  # This links recipes and ingredients
         session.query(Recipe).delete()
         session.query(Ingredient).delete()  # Now safe to delete ingredients
-        
+
         session.commit()
         print(f"Cleared {recipe_count} existing recipes and all related data")
         return recipe_count

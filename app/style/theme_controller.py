@@ -7,17 +7,16 @@ stylesheet and to individual widget-specific stylesheets. It allows for
 run-time changes of source color and light/dark modes.
 """
 import weakref
+
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from typing import Dict, Optional
 
 from PySide6.QtCore import QObject, Signal
 from PySide6.QtWidgets import QApplication, QWidget
-
 from app.core.utils import QSingleton
-from _dev_tools import DebugLogger
-
 from .theme.config import Color, Mode, Qss, Typography
 from .theme.style_sheet import Stylesheet
+from _dev_tools import DebugLogger
 
 
 # ── Theme Manager ───────────────────────────────────────────────────────────────────────────────────────────

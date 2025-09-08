@@ -6,7 +6,6 @@ in a horizontal row layout. Extracted from FullRecipe for use in multiple contex
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtWidgets import QHBoxLayout, QWidget
-
 from app.core.models.recipe import Recipe
 from app.style.icon import Icon
 from app.ui.components.widgets.recipe_tag import RecipeTag

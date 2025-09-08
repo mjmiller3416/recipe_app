@@ -28,6 +28,7 @@
     "editor.parameterHints.enabled": false, // Disable function signature popups
     "editor.acceptSuggestionOnCommitCharacter": false, // Prevent auto-accepting with punctuation
     "editor.acceptSuggestionOnEnter": "smart", // Avoid accidental 'Enter' acceptance
+    "editor.foldingHighlight": false, // Disable folding highlight
 
     "editor.tokenColorCustomizations": {
         "textMateRules": [
@@ -154,6 +155,7 @@
       "**/manage.py": true,
       "**/CLAUDE.md": true,
       "**/review_guide.md": true,
+      "**/.ruff_cache": true,
     },
 
     "files.associations": {
@@ -207,6 +209,8 @@
       "ai_gen": "images",
       "temp_crops": "Images",
       "user_profile": "Images",
+      "settings": "Python",
+      "recipe_browser": "Python",
 
       //** Subfolders **//
       "app_helpers": "App",

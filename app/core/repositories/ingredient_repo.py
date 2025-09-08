@@ -6,7 +6,6 @@ Provides database operations for Ingredient entities.
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-
 from ..models.ingredient import Ingredient
 
 

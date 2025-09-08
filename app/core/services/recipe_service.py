@@ -7,9 +7,6 @@ RecipeService using SQLAlchemy repository pattern.
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
-
-from _dev_tools import DebugLogger
-
 from ..dtos.ingredient_dtos import IngredientCreateDTO
 from ..dtos.recipe_dtos import RecipeCreateDTO, RecipeFilterDTO, RecipeIngredientDTO
 from ..models.ingredient import Ingredient
@@ -17,6 +14,7 @@ from ..models.recipe import Recipe
 from ..repositories.ingredient_repo import IngredientRepo
 from ..repositories.recipe_repo import RecipeRepo
 from .session_manager import session_scope
+from _dev_tools import DebugLogger
 
 
 # ── Exceptions ──────────────────────────────────────────────────────────────────────────────────────────────

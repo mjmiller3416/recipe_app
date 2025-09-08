@@ -7,7 +7,7 @@ Defines color enums, theme modes, and paths to QSS files.
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from enum import Enum
 
-from app.config.paths.app_paths import AppPaths
+from app.config import AppPaths
 
 
 # ── Theme Configuration ─────────────────────────────────────────────────────────────────────────────────────

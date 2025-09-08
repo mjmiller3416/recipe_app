@@ -1,5 +1,6 @@
 import os
 
+
 # Define paths
 BASE_DIR = "app/widgets"  # Adjust based on your project structure
 

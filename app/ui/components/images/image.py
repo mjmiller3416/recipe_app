@@ -9,9 +9,13 @@ from typing import Optional
 
 from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtWidgets import (
-    QHBoxLayout, QSizePolicy, QVBoxLayout,
-    QWidget, QLabel, QStackedWidget)
-
+    QHBoxLayout,
+    QLabel,
+    QSizePolicy,
+    QStackedWidget,
+    QVBoxLayout,
+    QWidget,
+)
 from app.core.utils.image_utils import img_validate_path
 from app.style import Qss, Theme, Type
 from app.style.icon.config import Icon, Name

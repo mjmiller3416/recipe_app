@@ -31,6 +31,7 @@ from __future__ import annotations
 import re
 from typing import Optional
 
+
 __all__ = [
     # String Cleaning & Sanitization
     'sanitize_form_input', 'sanitize_multiline_input',

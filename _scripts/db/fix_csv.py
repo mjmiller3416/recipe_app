@@ -1,6 +1,7 @@
 # fix_csv.py (in recipe_app/database)
 import os
 
+
 # 1. Locate files relative to this script’s folder
 BASE_DIR = os.path.dirname(__file__)  # .../recipe_app/database
 INPUT_CSV  = os.path.join(BASE_DIR, 'recipes_with_ingredients.csv')

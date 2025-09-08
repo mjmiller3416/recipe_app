@@ -17,8 +17,8 @@ from PySide6.QtCore import QByteArray, QRectF, QSize, Qt
 from PySide6.QtGui import QIcon, QPainter, QPixmap
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtWidgets import QApplication
-
 from _dev_tools import DebugLogger
+
 
 # Fallback path for default error icon
 _ERROR_ICON_PATH = Path(__file__).parent.parent.parent / "assets" / "icons" / "error.svg"

@@ -1,17 +1,13 @@
 # app/ui/views/__init__.py
 
-# ── Dashboard View ──
-# ── Add Recipes View ──
-from .add_recipes import AddRecipes
-from .dashboard import Dashboard
-# ── Meal Planner View ──
-from .meal_planner import MealPlanner
-# ── Settings View ──
-from .settings import Settings
-# ── Shopping List View ──
-from .shopping_list import ShoppingList
-# ── View Recipes View ──
-from .view_recipes import ViewRecipes
+from .add_recipes.add_recipes import AddRecipes
+from .dashboard.dashboard import Dashboard
+from .meal_planner.meal_planner import MealPlanner
+from .settings.settings import Settings
+from .shopping_list.shopping_list import ShoppingList
+from .view_recipes.view_recipes import ViewRecipes
+from .recipe_selection import RecipeSelection
+
 
 __all__ = [
     "Dashboard",
@@ -20,4 +16,5 @@ __all__ = [
     "ShoppingList",
     "AddRecipes",
     "Settings",
+    "RecipeSelection",
 ]

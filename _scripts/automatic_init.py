@@ -1,5 +1,6 @@
 import os
 
+
 ROOT_DIR = "app"  # Change this if needed
 
 def create_init_files(root_dir):

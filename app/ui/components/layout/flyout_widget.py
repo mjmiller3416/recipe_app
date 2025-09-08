@@ -9,9 +9,7 @@ from typing import Union
 
 from PySide6.QtCore import QEvent, QPoint, QRect, Qt, QTimer
 from PySide6.QtGui import QScreen
-from PySide6.QtWidgets import (QApplication, QFrame, QMainWindow, QVBoxLayout,
-                               QWidget)
-
+from PySide6.QtWidgets import QApplication, QFrame, QMainWindow, QVBoxLayout, QWidget
 from app.style.animation.animator import Animator
 from _dev_tools import DebugLogger
 
@@ -425,8 +423,13 @@ class FlyoutWidget(QFrame):
 if __name__ == "__main__":
     import sys
 
-    from PySide6.QtWidgets import (QApplication, QLabel, QMainWindow,
-                                   QPushButton, QVBoxLayout)
+    from PySide6.QtWidgets import (
+        QApplication,
+        QLabel,
+        QMainWindow,
+        QPushButton,
+        QVBoxLayout,
+    )
 
     app = QApplication(sys.argv)
 

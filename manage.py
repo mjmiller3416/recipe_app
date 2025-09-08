@@ -6,6 +6,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+
 try:
     import typer
 except ImportError:
@@ -48,7 +49,7 @@ def seed_db(
     Populate database with mock recipe data for development and testing.
     """
     try:
-        from _scripts.mock_data import seed_recipes, clear_all_recipes, get_recipe_count
+        from _scripts.mock_data import clear_all_recipes, get_recipe_count, seed_recipes
     except ImportError as e:
         typer.echo(f"Error importing mock data module: {e}", err=True)
         typer.echo("Make sure all dependencies are installed and the database is configured.", err=True)
@@ -90,7 +91,7 @@ def reset_db(
     Reset database to clean state (drops all recipe data).
     """
     try:
-        from _scripts.mock_data import clear_all_recipes, seed_recipes, get_recipe_count
+        from _scripts.mock_data import clear_all_recipes, get_recipe_count, seed_recipes
     except ImportError as e:
         typer.echo(f"Error importing mock data module: {e}", err=True)
         raise typer.Exit(code=1)
@@ -98,11 +99,11 @@ def reset_db(
     # Check if database has any data in any table
     try:
         from app.core.database.db import DatabaseSession
-        from app.core.models.recipe import Recipe
         from app.core.models.ingredient import Ingredient
-        from app.core.models.recipe_ingredient import RecipeIngredient
         from app.core.models.meal_selection import MealSelection
+        from app.core.models.recipe import Recipe
         from app.core.models.recipe_history import RecipeHistory
+        from app.core.models.recipe_ingredient import RecipeIngredient
         from app.core.models.saved_meal_state import SavedMealState
         from app.core.models.shopping_item import ShoppingItem
         from app.core.models.shopping_state import ShoppingState

@@ -5,11 +5,15 @@ Connects signals to their respective slots for handling sidebar and page navigat
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtWidgets import QStackedWidget
-
 from app.core.services import PlannerService, ShoppingService
 from app.ui.views import (
-    AddRecipes, Dashboard, MealPlanner, Settings, ShoppingList,
-    ViewRecipes)
+    AddRecipes,
+    Dashboard,
+    MealPlanner,
+    Settings,
+    ShoppingList,
+    ViewRecipes,
+)
 from _dev_tools import DebugLogger
 
 

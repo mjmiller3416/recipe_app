@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Set
 
-from app.config.paths import AppPaths
+from app.config import AppPaths
 
 
 # Model capabilities mapping

@@ -21,6 +21,7 @@ from __future__ import annotations
 from fractions import Fraction
 from typing import Dict
 
+
 __all__ = [
     # Quantity Formatting
     'format_quantity',

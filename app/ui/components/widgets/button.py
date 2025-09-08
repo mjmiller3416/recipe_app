@@ -45,8 +45,14 @@ cache_stats = SVGLoader.get_cache_stats()
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QEvent, QSize, Qt
-from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QToolButton
-
+from PySide6.QtWidgets import (
+    QApplication,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QSizePolicy,
+    QToolButton,
+)
 from app.style.icon.config import Name, Type
 from app.style.icon.icon import StateIcon
 from _dev_tools import DebugLogger

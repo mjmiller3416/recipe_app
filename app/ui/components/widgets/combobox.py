@@ -8,10 +8,8 @@ from typing import Sequence
 
 from PySide6.QtCore import QEvent, QStringListModel, Qt, Signal
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QWidget
-
 from app.style import Qss, Theme
 from app.style.icon.config import Name
-
 from .button import ToolButton
 from .dropdown_menu import DropdownMenu
 

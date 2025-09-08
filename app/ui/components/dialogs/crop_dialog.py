@@ -4,15 +4,23 @@ A dialog for cropping images with a square selection area.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import Qt, Signal, Slot
+from PySide6.QtCore import (
+    Qt,
+    Signal,
+    Slot)
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout
-
+from PySide6.QtWidgets import (
+    QFrame,
+    QLabel,
+    QVBoxLayout,
+    QHBoxLayout,
+    QPushButton,
+    QSizePolicy,
+    QSpacerItem)
+from app.config import AppConfig
 from app.ui.components.dialogs.dialog_window import DialogWindow
 from app.ui.components.images.image_cropper import ImageCropper
-from app.ui.helpers.dialog_helpers import (
-    MIN_CROP_DIM_ORIGINAL, SELECT_NEW_IMAGE_CODE, build_crop_buttons,
-    load_pixmap_or_warn)
+from app.ui.utils import load_pixmap_or_warn
 from _dev_tools import DebugLogger
 
 
@@ -63,7 +71,7 @@ class CropDialog(DialogWindow): # Inherit from your BaseDialog or QDialog
             self.btn_cancel,
             self.btn_save,
             self.buttons_layout,
-        ) = build_crop_buttons()
+        ) = self._build_crop_buttons()
 
         self.content_layout.addLayout(self.buttons_layout)
 
@@ -77,7 +85,7 @@ class CropDialog(DialogWindow): # Inherit from your BaseDialog or QDialog
         cropped_pixmap = self.image_cropper.get_cropped_qpixmap()
         if not cropped_pixmap.isNull():
             # Validate final size against original minimum
-            if cropped_pixmap.width() < MIN_CROP_DIM_ORIGINAL or cropped_pixmap.height() < MIN_CROP_DIM_ORIGINAL:
+            if cropped_pixmap.width() < AppConfig.MIN_CROP_DIM_ORIGINAL or cropped_pixmap.height() < AppConfig.MIN_CROP_DIM_ORIGINAL:
                  # This check should ideally be implicitly handled by cropper logic,
                  # but as a final validation:
                 # msg_box = QMessageBox(self)
@@ -97,13 +105,36 @@ class CropDialog(DialogWindow): # Inherit from your BaseDialog or QDialog
             DebugLogger.log("Failed to get valid cropped image from dialog", "error")
             # Potentially show a QMessageBox to the user
 
+    def _build_crop_buttons() -> tuple[QPushButton, QPushButton, QPushButton, QHBoxLayout]:
+        """Create Select-New, Cancel and Save buttons with standard layout."""
+        btn_select_new = QPushButton("Select New Image")
+        btn_select_new.setObjectName("SelectNewButton")
+
+        btn_cancel = QPushButton("Cancel")
+        btn_cancel.setObjectName("CancelButton")
+
+        btn_save = QPushButton("Save Crop")
+        btn_save.setObjectName("SaveButton")
+        btn_save.setDefault(True)
+
+        layout = QHBoxLayout()
+        layout.setSpacing(10)
+        layout.addWidget(btn_select_new)
+        layout.addSpacerItem(
+            QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        )
+        layout.addWidget(btn_cancel)
+        layout.addWidget(btn_save)
+
+        return btn_select_new, btn_cancel, btn_save, layout
+
     @Slot()
     def _on_select_new(self):
         self.select_new_image_requested.emit()
         # Close this dialog with a custom code, or just reject.
         # If UploadRecipeImage handles the signal by re-opening file dialog,
         # then this dialog just needs to close.
-        self.done(SELECT_NEW_IMAGE_CODE)
+        self.done(AppConfig.SELECT_NEW_IMAGE_CODE)
 
     # Optional: Method to get the pixmap if not using signals for some reason
     def get_final_cropped_pixmap(self) -> QPixmap:

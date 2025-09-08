@@ -7,7 +7,6 @@ Used for meal types, categories, dietary preferences, etc.
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel
-
 from app.style import Qss, Theme
 from app.style.icon import AppIcon
 from app.style.icon.config import Icon

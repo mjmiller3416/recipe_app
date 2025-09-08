@@ -5,10 +5,9 @@ with smooth animations. Supports success/error states and customizable positioni
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QTimer, QPropertyAnimation, QRect, QEasingCurve
-from PySide6.QtWidgets import QLabel, QWidget
+from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QRect, QTimer
 from PySide6.QtGui import QFont
-
+from PySide6.QtWidgets import QLabel, QWidget
 from app.style import Theme
 from app.style.theme.config import Qss
 

@@ -6,6 +6,7 @@ database, and handling command-line arguments for special modes like testing and
 # ── Imports ─────────────────────────────────────────────────────────────────────
 import os
 
+
 os.environ["QT_FONT_DPI"] = "96"
 import sys
 
@@ -13,13 +14,15 @@ import qframelesswindow.utils.win32_utils
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
 
+
 # Force-disable the border accent globally in the library
 qframelesswindow.utils.win32_utils.isSystemBorderAccentEnabled = lambda: False
+from dotenv import load_dotenv
 from app.style.theme_controller import Color, Mode, Theme
 from app.ui.main_window import MainWindow
 from app.ui.services.navigation_service import NavigationService
 from _dev_tools import DebugLogger, startup_timer
-from dotenv import load_dotenv
+
 
 if "--reset" in sys.argv:
         pass
@@ -61,7 +64,7 @@ else:
     #Theme.setTheme(Color.TEAL, Mode.DARK)
 
     # ── Custom Color Map ──
-    Theme.setCustomColorMap("material-theme.json", Mode.DARK)
+    Theme.setCustomColorMap("app/style/theme/material-theme.json", Mode.LIGHT)
 
     navigation_service_factory = NavigationService.create
 

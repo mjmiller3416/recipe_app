@@ -11,8 +11,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import NamedTuple, Optional
 
-from .service import ImageGenService, ImageRequest
 from .config import ImageGenConfig
+from .service import ImageGenService, ImageRequest
 from _dev_tools import DebugLogger
 
 

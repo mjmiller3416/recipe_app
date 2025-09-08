@@ -10,7 +10,6 @@ from typing import List, Optional
 
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session, joinedload
-
 from ..models.meal_selection import MealSelection
 from ..models.recipe import Recipe
 from ..models.saved_meal_state import SavedMealState

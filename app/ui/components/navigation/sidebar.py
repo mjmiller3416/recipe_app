@@ -3,31 +3,34 @@
 Sidebar navigation component for the main window.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import QSize, Qt
+# ── Imports ──
+from PySide6.QtCore import (
+    QSize,
+    Qt)
 from PySide6.QtWidgets import (
-    QButtonGroup, QLabel, QSizePolicy, QSpacerItem,
-    QVBoxLayout, QWidget)
+    QButtonGroup,
+    QLabel,
+    QSizePolicy,
+    QSpacerItem,
+    QVBoxLayout,
+    QWidget)
 
+from _dev_tools import DebugLogger
 from app.config import SIDEBAR
 from app.style import Theme
 from app.style.animation import Animator
 from app.style.icon.config import Name, Type
 from app.style.theme.config import Qss
 from app.ui.components.images import AvatarLoader
-from app.ui.helpers.ui_helpers import create_fixed_wrapper
-from _dev_tools import DebugLogger
-
+from app.ui.utils import create_fixed_wrapper
 from ..widgets.button import Button
 
-
-# ── Constants ────────────────────────────────────────────────────────────────────────────────
+# ── Constants ──
 START = SIDEBAR["SETTINGS"]["EXPANDED_WIDTH"]
 END = SIDEBAR["SETTINGS"]["COLLAPSED_WIDTH"]
 DURATION = SIDEBAR["SETTINGS"]["DURATION"]
 
 
-# ── Sidebar ──────────────────────────────────────────────────────────────────────────────────
 class Sidebar(QWidget):
     """A collapsible sidebar widget for navigation."""
 
