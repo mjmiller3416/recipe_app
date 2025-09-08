@@ -211,6 +211,7 @@
       "notifications": "Astro",
       "view_components": "Element",
       "recipe_browser": "Python",
+      "view_recipe": "Python",
 
       //** Subfolders **//
       "app_helpers": "App",

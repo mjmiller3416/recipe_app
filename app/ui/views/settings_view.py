@@ -28,7 +28,7 @@ from app.style import Qss, Theme
 from app.style.icon import Icon
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets import Button, ComboBox
-from app.ui.managers.navigation.views import MainView
+from app.ui.views.base import ScrollableNavView
 
 # ── Settings Category ────────────────────────────────────────────────────────────────────────
 class SettingsCategory(Card):
@@ -233,7 +233,7 @@ class ImageGenerationSettings(SettingsCategory):
 
 
 # ── Settings ─────────────────────────────────────────────────────────────────────────────────
-class Settings(MainView):
+class SettingsView(ScrollableNavView):
     """Main Settings view with category selection and management."""
 
     def __init__(self, parent=None):
@@ -242,6 +242,8 @@ class Settings(MainView):
 
         # Register for theme management
         Theme.register_widget(self, Qss.SETTINGS)
+
+        self._build_ui()
 
         # Settings data
         self.settings_service = SettingsService()

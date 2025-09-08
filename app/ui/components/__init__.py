@@ -16,9 +16,6 @@ from .layout.flow_layout import FlowLayout
 # From layout
 from .layout.separator import Separator
 
-# From navigation
-from .navigation.sidebar import Sidebar
-from .navigation.titlebar import TitleBar
 from .widgets.combobox import ComboBox
 from .widgets.dropdown_menu import DropdownMenu
 
@@ -37,8 +34,6 @@ __all__ = [
     "ComboBox", "SearchBar", "SmartLineEdit", "ToggleSwitch",
     # Layout
     "Separator", "FlowLayout",
-    # Navigation
-    "Sidebar", "TitleBar",
     # Widgets
     "Button", "ToolButton", "RoundedImage", "CircularImage", "DropdownMenu"
 ]

@@ -1,22 +1,22 @@
 # app/ui/views/__init__.py
 
 # ── Primary Views ──
-from .add_recipes.view import AddRecipes
-from .shopping_list.view import ShoppingList
-from .recipe_browser.view import RecipeBrowser
-from .meal_planner.view import MealPlanner
-from .dashboard import Dashboard
-from .settings import Settings
+from .add_recipes.add_recipes_view import AddRecipesView
+from .shopping_list.shopping_list_view import ShoppingListView
+from .recipe_browser.recipe_browser_view import RecipeBrowserView
+from .meal_planner.meal_planner_view import MealPlannerView
+from .dashboard_view import DashboardView
+from .settings_view import SettingsView
 
 # ── Sub Views ──
-from .view_recipe import ViewRecipe
+from .view_recipe.view_recipe import ViewRecipe
 
 __all__ = [
-    "Dashboard",
-    "MealPlanner",
-    "RecipeBrowser",
-    "ShoppingList",
-    "AddRecipes",
-    "Settings",
+    "DashboardView",
+    "MealPlannerView",
+    "RecipeBrowserView",
+    "ShoppingListView",
+    "AddRecipesView",
+    "SettingsView",
     "ViewRecipe",
 ]

@@ -9,11 +9,10 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget
 
 
-from app.ui.managers.navigation.views import MainView
 from app.ui.utils.layout_utils import setup_main_scroll_layout
 
 # ── Scrollable Navigation View ──────────────────────────────────────────────────────────────────────────────
-class ScrollableNavView(MainView):
+class ScrollableNavView(QWidget):
     """Base class for main views with scrollable content."""
 
     def __init__(self, parent=None):
@@ -21,8 +20,6 @@ class ScrollableNavView(MainView):
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setObjectName("BaseView")
         self._setup_scroll_layout()
-        self._build_ui()
-        self._connect_signals()
 
     def _setup_scroll_layout(self):
         """Setup the standard scroll layout - same for all views."""
@@ -39,7 +36,7 @@ class ScrollableNavView(MainView):
 
     def _connect_signals(self):
         """Override in subclasses if signal connections are needed."""
-        pass
+        raise NotImplementedError("Subclasses must implement _connect_signals")
 
     def setContentLayout(self, layout):
         """Replace the default scroll layout with a custom layout (e.g., FlowLayout)."""

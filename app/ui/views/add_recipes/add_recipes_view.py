@@ -1,4 +1,4 @@
-"""app/ui/views/add_recipes/view.py
+"""app/ui/views/add_recipes/add_recipes_view.py
 
 This module defines the AddRecipes screen, which allows users to create new recipes
 with ingredients, directions, and notes. It includes functionality for recipe image
@@ -29,11 +29,11 @@ from ...utils.layout_utils import (
 )
 from ...view_models import AddRecipesViewModel
 from ...view_models import IngredientViewModel
-from ...views.base import ScrollableNavView
+from ..base import ScrollableNavView
 from ._cards import DirectionsNotesCard, IngredientsCard
 from ._forms import RecipeForm
 
-class AddRecipes(ScrollableNavView):
+class AddRecipesView(ScrollableNavView):
     """Main add recipes view for creating new recipes with ingredients and directions.
 
     Allows users to create comprehensive recipes with:
@@ -61,6 +61,8 @@ class AddRecipes(ScrollableNavView):
         DebugLogger.log("Initializing AddRecipes page", "info")
         self.setObjectName("AddRecipes")
         Theme.register_widget(self, Qss.ADD_RECIPE)
+
+        self._build_ui()
 
         # Track stored ingredients for form state management
         self.stored_ingredients = []

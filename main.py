@@ -30,9 +30,6 @@ elif "--test" in sys.argv:
     app = QApplication(sys.argv)
     app.setApplicationName("Test App")
 
-    from _dev_tools.test_harness import TestHarness
-    TestHarness.launch_from_test_file(app)
-
     sys.exit(app.exec())
 
 elif "--import-recipes" in sys.argv:

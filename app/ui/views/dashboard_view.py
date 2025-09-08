@@ -11,10 +11,10 @@ from _dev_tools import DebugLogger
 from app.style.icon.config import Name, Type
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
-from app.ui.managers.navigation.views import MainView
+from app.ui.views.base import ScrollableNavView
 
 # ── Dashboard ────────────────────────────────────────────────────────────────────────────────
-class Dashboard(MainView):
+class DashboardView(ScrollableNavView):
     """Placeholder class for the Dashboard screen."""
 
     def __init__(self, parent=None):
@@ -22,10 +22,9 @@ class Dashboard(MainView):
         DebugLogger.log("Initializing Dashboard page", "info")
         self.setObjectName("Dashboard")
 
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(20, 20, 20, 20)
+        self._build_ui()
 
-        # Example Card
+    def _build_ui(self):
         card = Card(card_type="Primary")
         card.setAttribute(Qt.WA_StyledBackground, True)
         card.expandWidth(False)
@@ -35,7 +34,7 @@ class Dashboard(MainView):
         summary_label.setProperty("font", "Body")
         summary_label.setWordWrap(True)
         card.addWidget(summary_label)
-        self.layout.addWidget(card)
+        self.content_layout.addWidget(card)
 
 
         # add test button with icon
@@ -47,10 +46,11 @@ class Dashboard(MainView):
         self.btn.setIconSize(20, 20)
         self.btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
-        self.layout.addWidget(self.btn)
+        self.content_layout.addWidget(self.btn)
 
         # Add stretch to push content to top
-        self.layout.addStretch()
+        self.content_layout.addStretch()
+
 
 
 

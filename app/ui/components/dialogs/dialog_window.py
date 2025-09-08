@@ -9,7 +9,7 @@ Provides close button and dragging functionality.
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QWidget
 
-from app.ui.components.navigation import TitleBar
+# TODO: Create simplified title bar for dialogs
 from app.ui.utils.layout_utils import center_on_screen
 
 # ── Application Window ──────────────────────────────────────────────────────────────────────────────────────
@@ -48,10 +48,11 @@ class DialogWindow(QDialog):
         self.central_layout.setSpacing(0)
 
         # ── Title Bar ──
-        self.title_bar = TitleBar(self)
-        self.central_layout.addWidget(self.title_bar)
-        # Connect title bar signals for dialog behavior
-        self.title_bar.close_clicked.connect(self.close)
+        # TODO: Implement simplified title bar
+        # self.title_bar = TitleBar(self)
+        # self.central_layout.addWidget(self.title_bar)
+        # # Connect title bar signals for dialog behavior
+        # self.title_bar.close_clicked.connect(self.close)
 
         # ── Window Body ──
         self.window_body = QWidget(self)

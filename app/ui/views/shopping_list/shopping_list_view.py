@@ -1,4 +1,4 @@
-"""app/ui/views/shopping_list/view.py
+"""app/ui/views/shopping_list/shopping_list_view.py
 
 This module defines the ShoppingList screen, which allows users to view and manage their
 shopping list. It includes functionality to add manual items, categorize ingredients, and
@@ -20,12 +20,12 @@ from ...components.layout.card import ActionCard, Card
 from ...components.widgets import Toast
 from ...utils.layout_utils import create_two_column_layout
 from ...view_models import ShoppingListViewModel
-from ...views.base import ScrollableNavView
+from ..base import ScrollableNavView
 from ._add_item_form import AddItemForm
 from ._collapsible_category import CollapsibleCategory
 from ._shopping_item import ShoppingItem
 
-class ShoppingList(ScrollableNavView):
+class ShoppingListView(ScrollableNavView):
     """Main shopping list view for managing shopping items.
 
     Displays shopping items organized by category with functionality to:
@@ -54,6 +54,8 @@ class ShoppingList(ScrollableNavView):
 
         # Track currently loaded meals for refresh operations
         self.active_meal_ids: list[int] = []
+
+        self._build_ui()
 
         # CRITICAL: Connect ViewModel signals to view handlers
         self._connect_view_model_signals()
