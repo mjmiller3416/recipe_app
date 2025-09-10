@@ -440,7 +440,7 @@ class Settings(QWidget):
                     if add_recipes.reload_ai_service():
                         reloaded_count += 1
 
-                # Note: FullRecipe is created dynamically, so we can't reload it here
+                # Note: ViewRecipe is created dynamically, so we can't reload it here
 
                 if reloaded_count > 0:
                     DebugLogger().log(f"Reloaded {reloaded_count} AI service(s) with new settings", "info")

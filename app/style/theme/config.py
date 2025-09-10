@@ -82,5 +82,5 @@ class Qss(Enum):
     SETTINGS          = AppPaths.QSS_DIR / "settings.qss"
     SHOPPING_LIST     = AppPaths.QSS_DIR / "shopping_list.qss"
     BROWSE_RECIPES      = AppPaths.QSS_DIR / "browse_recipes.qss"
-    FULL_RECIPE       = AppPaths.QSS_DIR / "full_recipe.qss"
+    FULL_RECIPE       = AppPaths.QSS_DIR / "view_recipe.qss"
 

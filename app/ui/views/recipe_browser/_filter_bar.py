@@ -1,3 +1,7 @@
+"""app/ui/views/recipe_browser/_filter_bar.py
+
+A filter bar for filtering recipes by category, cuisine, and preparation time.
+"""
 
 # ── Imports ──
 from PySide6.QtCore import Signal
@@ -5,6 +9,7 @@ from PySide6.QtWidgets import QWidget, QHBoxLayout, QCheckBox
 
 from app.config import RECIPE_CATEGORIES, SORT_OPTIONS
 from app.ui.components.widgets import ComboBox
+
 
 class FilterBar(QWidget):
     """A filter bar for filtering recipes by category, cuisine, and preparation time."""
@@ -19,16 +24,18 @@ class FilterBar(QWidget):
 
     def _build_ui(self):
         # filter and sort controls
-        self.lyt_cb = QHBoxLayout()
-        self.lyt_cb.setSpacing(10)
+        self.lyt_main = QHBoxLayout()
+        self.lyt_main.setSpacing(10)
 
         self.cb_filter = ComboBox(list_items=RECIPE_CATEGORIES, placeholder="Filter")
         self.cb_sort = ComboBox(list_items=SORT_OPTIONS, placeholder="Sort")
         self.chk_favorites = QCheckBox("Show Favorites Only")
 
-        self.lyt_cb.addWidget(self.cb_filter)
-        self.lyt_cb.addWidget(self.cb_sort)
-        self.lyt_cb.addWidget(self.chk_favorites)
+        self.lyt_main.addWidget(self.cb_filter)
+        self.lyt_main.addWidget(self.cb_sort)
+        self.lyt_main.addWidget(self.chk_favorites)
+
+        self.setLayout(self.lyt_main)
 
     def _connect_signals(self):
         # connect signals

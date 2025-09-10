@@ -97,7 +97,7 @@ class BaseRecipeCard(BaseCard):
         self._size: LayoutSize = size
         self._recipe: Optional[Recipe] = None
         self._recipe_selection_dialog: Optional[QDialog] = None
-        self._selection_mode: bool = False  # When True, prevents FullRecipe dialog from opening
+        self._selection_mode: bool = False  # When True, prevents ViewRecipe dialog from opening
 
         # Set fixed size based on size category
         self.setFixedSize(LAYOUT_SIZE[size.value])
@@ -148,7 +148,7 @@ class BaseRecipeCard(BaseCard):
         """Set whether this card is in selection mode.
 
         Args:
-            selection_mode (bool): If True, clicking the card won't open FullRecipe dialog.
+            selection_mode (bool): If True, clicking the card won't open ViewRecipe dialog.
         """
         self._selection_mode = selection_mode
 

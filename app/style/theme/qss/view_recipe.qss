@@ -3,7 +3,7 @@
    ------------------------------------------------------------------ */
 
 /* ── Main Container ──────────────────────────────────────────── */
-QWidget#FullRecipe {
+QWidget#ViewRecipe {
     background-color: {surface};
 }
 

@@ -1,7 +1,7 @@
 """app/ui/components/composite/recipe_info_cards.py
 
 A reusable component for displaying recipe information cards (time, servings, category, dietary)
-in a horizontal row layout. Extracted from FullRecipe for use in multiple contexts.
+in a horizontal row layout. Extracted from ViewRecipe for use in multiple contexts.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────

@@ -7,7 +7,7 @@ from .meal_planner.meal_planner import MealPlanner
 from .recipe_browser.recipe_browser import RecipeBrowser
 from .settings.settings import Settings
 from .shopping_list.shopping_list import ShoppingList
-from .full_recipe import FullRecipe
+from .view_recipe.view_recipe import ViewRecipe
 
 __all__ = [
     "Dashboard",
@@ -17,5 +17,5 @@ __all__ = [
     "AddRecipes",
     "Settings",
     "BaseView",
-    "FullRecipe",
+    "ViewRecipe",
 ]

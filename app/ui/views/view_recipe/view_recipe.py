@@ -1,6 +1,6 @@
-"""app/ui/views/full_recipe.py
+"""app/ui/views/view_recipe.py
 
-FullRecipe view redesigned to match mock UI with:
+ViewRecipe view redesigned to match mock UI with:
 - Title + recipe tags
 - Banner image placeholder (fixed 2:1 aspect ratio)
 - Horizontal info cards (time, servings, category, dietary)
@@ -19,191 +19,24 @@ from pathlib import Path
 from typing import Iterable
 
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import (QHBoxLayout, QLabel, QSizePolicy, QVBoxLayout,
-                               QWidget)
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QSizePolicy, QWidget
 
 from _dev_tools.debug_logger import DebugLogger
 from app.core.models import Recipe
-from app.core.utils import sanitize_form_input, sanitize_multiline_input
-from app.style import Qss, Theme
+from app.core.utils import sanitize_form_input
+from app.style import Qss, Theme, Name, Type
 from app.style.icon import AppIcon, Icon
-from app.style.icon.config import Name, Type
 from app.ui.components.composite.recipe_info_card import RecipeInfoCard
 from app.ui.components.images.image import RecipeBanner
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
 from app.ui.components.widgets.recipe_tag import RecipeTag
-from app.ui.utils import (apply_object_name_pattern, batch_connect_signals,
-                          create_form_grid_layout, create_two_column_layout,
-                          setup_main_scroll_layout)
+from app.ui.utils import create_two_column_layout, setup_main_scroll_layout
+from .directions_list import DirectionsList
+from .ingredients_list import IngredientList
 
-
-# ── Ingredient List ──────────────────────────────────────────────────────────────────────────
-class IngredientList(QWidget):
-    """A list widget for displaying recipe ingredients with amounts and names."""
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setObjectName("IngredientList")
-
-        # Main layout
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(0, 0, 0, 0)
-        self.layout.setSpacing(12)
-
-    def setIngredients(self, ingredient_details: Iterable):
-        """Set the ingredients to display."""
-        # Clear existing ingredients
-        self._clearIngredients()
-
-        # Add new ingredients
-        for detail in ingredient_details:
-            self._addIngredientItem(detail)
-
-    def _clearIngredients(self):
-        """Clear all ingredient items from the layout."""
-        while self.layout.count():
-            child = self.layout.takeAt(0)
-            if child.widget():
-                child.widget().deleteLater()
-
-    def _addIngredientItem(self, detail):
-        """Add a single ingredient item to the list."""
-        # Create ingredient row widget with utility
-        item_widget = QWidget()
-        apply_object_name_pattern(item_widget, "Ingredient", "Item")
-
-        # Create standardized grid layout
-        item_layout = create_form_grid_layout(
-            item_widget, margins=(0, 0, 0, 0), spacing=10
-        )
-        item_layout.setVerticalSpacing(0)
-
-        # Set column stretch: quantity (fixed), unit (fixed), name (expanding)
-        item_layout.setColumnStretch(0, 0)  # Quantity column - fixed width
-        item_layout.setColumnStretch(1, 0)  # Unit column - fixed width
-        item_layout.setColumnStretch(2, 1)  # Name column - expanding
-
-        # Get formatted ingredient details using new DTO properties
-        formatted_qty = getattr(detail, 'formatted_quantity', '')
-        abbreviated_unit = getattr(detail, 'abbreviated_unit', '')
-        ingredient_name = getattr(detail, "ingredient_name", "") or ""
-
-        # Create labels with consistent patterns
-        qty_label = self._create_ingredient_label(
-            formatted_qty, "Ingredient", "Quantity",
-            Qt.AlignRight | Qt.AlignVCenter, fixed_width=60
-        )
-        unit_label = self._create_ingredient_label(
-            abbreviated_unit, "Ingredient", "Unit",
-            Qt.AlignLeft | Qt.AlignVCenter, fixed_width=50
-        )
-        name_label = self._create_ingredient_label(
-            ingredient_name, "Ingredient", "Name",
-            Qt.AlignLeft | Qt.AlignVCenter
-        )
-
-        # Add to grid: row 0, columns 0, 1, 2
-        item_layout.addWidget(qty_label, 0, 0)
-        item_layout.addWidget(unit_label, 0, 1)
-        item_layout.addWidget(name_label, 0, 2)
-
-        # Add to main layout
-        self.layout.addWidget(item_widget)
-
-    def _create_ingredient_label(self, text: str, context: str, label_type: str,
-                               alignment: Qt.AlignmentFlag, fixed_width: int = None) -> QLabel:
-        """Create a standardized ingredient label with consistent styling."""
-        label = QLabel(text)
-        apply_object_name_pattern(label, context, label_type)
-        label.setAlignment(alignment)
-        if fixed_width:
-            label.setFixedWidth(fixed_width)
-        return label
-
-
-# ── Directions List ──────────────────────────────────────────────────────────────────────────
-class DirectionsList(QWidget):
-    """A numbered list widget for displaying recipe directions."""
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setObjectName("DirectionsList")
-
-        # Main layout
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(0, 0, 0, 0)
-        self.layout.setSpacing(15)
-
-    def setDirections(self, directions: str):
-        """Set the directions to display."""
-        # Clear existing directions
-        self._clearDirections()
-
-        # Parse directions using text sanitization utility
-        sanitized_directions = sanitize_multiline_input(directions) if directions else ""
-        steps = sanitized_directions.splitlines() if sanitized_directions else []
-
-        if not steps:
-            empty_label = QLabel("No directions available.")
-            empty_label.setObjectName("EmptyDirections")
-            empty_label.setWordWrap(True)
-            self.layout.addWidget(empty_label)
-        else:
-            # Add numbered steps
-            for i, step in enumerate(steps, start=1):
-                self._addDirectionItem(i, step)
-
-    def _clearDirections(self):
-        """Clear all direction items from the layout."""
-        while self.layout.count():
-            child = self.layout.takeAt(0)
-            if child.widget():
-                child.widget().deleteLater()
-
-    def _addDirectionItem(self, number: int, text: str):
-        """Add a single direction item to the list."""
-        # Create direction row widget with utility
-        item_widget = QWidget()
-        apply_object_name_pattern(item_widget, "Direction", "Item")
-
-        item_layout = QHBoxLayout(item_widget)
-        item_layout.setContentsMargins(0, 0, 0, 0)
-        item_layout.setSpacing(12)
-
-        # Create standardized labels
-        number_label = self._create_direction_label(
-            f"{number}.", "Direction", "Number",
-            Qt.AlignLeft | Qt.AlignTop, min_width=30
-        )
-        text_label = self._create_direction_label(
-            text, "Direction", "Text",
-            Qt.AlignLeft | Qt.AlignTop, word_wrap=True
-        )
-
-        # Add to layout
-        item_layout.addWidget(number_label)
-        item_layout.addWidget(text_label, 1)
-
-        # Add to main layout
-        self.layout.addWidget(item_widget)
-
-    def _create_direction_label(self, text: str, context: str, label_type: str,
-                              alignment: Qt.AlignmentFlag, min_width: int = None,
-                              word_wrap: bool = False) -> QLabel:
-        """Create a standardized direction label with consistent styling."""
-        label = QLabel(text)
-        apply_object_name_pattern(label, context, label_type)
-        label.setAlignment(alignment)
-        if min_width:
-            label.setMinimumWidth(min_width)
-        if word_wrap:
-            label.setWordWrap(True)
-        return label
-
-
-# ── FullRecipe View ─────────────────────────────────────────────────────────────────────────
-class FullRecipe(QWidget):
+# ── ViewRecipe View ─────────────────────────────────────────────────────────────────────────
+class ViewRecipe(QWidget):
     """Full recipe detail view (visual-only, no editing/upload yet)."""
 
     back_clicked = Signal()
@@ -216,7 +49,7 @@ class FullRecipe(QWidget):
         # Register this view for component-scoped QSS.
         Theme.register_widget(self, Qss.FULL_RECIPE)
 
-        self.setObjectName("FullRecipe")
+        self.setObjectName("ViewRecipe")
         self._cached_recipe_data = None
         self._build_ui()
 

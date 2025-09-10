@@ -239,7 +239,7 @@ class RecipeBanner(BaseImage):
     - Single banner image generation
     - Large banner display
     - View/regenerate functionality
-    - Used in FullRecipe view
+    - Used in ViewRecipe view
     """
 
     def __init__(self, parent=None):

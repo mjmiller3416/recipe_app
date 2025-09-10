@@ -65,17 +65,19 @@ class RecipeBrowser(BaseView):
 
     def _build_ui(self):
         """Build the UI with filters and recipe grid."""
-        # Add filter bar to the content layout
-        self.filter_bar = FilterBar(self)
-        self.content_layout.addWidget(self.filter_bar, alignment=Qt.AlignTop)
-        self.filter_bar.filters_changed.connect(self._load_filtered_sorted_recipes)
-
+        self._create_filter_bar()
         # Create the flow layout container
         self._flow_container = FlowLayoutContainer(tight=True)
         self._flow_container.setObjectName("RecipeFlowContainer")
 
         # Add the container to the existing content_layout
         self.content_layout.addWidget(self._flow_container)
+
+    def _create_filter_bar(self):
+        """Create and add the filter bar above the recipe grid."""
+        self.filter_bar = FilterBar(self)
+        self.content_layout.addWidget(self.filter_bar)
+        self.filter_bar.filters_changed.connect(self._load_filtered_sorted_recipes)
 
     def _load_recipes(self):
         """Load recipes with default filter."""
@@ -90,7 +92,7 @@ class RecipeBrowser(BaseView):
     def _load_filtered_sorted_recipes(self):
         """Load recipes based on current filter/sort selections."""
         # Get the current filter state using the method
-        filter_state = self.filter_bar.get_filter_state()
+        filter_state = self.filter_bar.getFilterState()
 
         # Process the filter state
         recipe_category = filter_state['category']

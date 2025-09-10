@@ -1,7 +1,7 @@
 """app/ui/components/composite/recipe_tags_row.py
 
 A reusable component for displaying recipe tags (meal type, category, dietary preference)
-in a horizontal row layout. Extracted from FullRecipe for use in multiple contexts.
+in a horizontal row layout. Extracted from ViewRecipe for use in multiple contexts.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
