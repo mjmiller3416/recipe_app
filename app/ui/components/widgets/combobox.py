@@ -8,8 +8,10 @@ from typing import Sequence
 
 from PySide6.QtCore import QEvent, QStringListModel, Qt, Signal
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QWidget
+
 from app.style import Qss, Theme
 from app.style.icon.config import Name
+
 from .button import ToolButton
 from .dropdown_menu import DropdownMenu
 
@@ -28,9 +30,12 @@ class ComboBox(QWidget):
     ):
         super().__init__(parent)
         self.setObjectName("ComboBox")
+        self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setFocusPolicy(Qt.StrongFocus)
+
 
         # register for component-specific styling
-        Theme.register_widget(self, Qss.COMBOBOX)
+        # Theme.register_widget(self, Qss.COMBOBOX)
 
         # Create model
         self.model = QStringListModel(list_items or [])
@@ -57,17 +62,14 @@ class ComboBox(QWidget):
         )
         self.dropdown_menu.set_case_sensitivity(Qt.CaseInsensitive)
 
+        print(f"[INIT] ComboBox {id(self)} connecting to dropdown {id(self.dropdown_menu)}")
+
         # Set up layout
         layout = QHBoxLayout(self)
         layout.setContentsMargins(5, 5, 10, 5)
         layout.setSpacing(0)
         layout.addWidget(self.line_edit)
         layout.addWidget(self.cb_btn)
-
-        # Widget configuration
-        self.setObjectName("ComboBox")
-        self.setAttribute(Qt.WA_StyledBackground, True)
-        self.setFocusPolicy(Qt.StrongFocus)
 
         # Set unique scope property for CSS isolation testing
         unique_id = f"ComboBox_{id(self)}"
@@ -76,6 +78,8 @@ class ComboBox(QWidget):
         # Connect signals
         self.line_edit.textChanged.connect(self._on_text_changed)
         self.dropdown_menu.item_selected.connect(self._on_item_selected)
+        self.dropdown_menu.popup_opened.connect(self._on_popup_opened)
+        self.dropdown_menu.popup_closed.connect(self._on_popup_closed)
         self.cb_btn.clicked.connect(self._show_popup)
 
         # Install event filter for mouse clicks
@@ -105,6 +109,18 @@ class ComboBox(QWidget):
     def _show_popup(self):
         """Show the dropdown popup."""
         self.dropdown_menu.show_popup(self.line_edit)
+
+    def _on_popup_opened(self):
+        print(f"[COMBOBOX {id(self)}] Popup opened")
+        self.setProperty("dropdown", "true")
+        self.style().unpolish(self)
+        self.style().polish(self)
+
+    def _on_popup_closed(self):
+        print(f"[COMBOBOX {id(self)}] Popup closed")
+        self.setProperty("dropdown", "false")
+        self.style().unpolish(self)
+        self.style().polish(self)
 
     def eventFilter(self, obj, event):
         """Handle events for child widgets."""

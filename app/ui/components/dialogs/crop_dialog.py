@@ -4,24 +4,16 @@ A dialog for cropping images with a square selection area.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import (
-    Qt,
-    Signal,
-    Slot)
+from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import (
-    QFrame,
-    QLabel,
-    QVBoxLayout,
-    QHBoxLayout,
-    QPushButton,
-    QSizePolicy,
-    QSpacerItem)
+from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QPushButton,
+                               QSizePolicy, QSpacerItem, QVBoxLayout)
+
+from _dev_tools import DebugLogger
 from app.config import AppConfig
 from app.ui.components.dialogs.dialog_window import DialogWindow
 from app.ui.components.images.image_cropper import ImageCropper
 from app.ui.utils import load_pixmap_or_warn
-from _dev_tools import DebugLogger
 
 
 # ── Crop Dialog ─────────────────────────────────────────────────────────────────────────────────────────────

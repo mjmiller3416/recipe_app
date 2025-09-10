@@ -2,7 +2,6 @@ import os
 import re
 import sys
 
-
 # ── Config ─────────────────────────────────────────────────────────────
 BASE_DIR = r"G:\My Drive\Python\recipe_app\tests\dev"
 

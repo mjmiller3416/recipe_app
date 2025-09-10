@@ -7,6 +7,8 @@
 #FixedWrapper {background-color: transparent;}
 QWidget#ContentArea{background-color: {surface};}
 QWidget#ScrollContent {background-color: {surface};border: none;}
+#BaseView #qt_scrollarea_viewport QWidget {background: transparent; border: none;}
+
 
 [tag="Header"] {
     font: {title};
@@ -27,6 +29,10 @@ QWidget {
     color: {on_surface};
 }
 
+QWidget#ToggleContainer {border: 1px solid {outline};}
+#IngredientsScrollArea QWidget {background: {surface_container};border: none;}
+
+
 /* Group Boxes */
 QGroupBox {
     background-color: {surface};
@@ -41,6 +47,7 @@ QGroupBox::title {
     left: 10px;
     color: {on_surface_variant};
 }
+
 
 /* Tool Buttons */
 ToolButton {
@@ -63,8 +70,11 @@ ToolButton:disabled {
 
 }
 
+#TitleBar ToolButton#BtnMaximize {background-color: red}
+
 /* Labels */
 QLabel {background-color: transparent;}
+
 
 /* Buttons */
 QPushButton {
@@ -87,13 +97,16 @@ QPushButton:disabled {
     border: 1px solid {outline};
 }
 
+QPushButton#ToggleButtonActive, QPushButton#ToggleButtonInactive {border: none;}
+
+
 /* Input Fields */
 QLineEdit, QTextEdit, QComboBox {
     background-color: {surface};
     color: {on_surface};
-    border: 1px solid {outline};
+    border: none;
     border-radius: 4px;
-    padding: 5px;
+    padding: 5px 5px 5px 12px;
 }
 QLineEdit:focus, QTextEdit:focus, QComboBox:focus {border: 2px solid {primary};}
 
@@ -101,6 +114,47 @@ QLineEdit:disabled, QTextEdit:disabled, QComboBox:disabled {
     background-color: {surface};
     color: {on_surface_variant};
 }
+
+#AddRecipes QTextEdit, #IngredientForm QLineEdit, #IngredientForm QComboBox {border: 1px solid {outline};}
+#AddRecipes QLineEdit:focus {border: 4px solid {primary};}
+#AddRecipes QLineEdit {border: none; padding-left: 12px;}
+#IngredientForm QLineEdit {border: 1px solid {outline_variant};}
+QTextEdit#DirectionsTextEdit {border-top-left-radius: 0; border-top-right-radius: 0;}
+
+
+/* Comboboxes */
+ComboBox {background-color: {surface_container}; border-radius: 6px;}
+
+ComboBox QLineEdit#CBLineEdit {
+    background-color: transparent;
+    color: {on_surface};
+    border: none;
+    border-radius: 4px;
+    font: {default};
+    padding: 5px;
+    padding-left: 4px;
+}
+
+ComboBox QLineEdit#CBLineEdit:focus {border: none;}
+
+ComboBox ToolButton#CBButton {
+    background-color: transparent;
+    border: none;
+    border-radius: 0px;
+    padding-right: 20px;
+}
+
+ComboBox[dropdown="true"] {border: 4px solid {primary};}
+ComboBox[dropdown="false"] {border: none;}
+
+#AddRecipes ComboBox {background-color: {surface}; border-radius: 6px;}
+#ShoppingList ComboBox {background-color: {surface}; border-radius: 6px;}
+#AddRecipes ComboBox QLineEdit#CBLineEdit:focus {border: none;}
+#IngredientForm ComboBox {border: 1px solid {outline_variant};}
+
+#IngredientForm ComboBox[dropdown="true"] {border: 4px solid {primary};}
+#IngredientForm ComboBox[dropdown="false"] {border: 1px solid {outline_variant};}
+
 
 /* ComboBox Dropdown */
 QComboBox::drop-down {border: none;}
@@ -118,6 +172,7 @@ QComboBox QAbstractItemView {
     outline: none;
 }
 
+
 /* Checkboxes and Radio Buttons */
 QCheckBox, QRadioButton {background-color: transparent;padding-left: 2px;}
 
@@ -134,6 +189,7 @@ QCheckBox::indicator:checked, QRadioButton::indicator:checked {
     border-color: {primary};
 }
 QCheckBox:disabled, QRadioButton:disabled {color: {on_surface_variant};} /* Disabled state */
+
 
 /* Tabs */
 QTabWidget::pane {
@@ -155,6 +211,7 @@ QTabBar::tab:selected {
     border-bottom: 2px solid {primary};
     font-weight: bold;
 }
+
 
 /* ScrollBars */
 QScrollBar:vertical, QScrollBar:horizontal {
@@ -179,4 +236,158 @@ QScrollBar::add-line, QScrollBar::sub-line {
 
 QStackedWidget {
     background-color: {surface};
+}
+
+
+/* ------------------------------------------------------------------
+   COMPONENT-SPECIFIC STYLES
+   ------------------------------------------------------------------ */
+
+#RecipeCard, #EmptyStateFrame, #ErrorStateFrame {
+    background-color: {surface_container};  /* Use theme-based background instead of transparent */
+    border-radius: 10px; /* Rounded corners */
+}
+
+#RecipeCard QLabel#IngredientQuantity,
+#RecipeCard QLabel#IngredientName,
+#RecipeCard QLabel#IngredientUnit {
+    color: {on_surface};
+    font-size: 26px;
+}
+
+#RecipeCard QLabel#IngredientsHeader {
+    color: {secondary};
+    font-weight: bold;
+    font-size: 32px;
+    padding-bottom: 4px;
+}
+
+#RecipeCard QLabel {
+    color: {on_surface};
+    font: {default};
+}
+
+#RecipeCard[layout_size="medium"] [title_text="true"] {
+    font: {default};
+}
+
+#RecipeCard[layout_size="large"] {
+    border-top-left-radius: 0px;
+}
+
+#RecipeCard #LargeCardTitle {
+    font-size: 38px;
+    font-weight: bold;
+    color: {tertiary};
+}
+
+#RecipeCard [label_text="true"] {
+    font: {default};
+    color: {on_surface_variant};
+}
+
+#RecipeCard ToolButton {
+    background-color: transparent;
+    border: none;
+}
+
+
+/* ------------------------------------------------------------------
+   ICON WIDGET STYLING
+   ------------------------------------------------------------------ */
+AppIcon {background-color: transparent;}
+
+#ContentArea AppIcon {background-color: transparent;}
+
+/* Force transparent background for header icons */
+  AppIcon#HeaderIcon {
+      background-color: transparent !important;
+  }
+
+  /* Also try targeting by class and object name */
+  [card="Default"] AppIcon#HeaderIcon {
+      background-color: transparent !important;
+  }
+
+
+/* ------------------------------------------------------------------
+   CARD WIDGET STYLING
+   ------------------------------------------------------------------ */
+[card="Default"] {
+    background-color: {surface_container};
+    border: none;
+    border-radius: 10px;
+}
+
+/* Card content styling */
+[card="Default"] QLabel#Card {
+    background-color: purple;
+    color: {on_surface_variant};
+    font: {default};
+}
+
+/* Header styling */
+[card="Default"] QLabel#Header {
+    font: {header_small};
+}
+
+/* Subheader styling */
+[card="Default"] QLabel#SubHeader {
+    font: {default};
+    color: {outline};
+}
+
+/* -----------------------------------------------------------------
+Primary card variant
+-------------------------------------------------------------------- */
+[card="Primary"] {
+    background-color: {surface_container};
+    border: none;
+    border-radius: 10px;
+}
+
+/* Card content styling */
+[card="Primary"] QLabel {
+    background-color: {surface_container};
+    color: {on_surface_variant};
+    font: {default};
+}
+
+/* Header styling */
+[card="Primary"] QLabel#Header {
+    font: {header_small};
+    color: {secondary};
+}
+
+/* Subheader styling */
+[card="Primary"] QLabel#SubHeader {
+    font: {default};
+    color: {outline};
+}
+
+/* -----------------------------------------------------------------
+Secondary card variant
+-------------------------------------------------------------------- */
+[card="Secondary"] {
+    background-color: {secondary_container};
+    border: none;
+    border-radius: 10px;
+}
+
+/* Card content styling */
+[card="Secondary"] QLabel {
+    background-color: {secondary_container};
+    color: {on_secondary_container};
+}
+
+/* Header styling */
+[card="Secondary"] QLabel#Header {
+    font: {header_small};
+    color: {on_secondary_container};
+}
+
+/* Subheader styling */
+[card="Secondary"] QLabel#SubHeader {
+    font: {default};
+    color: {outline};
 }

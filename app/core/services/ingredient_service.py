@@ -9,11 +9,9 @@ from typing import List, Optional
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
-from ..dtos.ingredient_dtos import (
-    IngredientCreateDTO,
-    IngredientSearchDTO,
-    IngredientUpdateDTO,
-)
+
+from ..dtos.ingredient_dtos import (IngredientCreateDTO, IngredientSearchDTO,
+                                    IngredientUpdateDTO)
 from ..models.ingredient import Ingredient
 from ..repositories.ingredient_repo import IngredientRepo
 

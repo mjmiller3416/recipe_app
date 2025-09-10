@@ -9,9 +9,9 @@ from __future__ import annotations
 import json
 from typing import Any, Dict
 
+from _dev_tools import DebugLogger
 from app.config import AppPaths
 from app.core.services.ai_gen import ImageGenConfig
-from _dev_tools import DebugLogger
 
 
 # ── Settings Service ────────────────────────────────────────────────────────────────────────────────────────

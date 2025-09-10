@@ -6,22 +6,17 @@ A Card widget with collapsible functionality for shopping list categories.
 from typing import List, Optional
 
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt, QTimer, Signal
-from PySide6.QtWidgets import (
-    QCheckBox,
-    QFrame,
-    QLabel,
-    QScrollArea,
-    QVBoxLayout,
-    QWidget,
-)
+from PySide6.QtWidgets import (QCheckBox, QFrame, QLabel, QScrollArea,
+                               QVBoxLayout, QWidget)
+
+from _dev_tools.debug_logger import DebugLogger
 from app.config import CARD
 from app.style import Qss, Theme
 from app.style.animation.animator import Animator
 from app.style.icon import Name, Type
 from app.ui.components.widgets.button import ToolButton
-from .card import BaseCard
-from _dev_tools.debug_logger import DebugLogger
 
+from .card import BaseCard
 
 # ── Constants ────────────────────────────────────────────────────────────────────────────────
 EXPANDED_HEIGHT = 300    # Full height when expanded

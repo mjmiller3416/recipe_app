@@ -11,6 +11,7 @@ from typing import Optional
 
 from sqlalchemy import Boolean, Float, String
 from sqlalchemy.orm import Mapped, mapped_column
+
 from ..database.base import Base
 
 

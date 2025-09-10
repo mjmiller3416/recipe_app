@@ -8,7 +8,6 @@ from .image import CircularImage, RoundedImage
 from .toast import Toast, show_toast
 from .toggle_switch import ToggleSwitch
 
-
 __all__ = [
     "Button",
     "CheckBox",

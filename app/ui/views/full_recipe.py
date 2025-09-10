@@ -19,16 +19,12 @@ from pathlib import Path
 from typing import Iterable
 
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import (
-    QHBoxLayout,
-    QLabel,
-    QSizePolicy,
-    QVBoxLayout,
-    QWidget)
+from PySide6.QtWidgets import (QHBoxLayout, QLabel, QSizePolicy, QVBoxLayout,
+                               QWidget)
+
+from _dev_tools.debug_logger import DebugLogger
 from app.core.models import Recipe
-from app.core.utils import (
-    sanitize_form_input,
-    sanitize_multiline_input)
+from app.core.utils import sanitize_form_input, sanitize_multiline_input
 from app.style import Qss, Theme
 from app.style.icon import AppIcon, Icon
 from app.style.icon.config import Name, Type
@@ -37,13 +33,9 @@ from app.ui.components.images.image import RecipeBanner
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
 from app.ui.components.widgets.recipe_tag import RecipeTag
-from app.ui.utils import (
-    apply_object_name_pattern,
-    batch_connect_signals,
-    create_form_grid_layout,
-    create_two_column_layout,
-    setup_main_scroll_layout)
-from _dev_tools.debug_logger import DebugLogger
+from app.ui.utils import (apply_object_name_pattern, batch_connect_signals,
+                          create_form_grid_layout, create_two_column_layout,
+                          setup_main_scroll_layout)
 
 
 # ── Ingredient List ──────────────────────────────────────────────────────────────────────────
@@ -377,15 +369,15 @@ class FullRecipe(QWidget):
             right_column_widgets.append(notes_card)
 
         # Create two-column layout using utility (1/3 left, 2/3 right)
-        create_two_column_layout(
-            self.scroll_layout,
-            ingredients_card,
-            right_column_widgets,
-            left_proportion=1,
-            right_proportion=2,
-            spacing=30,
-            match_heights=False
+        column_layout = create_two_column_layout(
+            left_widgets  = [ingredients_card],
+            right_widgets = right_column_widgets,
+            left_ratio    = 1,
+            right_ratio   = 2,
         )
+        self.scroll_layout.addLayout(column_layout)
+
+
     def _create_section_header(self, icon: Icon, title: str) -> QWidget:
         """Create a section header with icon and title."""
         header_widget = QWidget()

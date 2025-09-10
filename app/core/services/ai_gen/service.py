@@ -16,9 +16,11 @@ from pathlib import Path
 from typing import List, Optional
 
 from openai import AsyncOpenAI
-from app.core.utils.image_utils import img_ai_get_hash, img_ai_slugify
-from .config import ImageGenConfig
+
 from _dev_tools import DebugLogger
+from app.core.utils.image_utils import img_ai_get_hash, img_ai_slugify
+
+from .config import ImageGenConfig
 
 
 @dataclass

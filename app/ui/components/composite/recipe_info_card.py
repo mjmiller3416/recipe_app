@@ -7,6 +7,7 @@ in a horizontal row layout. Extracted from FullRecipe for use in multiple contex
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout, QWidget
+
 from app.core.models.recipe import Recipe
 from app.style import Qss, Theme
 from app.style.icon import AppIcon, Icon

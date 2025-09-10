@@ -10,7 +10,6 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
-
 # Ensure Recipe is available at runtime for forward references
 """DTO for meal selection responses with full recipe information is simplified to include only ID."""
 

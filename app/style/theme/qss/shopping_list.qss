@@ -49,35 +49,6 @@
     border: none;
 }
 
-QComboBox {
-    min-height: 36px;
-    padding: 6px 36px 6px 12px;                 /* room for arrow */
-    border: 1px solid {outline_variant};
-    border-radius: 10px;
-    background: {surface_container_high};
-    color: {on_surface};
-    selection-background-color: transparent;    /* no blue flash */
-}
-
-/* Hover — slightly stronger outline */
-QComboBox:hover {
-    border-color: {outline};
-}
-
-/* Focus — M3: emphasize with primary */
-QComboBox:focus {
-    border-color: {primary};
-    /* If your style engine supports it, add a focus ring shadow: */
-    /* box-shadow: 0 0 0 3px rgba({primary}, 0.28); */
-}
-
-/* Disabled */
-QComboBox:disabled {
-    color: {on_surface_variant};
-    background: {surface_container_low};
-    border-color: {outline_variant};
-}
-
 QToolTip {
     /* Custom styles */
     background-color: #333;

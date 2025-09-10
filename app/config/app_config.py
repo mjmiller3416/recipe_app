@@ -5,11 +5,12 @@
 
 # ── Imports ──
 import re
-from typing_extensions import Final
 
-from PySide6.QtWidgets import QDialog
 from PySide6.QtCore import QRegularExpression, QSize
 from PySide6.QtGui import QRegularExpressionValidator
+from PySide6.QtWidgets import QDialog
+from typing_extensions import Final
+
 
 class AppConfig:
     # Content margins and spacing

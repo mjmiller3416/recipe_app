@@ -8,10 +8,10 @@ from typing import Sequence
 
 from PySide6.QtCore import QEvent, QStringListModel, Qt, QTimer, Signal
 from PySide6.QtWidgets import QCompleter, QLineEdit
+
+from _dev_tools import DebugLogger
 from app.ui.components.widgets.dropdown_menu import DropdownMenu
 from app.ui.utils import IngredientProxyModel
-from _dev_tools import DebugLogger
-
 
 # fixed height for the line edit
 FIXED_HEIGHT = 45

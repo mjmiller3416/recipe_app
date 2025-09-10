@@ -4,8 +4,8 @@
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import QMessageBox
 from PySide6.QtGui import QColor, QPainter, QPixmap
+from PySide6.QtWidgets import QMessageBox
 
 from app.core.utils import img_qt_load_safe
 

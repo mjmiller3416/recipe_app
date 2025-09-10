@@ -6,10 +6,12 @@ Provides a reusable dropdown menu component for displaying selectable lists.
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from typing import Optional, Sequence
 
-from PySide6.QtCore import QAbstractItemModel, QEvent, QStringListModel, Qt, Signal
+from PySide6.QtCore import (QAbstractItemModel, QEvent, QStringListModel, Qt,
+                            Signal)
 from PySide6.QtWidgets import QCompleter, QWidget
-from app.style import Qss, Theme
+
 from _dev_tools import DebugLogger
+from app.style import Qss, Theme
 
 
 # ── Dropdown Menu ───────────────────────────────────────────────────────────────────────────────────────────
@@ -30,6 +32,7 @@ class DropdownMenu(QWidget):
 
     item_selected = Signal(str)
     items_selected = Signal(list)  # For multi-select support
+    popup_opened = Signal()
     popup_closed = Signal()
 
     def __init__(
@@ -83,18 +86,25 @@ class DropdownMenu(QWidget):
         self.completer.activated.connect(self._on_item_activated)
 
     def show_popup(self, line_edit: QWidget):
-        """Show the dropdown popup attached to the given line edit."""
+        print(f"\n[DROPDOWN {id(self)}] show_popup called")
+
         if not self.completer.popup().isVisible():
-            # set the completer's widget to the line edit for proper positioning
             self.completer.setWidget(line_edit)
             line_edit.setFocus()
             self.completer.complete()
+
+            print(f"[DROPDOWN {id(self)}] Emitting popup_opened signal...")
+            self.popup_opened.emit()
+            print(f"[DROPDOWN {id(self)}] Signal emitted, continuing...")
+
+        print(f"[DROPDOWN {id(self)}] show_popup complete\n")
 
     def hide_popup(self):
         """Hide the dropdown popup."""
         if self.completer.popup().isVisible():
             self.completer.popup().hide()
             self.popup_closed.emit()
+            print("Popup closed.")
 
     def set_filter(self, filter_text: str):
         """Set filter text for the completer model (if supported)."""

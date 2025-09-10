@@ -4,7 +4,6 @@ from .flow_layout import FlowLayout
 from .flyout_widget import FlyoutWidget
 from .separator import Separator
 
-
 __all__ = [
     "CardLayout",
     "Direction",

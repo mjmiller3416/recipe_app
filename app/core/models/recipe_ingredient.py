@@ -10,6 +10,7 @@ from typing import Optional
 
 from sqlalchemy import Float, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from ..database.base import Base
 from ..dtos.ingredient_dtos import IngredientDetailDTO
 

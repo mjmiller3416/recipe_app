@@ -6,6 +6,7 @@ FocusTracker class for tracking and logging focus changes in a PySide6 applicati
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import QObject
 from PySide6.QtWidgets import QApplication, QWidget
+
 from _dev_tools import DebugLogger
 
 

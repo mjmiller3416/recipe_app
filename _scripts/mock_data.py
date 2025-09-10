@@ -7,7 +7,6 @@ import random
 from datetime import datetime, timedelta
 from typing import Any, Dict, List
 
-
 try:
     from faker import Faker
     FAKER_AVAILABLE = True
@@ -25,7 +24,6 @@ from app.core.models.recipe_ingredient import RecipeIngredient
 from app.core.models.saved_meal_state import SavedMealState
 from app.core.models.shopping_item import ShoppingItem
 from app.core.models.shopping_state import ShoppingState
-
 
 # Initialize Faker if available
 fake = Faker() if FAKER_AVAILABLE else None

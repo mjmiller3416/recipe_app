@@ -12,7 +12,6 @@ from pathlib import Path
 
 import colorlog
 
-
 # timestamp for current run (used to stamp log file names)
 _RUN_TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
 

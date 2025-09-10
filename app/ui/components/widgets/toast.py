@@ -8,6 +8,7 @@ with smooth animations. Supports success/error states and customizable positioni
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QRect, QTimer
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QLabel, QWidget
+
 from app.style import Theme
 from app.style.theme.config import Qss
 

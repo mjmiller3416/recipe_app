@@ -156,6 +156,7 @@
       "**/CLAUDE.md": true,
       "**/review_guide.md": true,
       "**/.ruff_cache": true,
+      "**/.isort.cfg": true
     },
 
     "files.associations": {

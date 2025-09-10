@@ -43,7 +43,6 @@ from typing import Callable, List, Optional, Tuple
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtGui import QKeySequence, QShortcut
 
-
 # Import DebugLogger if available, otherwise fallback to print
 try:
     from _dev_tools.debug_logger import DebugLogger  # adjust path as needed

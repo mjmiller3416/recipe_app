@@ -6,29 +6,35 @@ Placeholder class for the Dashboard screen.
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QSizePolicy, QVBoxLayout, QWidget
+
+from _dev_tools import DebugLogger, StartupTimer
 from app.style.icon.config import Name, Type
 from app.ui.components.inputs import SmartLineEdit
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
-from _dev_tools import DebugLogger, StartupTimer
+from app.ui.views.base import BaseView
 
 
 # ── Dashboard ────────────────────────────────────────────────────────────────────────────────
-class Dashboard(QWidget):
+class Dashboard(BaseView):
     """Placeholder class for the Dashboard screen."""
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
         DebugLogger.log("Initializing Dashboard page", "info")
-
-        # Initialize & Setup UI
         self.setObjectName("Dashboard")
 
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(20, 20, 20, 20)
+    def _build_ui(self):
+        self._create_widgets()
 
-        # Example Card
+
+    def _create_widgets(self):
+
+        self._create_cards()
+        self._create_buttons()
+
+    def _create_cards(self):
         card = Card(card_type="Primary")
         card.setAttribute(Qt.WA_StyledBackground, True)
         card.expandWidth(False)
@@ -38,9 +44,9 @@ class Dashboard(QWidget):
         summary_label.setProperty("font", "Body")
         summary_label.setWordWrap(True)
         card.addWidget(summary_label)
-        self.layout.addWidget(card)
+        self.content_layout.addWidget(card)
 
-
+    def _create_buttons(self):
         # add test button with icon
         self.btn = Button(
             label = "Test Button",
@@ -50,10 +56,9 @@ class Dashboard(QWidget):
         self.btn.setIconSize(20, 20)
         self.btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
-        self.layout.addWidget(self.btn)
+        self.content_layout.addWidget(self.btn)
 
         # Add stretch to push content to top
-        self.layout.addStretch()
-
+        self.content_layout.addStretch()
 
 

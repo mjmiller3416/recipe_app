@@ -14,9 +14,6 @@
     background-color: {surface_container_high};
 }
 
-#IngredientForm QLineEdit {border: 1px solid {outline_variant};}
-#IngredientForm ComboBox {border: 1px solid {outline_variant};}
-
 #IngredientForm #DeleteButton {background-color: transparent; border: none;}
 #IngredientForm #DeleteButton:hover {border: none;}
 

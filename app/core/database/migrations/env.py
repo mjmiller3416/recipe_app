@@ -19,7 +19,6 @@ This script is automatically invoked by Alembic when running migration commands.
 
 import os
 import sys
-
 # ── Imports ─────────────────────────────────────────────────────────────────────────────
 from logging.config import fileConfig
 from pathlib import Path
@@ -27,7 +26,6 @@ from pathlib import Path
 from alembic import context
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
-
 
 # load .env file (project root assumed)
 load_dotenv(dotenv_path=Path(__file__).resolve().parents[4] / ".env")
@@ -47,12 +45,10 @@ if database_url:
 # ── Import metadata ─────────────────────────────────────────────────────────────────────
 from app.core.database.base import Base
 from app.core.models.ingredient import Ingredient
-
 # import all models to register them with metadata
 from app.core.models.recipe import Recipe
 from app.core.models.recipe_history import RecipeHistory
 from app.core.models.recipe_ingredient import RecipeIngredient
-
 
 target_metadata = Base.metadata
 

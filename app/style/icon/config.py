@@ -8,6 +8,7 @@ from enum import Enum, auto
 from typing import NamedTuple
 
 from PySide6.QtCore import QSize
+
 from app.config import AppPaths
 
 

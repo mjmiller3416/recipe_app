@@ -36,8 +36,8 @@ from typing import Any, Dict, List, Optional, Union
 
 from PySide6.QtGui import QRegularExpressionValidator
 from PySide6.QtWidgets import QComboBox, QLineEdit, QTextEdit, QWidget
-from app.ui.components.widgets import ComboBox
 
+from app.ui.components.widgets import ComboBox
 
 __all__ = [
     # Form Validation

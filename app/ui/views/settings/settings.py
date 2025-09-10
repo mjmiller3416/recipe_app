@@ -12,16 +12,10 @@ from pathlib import Path
 from typing import Any, Dict
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import (
-    QFrame,
-    QHBoxLayout,
-    QLabel,
-    QScrollArea,
-    QSizePolicy,
-    QTextEdit,
-    QVBoxLayout,
-    QWidget,
-)
+from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QScrollArea,
+                               QSizePolicy, QTextEdit, QVBoxLayout, QWidget)
+
+from _dev_tools import DebugLogger
 from app.config import AppPaths
 from app.core.services.ai_gen import ImageGenConfig, RecipeImageHelper
 from app.core.services.settings_service import SettingsService
@@ -29,7 +23,6 @@ from app.style import Qss, Theme
 from app.style.icon import Icon
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets import Button, ComboBox
-from _dev_tools import DebugLogger
 
 
 # ── Settings Category ────────────────────────────────────────────────────────────────────────

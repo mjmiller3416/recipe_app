@@ -10,13 +10,14 @@ hierarchy for theme-aware SVG icons with state management.
 from PySide6.QtCore import QSize, Qt, QTimer
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QLabel, QSizePolicy, QVBoxLayout, QWidget
+
+from _dev_tools import DebugLogger
 from app.config import FALLBACK_COLOR
 from app.style.icon.config import Name, State, Type
 from app.style.icon.loader import IconLoader
 from app.style.icon.svg_loader import SVGLoader
 from app.style.theme.config import Qss
 from app.style.theme_controller import Theme
-from _dev_tools import DebugLogger
 
 
 # ── Base Icon ───────────────────────────────────────────────────────────────────────────────────────────────
@@ -263,7 +264,7 @@ class AppIcon(QLabel):
         self._themed_icon = ThemedIcon(icon_enum)
 
         # register for component-specific styling
-        Theme.register_widget(self, Qss.ICON)
+        # Theme.register_widget(self, Qss.ICON)
 
         # set callback so ThemedIcon can update this widget when theme changes
         self._themed_icon.set_refresh_callback(self._render_icon)

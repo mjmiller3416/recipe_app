@@ -17,6 +17,7 @@ from typing import List, Optional
 from PySide6.QtCore import QEvent, QObject, Qt
 from PySide6.QtGui import QKeyEvent, QMouseEvent
 from PySide6.QtWidgets import QApplication, QWidget
+
 from _dev_tools.debug_logger import DebugLogger
 
 

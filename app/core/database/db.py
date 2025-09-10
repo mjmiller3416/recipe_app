@@ -11,7 +11,6 @@ from typing import Generator
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
-
 DB_PATH = Path(__file__).parent / "app_data.db"
 SQLALCHEMY_DATABASE_URL = os.environ.get(
     "SQLALCHEMY_DATABASE_URL", f"sqlite:///{DB_PATH}"

@@ -21,36 +21,19 @@ from __future__ import annotations
 from enum import Enum
 from typing import Optional
 
-from PySide6.QtCore import (
-    QSize,
-    Qt,
-    Signal)
-from PySide6.QtWidgets import (
-    QDialog,
-    QFrame,
-    QHBoxLayout,
-    QLabel,
-    QStackedWidget,
-    QVBoxLayout,
-    QWidget)
+from PySide6.QtCore import QSize, Qt, Signal
+from PySide6.QtWidgets import (QDialog, QFrame, QHBoxLayout, QLabel,
+                               QStackedWidget, QVBoxLayout, QWidget)
 
 from _dev_tools import DebugLogger
 from app.core.models import Recipe
 from app.core.services import RecipeService
-from app.style import (
-    Theme,
-    Qss)
-from app.style.icon import (
-    AppIcon,
-    Name,
-    Type)
+from app.style import Qss, Theme
+from app.style.icon import AppIcon, Name, Type
 from app.ui.components.layout import Separator
 from app.ui.components.layout.card import BaseCard
-from app.ui.components.widgets import (
-    RoundedImage,
-    ToolButton)
+from app.ui.components.widgets import RoundedImage, ToolButton
 from app.ui.utils import make_overlay
-
 
 # ── Constants ──
 LAYOUT_SIZE = {
@@ -127,7 +110,7 @@ class BaseRecipeCard(BaseCard):
         self._setup_stacked_widget()
 
         # Register for theming
-        Theme.register_widget(self, Qss.RECIPE_CARD)
+        # Theme.register_widget(self, Qss.RECIPE_CARD)
 
     # ── Public Methods ───────────────────────────────────────────────────────────────────────
     def set_recipe(self, recipe: Recipe | None) -> None:
@@ -483,7 +466,8 @@ class LargeRecipeCard(BaseRecipeCard):
         frame.setAttribute(Qt.WA_StyledBackground, True)
         frame.setObjectName("RecipeCard")
 
-        from app.ui.components.composite.ingredients_preview import IngredientsPreview
+        from app.ui.components.composite.ingredients_preview import \
+            IngredientsPreview
         from app.ui.components.composite.recipe_info_card import RecipeInfoCard
         from app.ui.components.composite.recipe_tags_row import RecipeTagsRow
 

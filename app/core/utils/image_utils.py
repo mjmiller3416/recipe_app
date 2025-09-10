@@ -60,8 +60,8 @@ from typing import Dict, NamedTuple, Optional, Tuple, Union
 
 from PySide6.QtCore import QRect, QRectF, QSize, Qt
 from PySide6.QtGui import QColor, QPainter, QPainterPath, QPixmap
-from app.config import AppPaths
 
+from app.config import AppPaths
 
 __all__ = [
     # Types
