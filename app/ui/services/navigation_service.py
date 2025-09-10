@@ -8,9 +8,8 @@ from PySide6.QtWidgets import QStackedWidget
 
 from _dev_tools import DebugLogger
 from app.core.services import PlannerService, ShoppingService
-from app.ui.views import (AddRecipes, Dashboard, MealPlanner, RecipeBrowser, Settings,
-                          ShoppingList)
-from app.ui.views.full_recipe import FullRecipe
+from app.ui.views import AddRecipes, Dashboard, MealPlanner, RecipeBrowser, Settings, ShoppingList, FullRecipe
+
 
 
 # ── Navigation Service ──────────────────────────────────────────────────────────────────────────────────────

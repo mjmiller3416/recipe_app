@@ -3,22 +3,19 @@
 Standalone recipe browser view for displaying recipes in a grid layout.
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import (QCheckBox, QHBoxLayout, QScrollArea,
-                               QVBoxLayout, QWidget)
+# ── Imports ──
+from functools import partial
+from PySide6.QtCore import Qt, Signal, QCoreApplication
 
-from app.config import RECIPE_CATEGORIES, SORT_OPTIONS
-from app.core.dtos import RecipeFilterDTO
-from app.core.services.recipe_service import RecipeService
-from app.ui.components.composite.recipe_card import (LayoutSize,
-                                                     create_recipe_card)
-from app.ui.components.layout.flow_layout import FlowLayout
-from app.ui.components.widgets import ComboBox
+from app.core import RecipeFilterDTO
+from app.core.services import RecipeService
+from app.ui.components.composite.recipe_card import LayoutSize, create_recipe_card
+from app.ui.components.layout.flow_layout import FlowLayoutContainer
+from app.ui.views.base import BaseView
+from ._filter_bar import FilterBar
 
 
-# ── Recipe Browser ──────────────────────────────────────────────────────────────────────────────────────────
-class RecipeBrowser(QWidget):
+class RecipeBrowser(BaseView):
     """Standalone recipe browser view with filtering and sorting."""
 
     recipe_card_clicked = Signal(object)  # recipe object
@@ -44,8 +41,8 @@ class RecipeBrowser(QWidget):
         self.recipes_loaded = False
         self.navigation_service = navigation_service
 
-        self.build_ui()
-        self.load_recipes()
+        self._build_ui()
+        self._load_recipes()
 
     @property
     def selection_mode(self):
@@ -60,73 +57,27 @@ class RecipeBrowser(QWidget):
             # Refresh the recipe display to update card behavior
             # Only refresh if we're switching TO selection mode, not away from it
             if self.recipes_loaded and value:
-                self.load_filtered_sorted_recipes()
+                self._load_filtered_sorted_recipes()
 
     def _emit_recipe_selected(self, recipe):
         """Helper method to emit recipe_selected signal with recipe ID."""
         self.recipe_selected.emit(recipe.id)
 
-    def build_ui(self):
+    def _build_ui(self):
         """Build the UI with filters and recipe grid."""
-        self.main_layout = QVBoxLayout(self)
-        self.main_layout.setContentsMargins(0, 0, 0, 0)
-        self.main_layout.setSpacing(10)
+        # Add filter bar to the content layout
+        self.filter_bar = FilterBar(self)
+        self.content_layout.addWidget(self.filter_bar, alignment=Qt.AlignTop)
+        self.filter_bar.filters_changed.connect(self._load_filtered_sorted_recipes)
 
-        # filter and sort controls
-        self.lyt_cb = QHBoxLayout()
-        self.lyt_cb.setSpacing(10)
+        # Create the flow layout container
+        self._flow_container = FlowLayoutContainer(tight=True)
+        self._flow_container.setObjectName("RecipeFlowContainer")
 
-        self.cb_filter = ComboBox(list_items=RECIPE_CATEGORIES, placeholder="Filter")
-        self.cb_sort = ComboBox(list_items=SORT_OPTIONS, placeholder="Sort")
-        self.chk_favorites = QCheckBox("Show Favorites Only")
+        # Add the container to the existing content_layout
+        self.content_layout.addWidget(self._flow_container)
 
-        self.lyt_cb.addWidget(self.cb_filter)
-        self.lyt_cb.addWidget(self.cb_sort)
-        self.lyt_cb.addWidget(self.chk_favorites)
-
-        # connect signals
-        self.cb_filter.currentTextChanged.connect(self.load_filtered_sorted_recipes)
-        self.cb_sort.currentTextChanged.connect(self.load_filtered_sorted_recipes)
-        self.chk_favorites.stateChanged.connect(self.load_filtered_sorted_recipes)
-
-        # recipe grid
-        self.scroll_area = QScrollArea()
-        self.scroll_area.setObjectName("RecipeBrowserScrollArea")
-        self.scroll_area.setWidgetResizable(True)
-        self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        # Set transparent backgrounds to inherit from parent
-        self.scroll_area.setStyleSheet("""
-            QScrollArea {
-                background: transparent;
-                border: none;
-            }
-            QScrollArea > QWidget > QWidget {
-                background: transparent;
-            }
-        """)
-
-        self.scroll_container = QWidget()
-        self.scroll_container.setObjectName("RecipeBrowserContainer")
-        # Ensure container is transparent and takes full width
-        self.scroll_container.setStyleSheet("""
-            QWidget#RecipeBrowserContainer {
-                background: transparent;
-            }
-        """)
-        self.flow_layout = FlowLayout(self.scroll_container, needAni=False, isTight=True)
-        self.scroll_container.setLayout(self.flow_layout)
-
-
-        self.scroll_area.setWidget(self.scroll_container)
-
-        self.main_layout.addLayout(self.lyt_cb)
-        self.main_layout.addWidget(self.scroll_area)
-
-        # set initial sort
-        self.cb_sort.setCurrentText("A-Z")
-
-    def load_recipes(self):
+    def _load_recipes(self):
         """Load recipes with default filter."""
         default_filter_dto = RecipeFilterDTO(
             recipe_category=None,
@@ -136,13 +87,17 @@ class RecipeBrowser(QWidget):
         )
         self._fetch_and_display_recipes(default_filter_dto)
 
-    def load_filtered_sorted_recipes(self):
+    def _load_filtered_sorted_recipes(self):
         """Load recipes based on current filter/sort selections."""
-        recipe_category = self.cb_filter.currentText()
+        # Get the current filter state using the method
+        filter_state = self.filter_bar.get_filter_state()
+
+        # Process the filter state
+        recipe_category = filter_state['category']
         if not recipe_category or recipe_category in ("All", "Filter"):
             recipe_category = None
 
-        sort_label = self.cb_sort.currentText()
+        sort_label = filter_state['sort']
         sort_map = {
             "A-Z": "recipe_name",
             "Z-A": "recipe_name",
@@ -158,7 +113,7 @@ class RecipeBrowser(QWidget):
             recipe_category=recipe_category,
             sort_by=sort_map.get(sort_label, "recipe_name"),
             sort_order="desc" if sort_label in ("Z-A",) else "asc",
-            favorites_only=self.chk_favorites.isChecked(),
+            favorites_only=filter_state['favorites_only'],
         )
         self._fetch_and_display_recipes(filter_dto)
 
@@ -169,12 +124,13 @@ class RecipeBrowser(QWidget):
         Args:
             filter_dto (RecipeFilterDTO): The filter and sort criteria.
         """
-        self.clear_recipe_display()
+        self._clear_recipe_cards()
 
         recipes = self.recipe_service.list_filtered(filter_dto)
 
         for recipe in recipes:
-            card = create_recipe_card(self.card_size, parent=self.scroll_container)
+            # Create card with flow container as parent
+            card = create_recipe_card(self.card_size, parent=self._flow_container)
             card.set_recipe(recipe)
 
             # Set selection mode on the card
@@ -183,11 +139,9 @@ class RecipeBrowser(QWidget):
             if self._selection_mode:
                 # connect card click behavior for selection
                 # Use partial to avoid lambda closure issues
-                from functools import partial
-                card.card_clicked.connect(partial(self._emit_recipe_selected))
+                card.card_clicked.connect(partial(self._emit_recipe_selected, recipe))
 
                 # add visual feedback for selection mode
-                # TODO: create hover effect in stylesheet
                 # show pointer cursor on hover
                 card.setCursor(Qt.PointingHandCursor)
             else:
@@ -198,48 +152,40 @@ class RecipeBrowser(QWidget):
                     # fallback: emit signal for external handling
                     card.card_clicked.connect(self.recipe_card_clicked.emit)
 
-            self.flow_layout.addWidget(card)
+            # Add to the flow container
+            self._flow_container.addWidget(card)
 
         self.recipes_loaded = True
 
-        # Force the scroll area to update and recalculate its geometry
-        self.scroll_container.updateGeometry()
+        # Force the container to update and recalculate its geometry
+        self._flow_container.updateGeometry()
         self.scroll_area.updateGeometry()
+
         # Process any pending events to ensure proper layout
-        from PySide6.QtCore import QCoreApplication
         QCoreApplication.processEvents()
 
-    def clear_recipe_display(self):
-        """Remove all recipe cards from the layout."""
-        while self.flow_layout.count():
-            item = self.flow_layout.takeAt(0)
-            if item:
-                widget = item.widget() if hasattr(item, 'widget') else item
-                if widget:
-                    # Disconnect all signals to prevent conflicts
-                    widget.blockSignals(True)
-                    widget.deleteLater()
-
-        # Force layout update after clearing
-        self.scroll_container.updateGeometry()
+    def _clear_recipe_cards(self):
+        """Clear all existing recipe cards from the flow layout."""
+        self._flow_container.takeAllWidgets()
 
     def refresh(self):
         """Refresh the recipe display."""
         self.recipes_loaded = False
-        self.load_recipes()
+        self._load_recipes()
 
     def showEvent(self, event):
         """Handle show event to ensure proper layout."""
         super().showEvent(event)
         # Force layout recalculation when widget is shown
-        if hasattr(self, 'scroll_container'):
-            self.scroll_container.updateGeometry()
+        if hasattr(self, '_flow_container'):
+            self._flow_container.updateGeometry()
             self.scroll_area.updateGeometry()
 
     def resizeEvent(self, event):
         """Handle resize event to update layout."""
         super().resizeEvent(event)
         # Force layout update on resize
-        if hasattr(self, 'flow_layout'):
+        if hasattr(self, '_flow_container'):
             from PySide6.QtCore import QTimer
-            QTimer.singleShot(10, lambda: self.flow_layout.update())
+            # Use the flow container's layout for update
+            QTimer.singleShot(10, lambda: self._flow_container.layout.update())
