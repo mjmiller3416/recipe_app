@@ -49,7 +49,7 @@ class Sidebar(QWidget):
         self.nav_button_group.setExclusive(True)
         self.btn_dashboard = self._create_nav_button("Dashboard")
         self.btn_meal_planner = self._create_nav_button("Meal Planner")
-        self.btn_view_recipes = self._create_nav_button("View Recipes")
+        self.btn_browse_recipes = self._create_nav_button("Browse Recipes")
         self.btn_shopping_list = self._create_nav_button("Shopping List")
         self.btn_add_recipes = self._create_nav_button("Add Recipes")
 
@@ -65,7 +65,7 @@ class Sidebar(QWidget):
         return {
             "btn_dashboard": self.btn_dashboard,
             "btn_meal_planner": self.btn_meal_planner,
-            "btn_view_recipes": self.btn_view_recipes,
+            "btn_browse_recipes": self.btn_browse_recipes,
             "btn_shopping_list": self.btn_shopping_list,
             "btn_add_recipes": self.btn_add_recipes,
             "btn_settings": self.btn_settings,
@@ -94,7 +94,7 @@ class Sidebar(QWidget):
         """
         Create a navigation button using the Button class with NavButton-like styling.
         """
-        # derive enum key from label (e.g. "View Recipes" -> "VIEW_RECIPES")
+        # derive enum key from label (e.g. "Browse Recipes" -> "BROWSE_RECIPES")
         enum_key = label.replace(' ', '_').upper()
         app_icon = Name[enum_key]
 

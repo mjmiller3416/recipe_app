@@ -81,6 +81,6 @@ class Qss(Enum):
     MEAL_PLANNER      = AppPaths.QSS_DIR / "meal_planner.qss"
     SETTINGS          = AppPaths.QSS_DIR / "settings.qss"
     SHOPPING_LIST     = AppPaths.QSS_DIR / "shopping_list.qss"
-    VIEW_RECIPES      = AppPaths.QSS_DIR / "view_recipes.qss"
+    BROWSE_RECIPES      = AppPaths.QSS_DIR / "browse_recipes.qss"
     FULL_RECIPE       = AppPaths.QSS_DIR / "full_recipe.qss"
 

@@ -7,7 +7,7 @@ multiple meal planning tabs and integrates with the database to load and save me
 
 # ── Imports ───
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import QMenu, QStackedWidget, QTabWidget, QWidget
+from PySide6.QtWidgets import QMenu, QTabWidget, QWidget
 
 from _dev_tools import DebugLogger
 from app.core.services import PlannerService
@@ -18,7 +18,6 @@ from app.style.icon import AppIcon, Icon
 from app.ui.utils import (apply_object_name_pattern, register_widget_for_theme,
                           setup_main_scroll_layout)
 from app.ui.views.base import BaseView
-from app.ui.views.recipe_selection import RecipeSelection
 
 from .meal_widget import MealWidget
 
@@ -38,10 +37,11 @@ class MealPlanner(BaseView):
         tab_map (dict): Maps tab indices to their respective MealWidget and meal_id.
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, navigation_service=None):
         super().__init__(parent)
         # Initialize PlannerService
         self.planner_service = PlannerService()
+        self.navigation_service = navigation_service
 
         self._setup_widget_properties()
         DebugLogger.log("Initializing MealPlanner page", "info")
@@ -55,26 +55,12 @@ class MealPlanner(BaseView):
 
     def _build_ui(self):
         """Build the main UI layout using consistent scroll pattern."""
-        # Create Planner & Selection Widgets
+        # Create meal tabs widget
         self.meal_tabs = self._create_meal_tabs_widget()
         self.meal_tabs.setIconSize(TAB_ICON_SIZE)
 
-        # create the in-page recipe selection view
-        self.selection_page = RecipeSelection(self)
-        # handle when a recipe is selected from the selection page
-        self.selection_page.recipe_selected.connect(self._finish_recipe_selection)
-
-        # stacked widget to switch between planner tabs and selection page
-        self.stack = QStackedWidget()
-        self.stack.setContentsMargins(0, 0, 0, 0)
-        self.stack.addWidget(self.meal_tabs)
-        self.stack.addWidget(self.selection_page)
-
-        # Add stack to scroll layout with center alignment
-        self.content_layout.addWidget(self.stack, 0, Qt.AlignHCenter | Qt.AlignTop)
-
-        # show the planner view by default
-        self.stack.setCurrentIndex(0)
+        # Add tabs to scroll layout with center alignment
+        self.content_layout.addWidget(self.meal_tabs, 0, Qt.AlignHCenter | Qt.AlignTop)
 
     def _setup_widget_properties(self):
         """Setup widget properties and theme registration."""
@@ -155,34 +141,30 @@ class MealPlanner(BaseView):
             self._add_meal_tab()
 
     def _start_recipe_selection(self, widget, slot_key: str):
-        """Begin in-page recipe selection for the given meal slot."""
+        """Begin recipe selection for the given meal slot by navigating to RecipeBrowser."""
         DebugLogger.log(f"Starting recipe selection for slot: {slot_key}", "info")
         # Store Context
         self._selection_context = (widget, slot_key)
 
-        # Reset selection browser with error handling
-        def _load_recipes():
-            DebugLogger.log("Loading recipes in selection page browser", "info")
-            self.selection_page.browser.load_recipes()
+        # Navigate to RecipeBrowser in selection mode
+        if self.navigation_service:
+            # Get the RecipeBrowser instance from navigation service
+            recipe_browser = self.navigation_service.page_instances.get("browse_recipes")
+            if recipe_browser:
+                # Set to selection mode and connect to finish handler
+                recipe_browser.selection_mode = True
+                recipe_browser.recipe_selected.connect(self._finish_recipe_selection)
 
-        error_context = create_error_context(
-            "recipe_selection_init",
-            {"slot_key": slot_key},
-            {"component": "MealPlanner"}
-        )
-        safe_execute_with_fallback(
-            _load_recipes,
-            fallback=None,  # Continue even if loading fails
-            error_context="recipe_browser_load",
-            logger_func=DebugLogger.log
-        )
-
-        # Show Selection Page
-        DebugLogger.log("Switching to selection page (index 1)", "info")
-        self.stack.setCurrentIndex(1)
+                # Navigate to the recipe browser
+                self.navigation_service.switch_to("browse_recipes")
+                DebugLogger.log("Navigated to RecipeBrowser in selection mode", "info")
+            else:
+                DebugLogger.log("RecipeBrowser not found in navigation service", "error")
+        else:
+            DebugLogger.log("Navigation service not available", "error")
 
     def _finish_recipe_selection(self, recipe_id: int):
-        """Handle recipe selected from the selection page."""
+        """Handle recipe selected from the RecipeBrowser."""
         if not self._selection_context:
             return
         widget, slot_key = self._selection_context
@@ -191,7 +173,21 @@ class MealPlanner(BaseView):
 
     def _return_to_planner_view(self):
         """Return to planner view and clear selection context."""
-        self.stack.setCurrentIndex(0)
+        if self.navigation_service:
+            # Reset RecipeBrowser to normal mode
+            recipe_browser = self.navigation_service.page_instances.get("browse_recipes")
+            if recipe_browser:
+                recipe_browser.selection_mode = False
+                # Disconnect the signal to avoid future conflicts
+                try:
+                    recipe_browser.recipe_selected.disconnect(self._finish_recipe_selection)
+                except RuntimeError:
+                    pass  # Signal was not connected
+
+            # Navigate back to meal planner
+            self.navigation_service.switch_to("meal_planner")
+            DebugLogger.log("Returned to MealPlanner from recipe selection", "info")
+
         self._selection_context = None
 
     def _show_context_menu(self, position):

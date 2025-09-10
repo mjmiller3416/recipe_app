@@ -1,6 +1,6 @@
-"""app/ui/components/composite/recipe_browser.py
+"""app/ui/views/recipe_browser/recipe_browser.py
 
-Shared recipe browser component for displaying recipes in a grid layout.
+Standalone recipe browser view for displaying recipes in a grid layout.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
@@ -19,12 +19,12 @@ from app.ui.components.widgets import ComboBox
 
 # ── Recipe Browser ──────────────────────────────────────────────────────────────────────────────────────────
 class RecipeBrowser(QWidget):
-    """Reusable recipe browser component with filtering and sorting."""
+    """Standalone recipe browser view with filtering and sorting."""
 
     recipe_card_clicked = Signal(object)  # recipe object
     recipe_selected = Signal(int)  # recipe ID
 
-    def __init__(self, parent=None, card_size=LayoutSize.MEDIUM, selection_mode=False):
+    def __init__(self, parent=None, card_size=LayoutSize.MEDIUM, selection_mode=False, navigation_service=None):
         """
         Initialize the RecipeBrowser.
 
@@ -34,16 +34,37 @@ class RecipeBrowser(QWidget):
                 Size of recipe cards. Defaults to LayoutSize.MEDIUM.
             selection_mode (bool, optional):
                 If True, cards are clickable for selection. Defaults to False.
+            navigation_service (NavigationService, optional): Service for handling navigation.
         """
         super().__init__(parent)
         self.setObjectName("RecipeBrowser")
         self.card_size = card_size
-        self.selection_mode = selection_mode  # if True, cards are clickable for selection
+        self._selection_mode = selection_mode  # if True, cards are clickable for selection
         self.recipe_service = RecipeService()
         self.recipes_loaded = False
+        self.navigation_service = navigation_service
 
         self.build_ui()
         self.load_recipes()
+
+    @property
+    def selection_mode(self):
+        """Get the current selection mode."""
+        return self._selection_mode
+
+    @selection_mode.setter
+    def selection_mode(self, value):
+        """Set selection mode and refresh cards if needed."""
+        if self._selection_mode != value:
+            self._selection_mode = value
+            # Refresh the recipe display to update card behavior
+            # Only refresh if we're switching TO selection mode, not away from it
+            if self.recipes_loaded and value:
+                self.load_filtered_sorted_recipes()
+
+    def _emit_recipe_selected(self, recipe):
+        """Helper method to emit recipe_selected signal with recipe ID."""
+        self.recipe_selected.emit(recipe.id)
 
     def build_ui(self):
         """Build the UI with filters and recipe grid."""
@@ -157,19 +178,25 @@ class RecipeBrowser(QWidget):
             card.set_recipe(recipe)
 
             # Set selection mode on the card
-            card.set_selection_mode(self.selection_mode)
+            card.set_selection_mode(self._selection_mode)
 
-            if self.selection_mode:
+            if self._selection_mode:
                 # connect card click behavior for selection
-                card.card_clicked.connect(lambda r: self.recipe_selected.emit(r.id))
+                # Use partial to avoid lambda closure issues
+                from functools import partial
+                card.card_clicked.connect(partial(self._emit_recipe_selected))
 
                 # add visual feedback for selection mode
                 # TODO: create hover effect in stylesheet
                 # show pointer cursor on hover
                 card.setCursor(Qt.PointingHandCursor)
             else:
-                # normal card behavior (opens full recipe)
-                card.card_clicked.connect(self.recipe_card_clicked.emit)
+                # normal card behavior (navigate to full recipe via navigation service)
+                if self.navigation_service:
+                    card.card_clicked.connect(self.navigation_service.show_full_recipe)
+                else:
+                    # fallback: emit signal for external handling
+                    card.card_clicked.connect(self.recipe_card_clicked.emit)
 
             self.flow_layout.addWidget(card)
 
@@ -185,9 +212,13 @@ class RecipeBrowser(QWidget):
     def clear_recipe_display(self):
         """Remove all recipe cards from the layout."""
         while self.flow_layout.count():
-            widget = self.flow_layout.takeAt(0)
-            if widget:
-                widget.deleteLater()
+            item = self.flow_layout.takeAt(0)
+            if item:
+                widget = item.widget() if hasattr(item, 'widget') else item
+                if widget:
+                    # Disconnect all signals to prevent conflicts
+                    widget.blockSignals(True)
+                    widget.deleteLater()
 
         # Force layout update after clearing
         self.scroll_container.updateGeometry()

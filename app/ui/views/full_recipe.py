@@ -423,15 +423,9 @@ class FullRecipe(QWidget):
         DebugLogger().log("Recipe banner image clicked for full preview", "debug")
 
     def _handle_back_clicked(self):
-        """Handle back button click using NavigationService or fallback to signal."""
-        if self.navigation_service:
-            # Use NavigationService to go back
-            if not self.navigation_service.go_back():
-                # Fallback to view_recipes if no history
-                self.navigation_service.navigate_to("view_recipes")
-        else:
-            # Fallback to original signal-based approach
-            self.back_clicked.emit()
+        """Handle back button click by emitting signal."""
+        # Emit signal for navigation service to handle
+        self.back_clicked.emit()
 
 
 

@@ -8,8 +8,9 @@ from PySide6.QtWidgets import QStackedWidget
 
 from _dev_tools import DebugLogger
 from app.core.services import PlannerService, ShoppingService
-from app.ui.views import (AddRecipes, Dashboard, MealPlanner, Settings,
-                          ShoppingList, ViewRecipes)
+from app.ui.views import (AddRecipes, Dashboard, MealPlanner, RecipeBrowser, Settings,
+                          ShoppingList)
+from app.ui.views.full_recipe import FullRecipe
 
 
 # ── Navigation Service ──────────────────────────────────────────────────────────────────────────────────────
@@ -31,13 +32,19 @@ class NavigationService:
         page_map = {
             "dashboard": Dashboard,
             "meal_planner": MealPlanner,
-            "view_recipes": ViewRecipes,
+            "browse_recipes": RecipeBrowser,
             "shopping_list": ShoppingList,
             "add_recipe": AddRecipes,
             "settings": Settings,
         }
         for name, page_class in page_map.items():
-            instance = page_class()
+            # Pass navigation service to views that need it
+            if name == "meal_planner":
+                instance = page_class(navigation_service=self)
+            elif name == "browse_recipes":
+                instance = page_class(navigation_service=self)
+            else:
+                instance = page_class()
             self.page_instances[name] = instance
             self.sw_pages.addWidget(instance)
 
@@ -79,3 +86,26 @@ class NavigationService:
             Animator.transition_stack(current_widget, next_widget, self.sw_pages)
         else:
             self.sw_pages.setCurrentWidget(next_widget) """
+
+    def show_full_recipe(self, recipe):
+        """Navigate to FullRecipe view with the specified recipe."""
+        DebugLogger.log(f"NavigationService.show_full_recipe called for: {recipe.recipe_name}", "info")
+
+        # Remove existing full_recipe widget if it exists
+        if "full_recipe" in self.page_instances:
+            old_widget = self.page_instances["full_recipe"]
+            self.sw_pages.removeWidget(old_widget)
+            old_widget.deleteLater()
+
+        # Create new FullRecipe widget with the specific recipe
+        full_recipe_widget = FullRecipe(recipe, navigation_service=self)
+
+        # Connect the back button to return to recipes
+        full_recipe_widget.back_clicked.connect(lambda: self.switch_to("browse_recipes"))
+
+        # Add to navigation
+        self.page_instances["full_recipe"] = full_recipe_widget
+        self.sw_pages.addWidget(full_recipe_widget)
+
+        # Navigate to the full recipe view
+        self.sw_pages.setCurrentWidget(full_recipe_widget)

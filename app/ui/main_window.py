@@ -154,7 +154,7 @@ class MainWindow(FramelessWindow):
         button_map = {
             "btn_dashboard": "dashboard",
             "btn_meal_planner": "meal_planner",
-            "btn_view_recipes": "view_recipes",
+            "btn_browse_recipes": "browse_recipes",
             "btn_shopping_list": "shopping_list",
             "btn_add_recipes": "add_recipe",
             "btn_settings": "settings",
@@ -185,7 +185,7 @@ class MainWindow(FramelessWindow):
         mapping = {
             "dashboard": "Dashboard",
             "meal_planner": "Meal Planner",
-            "view_recipes": "View Recipes",
+            "browse_recipes": "Browse Recipes",
             "shopping_list": "Shopping List",
             "add_recipe": "Add Recipe",
             "settings": "Settings",

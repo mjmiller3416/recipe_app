@@ -67,7 +67,7 @@ class Path(Enum):
     TOTAL_TIME      = "total_time"
     TRASH           = "trash"
     USER            = "user"
-    VIEW_RECIPES    = "view_recipes"
+    BROWSE_RECIPES  = "browse_recipes"
     WARNING         = "warning"
     WIFI            = "wifi"
 
@@ -194,7 +194,7 @@ class Name(Enum):
     ADD_RECIPES     = IconSpec(Path.ADD_RECIPES, Size.LARGE)
     DASHBOARD       = IconSpec(Path.DASHBOARD, Size.LARGE)
     MEAL_PLANNER    = IconSpec(Path.MEAL_PLANNER, Size.LARGE)
-    VIEW_RECIPES    = IconSpec(Path.VIEW_RECIPES, Size.LARGE)
+    BROWSE_RECIPES    = IconSpec(Path.BROWSE_RECIPES, Size.LARGE)
     PHOTO           = IconSpec(Path.PHOTO, Size.LARGE)
     SHOPPING_LIST   = IconSpec(Path.SHOPPING_LIST, Size.LARGE)
     SETTINGS        = IconSpec(Path.SETTINGS, Size.LARGE)
