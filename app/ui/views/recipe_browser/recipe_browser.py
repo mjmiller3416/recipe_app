@@ -54,14 +54,9 @@ class RecipeBrowser(BaseView):
         """Set selection mode and refresh cards if needed."""
         if self._selection_mode != value:
             self._selection_mode = value
-            # Refresh the recipe display to update card behavior
             # Only refresh if we're switching TO selection mode, not away from it
             if self.recipes_loaded and value:
                 self._load_filtered_sorted_recipes()
-
-    def _emit_recipe_selected(self, recipe):
-        """Helper method to emit recipe_selected signal with recipe ID."""
-        self.recipe_selected.emit(recipe.id)
 
     def _build_ui(self):
         """Build the UI with filters and recipe grid."""
@@ -78,6 +73,10 @@ class RecipeBrowser(BaseView):
         self.filter_bar = FilterBar(self)
         self.content_layout.addWidget(self.filter_bar)
         self.filter_bar.filters_changed.connect(self._load_filtered_sorted_recipes)
+
+    def _emit_recipe_selected(self, recipe):
+        """Helper method to emit recipe_selected signal with recipe ID."""
+        self.recipe_selected.emit(recipe.id)
 
     def _load_recipes(self):
         """Load recipes with default filter."""

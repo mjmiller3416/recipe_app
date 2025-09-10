@@ -246,6 +246,7 @@
       "conversion_manager_blueprint.md": "Template",
     },
 
+
     //** EXTENSION: Custom CSS and JS **//
     "vscode_custom_css.imports": [
 	  "file://${workspaceFolder}/.vscode/sidebar.css"

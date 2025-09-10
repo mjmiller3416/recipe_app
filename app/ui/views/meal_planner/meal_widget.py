@@ -6,10 +6,12 @@ from _dev_tools import DebugLogger
 from app.core.dtos import MealSelectionCreateDTO, MealSelectionUpdateDTO
 from app.core.models import MealSelection
 from app.core.services import PlannerService, RecipeService
-from app.core.utils import (create_error_context, error_boundary,
-                            log_and_handle_exception, validate_positive_number)
-from app.ui.components.composite.recipe_card import (LayoutSize,
-                                                     create_recipe_card)
+from app.core.utils import (
+    create_error_context,
+    error_boundary,
+    log_and_handle_exception,
+    validate_positive_number)
+from app.ui.components.composite.recipe_card import LayoutSize, create_recipe_card
 from app.ui.utils import batch_connect_signals, create_tooltip_event_filter
 
 # ── Constants ──

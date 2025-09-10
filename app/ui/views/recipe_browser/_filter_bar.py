@@ -46,6 +46,7 @@ class FilterBar(QWidget):
     def _set_defaults(self):
         """Set default filter values."""
         self.cb_sort.setCurrentText("A-Z")
+        self.cb_filter.setCurrentText("All")
 
     def getFilterState(self):
         """Return current filter state as a dictionary."""
