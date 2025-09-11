@@ -47,7 +47,7 @@ class ViewRecipe(QWidget):
         self.navigation_service = navigation_service
 
         # Register this view for component-scoped QSS.
-        Theme.register_widget(self, Qss.FULL_RECIPE)
+        # Theme.register_widget(self, Qss.FULL_RECIPE)
 
         self.setObjectName("ViewRecipe")
         self._cached_recipe_data = None

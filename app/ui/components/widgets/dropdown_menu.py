@@ -48,9 +48,6 @@ class DropdownMenu(QWidget):
         # Set object name for styling
         self.setObjectName("DropdownMenu")
 
-        # register for component-specific styling
-        Theme.register_widget(self, Qss.DROPDOWN_MENU)
-
         # set up model
         if model is not None:
             self.model = model
@@ -73,7 +70,6 @@ class DropdownMenu(QWidget):
 
         # Apply theme styling to the popup
         popup.setAttribute(Qt.WA_StyledBackground, True)
-        Theme.register_widget(popup, Qss.DROPDOWN_MENU)
 
         # multi-select support
         self.allow_multi_select = allow_multi_select

@@ -20,8 +20,6 @@ class IngredientsPreview(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("IngredientsPreview")
-        # register for component-specific styling
-        Theme.register_widget(self, Qss.MEAL_PLANNER)
         self.ingredient_details = []
 
         # Main layout

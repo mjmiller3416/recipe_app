@@ -4,8 +4,7 @@ Standalone recipe browser view for displaying recipes in a grid layout.
 """
 
 # ── Imports ──
-from functools import partial
-from PySide6.QtCore import Qt, Signal, QCoreApplication
+from PySide6.QtCore import Qt, Signal
 
 from app.core import RecipeFilterDTO
 from app.core.services import RecipeService
@@ -51,12 +50,11 @@ class RecipeBrowser(BaseView):
 
     @selection_mode.setter
     def selection_mode(self, value):
-        """Set selection mode and refresh cards if needed."""
+        """Set selection mode and update existing cards' behavior."""
         if self._selection_mode != value:
             self._selection_mode = value
-            # Only refresh if we're switching TO selection mode, not away from it
-            if self.recipes_loaded and value:
-                self._load_filtered_sorted_recipes()
+            if self.recipes_loaded:
+                self._update_cards_selection_mode()
 
     def _build_ui(self):
         """Build the UI with filters and recipe grid."""
@@ -74,9 +72,6 @@ class RecipeBrowser(BaseView):
         self.content_layout.addWidget(self.filter_bar)
         self.filter_bar.filters_changed.connect(self._load_filtered_sorted_recipes)
 
-    def _emit_recipe_selected(self, recipe):
-        """Helper method to emit recipe_selected signal with recipe ID."""
-        self.recipe_selected.emit(recipe.id)
 
     def _load_recipes(self):
         """Load recipes with default filter."""
@@ -90,14 +85,12 @@ class RecipeBrowser(BaseView):
 
     def _load_filtered_sorted_recipes(self):
         """Load recipes based on current filter/sort selections."""
-        # Get the current filter state using the method
         filter_state = self.filter_bar.getFilterState()
 
-        # Process the filter state
-        recipe_category = filter_state['category']
-        if not recipe_category or recipe_category in ("All", "Filter"):
-            recipe_category = None
+        # Simplify category processing
+        recipe_category = None if filter_state['category'] in (None, "All", "Filter") else filter_state['category']
 
+        # Simplified sort mapping
         sort_label = filter_state['sort']
         sort_map = {
             "A-Z": "recipe_name",
@@ -109,11 +102,14 @@ class RecipeBrowser(BaseView):
             "Most Servings": "servings",
             "Fewest Servings": "servings",
         }
+        
+        sort_by = sort_map.get(sort_label, "recipe_name")
+        sort_order = "desc" if sort_label in ("Z-A", "Newest", "Longest Time", "Most Servings") else "asc"
 
         filter_dto = RecipeFilterDTO(
             recipe_category=recipe_category,
-            sort_by=sort_map.get(sort_label, "recipe_name"),
-            sort_order="desc" if sort_label in ("Z-A",) else "asc",
+            sort_by=sort_by,
+            sort_order=sort_order,
             favorites_only=filter_state['favorites_only'],
         )
         self._fetch_and_display_recipes(filter_dto)
@@ -130,40 +126,76 @@ class RecipeBrowser(BaseView):
         recipes = self.recipe_service.list_filtered(filter_dto)
 
         for recipe in recipes:
-            # Create card with flow container as parent
-            card = create_recipe_card(self.card_size, parent=self._flow_container)
-            card.set_recipe(recipe)
-
-            # Set selection mode on the card
-            card.set_selection_mode(self._selection_mode)
-
-            if self._selection_mode:
-                # connect card click behavior for selection
-                # Use partial to avoid lambda closure issues
-                card.card_clicked.connect(partial(self._emit_recipe_selected, recipe))
-
-                # add visual feedback for selection mode
-                # show pointer cursor on hover
-                card.setCursor(Qt.PointingHandCursor)
-            else:
-                # normal card behavior (navigate to full recipe via navigation service)
-                if self.navigation_service:
-                    card.card_clicked.connect(self.navigation_service.show_full_recipe)
-                else:
-                    # fallback: emit signal for external handling
-                    card.card_clicked.connect(self.recipe_card_clicked.emit)
-
-            # Add to the flow container
+            card = self._create_recipe_card(recipe)
             self._flow_container.addWidget(card)
 
         self.recipes_loaded = True
+        self._update_layout()
 
-        # Force the container to update and recalculate its geometry
-        self._flow_container.updateGeometry()
-        self.scroll_area.updateGeometry()
+    def _create_recipe_card(self, recipe):
+        """Create and configure a recipe card.
+        
+        Args:
+            recipe: The recipe data object.
+            
+        Returns:
+            Configured recipe card widget.
+        """
+        card = create_recipe_card(self.card_size, parent=self._flow_container)
+        card.set_recipe(recipe)
+        card.set_selection_mode(self._selection_mode)
+        
+        # Store recipe reference for later use
+        card.recipe_data = recipe
+        
+        self._setup_card_behavior(card, recipe)
+        return card
+    
+    def _setup_card_behavior(self, card, recipe):
+        """Setup click behavior for a recipe card based on current mode.
+        
+        Args:
+            card: The recipe card widget.
+            recipe: The recipe data object.
+        """
+        # Disconnect any existing connections
+        try:
+            card.card_clicked.disconnect()
+        except (RuntimeError, TypeError):
+            pass  # No connections to disconnect
+        
+        if self._selection_mode:
+            # Selection mode: emit recipe ID when clicked
+            card.card_clicked.connect(lambda: self.recipe_selected.emit(recipe.id))
+            card.setCursor(Qt.PointingHandCursor)
+        else:
+            # Normal mode: navigate or emit signal
+            if self.navigation_service:
+                card.card_clicked.connect(self.navigation_service.show_full_recipe)
+            else:
+                card.card_clicked.connect(self.recipe_card_clicked.emit)
+            card.setCursor(Qt.ArrowCursor)
+    
+    def _update_cards_selection_mode(self):
+        """Update all existing recipe cards to match current selection mode."""
+        if not hasattr(self, '_flow_container'):
+            return
+            
+        # Update each card's behavior without reloading data
+        for i in range(self._flow_container.layout.count()):
+            item = self._flow_container.layout.itemAt(i)
+            if item:
+                card = item.widget()
+                if card and hasattr(card, 'recipe_data'):
+                    card.set_selection_mode(self._selection_mode)
+                    self._setup_card_behavior(card, card.recipe_data)
 
-        # Process any pending events to ensure proper layout
-        QCoreApplication.processEvents()
+    def _update_layout(self):
+        """Update the flow container and scroll area layouts."""
+        if hasattr(self, '_flow_container'):
+            self._flow_container.updateGeometry()
+            if hasattr(self, 'scroll_area'):
+                self.scroll_area.updateGeometry()
 
     def _clear_recipe_cards(self):
         """Clear all existing recipe cards from the flow layout."""
@@ -177,16 +209,11 @@ class RecipeBrowser(BaseView):
     def showEvent(self, event):
         """Handle show event to ensure proper layout."""
         super().showEvent(event)
-        # Force layout recalculation when widget is shown
-        if hasattr(self, '_flow_container'):
-            self._flow_container.updateGeometry()
-            self.scroll_area.updateGeometry()
+        self._update_layout()
 
     def resizeEvent(self, event):
         """Handle resize event to update layout."""
         super().resizeEvent(event)
-        # Force layout update on resize
         if hasattr(self, '_flow_container'):
             from PySide6.QtCore import QTimer
-            # Use the flow container's layout for update
-            QTimer.singleShot(10, lambda: self._flow_container.layout.update())
+            QTimer.singleShot(10, self._flow_container.layout.update)

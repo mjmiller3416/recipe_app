@@ -21,9 +21,6 @@ class InfoCard(QWidget):
         super().__init__(parent)
         self.setObjectName("InfoCard")
 
-        # Register for component-specific styling
-        Theme.register_widget(self, Qss.INFO_CARD)
-
         # Layout
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 10, 0, 10)

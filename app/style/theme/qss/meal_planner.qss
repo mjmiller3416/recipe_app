@@ -34,7 +34,7 @@
     color: {on_surface_variant};  /* Gray-out disabled tabs */
 }
 
-QTabBar:tab:last {margin: 0px; width: 32px;}
+#MealPlanner QTabBar:tab:last {margin: 0px; width: 32px;}
 
 #MealPlanner QMenu {
     background-color: {primary_container};  /* Dark background */

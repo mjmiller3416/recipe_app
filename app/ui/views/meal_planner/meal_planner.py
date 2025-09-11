@@ -63,7 +63,6 @@ class MealPlanner(BaseView):
     def _setup_widget_properties(self):
         """Setup widget properties and theme registration."""
         apply_object_name_pattern(self, "MealPlanner")
-        register_widget_for_theme(self, Qss.MEAL_PLANNER)
 
     def _create_meal_tabs_widget(self) -> QTabWidget:
         """Create and configure the meal tabs widget."""

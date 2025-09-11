@@ -391,3 +391,362 @@ Secondary card variant
     font: {default};
     color: {outline};
 }
+
+/* ------------------------------------------------------------------
+   DROPDOWN MENU STYLSHEET
+   ------------------------------------------------------------------ */
+
+/* Main DropdownMenu widget */
+#DropdownMenu {
+    background-color: transparent;
+}
+
+/* QCompleter popup is a QListView - style it directly */
+QListView#DropdownMenuPopup {
+    background-color: {surface_container};
+    border: 2px solid {outline};
+    border-radius: 8px;
+    padding: 4px;
+    outline: none;
+}
+
+/* List view items */
+QListView#DropdownMenuPopup::item {
+    background-color: transparent;
+    color: {on_surface};
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    margin: 1px;
+}
+
+QListView#DropdownMenuPopup::item:hover {
+    background-color: {surface_container_high};
+    color: {on_surface};
+}
+
+QListView#DropdownMenuPopup::item:selected {
+    background-color: {primary_container};
+    color: {on_primary_container};
+}
+
+QListView#DropdownMenuPopup::item:selected:hover {
+    background-color: {primary_container};
+    color: {on_primary_container};
+}
+
+
+/* ------------------------------------------------------------------
+   INGREDIENT WIDGET STYLING
+   ------------------------------------------------------------------ */
+
+/* Main ingredient widget container */
+#IngredientForm {
+    background-color: {surface};
+    border: 1px solid {outline_variant};
+}
+
+/* Hover state for entire widget */
+#IngredientForm:hover {
+    background-color: {surface_container_high};
+}
+
+#IngredientForm #DeleteButton {background-color: transparent; border: none;}
+#IngredientForm #DeleteButton:hover {border: none;}
+
+/* Drag handle styling */
+#IngredientForm #DragHandle {
+    background-color: transparent;
+    border: none;
+    padding: 4px;
+    border-radius: 6px;
+    color: {outline};
+}
+
+
+/* Quantity field - smaller width */
+#IngredientForm #QuantityField {
+    max-width: 80px;
+    min-width: 60px;
+}
+
+/* Unit field - smaller width */
+#IngredientForm .UnitField {
+    max-width: 100px;
+    min-width: 80px;
+}
+
+/* Name field - expandable */
+#IngredientForm #NameField {
+    min-width: 200px;
+}
+
+/* Category field - medium width */
+#IngredientForm .CategoryField {
+    max-width: 150px;
+    min-width: 120px;
+}
+
+/* ------------------------------------------------------------------
+   RECIPE TAG STYLING
+   ------------------------------------------------------------------ */
+
+#RecipeTag {
+    background-color: {secondary_container};
+    border-radius: 20px;
+    padding: 8px 16px;
+}
+
+#RecipeTagText {
+    background-color: transparent;
+    font: {default};
+    color: {on_surface};
+    font-weight: 500;
+}
+
+
+/* ------------------------------------------------------------------
+   RECIPE TAG STYLING
+   ------------------------------------------------------------------ */
+
+#InfoCard {
+    background-color: transparent;
+    padding: 10px;
+}
+
+#InfoCardTitle {
+    font: {default};
+    color: {on_secondary_container};
+    font-weight: bold;
+}
+
+#InfoCardValue {
+    font: {default};
+    color: {tertiary};
+    font-weight: 400;
+}
+
+
+/* ------------------------------------------------------------------
+   MEAL PLANNER STYLING
+   ------------------------------------------------------------------ */
+
+#MealPlanner QTabWidget:pane {
+    background: {surface_container};  /* Dark background */
+    border: none;  /* Subtle border */
+    border-top-left-radius: 0px;
+    margin: 0;
+}
+
+#MealPlanner QTabBar:tab {
+    background: {surface_container_highest};  /* Darker tab background */
+    color: {on_surface};  /* Light text */
+    border-left: 2px solid {surface};
+    border-right: 2px solid {surface};
+    border-top: 2px solid {surface};
+    padding: 12px 16px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+#MealPlanner QTabBar:tab:selected {
+    background: {surface_container};  /* Slightly brighter for active tab */
+    font-weight: bold;
+    border: none;
+}
+
+#MealPlanner QTabBar:tab:hover {
+    background: {secondary_container};
+}
+
+#MealPlanner QTabBar:tab:disabled {
+    color: {on_surface_variant};  /* Gray-out disabled tabs */
+}
+
+#MealPlanner QTabBar:tab:last {margin: 0px; width: 32px;}
+
+#MealPlanner QMenu {
+    background-color: {primary_container};  /* Dark background */
+    border: 2px solid {outline};  /* Subtle border */
+    padding: 5px;
+    border-radius: 6px;
+}
+
+#MealPlanner QMenu:item {
+    padding: 8px 15px;
+    font: {default};
+    border-radius: 4px;
+}
+
+#MealPlanner QMenu:item:selected {
+    background-color: {tertiary};  /* Teal hover effect */
+    color: {on_tertiary};
+}
+
+/* Optional: Adds a separator style */
+#MealPlanner QMenu:separator {
+    height: 1px;
+    background: {outline_variant};
+    margin: 5px;
+}
+
+
+/* ------------------------------------------------------------------
+   FULL RECIPE VIEW STYLING
+   ------------------------------------------------------------------ */
+
+/* ── Main Container ──────────────────────────────────────────── */
+QWidget#ViewRecipe {
+    background-color: {surface};
+}
+
+QScrollArea#FullRecipeScroll {
+    background-color: {surface};
+    border: none;
+}
+
+QWidget#RecipeTagsContainer {
+    background-color: {surface};
+}
+
+/* ── Ingredient List Styling ──────────────────────────────────── */
+QLabel#IngredientQuantity {
+    font-weight: 600;
+    color: {primary};
+}
+
+QLabel#IngredientUnit {
+    color: {on_surface_variant};
+    font-style: italic;
+}
+
+QLabel#IngredientName {
+    color: {on_surface};
+}
+
+/* ── Notes Text Styling ──────────────────────────────────────── */
+QLabel#NotesText {
+    font: {default};
+    color: {on_surface_variant};
+    background-color: {surface_container};
+}
+
+
+/* ── Recipe Title ──────────────────────────────────────────────── */
+QLabel#RecipeTitle {
+    font: {header_large};
+    color: {on_surface};
+    margin: 20px 0;
+}
+
+/* ── Info Cards Container ─────────────────────────────────────── */
+[tag="Container"] {
+    background-color: {secondary_container};
+    border: 1px solid {outline_variant};
+    border-radius: 12px;
+    margin: 10px 0;
+}
+
+/* ── Back Button ───────────────────────────────────────────── */
+QWidget#BackBar {
+    background-color: transparent;
+    margin-bottom: 10px;
+}
+
+QPushButton#BackButton {
+    background-color: {primary_container};
+    color: {on_primary_container};
+    font: {default};
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+}
+
+
+/* ── Responsive Design ──────────────────────────────────────── */
+@media (max-width: 800px) {
+    QLabel#RecipeTitle {
+        font: {header_small};
+    }
+
+    QFrame#InfoContainer QHBoxLayout {
+        flex-direction: column;
+    }
+}
+
+/* ── Hover Effects ───────────────────────────────────────────── */
+QFrame#RecipeTag:hover {
+    background-color: {surface_container_highest};
+}
+
+[tag="Card"]#SectionCard:hover {
+    background-color: {surface_container_high};
+    border: 1px solid {outline};
+}
+
+
+#RightColumnContainer{
+      background-color: transparent;
+  }
+
+
+/* ------------------------------------------------------------------
+   SHOPPING LIST STYLING
+   ------------------------------------------------------------------ */
+[is_expanded="True"] {
+    background-color: {surface};
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+[is_expanded="False"] {
+    background-color: {surface};
+    border-radius: 10px;
+}
+
+#ShoppingList QLineEdit {
+    background-color: {surface};
+    border: none;
+    border-radius: 6px;
+}
+
+#ContentContainer {
+    background-color: {secondary_container};
+    border-left: 4px solid {surface};
+    border-right: 4px solid {surface};
+    border-bottom: 4px solid {surface};
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+#ShoppingListContent {
+    background-color: {surface};
+    border: none;
+}
+
+#ShoppingList QScrollArea {border: none;}
+
+#ShoppingItem {
+    color: {on_secondary_container};
+    font-size: 24px;
+}
+
+#CategoryLabel {
+    font-size: 32px;
+    font-weight: 400;
+}
+
+#ExpandButton {
+    background-color: transparent;
+    border: none;
+}
+
+#ShoppingList QToolTip {
+    /* Custom styles */
+    background-color: #333;
+    color: white;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 24px;
+}

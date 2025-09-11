@@ -22,9 +22,6 @@ class RecipeTag(QFrame):
         self.setObjectName("RecipeTag")
         self.setProperty("tag", "RecipeTag")
 
-        # register for component-specific styling
-        Theme.register_widget(self, Qss.RECIPE_TAG)
-
         # Layout
         layout = QHBoxLayout(self)
         layout.setContentsMargins(12, 6, 12, 6)
