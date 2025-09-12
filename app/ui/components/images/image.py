@@ -250,6 +250,7 @@ class RecipeBanner(BaseImage):
         # Setup object names and properties
         self.setObjectName("RecipeBanner")
         self.setProperty("tag", "RecipeBanner")
+        self.setAttribute(Qt.WA_StyledBackground, True)
         Theme.register_widget(self, Qss.RECIPE_BANNER)
 
         # Banner UI components
@@ -320,6 +321,8 @@ class RecipeBanner(BaseImage):
     def _create_banner_image_state(self):
         """Create banner image display state for single image."""
         self.image_widget = QWidget()
+        self.image_widget.setObjectName("RecipeBannerImageWidget")
+
         image_layout = QVBoxLayout(self.image_widget)
         image_layout.setContentsMargins(0, 0, 0, 0)
 

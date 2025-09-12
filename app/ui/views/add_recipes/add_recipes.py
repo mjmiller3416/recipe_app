@@ -43,9 +43,6 @@ class AddRecipes(BaseView):
         super().__init__(parent)
         self.setObjectName("AddRecipes")
 
-        # register for component-specific styling
-        Theme.register_widget(self, Qss.ADD_RECIPE)
-
         DebugLogger.log("Initializing Add Recipes page", "debug")
 
         self.stored_ingredients = []

@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any, Dict
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QScrollArea,
+from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel,
                                QSizePolicy, QTextEdit, QVBoxLayout, QWidget)
 
 from _dev_tools import DebugLogger
@@ -23,6 +23,7 @@ from app.style import Qss, Theme
 from app.style.icon import Icon
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets import Button, ComboBox
+from app.ui.views.base import BaseView
 
 
 # ── Settings Category ────────────────────────────────────────────────────────────────────────
@@ -228,7 +229,7 @@ class ImageGenerationSettings(SettingsCategory):
 
 
 # ── Settings ─────────────────────────────────────────────────────────────────────────────────
-class Settings(QWidget):
+class Settings(BaseView):
     """Main Settings view with category selection and management."""
 
     def __init__(self, parent=None):
@@ -236,7 +237,6 @@ class Settings(QWidget):
         self.setObjectName("Settings")
 
         # Register for theme management
-        Theme.register_widget(self, Qss.SETTINGS)
 
         # Settings data
         self.settings_service = SettingsService()
@@ -247,16 +247,20 @@ class Settings(QWidget):
 
     def _build_ui(self):
         """Build the main settings interface."""
-        # Main layout
-        main_layout = QHBoxLayout(self)
-        main_layout.setContentsMargins(30, 30, 30, 30)
-        main_layout.setSpacing(25)
+        # Create horizontal container for sidebar and content
+        container = QWidget()
+        container_layout = QHBoxLayout(container)
+        container_layout.setContentsMargins(30, 30, 30, 30)
+        container_layout.setSpacing(25)
 
         # Left sidebar for categories
-        self._build_category_sidebar(main_layout)
+        self._build_category_sidebar(container_layout)
 
         # Right content area
-        self._build_content_area(main_layout)
+        self._build_content_area(container_layout)
+
+        # Add the container to the scroll layout from BaseView
+        self.scroll_layout.addWidget(container)
 
         # Add categories
         self._add_categories()
@@ -287,7 +291,7 @@ class Settings(QWidget):
 
     def _build_content_area(self, main_layout: QHBoxLayout):
         """Build the settings content area."""
-        # Content area with scroll
+        # Content area container
         content_container = QWidget()
         content_container.setObjectName("SettingsContent")
 
@@ -295,22 +299,14 @@ class Settings(QWidget):
         content_layout.setContentsMargins(0, 0, 0, 0)
         content_layout.setSpacing(0)
 
-        # Scroll area for settings
-        self.scroll_area = QScrollArea()
-        self.scroll_area.setWidgetResizable(True)
-        self.scroll_area.setFrameShape(QFrame.NoFrame)
-        self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
-        # Settings content widget
+        # Settings content widget (no scroll area needed - BaseView handles it)
         self.settings_content = QWidget()
         self.settings_layout = QVBoxLayout(self.settings_content)
         self.settings_layout.setContentsMargins(0, 0, 0, 0)
         self.settings_layout.setSpacing(25)
         self.settings_layout.addStretch()
 
-        self.scroll_area.setWidget(self.settings_content)
-        content_layout.addWidget(self.scroll_area)
+        content_layout.addWidget(self.settings_content, 1)
 
         # Action buttons at bottom
         actions_container = QWidget()
