@@ -30,8 +30,6 @@ class ShoppingList(BaseView):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("ShoppingList")
-        # register for component-specific styling
-        Theme.register_widget(self, Qss.SHOPPING_LIST)
 
         DebugLogger.log("Initializing ShoppingList page", "info")
 

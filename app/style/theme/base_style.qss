@@ -1,45 +1,171 @@
-/* ------------------------------------------------------------------
-   BASE STYLESHEET
-   ------------------------------------------------------------------ */
-/* Main Window */
+/* ==================================================================
+   CLEANED AND ORGANIZED STYLESHEET
+   ================================================================== */
 
-/* Global Styles */
-#FixedWrapper {background-color: transparent;}
-QWidget#ContentArea{background-color: {surface};}
-QWidget#ScrollContent {background-color: {surface};border: none;}
-#BaseView #qt_scrollarea_viewport QWidget {background: transparent; border: none;}
+/* ==================================================================
+   1. GLOBAL STYLES & RESETS
+   ================================================================== */
 
-
-[tag="Header"] {
-    font: {title};
-    color: {on_surface};
-}
-[tag="Sub-Header"] {
-    font: {header_small};
-    color: {on_surface};
-}
-
-AppIcon {background-color: transparent;}
-
-
-/* QWidget */
+/* ── Base Widget Styles ─────────────────────────────────────── */
 QWidget {
     font-family: 'Roboto';
     font-size: 22px;
     color: {on_surface};
 }
 
-QWidget#ToggleContainer {border: 1px solid {outline};}
-#IngredientsScrollArea QWidget {background: {surface_container};border: none;}
+QWidget#ContentArea,
+QWidget#ScrollContent {
+    background-color: {surface};
+    border: none;
+}
 
+#FixedWrapper {
+    background-color: transparent;
+}
 
-/* Group Boxes */
+#BaseView #qt_scrollarea_viewport QWidget {
+    background: transparent;
+    border: none;
+}
+
+/* ── Typography Tags ──────────────────────────────────────── */
+[tag="Header"] {
+    font: {title};
+    color: {on_surface};
+}
+
+[tag="Sub-Header"] {
+    font: {header_small};
+    color: {on_surface};
+}
+
+/* ==================================================================
+   2. COMMON UI COMPONENTS
+   ================================================================== */
+
+/* ── Labels ───────────────────────────────────────────────── */
+QLabel {
+    background-color: transparent;
+}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+QPushButton {
+    background-color: {surface};
+    color: {on_surface};
+    border: 1px solid {outline};
+    padding: 8px 16px;
+    border-radius: 4px;
+}
+
+QPushButton:hover {
+    background-color: {primary_container};
+}
+
+QPushButton:pressed,
+QPushButton:checked {
+    background-color: {primary};
+    color: {on_primary};
+    border: 1px solid {primary};
+}
+
+QPushButton:disabled {
+    background-color: {surface};
+    color: {on_surface_variant};
+    border: 1px solid {outline};
+}
+
+/* Toggle Button Variants */
+QPushButton#ToggleButtonActive,
+QPushButton#ToggleButtonInactive {
+    border: none;
+}
+
+/* ── Tool Buttons ─────────────────────────────────────────── */
+ToolButton {
+    background-color: {surface};
+    border: 1px solid {outline};
+    padding: 8px;
+    border-radius: 4px;
+}
+
+ToolButton:hover {
+    background-color: {primary_container};
+    color: {on_primary};
+    border: 1px solid {primary};
+}
+
+ToolButton:pressed,
+ToolButton:checked {
+    background-color: {primary};
+    border: 1px solid {primary};
+}
+
+ToolButton:disabled {
+    background-color: {surface};
+}
+
+/* ── Input Fields ─────────────────────────────────────────── */
+QLineEdit,
+QTextEdit,
+QComboBox {
+    background-color: {surface};
+    color: {on_surface};
+    border: none;
+    border-radius: 4px;
+    padding: 5px 5px 5px 12px;
+}
+
+QLineEdit:focus,
+QTextEdit:focus,
+QComboBox:focus {
+    border: 2px solid {primary};
+}
+
+QLineEdit:disabled,
+QTextEdit:disabled,
+QComboBox:disabled {
+    background-color: {surface};
+    color: {on_surface_variant};
+}
+
+/* ── Checkboxes & Radio Buttons ──────────────────────────── */
+QCheckBox,
+QRadioButton {
+    background-color: transparent;
+    padding-left: 2px;
+}
+
+QCheckBox::indicator,
+QRadioButton::indicator {
+    width: 14px;
+    height: 14px;
+    border: 1px solid {outline};
+    border-radius: 4px;
+}
+
+QRadioButton::indicator {
+    border-radius: 7px;
+}
+
+QCheckBox::indicator:checked,
+QRadioButton::indicator:checked {
+    background-color: {primary};
+    border-color: {primary};
+}
+
+QCheckBox:disabled,
+QRadioButton:disabled {
+    color: {on_surface_variant};
+}
+
+/* ── Group Boxes ──────────────────────────────────────────── */
 QGroupBox {
     background-color: {surface};
     border: 1px solid {outline};
     border-radius: 8px;
     margin-top: 10px;
 }
+
 QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top left;
@@ -48,82 +174,71 @@ QGroupBox::title {
     color: {on_surface_variant};
 }
 
-
-/* Tool Buttons */
-ToolButton {
-    background-color: {surface};
+/* ── Tabs ─────────────────────────────────────────────────── */
+QTabWidget::pane {
     border: 1px solid {outline};
-    padding: 8px;
-    border-radius: 4px;
-}
-ToolButton:hover {
-    background-color: {primary_container};
-    color: {on_primary};
-    border: 1px solid {primary};
-}
-ToolButton:pressed, ToolButton:checked {
-    background-color: {primary};
-    border: 1px solid {primary};
-}
-ToolButton:disabled {
-    background-color: {surface};
-
+    border-top: none;
+    border-radius: 0 0 4px 4px;
 }
 
-#TitleBar ToolButton#BtnMaximize {background-color: red}
-
-/* Labels */
-QLabel {background-color: transparent;}
-
-
-/* Buttons */
-QPushButton {
-    background-color: {surface};
-    color: {on_surface};
-    border: 1px solid {outline};
-    padding: 8px 16px;
-    border-radius: 4px;
-}
-QPushButton:hover {background-color: {primary_container};}
-
-QPushButton:pressed, QPushButton:checked {
-    background-color: {primary};
-    color: {on_primary};
-    border: 1px solid {primary};
-}
-QPushButton:disabled {
-    background-color: {surface};
+QTabBar::tab {
+    background: transparent;
+    padding: 10px;
     color: {on_surface_variant};
-    border: 1px solid {outline};
-}
-
-QPushButton#ToggleButtonActive, QPushButton#ToggleButtonInactive {border: none;}
-
-
-/* Input Fields */
-QLineEdit, QTextEdit, QComboBox {
-    background-color: {surface};
-    color: {on_surface};
     border: none;
-    border-radius: 4px;
-    padding: 5px 5px 5px 12px;
+    border-bottom: 2px solid transparent;
 }
-QLineEdit:focus, QTextEdit:focus, QComboBox:focus {border: 2px solid {primary};}
 
-QLineEdit:disabled, QTextEdit:disabled, QComboBox:disabled {
+QTabBar::tab:hover {
+    background-color: {primary_container};
+}
+
+QTabBar::tab:selected {
+    color: {primary};
+    border-bottom: 2px solid {primary};
+    font-weight: bold;
+}
+
+/* ── Scroll Bars ──────────────────────────────────────────── */
+QScrollBar:vertical,
+QScrollBar:horizontal {
+    border: none;
     background-color: {surface};
-    color: {on_surface_variant};
+    width: 10px;
+    height: 10px;
+    margin: 0px;
 }
 
-#AddRecipes QTextEdit, #IngredientForm QLineEdit, #IngredientForm QComboBox {border: 1px solid {outline};}
-#AddRecipes QLineEdit:focus {border: 4px solid {primary};}
-#AddRecipes QLineEdit {border: none; padding-left: 12px;}
-#IngredientForm QLineEdit {border: 1px solid {outline_variant};}
-QTextEdit#DirectionsTextEdit {border-top-left-radius: 0; border-top-right-radius: 0;}
+QScrollBar::handle {
+    background-color: {outline};
+    border-radius: 5px;
+    min-height: 20px;
+    min-width: 20px;
+}
 
+QScrollBar::handle:hover {
+    background-color: {on_surface_variant};
+}
 
-/* Comboboxes */
-ComboBox {background-color: {surface_container}; border-radius: 6px;}
+QScrollBar::add-line,
+QScrollBar::sub-line {
+    height: 0px;
+    width: 0px;
+}
+
+/* ── Stacked Widget ───────────────────────────────────────── */
+QStackedWidget {
+    background-color: {surface};
+}
+
+/* ==================================================================
+   3. CUSTOM COMBOBOX COMPONENT
+   ================================================================== */
+
+ComboBox {
+    background-color: {surface_container};
+    border-radius: 6px;
+}
 
 ComboBox QLineEdit#CBLineEdit {
     background-color: transparent;
@@ -131,11 +246,8 @@ ComboBox QLineEdit#CBLineEdit {
     border: none;
     border-radius: 4px;
     font: {default};
-    padding: 5px;
-    padding-left: 4px;
+    padding: 5px 4px;
 }
-
-ComboBox QLineEdit#CBLineEdit:focus {border: none;}
 
 ComboBox ToolButton#CBButton {
     background-color: transparent;
@@ -144,26 +256,25 @@ ComboBox ToolButton#CBButton {
     padding-right: 20px;
 }
 
-ComboBox[dropdown="true"] {border: 4px solid {primary};}
-ComboBox[dropdown="false"] {border: none;}
+ComboBox[dropdown="true"] {
+    border: 4px solid {primary};
+}
 
-#AddRecipes ComboBox {background-color: {surface}; border-radius: 6px;}
-#ShoppingList ComboBox {background-color: {surface}; border-radius: 6px;}
-#AddRecipes ComboBox QLineEdit#CBLineEdit:focus {border: none;}
-#IngredientForm ComboBox {border: 1px solid {outline_variant};}
+ComboBox[dropdown="false"] {
+    border: none;
+}
 
-#IngredientForm ComboBox[dropdown="true"] {border: 4px solid {primary};}
-#IngredientForm ComboBox[dropdown="false"] {border: 1px solid {outline_variant};}
-
-
-/* ComboBox Dropdown */
-QComboBox::drop-down {border: none;}
+/* ComboBox Dropdown Arrow */
+QComboBox::drop-down {
+    border: none;
+}
 
 QComboBox::down-arrow {
     image: url(./down_arrow_{theme_name}.png);
     width: 14px;
     height: 14px;
 }
+
 QComboBox QAbstractItemView {
     background-color: {surface};
     border: 1px solid {outline};
@@ -172,80 +283,74 @@ QComboBox QAbstractItemView {
     outline: none;
 }
 
+/* ==================================================================
+   4. CARD COMPONENTS
+   ================================================================== */
 
-/* Checkboxes and Radio Buttons */
-QCheckBox, QRadioButton {background-color: transparent;padding-left: 2px;}
-
-QCheckBox::indicator, QRadioButton::indicator {
-    width: 14px;
-    height: 14px;
-    border: 1px solid {outline};
-    border-radius: 4px;
+/* ── Base Card Styles ─────────────────────────────────────── */
+[card="Default"],
+[card="Primary"] {
+    background-color: {surface_container};
+    border: none;
+    border-radius: 10px;
 }
-QRadioButton::indicator {border-radius: 7px;} /* Make radio buttons circular */
 
-QCheckBox::indicator:checked, QRadioButton::indicator:checked {
-    background-color: {primary};
-    border-color: {primary};
+[card="Secondary"] {
+    background-color: {secondary_container};
+    border: none;
+    border-radius: 10px;
 }
-QCheckBox:disabled, QRadioButton:disabled {color: {on_surface_variant};} /* Disabled state */
 
-
-/* Tabs */
-QTabWidget::pane {
-    border: 1px solid {outline};
-    border-top: none;
-    border-radius: 0 0 4px 4px;
-}
-QTabBar::tab {
-    background: transparent;
-    padding: 10px;
+/* Card Labels */
+[card="Default"] QLabel,
+[card="Primary"] QLabel {
+    background-color: transparent;
     color: {on_surface_variant};
-    border: none;
-    border-bottom: 2px solid transparent;
-}
-QTabBar::tab:hover {background-color: {primary_container};}
-
-QTabBar::tab:selected {
-    color: {primary};
-    border-bottom: 2px solid {primary};
-    font-weight: bold;
+    font: {default};
 }
 
-
-/* ScrollBars */
-QScrollBar:vertical, QScrollBar:horizontal {
-    border: none;
-    background-color: {surface};
-    width: 10px;
-    height: 10px;
-    margin: 0px;
-}
-QScrollBar::handle {
-    background-color: {outline};
-    border-radius: 5px;
-    min-height: 20px;
-    min-width: 20px;
-}
-QScrollBar::handle:hover {background-color: {on_surface_variant};}
-
-QScrollBar::add-line, QScrollBar::sub-line {
-    height: 0px;
-    width: 0px;
+[card="Secondary"] QLabel {
+    background-color: {secondary_container};
+    color: {on_secondary_container};
 }
 
-QStackedWidget {
-    background-color: {surface};
+/* Card Headers */
+[card="Default"] QLabel#Header,
+[card="Primary"] QLabel#Header {
+    font: {header_small};
 }
 
+[card="Primary"] QLabel#Header {
+    color: {secondary};
+}
 
-/* ------------------------------------------------------------------
-   COMPONENT-SPECIFIC STYLES
-   ------------------------------------------------------------------ */
+[card="Secondary"] QLabel#Header {
+    font: {header_small};
+    color: {on_secondary_container};
+}
 
-#RecipeCard, #EmptyStateFrame, #ErrorStateFrame {
-    background-color: {surface_container};  /* Use theme-based background instead of transparent */
-    border-radius: 10px; /* Rounded corners */
+/* Card Subheaders */
+[card="Default"] QLabel#SubHeader,
+[card="Primary"] QLabel#SubHeader,
+[card="Secondary"] QLabel#SubHeader {
+    font: {default};
+    color: {outline};
+}
+
+/* ==================================================================
+   5. RECIPE CARD COMPONENT
+   ================================================================== */
+
+#RecipeCard,
+#EmptyStateFrame,
+#ErrorStateFrame {
+    background-color: {surface_container};
+    border-radius: 10px;
+}
+
+#RecipeCard QLabel {
+    color: {on_surface};
+    font: {default};
 }
 
 #RecipeCard QLabel#IngredientQuantity,
@@ -262,23 +367,14 @@ QStackedWidget {
     padding-bottom: 4px;
 }
 
-#RecipeCard QLabel {
-    color: {on_surface};
-    font: {default};
-}
-
-#RecipeCard[layout_size="medium"] [title_text="true"] {
-    font: {default};
-}
-
-#RecipeCard[layout_size="large"] {
-    border-top-left-radius: 0px;
-}
-
 #RecipeCard #LargeCardTitle {
     font-size: 38px;
     font-weight: bold;
     color: {tertiary};
+}
+
+#RecipeCard[layout_size="large"] {
+    border-top-left-radius: 0px;
 }
 
 #RecipeCard [label_text="true"] {
@@ -291,325 +387,114 @@ QStackedWidget {
     border: none;
 }
 
+/* ==================================================================
+   6. ADD RECIPES FORM
+   ================================================================== */
 
-/* ------------------------------------------------------------------
-   ICON WIDGET STYLING
-   ------------------------------------------------------------------ */
-AppIcon {background-color: transparent;}
+#AddRecipes QTextEdit {
+    border: 1px solid {outline};
+}
 
-#ContentArea AppIcon {background-color: transparent;}
-
-/* Force transparent background for header icons */
-  AppIcon#HeaderIcon {
-      background-color: transparent !important;
-  }
-
-  /* Also try targeting by class and object name */
-  [card="Default"] AppIcon#HeaderIcon {
-      background-color: transparent !important;
-  }
-
-
-/* ------------------------------------------------------------------
-   CARD WIDGET STYLING
-   ------------------------------------------------------------------ */
-[card="Default"] {
-    background-color: {surface_container};
+#AddRecipes QLineEdit {
     border: none;
-    border-radius: 10px;
+    padding-left: 12px;
 }
 
-/* Card content styling */
-[card="Default"] QLabel#Card {
-    background-color: purple;
-    color: {on_surface_variant};
-    font: {default};
+#AddRecipes QLineEdit:focus {
+    border: 4px solid {primary};
 }
 
-/* Header styling */
-[card="Default"] QLabel#Header {
-    font: {header_small};
+#AddRecipes ComboBox {
+    background-color: {surface};
+    border-radius: 6px;
 }
 
-/* Subheader styling */
-[card="Default"] QLabel#SubHeader {
-    font: {default};
-    color: {outline};
+QTextEdit#DirectionsTextEdit {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
-/* -----------------------------------------------------------------
-Primary card variant
--------------------------------------------------------------------- */
-[card="Primary"] {
-    background-color: {surface_container};
-    border: none;
-    border-radius: 10px;
-}
+/* ==================================================================
+   7. INGREDIENT FORM COMPONENT
+   ================================================================== */
 
-/* Card content styling */
-[card="Primary"] QLabel {
-    background-color: {surface_container};
-    color: {on_surface_variant};
-    font: {default};
-}
-
-/* Header styling */
-[card="Primary"] QLabel#Header {
-    font: {header_small};
-    color: {secondary};
-}
-
-/* Subheader styling */
-[card="Primary"] QLabel#SubHeader {
-    font: {default};
-    color: {outline};
-}
-
-/* -----------------------------------------------------------------
-Secondary card variant
--------------------------------------------------------------------- */
-[card="Secondary"] {
-    background-color: {secondary_container};
-    border: none;
-    border-radius: 10px;
-}
-
-/* Card content styling */
-[card="Secondary"] QLabel {
-    background-color: {secondary_container};
-    color: {on_secondary_container};
-}
-
-/* Header styling */
-[card="Secondary"] QLabel#Header {
-    font: {header_small};
-    color: {on_secondary_container};
-}
-
-/* Subheader styling */
-[card="Secondary"] QLabel#SubHeader {
-    font: {default};
-    color: {outline};
-}
-
-/* ------------------------------------------------------------------
-   DROPDOWN MENU STYLSHEET
-   ------------------------------------------------------------------ */
-
-/* Main DropdownMenu widget */
-#DropdownMenu {
-    background-color: transparent;
-}
-
-/* QCompleter popup is a QListView - style it directly */
-QListView#DropdownMenuPopup {
-    background-color: {surface_container};
-    border: 2px solid {outline};
-    border-radius: 8px;
-    padding: 4px;
-    outline: none;
-}
-
-/* List view items */
-QListView#DropdownMenuPopup::item {
-    background-color: transparent;
-    color: {on_surface};
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    margin: 1px;
-}
-
-QListView#DropdownMenuPopup::item:hover {
-    background-color: {surface_container_high};
-    color: {on_surface};
-}
-
-QListView#DropdownMenuPopup::item:selected {
-    background-color: {primary_container};
-    color: {on_primary_container};
-}
-
-QListView#DropdownMenuPopup::item:selected:hover {
-    background-color: {primary_container};
-    color: {on_primary_container};
-}
-
-
-/* ------------------------------------------------------------------
-   INGREDIENT WIDGET STYLING
-   ------------------------------------------------------------------ */
-
-/* Main ingredient widget container */
 #IngredientForm {
     background-color: {surface};
     border: 1px solid {outline_variant};
 }
 
-/* Hover state for entire widget */
 #IngredientForm:hover {
     background-color: {surface_container_high};
 }
 
-#IngredientForm #DeleteButton {background-color: transparent; border: none;}
-#IngredientForm #DeleteButton:hover {border: none;}
+#IngredientForm QLineEdit,
+#IngredientForm QComboBox {
+    border: 1px solid {outline_variant};
+}
 
-/* Drag handle styling */
+#IngredientForm ComboBox[dropdown="true"] {
+    border: 4px solid {primary};
+}
+
+#IngredientForm ComboBox[dropdown="false"] {
+    border: 1px solid {outline_variant};
+}
+
+/* Ingredient Form Buttons */
+#IngredientForm #DeleteButton,
 #IngredientForm #DragHandle {
     background-color: transparent;
     border: none;
+}
+
+#IngredientForm #DragHandle {
     padding: 4px;
     border-radius: 6px;
     color: {outline};
 }
 
-
-/* Quantity field - smaller width */
+/* Field Sizing */
 #IngredientForm #QuantityField {
     max-width: 80px;
     min-width: 60px;
 }
 
-/* Unit field - smaller width */
 #IngredientForm .UnitField {
     max-width: 100px;
     min-width: 80px;
 }
 
-/* Name field - expandable */
 #IngredientForm #NameField {
     min-width: 200px;
 }
 
-/* Category field - medium width */
 #IngredientForm .CategoryField {
     max-width: 150px;
     min-width: 120px;
 }
 
-/* ------------------------------------------------------------------
-   RECIPE TAG STYLING
-   ------------------------------------------------------------------ */
+/* ==================================================================
+   8. VIEW RECIPE PAGE
+   ================================================================== */
 
-#RecipeTag {
-    background-color: {secondary_container};
-    border-radius: 20px;
-    padding: 8px 16px;
-}
-
-#RecipeTagText {
-    background-color: transparent;
-    font: {default};
-    color: {on_surface};
-    font-weight: 500;
-}
-
-
-/* ------------------------------------------------------------------
-   RECIPE TAG STYLING
-   ------------------------------------------------------------------ */
-
-#InfoCard {
-    background-color: transparent;
-    padding: 10px;
-}
-
-#InfoCardTitle {
-    font: {default};
-    color: {on_secondary_container};
-    font-weight: bold;
-}
-
-#InfoCardValue {
-    font: {default};
-    color: {tertiary};
-    font-weight: 400;
-}
-
-
-/* ------------------------------------------------------------------
-   MEAL PLANNER STYLING
-   ------------------------------------------------------------------ */
-
-#MealPlanner QTabWidget:pane {
-    background: {surface_container};  /* Dark background */
-    border: none;  /* Subtle border */
-    border-top-left-radius: 0px;
-    margin: 0;
-}
-
-#MealPlanner QTabBar:tab {
-    background: {surface_container_highest};  /* Darker tab background */
-    color: {on_surface};  /* Light text */
-    border-left: 2px solid {surface};
-    border-right: 2px solid {surface};
-    border-top: 2px solid {surface};
-    padding: 12px 16px;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-}
-
-#MealPlanner QTabBar:tab:selected {
-    background: {surface_container};  /* Slightly brighter for active tab */
-    font-weight: bold;
-    border: none;
-}
-
-#MealPlanner QTabBar:tab:hover {
-    background: {secondary_container};
-}
-
-#MealPlanner QTabBar:tab:disabled {
-    color: {on_surface_variant};  /* Gray-out disabled tabs */
-}
-
-#MealPlanner QTabBar:tab:last {margin: 0px; width: 32px;}
-
-#MealPlanner QMenu {
-    background-color: {primary_container};  /* Dark background */
-    border: 2px solid {outline};  /* Subtle border */
-    padding: 5px;
-    border-radius: 6px;
-}
-
-#MealPlanner QMenu:item {
-    padding: 8px 15px;
-    font: {default};
-    border-radius: 4px;
-}
-
-#MealPlanner QMenu:item:selected {
-    background-color: {tertiary};  /* Teal hover effect */
-    color: {on_tertiary};
-}
-
-/* Optional: Adds a separator style */
-#MealPlanner QMenu:separator {
-    height: 1px;
-    background: {outline_variant};
-    margin: 5px;
-}
-
-
-/* ------------------------------------------------------------------
-   FULL RECIPE VIEW STYLING
-   ------------------------------------------------------------------ */
-
-/* ── Main Container ──────────────────────────────────────────── */
-QWidget#ViewRecipe {
-    background-color: {surface};
-}
-
-QScrollArea#FullRecipeScroll {
-    background-color: {surface};
-    border: none;
-}
-
+QWidget#ViewRecipe,
+QScrollArea#FullRecipeScroll,
 QWidget#RecipeTagsContainer {
     background-color: {surface};
 }
 
-/* ── Ingredient List Styling ──────────────────────────────────── */
+QScrollArea#FullRecipeScroll {
+    border: none;
+}
+
+/* Recipe Title */
+QLabel#RecipeTitle {
+    font: {header_large};
+    color: {on_surface};
+    margin: 20px 0;
+}
+
+/* Ingredient Display */
 QLabel#IngredientQuantity {
     font-weight: 600;
     color: {primary};
@@ -624,30 +509,14 @@ QLabel#IngredientName {
     color: {on_surface};
 }
 
-/* ── Notes Text Styling ──────────────────────────────────────── */
+/* Notes */
 QLabel#NotesText {
     font: {default};
     color: {on_surface_variant};
     background-color: {surface_container};
 }
 
-
-/* ── Recipe Title ──────────────────────────────────────────────── */
-QLabel#RecipeTitle {
-    font: {header_large};
-    color: {on_surface};
-    margin: 20px 0;
-}
-
-/* ── Info Cards Container ─────────────────────────────────────── */
-[tag="Container"] {
-    background-color: {secondary_container};
-    border: 1px solid {outline_variant};
-    border-radius: 12px;
-    margin: 10px 0;
-}
-
-/* ── Back Button ───────────────────────────────────────────── */
+/* Back Button */
 QWidget#BackBar {
     background-color: transparent;
     margin-bottom: 10px;
@@ -663,37 +532,85 @@ QPushButton#BackButton {
     padding: 8px 16px;
 }
 
-
-/* ── Responsive Design ──────────────────────────────────────── */
-@media (max-width: 800px) {
-    QLabel#RecipeTitle {
-        font: {header_small};
-    }
-
-    QFrame#InfoContainer QHBoxLayout {
-        flex-direction: column;
-    }
+/* Info Container */
+[tag="Container"] {
+    background-color: {secondary_container};
+    border: 1px solid {outline_variant};
+    border-radius: 12px;
+    margin: 10px 0;
 }
 
-/* ── Hover Effects ───────────────────────────────────────────── */
-QFrame#RecipeTag:hover {
-    background-color: {surface_container_highest};
+#RightColumnContainer {
+    background-color: transparent;
 }
 
-[tag="Card"]#SectionCard:hover {
-    background-color: {surface_container_high};
-    border: 1px solid {outline};
+/* ==================================================================
+   9. MEAL PLANNER COMPONENT
+   ================================================================== */
+
+#MealPlanner QTabWidget:pane {
+    background: {surface_container};
+    border: none;
+    border-top-left-radius: 0px;
+    margin: 0;
 }
 
+#MealPlanner QTabBar:tab {
+    background: {surface_container_highest};
+    color: {on_surface};
+    border: none;
+    padding: 12px 16px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
 
-#RightColumnContainer{
-      background-color: transparent;
-  }
+#MealPlanner QTabBar:tab:selected {
+    background: {surface_container};
+    font-weight: bold;
+}
 
+#MealPlanner QTabBar:tab:hover {
+    background: {secondary_container};
+}
 
-/* ------------------------------------------------------------------
-   SHOPPING LIST STYLING
-   ------------------------------------------------------------------ */
+#MealPlanner QTabBar:tab:disabled {
+    color: {on_surface_variant};
+}
+
+#MealPlanner QTabBar:tab:last {
+    margin: 0px;
+    width: 32px;
+}
+
+/* Meal Planner Menu */
+#MealPlanner QMenu {
+    background-color: {primary_container};
+    border: 2px solid {outline};
+    padding: 5px;
+    border-radius: 6px;
+}
+
+#MealPlanner QMenu:item {
+    padding: 8px 15px;
+    font: {default};
+    border-radius: 4px;
+}
+
+#MealPlanner QMenu:item:selected {
+    background-color: {tertiary};
+    color: {on_tertiary};
+}
+
+#MealPlanner QMenu:separator {
+    height: 1px;
+    background: {outline_variant};
+    margin: 5px;
+}
+
+/* ==================================================================
+   10. SHOPPING LIST COMPONENT
+   ================================================================== */
+
 [is_expanded="True"] {
     background-color: {surface};
     border-top-left-radius: 10px;
@@ -705,10 +622,18 @@ QFrame#RecipeTag:hover {
     border-radius: 10px;
 }
 
-#ShoppingList QLineEdit {
+#ShoppingList QLineEdit,
+#ShoppingList ComboBox {
     background-color: {surface};
-    border: none;
     border-radius: 6px;
+}
+
+#ShoppingList QLineEdit {
+    border: none;
+}
+
+#ShoppingList QScrollArea {
+    border: none;
 }
 
 #ContentContainer {
@@ -724,8 +649,6 @@ QFrame#RecipeTag:hover {
     background-color: {surface};
     border: none;
 }
-
-#ShoppingList QScrollArea {border: none;}
 
 #ShoppingItem {
     color: {on_secondary_container};
@@ -743,7 +666,6 @@ QFrame#RecipeTag:hover {
 }
 
 #ShoppingList QToolTip {
-    /* Custom styles */
     background-color: #333;
     color: white;
     border-radius: 6px;
@@ -751,23 +673,24 @@ QFrame#RecipeTag:hover {
     font-size: 24px;
 }
 
+/* ==================================================================
+   11. SETTINGS PAGE
+   ================================================================== */
 
-/* ------------------------------------------------------------------
-   SETTINGS STYLING
-   ------------------------------------------------------------------ */
 Settings {
     background-color: {background};
     border: none;
 }
 
-/* ── Category Sidebar ────────────────────────────────────────────────── */
+/* Category Sidebar */
 #CategorySidebar {
     background-color: {surface_container};
     border: 1px solid {outline_variant};
     border-radius: 8px;
 }
 
-#CategorySidebar #CardHeader {
+#CategorySidebar #CardHeader,
+#ImageGenerationSettings #CardHeader {
     background-color: {primary};
     color: {on_primary};
     font: {title_small};
@@ -776,7 +699,11 @@ Settings {
     border-bottom: 1px solid {outline_variant};
 }
 
-/* Category Navigation Buttons */
+#ImageGenerationSettings #CardHeader {
+    padding: 15px 25px;
+}
+
+/* Category Buttons */
 #CategoryButton {
     background-color: transparent;
     color: {on_surface_variant};
@@ -799,12 +726,11 @@ Settings {
     font-weight: 500;
 }
 
-/* ── Settings Content Area ──────────────────────────────────────────── */
+/* Settings Content */
 #SettingsContent {
     background-color: transparent;
 }
 
-/* Settings Categories */
 #ImageGenerationSettings {
     background-color: {surface_container};
     border: 1px solid {outline_variant};
@@ -812,16 +738,7 @@ Settings {
     margin-bottom: 20px;
 }
 
-#ImageGenerationSettings #CardHeader {
-    background-color: {primary};
-    color: {on_primary};
-    font: {title_small};
-    padding: 15px 25px;
-    border-radius: 8px 8px 0 0;
-    border-bottom: 1px solid {outline_variant};
-}
-
-/* ── Form Elements ──────────────────────────────────────────────────── */
+/* Settings Form Elements */
 #SettingsLabel {
     color: {on_surface};
     font: {default};
@@ -854,7 +771,7 @@ Settings {
     outline: none;
 }
 
-/* ── Action Buttons ─────────────────────────────────────────────────── */
+/* Settings Buttons */
 #Settings Button[type="PRIMARY"] {
     background-color: {primary};
     color: {on_primary};
@@ -896,4 +813,90 @@ Settings {
     opacity: 0.8;
 }
 
+/* ==================================================================
+   12. UTILITY COMPONENTS
+   ================================================================== */
 
+/* ── App Icon ─────────────────────────────────────────────── */
+AppIcon,
+#ContentArea AppIcon,
+AppIcon#HeaderIcon,
+[card="Default"] AppIcon#HeaderIcon {
+    background-color: transparent;
+}
+
+/* ── Toggle Container ─────────────────────────────────────── */
+QWidget#ToggleContainer {
+    border: 1px solid {outline};
+}
+
+/* ── Ingredients Scroll Area ──────────────────────────────── */
+#IngredientsScrollArea QWidget {
+    background: {surface_container};
+    border: none;
+}
+
+/* ── Recipe Tag ───────────────────────────────────────────── */
+#RecipeTag {
+    background-color: {secondary_container};
+    border-radius: 20px;
+    padding: 8px 16px;
+}
+
+#RecipeTagText {
+    background-color: transparent;
+    font: {default};
+    color: {on_surface};
+    font-weight: 500;
+}
+
+/* ── Info Card ────────────────────────────────────────────── */
+#InfoCard {
+    background-color: transparent;
+    padding: 10px;
+}
+
+#InfoCardTitle {
+    font: {default};
+    color: {on_secondary_container};
+    font-weight: bold;
+}
+
+#InfoCardValue {
+    font: {default};
+    color: {tertiary};
+    font-weight: 400;
+}
+
+/* ── Dropdown Menu ────────────────────────────────────────── */
+#DropdownMenu {
+    background-color: transparent;
+}
+
+QListView#DropdownMenuPopup {
+    background-color: {surface_container};
+    border: 2px solid {outline};
+    border-radius: 8px;
+    padding: 4px;
+    outline: none;
+}
+
+QListView#DropdownMenuPopup::item {
+    background-color: transparent;
+    color: {on_surface};
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    margin: 1px;
+}
+
+QListView#DropdownMenuPopup::item:hover {
+    background-color: {surface_container_high};
+    color: {on_surface};
+}
+
+QListView#DropdownMenuPopup::item:selected,
+QListView#DropdownMenuPopup::item:selected:hover {
+    background-color: {primary_container};
+    color: {on_primary_container};
+}
