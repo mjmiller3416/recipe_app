@@ -59,9 +59,12 @@ from pathlib import Path
 from typing import Dict, NamedTuple, Optional, Tuple, Union
 
 from PySide6.QtCore import QRect, QRectF, QSize, Qt
-from PySide6.QtGui import QColor, QPainter, QPainterPath, QPixmap
+from PySide6.QtGui import QColor, QPainter, QPainterPath, QPixmap, QFont, QFontMetrics
 
 from app.config import AppPaths
+from app.style.icon.config import Name as IconName
+from app.style.icon.loader import IconLoader
+from app.style.icon.svg_loader import SVGLoader
 
 __all__ = [
     # Types
@@ -412,25 +415,80 @@ def img_resolve_path(relative_path: str) -> Path:
     return AppPaths.RECIPE_IMAGES_DIR / relative_path
 
 def img_get_placeholder(size: Union[int, QSize] = 100,
-                       color: QColor = None) -> QPixmap:
-    """Get placeholder pixmap for missing images.
+                       color: QColor | None = None,
+                       text: str | None = "No Image") -> QPixmap:
+    """Build a themed placeholder pixmap for missing images.
+
+    Uses the Photo icon from the app icon set and theme palette colors so the
+    result auto‑matches light/dark themes. Optionally renders a short label.
 
     Args:
-        size: Placeholder size
-        color: Background color (default light gray)
+        size: Target pixmap size (int = square, QSize supported).
+        color: Optional explicit background QColor. If None, uses themed surface.
+        text: Optional label to render under the icon; set None to omit.
 
     Returns:
-        Placeholder QPixmap
+        QPixmap: Themed placeholder image.
     """
-    if isinstance(size, int):
-        target_size = QSize(size, size)
-    else:
-        target_size = size
+    # Normalize size
+    target_size = QSize(size, size) if isinstance(size, int) else size
+    w, h = target_size.width(), target_size.height()
 
-    placeholder_color = color if color is not None else Qt.lightGray
+    # Pull colors from the active theme palette
+    palette = IconLoader.get_palette() or {}
+    bg_hex = palette.get("surface_container", palette.get("surface_variant", "#CCCCCC"))
+    fg_hex = palette.get("on_surface_variant", palette.get("on_surface", "#666666"))
 
+    # Background fill
     pixmap = QPixmap(target_size)
-    pixmap.fill(placeholder_color)
+    bg_qcolor = color if isinstance(color, QColor) else QColor(bg_hex)
+    pixmap.fill(bg_qcolor)
+
+    # Start painter
+    painter = QPainter(pixmap)
+    painter.setRenderHint(QPainter.Antialiasing, True)
+    painter.setRenderHint(QPainter.TextAntialiasing, True)
+
+    # Compute icon size (~50% of min dimension), leaving room for text
+    min_dim = min(w, h)
+    has_text = bool(text)
+    text_space = int(min_dim * 0.22) if has_text else 0
+    icon_side = max(16, int(min_dim * (0.50 if has_text else 0.60)))
+
+    # Render themed photo icon
+    try:
+        icon_pix = SVGLoader.load(
+            file_path=IconName.PHOTO.spec.name.path,
+            color=fg_hex,
+            size=QSize(icon_side, icon_side),
+            as_icon=False,
+        )
+        ix, iy = (w - icon_side) // 2, (h - icon_side - text_space) // 2
+        painter.drawPixmap(ix, iy, icon_pix)
+    except Exception:
+        # If icon fails, just skip drawing it
+        pass
+
+    # Optional label text
+    if has_text:
+        painter.setPen(QColor(fg_hex))
+
+        # Scaled font: readable but compact
+        font = QFont()
+        font.setPointSize(max(8, int(min_dim * 0.11)))
+        painter.setFont(font)
+
+        fm = QFontMetrics(font)
+        label = text
+        # Truncate if overly long for the width
+        if fm.horizontalAdvance(label) > int(w * 0.9):
+            label = fm.elidedText(label, Qt.ElideRight, int(w * 0.9))
+
+        # Place text centered within reserved text_space under the icon
+        text_top = iy + icon_side + max(0, (text_space - fm.height()) // 2)
+        painter.drawText(0, text_top, w, fm.height(), Qt.AlignHCenter, label)
+
+    painter.end()
     return pixmap
 
 def img_create_temp_path(prefix: str = "temp_image", suffix: str = ".png") -> Path:
