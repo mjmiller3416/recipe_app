@@ -27,7 +27,7 @@ from PySide6.QtWidgets import QDialog, QFrame, QHBoxLayout, QLabel, QStackedWidg
 from _dev_tools import DebugLogger
 from app.core.models import Recipe
 from app.core.services import RecipeService
-from app.style.icon import AppIcon, Name, Type
+from app.style.icon import AppIcon, Icon, Type, Name
 from app.ui.components.layout import Separator
 from app.ui.components.layout.card import BaseCard
 from app.ui.components.widgets import ToolButton, RecipeImage
@@ -194,7 +194,7 @@ class BaseRecipeCard(BaseCard):
         layout.setContentsMargins(0, 0, 0, 0)
 
         # Add meal button
-        btn_add = ToolButton(Type.DEFAULT, Name.ADD_RECIPES)
+        btn_add = ToolButton(Type.DEFAULT, Icon.ADD_RECIPES)
         btn_add.setObjectName("AddMealButton")  # RecipeCard looks for this
         btn_add.setCursor(Qt.PointingHandCursor)
         btn_add.clicked.connect(self._handle_add_meal_click)
@@ -247,7 +247,7 @@ class BaseRecipeCard(BaseCard):
             if self._recipe:
                 self._recipe.is_favorite = updated_recipe.is_favorite
 
-            BaseButton.swapIcon(button, updated_recipe.is_favorite, Name.FAV_FILLED, Name.FAV)
+            BaseButton.swapIcon(button, updated_recipe.is_favorite, Icon.FAV_FILLED, Icon.FAV)
 
         except Exception:
             pass
@@ -390,7 +390,7 @@ class MediumRecipeCard(BaseRecipeCard):
         )
 
         # Favorite button - choose initial icon based on favorite state
-        initial_icon = Name.FAV_FILLED if self._recipe.is_favorite else Name.FAV
+        initial_icon = Icon.FAV_FILLED if self._recipe.is_favorite else Icon.FAV
         btn_fav = ToolButton(Type.DEFAULT, initial_icon)
         btn_fav.setIconSize(24, 24)
         btn_fav.setObjectName("btn_favorite")
@@ -486,7 +486,7 @@ class LargeRecipeCard(BaseRecipeCard):
         )
 
         # Favorite button overlay
-        initial_icon = Name.FAV_FILLED if self._recipe.is_favorite else Name.FAV
+        initial_icon = Icon.FAV_FILLED if self._recipe.is_favorite else Icon.FAV
         btn_fav = ToolButton(Type.DEFAULT, initial_icon)
         btn_fav.setIconSize(24, 24)
         btn_fav.setObjectName("btn_favorite")

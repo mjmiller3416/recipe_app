@@ -118,23 +118,29 @@ class BaseImage(QLabel):
         # Load source pixmap
         if self._image_path:
             if not img_validate_path(self._image_path):
+                # Show shaped placeholder for invalid paths
                 placeholder = img_get_placeholder(self._size)
-                img_cache_set(cache_key, placeholder)
-                self.setPixmap(placeholder)
+                shaped_placeholder = self._apply_shape_mask(placeholder)
+                img_cache_set(cache_key, shaped_placeholder)
+                self.setPixmap(shaped_placeholder)
                 return
             source_pixmap = img_qt_load_safe(self._image_path)
         elif self._original_pixmap:
             source_pixmap = self._original_pixmap
         else:
+            # No source available - show shaped placeholder
             placeholder = img_get_placeholder(self._size)
-            img_cache_set(cache_key, placeholder)
-            self.setPixmap(placeholder)
+            shaped_placeholder = self._apply_shape_mask(placeholder)
+            img_cache_set(cache_key, shaped_placeholder)
+            self.setPixmap(shaped_placeholder)
             return
 
         if source_pixmap.isNull():
+            # Failed to load - show shaped placeholder
             placeholder = img_get_placeholder(self._size)
-            img_cache_set(cache_key, placeholder)
-            self.setPixmap(placeholder)
+            shaped_placeholder = self._apply_shape_mask(placeholder)
+            img_cache_set(cache_key, shaped_placeholder)
+            self.setPixmap(shaped_placeholder)
             return
 
         # Scale to fit

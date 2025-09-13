@@ -62,9 +62,9 @@ from PySide6.QtCore import QRect, QRectF, QSize, Qt
 from PySide6.QtGui import QColor, QPainter, QPainterPath, QPixmap, QFont, QFontMetrics
 
 from app.config import AppPaths
-from app.style.icon.config import Name as IconName
-from app.style.icon.loader import IconLoader
-from app.style.icon.svg_loader import SVGLoader
+# NOTE: Do not import from app.style.icon.* at module import time to avoid
+# circular imports through core.utils -> image_utils -> style.icon.loader.
+# Any icon/theme imports must be inside functions.
 
 __all__ = [
     # Types
@@ -434,8 +434,12 @@ def img_get_placeholder(size: Union[int, QSize] = 100,
     target_size = QSize(size, size) if isinstance(size, int) else size
     w, h = target_size.width(), target_size.height()
 
-    # Pull colors from the active theme palette
-    palette = IconLoader.get_palette() or {}
+    # Pull colors from the active theme palette (lazy import to avoid cycles)
+    try:
+        from app.style.theme_controller import Theme  # local import
+        palette = Theme.get_current_color_map() or {}
+    except Exception:
+        palette = {}
     bg_hex = palette.get("surface_container", palette.get("surface_variant", "#CCCCCC"))
     fg_hex = palette.get("on_surface_variant", palette.get("on_surface", "#666666"))
 
@@ -455,16 +459,19 @@ def img_get_placeholder(size: Union[int, QSize] = 100,
     text_space = int(min_dim * 0.22) if has_text else 0
     icon_side = max(16, int(min_dim * (0.50 if has_text else 0.60)))
 
-    # Render themed photo icon
+    # Compute icon position
+    ix, iy = (w - icon_side) // 2, (h - icon_side - text_space) // 2
+
+    # Render themed photo icon using AppIcon (lazy import to avoid cycles)
     try:
-        icon_pix = SVGLoader.load(
-            file_path=IconName.PHOTO.spec.name.path,
-            color=fg_hex,
-            size=QSize(icon_side, icon_side),
-            as_icon=False,
-        )
-        ix, iy = (w - icon_side) // 2, (h - icon_side - text_space) // 2
-        painter.drawPixmap(ix, iy, icon_pix)
+        from app.style.icon.icon import AppIcon
+        from app.style.icon.config import Name as IconName
+
+        icon_widget = AppIcon(IconName.PHOTO)
+        icon_widget.setSize(icon_side, icon_side)
+        icon_pix = icon_widget.pixmap()
+        if icon_pix is not None:
+            painter.drawPixmap(ix, iy, icon_pix)
     except Exception:
         # If icon fails, just skip drawing it
         pass
