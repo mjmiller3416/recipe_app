@@ -35,7 +35,7 @@ from app.ui.utils import make_overlay
 
 # ── Constants ──
 LAYOUT_SIZE = {
-    "small": QSize(300, 120),
+    "small": QSize(400, 180),
     "medium": QSize(280, 420),
     "large": QSize(1200, 600),
 }
@@ -106,9 +106,6 @@ class BaseRecipeCard(BaseCard):
 
         # Setup states
         self._setup_stacked_widget()
-
-        # Register for theming
-        # Theme.register_widget(self, Qss.RECIPE_CARD)
 
     # ── Public Methods ───────────────────────────────────────────────────────────────────────
     def set_recipe(self, recipe: Recipe | None) -> None:
@@ -346,7 +343,8 @@ class SmallRecipeCard(BaseRecipeCard):
         # Recipe image
         img_recipe = RecipeImage(
             image_path=self._recipe.reference_image_path,
-            size=120,
+            size=180,
+            corner_radius=(8, 0, 0, 8),  # top-left, top-right, bottom-right, bottom-left
         )
         layout.addWidget(img_recipe)
 
@@ -387,6 +385,7 @@ class MediumRecipeCard(BaseRecipeCard):
         img_recipe = RecipeImage(
             image_path=self._recipe.reference_image_path,
             size=280,
+            corner_radius=(8, 8, 0, 0),  # top-left, top-right, bottom-right, bottom-left
         )
 
         # Favorite button - choose initial icon based on favorite state

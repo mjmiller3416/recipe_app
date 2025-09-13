@@ -288,7 +288,7 @@ class RecipeImage(RoundedImage):
         self,
         image_path: Union[str, Path],
         size: int = 100,
-        corner_radius: int = 8,
+        corner_radius: Union[int, tuple[int, int, int, int]] = 8,
         parent=None
     ):
         super().__init__(image_path, size, corner_radius, parent)

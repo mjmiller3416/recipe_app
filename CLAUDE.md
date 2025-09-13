@@ -2,322 +2,140 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-_Project configuration & rules for AI contributions_
+## MealGenie - Recipe Management Desktop Application
 
-This file is the contract Claude must follow when working in the **MealGenie** repo. If a request conflicts with this file, Claude must surface the conflict and ask for approval before proceeding.
+A PySide6-based desktop application for meal planning, recipe management, and shopping list generation.
 
----
+## Common Development Commands
 
-## 1) Tech Stack (authoritative)
-- **Language:** Python 3.12
-- **Desktop UI:** PySide6 (Qt)
-- **ORM & Migrations:** SQLAlchemy 2.x + Alembic
-- **DB:** SQLite (dev)
-- **Styling:** QSS using Material 3 role placeholders (see §4)
-- **Tests:** pytest (when present)
-- **Editor:** VS Code (with custom QSS syntax support)
-- **CLI:** `manage.py` (see §3) — do not invent commands/flags
-
----
-
-## 2) Project Structure (authoritative)
-
-```
-recipe_app/
-├─ _data_files/
-│  ├─ recipe_images/
-│  ├─ temp_crops/
-│  ├─ user_profile/
-│  ├─ user_settings.json
-│  └─ user_settings.py
-├─ _dev_tools/
-├─ _scripts/
-├─ _test/
-├─ app/
-│  ├─ assets/
-│  ├─ config/
-│  ├─ core/
-│  │  ├─ database/
-│  │  ├─ dtos/
-│  │  ├─ models/
-│  │  ├─ repositories/
-│  │  ├─ services/
-│  │  └─ utils/
-│  ├─ style/
-│  │  ├─ animation/
-│  │  ├─ effects/
-│  │  ├─ icon/
-│  │  └─ theme/
-│  ├─ ui/
-│  │  ├─ components/
-│  │  │  ├─ composite/
-│  │  │  ├─ dialogs/
-│  │  │  ├─ images/
-│  │  │  ├─ inputs/
-│  │  │  ├─ layout/
-│  │  │  ├─ navigation/
-│  │  │  └─ widgets/
-│  │  ├─ models/
-│  │  ├─ services/
-│  │  ├─ utils/
-│  │  └─ views/
-│  └─ main_window.py
-└─ main.py
-```
-
-### Canonical pointers
-- **DB session/engine:** `app/core/database/db.py`
-- **Models:** `app/core/models/`
-- **DTOs:** `app/core/dtos/`
-- **Repositories:** `app/core/repositories/`
-- **Services:** `app/core/services/`
-- **Core utils:** `app/core/utils/`
-- **Theme controller:** `app/style/theme_controller.py`
-- **QSS loader:** `app/style/theme/style_sheet.py`
-- **Icon system:** `app/style/icon/icon.py`
-- **UI utils:** `app/ui/utils/`
-- **App views:** `app/ui/views/`
-- **Logging:** `_dev_tools/debug_logger.py`
-
-> Reuse existing utilities before creating new ones. Search `app/core/utils/` and `app/ui/utils/` first.
-
----
-
-## 3) Commands (do not guess)
-
-### Running the application
+### Database Management
 ```bash
-python main.py                          # Start the MealGenie desktop application
+# Apply database migrations
+python manage.py db migrate
+
+# Seed database with mock data (25 recipes with images by default)
+python manage.py db seed
+
+# Reset database (clear all data)
+python manage.py db reset --confirm
+
+# Check database status
+python manage.py db status
 ```
 
-### Database management
+### Running the Application
 ```bash
-python manage.py --help                 # Show help and available commands
-python manage.py db                     # Database management commands
+# Main application
+python main.py
 
-# Database subcommands
-python manage.py db migrate             # Apply database migrations using Alembic
-python manage.py db seed                # Populate with mock recipe data
-python manage.py db reset               # Reset database (drops all recipe data)
-python manage.py db status              # Show database status and recipe count
+# Test mode with development harness
+python main.py --test
 
-# Options
-python manage.py db seed --recipes 50   # Create 50 recipes (default: 25)
-python manage.py db seed --no-realistic # Use simple data (no Faker)
-python manage.py db seed --clear        # Clear existing recipes first
-python manage.py db seed --images       # Add random image paths (default: True)
-python manage.py db seed --no-images    # Skip adding image paths
-
-python manage.py db reset --confirm     # Skip confirmation prompt
-python manage.py db reset --seed        # Add sample data after reset
-python manage.py db reset --images      # Include images when seeding
+# Import recipes from CSV
+python main.py --import-recipes
 ```
 
-### Testing
+### Code Quality
 ```bash
-python -m pytest                        # Run all tests
-python -m pytest -v                     # Run tests with verbose output
-python -m pytest -x                     # Stop after first failure
-python -m pytest path/to/test_file.py   # Run specific test file
-python -m pytest -k "test_name"         # Run tests matching pattern
-python -m pytest --lf                   # Rerun only failed tests
+# Run isort for import formatting
+isort app/
+
+# Run ruff linter (if installed)
+ruff check app/
+
+# Run tests (when implemented)
+pytest
 ```
 
-### Code quality
-```bash
-python -m isort .                       # Sort imports (uses .isort.cfg)
-python -m isort --check-only .          # Check import sorting without changes
-python -m isort path/to/file.py         # Sort imports in specific file
-```
+## Architecture Overview
 
-Note: The project uses isort for import sorting. Black and ruff are not currently installed.
+### Core Structure
+The application follows a layered architecture with clear separation of concerns:
 
-If a command is not listed here, pause and request it to be added.
+- **`app/core/`**: Business logic layer
+  - `models/`: SQLAlchemy ORM models (Recipe, Ingredient, MealSelection, ShoppingItem, etc.)
+  - `repositories/`: Data access layer providing CRUD operations
+  - `services/`: Business logic services coordinating between repos and UI
+  - `dtos/`: Data transfer objects for clean data passing between layers
+  - `utils/`: Shared utilities (image_utils, format_utils, validation_utils, etc.)
+  - `database/`: Database configuration and Alembic migrations
 
----
+- **`app/ui/`**: PySide6 presentation layer
+  - `main_window/`: Main application window with title bar and navigation
+  - `pages/`: Application pages (recipes, planner, shopping, settings)
+  - `components/`: Reusable UI components
+  - `services/`: UI-specific services (navigation, state management)
+  - `dialogs/`: Modal dialogs for user interactions
 
-## 4) Code Style & Conventions (strict)
-- **Line length:** 110
-- **Public API naming:** **camelCase** (Qt convention)
-- **Internal/private Python:**
-    - Use snake_case for internal implementation details unless matching surrounding code.
-    - Prefix private methods and attributes with an underscore (_method_name).
-    - “Protected” methods intended for subclass overrides should also use a single underscore.
-    - Double underscores (__name) are not recommended unless name-mangling is required.
-    - Always default to public camelCase naming for Qt-facing APIs, signals, and slots.
-- **Imports:** stdlib → third-party → local; prefer absolute imports
-- **Docstrings:** Google-style for public classes/functions
-- **Small, explicit functions > clever abstractions**
-- **Error handling:** fail fast for programmer errors; handle boundary I/O gracefully
-- **Before adding helpers:** check `app/core/utils/` and `app/ui/utils/` first
+- **`app/style/`**: Theming and styling
+  - Material theme system with dark/light mode support
+  - Custom QSS styles with placeholders
+  - Theme controller for dynamic theming
 
-### QSS placeholders (Material 3 roles)
-Use placeholders exactly as defined (no hardcoded colors). The theme system supports Material Design 3 color tokens using `{placeholder}` syntax in QSS files. These are replaced at runtime by `app/style/theme/style_sheet.py`.
+### Database Architecture
+- SQLAlchemy ORM with SQLite backend
+- Alembic for migrations (configured in `alembic.ini`)
+- Session management via `DatabaseSession` context manager
+- Models use relationships for Recipe ↔ Ingredient ↔ RecipeIngredient associations
 
----
-## 5) Repository Etiquette & Branch Strategy (authoritative)
+### Service Layer Pattern
+Services coordinate between repositories and UI:
+- `RecipeService`: Recipe CRUD, search, filtering
+- `PlannerService`: Meal planning and selection management
+- `ShoppingService`: Shopping list generation and management
+- `IngredientService`: Ingredient management and parsing
+- `SessionManager`: Application-wide state management
 
-### 5.1 Branch types & names
+### UI Component Hierarchy
+- `MainWindow` contains navigation and page stack
+- Pages inherit from base classes providing common functionality
+- Components use signals/slots for communication
+- Navigation handled by `NavigationService` singleton
 
-- `feature/<topic-or-ticket>-short-description` — new functionality
-- `bugfix/<issue-or-ticket>-short-description` — fixes that are not production emergencies
-- `hotfix/<issue>-short-description` — production-breaking issues only
-- `refactor/<area>-short-description` — non-behavioral code reorganization
-- `chore/<task>-short-description` — tooling, config, CI, docs
-- `experiment/<spike>-short-description` — throwaway spikes (may never merge)
+## Key Design Patterns
 
-### 5.2 Branch lifecycle rules
+1. **Repository Pattern**: Clean data access abstraction
+2. **Service Layer**: Business logic isolation from UI
+3. **DTO Pattern**: Clean data contracts between layers
+4. **Singleton Pattern**: For app-wide services (Navigation, Session)
+5. **Context Managers**: For database session management
 
-- No direct commits to `main`
-- Keep feature branches up to date with `main` (fast-forward or rebase; be consistent within the branch)
-- Open PRs early; prefer smaller, focused diffs
-- Delete branches after merge to keep the repo tidy
+## Development Guidelines
 
-### 5.3 Decision logic (Claude MUST follow before any change)
+### Error Handling Philosophy
+- **Fail fast** for internal logic errors - raise exceptions immediately
+- **Boundary-only** try/except for external operations (DB, I/O, API calls)
+- Log errors centrally rather than scattered try/except blocks
 
-- Read current branch:
+### Code Style
+- Follow PEP 8 with 110 character line length
+- Use isort configuration in `.isort.cfg`
+- Prefer explicit over clever code
+- Names should be self-documenting
 
-```bash
-git rev-parse --abbrev-ref HEAD
-```
+### Utility Usage
+Always check `app/core/utils/` for existing helpers before implementing new functionality:
+- `image_utils.py`: Image loading, caching, placeholder generation
+- `format_utils.py`: Text formatting, measurements, ingredient parsing
+- `validation_utils.py`: Input validation helpers
+- `conversion_utils.py`: Unit conversions
+- `text_utils.py`: Text processing utilities
 
-- Derive task scope from the Scope Summary (see §8)
-- Decide where to commit:
-  - If the task belongs to the same topic as the current branch and stays within the change budget (§9) → use the current branch
-  - If the task is logically separate (different feature/bug/chore), or it exceeds the budget, or it touches guarded paths requiring approval (§9) → create a new branch
-  - If the task is a prod emergency → create a `hotfix/` branch off the latest `main`
-- If a branch change is needed, propose and run exact commands (see 5.4).
+### QSS and Theming
+- Use placeholder syntax for dynamic theming: `{{primary}}`, `{{surface}}`, etc.
+- Material theme colors defined in `app/style/theme/material-theme.json`
+- Components should respect theme changes via signals
 
-### 5.4 Commands Claude should propose when switching/creating branches
+## Safety Rails
 
-Always show details:
+1. **Database Operations**: Always use context managers for sessions
+2. **Image Loading**: Use cached image utilities to prevent memory issues
+3. **Error States**: Provide meaningful user feedback, not stack traces
+4. **State Management**: Use SessionManager for app-wide state consistency
+5. **Navigation**: Always use NavigationService for page transitions
 
-```bash
-# Ensure clean state
-git status
-
-# Update main
-git fetch origin
-git checkout main
-git pull --ff-only origin main
-
-# Create a new branch from main
-git checkout -b feature/<topic>-<short-description>
-
-# OR, if continuing on current feature branch is valid
-git checkout feature/<topic>-<short-description>
-git pull --ff-only origin feature/<topic>-<short-description>
-
-# Link to issue (if applicable)
-# (document issue ID in PR description)
-```
-
-### 5.5 Examples
-
-- You’re on `feature/meal-planner-tabs` and asked to fix an unrelated seeding bug → create `bugfix/seed-defaults-off-by-one`
-- You’re on `feature/iconkit-refresh` and asked to tweak an icon color var (same topic, tiny diff) → keep current branch
-- Schema change found mid-task (guarded) → pause, propose `feature/recipe-schema-add-image-attrib` and request approval
-
----
-
-## 6) Do Not Touch (hard rules)
-- Do not modify existing Alembic migration files retroactively
-- Do not change or move canonical paths in §2 without approval
-- Do not hardcode colors; use Material 3 placeholders (§4)
-- Do not alter `.env`, secrets, API keys, or DB URLs
-- Do not rewrite working legacy components/config unless the task explicitly requests it
-- Do not duplicate helpers; extend existing ones in `app/core/utils/` or `app/ui/utils/`
-- Do not change bootstrapping in `main.py` or `app/main_window.py` unless scoped in task
-
----
-
-## 7) Review Policy (embedded summary)
-For single-file changes, prioritize:
-1) **Bugs & conflicts** → small, targeted fixes
-2) **Error handling** → fail fast internally; try/except only at I/O boundaries
-3) **Redundancy** → consolidate; prefer existing helpers/services
-4) **Optimizations** → only if clarity is maintained; avoid clever one-liners
-
-See full guide: `docs/review_guide.md`
-
----
-
-## 8) Interaction Rules (how Claude must work)
-- Before making changes: produce a **Scope Summary** + **Todo List**
-- Patch must be **diff-only** and respect the change budget (§9)
-- Always confirm helpers don’t already exist
-- Ask clarifying questions before assuming implementation
-
----
-
-## 9) Safety Rails (AI-optimized)
-- **Call-before-write:** For these paths, propose changes and wait for approval:
-  - `app/style/theme_controller.py`
-  - `app/style/theme/style_sheet.py`
-  - `app/core/database/db.py`
-  - `app/core/models/` & `app/core/repositories/` schema changes
-  - any existing Alembic migration
-- **Reuse-first rule:** If an existing helper covers ≥70% of needs, extend it
-- **Ambiguity rule:** If command/path/flag isn’t listed, stop and ask
-
----
-
-## 10) Testing & Verification
-- After DB changes: `python manage.py db status`
-- After data updates: run `db seed` variants for sanity checks
-- For UI/QSS: confirm theme placeholders; no hardcoded colors
-- Add/update tests in `_test/` when feasible
-
----
-
-## 11) PR Template
-**Summary**
-What changed and why.
-
-**Scope & Constraints**
-Files touched; risks; out-of-scope.
-
-**Checklist**
-- [ ] Followed Review Policy (§7)
-- [ ] Stayed within change budget (§9)
-- [ ] Reused helpers (§2, §8)
-- [ ] Ran verification commands (§10)
-
-**Commands & Results**
-Paste exact commands and outputs.
-
----
-
-## 12) When to Refuse
-- If request conflicts with §6
-- If change exceeds §9 without approval
-- If ambiguity remains after one clarifying question
-
----
-
-## 13) Architecture Overview
-
-### Repository Pattern & Services
-The application follows a layered architecture:
-- **Models** (`app/core/models/`): SQLAlchemy ORM models defining database schema
-- **DTOs** (`app/core/dtos/`): Data Transfer Objects for type-safe data passing between layers
-- **Repositories** (`app/core/repositories/`): Data access layer, handles all database operations
-- **Services** (`app/core/services/`): Business logic layer, orchestrates repositories and implements features
-- **Views** (`app/ui/views/`): PySide6 UI components that interact with services
-
-### Theme System
-- **Material Design 3**: Uses material-color-utilities to generate color schemes
-- **Theme Controller** (`app/style/theme_controller.py`): Manages theme state and changes
-- **QSS Injection**: Runtime replacement of `{placeholder}` tokens with actual color values
-- **Icon System** (`app/style/icon/icon.py`): Dynamic icon coloring based on current theme
-
-### Database & Migrations
-- **SQLAlchemy 2.x**: Modern ORM with type hints
-- **Alembic**: Database migration management
-- **Session Management**: Context manager pattern via `DatabaseSession` in `app/core/database/db.py`
-
-### Signal/Slot Communication
-The application uses Qt's signal/slot mechanism for decoupled communication:
-- View models emit signals for state changes
-- Views connect to these signals to update UI
-- Services operate independently of UI concerns
+## Testing Approach
+- Test harness available via `python main.py --test`
+- Mock data generation in `_scripts/mock_data.py`
+- Database can be reset to clean state for testing
+- QSS inspector available for UI debugging (`_dev_tools/qss_inspector.py`)
