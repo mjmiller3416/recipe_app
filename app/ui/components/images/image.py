@@ -463,8 +463,6 @@ class RecipeImage(BaseImage):
         image_layout = QVBoxLayout(self.image_widget)
         image_layout.setContentsMargins(0, 0, 0, 0)
 
-        # Image display will be created when needed
-        # (self.image_display created in _display_image)
 
         # Action buttons row
         buttons_widget = QWidget()

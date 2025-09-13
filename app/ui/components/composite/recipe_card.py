@@ -30,7 +30,7 @@ from app.core.services import RecipeService
 from app.style.icon import AppIcon, Name, Type
 from app.ui.components.layout import Separator
 from app.ui.components.layout.card import BaseCard
-from app.ui.components.widgets import RoundedImage, ToolButton
+from app.ui.components.widgets import ToolButton, RecipeImage
 from app.ui.utils import make_overlay
 
 # ── Constants ──
@@ -344,10 +344,9 @@ class SmallRecipeCard(BaseRecipeCard):
         layout.setSpacing(0)
 
         # Recipe image
-        img_recipe = RoundedImage(
+        img_recipe = RecipeImage(
             image_path=self._recipe.reference_image_path,
             size=120,
-            radii=(10, 0, 0, 10)
         )
         layout.addWidget(img_recipe)
 
@@ -385,10 +384,9 @@ class MediumRecipeCard(BaseRecipeCard):
         layout.setSpacing(0)
 
         # Recipe image
-        img_recipe = RoundedImage(
+        img_recipe = RecipeImage(
             image_path=self._recipe.reference_image_path,
             size=280,
-            radii=(10, 10, 0, 0)
         )
 
         # Favorite button - choose initial icon based on favorite state
@@ -482,10 +480,9 @@ class LargeRecipeCard(BaseRecipeCard):
         left_panel.setSpacing(8)
 
         # Left Side: Recipe Image
-        img_recipe = RoundedImage(
+        img_recipe = RecipeImage(
             image_path=self._recipe.reference_image_path,
             size=400,
-            radii=(10, 10, 10, 10)
         )
 
         # Favorite button overlay
