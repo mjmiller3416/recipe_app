@@ -34,7 +34,7 @@ from app.ui.utils import create_two_column_layout, setup_main_scroll_layout
 from ._directions_list import DirectionsList
 from ._ingredients_list import IngredientList
 
-# ── ViewRecipe View ─────────────────────────────────────────────────────────────────────────
+
 class ViewRecipe(QWidget):
     """Full recipe detail view (visual-only, no editing/upload yet)."""
 
@@ -44,9 +44,6 @@ class ViewRecipe(QWidget):
         super().__init__(parent)
         self.recipe = recipe
         self.navigation_service = navigation_service
-
-        # Register this view for component-scoped QSS.
-        # Theme.register_widget(self, Qss.FULL_RECIPE)
 
         self.setObjectName("ViewRecipe")
         self._cached_recipe_data = None

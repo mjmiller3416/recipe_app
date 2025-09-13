@@ -33,7 +33,6 @@ from ._ingredients_card import IngredientsCard
 from ._directions_notes_card import DirectionsNotesCard
 
 
-# ── Add Recipes View ────────────────────────────────────────────────────────────────────────────────────────
 class AddRecipes(BaseView):
     """AddRecipes widget for creating new recipes with ingredients and directions."""
 

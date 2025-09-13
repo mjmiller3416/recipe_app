@@ -3,7 +3,7 @@
 Defines the main application window, including the custom title bar and sidebar.
 """
 
-# ── Imports ──────────────────────────────────────────────────────────────────────────────────
+# ── Imports ──
 from typing import TYPE_CHECKING, Callable
 
 from PySide6.QtCore import Qt, Signal
@@ -21,12 +21,10 @@ from ._titlebar import TitleBar
 if TYPE_CHECKING:
     from app.ui.services.navigation_service import NavigationService
 
-
-# ── Constants ────────────────────────────────────────────────────────────────────────────────
+# ── Constants ──
 SETTINGS = APPLICATION_WINDOW["SETTINGS"]
 
 
-# ── Application Window ───────────────────────────────────────────────────────────────────────
 class MainWindow(FramelessWindow):
     """The main application window, orchestrating title bar, sidebar, and content pages.
 

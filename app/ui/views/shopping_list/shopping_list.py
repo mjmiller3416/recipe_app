@@ -13,7 +13,6 @@ from PySide6.QtWidgets import QSizePolicy
 
 from _dev_tools import DebugLogger
 from app.core.services import ShoppingService
-from app.style import Qss, Theme
 from app.ui.components.layout.card import ActionCard, Card
 from app.ui.utils import create_two_column_layout
 from app.ui.views.base import BaseView
@@ -23,7 +22,6 @@ from ._collapsible_category import CollapsibleCategory
 from ._shopping_item import ShoppingItem
 
 
-# ── Shopping List View ───────────────────────────────────────────────────────────────────────
 class ShoppingList(BaseView):
     """Placeholder class for the ShoppingList screen."""
 

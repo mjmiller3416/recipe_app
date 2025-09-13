@@ -3,17 +3,14 @@
 This module defines a custom search widget that includes a search icon, a text input field,
 """
 
-# ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
+# ── Imports ──
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QFrame, QGridLayout, QLineEdit, QSizePolicy
 
-from app.style import Theme
 from app.style.icon import AppIcon, Name, Type
-from app.style.theme.config import Qss
 from app.ui.components.widgets import ToolButton
 
 
-# ── Search Bar ──────────────────────────────────────────────────────────────────────────────────────────────
 class SearchBar(QFrame):
     """
     A custom search bar widget with a search icon, text input, and clear button.
