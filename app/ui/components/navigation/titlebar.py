@@ -33,9 +33,6 @@ class TitleBar(QWidget):
         self.setObjectName("TitleBar")
         self.setAttribute(Qt.WA_StyledBackground)
 
-        # Register for component-specific styling
-        # Theme.register_widget(self, Qss.TITLE_BAR)
-
         self.setFixedHeight(60)
 
         self.old_pos = None

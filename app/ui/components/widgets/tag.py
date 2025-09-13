@@ -1,6 +1,6 @@
-"""app/ui/components/widgets/recipe_tag.py
+"""app/ui/components/widgets/tag.py
 
-RecipeTag component - A pill-shaped tag with icon and text for recipe metadata.
+Tag component - A pill-shaped tag with icon and text for recipe metadata.
 Used for meal types, categories, dietary preferences, etc.
 """
 
@@ -14,13 +14,13 @@ from app.style.icon.config import Icon
 
 
 # ── Recipe Tag ──────────────────────────────────────────────────────────────────────────────────────────────
-class RecipeTag(QFrame):
+class Tag(QFrame):
     """A pill-shaped tag widget with icon and text for recipe metadata."""
 
     def __init__(self, icon: Icon, text: str, parent=None):
         super().__init__(parent)
-        self.setObjectName("RecipeTag")
-        self.setProperty("tag", "RecipeTag")
+        self.setObjectName("Tag")
+        self.setProperty("tag", "Tag")
 
         # Layout
         layout = QHBoxLayout(self)
@@ -31,11 +31,11 @@ class RecipeTag(QFrame):
         self.icon_widget = AppIcon(icon)
         self.icon_widget.setSize(24, 24)
         self.icon_widget.setColor("primary")
-        self.icon_widget.setObjectName("RecipeTagIcon")
+        self.icon_widget.setObjectName("TagIcon")
 
         # Text
         self.text_label = QLabel(text)
-        self.text_label.setObjectName("RecipeTagText")
+        self.text_label.setObjectName("TagText")
 
         # Add to layout
         layout.addWidget(self.icon_widget)

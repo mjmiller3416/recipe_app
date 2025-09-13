@@ -9,7 +9,7 @@ from PySide6.QtWidgets import QHBoxLayout, QWidget
 
 from app.core.models.recipe import Recipe
 from app.style.icon import Icon
-from app.ui.components.widgets.recipe_tag import RecipeTag
+from app.ui.components.widgets.tag import Tag
 
 
 # ── Recipe Tags Row ─────────────────────────────────────────────────────────────────────────────────────────
@@ -47,9 +47,9 @@ class RecipeTagsRow(QWidget):
         diet_pref = getattr(recipe, "diet_pref", None) or "High-Protein"
 
         # Create and add tags
-        self.meal_type_tag = RecipeTag(Icon.MEAL_TYPE, meal_type)
-        self.category_tag = RecipeTag(Icon.CATEGORY, category)
-        self.diet_pref_tag = RecipeTag(Icon.DIET_PREF, diet_pref)
+        self.meal_type_tag = Tag(Icon.MEAL_TYPE, meal_type)
+        self.category_tag = Tag(Icon.CATEGORY, category)
+        self.diet_pref_tag = Tag(Icon.DIET_PREF, diet_pref)
 
         # Add to layout (insert before the final stretch)
         insert_index = self.layout.count() - 1
@@ -70,9 +70,9 @@ class RecipeTagsRow(QWidget):
         diet_pref = diet_pref or "High-Protein"
 
         # Create and add tags
-        self.meal_type_tag = RecipeTag(Icon.MEAL_TYPE, meal_type)
-        self.category_tag = RecipeTag(Icon.CATEGORY, category)
-        self.diet_pref_tag = RecipeTag(Icon.DIET_PREF, diet_pref)
+        self.meal_type_tag = Tag(Icon.MEAL_TYPE, meal_type)
+        self.category_tag = Tag(Icon.CATEGORY, category)
+        self.diet_pref_tag = Tag(Icon.DIET_PREF, diet_pref)
 
         # Add to layout (insert before the final stretch)
         insert_index = self.layout.count() - 1

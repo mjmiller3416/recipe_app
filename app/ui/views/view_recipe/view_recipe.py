@@ -30,7 +30,7 @@ from app.ui.components.composite.recipe_info_card import RecipeInfoCard
 from app.ui.components.images.image import RecipeBanner
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
-from app.ui.components.widgets.recipe_tag import RecipeTag
+from app.ui.components.widgets.tag import Tag
 from app.ui.utils import create_two_column_layout, setup_main_scroll_layout
 from .directions_list import DirectionsList
 from .ingredients_list import IngredientList
@@ -130,11 +130,11 @@ class ViewRecipe(QWidget):
         tags_layout.addStretch()
 
         # Add recipe tags using centralized data
-        tags_layout.addWidget(RecipeTag(Icon.MEAL_TYPE, self.recipe_data["meal_type"]))
+        tags_layout.addWidget(Tag(Icon.MEAL_TYPE, self.recipe_data["meal_type"]))
         tags_layout.addSpacing(20)
-        tags_layout.addWidget(RecipeTag(Icon.CATEGORY, self.recipe_data["category"]))
+        tags_layout.addWidget(Tag(Icon.CATEGORY, self.recipe_data["category"]))
         tags_layout.addSpacing(20)
-        tags_layout.addWidget(RecipeTag(Icon.DIET_PREF, self.recipe_data["diet_pref"]))
+        tags_layout.addWidget(Tag(Icon.DIET_PREF, self.recipe_data["diet_pref"]))
         tags_layout.addStretch()
         self.scroll_layout.addWidget(tags_container)
 

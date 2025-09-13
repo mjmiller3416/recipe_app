@@ -83,7 +83,7 @@ QPushButton#BackButton {
 }
 
 /* ── Hover Effects ───────────────────────────────────────────── */
-QFrame#RecipeTag:hover {
+QFrame#Tag:hover {
     background-color: {surface_container_highest};
 }
 
