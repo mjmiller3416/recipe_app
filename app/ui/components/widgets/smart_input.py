@@ -1,6 +1,6 @@
 """app/ui/components/inputs/smart_line_edit.py
 
-Defines a SmartLineEdit with a proxy-filtered dropdown completer and custom submission.
+Defines a SmartInput with a proxy-filtered dropdown completer and custom submission.
 """
 
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
@@ -17,8 +17,8 @@ from app.ui.utils import IngredientProxyModel
 FIXED_HEIGHT = 45
 
 
-# ── Smart Line Edit ─────────────────────────────────────────────────────────────────────────────────────────
-class SmartLineEdit(QLineEdit):
+# ── Smart Input ─────────────────────────────────────────────────────────────────────────────────────────
+class SmartInput(QLineEdit):
     """Line edit with proxy-filtered completer and custom text handling."""
 
     currentTextChanged = Signal(str)
@@ -44,7 +44,7 @@ class SmartLineEdit(QLineEdit):
         if placeholder:
             self.setPlaceholderText(placeholder)
         self.setFixedHeight(FIXED_HEIGHT)
-        self.setObjectName("SmartLineEdit")
+        self.setObjectName("SmartInput")
 
         # Create DropdownMenu with proxy model for filtering
         self.dropdown_menu = DropdownMenu(

@@ -1,23 +1,19 @@
-"""app/ui/components/navigation/sidebar.py
+"""app/ui/main_window/sidebar.py
 
 Sidebar navigation component for the main window.
 """
 
 # ── Imports ──
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import (QButtonGroup, QLabel, QSizePolicy, QSpacerItem,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import QButtonGroup, QLabel, QSizePolicy, QSpacerItem, QVBoxLayout, QWidget
 
 from _dev_tools import DebugLogger
 from app.config import SIDEBAR
-from app.style import Theme
 from app.style.animation import Animator
 from app.style.icon.config import Name, Type
-from app.style.theme.config import Qss
-from app.ui.components.images import AvatarWidget
 from app.ui.utils import create_fixed_wrapper
-
-from ..widgets.button import Button
+from app.ui.components.widgets.button import Button
+from ._avatar_widget import AvatarWidget
 
 # ── Constants ──
 START = SIDEBAR["SETTINGS"]["EXPANDED_WIDTH"]

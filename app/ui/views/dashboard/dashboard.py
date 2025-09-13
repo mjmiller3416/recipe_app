@@ -5,11 +5,10 @@ Placeholder class for the Dashboard screen.
 
 # ── Imports ──────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QLabel, QSizePolicy, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QLabel, QSizePolicy
 
 from _dev_tools import DebugLogger, StartupTimer
 from app.style.icon.config import Name, Type
-from app.ui.components.inputs import SmartLineEdit
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
 from app.ui.views.base import BaseView

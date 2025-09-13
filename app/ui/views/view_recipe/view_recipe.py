@@ -16,7 +16,6 @@ Styling:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Iterable
 
 from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QSizePolicy, QWidget
@@ -24,16 +23,16 @@ from PySide6.QtWidgets import QHBoxLayout, QLabel, QSizePolicy, QWidget
 from _dev_tools.debug_logger import DebugLogger
 from app.core.models import Recipe
 from app.core.utils import sanitize_form_input
-from app.style import Qss, Theme, Name, Type
+from app.style import Name, Type
 from app.style.icon import AppIcon, Icon
-from app.ui.components.composite.recipe_info_card import RecipeInfoCard
+from app.ui.components.composite.recipe_info_widget import RecipeInfoWidget
 from app.ui.components.images.image import RecipeBanner
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
 from app.ui.components.widgets.tag import Tag
 from app.ui.utils import create_two_column_layout, setup_main_scroll_layout
-from .directions_list import DirectionsList
-from .ingredients_list import IngredientList
+from ._directions_list import DirectionsList
+from ._ingredients_list import IngredientList
 
 # ── ViewRecipe View ─────────────────────────────────────────────────────────────────────────
 class ViewRecipe(QWidget):
@@ -172,7 +171,7 @@ class ViewRecipe(QWidget):
         info_container.setSpacing(40)
 
         # Create info card using centralized recipe data
-        info_card = RecipeInfoCard(
+        info_card = RecipeInfoWidget(
             show_cards=["time", "servings", "category", "dietary"])
         info_card.setRecipe(self.recipe)
         info_container.addWidget(info_card)

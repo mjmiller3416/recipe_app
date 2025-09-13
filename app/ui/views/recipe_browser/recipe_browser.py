@@ -102,7 +102,7 @@ class RecipeBrowser(BaseView):
             "Most Servings": "servings",
             "Fewest Servings": "servings",
         }
-        
+
         sort_by = sort_map.get(sort_label, "recipe_name")
         sort_order = "desc" if sort_label in ("Z-A", "Newest", "Longest Time", "Most Servings") else "asc"
 
@@ -134,53 +134,61 @@ class RecipeBrowser(BaseView):
 
     def _create_recipe_card(self, recipe):
         """Create and configure a recipe card.
-        
+
         Args:
             recipe: The recipe data object.
-            
+
         Returns:
             Configured recipe card widget.
         """
         card = create_recipe_card(self.card_size, parent=self._flow_container)
         card.set_recipe(recipe)
         card.set_selection_mode(self._selection_mode)
-        
+
         # Store recipe reference for later use
         card.recipe_data = recipe
-        
+
         self._setup_card_behavior(card, recipe)
         return card
-    
+
     def _setup_card_behavior(self, card, recipe):
         """Setup click behavior for a recipe card based on current mode.
-        
+
         Args:
             card: The recipe card widget.
             recipe: The recipe data object.
         """
-        # Disconnect any existing connections
-        try:
-            card.card_clicked.disconnect()
-        except (RuntimeError, TypeError):
-            pass  # No connections to disconnect
-        
+        # Disconnect previous connection if it exists
+        if hasattr(card, '_card_connection'):
+            try:
+                card.card_clicked.disconnect(card._card_connection)
+            except (RuntimeError, TypeError):
+                pass  # Connection might have been removed elsewhere
+            delattr(card, '_card_connection')
+
         if self._selection_mode:
             # Selection mode: emit recipe ID when clicked
-            card.card_clicked.connect(lambda: self.recipe_selected.emit(recipe.id))
+            card._card_connection = card.card_clicked.connect(
+                lambda: self.recipe_selected.emit(recipe.id)
+            )
             card.setCursor(Qt.PointingHandCursor)
         else:
             # Normal mode: navigate or emit signal
             if self.navigation_service:
-                card.card_clicked.connect(self.navigation_service.show_full_recipe)
+                card._card_connection = card.card_clicked.connect(
+                    self.navigation_service.show_full_recipe
+                )
             else:
-                card.card_clicked.connect(self.recipe_card_clicked.emit)
+                card._card_connection = card.card_clicked.connect(
+                    self.recipe_card_clicked.emit
+                )
             card.setCursor(Qt.ArrowCursor)
-    
+
     def _update_cards_selection_mode(self):
         """Update all existing recipe cards to match current selection mode."""
         if not hasattr(self, '_flow_container'):
             return
-            
+
         # Update each card's behavior without reloading data
         for i in range(self._flow_container.layout.count()):
             item = self._flow_container.layout.itemAt(i)

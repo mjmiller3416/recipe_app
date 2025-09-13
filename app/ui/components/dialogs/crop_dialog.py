@@ -20,7 +20,6 @@ from PySide6.QtWidgets import (
 from _dev_tools import DebugLogger
 from app.config import AppConfig
 from app.ui.components.images.image_cropper import ImageCropper
-from app.ui.components.navigation import TitleBar
 from app.ui.utils import load_pixmap_or_warn, center_on_screen
 
 
@@ -40,11 +39,6 @@ class DialogWindow(QDialog):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
-
-        # Title bar
-        self.title_bar = TitleBar(self)
-        self.title_bar.close_clicked.connect(self.close)
-        layout.addWidget(self.title_bar)
 
         # Content area - subclasses add widgets here
         self.content_widget = QWidget()

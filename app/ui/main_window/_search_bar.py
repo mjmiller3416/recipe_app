@@ -1,4 +1,4 @@
-"""app/ui/components/inputs/search_bar.py
+"""app/ui/main_window/search_bar.py
 
 This module defines a custom search widget that includes a search icon, a text input field,
 """

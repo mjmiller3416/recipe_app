@@ -540,6 +540,19 @@ QPushButton#BackButton {
     background-color: transparent;
 }
 
+QFrame#RecipeBanner {
+    border: 6px dotted {outline_variant};
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+/* The QStackedWidget inside RecipeBanner */
+QFrame#RecipeBanner QStackedWidget {
+    background-color: {surface_container};
+    border-radius: 6px;  /* Slightly less than parent to stay inside border */
+}
+
+
 /* ==================================================================
    9. MEAL PLANNER COMPONENT
    ================================================================== */

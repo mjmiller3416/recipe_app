@@ -2,7 +2,7 @@
 
 from .ingredients_preview import IngredientsPreview
 from .recipe_card import LayoutSize, create_recipe_card
-from .recipe_info_card import RecipeInfoCard
+from .recipe_info_widget import RecipeInfoWidget
 from .recipe_tags_row import RecipeTagsRow
 
 __all__ = [
@@ -10,5 +10,5 @@ __all__ = [
     "LayoutSize",
     "IngredientsPreview",
     "RecipeTagsRow",
-    "RecipeInfoCard",
+    "RecipeInfoWidget",
 ]

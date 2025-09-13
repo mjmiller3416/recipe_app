@@ -8,11 +8,10 @@ Used in AddRecipes view for default recipe images.
 from typing import Optional
 
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import (QHBoxLayout, QLabel, QSizePolicy,
-                               QStackedWidget, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QSizePolicy, QStackedWidget, QVBoxLayout, QWidget
 
 from app.core.utils.image_utils import img_validate_path
-from app.style import Qss, Theme, Type
+from app.style import Type
 from app.style.icon.config import Icon, Name
 from app.style.icon.icon import AppIcon
 from app.ui.components.layout.card import BaseCard
@@ -251,7 +250,6 @@ class RecipeBanner(BaseImage):
         self.setObjectName("RecipeBanner")
         self.setProperty("tag", "RecipeBanner")
         self.setAttribute(Qt.WA_StyledBackground, True)
-        Theme.register_widget(self, Qss.RECIPE_BANNER)
 
         # Banner UI components
         self.image_widget: Optional[QWidget] = None
@@ -396,7 +394,6 @@ class RecipeImage(BaseImage):
         # Setup object names and properties
         self.setObjectName("RecipeImage")
         self.setProperty("tag", "RecipeImage")
-        Theme.register_widget(self, Qss.RECIPE_BANNER)  # Use same styling
 
         # Default image UI components
         self.image_widget: Optional[QWidget] = None

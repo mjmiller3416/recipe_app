@@ -12,12 +12,11 @@ from PySide6.QtWidgets import QMenu, QTabWidget, QWidget
 from _dev_tools import DebugLogger
 from app.core.services import PlannerService
 from app.core.utils import error_boundary, safe_execute_with_fallback
-from app.style import Qss
 from app.style.icon import AppIcon, Icon
 from app.ui.utils import apply_object_name_pattern, register_widget_for_theme
 from app.ui.views.base import BaseView
 
-from .meal_widget import MealWidget
+from ._meal_widget import MealWidget
 
 # ── Constants ──
 TAB_ICON_SIZE = QSize(32, 32)

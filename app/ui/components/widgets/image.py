@@ -12,11 +12,15 @@ from PySide6.QtCore import Property, QRectF, QSize, Qt
 from PySide6.QtGui import QColor, QPainter, QPen, QPixmap
 from PySide6.QtWidgets import QLabel, QStyle, QStyleOption
 
-from app.core.utils.image_utils import (img_apply_circular_mask,
-                                        img_apply_rounded_mask, img_cache_get,
-                                        img_cache_get_key, img_cache_set,
-                                        img_get_placeholder, img_qt_load_safe,
-                                        img_validate_path)
+from app.core.utils.image_utils import (
+    img_apply_circular_mask,
+    img_apply_rounded_mask,
+    img_cache_get,
+    img_cache_get_key,
+    img_cache_set,
+    img_get_placeholder,
+    img_qt_load_safe,
+    img_validate_path)
 
 
 # ── Base Image Widget ───────────────────────────────────────────────────────────────────────────────────────

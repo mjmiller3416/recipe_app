@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 
 from _dev_tools import DebugLogger, startup_timer
 from app.style.theme_controller import Color, Mode, Theme
-from app.ui.main_window import MainWindow
+from app.ui.main_window.main_window import MainWindow
 from app.ui.services.navigation_service import NavigationService
 
 if "--reset" in sys.argv:

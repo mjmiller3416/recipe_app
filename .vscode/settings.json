@@ -222,6 +222,7 @@
       "dtos": "Packages",
       "builders": "Tools",
       "loaders": "Download",
+      "main_window": "Sandbox",
 
       //** Assets **//
       "assets": "Shader",

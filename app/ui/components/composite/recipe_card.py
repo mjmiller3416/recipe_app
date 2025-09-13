@@ -22,13 +22,11 @@ from enum import Enum
 from typing import Optional
 
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import (QDialog, QFrame, QHBoxLayout, QLabel,
-                               QStackedWidget, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import QDialog, QFrame, QHBoxLayout, QLabel, QStackedWidget, QVBoxLayout, QWidget
 
 from _dev_tools import DebugLogger
 from app.core.models import Recipe
 from app.core.services import RecipeService
-from app.style import Qss, Theme
 from app.style.icon import AppIcon, Name, Type
 from app.ui.components.layout import Separator
 from app.ui.components.layout.card import BaseCard
@@ -468,7 +466,7 @@ class LargeRecipeCard(BaseRecipeCard):
 
         from app.ui.components.composite.ingredients_preview import \
             IngredientsPreview
-        from app.ui.components.composite.recipe_info_card import RecipeInfoCard
+        from app.ui.components.composite.recipe_info_widget import RecipeInfoWidget
         from app.ui.components.composite.recipe_tags_row import RecipeTagsRow
 
         # Main layout
@@ -504,7 +502,7 @@ class LargeRecipeCard(BaseRecipeCard):
         image_overlay = make_overlay(img_recipe, btn_fav) # create image overlay
 
         # Info Cards Row (compact mode for large card)
-        info_cards = RecipeInfoCard(
+        info_cards = RecipeInfoWidget(
             show_cards=["time", "servings"])
         info_cards.setRecipe(self._recipe)
         info_cards.setCompactMode(True)

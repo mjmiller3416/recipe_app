@@ -5,7 +5,6 @@ AddRecipes widget for creating new recipes with ingredients and directions.
 
 # ── Imports ──
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget
 
 from _dev_tools import DebugLogger
 from app.core.dtos import RecipeCreateDTO, RecipeIngredientDTO
@@ -15,7 +14,6 @@ from app.core.utils import (
     safe_int_conversion,
     sanitize_form_input,
     sanitize_multiline_input)
-from app.style import Qss, Theme
 from app.style.icon.config import Name, Type
 from app.ui.components.images import RecipeImage
 from app.ui.components.layout.card import Card

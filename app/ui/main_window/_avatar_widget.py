@@ -1,4 +1,4 @@
-"""app/ui/components/images/avatar_loader.py
+"""app/ui/main_window/avatar_loader.py
 
 A widget for uploading and displaying a circular user avatar
 """
@@ -13,14 +13,12 @@ from PySide6.QtWidgets import QFileDialog, QVBoxLayout, QWidget
 from _data_files.user_settings import UserSettings
 from app.config import AppPaths
 from app.core.utils.image_utils import img_create_temp_path, img_validate_path
-from app.style import Theme
 from app.style.animation.animator import Animator
 from app.style.icon.config import Name, Type
-from app.style.theme.config import Qss
 from app.ui.components.widgets import Button
 from app.ui.utils import CornerAnchor
 
-from ..widgets.image import CircularImage
+from app.ui.components.widgets.image import CircularImage
 
 
 # ── Avatar Loader ────────────────────────────────────────────────────────────────────────────

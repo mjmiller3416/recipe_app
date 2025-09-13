@@ -3,32 +3,30 @@
 # From dialogs
 from .dialogs.crop_dialog import CropDialog
 # From image
-from .images.avatar_widget import AvatarWidget
+from ..main_window._avatar_widget import AvatarWidget
 from .images.image_cropper import ImageCropper
 # From inputs
-from .inputs.search_bar import SearchBar
-from .inputs.smart_line_edit import SmartLineEdit
+from ..main_window._search_bar import SearchBar
+from .widgets.smart_input import SmartInput
 from .layout.flow_layout import FlowLayout
 # From layout
-from .layout.separator import Separator
-# From navigation
-from .navigation.sidebar import Sidebar
-from .navigation.titlebar import TitleBar
-from .widgets.combobox import ComboBox
-from .widgets.dropdown_menu import DropdownMenu
+from .widgets.separator import Separator
+
 # From widgets
 from .widgets.image import CircularImage, RoundedImage
 from .widgets.toggle_switch import ToggleSwitch
+from .widgets.combobox import ComboBox
+from .widgets.dropdown_menu import DropdownMenu
 
 __all__ = [
     # Dialogs
-    "CropDialog"
+    "CropDialog",
     # Forms
     "FormField", "LineEditField", "ComboBoxField",
     # Image
     "AvatarWidget", "ImageCropper",
     # Inputs
-    "ComboBox", "SearchBar", "SmartLineEdit", "ToggleSwitch",
+    "ComboBox", "SearchBar", "SmartInput", "ToggleSwitch",
     # Layout
     "Separator", "FlowLayout",
     # Navigation

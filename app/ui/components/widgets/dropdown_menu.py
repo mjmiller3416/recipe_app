@@ -20,7 +20,7 @@ class DropdownMenu(QWidget):
     Reusable dropdown menu component for displaying filtered selectable lists.
 
     This component provides just the dropdown functionality without any input field
-    or button. It can be used by SmartLineEdit, ComboBox, and future multi-select widgets.
+    or button. It can be used by SmartInput, ComboBox, and future multi-select widgets.
 
     Args:
         parent (QWidget, optional): Parent widget.
@@ -115,7 +115,7 @@ class DropdownMenu(QWidget):
         self.set_filter("")
 
     def set_proxy_model(self, proxy_model):
-        """Set a proxy model for advanced filtering (used by SmartLineEdit)."""
+        """Set a proxy model for advanced filtering (used by SmartInput)."""
         self.model = proxy_model
         self.completer.setModel(proxy_model)
 

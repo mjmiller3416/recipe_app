@@ -9,7 +9,6 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
 from app.core.models.recipe import Recipe
-from app.style import Qss, Theme
 from app.style.icon import AppIcon, Icon
 
 
@@ -69,13 +68,13 @@ class InfoCard(QWidget):
         self.icon_widget.setColor(color)
 
 
-# ── Recipe Info Card ────────────────────────────────────────────────────────────────────────────────────────
-class RecipeInfoCard(QWidget):
+# ── Recipe Info Widget ────────────────────────────────────────────────────────────────────────────────────────
+class RecipeInfoWidget(QWidget):
     """A horizontal row of info cards showing recipe metadata."""
 
     def __init__(self, show_cards: list = None, parent=None):
         super().__init__(parent)
-        self.setObjectName("RecipeInfoCard")
+        self.setObjectName("RecipeInfoWidget")
 
         # Default cards to show if none specified
         self.show_cards = show_cards or ["time", "servings", "category", "dietary"]

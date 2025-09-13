@@ -14,9 +14,9 @@ from app.config import INGREDIENT_CATEGORIES, MEASUREMENT_UNITS, FLOAT_VALIDATOR
 from app.core.database import create_session
 from app.core.services import IngredientService
 from app.core.dtos import IngredientSearchDTO
-from app.style import Type, Name, Theme, Qss
+from app.style import Type, Name
 from app.ui.components.widgets.combobox import ComboBox
-from app.ui.components.inputs.smart_line_edit import SmartLineEdit
+from app.ui.components.widgets.smart_input import SmartInput
 from app.ui.components.widgets.button import ToolButton
 from app.core.utils import sanitize_form_input, safe_float_conversion
 from app.ui.utils import clear_error_styles, dynamic_validation
@@ -86,7 +86,7 @@ class IngredientForm(QWidget):
 
         # Ingredient name field - expandable
         all_ingredient_names = self.ingredient_service.list_distinct_names()
-        self.sle_ingredient_name = SmartLineEdit(
+        self.sle_ingredient_name = SmartInput(
             list_items=all_ingredient_names,
             placeholder="Ingredient Name"
         )
@@ -129,7 +129,7 @@ class IngredientForm(QWidget):
 
     def _ingredient_name_changed(self, text: str):
         """
-        Handles changes in the ingredient name field (SmartLineEdit).
+        Handles changes in the ingredient name field (SmartInput).
         If the entered text matches an existing ingredient (case-insensitive exact match),
         its category is auto-populated and the category ComboBox may be disabled.
         Otherwise, the category ComboBox is enabled for manual input.
@@ -139,7 +139,7 @@ class IngredientForm(QWidget):
 
         if not current_text:
             self.cb_ingredient_category.setCurrentIndex(-1)
-            clear_error_styles(self.sle_ingredient_name)  # SmartLineEdit is now a QLineEdit
+            clear_error_styles(self.sle_ingredient_name)  # SmartInput is now a QLineEdit
             return
 
         # validate the ingredient name against the NAME_PATTERN
