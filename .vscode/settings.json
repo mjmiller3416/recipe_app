@@ -247,6 +247,18 @@
       "conversion_manager_blueprint.md": "Template",
     },
 
+    "terminal.integrated.env.windows": {
+    "PATH": "${env:PATH};C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+  },
+
+  // optional: pin the default terminal to Windows PowerShell
+  "terminal.integrated.defaultProfile.windows": "Windows PowerShell",
+  "terminal.integrated.profiles.windows": {
+    "Windows PowerShell": {
+      "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "args": ["-NoLogo"]
+    }
+  },
 
     //** EXTENSION: Custom CSS and JS **//
     "vscode_custom_css.imports": [
@@ -273,6 +285,8 @@
         "ignoreInnerIndentation": false
         }
     },
+
+
 
     //** EXTENSION: PYTEST **//
     "python.testing.pytestEnabled": true,
