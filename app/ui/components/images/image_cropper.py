@@ -70,164 +70,46 @@ class CropRectangle:
         """Check if position is inside crop rectangle."""
         return self.rect.contains(pos)
 
-    def move_by_delta(self, delta: QPointF, bounds: QRectF):
-        """Move rectangle by delta, constraining within bounds."""
-        new_rect = QRectF(self.rect).translated(delta)
 
-        # Constrain within bounds
-        if new_rect.left() < bounds.left():
-            new_rect.moveLeft(bounds.left())
-        if new_rect.top() < bounds.top():
-            new_rect.moveTop(bounds.top())
-        if new_rect.right() > bounds.right():
-            new_rect.moveRight(bounds.right())
-        if new_rect.bottom() > bounds.bottom():
-            new_rect.moveBottom(bounds.bottom())
-
-        self.rect = new_rect
-        self._update_handles()
-
-    def resize_from_handle(self, handle_key: str, mouse_pos: QPointF,
-                          start_rect: QRectF, bounds: QRectF, min_size: float):
+    def resize_from_handle(
+            self,
+            handle_key: str,
+            mouse_pos: QPointF,
+            start_rect: QRectF,
+            bounds: QRectF,
+            min_size: float
+        ):
         """Resize rectangle from handle position."""
-        if handle_key == 'br':  # Bottom-right handle
-            anchor = start_rect.topLeft()
-            desired_size = max(mouse_pos.x() - anchor.x(), mouse_pos.y() - anchor.y())
-            max_size = min(bounds.right() - anchor.x(), bounds.bottom() - anchor.y())
+        # Define anchor points and size calculations for each handle
+        handle_configs = {
+            'br': (start_rect.topLeft(),
+                lambda p, a: (p.x() - a.x(), p.y() - a.y()),
+                lambda a, s: QRectF(a, QSizeF(s, s))),
+            'tl': (start_rect.bottomRight(),
+                lambda p, a: (a.x() - p.x(), a.y() - p.y()),
+                lambda a, s: QRectF(QPointF(a.x() - s, a.y() - s), QSizeF(s, s))),
+            'tr': (start_rect.bottomLeft(),
+                lambda p, a: (p.x() - a.x(), a.y() - p.y()),
+                lambda a, s: QRectF(QPointF(a.x(), a.y() - s), QSizeF(s, s))),
+            'bl': (start_rect.topRight(),
+                lambda p, a: (a.x() - p.x(), p.y() - a.y()),
+                lambda a, s: QRectF(QPointF(a.x() - s, a.y()), QSizeF(s, s)))
+        }
+
+        if handle_key in handle_configs:
+            anchor, calc_size, make_rect = handle_configs[handle_key]
+            dx, dy = calc_size(mouse_pos, anchor)
+            desired_size = max(dx, dy)
+
+            # Calculate max size based on bounds
+            max_x = bounds.right() - anchor.x() if mouse_pos.x() > anchor.x() else anchor.x() - bounds.left()
+            max_y = bounds.bottom() - anchor.y() if mouse_pos.y() > anchor.y() else anchor.y() - bounds.top()
+            max_size = min(abs(max_x), abs(max_y))
+
             final_size = max(min_size, min(desired_size, max_size))
-            self.rect = QRectF(anchor, QSizeF(final_size, final_size))
+            self.rect = make_rect(anchor, final_size)
+            self._update_handles()
 
-        elif handle_key == 'tl':  # Top-left handle
-            anchor = start_rect.bottomRight()
-            desired_size = max(anchor.x() - mouse_pos.x(), anchor.y() - mouse_pos.y())
-            max_size = min(anchor.x() - bounds.left(), anchor.y() - bounds.top())
-            final_size = max(min_size, min(desired_size, max_size))
-            top_left = QPointF(anchor.x() - final_size, anchor.y() - final_size)
-            self.rect = QRectF(top_left, QSizeF(final_size, final_size))
-
-        elif handle_key == 'tr':  # Top-right handle
-            anchor = start_rect.bottomLeft()
-            desired_size = max(mouse_pos.x() - anchor.x(), anchor.y() - mouse_pos.y())
-            max_size = min(bounds.right() - anchor.x(), anchor.y() - bounds.top())
-            final_size = max(min_size, min(desired_size, max_size))
-            top_left = QPointF(anchor.x(), anchor.y() - final_size)
-            self.rect = QRectF(top_left, QSizeF(final_size, final_size))
-
-        elif handle_key == 'bl':  # Bottom-left handle
-            anchor = start_rect.topRight()
-            desired_size = max(anchor.x() - mouse_pos.x(), mouse_pos.y() - anchor.y())
-            max_size = min(anchor.x() - bounds.left(), bounds.bottom() - anchor.y())
-            final_size = max(min_size, min(desired_size, max_size))
-            top_left = QPointF(anchor.x() - final_size, anchor.y())
-            self.rect = QRectF(top_left, QSizeF(final_size, final_size))
-
-        self._update_handles()
-
-
-# ── Mouse Interaction Handler ────────────────────────────────────────────────────────────────
-class CropInteractionHandler:
-    """Handles mouse interactions for cropping."""
-
-    def __init__(self, crop_rect: CropRectangle):
-        self.crop_rect = crop_rect
-        self.active_handle = None
-        self.is_dragging = False
-        self.drag_start_pos = QPointF()
-        self.drag_start_rect = QRectF()
-
-    def handle_mouse_press(self, pos_on_image: QPointF) -> bool:
-        """Handle mouse press. Returns True if interaction started."""
-        self.active_handle = self.crop_rect.get_handle_at_pos(pos_on_image)
-
-        if self.active_handle:
-            self.is_dragging = False
-        elif self.crop_rect.contains_point(pos_on_image):
-            self.is_dragging = True
-            self.active_handle = None
-        else:
-            return False  # No interaction
-
-        self.drag_start_pos = pos_on_image
-        self.drag_start_rect = QRectF(self.crop_rect.rect)
-        return True
-
-    def handle_mouse_move(self, pos_on_image: QPointF, bounds: QRectF,
-                         scale_factor: float) -> bool:
-        """Handle mouse move. Returns True if crop changed."""
-        if not (self.is_dragging or self.active_handle):
-            return False
-
-        if self.is_dragging:
-            delta = pos_on_image - self.drag_start_pos
-            self.crop_rect.move_by_delta(delta, bounds)
-            return True
-
-        elif self.active_handle:
-            min_size = max(1.0, AppConfig.MIN_CROP_DIM_ORIGINAL * scale_factor)
-            self.crop_rect.resize_from_handle(
-                self.active_handle, pos_on_image,
-                self.drag_start_rect, bounds, min_size
-            )
-            return True
-
-        return False
-
-    def handle_mouse_release(self):
-        """Handle mouse release."""
-        self.is_dragging = False
-        self.active_handle = None
-
-    def get_cursor_for_pos(self, pos_on_image: QPointF) -> Qt.CursorShape:
-        """Get appropriate cursor for position."""
-        if self.is_dragging or self.active_handle:
-            return Qt.CursorShape.ArrowCursor
-
-        handle = self.crop_rect.get_handle_at_pos(pos_on_image)
-        if handle in ['tl', 'br']:
-            return Qt.CursorShape.SizeFDiagCursor
-        elif handle in ['tr', 'bl']:
-            return Qt.CursorShape.SizeBDiagCursor
-        elif self.crop_rect.contains_point(pos_on_image):
-            return Qt.CursorShape.SizeAllCursor
-        else:
-            return Qt.CursorShape.ArrowCursor
-
-
-# ── Crop Renderer ────────────────────────────────────────────────────────────────────────────
-class CropRenderer:
-    """Handles rendering of crop overlay and handles."""
-
-    @staticmethod
-    def draw_crop_overlay(painter: QPainter, widget_rect: QRect,
-                         crop_visual_rect: QRectF, crop_rect: CropRectangle,
-                         pixmap_display_rect: QRect):
-        """Draw the crop overlay with darkened areas and handles."""
-        # Semi-transparent overlay outside crop area
-        overlay_path = QPainterPath()
-        overlay_path.addRect(QRectF(widget_rect))
-        overlay_path.addRect(crop_visual_rect)
-        painter.setBrush(QColor(0, 0, 0, 120))
-        painter.setPen(Qt.NoPen)
-        painter.drawPath(overlay_path)
-
-        # Crop rectangle border
-        pen = QPen(QColor(255, 255, 255, 200), 2, Qt.PenStyle.SolidLine)
-        painter.setPen(pen)
-        painter.setBrush(Qt.NoBrush)
-        painter.drawRect(crop_visual_rect)
-
-        # Draw resize handles
-        painter.setBrush(QColor(255, 255, 255, 220))
-        pen.setColor(QColor(50, 50, 50, 180))
-        pen.setWidth(1)
-        painter.setPen(pen)
-
-        for handle_rect in crop_rect.handles.values():
-            visual_handle = handle_rect.translated(pixmap_display_rect.topLeft())
-            painter.drawRect(visual_handle)
-
-
-# ── Main ImageCropper Widget ─────────────────────────────────────────────────────────────────
 class ImageCropper(QLabel):
     """Interactive image cropper with drag-and-resize functionality."""
 
@@ -243,7 +125,12 @@ class ImageCropper(QLabel):
 
         # Components
         self.crop_rect = CropRectangle()
-        self.interaction_handler = CropInteractionHandler(self.crop_rect)
+
+        # Mouse interaction state (previously in CropInteractionHandler)
+        self.active_handle = None
+        self.is_dragging = False
+        self.drag_start_pos = QPointF()
+        self.drag_start_rect = QRectF()
 
         # Widget setup
         self.setMouseTracking(True)
@@ -303,7 +190,109 @@ class ImageCropper(QLabel):
         return QRect(int(x_offset), int(y_offset),
                     self.scaled_pixmap.width(), self.scaled_pixmap.height())
 
+    def _draw_crop_overlay(self, painter: QPainter, widget_rect: QRect,
+                          crop_visual_rect: QRectF, pixmap_display_rect: QRect):
+        """Draw the crop overlay with darkened areas and handles."""
+        # Semi-transparent overlay outside crop area
+        overlay_path = QPainterPath()
+        overlay_path.addRect(QRectF(widget_rect))
+        overlay_path.addRect(crop_visual_rect)
+        painter.setBrush(QColor(0, 0, 0, 120))
+        painter.setPen(Qt.NoPen)
+        painter.drawPath(overlay_path)
+
+        # Crop rectangle border
+        pen = QPen(QColor(255, 255, 255, 200), 2, Qt.PenStyle.SolidLine)
+        painter.setPen(pen)
+        painter.setBrush(Qt.NoBrush)
+        painter.drawRect(crop_visual_rect)
+
+        # Draw resize handles
+        painter.setBrush(QColor(255, 255, 255, 220))
+        pen.setColor(QColor(50, 50, 50, 180))
+        pen.setWidth(1)
+        painter.setPen(pen)
+
+        for handle_rect in self.crop_rect.handles.values():
+            visual_handle = handle_rect.translated(pixmap_display_rect.topLeft())
+            painter.drawRect(visual_handle)
+
+    # ── Mouse Interaction Methods (previously in CropInteractionHandler) ──
+
+    def _handle_mouse_press(self, pos_on_image: QPointF) -> bool:
+        """Handle mouse press. Returns True if interaction started."""
+        self.active_handle = self.crop_rect.get_handle_at_pos(pos_on_image)
+
+        if self.active_handle:
+            self.is_dragging = False
+        elif self.crop_rect.contains_point(pos_on_image):
+            self.is_dragging = True
+            self.active_handle = None
+        else:
+            return False  # No interaction
+
+        self.drag_start_pos = pos_on_image
+        self.drag_start_rect = QRectF(self.crop_rect.rect)
+        return True
+
+    def _handle_mouse_move(self, pos_on_image: QPointF) -> bool:
+        """Handle mouse move. Returns True if crop changed."""
+        if not (self.is_dragging or self.active_handle):
+            return False
+
+        bounds = QRectF(0, 0, self.scaled_pixmap.width(), self.scaled_pixmap.height())
+
+        if self.is_dragging:
+            delta = pos_on_image - self.drag_start_pos
+            new_rect = QRectF(self.drag_start_rect)
+            new_rect.translate(delta)
+
+            # Constrain within bounds
+            if new_rect.left() < bounds.left():
+                new_rect.moveLeft(bounds.left())
+            if new_rect.top() < bounds.top():
+                new_rect.moveTop(bounds.top())
+            if new_rect.right() > bounds.right():
+                new_rect.moveRight(bounds.right())
+            if new_rect.bottom() > bounds.bottom():
+                new_rect.moveBottom(bounds.bottom())
+
+            self.crop_rect.rect = new_rect
+            self.crop_rect._update_handles()
+            return True
+
+        elif self.active_handle:
+            min_size = max(1.0, AppConfig.MIN_CROP_DIM_ORIGINAL * self.scale_factor)
+            self.crop_rect.resize_from_handle(
+                self.active_handle, pos_on_image,
+                self.drag_start_rect, bounds, min_size
+            )
+            return True
+
+        return False
+
+    def _handle_mouse_release(self):
+        """Handle mouse release."""
+        self.is_dragging = False
+        self.active_handle = None
+
+    def _get_cursor_for_pos(self, pos_on_image: QPointF) -> Qt.CursorShape:
+        """Get appropriate cursor for position."""
+        if self.is_dragging or self.active_handle:
+            return Qt.CursorShape.ArrowCursor
+
+        handle = self.crop_rect.get_handle_at_pos(pos_on_image)
+        if handle in ['tl', 'br']:
+            return Qt.CursorShape.SizeFDiagCursor
+        elif handle in ['tr', 'bl']:
+            return Qt.CursorShape.SizeBDiagCursor
+        elif self.crop_rect.contains_point(pos_on_image):
+            return Qt.CursorShape.SizeAllCursor
+        else:
+            return Qt.CursorShape.ArrowCursor
+
     # ── Event Handlers ──
+
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self._update_scaled_pixmap_and_crop_rect()
@@ -323,10 +312,7 @@ class ImageCropper(QLabel):
 
         # Draw crop overlay
         crop_visual_rect = self.crop_rect.rect.translated(pixmap_display_rect.topLeft())
-        CropRenderer.draw_crop_overlay(
-            painter, self.rect(), crop_visual_rect,
-            self.crop_rect, pixmap_display_rect
-        )
+        self._draw_crop_overlay(painter, self.rect(), crop_visual_rect, pixmap_display_rect)
 
         painter.end()
 
@@ -337,7 +323,7 @@ class ImageCropper(QLabel):
         pixmap_display_rect = self._get_pixmap_display_rect()
         pos_on_image = event.position() - pixmap_display_rect.topLeft()
 
-        if self.interaction_handler.handle_mouse_press(pos_on_image):
+        if self._handle_mouse_press(pos_on_image):
             event.accept()
 
     def mouseMoveEvent(self, event: QMouseEvent):
@@ -345,19 +331,18 @@ class ImageCropper(QLabel):
         pos_on_image = event.position() - pixmap_display_rect.topLeft()
 
         # Update cursor
-        cursor = self.interaction_handler.get_cursor_for_pos(pos_on_image)
+        cursor = self._get_cursor_for_pos(pos_on_image)
         self.setCursor(cursor)
 
         # Handle interaction
         if event.buttons() & Qt.MouseButton.LeftButton:
-            bounds = QRectF(0, 0, self.scaled_pixmap.width(), self.scaled_pixmap.height())
-            if self.interaction_handler.handle_mouse_move(pos_on_image, bounds, self.scale_factor):
+            if self._handle_mouse_move(pos_on_image):
                 self.update()
                 self.crop_rect_updated.emit()
                 event.accept()
 
     def mouseReleaseEvent(self, event: QMouseEvent):
         if event.button() == Qt.MouseButton.LeftButton:
-            self.interaction_handler.handle_mouse_release()
+            self._handle_mouse_release()
             self.setCursor(Qt.CursorShape.ArrowCursor)
             event.accept()

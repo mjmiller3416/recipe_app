@@ -31,7 +31,7 @@ class SearchBar(QFrame):
         self.setObjectName("SearchBar")
 
         # Register for component-specific styling
-        Theme.register_widget(self, Qss.SEARCH_BAR)
+        # Theme.register_widget(self, Qss.SEARCH_BAR)
 
         self.setFixedHeight(60)
         self.setFixedWidth(500)

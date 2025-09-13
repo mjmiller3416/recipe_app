@@ -62,8 +62,6 @@ class ComboBox(QWidget):
         )
         self.dropdown_menu.set_case_sensitivity(Qt.CaseInsensitive)
 
-        print(f"[INIT] ComboBox {id(self)} connecting to dropdown {id(self.dropdown_menu)}")
-
         # Set up layout
         layout = QHBoxLayout(self)
         layout.setContentsMargins(5, 5, 10, 5)

@@ -24,14 +24,14 @@ from ..widgets.image import CircularImage
 
 
 # ── Avatar Loader ────────────────────────────────────────────────────────────────────────────
-class AvatarLoader(QWidget):
+class AvatarWidget(QWidget):
     """
     A widget for uploading and displaying a circular user avatar,
     now using CircularImage for perfect circles + QSS borders.
     """
 
     def __init__(self, size: QSize = QSize(96, 96), parent=None):
-        """Initializes the AvatarLoader widget.
+        """Initializes the AvatarWidget widget.
         Args:
             size (QSize, optional): Diameter of the avatar circle. Defaults to QSize(96, 96).
             parent (QWidget, optional): Parent widget. Defaults to None.
@@ -39,10 +39,7 @@ class AvatarLoader(QWidget):
         super().__init__(parent)
         self._size = size
         self.settings = UserSettings()
-        self.setObjectName("AvatarLoader")
-
-        # register for component-specific styling
-        Theme.register_widget(self, Qss.AVATAR_LOADER)
+        self.setObjectName("AvatarWidget")
 
         # fix the widget's size to the diameter you want:
         self.setFixedSize(self._size)

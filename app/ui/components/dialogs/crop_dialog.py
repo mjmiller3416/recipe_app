@@ -6,26 +6,67 @@ A dialog for cropping images with a square selection area.
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QPushButton,
-                               QSizePolicy, QSpacerItem, QVBoxLayout)
+from PySide6.QtWidgets import (
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QSizePolicy,
+    QSpacerItem,
+    QVBoxLayout,
+    QDialog,
+    QWidget)
 
 from _dev_tools import DebugLogger
 from app.config import AppConfig
-from app.ui.components.dialogs.dialog_window import DialogWindow
 from app.ui.components.images.image_cropper import ImageCropper
-from app.ui.utils import load_pixmap_or_warn
+from app.ui.components.navigation import TitleBar
+from app.ui.utils import load_pixmap_or_warn, center_on_screen
 
 
-# ── Crop Dialog ─────────────────────────────────────────────────────────────────────────────────────────────
-class CropDialog(DialogWindow): # Inherit from your BaseDialog or QDialog
-    # Emits the QPixmap of the cropped image area
+class DialogWindow(QDialog):
+    """Base dialog with frameless window and title bar."""
+
+    def __init__(self, title: str = "", width: int = 800, height: int = 600, parent=None):
+        super().__init__(parent)  # <-- Fixed: Just pass parent to QDialog
+
+        # Window setup
+        self.setWindowTitle(title)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.Dialog)
+        self.setMinimumSize(400, 300)
+        self.resize(width, height)
+
+        # Layout
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+
+        # Title bar
+        self.title_bar = TitleBar(self)
+        self.title_bar.close_clicked.connect(self.close)
+        layout.addWidget(self.title_bar)
+
+        # Content area - subclasses add widgets here
+        self.content_widget = QWidget()
+        self.content_layout = QVBoxLayout(self.content_widget)
+        self.content_layout.setContentsMargins(10, 10, 10, 10)
+        layout.addWidget(self.content_widget)
+
+        center_on_screen(self)
+
+class CropDialog(DialogWindow):
+    """A dialog for cropping images with a square selection area."""
+
     crop_finalized = Signal(QPixmap)
-    # Emitted if the user wants to choose a different image file
     select_new_image_requested = Signal()
 
-
     def __init__(self, image_path: str, parent=None):
-        super().__init__(width=800, height=800, window_title="Crop Recipe Image")
+        """Initializes the CropDialog.
+        Args:
+            image_path (str): Path to the initial image to be cropped.
+            parent (QWidget, optional): Parent widget that owns the dialog.
+        """
+        super().__init__(title="Crop Recipe Image", width=800, height=800, parent=parent)  # <-- Fixed
 
         self.initial_image_path = image_path
         self.original_pixmap = load_pixmap_or_warn(image_path, self)
@@ -78,16 +119,6 @@ class CropDialog(DialogWindow): # Inherit from your BaseDialog or QDialog
         if not cropped_pixmap.isNull():
             # Validate final size against original minimum
             if cropped_pixmap.width() < AppConfig.MIN_CROP_DIM_ORIGINAL or cropped_pixmap.height() < AppConfig.MIN_CROP_DIM_ORIGINAL:
-                 # This check should ideally be implicitly handled by cropper logic,
-                 # but as a final validation:
-                # msg_box = QMessageBox(self)
-                # msg_box.setIcon(QMessageBox.Warning)
-                # msg_box.setText(f"The selected crop ({cropped_pixmap.width()}x{cropped_pixmap.height()}) is smaller than the minimum allowed size of {MIN_CROP_DIM_ORIGINAL}x{MIN_CROP_DIM_ORIGINAL} pixels.")
-                # msg_box.setWindowTitle("Crop Too Small")
-                # msg_box.setStandardButtons(QMessageBox.Ok)
-                # msg_box.exec()
-                # return # Keep dialog open
-                # Or, up-sample if that's desired (generally not for quality)
                 pass # Assume cropper logic enforced this
 
             self.crop_finalized.emit(cropped_pixmap)
@@ -97,7 +128,7 @@ class CropDialog(DialogWindow): # Inherit from your BaseDialog or QDialog
             DebugLogger.log("Failed to get valid cropped image from dialog", "error")
             # Potentially show a QMessageBox to the user
 
-    def _build_crop_buttons() -> tuple[QPushButton, QPushButton, QPushButton, QHBoxLayout]:
+    def _build_crop_buttons(self) -> tuple[QPushButton, QPushButton, QPushButton, QHBoxLayout]:
         """Create Select-New, Cancel and Save buttons with standard layout."""
         btn_select_new = QPushButton("Select New Image")
         btn_select_new.setObjectName("SelectNewButton")

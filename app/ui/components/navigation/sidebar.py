@@ -14,7 +14,7 @@ from app.style import Theme
 from app.style.animation import Animator
 from app.style.icon.config import Name, Type
 from app.style.theme.config import Qss
-from app.ui.components.images import AvatarLoader
+from app.ui.components.images import AvatarWidget
 from app.ui.utils import create_fixed_wrapper
 
 from ..widgets.button import Button
@@ -35,9 +35,6 @@ class Sidebar(QWidget):
         self.setMinimumWidth(0)
         self.setMaximumWidth(START)
         self._is_expanded = True
-
-        # register for component-specific styling
-        Theme.register_widget(self, Qss.SIDEBAR)
 
         self.mainLayout = QVBoxLayout(self)
         self.mainLayout.setContentsMargins(0, 0, 0, 0)
@@ -119,8 +116,8 @@ class Sidebar(QWidget):
 
         return button
 
-    def _create_avatar(self) -> AvatarLoader:
-        avatar = AvatarLoader(size=QSize(240, 240))
+    def _create_avatar(self) -> AvatarWidget:
+        avatar = AvatarWidget(size=QSize(240, 240))
         username = QLabel("@username")
         username.setObjectName("UsernameLabel")
         username.setAlignment(Qt.AlignCenter)

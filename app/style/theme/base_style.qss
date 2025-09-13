@@ -1,8 +1,4 @@
 /* ==================================================================
-   CLEANED AND ORGANIZED STYLESHEET
-   ================================================================== */
-
-/* ==================================================================
    1. GLOBAL STYLES & RESETS
    ================================================================== */
 
@@ -900,3 +896,108 @@ QListView#DropdownMenuPopup::item:selected:hover {
     background-color: {primary_container};
     color: {on_primary_container};
 }
+
+
+/* ==================================================================
+   13. MAIN WINDOW COMPONENTS
+   ================================================================== */
+
+/* ── Avatar Loader ───────────────────────────────────────── */
+#AvatarImage {
+    qproperty-borderColor: {primary};
+    qproperty-borderWidth: 6;
+}
+
+#AvatarEditButton {
+    background-color: {surface_variant};
+    border: 2px solid {outline};
+    border-radius: 10px; /* half of width/height for circular button */
+    color: {on_surface_variant};
+}
+
+/* ── Sidebar ──────────────────────────────────────────────── */
+#Sidebar {
+    background-color: {surface_container};
+  }
+
+#UsernameLabel {
+    color: {on_surface_variant};
+    font-weight: 600;
+    font-size: 22px;
+    padding-top: 5px;
+}
+
+#Sidebar #NavButton {
+    background-color: transparent;
+    border: none;
+    border-radius: 0px;
+}
+
+#Sidebar #NavButton:hover {
+    background-color: {secondary_container};
+}
+
+#Sidebar #NavButton:checked {
+    background-color: {secondary_container};
+    border-left: 4px solid {primary};
+}
+
+#Sidebar #NavButton QLabel {
+    color: {on_surface};
+    font-size: 22px;
+}
+
+#Sidebar #NavButton QLabel[state="CHECKED"] {
+    color: {on_secondary_container};
+    font-weight: 600;
+}
+
+/* ── Search Bar ──────────────────────────────────────────── */
+#SearchBar {
+background-color: {surface_container}; /* Search Widget Background Color */
+border-radius: 30px;
+}
+
+#SearchBar #le_search {
+    background-color: transparent;
+    padding-left: 10px;
+    border: none;
+    font: {default};
+}
+
+#SearchBar #le_search:focus {
+    border: none;
+    outline: none;
+}
+
+#SearchBar #le_search[text=""] {
+      color: {on_surface_variant};
+      font-style: italic;
+  }
+
+#SearchBar #btn_ico_clear {
+    background-color: transparent;
+}
+#SearchBar #btn_ico_clear:hover {
+    border-radius: 10px;
+}
+
+#SearchBar ToolButton {
+    background-color: transparent;
+    border: none;
+    border-radius: 5px;
+    padding: 8px;
+}
+
+/* ── Title Bar ────────────────────────────────────────────── */
+#TitleBar {background-color: {surface_container_high};}
+
+#TitleBar #BtnClose:hover{background-color: {error_container};}
+
+#TitleBar #AppTitle {margin-left: 2px; color: {on_surface};}
+
+#TitleBar ToolButton {background-color: transparent; border: none;}
+
+#TitleBar ToolButton:hover {background-color: {surface_bright};}
+
+#TitleBar QLabel {font-weight: 600; font-size: 28px;}
