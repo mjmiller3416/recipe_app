@@ -1,4 +1,7 @@
 # CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 _Project configuration & rules for AI contributions_
 
 This file is the contract Claude must follow when working in the **MealGenie** repo. If a request conflicts with this file, Claude must surface the conflict and ask for approval before proceeding.
@@ -82,6 +85,12 @@ recipe_app/
 
 ## 3) Commands (do not guess)
 
+### Running the application
+```bash
+python main.py                          # Start the MealGenie desktop application
+```
+
+### Database management
 ```bash
 python manage.py --help                 # Show help and available commands
 python manage.py db                     # Database management commands
@@ -96,10 +105,32 @@ python manage.py db status              # Show database status and recipe count
 python manage.py db seed --recipes 50   # Create 50 recipes (default: 25)
 python manage.py db seed --no-realistic # Use simple data (no Faker)
 python manage.py db seed --clear        # Clear existing recipes first
+python manage.py db seed --images       # Add random image paths (default: True)
+python manage.py db seed --no-images    # Skip adding image paths
 
 python manage.py db reset --confirm     # Skip confirmation prompt
 python manage.py db reset --seed        # Add sample data after reset
+python manage.py db reset --images      # Include images when seeding
 ```
+
+### Testing
+```bash
+python -m pytest                        # Run all tests
+python -m pytest -v                     # Run tests with verbose output
+python -m pytest -x                     # Stop after first failure
+python -m pytest path/to/test_file.py   # Run specific test file
+python -m pytest -k "test_name"         # Run tests matching pattern
+python -m pytest --lf                   # Rerun only failed tests
+```
+
+### Code quality
+```bash
+python -m isort .                       # Sort imports (uses .isort.cfg)
+python -m isort --check-only .          # Check import sorting without changes
+python -m isort path/to/file.py         # Sort imports in specific file
+```
+
+Note: The project uses isort for import sorting. Black and ruff are not currently installed.
 
 If a command is not listed here, pause and request it to be added.
 
@@ -121,7 +152,7 @@ If a command is not listed here, pause and request it to be added.
 - **Before adding helpers:** check `app/core/utils/` and `app/ui/utils/` first
 
 ### QSS placeholders (Material 3 roles)
-Use placeholders exactly as defined (no hardcoded colors).
+Use placeholders exactly as defined (no hardcoded colors). The theme system supports Material Design 3 color tokens using `{placeholder}` syntax in QSS files. These are replaced at runtime by `app/style/theme/style_sheet.py`.
 
 ---
 ## 5) Repository Etiquette & Branch Strategy (authoritative)
@@ -261,3 +292,32 @@ Paste exact commands and outputs.
 - If request conflicts with §6
 - If change exceeds §9 without approval
 - If ambiguity remains after one clarifying question
+
+---
+
+## 13) Architecture Overview
+
+### Repository Pattern & Services
+The application follows a layered architecture:
+- **Models** (`app/core/models/`): SQLAlchemy ORM models defining database schema
+- **DTOs** (`app/core/dtos/`): Data Transfer Objects for type-safe data passing between layers
+- **Repositories** (`app/core/repositories/`): Data access layer, handles all database operations
+- **Services** (`app/core/services/`): Business logic layer, orchestrates repositories and implements features
+- **Views** (`app/ui/views/`): PySide6 UI components that interact with services
+
+### Theme System
+- **Material Design 3**: Uses material-color-utilities to generate color schemes
+- **Theme Controller** (`app/style/theme_controller.py`): Manages theme state and changes
+- **QSS Injection**: Runtime replacement of `{placeholder}` tokens with actual color values
+- **Icon System** (`app/style/icon/icon.py`): Dynamic icon coloring based on current theme
+
+### Database & Migrations
+- **SQLAlchemy 2.x**: Modern ORM with type hints
+- **Alembic**: Database migration management
+- **Session Management**: Context manager pattern via `DatabaseSession` in `app/core/database/db.py`
+
+### Signal/Slot Communication
+The application uses Qt's signal/slot mechanism for decoupled communication:
+- View models emit signals for state changes
+- Views connect to these signals to update UI
+- Services operate independently of UI concerns

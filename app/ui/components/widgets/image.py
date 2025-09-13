@@ -181,10 +181,13 @@ class BaseImage(QLabel):
 class RoundedImage(BaseImage):
     """Image widget with configurable rounded corners."""
 
-    def __init__(self, image_path: Union[str, Path, None] = None,
-                 size: Union[int, QSize] = 100,
-                 radii: Union[int, tuple[int, int, int, int]] = 0,
-                 parent=None):
+    def __init__(
+            self,
+            image_path: Union[str, Path, None] = None,
+            size: Union[int, QSize] = 100,
+            radii: Union[int, tuple[int, int, int, int]] = 0,
+            parent=None
+        ):
         super().__init__(size, parent)
 
         # Handle radii parameter
@@ -281,8 +284,13 @@ class CircularImage(BaseImage):
 class RecipeImage(RoundedImage):
     """Image widget for displaying recipe images with rounded corners."""
 
-    def __init__(self, image_path: Union[str, Path], size: int = 100,
-                 corner_radius: int = 8, parent=None):
+    def __init__(
+        self,
+        image_path: Union[str, Path],
+        size: int = 100,
+        corner_radius: int = 8,
+        parent=None
+    ):
         super().__init__(image_path, size, corner_radius, parent)
         self.setImagePath(image_path)
         self.setRadii(corner_radius)
