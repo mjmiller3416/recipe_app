@@ -34,14 +34,18 @@ from app.ui.components.widgets import ToolButton, RecipeImage
 from app.ui.utils import make_overlay
 
 # ── Constants ──
+CARD_LAYOUT_SPACING = 15
+
+SMALL_SIZE = QSize(400, 180)
+MEDIUM_SIZE = QSize(280, 420)
+LARGE_SIZE = QSize((SMALL_SIZE.width() * 3) + (CARD_LAYOUT_SPACING * 2), 600)
+
 LAYOUT_SIZE = {
-    "small": QSize(400, 180),
-    "medium": QSize(280, 420),
-    "large": QSize(1200, 600),
+    "small": SMALL_SIZE,
+    "medium": MEDIUM_SIZE,
+    "large": LARGE_SIZE,
 }
 
-
-# ── Enums ───────────────────────────────────────────────────────────────────────────────────────────────────
 class LayoutSize(Enum):
     """Enum to define the target layout size for the RecipeCard when displaying a recipe."""
     SMALL = "small"
@@ -49,7 +53,6 @@ class LayoutSize(Enum):
     LARGE = "large"
 
 
-# ── Base Recipe Card ────────────────────────────────────────────────────────────────────────────────────────
 class BaseRecipeCard(BaseCard):
     """Base class for all recipe card variants with shared business logic.
 
@@ -73,7 +76,6 @@ class BaseRecipeCard(BaseCard):
         recipe_selected(int): Emitted when recipe is set (passes recipe_id)
     """
 
-    # ── Signals ──────────────────────────────────────────────────────────────────────────────
     add_meal_clicked = Signal()
     card_clicked = Signal(object)     # recipe instance
     delete_clicked = Signal(int)      # recipe_id

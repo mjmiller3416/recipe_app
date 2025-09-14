@@ -86,7 +86,11 @@ class DropdownMenu(QWidget):
 
         if not self.completer.popup().isVisible():
             self.completer.setWidget(line_edit)
-            line_edit.setFocus()
+
+            # Set popup to not interfere with tab navigation
+            popup = self.completer.popup()
+            popup.setFocusPolicy(Qt.NoFocus)  # Add this line
+
             self.completer.complete()
 
             print(f"[DROPDOWN {id(self)}] Emitting popup_opened signal...")
@@ -139,36 +143,6 @@ class DropdownMenu(QWidget):
             self.hide_popup()
             DebugLogger.log(f"Item selected: {text}")
 
-    def eventFilter(self, obj, event):
-        """Handle events for the popup."""
-        if obj is self.completer.popup():
-            if event.type() == QEvent.KeyPress:
-                key = event.key()
-
-                # handle Tab key for selection
-                if key == Qt.Key_Tab:
-                    DebugLogger.log("Tab pressed in dropdown menu.", "debug")
-                    current_index = self.completer.popup().currentIndex()
-                    if current_index.isValid():
-                        selected_text = current_index.data()
-                        self.completer.activated.emit(selected_text)
-                        return True
-
-                # handle Escape key to close popup
-                elif key == Qt.Key_Escape:
-                    DebugLogger.log("Escape pressed in dropdown menu.", "debug")
-                    self.hide_popup()
-                    return True
-
-                # let arrow keys and Enter/Return through
-                elif key in (Qt.Key_Up, Qt.Key_Down, Qt.Key_Enter, Qt.Key_Return):
-                    return False
-
-            elif event.type() == QEvent.Hide:
-                self.popup_closed.emit()
-
-        return super().eventFilter(obj, event)
-
     def get_selected_items(self) -> list:
         """Get currently selected items (for multi-select mode)."""
         if self.allow_multi_select:
@@ -188,3 +162,26 @@ class DropdownMenu(QWidget):
     def set_case_sensitivity(self, sensitivity: Qt.CaseSensitivity):
         """Set case sensitivity for the completer."""
         self.completer.setCaseSensitivity(sensitivity)
+
+    def eventFilter(self, obj, event):
+        """Handle events for the popup."""
+        if obj is self.completer.popup():
+            if event.type() == QEvent.KeyPress:
+                key = event.key()
+
+                # Don't handle Tab/Backtab here - let the parent ComboBox handle it
+                if key in (Qt.Key_Tab, Qt.Key_Backtab):
+                    # Ignore tab events in the popup
+                    event.ignore()
+                    return True  # Block the event from the popup
+
+                # Handle Escape key to close popup
+                elif key == Qt.Key_Escape:
+                    DebugLogger.log("Escape pressed in dropdown menu.", "debug")
+                    self.hide_popup()
+                    return True
+
+            elif event.type() == QEvent.Hide:
+                self.popup_closed.emit()
+
+        return super().eventFilter(obj, event)

@@ -236,7 +236,8 @@ ComboBox {
     border-radius: 6px;
 }
 
-ComboBox QLineEdit#CBLineEdit {
+ComboBox QLineEdit#CBLineEdit,
+ComboBox QLineEdit#CBLineEdit:focus {
     background-color: transparent;
     color: {on_surface};
     border: none;
@@ -258,6 +259,10 @@ ComboBox[dropdown="true"] {
 
 ComboBox[dropdown="false"] {
     border: none;
+}
+
+ComboBox[has_focus="true"] {
+    border: 4px solid {primary};
 }
 
 /* ComboBox Dropdown Arrow */
@@ -424,7 +429,7 @@ QTextEdit#DirectionsTextEdit {
 }
 
 #IngredientForm QLineEdit,
-#IngredientForm QComboBox {
+#IngredientForm ComboBox {
     border: 1px solid {outline_variant};
 }
 

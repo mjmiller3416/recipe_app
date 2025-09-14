@@ -31,11 +31,8 @@ class ComboBox(QWidget):
         super().__init__(parent)
         self.setObjectName("ComboBox")
         self.setAttribute(Qt.WA_StyledBackground, True)
-        self.setFocusPolicy(Qt.StrongFocus)
 
-
-        # register for component-specific styling
-        # Theme.register_widget(self, Qss.COMBOBOX)
+        self.setFocusPolicy(Qt.TabFocus)
 
         # Create model
         self.model = QStringListModel(list_items or [])
@@ -46,6 +43,8 @@ class ComboBox(QWidget):
             self.line_edit.setPlaceholderText(placeholder)
         self.line_edit.setReadOnly(True)
         self.line_edit.setObjectName("CBLineEdit")
+
+        self.line_edit.setFocusPolicy(Qt.NoFocus)
 
         # Create dropdown button
         from app.style.icon import Type
@@ -100,9 +99,8 @@ class ComboBox(QWidget):
         self.selection_validated.emit(True)
         self.currentTextChanged.emit(text)
 
-        # Move focus to next widget
-        if self.window().focusWidget() is self.line_edit:
-            self.focusNextChild()
+        # Move focus to next widget after selection
+        self.focusNextChild()
 
     def _show_popup(self):
         """Show the dropdown popup."""
@@ -119,6 +117,10 @@ class ComboBox(QWidget):
         self.setProperty("dropdown", "false")
         self.style().unpolish(self)
         self.style().polish(self)
+
+        # Force parent widget to repaint if it exists
+        if self.parent():
+            self.parent().update()
 
     def eventFilter(self, obj, event):
         """Handle events for child widgets."""
@@ -169,3 +171,52 @@ class ComboBox(QWidget):
         """Clear the current selection and text."""
         self.line_edit.clear()
         self.selection_validated.emit(False)
+
+    def focusInEvent(self, event):
+        """Handle focus in event."""
+        super().focusInEvent(event)
+
+        # Give visual feedback
+        self.setProperty("has_focus", "true")
+        self.style().unpolish(self)
+        self.style().polish(self)
+
+        # Auto-open dropdown when focused via keyboard (Tab)
+        if event.reason() == Qt.TabFocusReason:
+            # Small delay to ensure focus is properly set
+            from PySide6.QtCore import QTimer
+            QTimer.singleShot(50, self._show_popup)
+
+    def focusOutEvent(self, event):
+        """Handle focus out event."""
+        super().focusOutEvent(event)
+        self.setProperty("has_focus", "false")
+        self.style().unpolish(self)
+        self.style().polish(self)
+
+    def keyPressEvent(self, event):
+        """Handle key press events."""
+        key = event.key()
+
+        # If popup is visible, handle navigation differently
+        if self.dropdown_menu.completer.popup().isVisible():
+            if key == Qt.Key_Tab:
+                # Close popup and move to next widget
+                self.dropdown_menu.hide_popup()
+                self.focusNextChild()
+                event.accept()
+                return
+            elif key == Qt.Key_Backtab:
+                # Close popup and move to previous widget
+                self.dropdown_menu.hide_popup()
+                self.focusPreviousChild()
+                event.accept()
+                return
+
+        # Open dropdown on Space, Enter, or Down arrow
+        if key in (Qt.Key_Space, Qt.Key_Return, Qt.Key_Enter, Qt.Key_Down):
+            if not self.dropdown_menu.completer.popup().isVisible():
+                self._show_popup()
+            event.accept()
+        else:
+            super().keyPressEvent(event)

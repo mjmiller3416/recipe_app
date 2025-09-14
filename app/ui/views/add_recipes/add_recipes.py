@@ -23,7 +23,6 @@ from app.ui.utils import (
     clear_form_fields,
     collect_form_data,
     connect_form_signals,
-    create_two_column_layout,
     setup_tab_order_chain,
     validate_required_fields)
 from ._recipe_form import RecipeForm
@@ -45,13 +44,6 @@ class AddRecipes(BaseView):
         self._build_ui()
         self._connect_signals()
         self._setup_tab_order()
-
-    def showEvent(self, event):
-        """When the AddRecipes view is shown, focus the recipe name field."""
-        super().showEvent(event)
-        # defer to ensure widget is active
-        from PySide6.QtCore import QTimer
-        QTimer.singleShot(0, self.le_recipe_name.setFocus)
 
     def _build_ui(self):
         """Set up the main UI layout and components."""
@@ -117,6 +109,9 @@ class AddRecipes(BaseView):
         }
         connect_form_signals(form_widgets, form_change_handlers)
 
+        # Update tab order when ingredients change
+        self.ingredient_container.ingredients_changed.connect(self._setup_tab_order)
+
     def _on_recipe_name_changed(self, recipe_name: str):
         """Handle recipe name changes."""
         # Note: recipe_image component was removed, this is now a placeholder
@@ -124,21 +119,40 @@ class AddRecipes(BaseView):
 
     def _setup_tab_order(self):
         """Define a fixed tab order for keyboard navigation."""
+        # Recipe form widgets
         base_widgets = [
-            self.le_recipe_name, self.le_time, self.le_servings,
-            self.cb_meal_type, self.cb_recipe_category, self.cb_dietary_preference
+            self.le_recipe_name,
+            self.le_time,
+            self.le_servings,
+            self.cb_meal_type,
+            self.cb_recipe_category,
+            self.cb_dietary_preference
         ]
 
-        # Add ingredient widgets dynamically if they exist
-        ingredient_widgets = self.ingredient_container.ingredient_widgets
-        if ingredient_widgets:
-            w = ingredient_widgets[0]
-            ingredient_chain = [w.le_quantity, w.cb_unit, w.sle_ingredient_name,
-                              w.cb_ingredient_category, w.btn_delete]
+        # Add all ingredient widgets with correct order
+        for widget in self.ingredient_container.ingredient_widgets:
+            ingredient_chain = [
+                widget.cb_unit,  # Unit first
+                widget.le_quantity,  # Then Qty
+                widget.sle_ingredient_name,  # Then Name
+                widget.cb_ingredient_category,  # Then Category
+                # Skip delete button from tab order
+            ]
             base_widgets.extend(ingredient_chain)
 
-        # Add final widgets
-        base_widgets.append(self.te_directions)
+        # Add the "Add Ingredient" button
+        if self.ingredient_container.button:
+            base_widgets.append(self.ingredient_container.button)
+
+        # Add Directions/Notes toggle and text areas
+        base_widgets.extend([
+            self.directions_notes_card.btn_directions,
+            self.directions_notes_card.btn_notes,
+            self.te_directions  # Will be either directions or notes based on current view
+        ])
+
+        # Add save button
+        base_widgets.append(self.btn_save)
 
         setup_tab_order_chain(base_widgets)
 
@@ -290,3 +304,26 @@ class AddRecipes(BaseView):
         """Display a toast notification for save operations."""
         from app.ui.components.widgets import show_toast
         show_toast(self, message, success=success, duration=3000, offset_right=50)
+
+
+    def focusInEvent(self, event):
+        """Handle focus in event."""
+        super().focusInEvent(event)
+        # Transfer focus to the line edit for visual feedback
+        self.line_edit.setFocus()
+
+    def keyPressEvent(self, event):
+        """Handle key press events."""
+        if event.key() in (Qt.Key_Space, Qt.Key_Down):
+            # Open dropdown on space or down arrow
+            self._show_popup()
+            event.accept()
+        else:
+            super().keyPressEvent(event)
+
+    def showEvent(self, event):
+        """When the AddRecipes view is shown, focus the recipe name field."""
+        super().showEvent(event)
+        # defer to ensure widget is active
+        from PySide6.QtCore import QTimer
+        QTimer.singleShot(0, self.le_recipe_name.setFocus)
