@@ -26,7 +26,7 @@ from app.core.utils import sanitize_form_input
 from app.style import Name, Type
 from app.style.icon import AppIcon, Icon
 from app.ui.components.composite.recipe_info_widget import RecipeInfoWidget
-from app.ui.components.images.image import RecipeBanner
+from app.ui.components.widgets.image import RecipeBanner
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
 from app.ui.components.widgets.tag import Tag
