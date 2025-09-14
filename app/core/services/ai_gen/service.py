@@ -169,22 +169,14 @@ class ImageGenService:
         delay = 0.5
         for attempt in range(3):
             try:
-                # Generate with gpt-image-1 (with optional reference for consistency)
-                if reference_image_path and reference_image_path.exists():
-                    with open(reference_image_path, "rb") as image_file:
-                        response = await aclient.images.edit(
-                            image=image_file,
-                            prompt=prompt,
-                            size=size,
-                            n=1,
-                        )
-                else:
-                    response = await aclient.images.generate(
-                        model=self.config.model,
-                        prompt=prompt,
-                        size=size,
-                        n=1,
-                    )
+                # Generate with gpt-image-1
+                # Note: images.edit() only supports DALL-E 2 sizes, so we use generate() for all gpt-image-1 calls
+                response = await aclient.images.generate(
+                    model=self.config.model,
+                    prompt=prompt,
+                    size=size,
+                    n=1,
+                )
 
                 b64_data = response.data[0].b64_json
                 if not b64_data:

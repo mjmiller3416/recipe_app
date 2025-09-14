@@ -9,6 +9,7 @@ from PySide6.QtCore import Qt
 from _dev_tools import DebugLogger
 from app.core.dtos import RecipeCreateDTO, RecipeIngredientDTO
 from app.core.services.recipe_service import RecipeService
+from app.core.services.ai_gen.background_manager import get_background_manager
 from app.core.utils import (
     parse_servings_range,
     safe_int_conversion,
@@ -16,7 +17,7 @@ from app.core.utils import (
     sanitize_multiline_input)
 from app.style.icon.config import Name, Type
 from app.ui.components.layout.card import Card
-from app.ui.components.widgets import Button, RecipeImage
+from app.ui.components.widgets import Button
 from app.ui.views.base import BaseView
 from app.ui.utils import (
     clear_form_fields,
@@ -117,8 +118,9 @@ class AddRecipes(BaseView):
         connect_form_signals(form_widgets, form_change_handlers)
 
     def _on_recipe_name_changed(self, recipe_name: str):
-        """Update recipe image component when recipe name changes."""
-        self.recipe_image.set_recipe_name(recipe_name.strip())
+        """Handle recipe name changes."""
+        # Note: recipe_image component was removed, this is now a placeholder
+        pass
 
     def _setup_tab_order(self):
         """Define a fixed tab order for keyboard navigation."""
@@ -202,17 +204,37 @@ class AddRecipes(BaseView):
         # ── success! ──
         DebugLogger().log(f"[AddRecipes] Recipe '{new_recipe.recipe_name}' saved with ID={new_recipe.id}", "info")
 
-        # Update recipe with selected image path if available
-        selected_image = self.recipe_image.get_reference_image_path()
-        DebugLogger().log(f"[AddRecipes] get_reference_image_path returned: '{selected_image}'", "info")
-        if selected_image:
-            try:
-                service.update_recipe_reference_image_path(new_recipe.id, selected_image)
-                DebugLogger().log(f"[AddRecipes] Updated recipe {new_recipe.id} with default image: {selected_image}", "info")
-            except Exception as img_err:
-                DebugLogger().log(f"[AddRecipes] Failed to update recipe default image: {img_err}", "warning")
-        else:
-            DebugLogger().log(f"[AddRecipes] No selected image to update for recipe {new_recipe.id}", "info")
+        # ── trigger background AI image generation ──
+        try:
+            manager = get_background_manager()
+            reference_path, banner_path = manager.generate_recipe_images(
+                new_recipe.id,
+                new_recipe.recipe_name
+            )
+
+            # Update recipe with predicted paths immediately
+            service.update_recipe_reference_image_path(new_recipe.id, reference_path)
+            service.update_recipe_banner_image_path(new_recipe.id, banner_path)
+
+            DebugLogger().log(
+                f"[AddRecipes] Started background image generation for recipe {new_recipe.id}",
+                "info"
+            )
+
+            # Show user notification about image generation
+            from app.ui.components.widgets import show_toast
+            show_toast(
+                self,
+                "Generating AI images for your recipe...",
+                success=True,
+                duration=2000,
+                offset_right=50
+            )
+        except Exception as img_err:
+            DebugLogger().log(
+                f"[AddRecipes] Failed to start image generation: {img_err}",
+                "warning"
+            )
 
         self._display_save_message(
             f"Recipe '{new_recipe.recipe_name}' saved successfully!",
@@ -247,7 +269,7 @@ class AddRecipes(BaseView):
         # Apply transformations for servings/time parsing
         data["total_time"] = safe_int_conversion(data["total_time"])
         data["servings"] = parse_servings_range(data["servings"])
-        data["reference_image_path"] = self.recipe_image.get_reference_image_path() or ""
+        # Don't include reference_image_path in payload - will be generated async
 
         return data
 
@@ -258,7 +280,7 @@ class AddRecipes(BaseView):
             self.cb_dietary_preference, self.le_time, self.le_servings, self.te_directions
         ]
         clear_form_fields(form_widgets)
-        self.recipe_image.clear_default_image()
+        # Note: recipe_image component was removed in previous refactor
 
         # clear stored ingredients and widgets
         self.stored_ingredients.clear()
