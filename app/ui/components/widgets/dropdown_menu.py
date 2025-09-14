@@ -169,11 +169,14 @@ class DropdownMenu(QWidget):
             if event.type() == QEvent.KeyPress:
                 key = event.key()
 
-                # Don't handle Tab/Backtab here - let the parent ComboBox handle it
+                # For Tab/Backtab, close popup and let parent handle navigation
                 if key in (Qt.Key_Tab, Qt.Key_Backtab):
-                    # Ignore tab events in the popup
-                    event.ignore()
-                    return True  # Block the event from the popup
+                    self.hide_popup()
+                    # Post the event to the parent widget (ComboBox)
+                    if self.parent():
+                        from PySide6.QtCore import QCoreApplication
+                        QCoreApplication.postEvent(self.parent(), event.clone())
+                    return True  # We handled it by closing and reposting
 
                 # Handle Escape key to close popup
                 elif key == Qt.Key_Escape:

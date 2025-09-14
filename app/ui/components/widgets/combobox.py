@@ -182,10 +182,11 @@ class ComboBox(QWidget):
         self.style().polish(self)
 
         # Auto-open dropdown when focused via keyboard (Tab)
-        if event.reason() == Qt.TabFocusReason:
-            # Small delay to ensure focus is properly set
-            from PySide6.QtCore import QTimer
-            QTimer.singleShot(50, self._show_popup)
+        if event.reason() in (Qt.TabFocusReason, Qt.BacktabFocusReason):
+            # Only open if not already visible
+            if not self.dropdown_menu.completer.popup().isVisible():
+                from PySide6.QtCore import QTimer
+                QTimer.singleShot(50, self._show_popup)
 
     def focusOutEvent(self, event):
         """Handle focus out event."""
@@ -198,20 +199,21 @@ class ComboBox(QWidget):
         """Handle key press events."""
         key = event.key()
 
-        # If popup is visible, handle navigation differently
-        if self.dropdown_menu.completer.popup().isVisible():
-            if key == Qt.Key_Tab:
-                # Close popup and move to next widget
+        # Handle Tab/Backtab whether popup is visible or not
+        if key == Qt.Key_Tab:
+            if self.dropdown_menu.completer.popup().isVisible():
+                # Close popup without selection
                 self.dropdown_menu.hide_popup()
-                self.focusNextChild()
-                event.accept()
-                return
-            elif key == Qt.Key_Backtab:
-                # Close popup and move to previous widget
+            # Let Qt handle the tab navigation naturally
+            event.ignore()  # Changed from accept() to ignore()
+            return
+        elif key == Qt.Key_Backtab:
+            if self.dropdown_menu.completer.popup().isVisible():
+                # Close popup without selection
                 self.dropdown_menu.hide_popup()
-                self.focusPreviousChild()
-                event.accept()
-                return
+            # Let Qt handle the backtab navigation naturally
+            event.ignore()  # Changed from accept() to ignore()
+            return
 
         # Open dropdown on Space, Enter, or Down arrow
         if key in (Qt.Key_Space, Qt.Key_Return, Qt.Key_Enter, Qt.Key_Down):
