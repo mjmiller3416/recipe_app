@@ -126,6 +126,7 @@ class IngredientForm(QWidget):
         dynamic_validation(self.le_quantity, FLOAT_VALIDATOR)
 
         self.sle_ingredient_name.currentTextChanged.connect(self._ingredient_name_changed) # connect new signal
+        self.sle_ingredient_name.item_selected.connect(self._ingredient_name_changed)
 
     def _ingredient_name_changed(self, text: str):
         """
