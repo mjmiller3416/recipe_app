@@ -15,17 +15,14 @@ from app.core.utils import (
     sanitize_form_input,
     sanitize_multiline_input)
 from app.style.icon.config import Name, Type
-from app.ui.components.images import RecipeImage
 from app.ui.components.layout.card import Card
-from app.ui.components.widgets.button import Button
+from app.ui.components.widgets import Button, RecipeImage
 from app.ui.views.base import BaseView
 from app.ui.utils import (
-    batch_connect_signals,
     clear_form_fields,
     collect_form_data,
     connect_form_signals,
     create_two_column_layout,
-    setup_main_scroll_layout,
     setup_tab_order_chain,
     validate_required_fields)
 from ._recipe_form import RecipeForm
@@ -59,19 +56,6 @@ class AddRecipes(BaseView):
         """Set up the main UI layout and components."""
         self._create_cards()
         self._create_recipe_form()
-
-        self.recipe_image = RecipeImage()
-
-        # Add directions and image using shadow-safe utility
-        column_layout = create_two_column_layout(
-            left_widgets  = [self.directions_notes_card],
-            right_widgets = [self.recipe_image],
-            left_ratio    = 2,
-            right_ratio   = 1,
-            match_heights = True
-        )
-        self.content_layout.addLayout(column_layout)
-
         self._create_save_button()
 
     def _create_cards(self):
@@ -91,6 +75,7 @@ class AddRecipes(BaseView):
         # Directions & Notes Card
         self.directions_notes_card = DirectionsNotesCard()
         self.directions_notes_card.expandBoth(True)
+        self.content_layout.addWidget(self.directions_notes_card)
 
         # expose text edits for convenience
         self.te_directions = self.directions_notes_card.te_directions
@@ -131,67 +116,9 @@ class AddRecipes(BaseView):
         }
         connect_form_signals(form_widgets, form_change_handlers)
 
-        # Batch connect remaining signals
-        signal_connections = [
-            (self.recipe_image.generate_image_requested, self._on_generate_default_image_requested),
-            (self.recipe_image.image_selected, self._on_image_selected)
-        ]
-        batch_connect_signals(signal_connections)
-
-        # Connect AI service signals for async operations
-        """ self.ai_service.generation_finished.connect(self._on_generation_finished)
-        self.ai_service.generation_failed.connect(self._on_generation_failed) """
-
     def _on_recipe_name_changed(self, recipe_name: str):
         """Update recipe image component when recipe name changes."""
         self.recipe_image.set_recipe_name(recipe_name.strip())
-
-    def _on_generate_default_image_requested(self, recipe_name: str):
-        """Handle AI default image generation request (now async)."""
-        if not self.ai_service.is_available():
-            DebugLogger().log("AI Image Generation service not available", "error")
-            self.recipe_image.reset_generate_button()
-            return
-
-        # Start async default image generation (non-blocking)
-        self.ai_service.generate_default_image_async(recipe_name)
-        DebugLogger().log(f"Started background default image generation for '{recipe_name}'", "info")
-
-    def _on_generation_finished(self, recipe_name: str, result):
-        """Handle successful image generation completion."""
-        # Reset the UI state
-        self.recipe_image.reset_generate_button()
-
-        if result:
-            DebugLogger().log(f"Background generation completed for '{recipe_name}' - image saved", "info")
-
-            # Handle single image result (string path)
-            if isinstance(result, str):
-                image_path = result
-                DebugLogger().log(f"Single image generated: {image_path}", "info")
-                # Set the default image
-                self.recipe_image.set_reference_image_path(image_path)
-                # Also update selected path for saving
-                self.selected_image_path = image_path
-
-            # Handle dual image result (ImagePairPaths) for backward compatibility
-            elif hasattr(result, 'portrait_path') and result.portrait_path:
-                portrait_path = str(result.portrait_path)
-                DebugLogger().log(f"Portrait image from pair: {portrait_path}", "info")
-                # Set the default image to the portrait
-                self.recipe_image.set_reference_image_path(portrait_path)
-                # Also update selected path for saving
-                self.selected_image_path = portrait_path
-
-    def _on_generation_failed(self, recipe_name: str, error_msg: str):
-        """Handle image generation failure."""
-        # Reset the UI state
-        self.recipe_image.reset_generate_button()
-        DebugLogger().log(f"Background generation failed for '{recipe_name}': {error_msg}", "error")
-
-    def _on_image_selected(self, image_path: str):
-        """Handle image selection from the gallery."""
-        self.selected_image_path = image_path
 
     def _setup_tab_order(self):
         """Define a fixed tab order for keyboard navigation."""
@@ -212,10 +139,6 @@ class AddRecipes(BaseView):
         base_widgets.append(self.te_directions)
 
         setup_tab_order_chain(base_widgets)
-
-    def _update_image_path(self, image_path: str):
-        """Update the selected image path when an image is selected."""
-        self.selected_image_path = image_path if image_path else None
 
     def save_recipe(self):
         """
