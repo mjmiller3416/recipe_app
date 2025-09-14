@@ -32,7 +32,10 @@ class ComboBox(QWidget):
         self.setObjectName("ComboBox")
         self.setAttribute(Qt.WA_StyledBackground, True)
 
-        self.setFocusPolicy(Qt.TabFocus)
+        self.setFocusPolicy(Qt.TabFocus) # Allow focus by Tab key only
+        # Type-ahead navigation
+        self.type_ahead_string = ""
+        self.type_ahead_timer = None
 
         # Create model
         self.model = QStringListModel(list_items or [])
@@ -122,11 +125,51 @@ class ComboBox(QWidget):
         if self.parent():
             self.parent().update()
 
-    def eventFilter(self, obj, event):
-        """Handle events for child widgets."""
-        if obj is self.line_edit and event.type() == QEvent.MouseButtonPress:
-            self._show_popup()
-        return super().eventFilter(obj, event)
+    def _handle_type_ahead(self, char: str):
+        """Handle type-ahead navigation in the dropdown."""
+        from PySide6.QtCore import QTimer
+
+        # Add character to type-ahead string
+        self.type_ahead_string += char.lower()
+
+        # Reset timer
+        if self.type_ahead_timer:
+            self.type_ahead_timer.stop()
+
+        # Clear type-ahead string after 1 second
+        self.type_ahead_timer = QTimer()
+        self.type_ahead_timer.timeout.connect(self._clear_type_ahead)
+        self.type_ahead_timer.setSingleShot(True)
+        self.type_ahead_timer.start(1000)  # 1 second timeout
+
+        # Find and select matching item
+        self._jump_to_matching_item()
+
+    def _clear_type_ahead(self):
+        """Clear the type-ahead string."""
+        self.type_ahead_string = ""
+        print(f"Type-ahead cleared")
+
+    def _jump_to_matching_item(self):
+        """Jump to the first item that starts with the type-ahead string."""
+        popup = self.dropdown_menu.completer.popup()
+        model = popup.model()
+
+        # Search through all items
+        for row in range(model.rowCount()):
+            index = model.index(row, 0)
+            item_text = model.data(index, Qt.DisplayRole)
+
+            # Case-insensitive comparison
+            if item_text.lower().startswith(self.type_ahead_string):
+                # Set this as the current index
+                popup.setCurrentIndex(index)
+                # Ensure it's visible
+                popup.scrollTo(index)
+                print(f"Jumped to: {item_text} (type-ahead: '{self.type_ahead_string}')")
+                return
+
+        print(f"No match for: '{self.type_ahead_string}'")
 
     def setCurrentText(self, text: str):
         """Set the current text in the line edit."""
@@ -172,6 +215,13 @@ class ComboBox(QWidget):
         self.line_edit.clear()
         self.selection_validated.emit(False)
 
+    # ── Event Handling ──
+    def eventFilter(self, obj, event):
+        """Handle events for child widgets."""
+        if obj is self.line_edit and event.type() == QEvent.MouseButtonPress:
+            self._show_popup()
+        return super().eventFilter(obj, event)
+
     def focusInEvent(self, event):
         """Handle focus in event."""
         super().focusInEvent(event)
@@ -202,17 +252,13 @@ class ComboBox(QWidget):
         # Handle Tab/Backtab whether popup is visible or not
         if key == Qt.Key_Tab:
             if self.dropdown_menu.completer.popup().isVisible():
-                # Close popup without selection
                 self.dropdown_menu.hide_popup()
-            # Let Qt handle the tab navigation naturally
-            event.ignore()  # Changed from accept() to ignore()
+            event.ignore()
             return
         elif key == Qt.Key_Backtab:
             if self.dropdown_menu.completer.popup().isVisible():
-                # Close popup without selection
                 self.dropdown_menu.hide_popup()
-            # Let Qt handle the backtab navigation naturally
-            event.ignore()  # Changed from accept() to ignore()
+            event.ignore()
             return
 
         # Open dropdown on Space, Enter, or Down arrow
@@ -220,5 +266,11 @@ class ComboBox(QWidget):
             if not self.dropdown_menu.completer.popup().isVisible():
                 self._show_popup()
             event.accept()
+        # Handle type-ahead when dropdown is visible
+        elif self.dropdown_menu.completer.popup().isVisible() and event.text():
+            # Only process printable characters
+            if event.text().isprintable():
+                self._handle_type_ahead(event.text())
+                event.accept()
         else:
             super().keyPressEvent(event)

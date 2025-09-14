@@ -184,6 +184,18 @@ class DropdownMenu(QWidget):
                     self.hide_popup()
                     return True
 
+                # Pass printable characters to parent for type-ahead
+                elif event.text() and event.text().isprintable():
+                    if self.parent():
+                        # Let the parent ComboBox handle type-ahead
+                        from PySide6.QtCore import QCoreApplication
+                        QCoreApplication.postEvent(self.parent(), event.clone())
+                    return True  # Prevent default handling
+
+                # Let arrow keys and Enter work normally for selection
+                elif key in (Qt.Key_Up, Qt.Key_Down, Qt.Key_Enter, Qt.Key_Return):
+                    return False  # Let completer handle these
+
             elif event.type() == QEvent.Hide:
                 self.popup_closed.emit()
 
