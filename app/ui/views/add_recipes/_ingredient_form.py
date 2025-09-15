@@ -53,8 +53,10 @@ class IngredientForm(QWidget):
         self.ingredient_service = IngredientService(self._session)
         self.exact_match = None
         self._build_ui()
-        self.setup_event_logic()
+        self._setup_event_logic()
 
+
+    # ── Private ──
     def _build_ui(self):
         """Sets up the UI components and layout for the ingredient widget."""
 
@@ -118,9 +120,9 @@ class IngredientForm(QWidget):
         self.main_layout.setStretchFactor(self.cb_ingredient_category, 0)  # Fixed width
         self.main_layout.setStretchFactor(self.btn_delete, 0)
 
-    def setup_event_logic(self):
+    def _setup_event_logic(self):
         """Connects signals to their respective slots for handling ingredient data."""
-        self.btn_delete.clicked.connect(self.request_removal)
+        self.btn_delete.clicked.connect(self._request_removal)
         # Note: Add ingredient functionality will be handled at container level
 
         dynamic_validation(self.le_quantity, FLOAT_VALIDATOR)
@@ -183,16 +185,12 @@ class IngredientForm(QWidget):
             self.cb_ingredient_category.setCurrentIndex(-1)
             self.cb_ingredient_category.setEnabled(True)
 
-    def get_ingredient_data(self) -> dict:
-        """Returns the ingredient data as a dictionary for external collection."""
-        return self.to_payload()
-
-    def request_removal(self):
+    def _request_removal(self):
         """Emits a signal to request removal of this ingredient widget."""
         if self.parent() and len(self.parent().findChildren(IngredientForm)) > 1:
             self.remove_ingredient_requested.emit(self)
 
-    def to_payload(self) -> dict:
+    def _to_payload(self) -> dict:
         """Returns a plain dict that matches RecipeIngredientDTO fields"""
         return {
         "ingredient_name": sanitize_form_input(self.sle_ingredient_name.text()),
@@ -201,3 +199,9 @@ class IngredientForm(QWidget):
         "quantity": safe_float_conversion(self.le_quantity.text().strip()),
         "existing_ingredient_id": self.exact_match.id if self.exact_match else None,
         }
+
+
+    # ── Public ──
+    def getIngredientData(self) -> dict:
+        """Returns the ingredient data as a dictionary for external collection."""
+        return self._to_payload()

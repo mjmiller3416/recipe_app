@@ -40,11 +40,16 @@ class AddRecipes(BaseView):
         DebugLogger.log("Initializing Add Recipes page", "debug")
 
         self.stored_ingredients = []
+        self.last_focused_widget = None  # Track last focused widget
+        self.tab_order_widgets = []  # Store tab order for reference
 
         self._build_ui()
         self._connect_signals()
         self._setup_tab_order()
+        self._install_focus_tracking()
 
+
+    # ── Private ──
     def _build_ui(self):
         """Set up the main UI layout and components."""
         self._create_cards()
@@ -92,7 +97,7 @@ class AddRecipes(BaseView):
         """Create the save button at the bottom of the scroll area."""
         self.btn_save = Button("Save Recipe", Type.PRIMARY, Name.SAVE)
         self.btn_save.setObjectName("SaveRecipeButton")
-        self.btn_save.clicked.connect(self.save_recipe)
+        self.btn_save.clicked.connect(self._save_recipe)
 
         # Add save button with some spacing
         self.content_layout.addSpacing(20)
@@ -110,7 +115,12 @@ class AddRecipes(BaseView):
         connect_form_signals(form_widgets, form_change_handlers)
 
         # Update tab order when ingredients change
-        self.ingredient_container.ingredients_changed.connect(self._setup_tab_order)
+        self.ingredient_container.ingredients_changed.connect(self._on_ingredients_changed)
+
+    def _on_ingredients_changed(self):
+        """Handle changes in the ingredient list to update tab order."""
+        self._setup_tab_order()
+        self._setup_focus_tracking()  # Reinstall focus tracking
 
     def _on_recipe_name_changed(self, recipe_name: str):
         """Handle recipe name changes."""
@@ -154,9 +164,41 @@ class AddRecipes(BaseView):
         # Add save button
         base_widgets.append(self.btn_save)
 
+        # Store the tab order for reference
+        self.tab_order_widgets = [w for w in base_widgets if w is not None]
+
         setup_tab_order_chain(base_widgets)
 
-    def save_recipe(self):
+        # Make sure the form itself can receive tab focus
+        self.setFocusPolicy(Qt.StrongFocus)
+
+    def _install_focus_tracking(self):
+        """Install event filters to track focus on all tabbable widgets."""
+        # Install focus tracking immediately
+        self._setup_focus_tracking()
+
+    def _setup_focus_tracking(self):
+        """Set up focus tracking for all widgets in tab order."""
+        # First, remove all existing event filters to avoid duplicates
+        for widget in self.tab_order_widgets:
+            if widget and widget != self:
+                widget.removeEventFilter(self)
+
+        # Now install fresh event filters on all current widgets
+        for widget in self.tab_order_widgets:
+            if widget and widget != self:
+                widget.installEventFilter(self)
+
+        # Debug log
+        DebugLogger.log(f"Focus tracking installed on {len(self.tab_order_widgets)} widgets", "debug")
+
+    def _initialize_focus(self):
+        """Initialize focus when view is shown."""
+        if self.le_recipe_name:
+            self.le_recipe_name.setFocus()
+            self.last_focused_widget = self.le_recipe_name
+
+    def _save_recipe(self):
         """
         Gathers all form data (recipe fields + ingredient widgets),
         constructs a RecipeCreateDTO, and hands it to RecipeService.
@@ -174,10 +216,10 @@ class AddRecipes(BaseView):
             return
 
         # ── payload recipe data ──
-        recipe_data = self.to_payload()
+        recipe_data = self._to_payload()
 
         # ── payload raw ingredients ──
-        raw_ingredients = self.ingredient_container.get_all_ingredients_data()
+        raw_ingredients = self.ingredient_container.getAllIngredientsData()
 
         # ── convert raw_ingredients ──
         try:
@@ -258,9 +300,9 @@ class AddRecipes(BaseView):
         # ── clear form and reset state ──
         self._clear_form()
         self.stored_ingredients.clear()
-        self.ingredient_container.clear_all_ingredients()
+        self.ingredient_container.clearAllIngredients()
 
-    def to_payload(self):
+    def _to_payload(self):
         """Collect all recipe form data and return it as a dict for API calls."""
         form_mapping = {
             "recipe_name": self.le_recipe_name,
@@ -294,11 +336,17 @@ class AddRecipes(BaseView):
             self.cb_dietary_preference, self.le_time, self.le_servings, self.te_directions
         ]
         clear_form_fields(form_widgets)
-        # Note: recipe_image component was removed in previous refactor
 
         # clear stored ingredients and widgets
         self.stored_ingredients.clear()
-        self.ingredient_container.clear_all_ingredients()
+        self.ingredient_container.clearAllIngredients()
+
+        # Reset focus tracking
+        self.last_focused_widget = self.le_recipe_name
+
+        # Since ingredients were cleared, rebuild tab order
+        self._setup_tab_order()
+        self._setup_focus_tracking()  # Reinstall focus tracking
 
     def _display_save_message(self, message: str, success: bool = True):
         """Display a toast notification for save operations."""
@@ -306,24 +354,130 @@ class AddRecipes(BaseView):
         show_toast(self, message, success=success, duration=3000, offset_right=50)
 
 
+    # ── Event Handling ──
+    def eventFilter(self, watched, event):
+        """Track focus changes on widgets and handle tab navigation."""
+        from PySide6.QtCore import QEvent
+        from PySide6.QtWidgets import QApplication
+
+        if event.type() == QEvent.FocusIn:
+            # Track which widget gained focus
+            if watched in self.tab_order_widgets:
+                self.last_focused_widget = watched
+                # Debug log
+                DebugLogger.log(f"Focus tracked on: {watched.objectName() or watched.__class__.__name__}", "debug")
+
+        elif event.type() == QEvent.KeyPress:
+            # Intercept Tab key at widget level to ensure proper navigation
+            if event.key() == Qt.Key_Tab or event.key() == Qt.Key_Backtab:
+                # Let Qt handle normal tab navigation
+                return False
+
+        return super().eventFilter(watched, event)
+
     def focusInEvent(self, event):
-        """Handle focus in event."""
+        """Handle focus returning to the form container."""
         super().focusInEvent(event)
-        # Transfer focus to the line edit for visual feedback
-        self.line_edit.setFocus()
+
+        from PySide6.QtCore import Qt, QTimer
+
+        # Debug log
+        DebugLogger.log(f"Form focusInEvent - reason: {event.reason()}, last_focused: {self.last_focused_widget}", "debug")
+
+        # For any tab focus reason, restore to last widget or first widget
+        if event.reason() in (Qt.TabFocusReason, Qt.BacktabFocusReason):
+            # Defer focus setting to avoid conflicts
+            if event.reason() == Qt.BacktabFocusReason:
+                # Backtab - go to last widget or end of list
+                target = self.last_focused_widget if self.last_focused_widget in self.tab_order_widgets else (
+                    self.tab_order_widgets[-1] if self.tab_order_widgets else None
+                )
+            else:
+                # Normal tab - go to last widget or beginning
+                target = self.last_focused_widget if self.last_focused_widget in self.tab_order_widgets else (
+                    self.tab_order_widgets[0] if self.tab_order_widgets else None
+                )
+
+            if target:
+                QTimer.singleShot(0, lambda: target.setFocus(event.reason()))
+
+    def focusNextPrevChild(self, next):
+        """Override to ensure tab navigation stays within our defined order."""
+        from PySide6.QtWidgets import QApplication
+
+        current_widget = QApplication.focusWidget()
+
+        # If no current focus or not in our tab order, handle specially
+        if not current_widget or current_widget not in self.tab_order_widgets:
+            if self.tab_order_widgets:
+                if next:
+                    # Tab forward - use last focused or first widget
+                    target = self.last_focused_widget if self.last_focused_widget in self.tab_order_widgets else self.tab_order_widgets[0]
+                else:
+                    # Tab backward - use last focused or last widget
+                    target = self.last_focused_widget if self.last_focused_widget in self.tab_order_widgets else self.tab_order_widgets[-1]
+
+                target.setFocus(Qt.TabFocusReason if next else Qt.BacktabFocusReason)
+                return True
+
+        # If current widget is in our tab order, navigate within it
+        if current_widget in self.tab_order_widgets:
+            try:
+                current_index = self.tab_order_widgets.index(current_widget)
+
+                if next:
+                    # Moving forward
+                    next_index = (current_index + 1) % len(self.tab_order_widgets)
+                else:
+                    # Moving backward
+                    next_index = (current_index - 1) % len(self.tab_order_widgets)
+
+                next_widget = self.tab_order_widgets[next_index]
+                if next_widget and next_widget.isVisible() and next_widget.isEnabled():
+                    next_widget.setFocus(Qt.TabFocusReason if next else Qt.BacktabFocusReason)
+                    return True
+            except (ValueError, IndexError):
+                pass
+
+        # Fall back to default behavior
+        return super().focusNextPrevChild(next)
 
     def keyPressEvent(self, event):
-        """Handle key press events."""
-        if event.key() in (Qt.Key_Space, Qt.Key_Down):
-            # Open dropdown on space or down arrow
-            self._show_popup()
+        """Handle key press events at the form level."""
+        from PySide6.QtCore import Qt
+        from PySide6.QtWidgets import QApplication
+
+        # Check for Tab/Backtab when form itself has focus
+        if event.key() in (Qt.Key_Tab, Qt.Key_Backtab):
+            focused_widget = QApplication.focusWidget()
+
+            # If the form itself has focus (not a child widget)
+            if focused_widget == self or focused_widget is None:
+                if self.tab_order_widgets:
+                    if event.key() == Qt.Key_Tab:
+                        # Forward tab
+                        target = self.last_focused_widget if self.last_focused_widget in self.tab_order_widgets else self.tab_order_widgets[0]
+                    else:
+                        # Backward tab
+                        target = self.last_focused_widget if self.last_focused_widget in self.tab_order_widgets else self.tab_order_widgets[-1]
+
+                    target.setFocus(Qt.TabFocusReason if event.key() == Qt.Key_Tab else Qt.BacktabFocusReason)
+                    event.accept()
+                    return
+
+        # Handle Shift+Tab as Backtab
+        if event.key() == Qt.Key_Tab and event.modifiers() == Qt.ShiftModifier:
+            # Convert to backtab
+            self.focusNextPrevChild(False)
             event.accept()
-        else:
-            super().keyPressEvent(event)
+            return
+
+        super().keyPressEvent(event)
 
     def showEvent(self, event):
         """When the AddRecipes view is shown, focus the recipe name field."""
         super().showEvent(event)
-        # defer to ensure widget is active
         from PySide6.QtCore import QTimer
-        QTimer.singleShot(0, self.le_recipe_name.setFocus)
+
+        # Set initial focus and tracking
+        QTimer.singleShot(0, lambda: self._initialize_focus())

@@ -11,6 +11,7 @@ from PySide6.QtCore import Qt, Signal
 from app.style import Name
 from app.ui.components.layout.card import ActionCard
 from ._ingredient_form import IngredientForm
+from ..base import BaseView
 
 
 class IngredientsCard(ActionCard):
@@ -31,9 +32,10 @@ class IngredientsCard(ActionCard):
         self.ingredient_widgets = []
         self._build_ui()
 
+
+    # ── Private ──
     def _build_ui(self):
         """Set up the container UI with initial ingredient and add button."""
-
         # Add initial ingredient widget
         self._add_ingredient_widget()
 
@@ -42,8 +44,38 @@ class IngredientsCard(ActionCard):
 
         # Customize button icon size and connect click event
         if self.button:
-            self.button.setIconSize(24, 24)  # Set custom icon size
-            self.button.clicked.connect(self._add_ingredient_widget)
+            self.button.setIconSize(24, 24)
+            # Connect to a method that adds AND focuses
+            self.button.clicked.connect(self._on_add_button_clicked)
+
+    def _on_add_button_clicked(self):
+        """Handle add ingredient button click - add widget and set focus."""
+        # Add the new ingredient
+        self._add_ingredient_widget()
+
+        # Get the newly added widget (last in the list)
+        if self.ingredient_widgets:
+            new_widget = self.ingredient_widgets[-1]
+            # Set focus with a small delay to ensure rendering
+            from PySide6.QtCore import QTimer
+            QTimer.singleShot(50, lambda: self._focus_new_ingredient(new_widget))
+
+    def _focus_new_ingredient(self, widget):
+        """Set focus to the first input field of the ingredient widget."""
+        if widget and hasattr(widget, 'cb_unit') and widget.cb_unit:
+            widget.cb_unit.setFocus(Qt.TabFocusReason)
+
+            # Update the parent's last_focused_widget tracker
+            parent_view = self.parent()
+            while parent_view and not isinstance(parent_view, BaseView):
+                parent_view = parent_view.parent()
+
+            if parent_view and hasattr(parent_view, 'last_focused_widget'):
+                parent_view.last_focused_widget = widget.cb_unit
+
+    def _get_ingredient_count(self) -> int:
+        """Get the number of ingredient widgets."""
+        return len(self.ingredient_widgets)
 
     def _add_ingredient_widget(self):
         """Add a new ingredient widget to the container."""
@@ -67,19 +99,21 @@ class IngredientsCard(ActionCard):
 
         self.ingredients_changed.emit()
 
-    def get_all_ingredients_data(self) -> list[dict]:
+
+    # ── Public ──
+    def getAllIngredientsData(self) -> list[dict]:
         """Collect data from all ingredient widgets."""
         ingredients_data = []
 
         for widget in self.ingredient_widgets:
-            data = widget.get_ingredient_data()
+            data = widget.getIngredientData()
             # Only include ingredients with at least a name
             if data.get("ingredient_name", "").strip():
                 ingredients_data.append(data)
 
         return ingredients_data
 
-    def clear_all_ingredients(self):
+    def clearAllIngredients(self):
         """Clear all ingredient widgets and add one empty one."""
         # Remove all existing widgets
         for widget in self.ingredient_widgets:
@@ -91,6 +125,4 @@ class IngredientsCard(ActionCard):
         # Add one fresh ingredient widget
         self._add_ingredient_widget()
 
-    def get_ingredient_count(self) -> int:
-        """Get the number of ingredient widgets."""
-        return len(self.ingredient_widgets)
+
