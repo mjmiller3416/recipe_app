@@ -37,6 +37,8 @@ class ComboBox(QWidget):
         self.type_ahead_string = ""
         self.type_ahead_timer = None
 
+        self._keyboard_selection = False # Track if selection was made via keyboard
+
         # Create model
         self.model = QStringListModel(list_items or [])
 
@@ -102,8 +104,11 @@ class ComboBox(QWidget):
         self.selection_validated.emit(True)
         self.currentTextChanged.emit(text)
 
-        # Move focus to next widget after selection
-        self.focusNextChild()
+        # Only auto-advance for keyboard selection (Enter key)
+        if self._keyboard_selection:
+            self.focusNextChild()
+            self._keyboard_selection = False  # Reset flag
+        # For mouse selection, keep focus on this combobox
 
     def _show_popup(self):
         """Show the dropdown popup."""
@@ -249,6 +254,10 @@ class ComboBox(QWidget):
         """Handle key press events."""
         key = event.key()
 
+        # Track if Enter/Return is pressed (keyboard selection)
+        if key in (Qt.Key_Return, Qt.Key_Enter):
+            self._keyboard_selection = True
+
         # Handle Tab/Backtab whether popup is visible or not
         if key == Qt.Key_Tab:
             if self.dropdown_menu.completer.popup().isVisible():
@@ -265,6 +274,10 @@ class ComboBox(QWidget):
         if key in (Qt.Key_Space, Qt.Key_Return, Qt.Key_Enter, Qt.Key_Down):
             if not self.dropdown_menu.completer.popup().isVisible():
                 self._show_popup()
+            else:
+                # Dropdown is visible and Enter was pressed - this will trigger selection
+                if key in (Qt.Key_Return, Qt.Key_Enter):
+                    self._keyboard_selection = True
             event.accept()
         # Handle type-ahead when dropdown is visible
         elif self.dropdown_menu.completer.popup().isVisible() and event.text():

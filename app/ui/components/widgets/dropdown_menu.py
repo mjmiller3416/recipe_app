@@ -169,8 +169,15 @@ class DropdownMenu(QWidget):
             if event.type() == QEvent.KeyPress:
                 key = event.key()
 
+                # Track Enter key for keyboard selection
+                if key in (Qt.Key_Enter, Qt.Key_Return):
+                    # Tell parent ComboBox this is a keyboard selection
+                    if self.parent() and hasattr(self.parent(), '_keyboard_selection'):
+                        self.parent()._keyboard_selection = True
+                    return False  # Let completer handle the actual selection
+
                 # For Tab/Backtab, close popup and let parent handle navigation
-                if key in (Qt.Key_Tab, Qt.Key_Backtab):
+                elif key in (Qt.Key_Tab, Qt.Key_Backtab):
                     self.hide_popup()
                     # Post the event to the parent widget (ComboBox)
                     if self.parent():

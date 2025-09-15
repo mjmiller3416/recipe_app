@@ -189,6 +189,14 @@ class AddRecipes(BaseView):
             if widget and widget != self:
                 widget.installEventFilter(self)
 
+                # For ComboBox widgets, ensure they know about us
+                if widget.__class__.__name__ == 'ComboBox':
+                    # Force update the last_focused_widget reference
+                    # This is a workaround for nested parent issues
+                    widget._tracked_parent = self
+
+        DebugLogger.log(f"Focus tracking installed on {len(self.tab_order_widgets)} widgets", "debug")
+
         # Debug log
         DebugLogger.log(f"Focus tracking installed on {len(self.tab_order_widgets)} widgets", "debug")
 
@@ -358,20 +366,35 @@ class AddRecipes(BaseView):
     def eventFilter(self, watched, event):
         """Track focus changes on widgets and handle tab navigation."""
         from PySide6.QtCore import QEvent
-        from PySide6.QtWidgets import QApplication
+        from PySide6.QtWidgets import QComboBox
 
         if event.type() == QEvent.FocusIn:
-            # Track which widget gained focus
+            # Always update last_focused_widget for any widget that gains focus
+            # This ensures mouse clicks are tracked too
+            self.last_focused_widget = watched
+
+            # Check if this widget should be in our tab order
+            if watched not in self.tab_order_widgets:
+                # Check if it's a widget we should be tracking
+                for ingredient_widget in self.ingredient_container.ingredient_widgets:
+                    if watched in [ingredient_widget.cb_unit,
+                                ingredient_widget.le_quantity,
+                                ingredient_widget.sle_ingredient_name,
+                                ingredient_widget.cb_ingredient_category]:
+                        # New ingredient widget - update tab order
+                        DebugLogger.log(f"New ingredient widget detected, updating tab order", "debug")
+                        from PySide6.QtCore import QTimer
+                        QTimer.singleShot(0, self._setup_tab_order)
+                        QTimer.singleShot(10, self._setup_focus_tracking)
+                        break
+
+            DebugLogger.log(f"Focus tracked on: {watched.objectName() or watched.__class__.__name__}", "debug")
+
+        elif event.type() == QEvent.MouseButtonPress:
+            # Track mouse clicks that will lead to focus changes
             if watched in self.tab_order_widgets:
                 self.last_focused_widget = watched
-                # Debug log
-                DebugLogger.log(f"Focus tracked on: {watched.objectName() or watched.__class__.__name__}", "debug")
-
-        elif event.type() == QEvent.KeyPress:
-            # Intercept Tab key at widget level to ensure proper navigation
-            if event.key() == Qt.Key_Tab or event.key() == Qt.Key_Backtab:
-                # Let Qt handle normal tab navigation
-                return False
+                DebugLogger.log(f"Mouse click tracked on: {watched.objectName() or watched.__class__.__name__}", "debug")
 
         return super().eventFilter(watched, event)
 
