@@ -155,8 +155,8 @@ class ShoppingList(BaseView):
 
     def _build_category_section(self, title: str, items: list) -> CollapsibleCategory:
         """Creates a CollapsibleCategory widget and populates it with ShoppingItem widgets."""
-        # Start with categories collapsed to avoid initial squishing
-        category_widget = CollapsibleCategory(title, start_expanded=False)
+        # Start with categories expanded by default
+        category_widget = CollapsibleCategory(title, start_expanded=True)
 
         # Ensure we have a shopping service
         shopping_svc = getattr(self, 'shopping_svc', None)
