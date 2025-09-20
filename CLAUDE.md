@@ -2,48 +2,45 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## MealGenie - Recipe Management Desktop Application
+## Project Overview
+MealGenie is a meal planning desktop application built with PySide6 (Qt) and the Fluent design system. It provides recipe management, meal planning, and shopping list features.
 
-A PySide6-based desktop application for meal planning, recipe management, and shopping list generation.
+## Development Commands
 
-## Common Development Commands
-
-### Database Management
+### Application
 ```bash
-# Apply database migrations
-python manage.py db migrate
-
-# Seed database with mock data (25 recipes with images by default)
-python manage.py db seed
-
-# Reset database (clear all data)
-python manage.py db reset --confirm
-
-# Check database status
-python manage.py db status
-```
-
-### Running the Application
-```bash
-# Main application
+# Run the main application
 python main.py
 
-# Test mode with development harness
+# Run in test mode (launches test harness)
 python main.py --test
 
 # Import recipes from CSV
 python main.py --import-recipes
 ```
 
-### Code Quality
+### Database Management
 ```bash
-# Run isort for import formatting
-isort app/
+# Apply database migrations
+python manage.py db migrate
 
-# Run ruff linter (if installed)
-ruff check app/
+# Seed database with mock data
+python manage.py db seed                    # 25 recipes with images
+python manage.py db seed --recipes 50       # 50 recipes
+python manage.py db seed --no-images        # Without images
+python manage.py db seed --clear            # Clear existing recipes first
 
-# Run tests (when implemented)
+# Reset database
+python manage.py db reset --confirm         # Skip confirmation
+python manage.py db reset --seed --images   # Reset and add sample data
+
+# Check database status
+python manage.py db status
+```
+
+### Testing
+```bash
+# Run tests (note: tests directory doesn't currently exist)
 pytest
 ```
 
@@ -52,90 +49,85 @@ pytest
 ### Core Structure
 The application follows a layered architecture with clear separation of concerns:
 
-- **`app/core/`**: Business logic layer
-  - `models/`: SQLAlchemy ORM models (Recipe, Ingredient, MealSelection, ShoppingItem, etc.)
-  - `repositories/`: Data access layer providing CRUD operations
-  - `services/`: Business logic services coordinating between repos and UI
-  - `dtos/`: Data transfer objects for clean data passing between layers
-  - `utils/`: Shared utilities (image_utils, format_utils, validation_utils, etc.)
-  - `database/`: Database configuration and Alembic migrations
-
-- **`app/ui/`**: PySide6 presentation layer
-  - `main_window/`: Main application window with title bar and navigation
-  - `pages/`: Application pages (recipes, planner, shopping, settings)
-  - `components/`: Reusable UI components
+- **UI Layer** (`app/ui/`): PySide6/Qt-based GUI components
+  - `main_window/`: Main application window with custom titlebar and sidebar
+  - `views/`: Application pages (meal planner, shopping list, etc.)
+  - `components/`: Reusable UI components (buttons, dialogs, widgets)
   - `services/`: UI-specific services (navigation, state management)
-  - `dialogs/`: Modal dialogs for user interactions
 
-- **`app/style/`**: Theming and styling
-  - Material theme system with dark/light mode support
-  - Custom QSS styles with placeholders
-  - Theme controller for dynamic theming
+- **Core Layer** (`app/core/`):
+  - `models/`: SQLAlchemy ORM models (Recipe, Ingredient, MealSelection, etc.)
+  - `repositories/`: Data access layer for database operations
+  - `services/`: Business logic (recipe_service, planner_service, shopping_service)
+  - `dtos/`: Data transfer objects for passing data between layers
+  - `utils/`: Shared utilities (conversion, formatting, validation)
 
-### Database Architecture
-- SQLAlchemy ORM with SQLite backend
-- Alembic for migrations (configured in `alembic.ini`)
+- **Style System** (`app/style/`):
+  - Custom theme controller supporting Material Design color system
+  - Animation system for window and component animations
+  - Icon management with SVG support
+  - QSS-based styling with theme variables
+
+### Database
+- SQLite database at `app/core/database/app_data.db`
+- Alembic for migrations (`app/core/database/migrations/`)
 - Session management via `DatabaseSession` context manager
-- Models use relationships for Recipe ↔ Ingredient ↔ RecipeIngredient associations
 
-### Service Layer Pattern
-Services coordinate between repositories and UI:
-- `RecipeService`: Recipe CRUD, search, filtering
-- `PlannerService`: Meal planning and selection management
-- `ShoppingService`: Shopping list generation and management
-- `IngredientService`: Ingredient management and parsing
-- `SessionManager`: Application-wide state management
-
-### UI Component Hierarchy
-- `MainWindow` contains navigation and page stack
-- Pages inherit from base classes providing common functionality
-- Components use signals/slots for communication
-- Navigation handled by `NavigationService` singleton
-
-## Key Design Patterns
-
-1. **Repository Pattern**: Clean data access abstraction
-2. **Service Layer**: Business logic isolation from UI
-3. **DTO Pattern**: Clean data contracts between layers
-4. **Singleton Pattern**: For app-wide services (Navigation, Session)
-5. **Context Managers**: For database session management
+### Key Design Patterns
+- **Repository Pattern**: All database operations go through repository classes
+- **Service Layer**: Business logic separated from UI and data access
+- **DTO Pattern**: Clean data transfer between layers
+- **Singleton Services**: Settings and session management use singleton pattern
+- **Navigation Service**: Centralized page routing and management
 
 ## Development Guidelines
 
 ### Error Handling Philosophy
 - **Fail fast** for internal logic errors - raise exceptions immediately
-- **Boundary-only** try/except for external operations (DB, I/O, API calls)
-- Log errors centrally rather than scattered try/except blocks
+- Use try/except **only** at boundaries (I/O, database, API calls, user input)
+- Centralized logging via `DebugLogger` instead of scattered try/except blocks
 
 ### Code Style
-- Follow PEP 8 with 110 character line length
-- Use isort configuration in `.isort.cfg`
-- Prefer explicit over clever code
-- Names should be self-documenting
+- Prefer simplicity over cleverness
+- Explicit, predictable code over "smart" solutions
+- Meaningful names that make sense at 11 PM
+- Reuse existing utilities from `app/core/utils/` or services
+- Follow existing patterns in nearby code
 
-### Utility Usage
-Always check `app/core/utils/` for existing helpers before implementing new functionality:
-- `image_utils.py`: Image loading, caching, placeholder generation
-- `format_utils.py`: Text formatting, measurements, ingredient parsing
-- `validation_utils.py`: Input validation helpers
-- `conversion_utils.py`: Unit conversions
-- `text_utils.py`: Text processing utilities
+### UI Development
+- Components inherit from Fluent widgets (e.g., `FluentWindow`, `CardWidget`)
+- Use `Theme` controller for consistent styling
+- Animations handled via `WindowAnimator` and component animators
+- Custom widgets go in `app/ui/components/widgets/`
+- Complex composite widgets in `app/ui/components/composite/`
 
-### QSS and Theming
-- Use placeholder syntax for dynamic theming: `{{primary}}`, `{{surface}}`, etc.
-- Material theme colors defined in `app/style/theme/material-theme.json`
-- Components should respect theme changes via signals
-
-## Safety Rails
-
-1. **Database Operations**: Always use context managers for sessions
-2. **Image Loading**: Use cached image utilities to prevent memory issues
-3. **Error States**: Provide meaningful user feedback, not stack traces
-4. **State Management**: Use SessionManager for app-wide state consistency
-5. **Navigation**: Always use NavigationService for page transitions
-
-## Testing Approach
+### Testing Approach
 - Test harness available via `python main.py --test`
-- Mock data generation in `_scripts/mock_data.py`
-- Database can be reset to clean state for testing
-- QSS inspector available for UI debugging (`_dev_tools/qss_inspector.py`)
+- Mock data generation via `manage.py db seed`
+- Development tools in `_dev_tools/` (QSS inspector, debug logger, performance tracker)
+
+## Common Tasks
+
+### Adding a New View/Page
+1. Create view class in `app/ui/views/<view_name>/`
+2. Register with `NavigationService`
+3. Add sidebar navigation item if needed
+4. Follow existing view patterns for state management
+
+### Working with Recipes
+- Recipe model includes relationships to ingredients, history, and meal selections
+- Use `RecipeService` for CRUD operations
+- Images stored in `recipe_images/` directory
+- Dual image path system (reference and user paths)
+
+### Database Changes
+1. Modify models in `app/core/models/`
+2. Create migration: `alembic revision --autogenerate -m "description"`
+3. Apply migration: `python manage.py db migrate`
+
+## Review Standards
+Refer to `review_guide.md` for detailed code review guidelines focusing on:
+1. Bug fixes and conflict resolution
+2. Boundary-only error handling
+3. Reusing existing utilities
+4. Maintaining clarity over premature optimization
