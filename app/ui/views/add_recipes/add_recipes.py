@@ -46,7 +46,6 @@ class AddRecipes(BaseView):
         self._build_ui()
         self._connect_signals()
         self._setup_tab_order()
-        self._install_focus_tracking()
 
 
     # ── Private ──
@@ -120,7 +119,6 @@ class AddRecipes(BaseView):
     def _on_ingredients_changed(self):
         """Handle changes in the ingredient list to update tab order."""
         self._setup_tab_order()
-        self._setup_focus_tracking()  # Reinstall focus tracking
 
     def _on_recipe_name_changed(self, recipe_name: str):
         """Handle recipe name changes."""
@@ -142,11 +140,10 @@ class AddRecipes(BaseView):
         # Add all ingredient widgets with correct order
         for widget in self.ingredient_container.ingredient_widgets:
             ingredient_chain = [
-                widget.cb_unit,  # Unit first
-                widget.le_quantity,  # Then Qty
-                widget.sle_ingredient_name,  # Then Name
-                widget.cb_ingredient_category,  # Then Category
-                # Skip delete button from tab order
+                widget.cb_unit,
+                widget.le_quantity,
+                widget.sle_ingredient_name,
+                widget.cb_ingredient_category,
             ]
             base_widgets.extend(ingredient_chain)
 
@@ -158,7 +155,7 @@ class AddRecipes(BaseView):
         base_widgets.extend([
             self.directions_notes_card.btn_directions,
             self.directions_notes_card.btn_notes,
-            self.te_directions  # Will be either directions or notes based on current view
+            self.te_directions
         ])
 
         # Add save button
@@ -167,38 +164,18 @@ class AddRecipes(BaseView):
         # Store the tab order for reference
         self.tab_order_widgets = [w for w in base_widgets if w is not None]
 
-        setup_tab_order_chain(base_widgets)
+        for widget in self.tab_order_widgets:
+            if widget and widget.__class__.__name__ == 'ComboBox':
+                # Install on the line_edit and button children too
+                if hasattr(widget, 'line_edit'):
+                    widget.line_edit.installEventFilter(self)
+                if hasattr(widget, 'cb_btn'):
+                    widget.cb_btn.installEventFilter(self)
 
-        # Make sure the form itself can receive tab focus
+        setup_tab_order_chain(base_widgets)
         self.setFocusPolicy(Qt.StrongFocus)
 
-    def _install_focus_tracking(self):
-        """Install event filters to track focus on all tabbable widgets."""
-        # Install focus tracking immediately
-        self._setup_focus_tracking()
-
-    def _setup_focus_tracking(self):
-        """Set up focus tracking for all widgets in tab order."""
-        # First, remove all existing event filters to avoid duplicates
-        for widget in self.tab_order_widgets:
-            if widget and widget != self:
-                widget.removeEventFilter(self)
-
-        # Now install fresh event filters on all current widgets
-        for widget in self.tab_order_widgets:
-            if widget and widget != self:
-                widget.installEventFilter(self)
-
-                # For ComboBox widgets, ensure they know about us
-                if widget.__class__.__name__ == 'ComboBox':
-                    # Force update the last_focused_widget reference
-                    # This is a workaround for nested parent issues
-                    widget._tracked_parent = self
-
-        DebugLogger.log(f"Focus tracking installed on {len(self.tab_order_widgets)} widgets", "debug")
-
-        # Debug log
-        DebugLogger.log(f"Focus tracking installed on {len(self.tab_order_widgets)} widgets", "debug")
+        DebugLogger.log(f"Tab order setup with {len(self.tab_order_widgets)} widgets", "debug")
 
     def _initialize_focus(self):
         """Initialize focus when view is shown."""
@@ -354,47 +331,62 @@ class AddRecipes(BaseView):
 
         # Since ingredients were cleared, rebuild tab order
         self._setup_tab_order()
-        self._setup_focus_tracking()  # Reinstall focus tracking
 
     def _display_save_message(self, message: str, success: bool = True):
         """Display a toast notification for save operations."""
         from app.ui.components.widgets import show_toast
         show_toast(self, message, success=success, duration=3000, offset_right=50)
 
+    def _on_widget_focused(self, widget):
+        """Handle focus change from any widget in the application."""
+        # Only track widgets that are in our tab order
+        if widget in self.tab_order_widgets:
+            self.last_focused_widget = widget
+            DebugLogger.log(f"Focus tracked: {widget.__class__.__name__} - {widget.objectName()}", "debug")
 
     # ── Event Handling ──
     def eventFilter(self, watched, event):
-        """Track focus changes on widgets and handle tab navigation."""
+        """Track focus changes on widgets."""
         from PySide6.QtCore import QEvent
-        from PySide6.QtWidgets import QComboBox
 
+        # Track both focus events AND mouse clicks
         if event.type() == QEvent.FocusIn:
-            # Always update last_focused_widget for any widget that gains focus
-            # This ensures mouse clicks are tracked too
-            self.last_focused_widget = watched
-
-            # Check if this widget should be in our tab order
-            if watched not in self.tab_order_widgets:
-                # Check if it's a widget we should be tracking
-                for ingredient_widget in self.ingredient_container.ingredient_widgets:
-                    if watched in [ingredient_widget.cb_unit,
-                                ingredient_widget.le_quantity,
-                                ingredient_widget.sle_ingredient_name,
-                                ingredient_widget.cb_ingredient_category]:
-                        # New ingredient widget - update tab order
-                        DebugLogger.log(f"New ingredient widget detected, updating tab order", "debug")
-                        from PySide6.QtCore import QTimer
-                        QTimer.singleShot(0, self._setup_tab_order)
-                        QTimer.singleShot(10, self._setup_focus_tracking)
-                        break
-
-            DebugLogger.log(f"Focus tracked on: {watched.objectName() or watched.__class__.__name__}", "debug")
-
-        elif event.type() == QEvent.MouseButtonPress:
-            # Track mouse clicks that will lead to focus changes
+            # Update last focused widget for ANY widget
             if watched in self.tab_order_widgets:
                 self.last_focused_widget = watched
-                DebugLogger.log(f"Mouse click tracked on: {watched.objectName() or watched.__class__.__name__}", "debug")
+                DebugLogger.log(f"Focus tracked via FocusIn: {watched.__class__.__name__}", "debug")
+
+        elif event.type() == QEvent.MouseButtonPress:
+            # For ComboBox widgets, clicking anywhere on them should track focus
+            if watched in self.tab_order_widgets:
+                self.last_focused_widget = watched
+                DebugLogger.log(f"Focus tracked via MousePress: {watched.__class__.__name__}", "debug")
+                # Force the widget to take focus
+                from PySide6.QtCore import QTimer
+                QTimer.singleShot(0, watched.setFocus)
+            else:
+                # Check if this is a child of a ComboBox in our tab order
+                parent = watched.parent()
+                while parent:
+                    if parent in self.tab_order_widgets and parent.__class__.__name__ == 'ComboBox':
+                        self.last_focused_widget = parent
+                        DebugLogger.log(f"Focus tracked via MousePress on ComboBox child: {parent.__class__.__name__}", "debug")
+                        from PySide6.QtCore import QTimer
+                        QTimer.singleShot(0, parent.setFocus)
+                        break
+                    parent = parent.parent()
+
+        # Check for new ingredient widgets
+        if event.type() == QEvent.FocusIn and watched not in self.tab_order_widgets:
+            for ingredient_widget in self.ingredient_container.ingredient_widgets:
+                if watched in [ingredient_widget.cb_unit,
+                            ingredient_widget.le_quantity,
+                            ingredient_widget.sle_ingredient_name,
+                            ingredient_widget.cb_ingredient_category]:
+                    DebugLogger.log(f"New ingredient widget detected, updating tab order", "debug")
+                    from PySide6.QtCore import QTimer
+                    QTimer.singleShot(0, self._setup_tab_order)
+                    break
 
         return super().eventFilter(watched, event)
 

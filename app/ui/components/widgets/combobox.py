@@ -9,6 +9,7 @@ from typing import Sequence
 from PySide6.QtCore import QEvent, QStringListModel, Qt, Signal
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QWidget
 
+from _dev_tools import DebugLogger
 from app.style import Qss, Theme
 from app.style.icon.config import Name
 
@@ -236,9 +237,11 @@ class ComboBox(QWidget):
         self.style().unpolish(self)
         self.style().polish(self)
 
+        # Log for debugging
+        DebugLogger.log(f"ComboBox {self.objectName()} gained focus", "debug")
+
         # Auto-open dropdown when focused via keyboard (Tab)
         if event.reason() in (Qt.TabFocusReason, Qt.BacktabFocusReason):
-            # Only open if not already visible
             if not self.dropdown_menu.completer.popup().isVisible():
                 from PySide6.QtCore import QTimer
                 QTimer.singleShot(50, self._show_popup)
@@ -287,3 +290,10 @@ class ComboBox(QWidget):
                 event.accept()
         else:
             super().keyPressEvent(event)
+
+    def mousePressEvent(self, event):
+        """Handle mouse press events on the ComboBox widget itself."""
+        super().mousePressEvent(event)
+        # Ensure this widget takes focus when clicked
+        self.setFocus()
+        DebugLogger.log(f"ComboBox clicked, setting focus", "debug")

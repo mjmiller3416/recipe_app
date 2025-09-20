@@ -10,6 +10,8 @@ from app.style import Type
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
 
+#TODO: Add focus styling to Directions and Notes tabs.
+# Currently no visual cue when focused via Tab key.
 
 class DirectionsNotesCard(Card):
     """Custom card with toggle between Directions and Notes content."""

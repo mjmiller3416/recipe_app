@@ -150,11 +150,6 @@ class ViewRecipe(QWidget):
             else:
                 DebugLogger().log(f"Recipe banner path does not exist: {self.recipe_data['banner_image_path']}", "warning")
 
-        # Connect AI service signals for async operations
-        # TODO: enable after aI gen service is fixed
-        #self.ai_service.generation_finished.connect(self._on_generation_finished)
-        #self.ai_service.generation_failed.connect(self._on_generation_failed)
-
         self.scroll_layout.addWidget(self.recipe_banner)
 
     def _create_info_section(self) -> None:
