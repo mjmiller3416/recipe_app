@@ -27,6 +27,8 @@ class MealWidget(QWidget):
 
     # signal emitted when a recipe slot requests selection; passes the slot key (e.g., 'main', 'side1')
     recipe_selection_requested = Signal(str)
+    # signal emitted when the meal name changes (when main recipe is set)
+    meal_name_changed = Signal(str)
 
     def __init__(self, planner_service: PlannerService, parent=None):
         super().__init__(parent)
@@ -98,7 +100,7 @@ class MealWidget(QWidget):
         """
         if not self._meal_model:
             self._meal_model = MealSelection(
-                meal_name="Custom Meal",  # or dynamic name later
+                meal_name="Custom Meal",  # temporary name, will be updated when main recipe is set
                 main_recipe_id=recipe_id if key == "main" else 0
             )
 
@@ -109,6 +111,7 @@ class MealWidget(QWidget):
         else:
             # Side Slot Update
             setattr(self._meal_model, f"side_recipe_{key[-1]}_id", recipe_id)
+
         # fetch recipe and update the slot UI, but block signals to avoid recursion
         slot = self.meal_slots.get(key)
         if slot is not None:
@@ -116,6 +119,12 @@ class MealWidget(QWidget):
             slot.blockSignals(True)
             slot.set_recipe(recipe)
             slot.blockSignals(False)
+
+            # Update meal name to use main recipe name
+            if key == "main" and recipe:
+                self._meal_model.meal_name = recipe.recipe_name
+                # Emit signal to update tab title
+                self.meal_name_changed.emit(recipe.recipe_name)
 
     def _create_recipe_selection_handler(self, key: str):
         """Create recipe selection handler for the given slot key."""
@@ -206,6 +215,11 @@ class MealWidget(QWidget):
         """Load main recipe into the main slot."""
         main = self.recipe_service.get_recipe(self._meal_model.main_recipe_id)
         self.main_slot.set_recipe(main)
+
+        # Update meal name to main recipe name and emit signal if meal name is still "Custom Meal"
+        if main and (not self._meal_model.meal_name or self._meal_model.meal_name == "Custom Meal"):
+            self._meal_model.meal_name = main.recipe_name
+            self.meal_name_changed.emit(main.recipe_name)
 
     def _load_side_recipes(self):
         """Load side recipes into their respective slots."""

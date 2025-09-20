@@ -109,8 +109,14 @@ class MealPlanner(BaseView):
         selection_handler = self._create_recipe_selection_callback(widget)
         widget.recipe_selection_requested.connect(selection_handler)
 
+        # Connect meal name change signal
+        name_change_handler = self._create_name_change_callback(widget)
+        widget.meal_name_changed.connect(name_change_handler)
+
         insert_index = self.meal_tabs.count() - 1
-        index = self.meal_tabs.insertTab(insert_index, widget, "Custom Meal")
+        # Use main recipe name if available, otherwise "Custom Meal"
+        tab_title = self._get_meal_tab_title(widget)
+        index = self.meal_tabs.insertTab(insert_index, widget, tab_title)
         self.tab_map[index] = widget
         self.meal_tabs.setCurrentIndex(index)
 
@@ -120,6 +126,26 @@ class MealPlanner(BaseView):
             DebugLogger.log(f"Recipe selection requested for key: {key}", "info")
             self._start_recipe_selection(meal_widget, key)
         return callback
+
+    def _create_name_change_callback(self, meal_widget):
+        """Create meal name change callback for meal widget."""
+        def callback(meal_name: str):
+            DebugLogger.log(f"Meal name changed to: {meal_name}", "info")
+            self._update_tab_title(meal_widget, meal_name)
+        return callback
+
+    def _get_meal_tab_title(self, widget):
+        """Get the appropriate tab title for a meal widget."""
+        if widget._meal_model and widget._meal_model.meal_name != "Custom Meal":
+            return widget._meal_model.meal_name
+        return "Custom Meal"
+
+    def _update_tab_title(self, widget, new_title: str):
+        """Update the tab title for the given widget."""
+        for index, mapped_widget in self.tab_map.items():
+            if mapped_widget == widget:
+                self.meal_tabs.setTabText(index, new_title)
+                break
 
     def _new_meal_tab(self):
         """Add the last "+" tab to create new custom meals."""

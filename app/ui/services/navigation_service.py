@@ -38,7 +38,9 @@ class NavigationService:
         }
         for name, page_class in page_map.items():
             # Pass navigation service to views that need it
-            if name == "meal_planner":
+            if name == "dashboard":
+                instance = page_class(navigation_service=self)
+            elif name == "meal_planner":
                 instance = page_class(navigation_service=self)
             elif name == "browse_recipes":
                 instance = page_class(navigation_service=self)
