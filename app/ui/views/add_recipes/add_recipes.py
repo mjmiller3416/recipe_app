@@ -140,8 +140,8 @@ class AddRecipes(BaseView):
         # Add all ingredient widgets with correct order
         for widget in self.ingredient_container.ingredient_widgets:
             ingredient_chain = [
-                widget.cb_unit,
                 widget.le_quantity,
+                widget.cb_unit,
                 widget.sle_ingredient_name,
                 widget.cb_ingredient_category,
             ]
@@ -379,8 +379,8 @@ class AddRecipes(BaseView):
         # Check for new ingredient widgets
         if event.type() == QEvent.FocusIn and watched not in self.tab_order_widgets:
             for ingredient_widget in self.ingredient_container.ingredient_widgets:
-                if watched in [ingredient_widget.cb_unit,
-                            ingredient_widget.le_quantity,
+                if watched in [ingredient_widget.le_quantity,
+                            ingredient_widget.cb_unit,
                             ingredient_widget.sle_ingredient_name,
                             ingredient_widget.cb_ingredient_category]:
                     DebugLogger.log(f"New ingredient widget detected, updating tab order", "debug")

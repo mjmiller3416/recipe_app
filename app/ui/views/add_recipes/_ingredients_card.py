@@ -62,8 +62,8 @@ class IngredientsCard(ActionCard):
 
     def _focus_new_ingredient(self, widget):
         """Set focus to the first input field of the ingredient widget."""
-        if widget and hasattr(widget, 'cb_unit') and widget.cb_unit:
-            widget.cb_unit.setFocus(Qt.TabFocusReason)
+        if widget and hasattr(widget, 'le_quantity') and widget.le_quantity:
+            widget.le_quantity.setFocus(Qt.TabFocusReason)
 
             # Update the parent's last_focused_widget tracker
             parent_view = self.parent()
@@ -71,7 +71,7 @@ class IngredientsCard(ActionCard):
                 parent_view = parent_view.parent()
 
             if parent_view and hasattr(parent_view, 'last_focused_widget'):
-                parent_view.last_focused_widget = widget.cb_unit
+                parent_view.last_focused_widget = widget.le_quantity
 
     def _get_ingredient_count(self) -> int:
         """Get the number of ingredient widgets."""

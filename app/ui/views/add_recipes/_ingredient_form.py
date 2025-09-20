@@ -115,8 +115,8 @@ class IngredientForm(QWidget):
 
         # Set stretch factors for proper proportions
         self.main_layout.setStretchFactor(self.drag_handle, 0)
-        self.main_layout.setStretchFactor(self.cb_unit, 0)  # Fixed width
         self.main_layout.setStretchFactor(self.le_quantity, 0)  # Fixed width
+        self.main_layout.setStretchFactor(self.cb_unit, 0)  # Fixed width
         self.main_layout.setStretchFactor(self.sle_ingredient_name, 3)  # Expandable
         self.main_layout.setStretchFactor(self.cb_ingredient_category, 0)  # Fixed width
         self.main_layout.setStretchFactor(self.btn_delete, 0)
