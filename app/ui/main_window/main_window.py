@@ -6,7 +6,7 @@ Defines the main application window, including the custom title bar and sidebar.
 # ── Imports ──
 from typing import TYPE_CHECKING, Callable
 
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QStackedWidget, QVBoxLayout, QWidget
 from qframelesswindow import FramelessWindow
 
@@ -120,7 +120,7 @@ class MainWindow(FramelessWindow):
         self.navigation.build_and_register_pages()
 
         self._connect_signals()
-        self.sw_pages.currentChanged.connect(self._on_page_changed)
+        self.sw_pages.currentChanged[int].connect(self._on_page_changed)
 
         # Set initial page (after signal connections)
         self.navigation.switch_to("dashboard")
@@ -189,6 +189,7 @@ class MainWindow(FramelessWindow):
         }
         self.lbl_header.setText(mapping.get(page_name, page_name.replace("_", " ").title()))
 
+    @Slot(int)
     def _on_page_changed(self, index: int):
         """Update header when stacked widget page changes."""
         widget = self.sw_pages.widget(index)

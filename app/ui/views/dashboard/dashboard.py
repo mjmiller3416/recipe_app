@@ -18,8 +18,7 @@ from app.core.dtos.recipe_dtos import RecipeFilterDTO
 from app.core.models import Recipe
 from app.core.services import PlannerService, RecipeService, ShoppingService
 from app.style.icon.config import Name, Type
-from app.ui.components.composite.recipe_card import (MediumRecipeCard, SmallRecipeCard,
-                                                      create_recipe_card, LayoutSize)
+from app.ui.components.composite.recipe_card import (MediumRecipeCard, SmallRecipeCard)
 from app.ui.components.layout.card import Card
 from app.ui.components.layout.flow_layout import FlowLayoutContainer
 from app.ui.components.widgets.button import Button
@@ -60,8 +59,6 @@ class Dashboard(BaseView):
 
     def _build_ui(self):
         """Build the dashboard UI layout."""
-        # Quick Actions at the top
-        self._create_quick_actions()
 
         # Add spacing
         self.content_layout.addSpacing(20)
@@ -83,65 +80,6 @@ class Dashboard(BaseView):
 
         # Add stretch to push content to top
         self.content_layout.addStretch()
-
-    def _create_quick_actions(self):
-        """Create the quick actions section with navigation buttons."""
-        # Create card for quick actions
-        card = Card(card_type="Primary")
-        card.setHeader("Quick Actions")
-        card.setSubHeader("Jump to your most used features")
-
-        # Create button container
-        button_container = QWidget()
-        button_layout = QGridLayout(button_container)
-        button_layout.setSpacing(15)
-        button_layout.setContentsMargins(10, 10, 10, 10)
-
-        # Plan This Week button
-        btn_plan = Button(
-            label="Plan This Week",
-            type=Type.PRIMARY
-        )
-        btn_plan.setIcon(Name.MEAL_PLANNER)
-        btn_plan.setIconSize(24, 24)
-        btn_plan.clicked.connect(lambda: self._navigate_to("meal_planner"))
-        button_layout.addWidget(btn_plan, 0, 0)
-
-        # Add Recipe button
-        btn_add = Button(
-            label="Add Recipe",
-            type=Type.SECONDARY
-        )
-        btn_add.setIcon(Name.ADD)
-        btn_add.setIconSize(24, 24)
-        btn_add.clicked.connect(lambda: self._navigate_to("add_recipe"))
-        button_layout.addWidget(btn_add, 0, 1)
-
-        # Shopping List button
-        btn_shopping = Button(
-            label="Shopping List",
-            type=Type.SECONDARY
-        )
-        btn_shopping.setIcon(Name.SHOPPING_LIST)
-        btn_shopping.setIconSize(24, 24)
-        btn_shopping.clicked.connect(lambda: self._navigate_to("shopping_list"))
-        button_layout.addWidget(btn_shopping, 1, 0)
-
-        # Browse Recipes button
-        btn_browse = Button(
-            label="Browse Recipes",
-            type=Type.SECONDARY
-        )
-        btn_browse.setIcon(Name.SEARCH)
-        btn_browse.setIconSize(24, 24)
-        btn_browse.clicked.connect(lambda: self._navigate_to("browse_recipes"))
-        button_layout.addWidget(btn_browse, 1, 1)
-
-        # Add button container to card
-        card.addWidget(button_container)
-
-        # Add card to layout
-        self.content_layout.addWidget(card)
 
     def _create_stats_section(self):
         """Create statistics cards showing recipe collection stats."""
@@ -473,9 +411,14 @@ class Dashboard(BaseView):
         else:
             DebugLogger.log(f"Navigation service not available for {page_name}", "warning")
 
+    def _refresh_data(self):
+        """Refresh dashboard data without rebuilding UI."""
+        DebugLogger.log("Refreshing dashboard data", "info")
+        self._load_dashboard_data()
+
     def _refresh_dashboard(self):
         """Refresh dashboard data and update UI."""
-        DebugLogger.log("Refreshing dashboard data", "info")
+        DebugLogger.log("Refreshing dashboard data and rebuilding UI", "info")
 
         # Reload data
         self._load_dashboard_data()
@@ -489,7 +432,8 @@ class Dashboard(BaseView):
         # Rebuild UI with fresh data
         self._build_ui()
 
+    # ── Event Handlers ──
     def showEvent(self, event):
-        """Refresh dashboard when shown."""
+        """Refresh dashboard data when shown."""
         super().showEvent(event)
-        self._refresh_dashboard()
+        self._refresh_data()

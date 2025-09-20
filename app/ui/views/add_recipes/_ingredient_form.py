@@ -68,23 +68,24 @@ class IngredientForm(QWidget):
         self.drag_handle.setStateHover("tertiary")
         self.main_layout.addWidget(self.drag_handle)
 
-        # Unit field - compact (create first to get reference height)
+        # Quantity field - compact (create first to get reference height)
+        self.le_quantity = QLineEdit(self)
+        self.le_quantity.setPlaceholderText("Qty")
+        self.le_quantity.setObjectName("QuantityField")
+
+        # Unit field - compact
         self.cb_unit = ComboBox(
             list_items=MEASUREMENT_UNITS,
             placeholder="Unit"
         )
         self.cb_unit.setObjectName("ComboBox UnitField")
-        self.main_layout.addWidget(self.cb_unit)
+        self.main_layout.addWidget(self.le_quantity)
 
         # Get the ComboBox height to use for other fields
         combobox_height = self.cb_unit.sizeHint().height()
-
-        # Quantity field - compact
-        self.le_quantity = QLineEdit(self)
-        self.le_quantity.setPlaceholderText("Qty")
-        self.le_quantity.setObjectName("QuantityField")
         self.le_quantity.setFixedHeight(combobox_height)
-        self.main_layout.addWidget(self.le_quantity)
+
+        self.main_layout.addWidget(self.cb_unit)
 
         # Ingredient name field - expandable
         all_ingredient_names = self.ingredient_service.list_distinct_names()
