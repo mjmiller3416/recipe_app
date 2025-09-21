@@ -12,6 +12,10 @@ class GlobalSignals(QObject):
     # Signal emitted when any widget gains focus
     widget_focused = Signal(object)  # Emits the focused widget
 
+    # Auto-scroll signals
+    scroll_to_middle_requested = Signal(object)  # Emits widget to center in viewport
+    scroll_to_bottom_requested = Signal()        # Request scroll to bottom
+
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)

@@ -5,10 +5,12 @@ with toggle buttons to switch between Directions and Notes text areas.
 """
 
 # ── Imports ──
+from PySide6.QtCore import QEvent
 from PySide6.QtWidgets import QHBoxLayout, QTextEdit, QWidget
 from app.style import Type
 from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
+from app.ui.utils import global_signals
 
 #TODO: Add focus styling to Directions and Notes tabs.
 # Currently no visual cue when focused via Tab key.
@@ -60,6 +62,9 @@ class DirectionsNotesCard(Card):
         self.btn_directions.clicked.connect(self.show_directions)
         self.btn_notes.clicked.connect(self.show_notes)
 
+        # Setup auto-scroll signals for text edits
+        self._setup_auto_scroll_signals()
+
     def show_directions(self):
         """Show directions content and update button states."""
         self.te_directions.show()
@@ -81,3 +86,20 @@ class DirectionsNotesCard(Card):
         for btn in [self.btn_directions, self.btn_notes]:
             btn.style().unpolish(btn)
             btn.style().polish(btn)
+
+    def _setup_auto_scroll_signals(self):
+        """Setup focus event handling for auto-scroll functionality."""
+        # Install event filters on both text edits
+        self.te_directions.installEventFilter(self)
+        self.te_notes.installEventFilter(self)
+
+    def eventFilter(self, watched, event):
+        """Handle focus events for auto-scroll functionality."""
+        from _dev_tools import DebugLogger
+
+        if (watched in [self.te_directions, self.te_notes] and
+            event.type() == QEvent.FocusIn):
+            DebugLogger.log(f"[DirectionsNotesCard] Text edit focused, emitting scroll-to-bottom signal", "debug")
+            global_signals.scroll_to_bottom_requested.emit()
+
+        return super().eventFilter(watched, event)

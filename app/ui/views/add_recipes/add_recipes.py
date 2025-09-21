@@ -28,6 +28,7 @@ from app.ui.utils import (
 from ._recipe_form import RecipeForm
 from ._ingredients_card import IngredientsCard
 from ._directions_notes_card import DirectionsNotesCard
+from ._auto_scroll_handler import AutoScrollHandler
 
 
 class AddRecipes(BaseView):
@@ -46,6 +47,10 @@ class AddRecipes(BaseView):
         self._build_ui()
         self._connect_signals()
         self._setup_tab_order()
+
+        # Initialize auto-scroll handler after UI is built
+        self.auto_scroll_handler = AutoScrollHandler(self.scroll_area, self.scroll_content)
+        DebugLogger.log("AddRecipes auto-scroll handler initialized", "debug")
 
 
     # ── Private ──
@@ -354,7 +359,7 @@ class AddRecipes(BaseView):
             # Update last focused widget for ANY widget
             if watched in self.tab_order_widgets:
                 self.last_focused_widget = watched
-                DebugLogger.log(f"Focus tracked via FocusIn: {watched.__class__.__name__}", "debug")
+                DebugLogger.log(f"Focus tracked via FocusIn: {watched.__class__.__name__} - {watched.objectName()}", "debug")
 
         elif event.type() == QEvent.MouseButtonPress:
             # For ComboBox widgets, clicking anywhere on them should track focus

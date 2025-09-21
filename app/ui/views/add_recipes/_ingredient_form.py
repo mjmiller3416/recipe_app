@@ -19,7 +19,7 @@ from app.ui.components.widgets.combobox import ComboBox
 from app.ui.components.widgets.smart_input import SmartInput
 from app.ui.components.widgets.button import ToolButton
 from app.core.utils import sanitize_form_input, safe_float_conversion
-from app.ui.utils import clear_error_styles, dynamic_validation
+from app.ui.utils import clear_error_styles, dynamic_validation, global_signals
 
 
 class IngredientForm(QWidget):
@@ -54,6 +54,7 @@ class IngredientForm(QWidget):
         self.exact_match = None
         self._build_ui()
         self._setup_event_logic()
+        self._setup_auto_scroll_signals()
 
 
     # ── Private ──
@@ -190,6 +191,22 @@ class IngredientForm(QWidget):
         """Emits a signal to request removal of this ingredient widget."""
         if self.parent() and len(self.parent().findChildren(IngredientForm)) > 1:
             self.remove_ingredient_requested.emit(self)
+
+    def _setup_auto_scroll_signals(self):
+        """Setup focus event handling for auto-scroll functionality."""
+        # Install event filter on quantity field to detect focus
+        self.le_quantity.installEventFilter(self)
+
+    def eventFilter(self, watched, event):
+        """Handle focus events for auto-scroll functionality."""
+        from PySide6.QtCore import QEvent
+        from _dev_tools import DebugLogger
+
+        if watched == self.le_quantity and event.type() == QEvent.FocusIn:
+            DebugLogger.log(f"[IngredientForm] Quantity field focused, emitting scroll signal", "debug")
+            global_signals.scroll_to_middle_requested.emit(self.le_quantity)
+
+        return super().eventFilter(watched, event)
 
     def _to_payload(self) -> dict:
         """Returns a plain dict that matches RecipeIngredientDTO fields"""
