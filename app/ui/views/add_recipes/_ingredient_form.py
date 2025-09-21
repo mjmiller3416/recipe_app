@@ -197,17 +197,6 @@ class IngredientForm(QWidget):
         # Install event filter on quantity field to detect focus
         self.le_quantity.installEventFilter(self)
 
-    def eventFilter(self, watched, event):
-        """Handle focus events for auto-scroll functionality."""
-        from PySide6.QtCore import QEvent
-        from _dev_tools import DebugLogger
-
-        if watched == self.le_quantity and event.type() == QEvent.FocusIn:
-            DebugLogger.log(f"[IngredientForm] Quantity field focused, emitting scroll signal", "debug")
-            global_signals.scroll_to_middle_requested.emit(self.le_quantity)
-
-        return super().eventFilter(watched, event)
-
     def _to_payload(self) -> dict:
         """Returns a plain dict that matches RecipeIngredientDTO fields"""
         return {
@@ -218,8 +207,19 @@ class IngredientForm(QWidget):
         "existing_ingredient_id": self.exact_match.id if self.exact_match else None,
         }
 
-
     # ── Public ──
     def getIngredientData(self) -> dict:
         """Returns the ingredient data as a dictionary for external collection."""
         return self._to_payload()
+
+    # ── Event Handlers ──
+    def eventFilter(self, watched, event):
+        """Handle focus events for auto-scroll functionality."""
+        from PySide6.QtCore import QEvent
+        from _dev_tools import DebugLogger
+
+        if watched == self.le_quantity and event.type() == QEvent.FocusIn:
+            DebugLogger.log(f"[IngredientForm] Quantity field focused, emitting scroll signal", "debug")
+            global_signals.scroll_to_middle_requested.emit(self.le_quantity)
+
+        return super().eventFilter(watched, event)
