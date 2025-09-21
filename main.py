@@ -51,9 +51,9 @@ else:
 
     app = QApplication(sys.argv)
     app.setApplicationName("MealGenie")
-    app.setHighDpiScaleFactorRoundingPolicy(
-    Qt.HighDpiScaleFactorRoundingPolicy.RoundPreferFloor  # or RoundPreferFloor
-)
+    QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
     DebugLogger.set_log_level("info")
     DebugLogger.log("Starting MealGenie application...\n", "info")
 
