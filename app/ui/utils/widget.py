@@ -210,20 +210,6 @@ def create_text_edit(
 
 
 # ── Theme & Styling ─────────────────────────────────────────────────────────────────────────────────────────
-def register_widget_for_theme(widget: QWidget, qss_style: Qss) -> None:
-    """
-    Register widget with the theme system for consistent styling.
-
-    Args:
-        widget: Widget to register with theme system
-        qss_style: QSS style identifier from Qss enum
-
-    Examples:
-        register_widget_for_theme(self, Qss.ADD_RECIPE)
-        register_widget_for_theme(ingredient_form, Qss.INGREDIENT_WIDGET)
-    """
-    Theme.register_widget(widget, qss_style)
-
 def apply_object_name_pattern(
     widget: QWidget,
     base_name: str,

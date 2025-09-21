@@ -32,9 +32,6 @@ class Toast(QLabel):
         # Set success property for QSS styling
         self.setProperty("success", "true" if success else "false")
 
-        # Register with theme manager for styling
-        Theme.register_widget(self, Qss.TOAST)
-
         # Configure font
         self._setup_font()
 

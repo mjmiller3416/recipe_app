@@ -100,7 +100,6 @@ class BaseCard(QFrame):
             explicitly disabled through enableElevation(False).
         """
         super().__init__(parent)
-        # Theme.register_widget(self, Qss.CARD)  # Register for theming
 
         # Card properties
         self._card_type = card_type

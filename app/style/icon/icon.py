@@ -263,9 +263,6 @@ class AppIcon(QLabel):
         # initialize ThemedIcon functionality via composition
         self._themed_icon = ThemedIcon(icon_enum)
 
-        # register for component-specific styling
-        # Theme.register_widget(self, Qss.ICON)
-
         # set callback so ThemedIcon can update this widget when theme changes
         self._themed_icon.set_refresh_callback(self._render_icon)
 

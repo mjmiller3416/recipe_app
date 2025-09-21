@@ -40,9 +40,6 @@ class IngredientForm(QWidget):
         super().__init__(parent)
         self.setAttribute(Qt.WA_StyledBackground, True)
 
-        # Register with Theme API for Material3 styling
-        # Theme.register_widget(self, Qss.INGREDIENT_WIDGET)
-
         # Create horizontal layout for row-based design
         self.main_layout = QHBoxLayout(self)
         self.main_layout.setContentsMargins(18, 18, 18, 18)

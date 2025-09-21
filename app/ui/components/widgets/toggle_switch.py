@@ -28,9 +28,6 @@ class ToggleSwitch(QWidget):
         super().__init__(parent)
         self.setObjectName("ToggleSwitch")
 
-        # Register for component-specific styling
-        Theme.register_widget(self, Qss.TOGGLE_SWITCH)
-
         # State management
         self._checked = checked
         self._sliderX = 5
