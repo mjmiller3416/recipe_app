@@ -12,8 +12,8 @@ from app.ui.components.layout.card import Card
 from app.ui.components.widgets.button import Button
 from app.ui.utils import global_signals
 
-#TODO: Add focus styling to Directions and Notes tabs.
-# Currently no visual cue when focused via Tab key.
+# ── Constants ──
+TAB_HEIGHT = 60 # Height of the toggle button tabs
 
 class DirectionsNotesCard(Card):
     """Custom card with toggle between Directions and Notes content."""
@@ -27,11 +27,14 @@ class DirectionsNotesCard(Card):
         self.toggle_container = QWidget()
         toggle_layout = QHBoxLayout(self.toggle_container)
         toggle_layout.setContentsMargins(0, 0, 0, 0)
-        toggle_layout.setSpacing(0)
+        toggle_layout.setSpacing(10)
 
-        # Create toggle buttons using custom Button class
+        # Create toggle b2uttons using custom Button class
         self.btn_directions = Button("Directions", Type.PRIMARY)
         self.btn_notes = Button("Notes", Type.SECONDARY)
+        self.btn_directions.setFixedHeight(TAB_HEIGHT)
+        self.btn_notes.setFixedHeight(TAB_HEIGHT)
+
 
         # Set object names for styling
         self.btn_directions.setObjectName("ToggleButtonActive")

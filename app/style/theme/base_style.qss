@@ -5,7 +5,7 @@
 /* ── Base Widget Styles ─────────────────────────────────────── */
 QWidget {
     font-family: 'Roboto';
-    font-size: 22px;
+    font-size: 28px;
     color: {on_surface};
 }
 
@@ -81,6 +81,12 @@ QPushButton#ToggleButtonInactive {
     border: none;
 }
 
+/* Focus styles for toggle buttons */
+QPushButton#ToggleButtonActive:focus,
+QPushButton#ToggleButtonInactive:focus {
+    background-color: {primary_container};
+}
+
 /* ── Tool Buttons ─────────────────────────────────────────── */
 ToolButton {
     background-color: {surface};
@@ -110,7 +116,7 @@ QLineEdit,
 QTextEdit,
 QComboBox {
     background-color: {surface};
-    color: {on_surface};
+    color: {on_surface_variant};
     border: none;
     border-radius: 4px;
     padding: 5px 5px 5px 12px;
@@ -396,10 +402,6 @@ QComboBox QAbstractItemView {
 /* ==================================================================
    6. ADD RECIPES FORM
    ================================================================== */
-
-#AddRecipes QTextEdit {
-    border: 1px solid {outline};
-}
 
 #AddRecipes QLineEdit {
     border: none;
@@ -1026,3 +1028,34 @@ border-radius: 30px;
 #TitleBar ToolButton:hover {background-color: {surface_bright};}
 
 #TitleBar QLabel {font-weight: 600; font-size: 28px;}
+
+
+QPushButton#ToggleButtonActive {
+    background-color: {surface};
+    color: {on_surface};
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border: 1px solid {outline};
+    padding: 8px 16px;
+}
+
+QPushButton#ToggleButtonInactive {
+    background-color: {surface_container_high};
+    color: {on_surface_variant};
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border: 1px solid {outline};
+    padding: 8px 16px;
+}
+
+#DirectionsTextEdit, #NotesTextEdit {
+    background-color: {surface_container};
+    color: {on_surface_variant};
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border: 1px solid {outline};
+    padding: 12px;
+    font-size: 32px;
+    selection-background-color: {surface};
+    selection-color: {on_surface};
+}
