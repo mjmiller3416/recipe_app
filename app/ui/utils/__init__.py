@@ -27,8 +27,7 @@ from .proxy import IngredientProxyModel
 # ── Widget Utilities ────────────────────────────────────────────────────────────────────────
 from .widget import (CornerAnchor, apply_object_name_pattern, create_button,
                      create_combo_box, create_line_edit, create_text_edit,
-                     register_widget_for_theme, setup_form_field,
-                     setup_placeholder_text, setup_validation)
+                     setup_form_field, setup_placeholder_text, setup_validation)
 from .global_signals import global_signals
 __all__ = [
     # Global Signals
@@ -85,7 +84,6 @@ __all__ = [
     "create_combo_box",
     "create_line_edit",
     "create_text_edit",
-    "register_widget_for_theme",
     "setup_form_field",
     "setup_placeholder_text",
     "setup_validation",

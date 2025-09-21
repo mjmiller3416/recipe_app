@@ -18,7 +18,7 @@ qframelesswindow.utils.win32_utils.isSystemBorderAccentEnabled = lambda: False
 from dotenv import load_dotenv
 
 from _dev_tools import DebugLogger, startup_timer
-from app.style.theme_controller import Color, Mode, Theme
+from app.style.theme_controller import Mode, Theme
 from app.ui.main_window.main_window import MainWindow
 from app.ui.services.navigation_service import NavigationService
 
@@ -59,7 +59,6 @@ else:
 
 
 
-    #Theme.setTheme(Color.TEAL, Mode.DARK)
 
     # ── Custom Color Map ──
     Theme.setCustomColorMap("app/style/theme/material-theme.json", Mode.DARK)

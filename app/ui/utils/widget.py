@@ -13,7 +13,6 @@ Consolidates common widget setup patterns and theme registration logic.
 # create_text_edit()           -> Standardized TextEdit creation
 #
 # ── Theme & Styling ─────────────────────────────────────────
-# register_widget_for_theme()  -> Register widget for theme system
 # apply_object_name_pattern()  -> Apply consistent object naming
 #
 # ── Widget Configuration ────────────────────────────────────
@@ -40,7 +39,7 @@ __all__ = [
     'create_combo_box', 'create_line_edit', 'create_button', 'create_text_edit', 'CornmerAnchor',
 
     # Theme & Styling
-    'register_widget_for_theme', 'apply_object_name_pattern',
+    'apply_object_name_pattern',
 
     # Widget Configuration
     'setup_form_field', 'setup_validation', 'setup_placeholder_text',

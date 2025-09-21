@@ -8,7 +8,6 @@ ViewRecipe view redesigned to match mock UI with:
 - Modern styling using material injection variables
 
 Styling:
-- Registers for component-specific QSS with Theme.register_widget(self, Qss.FULL_RECIPE)
 - Uses material injection variables for consistent theming
 """
 
