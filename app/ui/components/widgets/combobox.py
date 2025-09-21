@@ -257,16 +257,19 @@ class ComboBox(QWidget):
         """Handle key press events."""
         key = event.key()
 
-        # Track if Enter/Return is pressed (keyboard selection)
-        if key in (Qt.Key_Return, Qt.Key_Enter):
+        # Track if Enter/Return or Tab is pressed (keyboard selection)
+        if key in (Qt.Key_Return, Qt.Key_Enter, Qt.Key_Tab):
             self._keyboard_selection = True
 
         # Handle Tab/Backtab whether popup is visible or not
         if key == Qt.Key_Tab:
             if self.dropdown_menu.completer.popup().isVisible():
-                self.dropdown_menu.hide_popup()
-            event.ignore()
-            return
+                # Let dropdown_menu handle Tab selection, don't hide popup here
+                # The dropdown_menu will handle selection and close the popup
+                pass
+            else:
+                event.ignore()
+                return
         elif key == Qt.Key_Backtab:
             if self.dropdown_menu.completer.popup().isVisible():
                 self.dropdown_menu.hide_popup()

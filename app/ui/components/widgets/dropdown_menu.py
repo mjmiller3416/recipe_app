@@ -176,8 +176,36 @@ class DropdownMenu(QWidget):
                         self.parent()._keyboard_selection = True
                     return False  # Let completer handle the actual selection
 
-                # For Tab/Backtab, close popup and let parent handle navigation
-                elif key in (Qt.Key_Tab, Qt.Key_Backtab):
+                # Handle Tab key to select highlighted option and navigate
+                elif key == Qt.Key_Tab:
+                    # Get the currently highlighted index
+                    popup = self.completer.popup()
+                    current_index = popup.currentIndex()
+
+                    if current_index.isValid():
+                        # Get the highlighted text
+                        selected_text = current_index.data(Qt.DisplayRole)
+
+                        # Tell parent ComboBox this is a keyboard selection
+                        if self.parent() and hasattr(self.parent(), '_keyboard_selection'):
+                            self.parent()._keyboard_selection = True
+
+                        # Trigger the selection and explicitly hide popup
+                        self.item_selected.emit(selected_text)
+                        self.hide_popup()  # Explicitly hide popup after selection
+
+                        return True  # We handled the selection
+                    else:
+                        # No selection, just close popup and navigate
+                        self.hide_popup()
+                        # Post the event to the parent widget (ComboBox)
+                        if self.parent():
+                            from PySide6.QtCore import QCoreApplication
+                            QCoreApplication.postEvent(self.parent(), event.clone())
+                        return True
+
+                # For Backtab, close popup and let parent handle navigation
+                elif key == Qt.Key_Backtab:
                     self.hide_popup()
                     # Post the event to the parent widget (ComboBox)
                     if self.parent():
