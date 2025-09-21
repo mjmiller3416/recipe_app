@@ -83,29 +83,21 @@ class DropdownMenu(QWidget):
         self.completer.activated.connect(self._on_item_activated)
 
     def show_popup(self, line_edit: QWidget):
-        print(f"\n[DROPDOWN {id(self)}] show_popup called")
-
         if not self.completer.popup().isVisible():
             self.completer.setWidget(line_edit)
 
             # Set popup to not interfere with tab navigation
             popup = self.completer.popup()
-            popup.setFocusPolicy(Qt.NoFocus)  # Add this line
+            popup.setFocusPolicy(Qt.NoFocus)
 
             self.completer.complete()
-
-            print(f"[DROPDOWN {id(self)}] Emitting popup_opened signal...")
             self.popup_opened.emit()
-            print(f"[DROPDOWN {id(self)}] Signal emitted, continuing...")
-
-        print(f"[DROPDOWN {id(self)}] show_popup complete\n")
 
     def hide_popup(self):
         """Hide the dropdown popup."""
         if self.completer.popup().isVisible():
             self.completer.popup().hide()
             self.popup_closed.emit()
-            print("Popup closed.")
 
     def set_filter(self, filter_text: str):
         """Set filter text for the completer model (if supported)."""
@@ -142,7 +134,6 @@ class DropdownMenu(QWidget):
             # single selection
             self.item_selected.emit(text)
             self.hide_popup()
-            DebugLogger.log(f"Item selected: {text}")
 
     def get_selected_items(self) -> list:
         """Get currently selected items (for multi-select mode)."""
@@ -233,7 +224,6 @@ class DropdownMenu(QWidget):
 
                 # Handle Escape key to close popup
                 elif key == Qt.Key_Escape:
-                    DebugLogger.log("Escape pressed in dropdown menu.", "debug")
                     self.hide_popup()
                     return True
 

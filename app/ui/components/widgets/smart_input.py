@@ -9,7 +9,6 @@ from typing import Sequence
 from PySide6.QtCore import QEvent, QStringListModel, Qt, QTimer, Signal
 from PySide6.QtWidgets import QCompleter, QLineEdit
 
-from _dev_tools import DebugLogger
 from app.ui.components.widgets.dropdown_menu import DropdownMenu
 from app.ui.utils import IngredientProxyModel
 
@@ -33,8 +32,6 @@ class SmartInput(QLineEdit):
     ):
         super().__init__(parent)
 
-        # Track current selection row
-        self._current_popup_row = -1
 
         # build source and proxy models
         self.source = QStringListModel(list_items or [])
@@ -103,24 +100,17 @@ class SmartInput(QLineEdit):
         source_items = [item.lower() for item in self.source.stringList()]
         if text.lower() in source_items:
             self.item_selected.emit(text)
-            DebugLogger.log(f"Submitted text '{text}' matched an item in the list.")
         else:
             self.custom_text_submitted.emit(text)
-            DebugLogger.log(f"Submitted text '{text}' is a custom entry.")
 
         self._reset_completer()
         # Don't clear the text - keep the selection visible!
 
-    def _on_item_highlighted(self, text: str):
-        """Handle item highlighting without auto-selecting."""
-        # Just track that we're navigating, don't auto-fill the text
-        self._navigating_with_arrows = True
 
     def _on_item_selected(self, text: str):
         """Handle selection from the dropdown menu."""
         self.setText(text)
         self.item_selected.emit(text)
-        DebugLogger.log(f"[SIGNAL] Item selected: {text}")
         self._reset_completer()
         # Hide the dropdown after selection
         self.dropdown_menu.hide_popup()
@@ -137,10 +127,7 @@ class SmartInput(QLineEdit):
             self.dropdown_menu.completer.complete()
 
         # Resize popup after filtering
-        from PySide6.QtCore import QTimer
         QTimer.singleShot(10, self._resize_popup)  # Small delay to let filter apply
-
-        DebugLogger.log(f"Text changed: {text}", "debug")
 
     def _on_text_changed_filter_only(self, text: str):
         """Update filter without showing popup (for programmatic changes)."""
@@ -157,24 +144,18 @@ class SmartInput(QLineEdit):
 
     def _on_tab_pressed(self, row_count: int, highlighted_text: str):
         """Handle Tab key pressed in dropdown - auto-select if single option or highlighted."""
-        DebugLogger.log(f"[SmartInput] Tab pressed - row_count: {row_count}, highlighted: '{highlighted_text}'", "debug")
-
         if row_count == 1:
             # Auto-select the single filtered option
             index = self.proxy.index(0, 0)
             selected_text = self.proxy.data(index, Qt.DisplayRole)
-            DebugLogger.log(f"[SmartInput] Auto-selecting single option: {selected_text}", "info")
             self.setText(selected_text)
             self.item_selected.emit(selected_text)
             self._reset_completer()
         elif highlighted_text:
             # Select the highlighted option
-            DebugLogger.log(f"[SmartInput] Selecting highlighted option: {highlighted_text}", "info")
             self.setText(highlighted_text)
             self.item_selected.emit(highlighted_text)
             self._reset_completer()
-        else:
-            DebugLogger.log(f"[SmartInput] No selection made, just navigating", "debug")
 
         # Move focus to next widget
         QTimer.singleShot(0, self.focusNextChild)
