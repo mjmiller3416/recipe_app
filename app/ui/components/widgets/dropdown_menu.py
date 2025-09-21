@@ -34,6 +34,7 @@ class DropdownMenu(QWidget):
     items_selected = Signal(list)  # For multi-select support
     popup_opened = Signal()
     popup_closed = Signal()
+    tab_pressed = Signal(int, str)  # Emits (row_count, highlighted_text or empty string)
 
     def __init__(
         self,
@@ -178,6 +179,23 @@ class DropdownMenu(QWidget):
 
                 # Handle Tab key to select highlighted option and navigate
                 elif key == Qt.Key_Tab:
+                    # Special handling for SmartInput parent - emit signal instead of handling directly
+                    if self.parent() and self.parent().__class__.__name__ == 'SmartInput':
+                        popup = self.completer.popup()
+                        model = popup.model()
+                        row_count = model.rowCount() if model else 0
+
+                        # Get highlighted text if any
+                        highlighted_text = ""
+                        if popup.currentIndex().isValid():
+                            highlighted_text = popup.currentIndex().data(Qt.DisplayRole)
+
+                        # Emit signal with row count and highlighted text
+                        self.tab_pressed.emit(row_count, highlighted_text)
+                        self.hide_popup()
+                        return True
+
+                    # Original ComboBox behavior - unchanged
                     # Get the currently highlighted index
                     popup = self.completer.popup()
                     current_index = popup.currentIndex()

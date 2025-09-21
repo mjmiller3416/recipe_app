@@ -85,6 +85,9 @@ class SmartInput(QLineEdit):
         self.textChanged.connect(self._on_text_changed_filter_only)
         self.returnPressed.connect(self._handle_submission)
 
+        # Connect to the dropdown menu's tab_pressed signal
+        self.dropdown_menu.tab_pressed.connect(self._on_tab_pressed)
+
     def _reset_completer(self):
         """Clear any active filter on the proxy model."""
         self.dropdown_menu.clear_filter()
@@ -150,6 +153,30 @@ class SmartInput(QLineEdit):
         self.setText(text)
         self.item_selected.emit(text)
         self.dropdown_menu.hide_popup()
+        QTimer.singleShot(0, self.focusNextChild)
+
+    def _on_tab_pressed(self, row_count: int, highlighted_text: str):
+        """Handle Tab key pressed in dropdown - auto-select if single option or highlighted."""
+        DebugLogger.log(f"[SmartInput] Tab pressed - row_count: {row_count}, highlighted: '{highlighted_text}'", "debug")
+
+        if row_count == 1:
+            # Auto-select the single filtered option
+            index = self.proxy.index(0, 0)
+            selected_text = self.proxy.data(index, Qt.DisplayRole)
+            DebugLogger.log(f"[SmartInput] Auto-selecting single option: {selected_text}", "info")
+            self.setText(selected_text)
+            self.item_selected.emit(selected_text)
+            self._reset_completer()
+        elif highlighted_text:
+            # Select the highlighted option
+            DebugLogger.log(f"[SmartInput] Selecting highlighted option: {highlighted_text}", "info")
+            self.setText(highlighted_text)
+            self.item_selected.emit(highlighted_text)
+            self._reset_completer()
+        else:
+            DebugLogger.log(f"[SmartInput] No selection made, just navigating", "debug")
+
+        # Move focus to next widget
         QTimer.singleShot(0, self.focusNextChild)
 
     def _resize_popup(self):
@@ -253,6 +280,7 @@ class SmartInput(QLineEdit):
                     return True
 
         return super().eventFilter(obj, event)
+
 
     def resizeEvent(self, event):
         """Handle resize events."""
