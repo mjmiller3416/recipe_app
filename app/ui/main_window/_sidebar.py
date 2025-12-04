@@ -114,14 +114,25 @@ class Sidebar(QWidget):
 
     def _create_avatar(self) -> AvatarWidget:
         avatar = AvatarWidget(size=QSize(240, 240))
-        username = QLabel("@username")
-        username.setObjectName("UsernameLabel")
-        username.setAlignment(Qt.AlignCenter)
+
+        # Get username from settings
+        from app.core.services.settings_service import SettingsService
+        settings_service = SettingsService()
+        username_text = settings_service.get("user.username", "User")
+
+        self.username_label = QLabel(f"@{username_text}")
+        self.username_label.setObjectName("UsernameLabel")
+        self.username_label.setAlignment(Qt.AlignCenter)
         avatar_wrapper = create_fixed_wrapper(
-            widgets=[avatar, username],
+            widgets=[avatar, self.username_label],
             fixed_width=self.width(),
             alignment=Qt.AlignHCenter,
             direction="vertical",
             margins=(0, 40, 0, 30),
         )
         self.mainLayout.addWidget(avatar_wrapper)
+
+    def update_username(self, username: str) -> None:
+        """Update the displayed username."""
+        if hasattr(self, 'username_label'):
+            self.username_label.setText(f"@{username}")

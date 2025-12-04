@@ -1059,3 +1059,21 @@ QPushButton#ToggleButtonInactive {
     selection-background-color: {surface};
     selection-color: {on_surface};
 }
+
+/* Base font color for all pivot items */
+  #SettingsNavPivot PivotItem {
+      color: red;
+      font-size: 28px;
+      font-weight: 500;
+  }
+
+  /* Selected/active item color */
+  #SettingsNavPivot PivotItem[isSelected="true"] {
+      color: #FFFFFF;
+      font-weight: 600;
+  }
+
+  /* Hover state */
+  #SettingsNavPivot PivotItem:hover {
+      color: #CCCCCC;
+  }

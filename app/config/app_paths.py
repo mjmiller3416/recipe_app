@@ -51,6 +51,7 @@ class AppPaths:
     USER_DATA_DIR = DATA_DIR  # Alias for consistency with services
     TEMP_CROP_DIR = DATA_DIR / "temp_crops"
     RECIPE_IMAGES_DIR = DATA_DIR / "recipe_images"
+    CUSTOM_THEMES_DIR = DATA_DIR / "custom_themes"
 
     # ── Database & Settings ─────────────────────────────────────────────────────
     DATABASE_PATH = DATABASE_DIR / "app_data.db"
@@ -90,6 +91,7 @@ class AppPaths:
             AppPaths.USER_PROFILE_DIR,
             AppPaths.TEMP_CROP_DIR,
             AppPaths.RECIPE_IMAGES_DIR,
+            AppPaths.CUSTOM_THEMES_DIR,
         ]
         for directory in directories:
             directory.mkdir(parents=True, exist_ok=True)
