@@ -8,9 +8,12 @@ Supports multiple settings categories with navigation and save/reset functionali
 from __future__ import annotations
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QHBoxLayout, QMessageBox, QStackedWidget,
-                               QVBoxLayout, QWidget)
-from qfluentwidgets import Pivot
+from PySide6.QtWidgets import (
+    QHBoxLayout,
+    QMessageBox,
+    QTabWidget,
+    QVBoxLayout,
+    QWidget)
 
 from _dev_tools import DebugLogger
 from app.core.services.settings_service import SettingsService
@@ -44,13 +47,9 @@ class Settings(BaseView):
         main_layout.setContentsMargins(24, 24, 24, 24)
         main_layout.setSpacing(16)
 
-        # Top navigation (Pivot)
-        nav_widget = self._create_navigation_panel()
-        main_layout.addWidget(nav_widget)
-
-        # Content area
-        content_widget = self._create_content_area()
-        main_layout.addWidget(content_widget)
+        # Tab navigation + content
+        self.tab_widget = self._create_tab_widget()
+        main_layout.addWidget(self.tab_widget)
 
         # Bottom action buttons
         buttons_widget = self._create_action_buttons()
@@ -62,43 +61,16 @@ class Settings(BaseView):
         container.setLayout(main_layout)
         self.content_layout.addWidget(container)
 
-    def _create_navigation_panel(self) -> QWidget:
-        """Create the top navigation panel with Pivot."""
-        nav_widget = QWidget()
-        nav_widget.setObjectName("SettingsNavigation")
-
-        nav_layout = QHBoxLayout(nav_widget)
-        nav_layout.setContentsMargins(0, 0, 0, 0)
-        nav_layout.setSpacing(0)
-
-        # Navigation pivot
-        self.nav_pivot = Pivot()
-        self.nav_pivot.setObjectName("SettingsNavPivot")
-
-        # Add navigation items
-        self._add_nav_item("User Settings", "user")
-        self._add_nav_item("Theme", "theme")
-
-        nav_layout.addWidget(self.nav_pivot)
-        nav_layout.addStretch()
-
-        return nav_widget
-
-    def _create_content_area(self) -> QWidget:
-        """Create the main content area."""
-        content_widget = QWidget()
-        content_widget.setObjectName("SettingsContent")
-
-        content_layout = QVBoxLayout(content_widget)
-        content_layout.setContentsMargins(0, 16, 0, 0)
-        content_layout.setSpacing(0)
-
-        # Stacked widget for category content
-        self.category_stack = QStackedWidget()
-        self.category_stack.setObjectName("SettingsCategoryStack")
-        content_layout.addWidget(self.category_stack)
-
-        return content_widget
+    def _create_tab_widget(self) -> QTabWidget:
+        """Create the tab widget for settings categories."""
+        tab_widget = QTabWidget()
+        tab_widget.setObjectName("SettingsTabWidget")
+        tab_widget.setTabPosition(QTabWidget.North)
+        tab_widget.setDocumentMode(True)
+        tab_widget.setElideMode(Qt.ElideNone)
+        # remove the default base line above the tabs
+        tab_widget.tabBar().setDrawBase(False)
+        return tab_widget
 
     def _create_action_buttons(self) -> QWidget:
         """Create the bottom action buttons area."""
@@ -134,31 +106,23 @@ class Settings(BaseView):
 
         return buttons_widget
 
-    def _add_nav_item(self, label: str, category_key: str) -> None:
-        """Add an item to the navigation pivot."""
-        self.nav_pivot.addItem(category_key, label)
-
     def _setup_categories(self) -> None:
         """Setup and add all settings categories."""
         # User Settings Category
         user_category = UserSettingsCategory()
         self.categories["user"] = user_category
-        self.category_stack.addWidget(user_category)
+        self.tab_widget.addTab(user_category, "User Settings")
 
         # Theme Settings Category
         theme_category = ThemeSettingsCategory()
         self.categories["theme"] = theme_category
-        self.category_stack.addWidget(theme_category)
-
-        # Select first item by default
-        if len(self.nav_pivot.items) > 0:
-            self.nav_pivot.setCurrentItem("user")
-            self._on_category_changed()
+        self.tab_widget.addTab(theme_category, "Theme")
+        self.tab_widget.setCurrentIndex(0)
 
     def _connect_signals(self) -> None:
         """Connect widget signals to handlers."""
         # Navigation
-        self.nav_pivot.currentItemChanged.connect(self._on_category_changed)
+        self.tab_widget.currentChanged.connect(self._on_category_changed)
 
         # Action buttons
         self.save_button.clicked.connect(self._save_all_settings)
@@ -168,15 +132,13 @@ class Settings(BaseView):
         for category in self.categories.values():
             category.settings_changed.connect(self._on_settings_changed)
 
-    def _on_category_changed(self, category_key: str = None) -> None:
+    def _on_category_changed(self, index: int = 0) -> None:
         """Handle navigation category change."""
-        if category_key is None:
-            category_key = self.nav_pivot.currentRouteKey()
-
-        if category_key and category_key in self.categories:
-            category_widget = self.categories[category_key]
-            self.category_stack.setCurrentWidget(category_widget)
-            DebugLogger.log(f"Switched to {category_key} settings", "debug")
+        try:
+            key = list(self.categories.keys())[index]
+            DebugLogger.log(f"Switched to {key} settings", "debug")
+        except Exception:
+            pass
 
     def _on_settings_changed(self, category_name: str, changed_values: dict) -> None:
         """Handle when settings in any category change."""

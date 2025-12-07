@@ -1061,44 +1061,44 @@ QPushButton#ToggleButtonInactive {
 }
 
 /* ==================================================================
-   14. QFLUENTWIDGETS PIVOT COMPONENT
+   14. SETTINGS TABS
    ================================================================== */
 
-/* Base Pivot widget */
-#SettingsNavPivot {
-    background-color: transparent;
+#SettingsTabWidget {
+    background: transparent;
     border: none;
 }
 
-/* Base font color for all pivot items */
-#SettingsNavPivot PivotItem {
+#SettingsTabWidget::pane {
+    background: transparent;
+    border: none;
+    margin-top: 12px;
+}
+
+#SettingsTabWidget QTabBar::tab {
+    background: transparent;
     color: {on_surface_variant};
     font: {default};
     font-weight: 500;
-    font-size: 24px;
-    background-color: transparent;
-    border: none;
     padding: 12px 24px;
-    margin: 0px 4px;
-    border-radius: 6px;
+    margin: 0 8px;
+    border: none;
+    border-bottom: 2px solid transparent;
 }
 
-/* Selected/active item color */
-#SettingsNavPivot PivotItem[isSelected="true"] {
+#SettingsTabWidget QTabBar::tab:selected {
     color: {primary};
     font-weight: 600;
-    background-color: {primary_container};
     border-bottom: 2px solid {primary};
 }
 
-/* Hover state */
-#SettingsNavPivot PivotItem:hover {
+#SettingsTabWidget QTabBar::tab:hover {
     color: {on_primary_container};
-    background-color: {primary_container};
+    background: {primary_container};
+    border-radius: 6px;
 }
 
-/* Disabled state */
-#SettingsNavPivot PivotItem:disabled {
+#SettingsTabWidget QTabBar::tab:disabled {
     color: {on_surface_variant};
-    background-color: transparent;
+    background: transparent;
 }

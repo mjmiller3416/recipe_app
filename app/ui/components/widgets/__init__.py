@@ -20,5 +20,5 @@ __all__ = [
     "BaseButton",
     "Toast",
     "show_toast",
-    "RecipeImage"
+    "RecipeImage",
 ]
