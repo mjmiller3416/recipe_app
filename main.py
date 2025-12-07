@@ -58,8 +58,6 @@ else:
     DebugLogger.log("Starting MealGenie application...\n", "info")
 
 
-
-
     # ── Custom Color Map ──
     Theme.setCustomColorMap("app/style/theme/material-theme.json", Mode.DARK)
 

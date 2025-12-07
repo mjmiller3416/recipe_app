@@ -3,7 +3,10 @@
     "username": "Maryann",
     "avatar_path": null
   },
-  "theme": "dark",
+  "theme": {
+    "custom_theme_path": null,
+    "use_custom_theme": false
+  },
   "app": {
     "start_on_last_page": true,
     "preferred_font_size": 14,

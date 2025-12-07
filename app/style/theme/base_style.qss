@@ -1060,20 +1060,45 @@ QPushButton#ToggleButtonInactive {
     selection-color: {on_surface};
 }
 
+/* ==================================================================
+   14. QFLUENTWIDGETS PIVOT COMPONENT
+   ================================================================== */
+
+/* Base Pivot widget */
+#SettingsNavPivot {
+    background-color: transparent;
+    border: none;
+}
+
 /* Base font color for all pivot items */
-  #SettingsNavPivot PivotItem {
-      color: red;
-      font-size: 28px;
-      font-weight: 500;
-  }
+#SettingsNavPivot PivotItem {
+    color: {on_surface_variant};
+    font: {default};
+    font-weight: 500;
+    font-size: 24px;
+    background-color: transparent;
+    border: none;
+    padding: 12px 24px;
+    margin: 0px 4px;
+    border-radius: 6px;
+}
 
-  /* Selected/active item color */
-  #SettingsNavPivot PivotItem[isSelected="true"] {
-      color: #FFFFFF;
-      font-weight: 600;
-  }
+/* Selected/active item color */
+#SettingsNavPivot PivotItem[isSelected="true"] {
+    color: {primary};
+    font-weight: 600;
+    background-color: {primary_container};
+    border-bottom: 2px solid {primary};
+}
 
-  /* Hover state */
-  #SettingsNavPivot PivotItem:hover {
-      color: #CCCCCC;
-  }
+/* Hover state */
+#SettingsNavPivot PivotItem:hover {
+    color: {on_primary_container};
+    background-color: {primary_container};
+}
+
+/* Disabled state */
+#SettingsNavPivot PivotItem:disabled {
+    color: {on_surface_variant};
+    background-color: transparent;
+}

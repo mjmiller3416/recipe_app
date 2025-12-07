@@ -1,6 +1,6 @@
 """app/ui/views/settings.py
 
-Settings view with category-based configuration interface.
+Settings View with category-based configuration interface.
 Supports multiple settings categories with navigation and save/reset functionality.
 """
 
