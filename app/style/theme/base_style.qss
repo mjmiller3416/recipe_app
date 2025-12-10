@@ -15,6 +15,10 @@ QWidget#ScrollContent {
     border: none;
 }
 
+QDialog {
+    background-color: {surface_container};
+}
+
 #FixedWrapper {
     background-color: transparent;
 }
