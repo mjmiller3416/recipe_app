@@ -66,6 +66,9 @@ else:
     main_window = MainWindow(
         navigation_service_factory=navigation_service_factory
     )
+    # Expose the main window on the QApplication instance so other widgets
+    # (like settings) can update UI elements in real time without a restart.
+    app.main_window = main_window
     # Show the window in normal size first to establish restore geometry
     main_window.show()
     # Then immediately maximize to get the desired startup appearance
@@ -83,5 +86,4 @@ else:
     startup_timer.StartupTimer.summary("MealGenie startup") # log total startup time
 
     sys.exit(app.exec())
-
 

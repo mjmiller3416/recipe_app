@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance when working with code in this repository.
 
 ## Project Overview
 MealGenie is a meal planning desktop application built with PySide6 (Qt) and the Fluent design system. It provides recipe management, meal planning, and shopping list features.

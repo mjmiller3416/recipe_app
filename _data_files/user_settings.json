@@ -1,15 +1,12 @@
 {
+  "user": {
+    "username": "Maryann",
+    "avatar_path": null
+  },
   "theme": {
     "mode": "light",
     "custom_theme_path": null,
     "use_custom_theme": false
-  },
-  "start_on_last_page": true,
-  "preferred_font_size": 14,
-  "dev_mode": false,
-  "user": {
-    "username": "OllieBash",
-    "avatar_path": null
   },
   "app": {
     "start_on_last_page": true,
@@ -20,5 +17,8 @@
     "model": "gpt-image-1",
     "prompt_template": "High-quality studio food photography of {recipe_name}. Style: natural light, shallow depth-of-field, appetizing, no text, no branding, no people. Plating on a neutral surface. Composition centered and clean. White balance slightly warm. Ultra-detailed, realistic, crisp."
   },
+  "start_on_last_page": true,
+  "preferred_font_size": 14,
+  "dev_mode": false,
   "avatar_path": "avatar_e69d539cfe63428aa8f9224dc4239aef.png"
 }
