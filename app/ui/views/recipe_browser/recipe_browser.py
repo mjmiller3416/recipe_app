@@ -189,25 +189,9 @@ class RecipeBrowser(BaseView):
 
     def _connect_context_actions(self, card, recipe):
         """Connect context menu actions for a card."""
-        # Edit request
-        try:
-            card.edit_requested.disconnect()
-        except Exception:
-            pass
+        # Freshly created cards start without these connections, so no disconnect needed
         card.edit_requested.connect(lambda r=recipe: self._handle_edit_request(r))
-
-        # Favorite toggle via context menu (just refresh card data)
-        try:
-            card.add_to_favorites.disconnect()
-        except Exception:
-            pass
         card.add_to_favorites.connect(lambda updated: card.set_recipe(updated))
-
-        # Delete request
-        try:
-            card.delete_clicked.disconnect()
-        except Exception:
-            pass
         card.delete_clicked.connect(lambda rid=recipe.id: self._handle_delete_request(rid))
 
     def _handle_edit_request(self, recipe):

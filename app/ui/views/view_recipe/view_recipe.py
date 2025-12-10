@@ -83,14 +83,14 @@ class ViewRecipe(QWidget):
         row.setSpacing(8)
 
         back_btn = Button("Back", Type.SECONDARY, Name.BACK)
-        back_btn.setObjectName("BackButton")
+        back_btn.setObjectName("Button")
         back_btn.clicked.connect(self._handle_back_clicked)
         row.addWidget(back_btn, 0, Qt.AlignLeft)
 
         row.addStretch(1)
 
         edit_btn = Button("Edit Recipe", Type.PRIMARY, Name.EDIT)
-        edit_btn.setObjectName("EditRecipeButton")
+        edit_btn.setObjectName("Button")
         edit_btn.clicked.connect(self._handle_edit_clicked)
         if not self.recipe_data.get("recipe_id"):
             edit_btn.setDisabled(True)

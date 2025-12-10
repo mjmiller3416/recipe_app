@@ -530,7 +530,7 @@ QWidget#BackBar {
     margin-bottom: 10px;
 }
 
-QPushButton#BackButton {
+QPushButton#Button {
     background-color: {primary_container};
     color: {on_primary_container};
     font: {default};
@@ -605,26 +605,26 @@ QFrame#RecipeBanner QStackedWidget {
     width: 32px;
 }
 
-/* Meal Planner Menu */
-#MealPlanner QMenu {
+/* QMenu */
+QMenu {
     background-color: {primary_container};
     border: 2px solid {outline};
     padding: 5px;
     border-radius: 6px;
 }
 
-#MealPlanner QMenu:item {
+QMenu:item {
     padding: 8px 15px;
     font: {default};
     border-radius: 4px;
 }
 
-#MealPlanner QMenu:item:selected {
+QMenu:item:selected {
     background-color: {tertiary};
     color: {on_tertiary};
 }
 
-#MealPlanner QMenu:separator {
+QMenu:separator {
     height: 1px;
     background: {outline_variant};
     margin: 5px;

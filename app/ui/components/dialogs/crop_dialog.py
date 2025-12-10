@@ -10,7 +10,6 @@ from PySide6.QtWidgets import (
     QFrame,
     QHBoxLayout,
     QLabel,
-    QPushButton,
     QSizePolicy,
     QSpacerItem,
     QVBoxLayout,
@@ -20,6 +19,7 @@ from PySide6.QtWidgets import (
 from _dev_tools import DebugLogger
 from app.config import AppConfig
 from app.ui.components.images.image_cropper import ImageCropper
+from app.ui.components.widgets.button import Button
 from app.ui.utils import load_pixmap_or_warn, center_on_screen
 
 
@@ -122,16 +122,16 @@ class CropDialog(DialogWindow):
             DebugLogger.log("Failed to get valid cropped image from dialog", "error")
             # Potentially show a QMessageBox to the user
 
-    def _build_crop_buttons(self) -> tuple[QPushButton, QPushButton, QPushButton, QHBoxLayout]:
+    def _build_crop_buttons(self) -> tuple[Button, Button, Button, QHBoxLayout]:
         """Create Select-New, Cancel and Save buttons with standard layout."""
-        btn_select_new = QPushButton("Select New Image")
-        btn_select_new.setObjectName("SelectNewButton")
+        btn_select_new = Button("Select New Image")
+        btn_select_new.setObjectName("Button")
 
-        btn_cancel = QPushButton("Cancel")
-        btn_cancel.setObjectName("CancelButton")
+        btn_cancel = Button("Cancel")
+        btn_cancel.setObjectName("Button")
 
-        btn_save = QPushButton("Save Crop")
-        btn_save.setObjectName("SaveButton")
+        btn_save = Button("Save Crop")
+        btn_save.setObjectName("Button")
         btn_save.setDefault(True)
 
         layout = QHBoxLayout()

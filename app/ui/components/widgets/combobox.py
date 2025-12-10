@@ -7,7 +7,7 @@ Defines a custom ComboBox with read-only selection and integrated dropdown butto
 from typing import Sequence
 
 from PySide6.QtCore import QEvent, QStringListModel, Qt, Signal
-from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QWidget
+from PySide6.QtWidgets import QCompleter, QHBoxLayout, QLineEdit, QWidget
 
 from _dev_tools import DebugLogger
 from app.style import Qss, Theme
@@ -65,6 +65,8 @@ class ComboBox(QWidget):
             parent=self,
             model=self.model
         )
+        # Always show the full option list (no prefix filtering) when opened
+        self.dropdown_menu.set_completion_mode(QCompleter.UnfilteredPopupCompletion)
         self.dropdown_menu.set_case_sensitivity(Qt.CaseInsensitive)
 
         # Set up layout
@@ -113,6 +115,8 @@ class ComboBox(QWidget):
 
     def _show_popup(self):
         """Show the dropdown popup."""
+        # Reset prefix so the popup isn't filtered by the current text
+        self.dropdown_menu.completer.setCompletionPrefix("")
         self.dropdown_menu.show_popup(self.line_edit)
 
     def _on_popup_opened(self):
