@@ -12,7 +12,7 @@ from _dev_tools import DebugLogger
 
 from ..dtos.ingredient_dtos import IngredientCreateDTO
 from ..dtos.recipe_dtos import (RecipeCreateDTO, RecipeFilterDTO,
-                                RecipeIngredientDTO)
+                                RecipeIngredientDTO, RecipeUpdateDTO)
 from ..models.ingredient import Ingredient
 from ..models.recipe import Recipe
 from ..repositories.ingredient_repo import IngredientRepo
@@ -170,6 +170,36 @@ class RecipeService:
             self.session.rollback()
             DebugLogger.log(f"Failed to update recipe {recipe_id} banner image path: {e}", "error")
             raise
+
+    def delete_recipe(self, recipe_id: int) -> bool:
+        """Delete a recipe by ID."""
+        try:
+            recipe = self.recipe_repo.get_by_id(recipe_id)
+            if not recipe:
+                return False
+            self.recipe_repo.delete_recipe(recipe)
+            self.session.commit()
+            return True
+        except Exception as e:
+            self.session.rollback()
+            DebugLogger.log(f"Failed to delete recipe {recipe_id}: {e}", "error")
+            raise
+
+    def update_recipe(self, recipe_id: int, update_dto: RecipeUpdateDTO) -> Recipe:
+        """
+        Update an existing recipe and its ingredient links.
+        """
+        try:
+            updated_recipe = self.recipe_repo.update_recipe(recipe_id, update_dto)
+            if not updated_recipe:
+                raise RecipeSaveError(f"Recipe {recipe_id} not found.")
+            self.session.commit()
+            return updated_recipe
+        except SQLAlchemyError as err:
+            self.session.rollback()
+            raise RecipeSaveError(
+                f"Unable to update recipe '{recipe_id}': {err}"
+            ) from err
 
     def get_recipe(self, recipe_id: int) -> Recipe | None:
         """

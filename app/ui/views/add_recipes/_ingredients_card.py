@@ -202,6 +202,29 @@ class IngredientsCard(ActionCard):
 
         return ingredients_data
 
+    def setIngredients(self, ingredients: list[dict]) -> None:
+        """Replace current ingredient widgets with provided ingredient data."""
+        signals_were_blocked = self.blockSignals(True)
+        self.clearAllIngredients()
+        if not ingredients:
+            if not signals_were_blocked:
+                self.ingredients_changed.emit()
+            self.blockSignals(signals_were_blocked)
+            return
+
+        # Populate the first widget (already created by clearAllIngredients)
+        if self.ingredient_widgets:
+            self.ingredient_widgets[0].setIngredientData(ingredients[0])
+
+        # Add any remaining widgets
+        for data in ingredients[1:]:
+            self._add_ingredient_widget()
+            self.ingredient_widgets[-1].setIngredientData(data)
+
+        if not signals_were_blocked:
+            self.ingredients_changed.emit()
+        self.blockSignals(signals_were_blocked)
+
     def clearAllIngredients(self):
         """Clear all ingredient widgets and add one empty one."""
         # Remove all existing widgets
@@ -274,5 +297,3 @@ class IngredientsCard(ActionCard):
                     obj.setCursor(Qt.ArrowCursor)
 
         return super().eventFilter(obj, event)
-
-

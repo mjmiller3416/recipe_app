@@ -11,8 +11,8 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QWidget
 
 from app.config import INGREDIENT_CATEGORIES, MEASUREMENT_UNITS, FLOAT_VALIDATOR, NAME_PATTERN
-from app.core.database import create_session
 from app.core.services import IngredientService
+from app.core.services.session_manager import session_scope
 from app.core.dtos import IngredientSearchDTO
 from app.style import Type, Name
 from app.ui.components.widgets.combobox import ComboBox
@@ -45,9 +45,6 @@ class IngredientForm(QWidget):
         self.main_layout.setContentsMargins(18, 18, 18, 18)
         self.main_layout.setSpacing(12)
         self.setObjectName("IngredientForm")
-        # Initialize IngredientService with a new DB session
-        self._session = create_session()
-        self.ingredient_service = IngredientService(self._session)
         self.exact_match = None
         self._build_ui()
         self._setup_event_logic()
@@ -86,7 +83,7 @@ class IngredientForm(QWidget):
         self.main_layout.addWidget(self.cb_unit)
 
         # Ingredient name field - expandable
-        all_ingredient_names = self.ingredient_service.list_distinct_names()
+        all_ingredient_names = self._fetch_distinct_names()
         self.sle_ingredient_name = SmartInput(
             list_items=all_ingredient_names,
             placeholder="Ingredient Name"
@@ -152,14 +149,18 @@ class IngredientForm(QWidget):
             clear_error_styles(self.sle_ingredient_name)
 
         search_dto = IngredientSearchDTO(search_term=current_text)
-        matching_ingredients = self.ingredient_service.find_matching_ingredients(search_dto)
-
         exact_match = None
-        for ingredient in matching_ingredients:
-            if ingredient.ingredient_name.lower() == current_text.lower():
-                exact_match = ingredient
-                self.exact_match = exact_match
-                break
+        try:
+            with session_scope() as session:
+                service = IngredientService(session)
+                matching_ingredients = service.find_matching_ingredients(search_dto)
+                for ingredient in matching_ingredients:
+                    if ingredient.ingredient_name.lower() == current_text.lower():
+                        exact_match = ingredient
+                        self.exact_match = exact_match
+                        break
+        except Exception:
+            matching_ingredients = []
 
         if exact_match:
             category_index = self.cb_ingredient_category.findText(
@@ -197,11 +198,11 @@ class IngredientForm(QWidget):
     def _to_payload(self) -> dict:
         """Returns a plain dict that matches RecipeIngredientDTO fields"""
         return {
-        "ingredient_name": sanitize_form_input(self.sle_ingredient_name.text()),
-        "ingredient_category": sanitize_form_input(self.cb_ingredient_category.currentText()),
-        "unit": sanitize_form_input(self.cb_unit.currentText()),
-        "quantity": safe_float_conversion(self.le_quantity.text().strip()),
-        "existing_ingredient_id": self.exact_match.id if self.exact_match else None,
+            "ingredient_name": sanitize_form_input(self.sle_ingredient_name.text()),
+            "ingredient_category": sanitize_form_input(self.cb_ingredient_category.currentText()),
+            "unit": sanitize_form_input(self.cb_unit.currentText()),
+            "quantity": safe_float_conversion(self.le_quantity.text().strip()),
+            "existing_ingredient_id": self.exact_match.id if self.exact_match else None,
         }
 
     # ── Public ──
@@ -209,7 +210,51 @@ class IngredientForm(QWidget):
         """Returns the ingredient data as a dictionary for external collection."""
         return self._to_payload()
 
+    def _fetch_distinct_names(self) -> list[str]:
+        """Fetch distinct ingredient names using a short-lived session."""
+        try:
+            with session_scope() as session:
+                service = IngredientService(session)
+                return service.list_distinct_names()
+        except Exception:
+            return []
+
     # ── Event Handlers ──
+
+    def setIngredientData(self, data: dict) -> None:
+        """Populate the ingredient fields from a data dict."""
+        widgets = [
+            self.le_quantity,
+            self.cb_unit,
+            self.sle_ingredient_name,
+            self.cb_ingredient_category,
+        ]
+        previous_block_states = [w.blockSignals(True) for w in widgets]
+        try:
+            quantity = data.get("quantity")
+            self.le_quantity.setText("" if quantity is None else str(quantity))
+
+            unit = data.get("unit") or ""
+            if unit:
+                self.cb_unit.setCurrentText(str(unit))
+            else:
+                self.cb_unit.setCurrentIndex(-1)
+
+            name = data.get("ingredient_name") or ""
+            self.sle_ingredient_name.setText(str(name))
+
+            category = data.get("ingredient_category") or ""
+            if category:
+                self.cb_ingredient_category.setCurrentText(str(category))
+            else:
+                self.cb_ingredient_category.setCurrentIndex(-1)
+
+            # Reset any cached match info
+            self.exact_match = None
+        finally:
+            for widget, was_blocked in zip(widgets, previous_block_states):
+                widget.blockSignals(was_blocked)
+
     def eventFilter(self, watched, event):
         """Handle focus events for auto-scroll functionality."""
         from PySide6.QtCore import QEvent

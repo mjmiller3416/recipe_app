@@ -7,7 +7,7 @@ AddRecipes widget for creating new recipes with ingredients and directions.
 from PySide6.QtCore import Qt
 
 from _dev_tools import DebugLogger
-from app.core.dtos import RecipeCreateDTO, RecipeIngredientDTO
+from app.core.dtos import RecipeCreateDTO, RecipeIngredientDTO, RecipeUpdateDTO
 from app.core.services.recipe_service import RecipeService
 from app.core.services.ai_gen.background_manager import get_background_manager
 from app.core.utils import (
@@ -23,6 +23,7 @@ from app.ui.utils import (
     clear_form_fields,
     collect_form_data,
     connect_form_signals,
+    populate_form_from_data,
     setup_tab_order_chain,
     validate_required_fields)
 from ._recipe_form import RecipeForm
@@ -43,6 +44,9 @@ class AddRecipes(BaseView):
         self.stored_ingredients = []
         self.last_focused_widget = None  # Track last focused widget
         self.tab_order_widgets = []  # Store tab order for reference
+        self.is_edit_mode = False
+        self.editing_recipe_id = None
+        self.navigation_service = None
 
         self._build_ui()
         self._connect_signals()
@@ -51,6 +55,82 @@ class AddRecipes(BaseView):
         # Initialize auto-scroll handler after UI is built
         self.auto_scroll_handler = AutoScrollHandler(self.scroll_area, self.scroll_content)
         DebugLogger.log("AddRecipes auto-scroll handler initialized", "debug")
+
+    # ƒ"?ƒ"? Mode Helpers ƒ"?ƒ"?
+    def _set_edit_mode(self, enabled: bool, recipe_name: str | None = None) -> None:
+        """Toggle between add and edit modes and update UI copy."""
+        self.is_edit_mode = enabled
+        if enabled:
+            self.btn_save.setText("Update Recipe")
+            self.recipe_details_card.setHeader("Edit Recipe Info")
+            self.recipe_details_card.setSubHeader(
+                f"Update details for {recipe_name or 'this recipe'}."
+            )
+        else:
+            self.editing_recipe_id = None
+            self.btn_save.setText("Save Recipe")
+            self.recipe_details_card.setHeader("Recipe Info")
+            self.recipe_details_card.setSubHeader("Basic information about your recipe.")
+
+    def enter_edit_mode(self, recipe, navigation_service=None) -> None:
+        """Prefill the form with an existing recipe for editing."""
+        DebugLogger.log(f"[AddRecipes] enter_edit_mode for recipe ID={getattr(recipe, 'id', None)}", "debug")
+        self.navigation_service = navigation_service or self.navigation_service
+        self._set_edit_mode(True, getattr(recipe, "recipe_name", None))
+        self.editing_recipe_id = getattr(recipe, "id", None)
+
+        signals_were_blocked = self.ingredient_container.blockSignals(True)
+        try:
+            # Reset current form content before populating
+            self._clear_form(reset_mode=False)
+
+            # Populate core fields
+            form_mapping = {
+                "recipe_name": self.le_recipe_name,
+                "recipe_category": self.cb_recipe_category,
+                "meal_type": self.cb_meal_type,
+                "diet_pref": self.cb_dietary_preference,
+                "total_time": self.le_time,
+                "servings": self.le_servings,
+            }
+            recipe_data = {
+                "recipe_name": getattr(recipe, "recipe_name", "") or "",
+                "recipe_category": getattr(recipe, "recipe_category", "") or "",
+                "meal_type": getattr(recipe, "meal_type", "") or "",
+                "diet_pref": getattr(recipe, "diet_pref", "") or "",
+                "total_time": getattr(recipe, "total_time", "") or "",
+                "servings": getattr(recipe, "servings", "") or "",
+            }
+            populate_form_from_data(form_mapping, recipe_data)
+
+            # Directions / notes
+            self.te_directions.setPlainText(getattr(recipe, "directions", "") or "")
+            self.te_notes.setPlainText(getattr(recipe, "notes", "") or "")
+            if getattr(recipe, "notes", None):
+                self.directions_notes_card.show_notes()
+            else:
+                self.directions_notes_card.show_directions()
+
+            # Ingredients
+            ingredients = []
+            for ing in getattr(recipe, "get_ingredient_details", lambda: [])():
+                ingredients.append(
+                    {
+                        "ingredient_name": getattr(ing, "ingredient_name", ""),
+                        "ingredient_category": getattr(ing, "ingredient_category", ""),
+                        "quantity": getattr(ing, "quantity", None),
+                        "unit": getattr(ing, "unit", None),
+                    }
+                )
+            self.ingredient_container.setIngredients(ingredients)
+        finally:
+            self.ingredient_container.blockSignals(signals_were_blocked)
+        self._setup_tab_order()
+
+        if self.le_recipe_name:
+            self.le_recipe_name.setFocus()
+            self.last_focused_widget = self.le_recipe_name
+        DebugLogger.log("[AddRecipes] enter_edit_mode complete", "debug")
 
 
     # ── Private ──
@@ -193,7 +273,7 @@ class AddRecipes(BaseView):
         Gathers all form data (recipe fields + ingredient widgets),
         constructs a RecipeCreateDTO, and hands it to RecipeService.
         """
-        # ── validate required fields ──
+        # Validate required fields before saving
         required_fields = {
             "Recipe Name": self.le_recipe_name,
             "Meal Type": self.cb_meal_type,
@@ -201,17 +281,14 @@ class AddRecipes(BaseView):
         }
         is_valid, validation_errors = validate_required_fields(required_fields)
         if not is_valid:
-            error_msg = "Please fix the following errors:\n• " + "\n• ".join(validation_errors)
+            error_msg = "Please fix the following errors:\\n- " + "\\n- ".join(validation_errors)
             self._display_save_message(error_msg, success=False)
             return
 
-        # ── payload recipe data ──
+        # Build payloads
         recipe_data = self._to_payload()
-
-        # ── payload raw ingredients ──
         raw_ingredients = self.ingredient_container.getAllIngredientsData()
 
-        # ── convert raw_ingredients ──
         try:
             ingredient_dtos = [
                 RecipeIngredientDTO(
@@ -224,20 +301,39 @@ class AddRecipes(BaseView):
             ]
         except Exception as dto_err:
             DebugLogger().log(f"[AddRecipes] DTO construction failed: {dto_err}", "error")
-            return  # show error dialog
+            return
 
-        # ── convert recipe_data ──
         try:
-            recipe_dto = RecipeCreateDTO(
-                **recipe_data,
-                ingredients=ingredient_dtos,
-            )
+            recipe_dto = RecipeCreateDTO(**recipe_data, ingredients=ingredient_dtos)
         except Exception as dto_err:
             DebugLogger().log(f"[AddRecipes] RecipeCreateDTO validation failed: {dto_err}", "error")
             return
 
-        # ── create recipe via service (internal session management) ──
         service = RecipeService()
+        if self.is_edit_mode and self.editing_recipe_id:
+            try:
+                update_dto = RecipeUpdateDTO(**recipe_data, ingredients=ingredient_dtos)
+                updated_recipe = service.update_recipe(self.editing_recipe_id, update_dto)
+            except Exception as svc_err:
+                DebugLogger().log(f"[AddRecipes.save_recipe] Error updating recipe: {svc_err}", "error")
+                self._display_save_message(
+                    f"Failed to update recipe: {svc_err}", success=False
+                )
+                return
+
+            DebugLogger().log(
+                f"[AddRecipes] Recipe '{updated_recipe.recipe_name}' updated with ID={updated_recipe.id}",
+                "info"
+            )
+            self._display_save_message(
+                f"Recipe '{updated_recipe.recipe_name}' updated successfully!",
+                success=True
+            )
+            self._clear_form()
+            if self.navigation_service:
+                self.navigation_service.show_full_recipe(updated_recipe)
+            return
+
         try:
             new_recipe = service.create_recipe_with_ingredients(recipe_dto)
         except Exception as svc_err:
@@ -247,10 +343,8 @@ class AddRecipes(BaseView):
             )
             return
 
-        # ── success! ──
         DebugLogger().log(f"[AddRecipes] Recipe '{new_recipe.recipe_name}' saved with ID={new_recipe.id}", "info")
 
-        # ── trigger background AI image generation ──
         try:
             manager = get_background_manager()
             reference_path, banner_path = manager.generate_recipe_images(
@@ -258,7 +352,6 @@ class AddRecipes(BaseView):
                 new_recipe.recipe_name
             )
 
-            # Update recipe with predicted paths immediately
             service.update_recipe_reference_image_path(new_recipe.id, reference_path)
             service.update_recipe_banner_image_path(new_recipe.id, banner_path)
 
@@ -267,7 +360,6 @@ class AddRecipes(BaseView):
                 "info"
             )
 
-            # Show user notification about image generation
             from app.ui.components.widgets import show_toast
             show_toast(
                 self,
@@ -287,10 +379,7 @@ class AddRecipes(BaseView):
             success=True
         )
 
-        # ── clear form and reset state ──
         self._clear_form()
-        self.stored_ingredients.clear()
-        self.ingredient_container.clearAllIngredients()
 
     def _to_payload(self):
         """Collect all recipe form data and return it as a dict for API calls."""
@@ -298,10 +387,11 @@ class AddRecipes(BaseView):
             "recipe_name": self.le_recipe_name,
             "recipe_category": self.cb_recipe_category,
             "meal_type": self.cb_meal_type,
-            "dietary_preference": self.cb_dietary_preference,
+            "diet_pref": self.cb_dietary_preference,
             "total_time": self.le_time,
             "servings": self.le_servings,
-            "directions": self.te_directions
+            "directions": self.te_directions,
+            "notes": self.te_notes,
         }
         data = collect_form_data(form_mapping)
 
@@ -309,8 +399,9 @@ class AddRecipes(BaseView):
         data["recipe_name"] = sanitize_form_input(data["recipe_name"])
         data["recipe_category"] = sanitize_form_input(data["recipe_category"])
         data["meal_type"] = sanitize_form_input(data["meal_type"])
-        data["dietary_preference"] = sanitize_form_input(data["dietary_preference"])
+        data["diet_pref"] = sanitize_form_input(data["diet_pref"])
         data["directions"] = sanitize_multiline_input(data["directions"])
+        data["notes"] = sanitize_multiline_input(data.get("notes", ""))
 
         # Apply transformations for servings/time parsing
         data["total_time"] = safe_int_conversion(data["total_time"])
@@ -319,17 +410,21 @@ class AddRecipes(BaseView):
 
         return data
 
-    def _clear_form(self):
-        """Clear all form fields after successful save."""
+    def _clear_form(self, reset_mode: bool = True):
+        """Clear all form fields after save or when switching modes."""
         form_widgets = [
             self.le_recipe_name, self.cb_recipe_category, self.cb_meal_type,
-            self.cb_dietary_preference, self.le_time, self.le_servings, self.te_directions
+            self.cb_dietary_preference, self.le_time, self.le_servings,
+            self.te_directions, self.te_notes
         ]
         clear_form_fields(form_widgets)
 
         # clear stored ingredients and widgets
         self.stored_ingredients.clear()
         self.ingredient_container.clearAllIngredients()
+
+        if reset_mode:
+            self._set_edit_mode(False)
 
         # Reset focus tracking
         self.last_focused_widget = self.le_recipe_name

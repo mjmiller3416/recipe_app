@@ -22,7 +22,7 @@ from enum import Enum
 from typing import Optional
 
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import QDialog, QFrame, QHBoxLayout, QLabel, QStackedWidget, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QDialog, QFrame, QHBoxLayout, QLabel, QMenu, QStackedWidget, QVBoxLayout, QWidget
 
 from _dev_tools import DebugLogger
 from app.core.models import Recipe
@@ -80,6 +80,8 @@ class BaseRecipeCard(BaseCard):
     card_clicked = Signal(object)     # recipe instance
     delete_clicked = Signal(int)      # recipe_id
     recipe_selected = Signal(int)     # recipe_id
+    edit_requested = Signal(object)   # recipe instance
+    add_to_favorites = Signal(object) # updated recipe instance
 
     def __init__(self, size: LayoutSize, parent: QWidget | None = None):
         """Initialize the BaseRecipeCard with size category and stacked widget management.
@@ -311,6 +313,38 @@ class BaseRecipeCard(BaseCard):
         """
         if event.button() == Qt.LeftButton and self._recipe:
             self.card_clicked.emit(self._recipe)
+
+    def contextMenuEvent(self, event) -> None:
+        """Show context menu with recipe actions."""
+        if not self._recipe:
+            return
+
+        menu = QMenu(self)
+        act_edit = menu.addAction("Edit Recipe")
+        fav_label = "Remove from Favorites" if getattr(self._recipe, "is_favorite", False) else "Add to Favorites"
+        act_fav = menu.addAction(fav_label)
+        act_delete = menu.addAction("Delete Recipe")
+
+        chosen = menu.exec(event.globalPos())
+        if chosen == act_edit:
+            self.edit_requested.emit(self._recipe)
+        elif chosen == act_fav:
+            self._handle_context_favorite_toggle()
+        elif chosen == act_delete and getattr(self._recipe, "id", None):
+            self.delete_clicked.emit(self._recipe.id)
+        event.accept()
+
+    def _handle_context_favorite_toggle(self) -> None:
+        """Toggle favorite status from context menu and emit update."""
+        if not self._recipe or not getattr(self._recipe, "id", None):
+            return
+        try:
+            service = RecipeService()
+            updated = service.toggle_favorite(self._recipe.id)
+            self._recipe.is_favorite = updated.is_favorite
+            self.add_to_favorites.emit(updated)
+        except Exception as exc:
+            DebugLogger.log(f"Failed to toggle favorite via context menu: {exc}", "error")
 
     def _handle_add_meal_click(self):
         """Handle the click event for the 'Add Meal' button in the empty state."""
@@ -577,5 +611,3 @@ def create_recipe_card(size: LayoutSize, parent: QWidget | None = None) -> BaseR
         raise ValueError(f"Unsupported size: {size}")
 
     return size_map[size](size, parent)
-
-

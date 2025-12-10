@@ -35,9 +35,10 @@ from ._ingredients_list import IngredientList
 
 
 class ViewRecipe(QWidget):
-    """Full recipe detail view (visual-only, no editing/upload yet)."""
+    """Full recipe detail view."""
 
     back_clicked = Signal()
+    edit_clicked = Signal(int)  # emits recipe id when edit is requested
 
     def __init__(self, recipe: Recipe, navigation_service=None, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -73,21 +74,29 @@ class ViewRecipe(QWidget):
         }
 
     # ── Layout ───────────────────────────────────────────────────────────────────────────────
-    def _make_back_button(self):
-        """Create a simple back button using custom Button class."""
-        w = QWidget(self)
-        w.setObjectName("BackBar")
-        row = QHBoxLayout(w)
+    def _make_header_bar(self):
+        """Create top bar with back and edit actions."""
+        bar = QWidget(self)
+        bar.setObjectName("BackBar")
+        row = QHBoxLayout(bar)
         row.setContentsMargins(0, 0, 0, 0)
         row.setSpacing(8)
 
-        btn = Button("Back", Type.SECONDARY, Name.BACK)
-        btn.setObjectName("BackButton")
-        btn.clicked.connect(self._handle_back_clicked)
+        back_btn = Button("Back", Type.SECONDARY, Name.BACK)
+        back_btn.setObjectName("BackButton")
+        back_btn.clicked.connect(self._handle_back_clicked)
+        row.addWidget(back_btn, 0, Qt.AlignLeft)
 
-        row.addWidget(btn, 0, Qt.AlignLeft)
         row.addStretch(1)
-        return w
+
+        edit_btn = Button("Edit Recipe", Type.PRIMARY, Name.EDIT)
+        edit_btn.setObjectName("EditRecipeButton")
+        edit_btn.clicked.connect(self._handle_edit_clicked)
+        if not self.recipe_data.get("recipe_id"):
+            edit_btn.setDisabled(True)
+        row.addWidget(edit_btn, 0, Qt.AlignRight)
+
+        return bar
 
     def _build_ui(self) -> None:
         """Build the main UI matching the mock design."""
@@ -108,7 +117,7 @@ class ViewRecipe(QWidget):
         # Back Button
         # TODO: Implement sticky back button that remains visible during scrolling
         # Requirements: Fixed position overlay, semi-transparent background, proper z-index
-        back_bar = self._make_back_button()
+        back_bar = self._make_header_bar()
         self.scroll_layout.addWidget(back_bar)
 
         # Title Section
@@ -250,5 +259,10 @@ class ViewRecipe(QWidget):
         # Emit signal for navigation service to handle
         self.back_clicked.emit()
 
+    def _handle_edit_clicked(self):
+        """Emit edit signal with the current recipe id."""
+        recipe_id = self.recipe_data.get("recipe_id")
+        if recipe_id:
+            self.edit_clicked.emit(recipe_id)
 
 

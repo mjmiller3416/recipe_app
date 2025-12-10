@@ -11,9 +11,15 @@ from typing import List, Optional
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload
 
-from ..dtos.recipe_dtos import RecipeCreateDTO, RecipeFilterDTO
+from ..dtos.recipe_dtos import (
+    RecipeCreateDTO,
+    RecipeFilterDTO,
+    RecipeIngredientDTO,
+    RecipeUpdateDTO,
+)
 from ..models.recipe import Recipe
 from ..models.recipe_history import RecipeHistory
+from ..models.meal_selection import MealSelection
 from ..models.recipe_ingredient import RecipeIngredient
 from ..repositories.ingredient_repo import IngredientRepo
 
@@ -110,6 +116,54 @@ class RecipeRepo:
         result = self.session.execute(stmt).scalar_one_or_none()
         return result
 
+    def update_recipe(self, recipe_id: int, update_dto: RecipeUpdateDTO) -> Optional[Recipe]:
+        """
+        Update a recipe's core fields and replace ingredient links.
+        """
+        recipe = self.get_by_id(recipe_id)
+        if not recipe:
+            return None
+
+        update_data = update_dto.model_dump(exclude_unset=True)
+
+        for field in [
+            "recipe_name",
+            "recipe_category",
+            "meal_type",
+            "diet_pref",
+            "total_time",
+            "servings",
+            "directions",
+            "notes",
+            "reference_image_path",
+            "banner_image_path",
+            "is_favorite",
+        ]:
+            if field in update_data:
+                setattr(recipe, field, update_data[field])
+
+        if "ingredients" in update_data and update_data["ingredients"] is not None:
+            recipe.ingredients.clear()
+            self.session.flush()
+            for ing in update_data["ingredients"]:
+                ing_dto = (
+                    RecipeIngredientDTO(**ing)
+                    if isinstance(ing, dict)
+                    else ing
+                )
+                ingredient = self.ingredient_repo.get_or_create(ing_dto)
+                self.session.flush()
+                recipe.ingredients.append(
+                    RecipeIngredient(
+                        recipe_id=recipe.id,
+                        ingredient_id=ingredient.id,
+                        quantity=ing_dto.quantity,
+                        unit=ing_dto.unit,
+                    )
+                )
+
+        return recipe
+
     def create_recipe(self, recipe: Recipe) -> Recipe:
         """
         Adds and returns a new recipe.
@@ -132,6 +186,23 @@ class RecipeRepo:
             recipe (Recipe): The recipe instance to delete.
 
         """
+        # Remove meal selections that depend on this recipe
+        # 1) delete any meal selections where this recipe is the main recipe
+        self.session.query(MealSelection).filter(
+            MealSelection.main_recipe_id == recipe.id
+        ).delete(synchronize_session=False)
+
+        # 2) null out side recipes that reference this recipe
+        self.session.query(MealSelection).filter(
+            MealSelection.side_recipe_1_id == recipe.id
+        ).update({"side_recipe_1_id": None}, synchronize_session=False)
+        self.session.query(MealSelection).filter(
+            MealSelection.side_recipe_2_id == recipe.id
+        ).update({"side_recipe_2_id": None}, synchronize_session=False)
+        self.session.query(MealSelection).filter(
+            MealSelection.side_recipe_3_id == recipe.id
+        ).update({"side_recipe_3_id": None}, synchronize_session=False)
+
         self.session.delete(recipe)
 
     def recipe_exists(self, name: str, category: str) -> bool:

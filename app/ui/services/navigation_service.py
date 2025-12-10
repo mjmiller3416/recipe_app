@@ -103,6 +103,10 @@ class NavigationService:
 
         # Connect the back button to return to recipes
         full_recipe_widget.back_clicked.connect(lambda: self.switch_to("browse_recipes"))
+        if getattr(recipe, "id", None):
+            full_recipe_widget.edit_clicked.connect(
+                lambda recipe_id=recipe.id: self.start_edit_recipe(recipe_id)
+            )
 
         # Add to navigation
         self.page_instances["view_recipe"] = full_recipe_widget
@@ -110,3 +114,31 @@ class NavigationService:
 
         # Navigate to the full recipe view
         self.sw_pages.setCurrentWidget(full_recipe_widget)
+
+    def start_edit_recipe(self, recipe_id: int):
+        """Open AddRecipes in edit mode with the selected recipe prefilled."""
+        DebugLogger.log(f"[NavigationService] start_edit_recipe called for ID={recipe_id}", "debug")
+        try:
+            from app.core.services import RecipeService
+            recipe = RecipeService().get_recipe(recipe_id)
+        except Exception as exc:
+            DebugLogger.log(f"Unable to load recipe {recipe_id} for editing: {exc}", "error")
+            return
+
+        if not recipe:
+            DebugLogger.log(f"Recipe {recipe_id} not found; cannot edit.", "warning")
+            return
+        DebugLogger.log(f"[NavigationService] Loaded recipe {recipe_id} for edit ({recipe.recipe_name})", "debug")
+
+        add_view = self.page_instances.get("add_recipe")
+        if not isinstance(add_view, AddRecipes):
+            add_view = AddRecipes()
+            self.page_instances["add_recipe"] = add_view
+            self.sw_pages.addWidget(add_view)
+
+        # Navigate first so UI changes immediately, then populate on the next event loop tick
+        self.sw_pages.setCurrentWidget(add_view)
+        if hasattr(add_view, "enter_edit_mode"):
+            from PySide6.QtCore import QTimer
+            DebugLogger.log("[NavigationService] Scheduling enter_edit_mode on AddRecipes view", "debug")
+            QTimer.singleShot(0, lambda: add_view.enter_edit_mode(recipe, navigation_service=self))

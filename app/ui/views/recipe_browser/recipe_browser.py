@@ -184,6 +184,64 @@ class RecipeBrowser(BaseView):
                 )
             card.setCursor(Qt.ArrowCursor)
 
+        # Context menu actions
+        self._connect_context_actions(card, recipe)
+
+    def _connect_context_actions(self, card, recipe):
+        """Connect context menu actions for a card."""
+        # Edit request
+        try:
+            card.edit_requested.disconnect()
+        except Exception:
+            pass
+        card.edit_requested.connect(lambda r=recipe: self._handle_edit_request(r))
+
+        # Favorite toggle via context menu (just refresh card data)
+        try:
+            card.add_to_favorites.disconnect()
+        except Exception:
+            pass
+        card.add_to_favorites.connect(lambda updated: card.set_recipe(updated))
+
+        # Delete request
+        try:
+            card.delete_clicked.disconnect()
+        except Exception:
+            pass
+        card.delete_clicked.connect(lambda rid=recipe.id: self._handle_delete_request(rid))
+
+    def _handle_edit_request(self, recipe):
+        """Handle edit requests from a recipe card context menu."""
+        if self.navigation_service and getattr(recipe, "id", None):
+            self.navigation_service.start_edit_recipe(recipe.id)
+        else:
+            # Fallback: emit card clicked to allow external handling
+            self.recipe_card_clicked.emit(recipe)
+
+    def _handle_delete_request(self, recipe_id: int):
+        """Handle recipe deletion with confirmation and refresh."""
+        from PySide6.QtWidgets import QMessageBox
+
+        reply = QMessageBox.question(
+            self,
+            "Delete Recipe",
+            "Are you sure you want to delete this recipe?\nThis action cannot be undone.",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+        if reply != QMessageBox.Yes:
+            return
+
+        try:
+            service = RecipeService()
+            if service.delete_recipe(recipe_id):
+                self.refresh()
+                from app.ui.components.widgets import show_toast
+                show_toast(self, "Recipe deleted.", success=True, duration=2000, offset_right=40)
+        except Exception as exc:
+            from _dev_tools import DebugLogger
+            DebugLogger.log(f"Failed to delete recipe {recipe_id}: {exc}", "error")
+
     def _update_cards_selection_mode(self):
         """Update all existing recipe cards to match current selection mode."""
         if not hasattr(self, '_flow_container'):
