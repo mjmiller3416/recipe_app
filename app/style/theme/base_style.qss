@@ -50,15 +50,17 @@ QLabel {
 
 /* ── Buttons ──────────────────────────────────────────────── */
 QPushButton {
-    background-color: {surface};
-    color: {on_surface};
-    border: 1px solid {outline};
+    background-color: {primary_container};
+    color: {on_primary_container};
+    font: {default};
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
     padding: 8px 16px;
-    border-radius: 4px;
 }
 
 QPushButton:hover {
-    background-color: {primary_container};
+    background-color: {tertiary_container};
 }
 
 QPushButton:pressed,
@@ -532,16 +534,6 @@ QLabel#NotesText {
 QWidget#BackBar {
     background-color: transparent;
     margin-bottom: 10px;
-}
-
-QPushButton#Button {
-    background-color: {primary_container};
-    color: {on_primary_container};
-    font: {default};
-    font-weight: 500;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 16px;
 }
 
 /* Info Container */

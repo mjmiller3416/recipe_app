@@ -1,198 +1,203 @@
 """app/ui/views/recipe_browser/recipe_browser.py
 
-Standalone recipe browser view for displaying recipes in a grid layout.
+Recipe browser view rendered with QListView + model/delegate for performance.
 """
 
-# ── Imports ──
-from PySide6.QtCore import Qt, Signal
+from __future__ import annotations
 
+from PySide6.QtCore import QPoint, QSize, Qt, Signal
+from PySide6.QtWidgets import (
+    QAbstractItemView,
+    QListView,
+    QMenu,
+    QMessageBox,
+)
+
+from _dev_tools import DebugLogger
 from app.core import RecipeFilterDTO
 from app.core.services import RecipeService
-from app.ui.components.composite.recipe_card import LayoutSize, create_recipe_card
-from app.ui.components.layout.flow_layout import FlowLayoutContainer
+from app.ui.components.composite.recipe_card import LARGE_SIZE, LayoutSize, MEDIUM_SIZE, SMALL_SIZE
 from app.ui.views.base import BaseView
 from ._filter_bar import FilterBar
+from .delegate import RecipeCardDelegate
+from .models import RecipeFilterProxyModel, RecipeListModel
+
+
+CARD_SIZE_BY_LAYOUT = {
+    LayoutSize.SMALL: SMALL_SIZE,
+    LayoutSize.MEDIUM: MEDIUM_SIZE,
+    LayoutSize.LARGE: LARGE_SIZE,
+}
 
 
 class RecipeBrowser(BaseView):
-    """Standalone recipe browser view with filtering and sorting."""
+    """Recipe browser view with filtering and sorting.
+
+    Legacy note: this view previously built one QWidget per card inside a flow
+    layout. It now uses a QListView with a model/delegate for faster redraws.
+    """
 
     recipe_card_clicked = Signal(object)  # recipe object
     recipe_selected = Signal(int)  # recipe ID
 
-    def __init__(self, parent=None, card_size=LayoutSize.MEDIUM, selection_mode=False, navigation_service=None):
-        """
-        Initialize the RecipeBrowser.
-
-        Args:
-            parent (QWidget, optional): Parent widget. Defaults to None.
-            card_size (LayoutSize, optional):
-                Size of recipe cards. Defaults to LayoutSize.MEDIUM.
-            selection_mode (bool, optional):
-                If True, cards are clickable for selection. Defaults to False.
-            navigation_service (NavigationService, optional): Service for handling navigation.
-        """
+    def __init__(
+        self,
+        parent=None,
+        card_size: LayoutSize = LayoutSize.MEDIUM,
+        selection_mode: bool = False,
+        navigation_service=None,
+    ):
         super().__init__(parent)
         self.setObjectName("RecipeBrowser")
         self.card_size = card_size
-        self._selection_mode = selection_mode  # if True, cards are clickable for selection
+        self._selection_mode = selection_mode
+        self.navigation_service = navigation_service
         self.recipe_service = RecipeService()
         self.recipes_loaded = False
-        self.navigation_service = navigation_service
+        self._card_dimensions = CARD_SIZE_BY_LAYOUT.get(self.card_size, MEDIUM_SIZE)
+
+        self._list_model = RecipeListModel(
+            favorite_handler=self._persist_favorite,
+            image_size=QSize(self._card_dimensions.width(), self._card_dimensions.width()),
+        )
+        self._proxy_model = RecipeFilterProxyModel()
+        self._proxy_model.setSourceModel(self._list_model)
 
         self._build_ui()
         self._load_recipes()
 
+    # Public API ----------------------------------------------------------
     @property
     def selection_mode(self):
         """Get the current selection mode."""
         return self._selection_mode
 
     @selection_mode.setter
-    def selection_mode(self, value):
-        """Set selection mode and update existing cards' behavior."""
-        if self._selection_mode != value:
-            self._selection_mode = value
-            if self.recipes_loaded:
-                self._update_cards_selection_mode()
+    def selection_mode(self, value: bool):
+        """Toggle selection mode (used by MealPlanner recipe picking)."""
+        self._selection_mode = bool(value)
 
+    def refresh(self):
+        """Refresh the recipe display."""
+        self.recipes_loaded = False
+        self._load_recipes()
+
+    # UI Construction -----------------------------------------------------
     def _build_ui(self):
-        """Build the UI with filters and recipe grid."""
+        """Build the filter bar and the list view."""
         self._create_filter_bar()
-        # Create the flow layout container
-        self._flow_container = FlowLayoutContainer(tight=True)
-        self._flow_container.setObjectName("RecipeFlowContainer")
-
-        # Add the container to the existing content_layout
-        self.content_layout.addWidget(self._flow_container)
+        self._create_list_view()
 
     def _create_filter_bar(self):
-        """Create and add the filter bar above the recipe grid."""
         self.filter_bar = FilterBar(self)
         self.content_layout.addWidget(self.filter_bar)
-        self.filter_bar.filters_changed.connect(self._load_filtered_sorted_recipes)
+        self.filter_bar.filters_changed.connect(self._apply_filters)
 
+    def _create_list_view(self):
+        self._list_view = QListView(self)
+        self._list_view.setObjectName("RecipeListView")
+        self._list_view.setViewMode(QListView.IconMode)
+        self._list_view.setResizeMode(QListView.Adjust)
+        self._list_view.setMovement(QListView.Static)
+        self._list_view.setWrapping(True)
+        self._list_view.setSpacing(16)
+        self._list_view.setUniformItemSizes(True)
+        self._list_view.setMouseTracking(True)
+        self._list_view.setSelectionMode(QAbstractItemView.SingleSelection)
+        self._list_view.setSelectionRectVisible(False)
+        self._list_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self._list_view.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self._list_view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self._list_view.setContextMenuPolicy(Qt.CustomContextMenu)
+        self._list_view.customContextMenuRequested.connect(self._show_context_menu)
+        self._list_view.clicked.connect(self._handle_card_clicked)
+        self._list_view.setStyleSheet(
+            "QListView { background: transparent; border: none; padding: 6px; }"
+            "QListView::item { background: transparent; }"
+        )
 
+        delegate = RecipeCardDelegate(self._list_view, card_size=self._card_dimensions)
+        self._list_view.setItemDelegate(delegate)
+        self._list_view.setGridSize(delegate.sizeHint() + QSize(8, 12))
+        self._list_view.setModel(self._proxy_model)
+
+        self.content_layout.addWidget(self._list_view)
+
+    # Data Loading --------------------------------------------------------
     def _load_recipes(self):
-        """Load recipes with default filter."""
+        """Load recipes with default filter (unfiltered, sorted by name)."""
         default_filter_dto = RecipeFilterDTO(
             recipe_category=None,
             sort_by="recipe_name",
             sort_order="asc",
-            favorites_only=False
+            favorites_only=False,
         )
-        self._fetch_and_display_recipes(default_filter_dto)
+        self._fetch_and_bind_recipes(default_filter_dto)
+        self._apply_filters()
 
-    def _load_filtered_sorted_recipes(self):
-        """Load recipes based on current filter/sort selections."""
-        filter_state = self.filter_bar.getFilterState()
-
-        # Simplify category processing
-        recipe_category = None if filter_state['category'] in (None, "All", "Filter") else filter_state['category']
-
-        # Simplified sort mapping
-        sort_label = filter_state['sort']
-        sort_map = {
-            "A-Z": "recipe_name",
-            "Z-A": "recipe_name",
-            "Newest": "created_at",
-            "Oldest": "created_at",
-            "Shortest Time": "total_time",
-            "Longest Time": "total_time",
-            "Most Servings": "servings",
-            "Fewest Servings": "servings",
-        }
-
-        sort_by = sort_map.get(sort_label, "recipe_name")
-        sort_order = "desc" if sort_label in ("Z-A", "Newest", "Longest Time", "Most Servings") else "asc"
-
-        filter_dto = RecipeFilterDTO(
-            recipe_category=recipe_category,
-            sort_by=sort_by,
-            sort_order=sort_order,
-            favorites_only=filter_state['favorites_only'],
-        )
-        self._fetch_and_display_recipes(filter_dto)
-
-    def _fetch_and_display_recipes(self, filter_dto: RecipeFilterDTO):
-        """
-        Fetch and display recipes using the filter DTO.
-
-        Args:
-            filter_dto (RecipeFilterDTO): The filter and sort criteria.
-        """
-        self._clear_recipe_cards()
-
+    def _fetch_and_bind_recipes(self, filter_dto: RecipeFilterDTO):
+        """Fetch from service and push into the model."""
         recipes = self.recipe_service.list_filtered(filter_dto)
-
-        for recipe in recipes:
-            card = self._create_recipe_card(recipe)
-            self._flow_container.addWidget(card)
-
+        self._list_model.load_recipes(recipes)
         self.recipes_loaded = True
-        self._update_layout()
 
-    def _create_recipe_card(self, recipe):
-        """Create and configure a recipe card.
+    # Filtering / Sorting -------------------------------------------------
+    def _apply_filters(self):
+        """Update proxy filters based on the filter bar state."""
+        filter_state = self.filter_bar.getFilterState()
+        self._proxy_model.set_category_filter(filter_state["category"])
+        self._proxy_model.set_sort_mode(filter_state["sort"])
+        self._proxy_model.set_favorites_only(filter_state["favorites_only"])
+        self._proxy_model.sort(0)
 
-        Args:
-            recipe: The recipe data object.
+    # Interaction ---------------------------------------------------------
+    def _handle_card_clicked(self, proxy_index):
+        """Handle list view clicks, forwarding to navigation or selection."""
+        if not proxy_index.isValid():
+            return
 
-        Returns:
-            Configured recipe card widget.
-        """
-        card = create_recipe_card(self.card_size, parent=self._flow_container)
-        card.set_recipe(recipe)
-        card.set_selection_mode(self._selection_mode)
+        source_index = self._proxy_model.mapToSource(proxy_index)
+        recipe = self._list_model.get_recipe(source_index)
+        if recipe is None:
+            return
 
-        # Store recipe reference for later use
-        card.recipe_data = recipe
+        if self._selection_mode and getattr(recipe, "id", None) is not None:
+            self.recipe_selected.emit(recipe.id)
+            return
 
-        self._setup_card_behavior(card, recipe)
-        return card
-
-    def _setup_card_behavior(self, card, recipe):
-        """Setup click behavior for a recipe card based on current mode.
-
-        Args:
-            card: The recipe card widget.
-            recipe: The recipe data object.
-        """
-        # Disconnect previous connection if it exists
-        if hasattr(card, '_card_connection'):
-            try:
-                card.card_clicked.disconnect(card._card_connection)
-            except (RuntimeError, TypeError):
-                pass  # Connection might have been removed elsewhere
-            delattr(card, '_card_connection')
-
-        if self._selection_mode:
-            # Selection mode: emit recipe ID when clicked
-            card._card_connection = card.card_clicked.connect(
-                lambda: self.recipe_selected.emit(recipe.id)
-            )
-            card.setCursor(Qt.PointingHandCursor)
+        if self.navigation_service:
+            self.navigation_service.show_full_recipe(recipe)
         else:
-            # Normal mode: navigate or emit signal
-            if self.navigation_service:
-                card._card_connection = card.card_clicked.connect(
-                    self.navigation_service.show_full_recipe
-                )
-            else:
-                card._card_connection = card.card_clicked.connect(
-                    self.recipe_card_clicked.emit
-                )
-            card.setCursor(Qt.ArrowCursor)
+            self.recipe_card_clicked.emit(recipe)
 
-        # Context menu actions
-        self._connect_context_actions(card, recipe)
+    def _show_context_menu(self, point: QPoint):
+        """Context menu for edit/favorite/delete on a recipe card."""
+        index = self._list_view.indexAt(point)
+        if not index.isValid():
+            return
 
-    def _connect_context_actions(self, card, recipe):
-        """Connect context menu actions for a card."""
-        # Freshly created cards start without these connections, so no disconnect needed
-        card.edit_requested.connect(lambda r=recipe: self._handle_edit_request(r))
-        card.add_to_favorites.connect(lambda updated: card.set_recipe(updated))
-        card.delete_clicked.connect(lambda rid=recipe.id: self._handle_delete_request(rid))
+        source_index = self._proxy_model.mapToSource(index)
+        recipe = self._list_model.get_recipe(source_index)
+        if recipe is None:
+            return
+
+        menu = QMenu(self)
+        act_edit = menu.addAction("Edit Recipe")
+        fav_label = "Remove from Favorites" if getattr(recipe, "is_favorite", False) else "Add to Favorites"
+        act_fav = menu.addAction(fav_label)
+        act_delete = menu.addAction("Delete Recipe")
+
+        chosen = menu.exec(self._list_view.viewport().mapToGlobal(point))
+        if chosen == act_edit:
+            self._handle_edit_request(recipe)
+        elif chosen == act_fav:
+            self._toggle_favorite_from_context(source_index, recipe)
+        elif chosen == act_delete and getattr(recipe, "id", None):
+            self._handle_delete_request(recipe.id)
+
+    def _toggle_favorite_from_context(self, source_index, recipe):
+        current = bool(getattr(recipe, "is_favorite", False))
+        self._list_model.setData(source_index, not current, RecipeListModel.FAVORITE_ROLE)
 
     def _handle_edit_request(self, recipe):
         """Handle edit requests from a recipe card context menu."""
@@ -204,14 +209,12 @@ class RecipeBrowser(BaseView):
 
     def _handle_delete_request(self, recipe_id: int):
         """Handle recipe deletion with confirmation and refresh."""
-        from PySide6.QtWidgets import QMessageBox
-
         reply = QMessageBox.question(
             self,
             "Delete Recipe",
             "Are you sure you want to delete this recipe?\nThis action cannot be undone.",
             QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
+            QMessageBox.No,
         )
         if reply != QMessageBox.Yes:
             return
@@ -221,49 +224,19 @@ class RecipeBrowser(BaseView):
             if service.delete_recipe(recipe_id):
                 self.refresh()
                 from app.ui.components.widgets import show_toast
+
                 show_toast(self, "Recipe deleted.", success=True, duration=2000, offset_right=40)
         except Exception as exc:
-            from _dev_tools import DebugLogger
             DebugLogger.log(f"Failed to delete recipe {recipe_id}: {exc}", "error")
 
-    def _update_cards_selection_mode(self):
-        """Update all existing recipe cards to match current selection mode."""
-        if not hasattr(self, '_flow_container'):
-            return
-
-        # Update each card's behavior without reloading data
-        for i in range(self._flow_container.layout.count()):
-            item = self._flow_container.layout.itemAt(i)
-            if item:
-                card = item.widget()
-                if card and hasattr(card, 'recipe_data'):
-                    card.set_selection_mode(self._selection_mode)
-                    self._setup_card_behavior(card, card.recipe_data)
-
-    def _update_layout(self):
-        """Update the flow container and scroll area layouts."""
-        if hasattr(self, '_flow_container'):
-            self._flow_container.updateGeometry()
-            if hasattr(self, 'scroll_area'):
-                self.scroll_area.updateGeometry()
-
-    def _clear_recipe_cards(self):
-        """Clear all existing recipe cards from the flow layout."""
-        self._flow_container.takeAllWidgets()
-
-    def refresh(self):
-        """Refresh the recipe display."""
-        self.recipes_loaded = False
-        self._load_recipes()
-
-    def showEvent(self, event):
-        """Handle show event to ensure proper layout."""
-        super().showEvent(event)
-        self._update_layout()
-
-    def resizeEvent(self, event):
-        """Handle resize event to update layout."""
-        super().resizeEvent(event)
-        if hasattr(self, '_flow_container'):
-            from PySide6.QtCore import QTimer
-            QTimer.singleShot(10, self._flow_container.layout.update)
+    # Persistence helpers -------------------------------------------------
+    def _persist_favorite(self, recipe, new_value: bool):
+        """Persist favorite toggle and return the updated recipe."""
+        if not getattr(recipe, "id", None):
+            return None
+        try:
+            updated = self.recipe_service.toggle_favorite(recipe.id)
+            return updated
+        except Exception as exc:
+            DebugLogger.log(f"Failed to persist favorite toggle: {exc}", "error")
+            return None
