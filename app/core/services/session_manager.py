@@ -9,7 +9,7 @@ ensuring commit, rollback, and closure are handled.
 from contextlib import contextmanager
 
 from _dev_tools import DebugLogger
-from app.core.database.db import create_session
+from ..database.db import create_session
 
 
 @contextmanager

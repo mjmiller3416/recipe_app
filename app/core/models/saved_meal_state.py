@@ -14,7 +14,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from ..database.base import Base
 
 if TYPE_CHECKING:
-    from app.core.models.meal_selection import MealSelection
+    from ..models.meal_selection import MealSelection
 
 
 # ── Saved Meal State Model ──────────────────────────────────────────────────────────────────────────────────

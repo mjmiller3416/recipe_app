@@ -14,7 +14,7 @@ from typing import NamedTuple, Optional
 from _dev_tools import DebugLogger
 
 from .config import ImageGenConfig
-from .service import ImageGenService, ImageRequest
+from .service import ImageGenService
 
 
 class RecipeImagePaths(NamedTuple):

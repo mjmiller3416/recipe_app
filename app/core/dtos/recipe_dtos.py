@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, List, Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 if TYPE_CHECKING:
-    from app.core.models.ingredient import Ingredient
+    from ..models.ingredient import Ingredient
 
 
 # ── Recipe Ingredient DTOs ──────────────────────────────────────────────────────────────────────────────────

@@ -11,7 +11,7 @@ from typing import Any, Dict, Optional
 
 from _dev_tools import DebugLogger
 from app.config import AppPaths
-from app.core.utils import QSingleton
+from ..utils import QSingleton
 
 
 class SettingsService(QSingleton):
