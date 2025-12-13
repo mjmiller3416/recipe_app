@@ -16,7 +16,6 @@ Text processing and string manipulation utilities.
 # ── String Extraction & Parsing ─────────────────────────────
 # safe_split_extract()         -> Safely extract from split string
 # extract_first_number()       -> Get first number from text
-# extract_numeric_range()      -> Parse numeric ranges
 #
 # ── String Validation Helpers ───────────────────────────────
 # is_empty_or_whitespace()     -> Check for empty/whitespace
@@ -39,7 +38,7 @@ __all__ = [
     'text_to_enum_key', 'snake_to_title_case', 'camel_to_title_case',
 
     # String Extraction & Parsing
-    'safe_split_extract', 'extract_first_number', 'extract_numeric_range',
+    'safe_split_extract', 'extract_first_number',
 
     # String Validation Helpers
     'is_empty_or_whitespace', 'truncate_with_ellipsis', 'normalize_line_endings',
@@ -209,37 +208,6 @@ def extract_first_number(text: str) -> Optional[int]:
 
     match = re.search(r'\d+', text)
     return int(match.group()) if match else None
-
-def extract_numeric_range(text: str) -> tuple[Optional[int], Optional[int]]:
-    """
-    Extract numeric range from text.
-
-    Args:
-        text: Text containing range (e.g., "4-6", "2 to 8")
-
-    Returns:
-        tuple[int | None, int | None]: (min_value, max_value)
-
-    Examples:
-        "4-6 servings" -> (4, 6)
-        "2 to 8 hours" -> (2, 8)
-        "5 minutes" -> (5, None)
-        "No numbers" -> (None, None)
-    """
-    if not text:
-        return (None, None)
-
-    # Look for range patterns: "4-6", "2 to 8", "1-2", etc.
-    range_match = re.search(r'(\d+)\s*(?:-|to)\s*(\d+)', text, re.IGNORECASE)
-    if range_match:
-        return (int(range_match.group(1)), int(range_match.group(2)))
-
-    # Look for single number
-    single_match = re.search(r'\d+', text)
-    if single_match:
-        return (int(single_match.group()), None)
-
-    return (None, None)
 
 
 # ── String Validation Helpers ───────────────────────────────────────────────────────────────────────────────

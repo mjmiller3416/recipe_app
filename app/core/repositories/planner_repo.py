@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import List, Optional
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select, func
 from sqlalchemy.orm import Session, joinedload
 
 from ..models.meal_selection import MealSelection
@@ -51,9 +51,8 @@ class PlannerRepo:
         for meal_id in meal_ids:
             saved_state = SavedMealState(meal_id=meal_id)
             self.session.add(saved_state)
-        # flush to persist new saved meal states for immediate retrieval
+        # flush so new saved meal states can be read immediately in this session
         self.session.flush()
-
 
     def clear_saved_meal_states(self) -> None:
         """Clear all saved meal states from the database."""
@@ -68,10 +67,13 @@ class PlannerRepo:
             List[SavedMealState]: List of saved meal states with loaded relationships.
         """
         stmt = select(SavedMealState).options(
-            joinedload(SavedMealState.meal_selection)
+            joinedload(SavedMealState.meal_selection).joinedload(MealSelection.main_recipe),
+            joinedload(SavedMealState.meal_selection).joinedload(MealSelection.side_recipe_1),
+            joinedload(SavedMealState.meal_selection).joinedload(MealSelection.side_recipe_2),
+            joinedload(SavedMealState.meal_selection).joinedload(MealSelection.side_recipe_3),
         )
         result = self.session.execute(stmt)
-        return result.scalars().all()
+        return result.scalars().unique().all()  # added unique() for joinedload
 
     # ── Meal Selection Operations ───────────────────────────────────────────────────────────────────────────
     def create_meal_selection(self, meal_selection: MealSelection) -> MealSelection:
@@ -161,7 +163,7 @@ class PlannerRepo:
 
         if meal_selection:
             self.session.delete(meal_selection)
-            # flush to persist deletion immediately
+            # flush to push the delete before any follow-up queries
             self.session.flush()
             return True
         return False
@@ -277,9 +279,8 @@ class PlannerRepo:
         Returns:
             int: Total count of meal selections
         """
-        stmt = select(MealSelection.id)
-        result = self.session.execute(stmt)
-        return len(result.scalars().all())
+        stmt = select(func.count()).select_from(MealSelection)
+        return self.session.execute(stmt).scalar() or 0
 
     def count_saved_meal_states(self) -> int:
         """
@@ -288,6 +289,5 @@ class PlannerRepo:
         Returns:
             int: Total count of saved meal states
         """
-        stmt = select(SavedMealState.id)
-        result = self.session.execute(stmt)
-        return len(result.scalars().all())
+        stmt = select(func.count()).select_from(SavedMealState)
+        return self.session.execute(stmt).scalar() or 0

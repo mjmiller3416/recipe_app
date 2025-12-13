@@ -15,8 +15,7 @@ from ..dtos.recipe_dtos import (
     RecipeCreateDTO,
     RecipeFilterDTO,
     RecipeIngredientDTO,
-    RecipeUpdateDTO,
-)
+    RecipeUpdateDTO)
 from ..models.recipe import Recipe
 from ..models.recipe_history import RecipeHistory
 from ..models.meal_selection import MealSelection
@@ -48,10 +47,12 @@ class RecipeRepo:
             banner_image_path=recipe_dto.banner_image_path
         )
         self.session.add(recipe)
+        # flush so recipe gets its primary key before linking ingredients
         self.session.flush()
 
         for ing in recipe_dto.ingredients:
             ingredient = self.ingredient_repo.get_or_create(ing)
+            # flush to ensure ingredient has an ID before creating the link row
             self.session.flush()
             link = RecipeIngredient(
                 recipe_id=recipe.id,
@@ -62,10 +63,6 @@ class RecipeRepo:
             self.session.add(link)
 
         return recipe
-
-    def rollback(self) -> None:
-        # transaction management moved to service layer
-        pass
 
     def get_all_recipes(self) -> List[Recipe]:
         """
@@ -144,6 +141,7 @@ class RecipeRepo:
 
         if "ingredients" in update_data and update_data["ingredients"] is not None:
             recipe.ingredients.clear()
+            # flush to persist removal of old links before adding replacements
             self.session.flush()
             for ing in update_data["ingredients"]:
                 ing_dto = (
@@ -152,6 +150,7 @@ class RecipeRepo:
                     else ing
                 )
                 ingredient = self.ingredient_repo.get_or_create(ing_dto)
+                # flush so ingredient has an ID before we append the new link
                 self.session.flush()
                 recipe.ingredients.append(
                     RecipeIngredient(
@@ -180,29 +179,17 @@ class RecipeRepo:
 
     def delete_recipe(self, recipe: Recipe) -> None:
         """
-        Deletes the given recipe.
+        Delete the given recipe.
 
         Args:
             recipe (Recipe): The recipe instance to delete.
 
+        Note:
+            Related data is handled by database foreign key rules:
+            - Recipe ingredients and history: CASCADE (deleted)
+            - Meal selections (main recipe): CASCADE (deleted)
+            - Meal selections (side recipe): SET NULL
         """
-        # Remove meal selections that depend on this recipe
-        # 1) delete any meal selections where this recipe is the main recipe
-        self.session.query(MealSelection).filter(
-            MealSelection.main_recipe_id == recipe.id
-        ).delete(synchronize_session=False)
-
-        # 2) null out side recipes that reference this recipe
-        self.session.query(MealSelection).filter(
-            MealSelection.side_recipe_1_id == recipe.id
-        ).update({"side_recipe_1_id": None}, synchronize_session=False)
-        self.session.query(MealSelection).filter(
-            MealSelection.side_recipe_2_id == recipe.id
-        ).update({"side_recipe_2_id": None}, synchronize_session=False)
-        self.session.query(MealSelection).filter(
-            MealSelection.side_recipe_3_id == recipe.id
-        ).update({"side_recipe_3_id": None}, synchronize_session=False)
-
         self.session.delete(recipe)
 
     def recipe_exists(self, name: str, category: str) -> bool:
@@ -223,7 +210,7 @@ class RecipeRepo:
             )
             .first()
             is not None
-    )
+        )
 
     def filter_recipes(self, filter_dto: RecipeFilterDTO) -> list[Recipe]:
         """
@@ -281,5 +268,7 @@ class RecipeRepo:
             Recipe: The updated recipe with new favorite status.
         """
         recipe = self.get_by_id(recipe_id)
+        if recipe is None:
+            return None
         recipe.is_favorite = not recipe.is_favorite
         return recipe

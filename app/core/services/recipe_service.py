@@ -15,13 +15,11 @@ from ..dtos.recipe_dtos import (
     RecipeCreateDTO,
     RecipeFilterDTO,
     RecipeIngredientDTO,
-    RecipeUpdateDTO
-)
+    RecipeUpdateDTO)
 from ..models.ingredient import Ingredient
 from ..models.recipe import Recipe
 from ..repositories.ingredient_repo import IngredientRepo
 from ..repositories.recipe_repo import RecipeRepo
-from .session_manager import session_scope
 
 
 # ── Exceptions ──────────────────────────────────────────────────────────────────────────────────────────────
@@ -71,7 +69,7 @@ class RecipeService:
 
     def resolve_ingredient(
         self, ing_dto: RecipeIngredientDTO
-    ) -> Ingredient:
+        ) -> Ingredient:
         """
         Resolve or create an Ingredient from an ingredient DTO.
 
@@ -215,7 +213,4 @@ class RecipeService:
         Returns:
             Optional[Recipe]: The Recipe if found, else None.
         """
-        with session_scope() as session:
-            ingredient_repo = IngredientRepo(session)
-            recipe_repo = RecipeRepo(session, ingredient_repo)
-            return recipe_repo.get_by_id(recipe_id)
+        return self.recipe_repo.get_by_id(recipe_id)

@@ -20,8 +20,8 @@ from ..dtos.planner_dtos import (
     MealPlanValidationDTO,
     MealSelectionCreateDTO,
     MealSelectionResponseDTO,
-    MealSelectionUpdateDTO
-)
+    MealSelectionUpdateDTO,
+    RecipeCardDTO)
 from ..models.meal_selection import MealSelection
 from ..repositories.planner_repo import PlannerRepo
 
@@ -52,7 +52,7 @@ class PlannerService:
         try:
             return self.repo.get_saved_meal_ids()
         except SQLAlchemyError as e:
-            DebugLogger.log("Failed to load saved meal IDs: {e}", "error")
+            DebugLogger.log(f"Failed to load saved meal IDs: {e}", "error")
             return []
 
     def get_saved_meal_plan(self) -> List[MealSelectionResponseDTO]:
@@ -123,7 +123,7 @@ class PlannerService:
             self.session.commit()
         except SQLAlchemyError as e:
             self.session.rollback()
-            DebugLogger.log("Failed to save active meal IDs, transaction rolled back: {e}", "error")
+            DebugLogger.log(f"Failed to save active meal IDs, transaction rolled back: {e}", "error")
             raise
 
     def clear_meal_plan(self) -> bool:
@@ -220,7 +220,7 @@ class PlannerService:
 
         except (SQLAlchemyError, ValueError) as e:
             self.session.rollback()
-            DebugLogger.log("Failed to create meal selection, transaction rolled back: {e}", "error")
+            DebugLogger.log(f"Failed to create meal selection, transaction rolled back: {e}", "error")
             return None
 
     def update_meal_selection(self, meal_id: int, update_dto: MealSelectionUpdateDTO) -> Optional[MealSelectionResponseDTO]:
@@ -272,7 +272,7 @@ class PlannerService:
 
         except (SQLAlchemyError, ValueError) as e:
             self.session.rollback()
-            DebugLogger.log("Failed to update meal selection {meal_id}, transaction rolled back: {e}", "error")
+            DebugLogger.log(f"Failed to update meal selection {meal_id}, transaction rolled back: {e}", "error")
             return None
 
     def get_meal_selection(self, meal_id: int) -> Optional[MealSelectionResponseDTO]:
@@ -367,16 +367,16 @@ class PlannerService:
             MealSelectionResponseDTO: Response DTO.
         """
         return MealSelectionResponseDTO(
-            id=meal.id,
-            meal_name=meal.meal_name,
-            main_recipe_id=meal.main_recipe_id,
-            side_recipe_1_id=meal.side_recipe_1_id,
-            side_recipe_2_id=meal.side_recipe_2_id,
-            side_recipe_3_id=meal.side_recipe_3_id,
-            main_recipe=meal.main_recipe,
-            side_recipe_1=meal.side_recipe_1,
-            side_recipe_2=meal.side_recipe_2,
-            side_recipe_3=meal.side_recipe_3
+        id=meal.id,
+        meal_name=meal.meal_name,
+        main_recipe_id=meal.main_recipe_id,
+        side_recipe_1_id=meal.side_recipe_1_id,
+        side_recipe_2_id=meal.side_recipe_2_id,
+        side_recipe_3_id=meal.side_recipe_3_id,
+        main_recipe=RecipeCardDTO.from_recipe(meal.main_recipe),
+        side_recipe_1=RecipeCardDTO.from_recipe(meal.side_recipe_1),
+        side_recipe_2=RecipeCardDTO.from_recipe(meal.side_recipe_2),
+        side_recipe_3=RecipeCardDTO.from_recipe(meal.side_recipe_3),
         )
 
     # ── Validation Methods ───────────────────────────────────────────────────────────────────

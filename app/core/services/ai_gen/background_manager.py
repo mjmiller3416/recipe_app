@@ -110,7 +110,7 @@ class BackgroundImageManager:
             banner_path: Path for banner image
         """
         try:
-            DebugLogger().log(
+            DebugLogger.log(
                 f"Starting background image generation for recipe {recipe_id}: {recipe_name}",
                 "info"
             )
@@ -125,7 +125,7 @@ class BackgroundImageManager:
             helper = RecipeImageHelper(service, config)
 
             # Generate standard image first
-            DebugLogger().log(f"Generating standard image for recipe {recipe_id}", "info")
+            DebugLogger.log(f"Generating standard image for recipe {recipe_id}", "info")
             standard_path = await helper.generate_for_recipe(recipe_name, "standard")
 
             # Ensure the reference path exists before generating banner
@@ -137,7 +137,7 @@ class BackgroundImageManager:
                 shutil.copy2(standard_path, ref_path_obj)
 
             # Generate banner using standard as reference
-            DebugLogger().log(f"Generating banner image for recipe {recipe_id}", "info")
+            DebugLogger.log(f"Generating banner image for recipe {recipe_id}", "info")
             banner_generated = await helper.generate_for_recipe(
                 recipe_name,
                 "banner",
@@ -162,13 +162,13 @@ class BackgroundImageManager:
                 service.update_recipe_reference_image_path(recipe_id, str(ref_path_obj))
                 service.update_recipe_banner_image_path(recipe_id, str(banner_path_obj))
 
-            DebugLogger().log(
+            DebugLogger.log(
                 f"Successfully generated images for recipe {recipe_id}: {recipe_name}",
                 "info"
             )
 
         except Exception as e:
-            DebugLogger().log(
+            DebugLogger.log(
                 f"Failed to generate images for recipe {recipe_id}: {e}",
                 "error"
             )

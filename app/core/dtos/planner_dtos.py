@@ -10,6 +10,8 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from .recipe_dtos import RecipeCardDTO
+
 # Ensure Recipe is available at runtime for forward references
 """DTO for meal selection responses with full recipe information is simplified to include only ID."""
 
@@ -48,6 +50,10 @@ class MealSelectionResponseDTO(MealSelectionBaseDTO):
     """DTO for meal selection responses with full recipe information."""
 
     id: int
+    main_recipe: Optional[RecipeCardDTO] = None
+    side_recipe_1: Optional[RecipeCardDTO] = None
+    side_recipe_2: Optional[RecipeCardDTO] = None
+    side_recipe_3: Optional[RecipeCardDTO] = None
 
 # ── Filter DTO ──────────────────────────────────────────────────────────────────────────────────────────────
 class MealSelectionFilterDTO(BaseModel):

@@ -43,7 +43,7 @@ elif "--import-recipes" in sys.argv:
     from _scripts.db.recipes_with_ingredients import insert_recipes_from_csv
     insert_recipes_from_csv("database/recipes_with_ingredients.csv")
 
-    DebugLogger().log("Recipe import complete.\n", "success")
+    DebugLogger.log("Recipe import complete.\n", "success")
 
 # ── Application Entry Point ──
 else:

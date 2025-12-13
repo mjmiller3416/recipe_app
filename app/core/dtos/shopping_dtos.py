@@ -173,6 +173,7 @@ class ShoppingListGenerationResultDTO(BaseModel):
     total_items: int
     message: str
     errors: List[str] = []
+    items: List[ShoppingItemResponseDTO] = []
 
 class BulkOperationResultDTO(BaseModel):
     """DTO for bulk operation results."""

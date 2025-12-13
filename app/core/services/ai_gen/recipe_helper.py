@@ -61,7 +61,7 @@ class RecipeImageHelper:
         self.service = service
         self.config = config
 
-        DebugLogger().log("RecipeImageHelper initialized", "info")
+        DebugLogger.log("RecipeImageHelper initialized", "info")
 
     async def generate_for_recipe(self,
                           recipe_name: str,
@@ -97,7 +97,7 @@ class RecipeImageHelper:
         size = self._get_optimal_size(image_type)
         filename_base = f"{recipe_name}-{image_type}"
 
-        DebugLogger().log(
+        DebugLogger.log(
             f"Generating {image_type} image for '{recipe_name}' @ {size}",
             "info"
         )
@@ -117,7 +117,7 @@ class RecipeImageHelper:
         if not recipe_name:
             raise ValueError("Recipe name cannot be empty")
 
-        DebugLogger().log(f"Generating both images for '{recipe_name}' (sequential workflow)", "info")
+        DebugLogger.log(f"Generating both images for '{recipe_name}' (sequential workflow)", "info")
 
         # Generate standard first (becomes reference)
         standard_path = await self.generate_for_recipe(recipe_name, "standard")

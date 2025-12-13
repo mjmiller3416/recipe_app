@@ -109,7 +109,7 @@ def log_and_handle_exception(
     else:
         try:
             from _dev_tools import DebugLogger
-            DebugLogger().log(error_message, "error")
+            DebugLogger.log(error_message, "error")
         except ImportError:
             # Fallback to print if no logger available
             print(f"ERROR: {error_message}")
@@ -397,7 +397,7 @@ def graceful_degradation(fallback_value: Any = None, logger_func: Optional[Calla
         else:
             try:
                 from _dev_tools import DebugLogger
-                DebugLogger().log(f"Graceful degradation activated: {str(e)}", "warning")
+                DebugLogger.log(f"Graceful degradation activated: {str(e)}", "warning")
             except ImportError:
                 pass
 

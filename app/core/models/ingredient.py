@@ -1,4 +1,4 @@
-"""app/core/models/ingredien.py
+"""app/core/models/ingredient.py
 
 SQLAlchemy model for the Ingredient table.
 """
@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import String
+from sqlalchemy import String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..database.base import Base
@@ -23,9 +23,18 @@ class Ingredient(Base):
 
     __tablename__ = "ingredients"
 
+    # Add unique constraint for name + category combination
+    __table_args__ = (
+        UniqueConstraint(
+            'ingredient_name',
+            'ingredient_category',
+            name='uq_ingredient_name_category'
+        ),
+    )
+
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    ingredient_name: Mapped[str] = mapped_column(String, nullable=False)
-    ingredient_category: Mapped[str] = mapped_column(String, nullable=False)
+    ingredient_name: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    ingredient_category: Mapped[str] = mapped_column(String, nullable=False, index=True)
 
 
     # ── Relationships ───────────────────────────────────────────────────────────────────────────────────────

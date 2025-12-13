@@ -29,9 +29,9 @@ class Recipe(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     recipe_name: Mapped[str] = mapped_column(String, nullable=False)
-    recipe_category: Mapped[str] = mapped_column(String, nullable=False)
-    meal_type: Mapped[str] = mapped_column(String, default="Dinner", nullable=False)
-    diet_pref: Mapped[Optional[str]] = mapped_column(String, default="None", nullable=True)
+    recipe_category: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    meal_type: Mapped[str] = mapped_column(String, default="Dinner", nullable=False, index=True)
+    diet_pref: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     total_time: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     servings: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     directions: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
@@ -39,7 +39,7 @@ class Recipe(Base):
     reference_image_path: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     banner_image_path: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
-    is_favorite: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_favorite: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
 
     # ── Relationships  ──────────────────────────────────────────────────────────────────────────────────────
     ingredients: Mapped[List[RecipeIngredient]] = relationship(
@@ -57,7 +57,8 @@ class Recipe(Base):
     main_meal_selections: Mapped[List["MealSelection"]] = relationship(
         "MealSelection",
         foreign_keys="MealSelection.main_recipe_id",
-        back_populates="main_recipe"
+        back_populates="main_recipe",
+        passive_deletes=True
     )
 
     # ── String Representation ───────────────────────────────────────────────────────────────────────────────

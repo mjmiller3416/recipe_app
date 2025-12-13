@@ -67,7 +67,7 @@ class ShoppingItem(Base):
         quantity: float,
         unit: Optional[str] = None,
         category: Optional[str] = None
-    ) -> "ShoppingItem":
+        ) -> "ShoppingItem":
         """
         Create a shopping item from recipe data.
 
@@ -95,7 +95,7 @@ class ShoppingItem(Base):
         ingredient_name: str,
         quantity: float,
         unit: Optional[str] = None
-    ) -> "ShoppingItem":
+        ) -> "ShoppingItem":
         """
         Create a manual shopping item.
 

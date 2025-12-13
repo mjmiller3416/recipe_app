@@ -14,6 +14,7 @@ from sqlalchemy import and_, delete, select
 from sqlalchemy.orm import Session, joinedload
 
 from ..models.recipe_ingredient import RecipeIngredient
+from ..models.ingredient import Ingredient
 from ..models.shopping_item import ShoppingItem
 from ..models.shopping_state import ShoppingState
 
@@ -98,7 +99,7 @@ class ShoppingRepo:
 
         return result
 
-    def aggregate_recipe_ingredients(self, recipe_ids: List[int]) -> List[ShoppingItem]:
+    def aggregate_ingredients(self, recipe_ids: List[int]) -> List[ShoppingItem]:
         """
         Aggregate ingredients from recipes into shopping items.
 
@@ -119,7 +120,7 @@ class ShoppingRepo:
         })
 
         for ri in recipe_ingredients:
-            ingredient = ri.ingredient
+            ingredient: Ingredient = ri.ingredient
             data = aggregation[ri.ingredient_id]
             data["name"] = ingredient.ingredient_name
             data["category"] = ingredient.ingredient_category
@@ -150,16 +151,10 @@ class ShoppingRepo:
 
         return items
 
-    def aggregate_ingredients(self, recipe_ids: List[int]) -> List[ShoppingItem]:
-        """
-        Alias for aggregate_recipe_ingredients for backward compatibility.
-        """
-        return self.aggregate_recipe_ingredients(recipe_ids)
-
     def get_ingredient_breakdown(
             self,
             recipe_ids: List[int]
-    ) -> Dict[str, List[Tuple[str, float, str]]]:
+        ) -> Dict[str, List[Tuple[str, float, str]]]:
         """
         Get detailed breakdown of ingredients used in recipes.
 
@@ -230,7 +225,7 @@ class ShoppingRepo:
         Create and persist shopping items aggregated from given recipes.
         """
         created_items: List[ShoppingItem] = []
-        recipe_items = self.aggregate_recipe_ingredients(recipe_ids)
+        recipe_items = self.aggregate_ingredients(recipe_ids)
         for item in recipe_items:
             created = self.create_shopping_item(item)
             created_items.append(created)
@@ -277,13 +272,7 @@ class ShoppingRepo:
         result = self.session.execute(stmt)
         return result.scalars().all()
 
-    def delete_item(self, item_id: int) -> bool:
-        """
-        Delete a shopping item by ID. Alias for delete_shopping_item.
-        """
-        return self.delete_shopping_item(item_id)
-
-    def update_shopping_item(self, shopping_item: ShoppingItem) -> ShoppingItem:
+    def update_item(self, shopping_item: ShoppingItem) -> ShoppingItem:
         """
         Update an existing shopping item.
 
@@ -296,7 +285,7 @@ class ShoppingRepo:
         merged_item = self.session.merge(shopping_item)
         return merged_item
 
-    def delete_shopping_item(self, item_id: int) -> bool:
+    def delete_item(self, item_id: int) -> bool:
         """
         Delete a shopping item by ID.
 
@@ -349,7 +338,7 @@ class ShoppingRepo:
         have: Optional[bool] = None,
         limit: Optional[int] = None,
         offset: Optional[int] = None
-    ) -> List[ShoppingItem]:
+        ) -> List[ShoppingItem]:
         """
         Search shopping items with filters.
 
@@ -410,7 +399,7 @@ class ShoppingRepo:
             quantity: float,
             unit: str,
             checked: bool
-    ) -> ShoppingState:
+        ) -> ShoppingState:
         """
         Save or update shopping state.
 
@@ -433,7 +422,7 @@ class ShoppingRepo:
             existing_state.quantity = quantity
             existing_state.unit = unit
             existing_state.checked = checked
-            # flush to persist updates before refresh
+            # flush so updates land before we refresh/read them back
             self.session.flush()
             state = existing_state
         else:
@@ -444,7 +433,7 @@ class ShoppingRepo:
                 checked=checked
             )
             self.session.add(state)
-            # flush to assign primary key and persist state
+            # flush to assign primary key and persist the new state
             self.session.flush()
 
         self.session.refresh(state)

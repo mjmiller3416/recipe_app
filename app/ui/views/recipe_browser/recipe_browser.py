@@ -72,7 +72,6 @@ class RecipeBrowser(BaseView):
         self.content_layout.addWidget(self.filter_bar)
         self.filter_bar.filters_changed.connect(self._load_filtered_sorted_recipes)
 
-
     def _load_recipes(self):
         """Load recipes with default filter."""
         default_filter_dto = RecipeFilterDTO(
@@ -189,7 +188,26 @@ class RecipeBrowser(BaseView):
 
     def _connect_context_actions(self, card, recipe):
         """Connect context menu actions for a card."""
-        # Freshly created cards start without these connections, so no disconnect needed
+        import warnings
+
+        # Suppress the RuntimeWarning for disconnecting unconnected signals
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RuntimeWarning)
+
+            try:
+                card.edit_requested.disconnect()
+            except (RuntimeError, TypeError):
+                pass
+            try:
+                card.add_to_favorites.disconnect()
+            except (RuntimeError, TypeError):
+                pass
+            try:
+                card.delete_clicked.disconnect()
+            except (RuntimeError, TypeError):
+                pass
+
+        # Now connect fresh
         card.edit_requested.connect(lambda r=recipe: self._handle_edit_request(r))
         card.add_to_favorites.connect(lambda updated: card.set_recipe(updated))
         card.delete_clicked.connect(lambda rid=recipe.id: self._handle_delete_request(rid))
@@ -219,6 +237,10 @@ class RecipeBrowser(BaseView):
         try:
             service = RecipeService()
             if service.delete_recipe(recipe_id):
+                # Emit global signal BEFORE refreshing local view
+                from app.ui.utils import global_signals
+                global_signals.recipe_deleted.emit(recipe_id)
+
                 self.refresh()
                 from app.ui.components.widgets import show_toast
                 show_toast(self, "Recipe deleted.", success=True, duration=2000, offset_right=40)

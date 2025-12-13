@@ -50,6 +50,98 @@ class MealPlanner(BaseView):
         self._build_ui()
         self._init_ui()
 
+        self._connect_global_signals() # connect global signals
+
+    def _connect_global_signals(self):
+        """Connect to application-wide signals."""
+        from app.ui.utils import global_signals
+        global_signals.recipe_deleted.connect(self._on_recipe_deleted)
+
+    def _on_recipe_deleted(self, recipe_id: int):
+        """Handle when a recipe is deleted elsewhere in the app."""
+        DebugLogger.log(f"[MealPlanner] Recipe {recipe_id} was deleted, refreshing tabs", "info")
+
+        # Clear all meal models to prevent stale saves
+        for widget in self.tab_map.values():
+            widget._meal_model = None
+
+        self._refresh_meal_tabs()
+
+    def _refresh_meal_tabs(self):
+        """Reload all meal tabs from the database."""
+        # Save current tab index
+        current_index = self.meal_tabs.currentIndex()
+
+        # Remove all meal tabs (but NOT the '+' tab which is always last)
+        # Work backwards to avoid index shifting issues
+        indices_to_remove = sorted(self.tab_map.keys(), reverse=True)
+        for index in indices_to_remove:
+            widget = self.tab_map[index]
+            self.meal_tabs.removeTab(index)
+            widget.deleteLater()
+
+        self.tab_map.clear()
+
+        # Reload from database - only meals that still exist
+        meal_ids = self.planner_service.load_saved_meal_ids()
+        DebugLogger.log(f"[MealPlanner] Reloading {len(meal_ids)} meals after recipe deletion", "info")
+
+        # Filter out any meal IDs that no longer exist in the database
+        valid_meal_ids = []
+        for meal_id in meal_ids:
+            if self.planner_service.get_meal_selection(meal_id):
+                valid_meal_ids.append(meal_id)
+            else:
+                DebugLogger.log(f"[MealPlanner] Meal {meal_id} no longer exists, skipping", "info")
+
+        for meal_id in valid_meal_ids:
+            self._add_meal_tab(meal_id=meal_id)
+
+        # If no meals remain, add an empty one
+        if not valid_meal_ids:
+            self._add_meal_tab()
+
+        # Update the saved meal plan to remove deleted meals
+        if len(valid_meal_ids) != len(meal_ids):
+            self.planner_service.saveMealPlan(valid_meal_ids)
+
+        # Restore tab selection (or go to first if out of range)
+        max_valid_index = self.meal_tabs.count() - 2  # -1 for 0-index, -1 for '+' tab
+        new_index = min(current_index, max(0, max_valid_index))
+        self.meal_tabs.setCurrentIndex(new_index)
+
+    def _cleanup_orphaned_meals(self):
+        """Remove meal selections that reference deleted recipes."""
+        try:
+            from app.core.services import RecipeService
+            recipe_service = RecipeService()
+
+            meal_ids = self.planner_service.load_saved_meal_ids()
+            valid_ids = []
+
+            for meal_id in meal_ids:
+                meal = self.planner_service.get_meal_selection(meal_id)
+                if meal and meal.main_recipe_id:
+                    # Check if main recipe exists
+                    recipe = recipe_service.get_recipe(meal.main_recipe_id)
+                    if recipe:
+                        valid_ids.append(meal_id)
+                    else:
+                        # Main recipe was deleted, delete this meal selection
+                        DebugLogger.log(f"[MealPlanner] Removing orphaned meal {meal_id} (recipe {meal.main_recipe_id} deleted)", "info")
+                        self.planner_service.delete_meal_selection(meal_id)
+                elif meal and not meal.main_recipe_id:
+                    # Meal exists but has no main recipe (SET NULL happened)
+                    DebugLogger.log(f"[MealPlanner] Removing meal {meal_id} with no main recipe", "info")
+                    self.planner_service.delete_meal_selection(meal_id)
+
+            # Update saved meal plan if we removed any
+            if len(valid_ids) != len(meal_ids):
+                self.planner_service.saveMealPlan(valid_ids)
+
+        except Exception as e:
+            DebugLogger.log(f"[MealPlanner] Error cleaning up orphaned meals: {e}", "error")
+
     def _build_ui(self):
         """Build the main UI layout using consistent scroll pattern."""
         # Create meal tabs widget
@@ -83,6 +175,9 @@ class MealPlanner(BaseView):
         self._new_meal_tab()  # add the "+" tab (used to add new meals)
 
         def _load_saved_meals():
+            # Clean up any orphaned meals first
+            self._cleanup_orphaned_meals()
+
             meal_ids = self.planner_service.load_saved_meal_ids()
             DebugLogger.log(f"[MealPlanner] Restoring saved meal IDs: {meal_ids}", "info")
 

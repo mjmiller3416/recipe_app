@@ -61,7 +61,7 @@ class ImageGenService:
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
 
         mode_info = "MOCK MODE" if self.config.mock_mode else f"{config.model} @ {config.default_size}"
-        DebugLogger().log(f"ImageGenService initialized: {mode_info}", "info")
+        DebugLogger.log(f"ImageGenService initialized: {mode_info}", "info")
 
     async def generate_image_async(
             self,
@@ -91,7 +91,7 @@ class ImageGenService:
         # Check existing file
         output_path = self._get_output_path(filename_base, size)
         if not self.config.allow_overwrite and output_path.exists():
-            DebugLogger().log(f"Image already exists: {output_path.name}", "info")
+            DebugLogger.log(f"Image already exists: {output_path.name}", "info")
             return output_path
 
         # Generate and save
@@ -128,7 +128,7 @@ class ImageGenService:
 
             # Check if generation is needed
             if not self.config.allow_overwrite and output_path.exists():
-                DebugLogger().log(f"Skipping existing: {output_path.name}", "debug")
+                DebugLogger.log(f"Skipping existing: {output_path.name}", "debug")
                 continue
 
             # Add generation task with its index
@@ -146,7 +146,7 @@ class ImageGenService:
                     raise result
                 self._save_image(result, output_paths[original_index])
 
-        DebugLogger().log(f"Batch complete: {len(output_paths)} images", "info")
+        DebugLogger.log(f"Batch complete: {len(output_paths)} images", "info")
         return output_paths
 
     async def _generate_async(self, prompt: str, size: str, reference_image_path: Optional[Path] = None) -> bytes:
@@ -182,14 +182,14 @@ class ImageGenService:
                 if not b64_data:
                     raise RuntimeError(f"API returned no image data for {self.config.model}")
 
-                DebugLogger().log(
+                DebugLogger.log(
                     f"API success: {self.config.model} @ {size} ({len(b64_data)} chars)",
                     "debug"
                 )
                 return base64.b64decode(b64_data)
 
             except Exception as e:
-                DebugLogger().log(
+                DebugLogger.log(
                     f"Attempt {attempt + 1}/3 failed: {e}",
                     "warning" if attempt < 2 else "error"
                 )
@@ -252,7 +252,7 @@ class ImageGenService:
         image.save(buffer, format='PNG')
         image_bytes = buffer.getvalue()
 
-        DebugLogger().log(
+        DebugLogger.log(
             f"Mock image generated: {size} ({len(image_bytes)} bytes)",
             "debug"
         )

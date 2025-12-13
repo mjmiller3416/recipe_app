@@ -7,12 +7,11 @@ Handles recipe creation, updates, filtering, and responses with ingredient relat
 # ── Imports ─────────────────────────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-if TYPE_CHECKING:
-    from ..models.ingredient import Ingredient
+from ..models.recipe import Recipe
 
 
 # ── Recipe Ingredient DTOs ──────────────────────────────────────────────────────────────────────────────────
@@ -58,6 +57,33 @@ class RecipeBaseDTO(BaseModel):
             return v.strip()
         return v
 
+# ── Recipe Card DTO ─────────────────────────────────────────────────────────────────────────────────────────
+class RecipeCardDTO(BaseModel):
+    """Minimal recipe info needed to render a recipe card."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    recipe_name: str
+    is_favorite: bool = False
+    reference_image_path: Optional[str] = None
+    servings: Optional[int] = None
+    total_time: Optional[int] = None
+
+    @classmethod
+    def from_recipe(cls, recipe: Optional[Recipe]) -> Optional["RecipeCardDTO"]:
+        """Convert a Recipe model to RecipeCardDTO."""
+        if recipe is None:
+            return None
+        return cls(
+            id=recipe.id,
+            recipe_name=recipe.recipe_name,
+            is_favorite=recipe.is_favorite,
+            reference_image_path=recipe.reference_image_path,
+            servings=recipe.servings,
+            total_time=recipe.total_time,
+        )
+
 # ── Create DTO ──────────────────────────────────────────────────────────────────────────────────────────────
 class RecipeCreateDTO(RecipeBaseDTO):
     """DTO used to create a new recipe with ingredients."""
@@ -90,13 +116,23 @@ class RecipeUpdateDTO(BaseModel):
         return v
 
 # ── Response DTO ────────────────────────────────────────────────────────────────────────────────────────────
+class RecipeIngredientResponseDTO(BaseModel):
+    """DTO for ingredient in recipe response."""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    ingredient_name: str
+    ingredient_category: str
+    quantity: Optional[float] = None
+    unit: Optional[str] = None
+
 class RecipeResponseDTO(RecipeBaseDTO):
     """DTO for recipe responses with full ingredient information."""
 
     id: int
     is_favorite: bool = False
     created_at: Optional[str] = None  # ISO format datetime string
-    ingredients: List["Ingredient"] = []
+    ingredients: List["RecipeIngredientResponseDTO"] = []
 
 # ── Filter DTO ──────────────────────────────────────────────────────────────────────────────────────────────
 class RecipeFilterDTO(BaseModel):

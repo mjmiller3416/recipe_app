@@ -154,9 +154,9 @@ class ViewRecipe(QWidget):
         if self.recipe_data["banner_image_path"]:
             if Path(self.recipe_data["banner_image_path"]).exists():
                 self.recipe_banner.set_banner_image_path(self.recipe_data["banner_image_path"])
-                DebugLogger().log(f"Loaded recipe banner: {self.recipe_data['banner_image_path']}", "info")
+                DebugLogger.log(f"Loaded recipe banner: {self.recipe_data['banner_image_path']}", "info")
             else:
-                DebugLogger().log(f"Recipe banner path does not exist: {self.recipe_data['banner_image_path']}", "warning")
+                DebugLogger.log(f"Recipe banner path does not exist: {self.recipe_data['banner_image_path']}", "warning")
 
         self.scroll_layout.addWidget(self.recipe_banner)
 
@@ -252,7 +252,7 @@ class ViewRecipe(QWidget):
     def _on_image_clicked(self):
         """Handle image click for full preview."""
         # TODO: Show full-size image preview dialog
-        DebugLogger().log("Recipe banner image clicked for full preview", "debug")
+        DebugLogger.log("Recipe banner image clicked for full preview", "debug")
 
     def _handle_back_clicked(self):
         """Handle back button click by emitting signal."""

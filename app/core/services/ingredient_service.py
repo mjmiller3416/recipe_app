@@ -13,8 +13,7 @@ from sqlalchemy.orm import Session
 from ..dtos.ingredient_dtos import (
     IngredientCreateDTO,
     IngredientSearchDTO,
-    IngredientUpdateDTO
-)
+    IngredientUpdateDTO)
 from ..models.ingredient import Ingredient
 from ..repositories.ingredient_repo import IngredientRepo
 

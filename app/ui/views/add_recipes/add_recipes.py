@@ -300,13 +300,13 @@ class AddRecipes(BaseView):
                 for data in raw_ingredients
             ]
         except Exception as dto_err:
-            DebugLogger().log(f"[AddRecipes] DTO construction failed: {dto_err}", "error")
+            DebugLogger.log(f"[AddRecipes] DTO construction failed: {dto_err}", "error")
             return
 
         try:
             recipe_dto = RecipeCreateDTO(**recipe_data, ingredients=ingredient_dtos)
         except Exception as dto_err:
-            DebugLogger().log(f"[AddRecipes] RecipeCreateDTO validation failed: {dto_err}", "error")
+            DebugLogger.log(f"[AddRecipes] RecipeCreateDTO validation failed: {dto_err}", "error")
             return
 
         service = RecipeService()
@@ -315,13 +315,13 @@ class AddRecipes(BaseView):
                 update_dto = RecipeUpdateDTO(**recipe_data, ingredients=ingredient_dtos)
                 updated_recipe = service.update_recipe(self.editing_recipe_id, update_dto)
             except Exception as svc_err:
-                DebugLogger().log(f"[AddRecipes.save_recipe] Error updating recipe: {svc_err}", "error")
+                DebugLogger.log(f"[AddRecipes.save_recipe] Error updating recipe: {svc_err}", "error")
                 self._display_save_message(
                     f"Failed to update recipe: {svc_err}", success=False
                 )
                 return
 
-            DebugLogger().log(
+            DebugLogger.log(
                 f"[AddRecipes] Recipe '{updated_recipe.recipe_name}' updated with ID={updated_recipe.id}",
                 "info"
             )
@@ -337,13 +337,13 @@ class AddRecipes(BaseView):
         try:
             new_recipe = service.create_recipe_with_ingredients(recipe_dto)
         except Exception as svc_err:
-            DebugLogger().log(f"[AddRecipes.save_recipe] Error saving recipe: {svc_err}", "error")
+            DebugLogger.log(f"[AddRecipes.save_recipe] Error saving recipe: {svc_err}", "error")
             self._display_save_message(
                 f"Failed to save recipe: {svc_err}", success=False
             )
             return
 
-        DebugLogger().log(f"[AddRecipes] Recipe '{new_recipe.recipe_name}' saved with ID={new_recipe.id}", "info")
+        DebugLogger.log(f"[AddRecipes] Recipe '{new_recipe.recipe_name}' saved with ID={new_recipe.id}", "info")
 
         try:
             manager = get_background_manager()
@@ -355,7 +355,7 @@ class AddRecipes(BaseView):
             service.update_recipe_reference_image_path(new_recipe.id, reference_path)
             service.update_recipe_banner_image_path(new_recipe.id, banner_path)
 
-            DebugLogger().log(
+            DebugLogger.log(
                 f"[AddRecipes] Started background image generation for recipe {new_recipe.id}",
                 "info"
             )
@@ -369,7 +369,7 @@ class AddRecipes(BaseView):
                 offset_right=50
             )
         except Exception as img_err:
-            DebugLogger().log(
+            DebugLogger.log(
                 f"[AddRecipes] Failed to start image generation: {img_err}",
                 "warning"
             )
