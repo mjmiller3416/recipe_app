@@ -55,6 +55,7 @@ class MealWidget(QWidget):
 
         # Main Dish (Large Card)
         self.main_slot = create_recipe_card(LayoutSize.LARGE)
+        self.main_slot.set_meal_slot("main")
         self.meal_slots["main"] = self.main_slot
         self.main_layout.addWidget(self.main_slot, 0, Qt.AlignHCenter | Qt.AlignTop)
 
@@ -64,6 +65,7 @@ class MealWidget(QWidget):
 
         for i in range(1, SIDE_SLOT_COUNT + 1):
             side_slot = create_recipe_card(LayoutSize.SMALL)
+            side_slot.set_meal_slot(f"side{i}")
             side_slot.setEnabled(False) # initially disabled
             side_slot.setToolTip("Select a main dish first") # tooltip for disabled state
             side_slot.installEventFilter(self.tooltip_filter)
@@ -82,10 +84,14 @@ class MealWidget(QWidget):
             # Create bound methods to avoid closure issues
             recipe_handler = self._create_recipe_selection_handler(key)
             add_meal_handler = self._create_add_meal_handler(key)
+            remove_handler = self._create_remove_recipe_handler(key)
+            replace_handler = self._create_replace_recipe_handler(key)
 
             signal_connections.extend([
                 (slot.recipe_selected, recipe_handler),
-                (slot.add_meal_clicked, add_meal_handler)
+                (slot.add_meal_clicked, add_meal_handler),
+                (slot.remove_from_meal_clicked, remove_handler),
+                (slot.replace_recipe_requested, replace_handler)
             ])
 
         batch_connect_signals(signal_connections)
@@ -138,6 +144,55 @@ class MealWidget(QWidget):
             DebugLogger.log(f"Add meal clicked for slot: {key}", "info")
             self.recipe_selection_requested.emit(key)
         return handler
+
+    def _create_remove_recipe_handler(self, key: str):
+        """Create remove recipe handler for the given slot key."""
+        def handler(recipe_id: int):
+            self._handle_remove_recipe(key, recipe_id)
+        return handler
+
+    def _create_replace_recipe_handler(self, key: str):
+        """Create replace recipe handler for the given slot key."""
+        def handler():
+            DebugLogger.log(f"Replace recipe requested for slot: {key}", "info")
+            self.recipe_selection_requested.emit(key)
+        return handler
+
+    def _handle_remove_recipe(self, key: str, recipe_id: int) -> None:
+        """
+        Handle removing a recipe from a meal slot.
+
+        Args:
+            key (str): The slot key (e.g., "side1", "side2", "side3").
+            recipe_id (int): The ID of the recipe being removed (for logging).
+        """
+        if not self._meal_model or not self._meal_model.id:
+            DebugLogger.log(f"Cannot remove recipe: meal not saved yet", "warning")
+            return
+
+        if not key.startswith("side"):
+            DebugLogger.log(f"Cannot remove recipe from main slot", "warning")
+            return
+
+        # Map slot key to service format: "side1" -> "side_1"
+        slot_number = key[-1]  # Get the number from "side1", "side2", "side3"
+        service_slot = f"side_{slot_number}"
+
+        # Call service to remove recipe from meal
+        result = self.planner_service.remove_recipe_from_meal(self._meal_model.id, service_slot)
+
+        if result:
+            # Update local model
+            setattr(self._meal_model, f"side_recipe_{slot_number}_id", None)
+
+            # Clear the card display
+            slot = self.meal_slots.get(key)
+            if slot:
+                slot.set_recipe(None)
+
+            DebugLogger.log(f"Removed recipe {recipe_id} from {key}", "info")
+        else:
+            DebugLogger.log(f"Failed to remove recipe {recipe_id} from {key}", "error")
 
     def _enable_side_slots(self):
         """Enable side dish slots when main dish is selected."""

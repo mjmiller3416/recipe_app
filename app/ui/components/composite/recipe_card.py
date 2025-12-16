@@ -79,6 +79,8 @@ class BaseRecipeCard(BaseCard):
     add_meal_clicked = Signal()
     card_clicked = Signal(object)     # recipe instance
     delete_clicked = Signal(int)      # recipe_id
+    remove_from_meal_clicked = Signal(int)  # recipe_id (emitted when in meal planner context)
+    replace_recipe_requested = Signal()  # emitted when user wants to replace main recipe in meal planner
     recipe_selected = Signal(int)     # recipe_id
     edit_requested = Signal(object)   # recipe instance
     add_to_favorites = Signal(object) # updated recipe instance
@@ -100,6 +102,7 @@ class BaseRecipeCard(BaseCard):
         self._recipe: Optional[Recipe] = None
         self._recipe_selection_dialog: Optional[QDialog] = None
         self._selection_mode: bool = False  # When True, prevents ViewRecipe dialog from opening
+        self._meal_slot: Optional[str] = None  # When set, card is in meal planner context (e.g., "main", "side1")
 
         # Set fixed size based on size category
         self.setFixedSize(LAYOUT_SIZE[size.value])
@@ -150,6 +153,18 @@ class BaseRecipeCard(BaseCard):
             selection_mode (bool): If True, clicking the card won't open ViewRecipe dialog.
         """
         self._selection_mode = selection_mode
+
+    def set_meal_slot(self, slot: str | None) -> None:
+        """Set the meal slot context for this card.
+
+        When set, the context menu will show 'Remove Recipe' instead of 'Delete Recipe',
+        and clicking it will emit remove_from_meal_clicked instead of delete_clicked.
+
+        Args:
+            slot (str | None): The meal slot key (e.g., "main", "side1", "side2", "side3"),
+                or None to disable meal planner context.
+        """
+        self._meal_slot = slot
 
     def recipe(self) -> Recipe | None:
         """Return the currently displayed recipe (or None)."""
@@ -323,7 +338,20 @@ class BaseRecipeCard(BaseCard):
         act_edit = menu.addAction("Edit Recipe")
         fav_label = "Remove from Favorites" if getattr(self._recipe, "is_favorite", False) else "Add to Favorites"
         act_fav = menu.addAction(fav_label)
-        act_delete = menu.addAction("Delete Recipe")
+
+        # Determine delete/remove/replace action based on meal planner context
+        act_delete = None
+        act_remove = None
+        act_replace = None
+        if self._meal_slot == "main":
+            # In meal planner context for main dish - show "Replace Recipe"
+            act_replace = menu.addAction("Replace Recipe")
+        elif self._meal_slot and self._meal_slot.startswith("side"):
+            # In meal planner context for side dishes - show "Remove Recipe"
+            act_remove = menu.addAction("Remove Recipe")
+        elif not self._meal_slot:
+            # Not in meal planner context - show "Delete Recipe"
+            act_delete = menu.addAction("Delete Recipe")
 
         chosen = menu.exec(event.globalPos())
         if chosen == act_edit:
@@ -332,6 +360,10 @@ class BaseRecipeCard(BaseCard):
             self._handle_context_favorite_toggle()
         elif chosen == act_delete and getattr(self._recipe, "id", None):
             self.delete_clicked.emit(self._recipe.id)
+        elif chosen == act_remove and getattr(self._recipe, "id", None):
+            self.remove_from_meal_clicked.emit(self._recipe.id)
+        elif chosen == act_replace:
+            self.replace_recipe_requested.emit()
         event.accept()
 
     def _handle_context_favorite_toggle(self) -> None:
